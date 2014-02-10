@@ -1,5 +1,5 @@
 {
-  "name": "lamassu-atm-protocol",
+  "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
   "version": "0.0.1",
