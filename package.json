@@ -14,7 +14,7 @@
   "dependencies": {
     "express": "~3.4.7",
     "optimist": "~0.6.0",
-    "lamassu-config": "0.0.4",
+    "lamassu-config": "0.0.5",
     "lamassu-atm-protocol": "0.0.5"
   },
   "repository": {
