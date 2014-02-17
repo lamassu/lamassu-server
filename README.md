@@ -73,5 +73,10 @@ psql lamassu lamassu < database/lamassu.sql
 
 ## Running
 ```sh
-node lib/app.js
+node lib/app.js --https
 ```
+
+The https flag is required for local testing. When deployed to a PAAS environment - such as heroku, the https flag is not required,
+as the SSL connection typically terminates on the load balancer and the application will see http only.
+
+
