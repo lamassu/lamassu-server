@@ -1,0 +1,14 @@
+{
+  "local": {
+    "user": "lamassu",
+    "pwd": "lamassu",
+    "host": "localhost",
+    "db": "lamassu"
+  },
+  "heroku": {
+    "user": "txkholoodiceqt",
+    "pwd": "9WPMKrlitFf7GseoZiSj5Xcdbt",
+    "host": "ec2-54-197-237-120.compute-1.amazonaws.com",
+    "db": "d40d97tmgr3829"
+  }
+}
