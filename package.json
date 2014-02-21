@@ -15,7 +15,7 @@
     "express": "~3.4.7",
     "optimist": "~0.6.0",
     "lamassu-config": "0.0.6",
-    "lamassu-atm-protocol": "0.0.9",
+    "lamassu-atm-protocol": "git+https://github.com/lamassu/lamassu-atm-protocol.git#real-exchanges",
     "lamassu-bitpay": "~0.0.1"
   },
   "repository": {
