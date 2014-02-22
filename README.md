@@ -79,4 +79,28 @@ node lib/app.js --https
 The https flag is required for local testing. When deployed to a PAAS environment - such as heroku, the https flag is not required,
 as the SSL connection typically terminates on the load balancer and the application will see http only.
 
+## Deployment
 
+### Heroku
+This application is deployable to Heroku.
+
+First, you need to get a [Heroku](https://heroku.com) account and install the
+Heroku toolkit.
+
+Next, assuming that you have this repository cloned and are `cd'`d into it,
+and have `lamassu-admin` cloned one directory up:
+
+```bash
+heroku apps:create
+heroku addons:add heroku-postgresql:dev
+heroku pg:wait
+heroku pg:sql < ../lamassu-admin/database/lamassu.sql
+git push heroku master
+```
+
+If you want to change settings, do:
+
+```bash
+heroku pg:sql < ../lamassu-admin/database/drop.sql
+heroku pg:sql < ../lamassu-admin/database/lamassu.sql
+```
