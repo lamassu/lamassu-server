@@ -1,0 +1,34 @@
+{
+  "name": "lamassu-server",
+  "description": "bitcoin atm client server protocol module",
+  "keywords": [],
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Peter Elger (http://nearform.com/)",
+  "contributors": [
+    "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"
+  ],
+  "engines": {
+    "node": "0.10.x"
+  },
+  "dependencies": {
+    "express": "~3.4.7",
+    "optimist": "~0.6.0",
+    "lamassu-config": "~0.1.1",
+    "lamassu-atm-protocol": "git+https://github.com/lamassu/lamassu-atm-protocol.git"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lamassu/lamassu-server.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.0",
+    "load-grunt-tasks": "~0.1.0",
+    "chai": "~1.8.1",
+    "matchdep": "~0.3.0",
+    "mocha": "~1.13.0",
+    "grunt-mocha-test": "~0.7.0",
+    "grunt-mocha-cov": "0.0.7"
+  }
+}
