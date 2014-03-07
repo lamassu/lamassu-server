@@ -30,5 +30,6 @@
     "mocha": "~1.13.0",
     "grunt-mocha-test": "~0.7.0",
     "grunt-mocha-cov": "0.0.7"
-  }
+  },
+  "license": "unlicense"
 }
