@@ -31,5 +31,8 @@
     "grunt-mocha-test": "~0.7.0",
     "grunt-mocha-cov": "0.0.7"
   },
-  "license": "unlicense"
+  "license": "unlicense",
+  "bin": {
+    "lamassu-server": "./lib/app.js"
+  }
 }
