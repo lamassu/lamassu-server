@@ -15,7 +15,7 @@
     "express": "~3.4.7",
     "optimist": "~0.6.0",
     "lamassu-config": "~0.1.1",
-    "lamassu-atm-protocol": "git+https://github.com/lamassu/lamassu-atm-protocol.git"
+    "lamassu-atm-protocol": "~0.1.0"
   },
   "repository": {
     "type": "git",
