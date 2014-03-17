@@ -3,7 +3,7 @@
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
   "version": "0.1.2",
-  "license": "MIT",
+  "license": "unlicense",
   "author": "Peter Elger (http://nearform.com/)",
   "contributors": [
     "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"
@@ -15,7 +15,8 @@
     "express": "~3.4.7",
     "optimist": "~0.6.0",
     "lamassu-config": "~0.1.1",
-    "lamassu-atm-protocol": "~0.1.0"
+    "lamassu-atm-protocol": "~0.1.0",
+    "client-certificate-auth": "git+https://github.com/mmalecki/client-certificate-auth.git#async-authorization"
   },
   "repository": {
     "type": "git",
@@ -31,7 +32,6 @@
     "grunt-mocha-test": "~0.7.0",
     "grunt-mocha-cov": "0.0.7"
   },
-  "license": "unlicense",
   "bin": {
     "lamassu-server": "./lib/app.js"
   }
