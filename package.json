@@ -45,5 +45,8 @@
   },
   "bin": {
     "lamassu-server": "./lib/app.js"
+  },
+  "scripts": {
+    "test": "mocha --recursive test"
   }
 }
