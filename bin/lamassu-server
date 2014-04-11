@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+var createServer = require('../lib/app.js');
+var argv = require('optimist').argv;
+
+var options = {
+  postgres: process.env.DATABASE_URL
+};
+
+var port = process.env.PORT || 3000;
+
+if (!argv.http) {
+  if (!argv.key || !argv.cert) {
+    console.error('--key and --cert are required');
+    process.exit(1);
+  }
+
+  options.https = {
+    key: fs.readFileSync(argv.key),
+    cert: fs.readFileSync(argv.cert)
+  };
+}
+
+var server = createServer(options);
+server.listen(port, function () {
+  console.log('lamassu-server listening on port ' + port + ' ' + argv.http ? '(http)' : '(https)');
+});
