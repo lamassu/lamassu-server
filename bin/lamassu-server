@@ -22,5 +22,5 @@ if (!argv.http) {
 
 var server = createServer(options);
 server.listen(port, function () {
-  console.log('lamassu-server listening on port ' + port + ' ' + argv.http ? '(http)' : '(https)');
+  console.log('lamassu-server listening on port ' + port + ' ' + (argv.http ? '(http)' : '(https)'));
 });
