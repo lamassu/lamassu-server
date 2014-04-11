@@ -41,6 +41,8 @@
     "matchdep": "~0.3.0",
     "mocha": "~1.13.0",
     "grunt-mocha-test": "~0.7.0",
+    "hock": "git+https://github.com/mmalecki/hock.git#no-http-server",
+    "jsonquest": "^0.2.2",
     "grunt-mocha-cov": "0.0.7"
   },
   "bin": {
