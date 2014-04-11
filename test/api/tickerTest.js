@@ -48,7 +48,7 @@ describe('ticker test', function(){
     }, function(err, results) {
       assert.isNull(err);
 
-      cfg = results.config.config;
+      cfg = results.config;
 
       cfg.exchanges.settings.commission = 1;
 
@@ -92,7 +92,7 @@ describe('ticker test', function(){
       .reply(200, { balance: 100000000, total_received: 100000000 });
     // That's 1 BTC.
 
-    var api = require('../../lib/atm-api');
+    var api = require('../../lib/protocol/atm-api');
     api.init(app, cfg);
 
     // let ticker rate fetch finish...

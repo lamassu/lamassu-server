@@ -41,7 +41,7 @@ describe('trade test', function(){
   beforeEach(function(done) {
     config.load(function(err, result) {
       assert.isNull(err);
-      cfg = result.config;
+      cfg = result;
       done();
     });
   });
@@ -52,7 +52,7 @@ describe('trade test', function(){
     this.timeout(1000000);
 
     cfg.exchanges.plugins.trade = 'bitstamp';
-    var api = require('../../lib/atm-api');
+    var api = require('../../lib/protocol/atm-api');
     api.init(app, cfg);
 
     // schedule two trades this should result in a single consolidated trade hitting the trading system

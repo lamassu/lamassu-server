@@ -57,7 +57,7 @@ describe('send test', function() {
     }, function(err, results) {
       assert.isNull(err);
 
-      cfg = results.config.config;
+      cfg = results.config;
       port = results.blockchain.address().port;
 
       cfg.exchanges.plugins.current.transfer = 'blockchain';
@@ -103,7 +103,7 @@ describe('send test', function() {
       .reply(200, payment_response);
 
 
-    var api = require('../../lib/atm-api');
+    var api = require('../../lib/protocol/atm-api');
     api.init(app, cfg);
 
     var params = {
