@@ -38,7 +38,8 @@
     "matchdep": "~0.3.0",
     "mocha": "~1.13.0",
     "hock": "git+https://github.com/mmalecki/hock.git#no-http-server",
-    "jsonquest": "^0.2.2"
+    "jsonquest": "^0.2.2",
+    "node-uuid": "^1.4.1"
   },
   "bin": {
     "lamassu-server": "./lib/app.js"
