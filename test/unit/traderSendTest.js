@@ -24,7 +24,7 @@ describe('trader/send', function () {
     }
   };
 
-  trader.tickerExchange = { ticker: function () { } };
+  trader.pollRate = function () {};
 
   it('should call `sendBitcoins` on the transfer exchange', function (done) {
     var address = '1LhkU2R8nJaU8Zj6jB8VjWrMpvVKGqCZ64';
