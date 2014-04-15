@@ -26,4 +26,29 @@ describe('trader/api', function () {
       });
     });
   });
+
+  it('should find and instantiate ticker and trade exchanges', function () {
+    var trader = new Trader(psqlInterface);
+    trader.configure({
+      exchanges: {
+        plugins: {
+          current: {
+            ticker: 'bitpay',
+            transfer: 'blockchain'
+          },
+          settings: {
+            bitpay: {},
+            blockchain: {}
+          }
+        },
+        settings: {
+          currency: 'USD',
+          lowBalanceMargin: 2
+        }
+      }
+    });
+
+    assert.ok(trader.tickerExchange);
+    assert.ok(trader.transferExchange);
+  });
 });
