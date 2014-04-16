@@ -7,7 +7,7 @@ var PostgresqlInterface = require('../../lib/postgresql_interface.js');
 var db = 'psql://lamassu:lamassu@localhost/lamassu-test';
 var psqlInterface = new PostgresqlInterface(db);
 
-var RATE = 100;
+var RATE = 101;
 var CURRENCY = 'USD';
 var SATOSHI_FACTOR = Math.pow(10, 8);
 var LOW_BALANCE_MARGIN = 1.2;
@@ -35,14 +35,14 @@ describe('trader/fiatBalance', function() {
       }
     });
 
-    // We have 2 bitcoins, want to trade 1 bitcoin for 100 fiat
+    // We have 3 bitcoins, want to trade 1 bitcoin for 100 fiat
     trader.balance = {
-      transferBalance: 2 * SATOSHI_FACTOR,
+      transferBalance: 3 * SATOSHI_FACTOR,
       tradeBalance: null
     };
     trader.rates[CURRENCY] = { rate: RATE };
 
     var balance = trader.fiatBalance(1 * SATOSHI_FACTOR, 100);
-    assert.equal(balance, (100 / LOW_BALANCE_MARGIN) * COMMISSION);
+    assert.equal(balance, (202 / LOW_BALANCE_MARGIN) * COMMISSION);
   });
 });
