@@ -4,7 +4,7 @@ var assert = require('chai').assert;
 var hock = require('hock');
 var uuid = require('node-uuid').v4;
 var Trader = require('../../lib/trader.js');
-var PostgresqlInterface = require('../../lib/protocol/db/postgresql_interface.js');
+var PostgresqlInterface = require('../../lib/postgresql_interface.js');
 
 var db = 'psql://lamassu:lamassu@localhost/lamassu-test';
 var psqlInterface = new PostgresqlInterface(db);
