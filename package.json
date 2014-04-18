@@ -15,23 +15,36 @@
     "express": "~3.4.7",
     "optimist": "~0.6.0",
     "lamassu-config": "~0.2.0",
-    "lamassu-atm-protocol": "~0.2.0"
+    "lodash": "~2.4.1",
+    "async": "~0.2.9",
+    "deepmerge": "~0.2.7",
+    "underscore": "~1.5.2",
+    "error-create": "0.0.0",
+    "date-utils": "~1.2.15",
+    "bitstamp": "~0.1.3",
+    "winston": "~0.7.2",
+    "pg": "~2.11.1",
+    "lamassu-bitpay": "~0.0.1",
+    "lamassu-bitstamp": "~0.0.1",
+    "lamassu-mtgox": "~0.0.1",
+    "lamassu-blockchain": "0.0.4"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/lamassu/lamassu-server.git"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.6.0",
-    "load-grunt-tasks": "~0.1.0",
     "chai": "~1.8.1",
     "matchdep": "~0.3.0",
     "mocha": "~1.13.0",
-    "grunt-mocha-test": "~0.7.0",
-    "grunt-mocha-cov": "0.0.7"
+    "hock": "git+https://github.com/mmalecki/hock.git#no-http-server",
+    "jsonquest": "^0.2.2",
+    "node-uuid": "^1.4.1"
   },
   "bin": {
     "lamassu-server": "./lib/app.js"
+  },
+  "scripts": {
+    "test": "mocha --recursive test"
   }
 }
