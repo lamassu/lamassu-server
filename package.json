@@ -42,7 +42,7 @@
     "node-uuid": "^1.4.1"
   },
   "bin": {
-    "lamassu-server": "./lib/app.js"
+    "lamassu-server": "./bin/lamassu-server"
   },
   "scripts": {
     "test": "mocha --recursive test"
