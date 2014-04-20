@@ -2,12 +2,9 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "unlicense",
-  "author": "Peter Elger (http://nearform.com/)",
-  "contributors": [
-    "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"
-  ],
+  "author": "Lamassu (https://lamassu.is)",
   "engines": {
     "node": "0.10.x"
   },
