@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "0.3.4",
+  "version": "0.3.5",
   "license": "unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "engines": {
@@ -24,7 +24,7 @@
     "lamassu-bitpay": "~0.0.1",
     "lamassu-bitstamp": "~0.0.1",
     "lamassu-mtgox": "~0.0.1",
-    "lamassu-blockchain": "0.0.4"
+    "lamassu-blockchain": "0.0.5"
   },
   "repository": {
     "type": "git",
