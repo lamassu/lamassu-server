@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "0.3.7",
+  "version": "0.3.8",
   "license": "unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "engines": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "express": "~3.4.7",
     "optimist": "~0.6.0",
-    "lamassu-config": "0.3.3",
+    "lamassu-config": "0.3.4",
     "lodash": "~2.4.1",
     "async": "~0.2.9",
     "deepmerge": "~0.2.7",
