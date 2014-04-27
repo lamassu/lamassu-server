@@ -11,7 +11,7 @@
   "dependencies": {
     "express": "~3.4.7",
     "optimist": "~0.6.0",
-    "lamassu-config": "0.3.4",
+    "lamassu-config": "~0.4.0",
     "lodash": "~2.4.1",
     "async": "~0.2.9",
     "deepmerge": "~0.2.7",
@@ -23,7 +23,7 @@
     "lamassu-bitpay": "0.0.2",
     "lamassu-bitstamp": "0.0.3",
     "lamassu-mtgox": "~0.0.1",
-    "lamassu-blockchain": "0.0.5",
+    "lamassu-blockchain": "~0.1.0",
     "morgan": "~1.0.0"
   },
   "repository": {
