@@ -1,6 +1,6 @@
 {
   "name": "lamassu-server",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "dependencies": {
     "express": {
       "version": "3.4.8",
@@ -327,8 +327,8 @@
       "from": "lamassu-bitpay@0.0.2"
     },
     "lamassu-bitstamp": {
-      "version": "0.0.3",
-      "from": "lamassu-bitstamp@0.0.3",
+      "version": "0.0.4",
+      "from": "lamassu-bitstamp@latest",
       "dependencies": {
         "bitstamp": {
           "version": "0.1.5",

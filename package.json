@@ -21,7 +21,7 @@
     "winston": "~0.7.2",
     "pg": "~2.11.1",
     "lamassu-bitpay": "0.0.2",
-    "lamassu-bitstamp": "0.0.3",
+    "lamassu-bitstamp": "0.0.4",
     "lamassu-mtgox": "~0.0.1",
     "lamassu-blockchain": "~0.1.0",
     "morgan": "~1.0.0"
