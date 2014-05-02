@@ -24,7 +24,8 @@
     "lamassu-bitstamp": "0.0.4",
     "lamassu-mtgox": "~0.0.1",
     "lamassu-blockchain": "~0.1.0",
-    "morgan": "~1.0.0"
+    "morgan": "~1.0.0",
+    "bunyan": "~0.22.3"
   },
   "repository": {
     "type": "git",
