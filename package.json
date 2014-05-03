@@ -16,15 +16,10 @@
     "async": "~0.2.9",
     "deepmerge": "~0.2.7",
     "underscore": "~1.5.2",
-    "error-create": "0.0.0",
-    "date-utils": "~1.2.15",
-    "winston": "~0.7.2",
     "pg": "~2.11.1",
     "lamassu-bitpay": "0.0.2",
     "lamassu-bitstamp": "0.0.4",
-    "lamassu-mtgox": "~0.0.1",
     "lamassu-blockchain": "~0.1.0",
-    "morgan": "~1.0.0",
     "bunyan": "~0.22.3"
   },
   "repository": {
