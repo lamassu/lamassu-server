@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var fs = require('fs');
 var createServer = require('../lib/app.js');
-var argv = require('optimist').argv;
+var argv = require('minimist')(process.argv.slice(2));
 var logger = require('../lib/logger');
 
 var options = {
