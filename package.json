@@ -13,11 +13,12 @@
     "async": "~0.2.9",
     "pg": "~2.11.1",
     "lamassu-config": "~0.4.0",
-    "lamassu-bitpay": "0.0.2",
-    "lamassu-bitstamp": "0.0.4",
+    "lamassu-bitpay": "~0.1.0",
+    "lamassu-bitstamp": "~0.1.0",
     "lamassu-blockchain": "~0.1.0",
     "bunyan": "~0.22.3",
-    "minimist": "0.0.8"
+    "minimist": "0.0.8",
+    "lamassu-bitcoind": "0.0.6"
   },
   "repository": {
     "type": "git",
