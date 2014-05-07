@@ -1,8 +1,7 @@
+/*global describe, it */
 'use strict';
 
 var assert = require('chai').assert;
-var hock = require('hock');
-var uuid = require('node-uuid').v4;
 var Trader = require('../../lib/trader.js');
 var PostgresqlInterface = require('../../lib/postgresql_interface.js');
 
@@ -26,7 +25,7 @@ describe('trader/send', function () {
       }
     };
 
-    trader.pollBalance(function (err, balance) {
+    trader.pollBalance(function (err) {
       assert.notOk(err);
       assert.equal(trader.balance.transferBalance, 100);
       assert.ok(trader.balance.timestamp);
@@ -36,17 +35,15 @@ describe('trader/send', function () {
 
   it('should call `ticker` on the ticker exchange', function (done) {
     trader.tickerExchange = {
-      ticker: function (currency, callback) {
-        assert.equal(currency, CURRENCY);
-        callback(null, 100);
+      ticker: function (currencies, callback) {
+        assert.equal(currencies[0], CURRENCY);
+        callback(null, {USD: {rate: 100}});
       }
     };
 
-    trader.pollRate(function (err, rate) {
-      var rate;
-
+    trader.pollRate(function (err) {
       assert.notOk(err);
-      rate = trader.rate(CURRENCY);
+      var rate = trader.rate(CURRENCY);
       assert.equal(rate.rate, 100);
       assert.ok(rate.timestamp);
       done();
