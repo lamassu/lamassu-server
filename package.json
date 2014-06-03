@@ -18,7 +18,7 @@
     "lamassu-blockchain": "~0.1.0",
     "bunyan": "~0.22.3",
     "minimist": "0.0.8",
-    "lamassu-bitcoind": "0.0.6",
+    "lamassu-bitcoind": "~0.1.0",
     "lamassu-coindesk": "~0.2.0",
     "lamassu-bitcoinaverage": "~0.2.0"
   },
