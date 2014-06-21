@@ -1,3 +1,5 @@
+This is part of the **Rakía** Bitcoin Machine platform.
+
 # lamassu-server
 
 Lamassu remote server.
