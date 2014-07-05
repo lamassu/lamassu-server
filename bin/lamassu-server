@@ -20,6 +20,8 @@ if (!argv.http) {
     key: fs.readFileSync(argv.key),
     cert: fs.readFileSync(argv.cert)
   };
+
+  options.mock = argv.mock;
 }
 
 var server = createServer(options);
