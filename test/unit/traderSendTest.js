@@ -37,7 +37,8 @@ describe('trader/send', function () {
         assert.equal(SATOSHIS, satoshis);
         assert.equal(transactionFee, TRANSACTION_FEE);
         callback(null, TXID);
-      }
+      },
+      balance: function () {}
     };
 
     trader.sendBitcoins(FINGERPRINT, {
@@ -57,7 +58,8 @@ describe('trader/send', function () {
     trader.transferExchange = {
       sendBitcoins: function () {
         throw new Error('This should not have been called');
-      }
+      },
+      balance: function () {}
     };
 
     trader.sendBitcoins(FINGERPRINT, {
