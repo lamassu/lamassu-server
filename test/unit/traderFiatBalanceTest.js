@@ -74,7 +74,7 @@ describe('trader/fiatBalance', function() {
     assert.equal(fiatBalance, 150 / LOW_BALANCE_MARGIN);
   });
 
-  it('should calculate balance correctly with transfer and ' + 
+  it('should calculate balance correctly with transfer and ' +
       'trade exchange with different currencies', function() {
     var trader = new Trader(db);
     trader.configure({

@@ -90,7 +90,7 @@ describe('send test', function() {
       'txs': []
     };
 
-    var payment_response = { 
+    var payment_response = {
       'message': 'Sent 0.1 BTC to 1LhkU2R8nJaU8Zj6jB8VjWrMpvVKGqCZ64',
       'tx_hash': 'f322d01ad784e5deeb25464a5781c3b20971c1863679ca506e702e3e33c18e9c',
       'notice': 'Some funds are pending confirmation and cannot be spent yet (Value 0.001 BTC)'
