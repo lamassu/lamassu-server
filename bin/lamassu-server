@@ -21,8 +21,9 @@ if (!argv.http) {
     cert: fs.readFileSync(argv.cert)
   };
 
-  options.mock = argv.mock;
 }
+
+options.mock = argv.mock;
 
 var server = createServer(options);
 server.listen(port, function () {
