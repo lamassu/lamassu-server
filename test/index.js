@@ -122,6 +122,15 @@ describe('Plugins', function() {
 
   });
 
+  this.timeout(9000);
+
+  describe('Ticker', function() {
+    it('should have .ticker() called at least once', function() {
+      tickerMock.tickerCalls.should.be.at.least(1);
+    });
+
+  });
+
 
 });
 
