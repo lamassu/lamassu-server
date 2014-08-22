@@ -131,6 +131,5 @@ describe('Plugins', function() {
 
   });
 
-
 });
 
