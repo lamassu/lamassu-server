@@ -1,4 +1,6 @@
-'use strict'
+/* global describe, it, before, afterEach */
+
+'use strict';
 
 var _       = require('lodash');
 var should  = require('chai').should();
@@ -9,10 +11,8 @@ var config = require('./mocks/config');
 var CONFIG = _.cloneDeep(config);
 function requireFreshConfig() {
   return _.cloneDeep(CONFIG);
-};
+}
 
-
-var currents = config.exchanges.plugins.current;
 
 var walletMock = require('./mocks/wallet');
 var tickerMock = require('./mocks/ticker');
@@ -51,11 +51,11 @@ describe('Plugins', function() {
   });
 
   it('should throw when invalid balance margin', function() {
-    config.exchanges.settings.lowBalanceMargin = .99;
+    config.exchanges.settings.lowBalanceMargin = 0.99;
 
     function configurer() {
       plugins.configure(config);
-    };
+    }
     configurer.should.throw(/lowBalanceMargin/);
   });
 
@@ -64,7 +64,7 @@ describe('Plugins', function() {
 
     function configurer() {
       plugins.configure(config);
-    };
+    }
     configurer.should.throw(/module.*not installed/);
   });
 
@@ -74,7 +74,7 @@ describe('Plugins', function() {
 
     function configurer() {
       plugins.configure(config);
-    };
+    }
     configurer.should.throw(/required.*SUPPORTED_MODULES/);
 
     tickerMock.SUPPORTED_MODULES = tmp;
@@ -86,7 +86,7 @@ describe('Plugins', function() {
 
     function configurer() {
       plugins.configure(config);
-    };
+    }
     configurer.should.throw(/fails.*implement.*method/);
 
     tickerMock.ticker = tmp;
@@ -97,12 +97,14 @@ describe('Plugins', function() {
 
     before(function() {
       function configTest(name) {
-        return function config(config) {
+        return function config(localConfig) {
           should.exist(config);
-          config.should.be.an.Object;
+          /* jshint expr: true */
+          localConfig.should.be.an.Object;
+          /* jshint expr: true */
           confList[name] = config;
         };
-      };
+      }
 
       walletMock.config   = configTest('wallet');
       tickerMock.config   = configTest('ticker');
@@ -116,7 +118,9 @@ describe('Plugins', function() {
       it('should configure ' + name, function() {
         confList.should.have.property(name);
         should.exist(confList[name]);
+        /* jshint expr: true */
         confList[name].should.be.an.Object;
+        /* jshint expr: true */
       });
     });
 
