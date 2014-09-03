@@ -1,8 +1,10 @@
 #!/usr/bin/env node
+
+'use strict';
+
 var fs = require('fs');
 var createServer = require('../lib/app.js');
 var argv = require('minimist')(process.argv.slice(2));
-var logger = require('../lib/logger');
 
 var options = {
   postgres: process.env.DATABASE_URL
