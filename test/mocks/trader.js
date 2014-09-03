@@ -4,8 +4,8 @@ module.exports = {
   SUPPORTED_MODULES: ['trader'],
   NAME: 'Mock Trader',
 
-  config: function() {},
-  balance: function() {},
-  purchase: function() {},
-  sell: function() {}
+  config: function config() {},
+  balance: function balance() {},
+  purchase: function purchase() {},
+  sell: function sell() {}
 };
