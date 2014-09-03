@@ -39,6 +39,6 @@ module.exports.resetCalls = function() {
   calls = {
     status: false,
     fail: false
-  }
+  };
 };
 module.exports.resetCalls();

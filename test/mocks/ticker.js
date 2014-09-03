@@ -25,4 +25,4 @@ module.exports = {
 var tickerCalls = 0;
 module.exports.getTickerCalls = function() {
   return tickerCalls;
-}
+};
