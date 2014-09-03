@@ -4,11 +4,9 @@ module.exports = {
   SUPPORTED_MODULES: [ 'ticker' ],
   NAME: 'Mock Ticker',
 
-  tickerCalls: 0,
-
-  config: function() {},
-  ticker: function(currency, callback) {
-    this.tickerCalls++;
+  config: function config() {},
+  ticker: function ticker(currency, callback) {
+    tickerCalls++;
 
     var out = {};
     out[currency] = {
@@ -20,4 +18,11 @@ module.exports = {
     };
     callback(null, out);
   }
+};
+
+
+// mock stuff
+var tickerCalls = 0;
+module.exports.getTickerCalls = function() {
+  return tickerCalls;
 };
