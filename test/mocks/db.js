@@ -24,7 +24,8 @@ module.exports = {
   },
   completeTransaction: function(tx, txHash) {
     calls.status = true;
-  }
+  },
+  recordBill: function(fingerprint, trade) { }
 };
 
 
