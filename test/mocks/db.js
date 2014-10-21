@@ -9,13 +9,17 @@ var txs = {};
 module.exports = {
   FINGERPRINT_NEW: FINGERPRINT_NEW,
   FINGERPRINT_FUNDS: FINGERPRINT_FUNDS,
-  summonTransaction: function(fingerprint, tx, cb) {
+  getPendingAmount: function(tx, cb) {
     var cachedTx = txs[tx.txId];
     if (cachedTx) cb(null, cachedTx);
     else {
       txs[tx.txId] = tx;
       cb(null, null);
     }
+  },
+  changeTxStatus: function(txId, newStatus, data, cb) {
+    cb = typeof cb === 'function' ? cb : function() {};
+    cb();
   },
   reportTransactionError: function(tx, err, status) {
     txs[tx.txId].err = err;
@@ -24,7 +28,8 @@ module.exports = {
   },
   completeTransaction: function(tx, txHash) {
     calls.status = true;
-  }
+  },
+  recordBill: function(fingerprint, trade) { }
 };
 
 
