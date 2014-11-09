@@ -17,6 +17,7 @@
     "lamassu-bitpay": "~1.0.0",
     "lamassu-bitstamp": "~1.0.0",
     "lamassu-blockchain": "~1.0.0",
+    "lamassu-chain": "chester1000/lamassu-chain",
     "lamassu-coindesk": "~1.0.0",
     "lamassu-config": "~0.4.0",
     "lamassu-identitymind": "^1.0.1",
