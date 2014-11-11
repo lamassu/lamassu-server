@@ -21,6 +21,9 @@ module.exports = {
       e.name = 'InsufficientFunds';
       cb(e);
     }
+  },
+  newAddress: function(info, cb) {
+    cb(null, ADDR);
   }
 };
 
