@@ -27,7 +27,8 @@
         "trade": "mockTrader",
         "wallet": "mockWallet",
         "transfer": "mockWallet",
-        "idVerifier": "mockVerifier"
+        "idVerifier": "mockVerifier",
+        "info": "mockInfo"
       },
       "settings": {
         "bitpay": { },

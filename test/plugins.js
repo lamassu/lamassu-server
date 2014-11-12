@@ -18,11 +18,13 @@ var walletMock = require('./mocks/wallet');
 var tickerMock = require('./mocks/ticker');
 var traderMock = require('./mocks/trader');
 var verifierMock = require('./mocks/verifier');
+var infoMock = require('./mocks/info');
 
 mockery.registerMock('lamassu-mockWallet', walletMock);
 mockery.registerMock('lamassu-mockTicker', tickerMock);
 mockery.registerMock('lamassu-mockTrader', traderMock);
 mockery.registerMock('lamassu-mockVerifier', verifierMock);
+mockery.registerMock('lamassu-mockInfo', infoMock);
 
 
 describe('Plugins', function() {
@@ -110,11 +112,12 @@ describe('Plugins', function() {
       tickerMock.config   = configTest('ticker');
       traderMock.config   = configTest('trader');
       verifierMock.config = configTest('verifier');
+      infoMock.config     = configTest('info');
 
       plugins.configure(config);
     });
 
-    ['wallet', 'ticker', 'trader', 'verifier'].forEach(function(name) {
+    ['wallet', 'ticker', 'trader', 'verifier', 'info'].forEach(function(name) {
       it('should configure ' + name, function() {
         confList.should.have.property(name);
         should.exist(confList[name]);
