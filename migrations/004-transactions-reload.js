@@ -2,8 +2,17 @@
 
 var db = require('./db');
 
+function singleQuotify(item) { return '\'' + item + '\''; }
+
 exports.up = function(next){
+  var stages = ['partial_request', 'partial_send', 'complete',
+    'initial_request', 'deposit', 'supplemental_request', 'dispense_request',
+    'dispense'].map(singleQuotify).join(',');
+  var sources = ['timeout', 'machine', 'published', 'authorized', 'rejected'].
+    map(singleQuotify).join(',');
   var sqls = [
+    'CREATE TYPE transaction_stage AS ENUM (' + stages + ')',
+    'CREATE TYPE transaction_source AS ENUM (' + sources + ')',
     'ALTER TABLE transactions DROP IF EXISTS completed',
     'ALTER TABLE transactions DROP CONSTRAINT transactions_pkey',
     'ALTER TABLE transactions RENAME id TO session_id',
@@ -11,18 +20,21 @@ exports.up = function(next){
     'UPDATE transactions SET id = DEFAULT',
     'ALTER TABLE transactions ADD PRIMARY KEY (id)',
     'CREATE INDEX ON transactions (session_id)',
-    'ALTER TABLE transactions ADD CONSTRAINT transactions_session_status UNIQUE (session_id,status)',
-    'ALTER TABLE transactions ADD COLUMN incoming boolean',
+    'ALTER TABLE transactions ADD COLUMN incoming boolean DEFAULT false',
+    'ALTER TABLE transactions ADD COLUMN stage transaction_stage NULL',
+    'ALTER TABLE transactions ADD COLUMN source transaction_source NULL',
+    'ALTER TABLE transactions ADD COLUMN error text NULL',
+    'ALTER TABLE transactions ADD CONSTRAINT transactions_unique_source ' +
+      'UNIQUE (session_id,to_address,stage,source)',
 
-    'CREATE TABLE digital_transactions ( ' +
+    'ALTER TABLE transactions DROP COLUMN status',
+    // Convert stages, source to NOT NULL
+
+    'CREATE TABLE pending_transactions ( ' +
     'id serial PRIMARY KEY, ' +
-    'transaction_id integer REFERENCES transactions(id), ' +
-    'status text, ' +
+    'session_id uuid UNIQUE, ' +
     'incoming boolean, ' +
-    'tx_hash text NULL, ' +
-    'error text NULL, ' +
-    'created timestamp NOT NULL DEFAULT now(), ' +
-    'CONSTRAINT digital_transactions_status_txid UNIQUE (status, transaction_id) ' +
+    'created timestamp NOT NULL DEFAULT now() ' +
     ')',
 
     'CREATE TABLE dispenses ( ' +
@@ -35,7 +47,7 @@ exports.up = function(next){
     'reject2 integer NOT NULL, ' +
     'count2 integer NOT NULL, ' +
     'refill boolean NOT NULL, ' +
-    'error text NULL, ' +
+    'error text, ' +
     'created timestamp NOT NULL DEFAULT now() ' +
     ')'
   ];
