@@ -12,6 +12,7 @@ exports.up = function(next){
     'ALTER TABLE transactions ADD PRIMARY KEY (id)',
     'CREATE INDEX ON transactions (session_id)',
     'ALTER TABLE transactions ADD CONSTRAINT transactions_session_status UNIQUE (session_id,status)',
+    'ALTER TABLE transactions ADD COLUMN incoming boolean',
 
     'CREATE TABLE digital_transactions ( ' +
     'id serial PRIMARY KEY, ' +
