@@ -5,9 +5,9 @@ var db = require('./db');
 function singleQuotify(item) { return '\'' + item + '\''; }
 
 exports.up = function(next){
-  var stages = ['partial_request', 'partial_send', 'complete',
-    'initial_request', 'deposit', 'supplemental_request', 'dispense_request',
-    'dispense'].map(singleQuotify).join(',');
+  var stages = ['initial_request', 'partial_request', 'final_request',
+    'partial_send', 'deposit', 'dispense_request', 'dispense'].
+    map(singleQuotify).join(',');
   var sources = ['timeout', 'machine', 'published', 'authorized', 'rejected'].
     map(singleQuotify).join(',');
   var sqls = [
@@ -23,7 +23,12 @@ exports.up = function(next){
     'ALTER TABLE transactions ADD COLUMN incoming boolean DEFAULT false',
     'ALTER TABLE transactions ADD COLUMN stage transaction_stage NULL',
     'ALTER TABLE transactions ADD COLUMN source transaction_source NULL',
+    'ALTER TABLE transactions ADD COLUMN fee integer NOT NULL DEFAULT 0',
     'ALTER TABLE transactions ADD COLUMN error text NULL',
+    'ALTER TABLE transactions ALTER COLUMN fiat SET DEFAULT 0',
+    'ALTER TABLE transactions ALTER COLUMN satoshis SET DEFAULT 0',
+    'ALTER TABLE transactions ALTER COLUMN fiat SET NOT NULL',
+    'ALTER TABLE transactions ALTER COLUMN satoshis SET NOT NULL',
     'ALTER TABLE transactions ADD CONSTRAINT transactions_unique_source ' +
       'UNIQUE (session_id,to_address,stage,source)',
 
