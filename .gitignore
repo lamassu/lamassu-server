@@ -22,3 +22,5 @@ dist
 .sass-cache
 app/bower_components
 options.mine.js
+
+.migrate
