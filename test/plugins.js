@@ -6,13 +6,11 @@ var _       = require('lodash');
 var should  = require('chai').should();
 var mockery =  require('mockery');
 
-
 var config = require('./mocks/config.json');
 var CONFIG = _.cloneDeep(config);
 function requireFreshConfig() {
   return _.cloneDeep(CONFIG);
 }
-
 
 var walletMock = require('./mocks/wallet');
 var tickerMock = require('./mocks/ticker');
@@ -25,7 +23,6 @@ mockery.registerMock('lamassu-mockTicker', tickerMock);
 mockery.registerMock('lamassu-mockTrader', traderMock);
 mockery.registerMock('lamassu-mockVerifier', verifierMock);
 mockery.registerMock('lamassu-mockInfo', infoMock);
-
 
 describe('Plugins', function() {
   var plugins = null;
@@ -138,7 +135,6 @@ describe('Plugins', function() {
 
   });
 
-
   describe('Ticker', function() {
     it('should have called .ticker() at least once', function() {
       tickerMock.getTickerCalls().should.be.at.least(1);
@@ -161,7 +157,6 @@ describe('Plugins', function() {
       rates.should.have.property('bid');
     });
   });
-
 
   describe('Wallet', function() {
 
@@ -207,7 +202,8 @@ describe('Plugins', function() {
           satoshis: 1e7
         };
 
-        plugins.sendBitcoins(db.FINGERPRINT_NEW, txDetails, function(err, response) {
+        plugins.sendBitcoins(db.FINGERPRINT_NEW, txDetails, function(err,
+            response) {
           should.not.exist(err);
           should.exist(response);
           /* jshint expr: true */
@@ -227,7 +223,8 @@ describe('Plugins', function() {
           toAddress: walletMock.ADDR,
           satoshis: 1e9
         };
-        plugins.sendBitcoins(db.FINGERPRINT_FUNDS, txDetails, function(err, txHash) {
+        plugins.sendBitcoins(db.FINGERPRINT_FUNDS, txDetails, function(err,
+            txHash) {
           should.exist(err);
           err.should.be.instanceof(Error);
           err.name.should.equal('InsufficientFunds');
@@ -268,4 +265,3 @@ describe('Plugins', function() {
 
   describe('Trader', function() {});
 });
-
