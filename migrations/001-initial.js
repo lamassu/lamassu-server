@@ -2,7 +2,7 @@
 
 var db = require('./db');
 
-exports.up = function(next){
+exports.up = function(next) {
 
   var sqls = [
     'CREATE TABLE IF NOT EXISTS user_config ( ' +
@@ -50,6 +50,6 @@ exports.up = function(next){
   db.multi(sqls, next);
 };
 
-exports.down = function(next){
+exports.down = function(next) {
   next();
 };

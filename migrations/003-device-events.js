@@ -2,7 +2,7 @@
 
 var db = require('./db');
 
-exports.up = function(next){
+exports.up = function(next) {
   db.query('CREATE TABLE machine_events ( ' +
     'id uuid PRIMARY KEY, ' +
     'device_fingerprint text NOT NULL, ' +
@@ -12,6 +12,6 @@ exports.up = function(next){
     'created timestamp NOT NULL DEFAULT now() )', next);
 };
 
-exports.down = function(next){
+exports.down = function(next) {
   next();
 };

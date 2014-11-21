@@ -28,6 +28,7 @@ if (!argv.http) {
 options.mock = argv.mock;
 
 var server = createServer(options);
-server.listen(port, function () {
-  console.log('lamassu-server listening on port ' + port + ' ' + (argv.http ? '(http)' : '(https)'));
+server.listen(port, function() {
+  console.log('lamassu-server listening on port ' + port + ' ' +
+    (argv.http ? '(http)' : '(https)'));
 });

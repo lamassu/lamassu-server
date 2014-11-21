@@ -4,7 +4,7 @@ var db = require('./db');
 
 function singleQuotify(item) { return '\'' + item + '\''; }
 
-exports.up = function(next){
+exports.up = function(next) {
   var stages = ['initial_request', 'partial_request', 'final_request',
     'partial_send', 'deposit', 'dispense_request', 'dispense'].
     map(singleQuotify).join(',');
@@ -61,6 +61,6 @@ exports.up = function(next){
   db.multi(sqls, next);
 };
 
-exports.down = function(next){
+exports.down = function(next) {
   next();
 };
