@@ -8,8 +8,8 @@ exports.up = function(next){
   var stages = ['initial_request', 'partial_request', 'final_request',
     'partial_send', 'deposit', 'dispense_request', 'dispense'].
     map(singleQuotify).join(',');
-  var sources = ['timeout', 'machine', 'published', 'authorized', 'rejected'].
-    map(singleQuotify).join(',');
+  var sources = ['timeout', 'machine', 'pending', 'published',
+    'authorized', 'rejected'].map(singleQuotify).join(',');
   var sqls = [
     'CREATE TYPE transaction_stage AS ENUM (' + stages + ')',
     'CREATE TYPE transaction_source AS ENUM (' + sources + ')',
@@ -37,8 +37,10 @@ exports.up = function(next){
 
     'CREATE TABLE pending_transactions ( ' +
     'id serial PRIMARY KEY, ' +
-    'session_id uuid UNIQUE, ' +
-    'incoming boolean, ' +
+    'session_id uuid UNIQUE NOT NULL, ' +
+    'incoming boolean NOT NULL, ' +
+    'currency_code text NOT NULL, ' +
+    'to_address text NOT NULL, ' +
     'created timestamp NOT NULL DEFAULT now() ' +
     ')',
 
