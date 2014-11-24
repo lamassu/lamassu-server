@@ -46,6 +46,7 @@ exports.up = function(next) {
 
     'CREATE TABLE dispenses ( ' +
     'id serial PRIMARY KEY, ' +
+    'device_fingerprint text NOT NULL, ' +
     'transaction_id integer UNIQUE REFERENCES transactions(id), ' +
     'dispense1 integer NOT NULL, ' +
     'reject1 integer NOT NULL, ' +
