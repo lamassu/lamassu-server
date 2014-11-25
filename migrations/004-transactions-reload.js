@@ -17,7 +17,7 @@ exports.up = function(next) {
 
     'CREATE TABLE transactions ( ' +
     'id serial PRIMARY KEY, ' +
-    'session_id uuid UNIQUE NOT NULL, ' +
+    'session_id uuid NOT NULL, ' +
     'device_fingerprint text, ' +
     'to_address text NOT NULL, ' +
     'satoshis integer NOT NULL DEFAULT 0, ' +
@@ -35,6 +35,7 @@ exports.up = function(next) {
 
     'CREATE TABLE pending_transactions ( ' +
     'id serial PRIMARY KEY, ' +
+    'device_fingerprint text NOT NULL, ' +
     'session_id uuid UNIQUE NOT NULL, ' +
     'incoming boolean NOT NULL, ' +
     'currency_code text NOT NULL, ' +
