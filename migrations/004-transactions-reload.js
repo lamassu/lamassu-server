@@ -8,32 +8,30 @@ exports.up = function(next) {
   var stages = ['initial_request', 'partial_request', 'final_request',
     'partial_send', 'deposit', 'dispense_request', 'dispense'].
     map(singleQuotify).join(',');
-  var sources = ['timeout', 'machine', 'pending', 'published',
+  var authorizations = ['timeout', 'machine', 'pending', 'published',
     'authorized', 'rejected'].map(singleQuotify).join(',');
+
   var sqls = [
     'CREATE TYPE transaction_stage AS ENUM (' + stages + ')',
-    'CREATE TYPE transaction_source AS ENUM (' + sources + ')',
-    'ALTER TABLE transactions DROP IF EXISTS completed',
-    'ALTER TABLE transactions DROP CONSTRAINT transactions_pkey',
-    'ALTER TABLE transactions RENAME id TO session_id',
-    'ALTER TABLE transactions ADD COLUMN id SERIAL',
-    'UPDATE transactions SET id = DEFAULT',
-    'ALTER TABLE transactions ADD PRIMARY KEY (id)',
-    'CREATE INDEX ON transactions (session_id)',
-    'ALTER TABLE transactions ADD COLUMN incoming boolean DEFAULT false',
-    'ALTER TABLE transactions ADD COLUMN stage transaction_stage NULL',
-    'ALTER TABLE transactions ADD COLUMN source transaction_source NULL',
-    'ALTER TABLE transactions ADD COLUMN fee integer NOT NULL DEFAULT 0',
-    'ALTER TABLE transactions ADD COLUMN error text NULL',
-    'ALTER TABLE transactions ALTER COLUMN fiat SET DEFAULT 0',
-    'ALTER TABLE transactions ALTER COLUMN satoshis SET DEFAULT 0',
-    'ALTER TABLE transactions ALTER COLUMN fiat SET NOT NULL',
-    'ALTER TABLE transactions ALTER COLUMN satoshis SET NOT NULL',
-    'ALTER TABLE transactions ADD CONSTRAINT transactions_unique_source ' +
-      'UNIQUE (session_id,to_address,stage,source)',
+    'CREATE TYPE transaction_authority AS ENUM (' + authorizations + ')',
 
-    'ALTER TABLE transactions DROP COLUMN status',
-    // Convert stages, source to NOT NULL
+    'CREATE TABLE transactions ( ' +
+    'id serial PRIMARY KEY, ' +
+    'session_id uuid UNIQUE NOT NULL, ' +
+    'device_fingerprint text, ' +
+    'to_address text NOT NULL, ' +
+    'satoshis integer NOT NULL DEFAULT 0, ' +
+    'fiat decimal NOT NULL DEFAULT 0, ' +
+    'currency_code text NOT NULL, ' +
+    'fee integer NOT NULL DEFAULT 0, ' +
+    'incoming boolean NOT NULL, ' +
+    'stage transaction_stage NOT NULL, ' +
+    'authority transaction_authority NOT NULL, ' +
+    'tx_hash text, ' +
+    'error text, ' +
+    'created timestamp NOT NULL DEFAULT now(), ' +
+    'UNIQUE (session_id, to_address, stage, authority) ' +
+    ')',
 
     'CREATE TABLE pending_transactions ( ' +
     'id serial PRIMARY KEY, ' +
@@ -59,7 +57,13 @@ exports.up = function(next) {
     'created timestamp NOT NULL DEFAULT now() ' +
     ')'
   ];
-  db.multi(sqls, next);
+
+  // Need to call this separately to ignore error
+  // in case transactions doesn't exist
+  var renameSql = 'ALTER TABLE transactions RENAME TO transactions_old';
+  db.silentQuery(renameSql, function() {
+    db.multi(sqls, next);
+  });
 };
 
 exports.down = function(next) {

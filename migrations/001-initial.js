@@ -25,20 +25,6 @@ exports.up = function(next) {
     'created timestamp NOT NULL DEFAULT now() ' +
     ')',
 
-    'CREATE TABLE IF NOT EXISTS transactions ( ' +
-    'id uuid PRIMARY KEY, ' +
-    'status text NOT NULL, ' +
-    'tx_hash text, ' +
-    'device_fingerprint text, ' +
-    'to_address text NOT NULL, ' +
-    'satoshis integer, ' +
-    'currency_code text, ' +
-    'fiat decimal, ' +
-    'error text, ' +
-    'created timestamp NOT NULL DEFAULT now(), ' +
-    'completed timestamp ' +
-    ')',
-
     'CREATE TABLE IF NOT EXISTS users ( ' +
     'id serial PRIMARY KEY, ' +
     'userName text NOT NULL UNIQUE, ' +
