@@ -8,8 +8,8 @@ exports.up = function(next) {
   var stages = ['initial_request', 'partial_request', 'final_request',
     'partial_send', 'deposit', 'dispense_request', 'dispense'].
     map(singleQuotify).join(',');
-  var authorizations = ['timeout', 'machine', 'pending', 'published',
-    'authorized', 'rejected'].map(singleQuotify).join(',');
+  var authorizations = ['timeout', 'machine', 'pending', 'rejected',
+    'published', 'authorized', 'confirmed'].map(singleQuotify).join(',');
 
   var sqls = [
     'CREATE TYPE transaction_stage AS ENUM (' + stages + ')',
@@ -21,7 +21,7 @@ exports.up = function(next) {
     'device_fingerprint text, ' +
     'to_address text NOT NULL, ' +
     'satoshis integer NOT NULL DEFAULT 0, ' +
-    'fiat decimal NOT NULL DEFAULT 0, ' +
+    'fiat integer NOT NULL DEFAULT 0, ' +
     'currency_code text NOT NULL, ' +
     'fee integer NOT NULL DEFAULT 0, ' +
     'incoming boolean NOT NULL, ' +
@@ -40,6 +40,7 @@ exports.up = function(next) {
     'incoming boolean NOT NULL, ' +
     'currency_code text NOT NULL, ' +
     'to_address text NOT NULL, ' +
+    'satoshis integer NOT NULL, ' +
     'created timestamp NOT NULL DEFAULT now() ' +
     ')',
 
