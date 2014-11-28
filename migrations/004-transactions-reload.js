@@ -41,7 +41,7 @@ exports.up = function(next) {
     'currency_code text NOT NULL, ' +
     'to_address text NOT NULL, ' +
     'satoshis integer NOT NULL, ' +
-    'created timestamp NOT NULL DEFAULT now() ' +
+    'updated timestamp NOT NULL DEFAULT now() ' +
     ')',
 
     'CREATE TABLE dispenses ( ' +
