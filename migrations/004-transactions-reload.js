@@ -32,6 +32,7 @@ exports.up = function(next) {
     'created timestamp NOT NULL DEFAULT now(), ' +
     'UNIQUE (session_id, to_address, stage, authority) ' +
     ')',
+    'CREATE INDEX ON transactions (session_id)',
 
     'CREATE TABLE pending_transactions ( ' +
     'id serial PRIMARY KEY, ' +
@@ -57,7 +58,8 @@ exports.up = function(next) {
     'refill boolean NOT NULL, ' +
     'error text, ' +
     'created timestamp NOT NULL DEFAULT now() ' +
-    ')'
+    ')',
+    'CREATE INDEX ON dispenses (device_fingerprint)'
   ];
 
   // Need to call this separately to ignore error
