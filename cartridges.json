@@ -1,7 +1,4 @@
 {
-  "cartridges": [
-    {"denomination": 1, "count": 100},
-    {"denomination": 20, "count": 100}
-  ],
+  "cartridges": [1, 20],
   "virtualCartridges": [5]
 }
