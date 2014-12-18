@@ -6,6 +6,11 @@ This is part of the **Rakía** Bitcoin Machine platform.
 
 Lamassu remote server.
 
+## Prerequisites
+
+lamassu-server depends on 
+* PostgreSQL
+
 ## Installation
 
 ```sh
