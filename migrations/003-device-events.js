@@ -3,7 +3,7 @@
 var db = require('./db');
 
 exports.up = function(next) {
-  db.query('CREATE TABLE machine_events ( ' +
+  db.query('CREATE TABLE IF NOT EXISTS machine_events ( ' +
     'id uuid PRIMARY KEY, ' +
     'device_fingerprint text NOT NULL, ' +
     'event_type text NOT NULL, ' +
