@@ -16,13 +16,14 @@
     "lamassu-bitcoind": "~1.0.0",
     "lamassu-bitpay": "~1.0.0",
     "lamassu-bitstamp": "~1.0.0",
+    "lamassu-blockchain": "~1.1.2",
+    "lamassu-blockcypher": "~0.1.0",
     "lamassu-coindesk": "~1.0.0",
     "lamassu-config": "~0.4.0",
     "lamassu-identitymind": "^1.0.1",
+    "lodash": "^2.4.1",
     "minimist": "0.0.8",
-    "pg": "~2.11.1",
-    "lamassu-blockchain": "~1.1.2",
-    "lamassu-blockcypher": "~0.1.0"
+    "pg": "~2.11.1"
   },
   "repository": {
     "type": "git",
