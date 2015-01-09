@@ -12,6 +12,8 @@
     "async": "~0.2.9",
     "bunyan": "~0.22.3",
     "express": "~3.4.7",
+    "inquirer": "^0.8.0",
+    "joi": "^5.1.0",
     "lamassu-bitcoinaverage": "~1.0.0",
     "lamassu-bitcoind": "~1.0.0",
     "lamassu-bitpay": "~1.0.0",
@@ -30,7 +32,8 @@
     "url": "https://github.com/lamassu/lamassu-server.git"
   },
   "bin": {
-    "lamassu-server": "./bin/lamassu-server"
+    "lamassu-server": "./bin/lamassu-server",
+    "ssu-raqia": "./bin/ssu-raqia"
   },
   "scripts": {
     "test": "mocha --recursive test"
