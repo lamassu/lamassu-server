@@ -25,7 +25,8 @@
     "lamassu-identitymind": "^1.0.1",
     "lodash": "^2.4.1",
     "minimist": "0.0.8",
-    "pg": "~2.11.1"
+    "pg": "~2.11.1",
+    "wreck": "^5.1.0"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var url = require('url');
+var querystring = require('querystring');
+var fs = require('fs');
+var path = require('path');
+var argv = process.argv.slice(2);
+var Wreck = require('wreck');
+var _ = require('lodash');
+var pg = require('pg');
+
+var raqiaPath = path.join(__dirname, '..', 'raqia.json');
+
+var code = argv[0];
+if (!code) {
+  console.log('Registers your machines with the Lamassu raqia.is API.');
+  console.log('Usage: ssu-raqia <code>\n');
+  console.log('Please supply the code sent to you by Lamassu support.');
+  process.exit(1);
+}
+
+var rec;
+try {
+  rec = JSON.parse(new Buffer(code, 'base64').toString());
+} catch(ex) {
+  console.log('There was a problem with the code. Please contact Lamassu support.');
+  process.exit(2);
+}
+
+var psqlUrl;
+try {
+  psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql;
+} catch (ex) {
+  psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu';
+}
+
+var client = new pg.Client(psqlUrl);
+client.connect(function(err) {
+  if (err) return console.log(err);
+  var sql = 'SELECT * FROM devices ORDER BY id';
+  client.query(sql, function(err, res) {
+    if (err) return console.log(err);
+    client.end();
+    var machines = _.pluck(res.rows, 'fingerprint');
+
+    var uri = url.format({
+      protocol: 'https',
+      host: 'api.raqia.is',
+      pathname: '/auth/users',
+      search: querystring.stringify({account_id: rec.accountId, code: rec.code, count: machines.length})
+    });
+
+    Wreck.post(uri, {json: true}, function(err, res, payload) {
+      if (err) return console.log(err.message);
+      if (res.statusCode !== 200) return console.log('Could not connect to raqia.is: %d', res.statusCode);
+
+      console.log(payload); //DEBUG
+
+      var users = {};
+      _.forEach(machines, function(fingerprint, i) {
+        users[fingerprint] = payload.users[i];
+      });
+
+      fs.writeFileSync(raqiaPath, JSON.stringify(users));
+    });
+  });
+});
