@@ -3,13 +3,14 @@
 'use strict';
 
 var url = require('url');
-var querystring = require('querystring');
 var fs = require('fs');
 var path = require('path');
 var argv = process.argv.slice(2);
 var Wreck = require('wreck');
 var _ = require('lodash');
 var pg = require('pg');
+var uuid = require('node-uuid');
+var async = require('async');
 
 var raqiaPath = path.join(__dirname, '..', 'raqia.json');
 
@@ -21,9 +22,12 @@ if (!code) {
   process.exit(1);
 }
 
-var rec;
+var apiKey, apiSecret;
+
 try {
-  rec = JSON.parse(new Buffer(code, 'base64').toString());
+  var buf = new Buffer(code, 'hex');
+  apiKey = uuid.unparse(buf);
+  apiSecret = uuid.unparse(buf, 16);
 } catch(ex) {
   console.log('There was a problem with the code. Please contact Lamassu support.');
   process.exit(2);
@@ -48,22 +52,81 @@ client.connect(function(err) {
     var uri = url.format({
       protocol: 'https',
       host: 'api.raqia.is',
-      pathname: '/auth/users',
-      search: querystring.stringify({account_id: rec.accountId, code: rec.code, count: machines.length})
+      pathname: '/auth/users'
     });
 
-    Wreck.post(uri, {json: true}, function(err, res, payload) {
+    var opts = {
+      headers: headers(apiKey, apiSecret),
+      json:true
+    };
+
+    Wreck.get(uri, opts, function(err, res, payload) {
       if (err) return console.log(err.message);
       if (res.statusCode !== 200) return console.log('Could not connect to raqia.is: %d', res.statusCode);
 
-      console.log(payload); //DEBUG
+      var configuredMachines = _(payload).pluck('fingerprint').compact().value();
+      var remainingMachines = _.difference(machines, configuredMachines);
 
       var users = {};
-      _.forEach(machines, function(fingerprint, i) {
-        users[fingerprint] = payload.users[i];
+      var zcUsers = _.filter(payload, zeroConfScopeOnly);
+
+      if (zcUsers.length < remainingMachines.length)
+        bail('You need more raqia users for your account. Please contact Lamassu support.');
+
+      _.forEach(configuredMachines, function(fingerprint) {
+        var user = _.find(payload, {fingerprint: fingerprint});
+        users[fingerprint] = user;
       });
 
-      fs.writeFileSync(raqiaPath, JSON.stringify(users));
+      async.each(remainingMachines,
+        function(fingerprint, cb) {
+          var zcUser = zcUsers.pop();
+          users[fingerprint] = zcUser;
+          updateUser(zcUser, fingerprint, cb);
+        },
+        function(err) {
+          if (err) bail(err.message);
+          fs.writeFileSync(raqiaPath, JSON.stringify(users));
+          console.log('Success.');
+        }
+      );
     });
   });
 });
+
+function updateUser(user, fingerprint, cb) {
+  var uri = 'https://api.raqia.is/auth/users/' + user.userId;
+  var opts = {
+    json: true,
+    payload: JSON.stringify({fingerprint: fingerprint}),
+    headers: headers(apiKey, apiSecret)
+  };
+
+  Wreck.post(uri, opts, function(err, res) {
+    if (err) return cb(err);
+    if (res.statusCode !== 200) return cb(new Error('Could not connect to raqia.is: ' + res.statusCode));
+    cb();
+  });
+}
+
+function zeroConfScopeOnly(user) {
+  return user.apiKeys[0].scope[0] === 'zero-conf' &&
+    user.apiKeys[0].scope.length === 1 &&
+    !user.fingerprint;
+}
+
+function headers(apiKey, apiSecret) {
+  return {
+    'request-id': uuid.v4(),
+    Authorization: 'Basic ' + buildAuth(apiKey, apiSecret)
+  };
+}
+
+function buildAuth(apiKey, apiSecret) {
+  return new Buffer([apiKey, apiSecret].join(':')).toString('base64');
+}
+
+function bail(msg) {
+  console.log(msg);
+  process.exit(1);
+}
