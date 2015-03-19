@@ -29,7 +29,11 @@ module.exports = {
   completeTransaction: function(tx, txHash) {
     calls.status = true;
   },
-  recordBill: function(fingerprint, trade) { }
+  recordBill: function(fingerprint, trade) { },
+  addOutgoingTx: function(session, tx, cb) {
+    cb(null, {satoshis: tx.satoshis});
+  },
+  sentCoins: function() {}
 };
 
 

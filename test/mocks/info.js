@@ -6,5 +6,6 @@ module.exports = {
 
   config: function config() {},
   getAddressLastTx: function verifyUser() {},
-  getTx: function verifyTransaction() {}
+  getTx: function verifyTransaction() {},
+  checkAddress: function checkAddress() {}
 };
