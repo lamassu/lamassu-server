@@ -42,5 +42,3 @@ module.exports.getBalanceCalls = function() {
 module.exports.wasSendCalled = function() {
   return calls.send;
 };
-
-

@@ -209,7 +209,7 @@ describe('Plugins', function() {
           /* jshint expr: true */
           response.should.be.an.Object;
           response.should.have.property('statusCode');
-          response.statusCode.should.equal(204);
+          response.statusCode.should.equal(201);
           /* jshint expr: false */
 
           done();
