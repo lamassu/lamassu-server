@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "2.2.9",
+  "version": "2.2.10",
   "license": "unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "engines": {
@@ -38,8 +38,7 @@
     "url": "https://github.com/lamassu/lamassu-server.git"
   },
   "bin": {
-    "lamassu-server": "./bin/lamassu-server",
-    "ssu-raqia": "./bin/ssu-raqia"
+    "lamassu-server": "./bin/lamassu-server"
   },
   "scripts": {
     "test": "mocha --recursive test"
