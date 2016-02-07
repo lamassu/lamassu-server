@@ -192,7 +192,7 @@ describe('Plugins', function() {
     describe('Send Bitcoins', function() {
 
       before(function() {
-        plugins.trade('123', {currency: 'USD', satoshis: 1e7, toAddress: '1xxx'}, function() {});
+        plugins.trade({currency: 'USD', satoshis: 1e7}, db.FINGERPRINT_NEW);
       });
 
       it('should send bitcoins successfully', function(done) {
