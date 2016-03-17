@@ -22,8 +22,8 @@ wreck.get('http://localhost:7070/pid?fingerprint=' + fingerprint, opts, function
     process.exit(2)
   }
 
-  if (!payload.pid) {
-    console.log('The requested lamassu-machine is not connected.')
+  if (!payload || !payload.pid) {
+    console.log('The requested lamassu-machine appears to be running an old version.')
     process.exit(3)
   }
 
