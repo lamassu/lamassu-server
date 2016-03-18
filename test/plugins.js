@@ -125,7 +125,7 @@ describe('Plugins', function() {
     });
 
     it('should return config', function() {
-      var config = plugins.getCachedConfig();
+      var config = plugins.getConfig();
       should.exist(config);
       /* jshint expr: true */
       config.should.be.an.Object;
