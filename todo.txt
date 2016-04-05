@@ -9,3 +9,5 @@ backwards compatibility:
 
 - parse out bignumber when loading in routes
 - making a trade -- convert to units
+- clean up db stuff satoshis/cryptoAtoms
+- clean up other stuff
