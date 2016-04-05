@@ -1,0 +1,5 @@
+- specify crypto and fiat for trades
+- make sure ticker is in full coins
+- rethink scale names: is unit satoshi or btc?
+- cryptoCoin is record, not code
+- getDeviceRate should return bignumber
