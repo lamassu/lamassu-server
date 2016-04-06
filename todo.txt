@@ -1,5 +1,3 @@
-- specify crypto and fiat for trades
-- make sure ticker is in full coins
 - getDeviceRate should return bignumber
 - test with l-m
 
@@ -7,7 +5,5 @@ backwards compatibility:
 
 - new l-m must be backwards compatible with old l-s
 
-- parse out bignumber when loading in routes
-- making a trade -- convert to units
 - clean up db stuff satoshis/cryptoAtoms
 - clean up other stuff
