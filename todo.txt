@@ -7,3 +7,30 @@ backwards compatibility:
 
 - clean up db stuff satoshis/cryptoAtoms
 - clean up other stuff
+
+- add 'ETH' to config in ssu crypto: config.exchanges.settings.coins
+
+[2016-04-06T19:58:17.827Z] ERROR: lamassu-server/39374 on MacBook-Pro: null value in column "satoshis" violates not-null constraint
+    error: null value in column "satoshis" violates not-null constraint
+        at Connection.parseE (/Users/josh/projects/lamassu-server/node_modules/pg/lib/connection.js:539:11)
+        at Connection.parseMessage (/Users/josh/projects/lamassu-server/node_modules/pg/lib/connection.js:366:17)
+        at Socket.<anonymous> (/Users/josh/projects/lamassu-server/node_modules/pg/lib/connection.js:105:22)
+        at Socket.emit (events.js:95:17)
+        at Socket.<anonymous> (_stream_readable.js:765:14)
+        at Socket.emit (events.js:92:17)
+        at emitReadable_ (_stream_readable.js:427:10)
+        at emitReadable (_stream_readable.js:423:5)
+        at readableAddChunk (_stream_readable.js:166:9)
+        at Socket.Readable.push (_stream_readable.js:128:10)
+
+alter table transactions alter satoshis TYPE bigint;
+alter table transactions add crypto_code text default 'BTC';
+alter table pending_transactions add crypto_code text default 'BTC';
+alter table pending_transactions alter satoshis TYPE bigint;
+alter table bills add crypto_code text default 'BTC';
+alter table bills alter satoshis TYPE bigint;
+
+- get cryptoCode from pending tx
+- update cryptoCode for bills insert
+- insert correct satoshis in pending tx -- actually this is supposed to be 0
+- fix satoshi math in postgres module by moving to bignumber math
