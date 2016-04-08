@@ -139,6 +139,7 @@ function crypto () {
       ticker: tickerPlugin,
       transfer: walletPlugin
     }
+    config.exchanges.settings.coins = ['BTC', code]
     return db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
   })
   .then(function () {

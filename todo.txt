@@ -30,5 +30,5 @@ alter table pending_transactions alter satoshis TYPE bigint;
 alter table bills add crypto_code text default 'BTC';
 alter table bills alter satoshis TYPE bigint;
 
-- test against old server
 - remove debug
+- test trading
