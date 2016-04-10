@@ -19,7 +19,7 @@ function bail () {
   console.log('Command line utility for lamassu-server')
   console.log('\nssu reboot <machine-fingerprint>')
   console.log('This will remotely reboot your lamassu-machine.')
-  console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin>')
+  console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin> [<trader-plugin>]')
   console.log('This will configure a new cryptocurrency.')
   process.exit(1)
 }
@@ -115,9 +115,10 @@ function crypto () {
   var code = argv[1]
   var tickerPlugin = argv[2]
   var walletPlugin = argv[3]
+  var traderPlugin = argv[4]
 
   if (!code || !tickerPlugin || !walletPlugin) {
-    console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin>')
+    console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin> [<trader-plugin>]')
     console.log('This will configure a new cryptocurrency.')
     process.exit(1)
   }
@@ -137,7 +138,8 @@ function crypto () {
     var config = data.data
     config.exchanges.plugins.current[code] = {
       ticker: tickerPlugin,
-      transfer: walletPlugin
+      transfer: walletPlugin,
+      trader: traderPlugin
     }
     config.exchanges.settings.coins = ['BTC', code]
     return db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])

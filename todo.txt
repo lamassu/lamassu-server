@@ -30,5 +30,17 @@ alter table pending_transactions alter satoshis TYPE bigint;
 alter table bills add crypto_code text default 'BTC';
 alter table bills alter satoshis TYPE bigint;
 
+- handle geth send failure better
+- unlock geth account
 - remove debug
-- test trading
+- implement coin selection screen
+- ask neal to work on config scripts
+
+TypeError: Cannot read property 'rates' of null
+    at /Users/josh/projects/lamassu-server/lib/routes.js:36:49
+    at Array.forEach (native)
+    at buildRates (/Users/josh/projects/lamassu-server/lib/routes.js:35:15)
+    at poll (/Users/josh/projects/lamassu-server/lib/routes.js:66:15)
+    at callbacks (/Users/josh/projects/lamassu-server/node_modules/express/lib/router/index.js:164:37)
+    at /Users/josh/projects/lamassu-server/lib/app.js:56:7
+    at /Users/josh/projects/lamassu-server/node_modules/lamassu-config/lib/main.js:142:5
