@@ -8,6 +8,7 @@ var Promise = require('es6-promise')
 var pgp = require('pg-promise')({
   promiseLib: Promise
 })
+var inquirer = require('inquirer')
 
 var fs = require('fs')
 
@@ -21,6 +22,8 @@ function bail () {
   console.log('This will remotely reboot your lamassu-machine.')
   console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin> [<trader-plugin>]')
   console.log('This will configure a new cryptocurrency.')
+  console.log('\nssu config <plugin> <key>')
+  console.log('Configure a plugin setting.')
   process.exit(1)
 }
 
@@ -30,6 +33,9 @@ switch (cmd) {
     break
   case 'crypto':
     crypto()
+    break
+  case 'config':
+    configure()
     break
   default:
 
@@ -151,5 +157,53 @@ function crypto () {
   .catch(function (err) {
     console.log(err.stack)
     pgp.end()
+  })
+}
+
+function configure () {
+  var plugin = argv[1]
+  var key = argv[2]
+
+  if (!plugin || !key) {
+    console.log('\nssu config <plugin> <key>')
+    console.log('Configure a plugin setting.')
+    process.exit(1)
+  }
+
+  inquirer.prompt([{
+    type: 'password',
+    name: 'value',
+    message: 'Enter value for ' + key + ': ',
+    validate: function (val) {
+      return !val || val.length === 0
+      ? 'Please enter a value for ' + key
+      : true
+    }
+  }]).then(function (result) {
+    var value = result.value
+
+    var psqlUrl
+    try {
+      psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
+    } catch (ex) {
+      psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
+    }
+    var db = pgp(psqlUrl)
+
+    return db.one('select data from user_config where type=$1', 'exchanges')
+    .then(function (data) {
+      var config = data.data
+      config.exchanges.plugins.settings[plugin] = config.exchanges.plugins.settings[plugin] || {}
+      config.exchanges.plugins.settings[plugin][key] = value
+      return db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+    })
+    .then(function () {
+      console.log('success')
+      pgp.end()
+    })
+    .catch(function (err) {
+      console.log(err.stack)
+      pgp.end()
+    })
   })
 }

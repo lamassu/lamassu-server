@@ -16,7 +16,7 @@
     "es6-promise": "^3.1.2",
     "ethereumjs-wallet": "^0.5.1",
     "express": "~3.4.7",
-    "inquirer": "^0.8.0",
+    "inquirer": "^1.0.0",
     "joi": "^5.1.0",
     "lamassu-bitcoinaverage": "~1.0.0",
     "lamassu-bitcoind": "^1.1.0",
@@ -37,6 +37,8 @@
     "node-uuid": "^1.4.2",
     "pg": "^4.5.1",
     "pg-promise": "^3.4.3",
+    "prompt": "^1.0.0",
+    "promptly": "^1.1.0",
     "web3": "^0.15.3",
     "wreck": "5.1.0"
   },
