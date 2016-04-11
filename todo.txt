@@ -31,7 +31,6 @@ alter table bills add crypto_code text default 'BTC';
 alter table bills alter satoshis TYPE bigint;
 
 - handle geth send failure better
-- unlock geth account
 - remove debug
 - implement coin selection screen
 - ask neal to work on config scripts
