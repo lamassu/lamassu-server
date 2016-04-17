@@ -35,11 +35,19 @@ alter table bills alter satoshis TYPE bigint;
 - implement coin selection screen
 - ask neal to work on config scripts
 
-TypeError: Cannot read property 'rates' of null
-    at /Users/josh/projects/lamassu-server/lib/routes.js:36:49
-    at Array.forEach (native)
-    at buildRates (/Users/josh/projects/lamassu-server/lib/routes.js:35:15)
-    at poll (/Users/josh/projects/lamassu-server/lib/routes.js:66:15)
-    at callbacks (/Users/josh/projects/lamassu-server/node_modules/express/lib/router/index.js:164:37)
-    at /Users/josh/projects/lamassu-server/lib/app.js:56:7
-    at /Users/josh/projects/lamassu-server/node_modules/lamassu-config/lib/main.js:142:5
+[2016-04-17T22:10:57.917Z] ERROR: lamassu-server/32185 on MacBook-Pro.local: could not unlock signer account
+    Error: could not unlock signer account
+        at Object.module.exports.InvalidResponse (/Users/josh/projects/lamassu-geth/node_modules/web3/lib/web3/errors.js:35:16)
+        at /Users/josh/projects/lamassu-geth/node_modules/web3/lib/web3/requestmanager.js:86:36
+        at request.onreadystatechange (/Users/josh/projects/lamassu-geth/node_modules/web3/lib/web3/httpprovider.js:114:13)
+        at dispatchEvent (/Users/josh/projects/lamassu-geth/node_modules/web3/node_modules/xmlhttprequest/lib/XMLHttpRequest.js:591:25)
+        at setState (/Users/josh/projects/lamassu-geth/node_modules/web3/node_modules/xmlhttprequest/lib/XMLHttpRequest.js:610:14)
+        at IncomingMessage.<anonymous> (/Users/josh/projects/lamassu-geth/node_modules/web3/node_modules/xmlhttprequest/lib/XMLHttpRequest.js:447:13)
+        at emitNone (events.js:72:20)
+        at IncomingMessage.emit (events.js:166:7)
+        at endReadableNT (_stream_readable.js:913:12)
+        at nextTickCallbackWith2Args (node.js:442:9)
+/Users/josh/projects/lamassu-server/lib/postgresql_interface.js:301
+    satoshis.toString(),
+            ^
+better handling of this error
