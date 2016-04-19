@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "2.2.10",
+  "version": "2.3.0",
   "license": "unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "engines": {
@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "async": "~0.2.9",
-    "bunyan": "~0.22.3",
+    "axios": "^0.9.1",
+    "bignumber.js": "^2.3.0",
+    "bluebird": "^3.3.4",
+    "es6-promise": "^3.1.2",
+    "ethereumjs-wallet": "^0.5.1",
     "express": "~3.4.7",
-    "inquirer": "^0.8.0",
+    "inquirer": "^1.0.0",
     "joi": "^5.1.0",
     "lamassu-bitcoinaverage": "~1.0.0",
     "lamassu-bitcoind": "^1.1.0",
@@ -27,10 +31,15 @@
     "lamassu-coinfloor": "^0.1.2",
     "lamassu-config": "~0.4.0",
     "lamassu-identitymind": "^1.0.1",
+    "lamassu-snapcard": "^0.1.7",
     "lodash": "^2.4.1",
     "minimist": "0.0.8",
     "node-uuid": "^1.4.2",
-    "pg": "~2.11.1",
+    "pg": "^4.5.1",
+    "pg-promise": "^3.4.3",
+    "prompt": "^1.0.0",
+    "promptly": "^1.1.0",
+    "web3": "^0.15.3",
     "ramda": "^0.19.1",
     "smtp-connection": "^2.2.1",
     "twilio": "^3.3.0-edge",
@@ -42,7 +51,8 @@
   },
   "bin": {
     "lamassu-server": "./bin/lamassu-server",
-    "ssu-raqia": "./bin/ssu-raqia"
+    "ssu-raqia": "./bin/ssu-raqia",
+    "ssu": "./bin/ssu"
   },
   "scripts": {
     "test": "mocha --recursive test"
