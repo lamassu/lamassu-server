@@ -2,6 +2,7 @@
 
 'use strict'
 
+var chalk = require('chalk')
 var wreck = require('wreck')
 var argv = process.argv.slice(2)
 var Promise = require('es6-promise')
@@ -9,19 +10,22 @@ var pgp = require('pg-promise')({
   promiseLib: Promise
 })
 var inquirer = require('inquirer')
-
+var R = require('ramda')
 var fs = require('fs')
 
 var cmd = argv[0]
 
 if (!cmd) bail()
 
-function bail () {
-  console.log('Command line utility for lamassu-server')
+function bail (error) {
+  error = error || 'Command line utility for lamassu-server'
+  console.log(chalk.bold(error))
   console.log('\nssu reboot <machine-fingerprint>')
   console.log('This will remotely reboot your lamassu-machine.')
   console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin> [<trader-plugin>]')
   console.log('This will configure a new cryptocurrency.')
+  console.log('\nssu crypto <code> [on|off]')
+  console.log('This will activate or deactivate a cryptocurrency.')
   console.log('\nssu config <plugin> <key>')
   console.log('Configure a plugin setting.')
   process.exit(1)
@@ -38,7 +42,8 @@ switch (cmd) {
     configure()
     break
   default:
-
+    bail('No such command: ' + cmd)
+    break
 }
 
 function reboot () {
@@ -117,11 +122,44 @@ function reboot () {
   })
 }
 
+function cryptoActivate (code, on) {
+  var psqlUrl
+  try {
+    psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
+  } catch (ex) {
+    psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
+  }
+  var db = pgp(psqlUrl)
+
+  return db.one('select data from user_config where type=$1', 'exchanges')
+  .then(function (data) {
+    var config = data.data
+    if (on) {
+      config.exchanges.settings.coins = R.append(code, config.exchanges.settings.coins)
+    } else {
+      config.exchanges.settings.coins = R.without([code], config.exchanges.settings.coins)
+    }
+    db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+    db.none('notify "config_update"')
+  })
+  .then(function () {
+    console.log('success')
+    pgp.end()
+  })
+  .catch(function (err) {
+    console.log(err.stack)
+    pgp.end()
+  })
+}
+
 function crypto () {
   var code = argv[1]
   var tickerPlugin = argv[2]
   var walletPlugin = argv[3]
   var traderPlugin = argv[4]
+
+  if (code && tickerPlugin === 'on') return cryptoActivate(code, true)
+  if (code && tickerPlugin === 'off') return cryptoActivate(code, false)
 
   if (!code || !tickerPlugin || !walletPlugin) {
     console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin> [<trader-plugin>]')
@@ -148,7 +186,8 @@ function crypto () {
       trader: traderPlugin
     }
     config.exchanges.settings.coins = ['BTC', code]
-    return db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+    db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+    db.none('notify "config_update"')
   })
   .then(function () {
     console.log('success')
@@ -195,7 +234,8 @@ function configure () {
       var config = data.data
       config.exchanges.plugins.settings[plugin] = config.exchanges.plugins.settings[plugin] || {}
       config.exchanges.plugins.settings[plugin][key] = value
-      return db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+      db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+      db.none('notify "config_update"')
     })
     .then(function () {
       console.log('success')
