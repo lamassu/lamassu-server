@@ -199,43 +199,65 @@ function crypto () {
   })
 }
 
+function connect () {
+  var psqlUrl
+  try {
+    psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
+  } catch (ex) {
+    psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
+  }
+  return pgp(psqlUrl)
+}
+
+function loadConfig (db) {
+  return db.one('select data from user_config where type=$1', 'exchanges')
+  .then(function (data) {
+    return data.data
+  })
+}
+
+function updateConfig (db, config) {
+  db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
+  db.none('notify "config_update"')
+}
+
+function modifyConfig (config, plugin, keys, result) {
+  keys.forEach(function (key) {
+    var value = result[key]
+    config.exchanges.plugins.settings[plugin] = config.exchanges.plugins.settings[plugin] || {}
+    config.exchanges.plugins.settings[plugin][key] = value
+  })
+  return config
+}
+
 function configure () {
   var plugin = argv[1]
-  var key = argv[2]
+  var keys = argv.slice(2)
 
-  if (!plugin || !key) {
-    console.log('\nssu config <plugin> <key>')
+  if (!plugin || keys.length === 0) {
+    console.log('\nssu config <plugin> <key> [<key> ...]')
     console.log('Configure a plugin setting.')
     process.exit(1)
   }
 
-  inquirer.prompt([{
-    type: 'password',
-    name: 'value',
-    message: 'Enter value for ' + key + ': ',
-    validate: function (val) {
-      return !val || val.length === 0
-      ? 'Please enter a value for ' + key
-      : true
+  var questions = keys.map(function (key) {
+    return {
+      type: 'input',
+      name: key,
+      message: 'Enter value for ' + key + ':',
+      validate: function (val) {
+        return !val || val.length === 0
+        ? 'Please enter a value for ' + key
+        : true
+      }
     }
-  }]).then(function (result) {
-    var value = result.value
-
-    var psqlUrl
-    try {
-      psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
-    } catch (ex) {
-      psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
-    }
-    var db = pgp(psqlUrl)
-
-    return db.one('select data from user_config where type=$1', 'exchanges')
-    .then(function (data) {
-      var config = data.data
-      config.exchanges.plugins.settings[plugin] = config.exchanges.plugins.settings[plugin] || {}
-      config.exchanges.plugins.settings[plugin][key] = value
-      db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
-      db.none('notify "config_update"')
+  })
+  inquirer.prompt(questions).then(function (result) {
+    var db = connect()
+    return loadConfig(db)
+    .then(function (config) {
+      var _config = modifyConfig(config, plugin, keys, result)
+      return updateConfig(db, _config)
     })
     .then(function () {
       console.log('success')

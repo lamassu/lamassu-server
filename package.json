@@ -41,7 +41,7 @@
     "prompt": "^1.0.0",
     "promptly": "^1.1.0",
     "ramda": "^0.19.1",
-    "smtp-connection": "^2.2.1",
+    "smtp-connection": "^2.3.2",
     "twilio": "^3.3.0-edge",
     "web3": "^0.15.3",
     "wreck": "5.1.0"
