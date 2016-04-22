@@ -28,6 +28,10 @@ function bail (error) {
   console.log('This will activate or deactivate a cryptocurrency.')
   console.log('\nssu config <plugin> <key>')
   console.log('Configure a plugin setting.')
+  console.log('\nssu notify [email] [sms]')
+  console.log('Set notification plugin types.')
+  console.log('\nssu set <plugin type> <plugin>')
+  console.log('Set current plugin for plugin type.')
   process.exit(1)
 }
 
@@ -40,6 +44,12 @@ switch (cmd) {
     break
   case 'config':
     configure()
+    break
+  case 'notify':
+    notify()
+    break
+  case 'set':
+    setPlugin()
     break
   default:
     bail('No such command: ' + cmd)
@@ -267,5 +277,50 @@ function configure () {
       console.log(err.stack)
       pgp.end()
     })
+  })
+}
+
+function notify () {
+  var plugins = argv.slice(1)
+  var db = connect()
+  return loadConfig(db)
+  .then(function (config) {
+    config.exchanges.plugins.current.notify = JSON.stringify(plugins)
+    return updateConfig(db, config)
+  })
+  .then(function () {
+    console.log('success')
+    pgp.end()
+  })
+  .catch(function (err) {
+    console.log(err.stack)
+    pgp.end()
+  })
+}
+
+function setPlugin () {
+  var pluginType = argv[1]
+  var plugin = argv[2]
+
+  var db = connect()
+  return loadConfig(db)
+  .then(function (config) {
+    if (!plugin) {
+      var _plugin = config.exchanges.plugins.current[pluginType]
+      _plugin
+      ? console.log('Current plugin for %s: %s', pluginType, _plugin)
+      : console.log('No plugin set for %s', pluginType)
+      process.exit(0)
+    }
+    config.exchanges.plugins.current[pluginType] = plugin
+    return updateConfig(db, config)
+  })
+  .then(function () {
+    console.log('success')
+    pgp.end()
+  })
+  .catch(function (err) {
+    console.log(err.stack)
+    pgp.end()
   })
 }
