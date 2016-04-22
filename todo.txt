@@ -2,3 +2,5 @@
 - integrate email and sms into notifications
 - run notifications from server
 - don't keep sending notifications when state persists -- keep variable in memory
+- add toEmail, toNumber to db
+- finish up notification emails
