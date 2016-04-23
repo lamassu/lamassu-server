@@ -1,1 +1,1 @@
-- configure LOW_BALANCE_THRESHOLD, STALE_STATE, NETWORK_DOWN_TIME
+- fix tests
