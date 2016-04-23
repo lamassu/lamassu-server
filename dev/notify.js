@@ -11,7 +11,7 @@ function getBalances () {
 }
 
 db.init('psql://lamassu:lamassu@localhost/lamassu')
-notifier.init(db, getBalances)
+notifier.init(db, getBalances, {lowBalanceThreshold: 10})
 console.log('DEBUG0')
 notifier.checkStatus()
 .then(function (alertRec) {

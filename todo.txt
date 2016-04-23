@@ -1,6 +1,1 @@
-- configure email, sms or both for notification
-- integrate email and sms into notifications
-- run notifications from server
-- don't keep sending notifications when state persists -- keep variable in memory
-- add toEmail, toNumber to db
-- finish up notification emails
+- configure LOW_BALANCE_THRESHOLD, STALE_STATE, NETWORK_DOWN_TIME
