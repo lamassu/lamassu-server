@@ -7,12 +7,10 @@ var rand = Math.floor(Math.random() * 1e6)
 
 var rec = {
   email: {
-    toEmail: 'joshmh@gmail.com',
     subject: 'Test email ' + rand,
     body: 'This is a test email from lamassu-server'
   },
   sms: {
-    toNumber: process.argv[2],
     body: '[Lamassu] This is a test sms ' + rand
   }
 }
