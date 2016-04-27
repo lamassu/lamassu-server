@@ -15,7 +15,7 @@ npm install
 ## Configuration
 
 ```bash
-bin/ssu config smtp2go user pass toEmail
+bin/ssu config smtp2go user pass fromEmail toEmail
 bin/ssu config twilio accountSid authToken fromNumber toNumber
 bin/ssu set sms twilio
 bin/ssu set email smtp2go

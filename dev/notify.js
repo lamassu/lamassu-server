@@ -1,5 +1,6 @@
 require('es6-promise').polyfill()
 
+var fs = require('fs')
 var notifier = require('../lib/notifier')
 var db = require('../lib/postgresql_interface')
 
@@ -10,7 +11,14 @@ function getBalances () {
   ]
 }
 
-db.init('psql://lamassu:lamassu@localhost/lamassu')
+var psqlUrl
+try {
+  psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
+} catch (ex) {
+  psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
+}
+
+db.init(psqlUrl)
 notifier.init(db, getBalances, {lowBalanceThreshold: 10})
 console.log('DEBUG0')
 notifier.checkStatus()
