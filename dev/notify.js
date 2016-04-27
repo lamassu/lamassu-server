@@ -7,7 +7,7 @@ var db = require('../lib/postgresql_interface')
 function getBalances () {
   return [
     {fiatBalance: 23.2345, fiatCode: 'USD', cryptoCode: 'BTC'},
-    {fiatBalance: 22, fiatCode: 'USD', cryptoCode: 'ETH'}
+    {fiatBalance: 23, fiatCode: 'USD', cryptoCode: 'ETH'}
   ]
 }
 
