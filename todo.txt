@@ -1,1 +1,5 @@
 - update tx statuses in background
+  - pull all unpublished and unauthorized txs in last x seconds
+  - pull all unconfirmed txs
+  - for each tx: poll wallet plugin to check status
+  - update db
