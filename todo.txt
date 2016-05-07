@@ -3,3 +3,5 @@
   - pull all unconfirmed txs
   - for each tx: poll wallet plugin to check status
   - update db
+
+- translate back and forth between db fields and json fields of tx
