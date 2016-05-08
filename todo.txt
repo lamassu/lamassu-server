@@ -1,7 +1,3 @@
-- update tx statuses in background
-  - pull all unpublished and unauthorized txs in last x seconds
-  - pull all unconfirmed txs
-  - for each tx: poll wallet plugin to check status
-  - update db
-
-- translate back and forth between db fields and json fields of tx
+- change satoshis to crypto_atoms in db (ask neal about this)
+- test bitgo
+- start testing
