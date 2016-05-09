@@ -1,2 +1,4 @@
 - change satoshis to crypto_atoms in db (ask neal about this)
-- start testing
+
+- on upgrade, make sure we're not sending out lots of notifications
+- fix plugin reloading, in current version and master
