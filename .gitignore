@@ -28,3 +28,5 @@ options.mine.js
 
 raqia.json
 scratch/
+
+*.pem
