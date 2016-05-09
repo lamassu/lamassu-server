@@ -1,34 +1,34 @@
 #!/usr/bin/env node
 
-'use strict';
+'use strict'
 
-var fs = require('fs');
-var createServer = require('../lib/app.js');
-var argv = require('minimist')(process.argv.slice(2));
+var fs = require('fs')
+var createServer = require('../lib/app.js')
+var argv = require('minimist')(process.argv.slice(2))
 
 var options = {
   postgres: process.env.DATABASE_URL
-};
+}
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3000
 
 if (!argv.http) {
   if (!argv.key || !argv.cert) {
-    console.error('--key and --cert are required');
-    process.exit(1);
+    console.error('--key and --cert are required')
+    process.exit(1)
   }
 
   options.https = {
     key: fs.readFileSync(argv.key),
     cert: fs.readFileSync(argv.cert)
-  };
-
+  }
 }
 
-options.mock = argv.mock;
+options.mock = argv.mock
 
-var server = createServer(options);
-server.listen(port, function() {
+var server = createServer(options)
+
+server.listen(port, function () {
   console.log('lamassu-server listening on port ' + port + ' ' +
-    (argv.http ? '(http)' : '(https)'));
-});
+    (argv.http ? '(http)' : '(https)'))
+})
