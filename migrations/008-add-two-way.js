@@ -3,7 +3,8 @@ var db = require('./db')
 function singleQuotify (item) { return '\'' + item + '\'' }
 
 exports.up = function (next) {
-  var statuses = ['notSeen', 'published', 'zeroConf', 'authorized', 'confirmed', 'rejected']
+  var statuses = ['notSeen', 'published', 'authorized', 'instant',
+    'confirmed', 'rejected', 'insufficientFunds']
   .map(singleQuotify).join(',')
 
   var sql = [

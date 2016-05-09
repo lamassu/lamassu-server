@@ -1,3 +1,2 @@
 - change satoshis to crypto_atoms in db (ask neal about this)
-- test bitgo
 - start testing
