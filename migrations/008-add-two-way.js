@@ -12,6 +12,7 @@ exports.up = function (next) {
     'alter table transactions add dispensed boolean NOT NULL DEFAULT false',
     'alter table transactions add notified boolean NOT NULL DEFAULT false',
     'alter table transactions add redeem boolean NOT NULL DEFAULT false',
+    'alter table transactions add confirmation_time timestamp',
     'alter table transactions add status status_stage NOT NULL DEFAULT \'notSeen\''
   ]
   db.multi(sql, next)
