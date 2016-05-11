@@ -1,19 +1,19 @@
 - change satoshis to crypto_atoms in db (ask neal about this)
 
-- on upgrade, make sure we're not sending out lots of notifications
+- on upgrade, make sure we're not sending out lots of notifications to users
+  - set notified to true on all transactions before running
 
------------------
+- handle redeems
+  - if fetchPhoneTx fails for trader, try raqia. Use record to update l-s db, and take it from there.
+  - should be safe because:
+    - impossible to dispense via raqia, we don't allow access anymore
+    - each new fetch will hit l-s db as usual
 
-If machine is polling when server starts:
+----
 
-TypeError: Cannot read property 'cashIn' of undefined
-    at /Users/josh/projects/lamassu-server/lib/routes.js:83:22
-    at /Users/josh/projects/lamassu-server/lib/plugins.js:271:12
-    at /Users/josh/projects/lamassu-server/lib/postgresql_interface.js:619:7
-    at null.callback (/Users/josh/projects/lamassu-server/lib/postgresql_interface.js:129:5)
-    at Query.handleReadyForQuery (/Users/josh/projects/lamassu-server/node_modules/pg/lib/query.js:89:10)
-    at null.<anonymous> (/Users/josh/projects/lamassu-server/node_modules/pg/lib/client.js:163:19)
-    at emitOne (events.js:82:20)
-    at emit (events.js:169:7)
-    at Socket.<anonymous> (/Users/josh/projects/lamassu-server/node_modules/pg/lib/connection.js:109:12)
-    at emitOne (events.js:77:13)
+UTC:
+http://justatheory.com/computers/databases/postgresql/use-timestamptz.html
+
+Upgrade instructions:
+
+AFTER migrating, set timezone in config to 'UTC', then restart server
