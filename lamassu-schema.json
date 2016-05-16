@@ -1,0 +1,15 @@
+{
+  "jsonSchema": {
+    "title": "Global",
+    "type": "object",
+    "required": [],
+    "properties": {
+      "cashInCommission": {"type": "number", "title": "Cash-in Commission", "minimum": 0},
+      "cashOutCommission": {"type": "number", "title": "Cash-out Commission", "minimum": 0},
+    }
+  },
+  "uiSchema": {
+    "ui:order": ["cashInCommission", "cashOutCommission"],
+    "authToken": {"ui:widget": "password"}
+  }
+}
