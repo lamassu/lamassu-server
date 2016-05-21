@@ -38,6 +38,7 @@
     "node-uuid": "^1.4.2",
     "numeral": "^1.5.3",
     "pg": "^4.5.1",
+    "pg-promise": "^4.2.4",
     "pretty-ms": "^2.1.0",
     "ramda": "^0.21.0",
     "wreck": "5.1.0"
