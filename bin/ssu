@@ -145,6 +145,10 @@ function cryptoActivate (code, on) {
   .then(function (data) {
     var config = data.data
     if (on) {
+      if (R.contains(code, config.exchanges.settings.coins)) {
+        console.log('success [no changes]')
+        process.exit(0)
+      }
       config.exchanges.settings.coins = R.append(code, config.exchanges.settings.coins)
     } else {
       config.exchanges.settings.coins = R.without([code], config.exchanges.settings.coins)
@@ -195,7 +199,7 @@ function crypto () {
       transfer: walletPlugin,
       trader: traderPlugin
     }
-    config.exchanges.settings.coins = ['BTC', code]
+    config.exchanges.settings.coins = R.union(config.exchanges.settings.coins, [code])
     db.none('update user_config set data=$1 where type=$2', [config, 'exchanges'])
     db.none('notify "config_update"')
   })
