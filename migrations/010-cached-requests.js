@@ -10,7 +10,7 @@ exports.up = function (next) {
     'path text NOT NULL, ' +
     'method text NOT NULL, ' +
     'body json NOT NULL, ' +
-    'created timestampz NOT NULL DEFAULT now(), ' +
+    'created timestamptz NOT NULL DEFAULT now(), ' +
     'UNIQUE (device_fingerprint, session_id, path, method) ' +
     ')', next)
 }
