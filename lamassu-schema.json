@@ -4,12 +4,16 @@
     "type": "object",
     "required": [],
     "properties": {
-      "cashInCommission": {"type": "number", "title": "Cash-in Commission", "minimum": 0},
+      "commission": {"type": "number", "title": "Cash-in Commission", "minimum": 0},
       "cashOutCommission": {"type": "number", "title": "Cash-out Commission", "minimum": 0},
+      "currency": {"type": "string", "title": "Currency"},
+      "zeroConfLimit": {"type": "number", "title": "Zero-conf Limit", "minimum": 0},
+      "fiatTxLimit": {"type": "number", "title": "Cash-out Limit", "minimum": 0},
+      "coins": {"type": "array", "title": "Crypto Coins", "items": {"type": "string"}}
     }
   },
   "uiSchema": {
-    "ui:order": ["cashInCommission", "cashOutCommission"],
-    "authToken": {"ui:widget": "password"}
+    "ui:order": ["commission", "cashOutCommission", "currency", "zeroConfLimit",
+      "fiatTxLimit", "coins"]
   }
 }
