@@ -1,1 +1,2 @@
-- change satoshis to crypto_atoms in db (ask neal about this)
+- test cash out
+- l-m shouldn't keep polling l-s when not on pending screen
