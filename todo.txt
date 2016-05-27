@@ -1,2 +1,2 @@
 - test cash out
-- l-m shouldn't keep polling l-s when not on pending screen
+- l-m shouldn't keep polling l-s when not on pending screen (low priority)
