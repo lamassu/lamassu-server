@@ -2,3 +2,4 @@
 - l-m shouldn't keep polling l-s when not on pending screen (low priority)
 
 - convert postgresql_interface to pg-promise
+- check what happens in pgp when double-inserting
