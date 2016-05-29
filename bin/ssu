@@ -5,10 +5,7 @@
 var chalk = require('chalk')
 var wreck = require('wreck')
 var argv = process.argv.slice(2)
-var Promise = require('es6-promise')
-var pgp = require('pg-promise')({
-  promiseLib: Promise
-})
+var pgp = require('pg-promise')()
 var inquirer = require('inquirer')
 var R = require('ramda')
 var fs = require('fs')
