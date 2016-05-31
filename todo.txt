@@ -1,4 +1,4 @@
 - l-m shouldn't keep polling l-s when not on pending screen (low priority)
 
-- don't record multiple tx authorizations to db
-- processTxStatus isn't atomic
+- need more bulletproof way to ensure only unique serials for each coin
+- use tx to read last, then insert new row

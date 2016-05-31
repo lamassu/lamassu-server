@@ -21,8 +21,7 @@ exports.up = function (next) {
       tx_hash text,
       phone text,
       error text,
-      created timestamptz NOT NULL default now(),
-      unique (session_id)
+      created timestamptz NOT NULL default now()
     )`,
     `create table cash_out_txs (
       session_id uuid PRIMARY KEY,
@@ -40,8 +39,7 @@ exports.up = function (next) {
       phone text,
       error text,
       created timestamptz NOT NULL default now(),
-      confirmation_time timestamptz,
-      unique (session_id)
+      confirmation_time timestamptz
     )`,
     `create type cash_out_action_types AS ENUM (${actions})`,
     `create table cash_out_actions (
