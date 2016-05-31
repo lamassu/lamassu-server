@@ -1,0 +1,15 @@
+{
+  "jsonSchema": {
+    "title": "Crypto Settings",
+    "type": "object",
+    "required": [],
+    "properties": {
+      "commission": {"type": "number", "title": "Cash-in Commission", "minimum": 0, "description": 3.5},
+      "cashOutCommission": {"type": "number", "title": "Cash-out Commission", "minimum": 0},
+      "fiatTxLimit": {"type": "number", "title": "Cash-out Limit", "minimum": 0}
+    }
+  },
+  "uiSchema": {
+    "ui:order": ["commission", "cashOutCommission", "fiatTxLimit"]
+  }
+}
