@@ -31,12 +31,14 @@
     "lamassu-smtp2go": "^1.0.3",
     "lamassu-twilio": "^1.1.0",
     "minimist": "0.0.8",
+    "node-hkdf-sync": "^1.0.0",
     "node-uuid": "^1.4.2",
     "numeral": "^1.5.3",
     "pg": "^4.5.5",
     "pg-promise": "^4.3.3",
     "pretty-ms": "^2.1.0",
     "ramda": "^0.21.0",
+    "u-promised": "^0.2.4",
     "wreck": "5.1.0"
   },
   "repository": {
