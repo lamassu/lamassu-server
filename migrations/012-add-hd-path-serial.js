@@ -6,8 +6,9 @@ exports.up = function (next) {
       session_id uuid PRIMARY KEY,
       crypto_code text NOT NULL,
       hd_serial integer NOT NULL,
+      swept boolean NOT NULL default false,
       created timestamptz NOT NULL default now(),
-      unique (crypto_code, hd_serial),
+      unique (crypto_code, hd_serial)
     )`
   ]
   db.multi(sql, next)

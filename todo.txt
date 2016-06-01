@@ -1,3 +1,4 @@
 - l-m shouldn't keep polling l-s when not on pending screen (low priority)
 
 - scrutinize hkdf, maybe use own simplified version
+- test geth cash-out
