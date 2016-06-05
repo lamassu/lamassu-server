@@ -4,3 +4,7 @@
 - test bitcoind cash-out
 - test eth cash out, check that HD is still working
 - throttle status check for 3rd services like bitgo
+
+- load stuff from master config file
+- set up DATABASE_URL environment variable in lamassu-server
+- add default configuration
