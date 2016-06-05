@@ -6,21 +6,27 @@ var fs = require('fs')
 var createServer = require('../lib/app.js')
 var argv = require('minimist')(process.argv.slice(2))
 
-var options = {
-  postgres: process.env.DATABASE_URL
+var options
+
+try {
+  options = JSON.parse(fs.readFileSync('/etc/lamassu.json'))
+} catch (err) {
+  try {
+    options = JSON.parse(fs.readFileSync('./lamassu.json'))
+  } catch (err2) {
+    console.log('Missing configuration file /etc/lamassu.json -- exiting.')
+    process.exit(1)
+  }
 }
+
+process.env.DATABASE_URL = options.postgres
 
 var port = process.env.PORT || 3000
 
 if (!argv.http) {
-  if (!argv.key || !argv.cert) {
-    console.error('--key and --cert are required')
-    process.exit(1)
-  }
-
   options.https = {
-    key: fs.readFileSync(argv.key),
-    cert: fs.readFileSync(argv.cert)
+    key: fs.readFileSync(options.certKey),
+    cert: fs.readFileSync(options.certPath)
   }
 }
 
