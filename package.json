@@ -30,6 +30,7 @@
     "lamassu-kraken": "^1.0.3",
     "lamassu-smtp2go": "^1.0.3",
     "lamassu-twilio": "^1.1.0",
+    "migrate": "^0.2.2",
     "minimist": "0.0.8",
     "node-hkdf-sync": "^1.0.0",
     "node-uuid": "^1.4.2",
