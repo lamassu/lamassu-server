@@ -1,4 +1,6 @@
 - l-m shouldn't keep polling l-s when not on pending screen (low priority)
 
 - scrutinize hkdf, maybe use own simplified version
-- test eth cash-out confirmation record in cash_out_hds
+- test bitcoind cash-out
+- test eth cash out, check that HD is still working
+- throttle status check for 3rd services like bitgo
