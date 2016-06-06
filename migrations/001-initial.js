@@ -1,9 +1,43 @@
-'use strict';
+'use strict'
 
-var db = require('./db');
+var db = require('./db')
 
-exports.up = function(next) {
+var exchanges = {
+  exchanges: {
+    settings: {
+      commission: 1.0,
+      compliance: {
+        maximum: {
+          limit: null
+        }
+      }
+    },
+    plugins: {
+      current: {
+        ticker: 'bitpay',
+        transfer: 'bitgo'
+      },
+      settings: {
+        bitpay: {},
+        bitgo: {}
+      }
+    }
+  }
+}
 
+var unit = {
+  brain: {
+    locale: {
+      currency: 'USD',
+      localeInfo: {
+        primaryLocale: 'en-US',
+        primaryLocales: ['en-US']
+      }
+    }
+  }
+}
+
+exports.up = function (next) {
   var sqls = [
     'CREATE TABLE IF NOT EXISTS user_config ( ' +
     'id serial PRIMARY KEY, ' +
@@ -30,12 +64,18 @@ exports.up = function(next) {
     'userName text NOT NULL UNIQUE, ' +
     'salt text NOT NULL, ' +
     'pwdHash text NOT NULL ' +
-    ')'
-  ];
+    ')',
 
-  db.multi(sqls, next);
-};
+    'INSERT INTO user_config (type, data) ' +
+    "VALUES ('exchanges', '" + JSON.stringify(exchanges) + "')",
 
-exports.down = function(next) {
-  next();
-};
+    'INSERT INTO user_config (type, data) ' +
+    "VALUES ('unit', '" + JSON.stringify(unit) + "')"
+  ]
+
+  db.multi(sqls, next)
+}
+
+exports.down = function (next) {
+  next()
+}
