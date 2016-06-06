@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const HKDF = require('node-hkdf-sync')
+
+const label = process.argv[2]
+const masterSeedHex = process.argv[3].trim()
+
+if (process.argv.length !== 4) {
+  console.log('hdkf <label> <masterKey>')
+  console.log('masterKey should be in hex encoding.')
+  process.exit(3)
+}
+
+const masterSeed = new Buffer(masterSeedHex, 'hex')
+const hkdf = new HKDF('sha256', 'lamassu-server-salt', masterSeed)
+console.log(hkdf.derive(label, 32).toString('hex'))

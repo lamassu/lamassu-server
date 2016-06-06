@@ -49,7 +49,8 @@
   "bin": {
     "lamassu-server": "./bin/lamassu-server",
     "ssu-raqia": "./bin/ssu-raqia",
-    "ssu": "./bin/ssu"
+    "ssu": "./bin/ssu",
+    "hkdf": "./bin/hkdf"
   },
   "scripts": {
     "test": "mocha --recursive test"
