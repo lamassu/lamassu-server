@@ -19,7 +19,7 @@ try {
   }
 }
 
-process.env.DATABASE_URL = options.postgres
+process.env.DATABASE_URL = options.postgresql
 
 var port = process.env.PORT || 3000
 
