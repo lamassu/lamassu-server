@@ -25,7 +25,7 @@ var port = process.env.PORT || 3000
 
 if (!argv.http) {
   options.https = {
-    key: fs.readFileSync(options.certKey),
+    key: fs.readFileSync(options.certKeyPath),
     cert: fs.readFileSync(options.certPath)
   }
 }
