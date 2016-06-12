@@ -2,7 +2,12 @@
 
 var pg = require('pg');
 var async   = require('async');
-var psqlUrl = require('../lib/options').postgres
+var psqlUrl = require('../lib/options').postgresql
+
+if (psqlUrl) {
+  console.log('No postgresql entry in config file')
+  process.exit(1)
+}
 
 exports.query = function query(sql, cb) {
   exports.multi([sql], cb);

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var pgp = require('pg-promise')()
-var psqlUrl = require('../lib/options').postgres
+var psqlUrl = require('../lib/options').postgresql
 
 var db = pgp(psqlUrl)
 

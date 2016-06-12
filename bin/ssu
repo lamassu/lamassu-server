@@ -8,7 +8,7 @@ var argv = process.argv.slice(2)
 var pgp = require('pg-promise')()
 var inquirer = require('inquirer')
 var R = require('ramda')
-var psqlUrl = require('../lib/options').postgres
+var psqlUrl = require('../lib/options').postgresql
 
 var cmd = argv[0]
 
