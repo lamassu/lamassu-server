@@ -3,6 +3,8 @@
 'use strict'
 
 var fs = require('fs')
+const os = require('os')
+var path = require('path')
 var createServer = require('../lib/app.js')
 var argv = require('minimist')(process.argv.slice(2))
 
@@ -12,9 +14,10 @@ try {
   options = JSON.parse(fs.readFileSync('/etc/lamassu.json'))
 } catch (err) {
   try {
-    options = JSON.parse(fs.readFileSync('./lamassu.json'))
+    const homePath = path.resolve(os.homedir(), '.lamassu', 'lamassu.json')
+    options = JSON.parse(fs.readFileSync(homePath))
   } catch (err2) {
-    console.log('Missing configuration file /etc/lamassu.json -- exiting.')
+    console.log('Missing configuration file -- exiting.')
     process.exit(1)
   }
 }
@@ -22,8 +25,9 @@ try {
 process.env.DATABASE_URL = options.postgresql
 
 var port = process.env.PORT || 3000
+var httpOnly = options.httpOnly || argv.http
 
-if (!argv.http) {
+if (!httpOnly) {
   options.https = {
     key: fs.readFileSync(options.certKeyPath),
     cert: fs.readFileSync(options.certPath)
@@ -36,5 +40,5 @@ var server = createServer(options)
 
 server.listen(port, function () {
   console.log('lamassu-server listening on port ' + port + ' ' +
-    (argv.http ? '(http)' : '(https)'))
+    (httpOnly ? '(http)' : '(https)'))
 })
