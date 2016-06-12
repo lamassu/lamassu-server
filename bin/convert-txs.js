@@ -1,14 +1,8 @@
 #!/usr/bin/env node
 
-var fs = require('fs')
 var pgp = require('pg-promise')()
+var psqlUrl = require('../lib/options').postgres
 
-var psqlUrl
-try {
-  psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
-} catch (ex) {
-  psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
-}
 var db = pgp(psqlUrl)
 
 db.manyOrNone(`select * from transactions where incoming=false

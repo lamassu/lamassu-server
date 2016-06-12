@@ -8,7 +8,7 @@ var argv = process.argv.slice(2)
 var pgp = require('pg-promise')()
 var inquirer = require('inquirer')
 var R = require('ramda')
-var fs = require('fs')
+var psqlUrl = require('../lib/options').postgres
 
 var cmd = argv[0]
 
@@ -130,12 +130,6 @@ function reboot () {
 }
 
 function cryptoActivate (code, on) {
-  var psqlUrl
-  try {
-    psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
-  } catch (ex) {
-    psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
-  }
   var db = pgp(psqlUrl)
 
   return db.one('select data from user_config where type=$1', 'exchanges')
@@ -180,12 +174,6 @@ function crypto () {
 
   code = code.toUpperCase()
 
-  var psqlUrl
-  try {
-    psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
-  } catch (ex) {
-    psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
-  }
   var db = pgp(psqlUrl)
 
   return db.one('select data from user_config where type=$1', 'exchanges')
@@ -211,12 +199,6 @@ function crypto () {
 }
 
 function connect () {
-  var psqlUrl
-  try {
-    psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
-  } catch (ex) {
-    psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
-  }
   return pgp(psqlUrl)
 }
 

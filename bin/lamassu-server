@@ -3,34 +3,23 @@
 'use strict'
 
 var fs = require('fs')
-const os = require('os')
-var path = require('path')
 var createServer = require('../lib/app.js')
 var argv = require('minimist')(process.argv.slice(2))
-
-var options
-
-try {
-  options = JSON.parse(fs.readFileSync('/etc/lamassu.json'))
-} catch (err) {
-  try {
-    const homePath = path.resolve(os.homedir(), '.lamassu', 'lamassu.json')
-    options = JSON.parse(fs.readFileSync(homePath))
-  } catch (err2) {
-    console.log('Missing configuration file -- exiting.')
-    process.exit(1)
-  }
-}
-
-process.env.DATABASE_URL = options.postgresql
+var options = require('../lib/options')
 
 var port = process.env.PORT || 3000
 var httpOnly = options.httpOnly || argv.http
 
 if (!httpOnly) {
-  options.https = {
-    key: fs.readFileSync(options.certKeyPath),
-    cert: fs.readFileSync(options.certPath)
+  try {
+    options.https = {
+      key: fs.readFileSync(options.certKeyPath),
+      cert: fs.readFileSync(options.certPath)
+    }
+  } catch (err) {
+    console.log('Please configure your certificate.')
+    console.log(err)
+    process.exit(1)
   }
 }
 

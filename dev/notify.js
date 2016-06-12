@@ -1,21 +1,14 @@
 require('es6-promise').polyfill()
 
-var fs = require('fs')
 var notifier = require('../lib/notifier')
 var db = require('../lib/postgresql_interface')
+var psqlUrl = require('../lib/options').postgres
 
 function getBalances () {
   return [
     {fiatBalance: 23.2345, fiatCode: 'USD', cryptoCode: 'BTC'},
     {fiatBalance: 23, fiatCode: 'USD', cryptoCode: 'ETH'}
   ]
-}
-
-var psqlUrl
-try {
-  psqlUrl = process.env.DATABASE_URL || JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql
-} catch (ex) {
-  psqlUrl = 'psql://lamassu:lamassu@localhost/lamassu'
 }
 
 db.init(psqlUrl)

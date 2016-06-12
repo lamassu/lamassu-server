@@ -1,24 +1,15 @@
 'use strict';
 
-var fs = require('fs');
 var pg = require('pg');
 var async   = require('async');
-
-var conString;
-try {
-  conString = process.env.DATABASE_URL ||
-    JSON.parse(fs.readFileSync('/etc/lamassu.json')).postgresql;
-}
-catch (ex) {
-  conString = 'psql://lamassu:lamassu@localhost/lamassu';
-}
+var psqlUrl = require('../lib/options').postgres
 
 exports.query = function query(sql, cb) {
   exports.multi([sql], cb);
 };
 
 exports.silentQuery = function query(sql, cb) {
-  pg.connect(conString, function(err, client, done) {
+  pg.connect(psqlUrl, function(err, client, done) {
     if (err) {
       console.log(err.message);
       return cb(err);
@@ -32,7 +23,7 @@ exports.silentQuery = function query(sql, cb) {
 };
 
 exports.multi = function multi(sqls, cb) {
-  pg.connect(conString, function(err, client, done) {
+  pg.connect(psqlUrl, function(err, client, done) {
     if (err) {
       console.log(err.message);
       return cb(err);
