@@ -4,7 +4,7 @@ var pg = require('pg');
 var async   = require('async');
 var psqlUrl = require('../lib/options').postgresql
 
-if (psqlUrl) {
+if (!psqlUrl) {
   console.log('No postgresql entry in config file')
   process.exit(1)
 }
