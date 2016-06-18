@@ -15,7 +15,8 @@ var exchanges = {
     plugins: {
       current: {
         ticker: 'bitpay',
-        transfer: 'bitgo'
+        transfer: 'bitgo',
+        notify: []
       },
       settings: {
         bitpay: {},
