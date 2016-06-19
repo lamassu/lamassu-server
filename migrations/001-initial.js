@@ -16,6 +16,8 @@ var exchanges = {
       current: {
         ticker: 'bitpay',
         transfer: 'bitgo',
+        email: 'smtp2go',
+        sms: 'twilio',
         notify: []
       },
       settings: {
