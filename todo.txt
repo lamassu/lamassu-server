@@ -7,3 +7,9 @@
 
 - load stuff from master config file
 - add default configuration
+
+---------------------
+
+for refactoring:
+
+migrate db
