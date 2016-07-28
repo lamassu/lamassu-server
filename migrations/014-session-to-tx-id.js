@@ -2,9 +2,9 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-//    'alter table bills rename device_fingerprint to device_id',
-//    'alter table bills rename satoshis to crypto_atoms',
-//    'alter table bills rename session_id to cash_in_txs_id',
+    'alter table bills rename device_fingerprint to device_id',
+    'alter table bills rename satoshis to crypto_atoms',
+    'alter table bills rename session_id to cash_in_txs_id',
 
     'alter table cached_responses rename device_fingerprint to device_id',
     'alter table cached_responses rename session_id to tx_id',
