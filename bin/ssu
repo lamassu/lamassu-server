@@ -17,7 +17,7 @@ if (!cmd) bail()
 function bail (error) {
   error = error || 'Command line utility for lamassu-server'
   console.log(chalk.bold(error))
-  console.log('\nssu reboot <machine-fingerprint>')
+  console.log('\nssu reboot <machine-id>')
   console.log('This will remotely reboot your lamassu-machine.')
   console.log('\nssu crypto <code> <ticker-plugin> <wallet-plugin> [<trader-plugin>]')
   console.log('This will configure a new cryptocurrency.')
@@ -54,15 +54,15 @@ switch (cmd) {
 }
 
 function reboot () {
-  var fingerprint = argv[1]
+  var deviceId = argv[1]
 
-  if (!fingerprint) {
-    console.log('Fingerprint required')
+  if (!deviceId) {
+    console.log('Machine ID required')
     process.exit(1)
   }
 
   var opts = {json: true}
-  wreck.get('http://localhost:7070/pid?fingerprint=' + fingerprint, opts, function (err, res, payload) {
+  wreck.get('http://localhost:7070/pid?device_id=' + deviceId, opts, function (err, res, payload) {
     if (err) {
       console.log('Please make sure that lamassu-server is running on this box.')
       process.exit(2)
@@ -82,7 +82,7 @@ function reboot () {
 
     var opts2 = {
       headers: {'Content-Type': 'application/json'},
-      payload: JSON.stringify({pid: pid, fingerprint: fingerprint})
+      payload: JSON.stringify({pid: pid, deviceId: deviceId})
     }
 
     wreck.post('http://localhost:7070/reboot', opts2, function (err2, res) {
@@ -111,7 +111,7 @@ function reboot () {
       }, 30000)
 
       setInterval(function () {
-        wreck.get('http://localhost:7070/pid?fingerprint=' + fingerprint, opts, function (err3, res, payload) {
+        wreck.get('http://localhost:7070/pid?device_id=' + deviceId, opts, function (err3, res, payload) {
           if (err3) {
             console.log('lamassu-server appears to be down.')
             process.exit(2)
