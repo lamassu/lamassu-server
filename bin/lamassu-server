@@ -4,7 +4,7 @@
 
 var fs = require('fs')
 var options = require('../lib/options')
-process.env.LAMASSU_ENV = process.env.LAMASSU_ENV || options.logLevel
+process.env.LAMASSU_ENV = process.env.LAMASSU_ENV || options.logLevel || 'info'
 
 var createServer = require('../lib/app.js')
 var argv = require('minimist')(process.argv.slice(2))
