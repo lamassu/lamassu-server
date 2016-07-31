@@ -14,8 +14,10 @@ var exchanges = {
     },
     plugins: {
       current: {
-        ticker: 'bitpay',
-        transfer: 'bitgo',
+        BTC: {
+          ticker: 'bitpay',
+          transfer: 'bitgo'
+        },
         email: 'smtp2go',
         sms: 'twilio',
         notify: []
