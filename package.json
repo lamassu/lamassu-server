@@ -24,7 +24,7 @@
     "lamassu-blockcypher": "~0.1.0",
     "lamassu-coinbase": "^1.0.5",
     "lamassu-coindesk": "~1.0.0",
-    "lamassu-config": "^0.4.4",
+    "lamassu-config": "lamassu/lamassu-config#alpha",
     "lamassu-geth": "lamassu/lamassu-geth",
     "lamassu-identitymind": "^1.2.9",
     "lamassu-kraken": "^1.0.3",

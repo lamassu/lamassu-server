@@ -8,8 +8,4 @@
 - load stuff from master config file
 - add default configuration
 
----------------------
-
-for refactoring:
-
-migrate db
+- either remove lamassu-config or fix link in package.json
