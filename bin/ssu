@@ -268,7 +268,7 @@ function notify () {
   var db = connect()
   return loadConfig(db)
   .then(function (config) {
-    config.exchanges.plugins.current.notify = JSON.stringify(plugins)
+    config.exchanges.plugins.current.notify = plugins
     return updateConfig(db, config)
   })
   .then(function () {
