@@ -20,13 +20,8 @@ db.one('select data from user_config where type=$1', 'exchanges')
       cashOutCommission: settings.fiatCommission || settings.commission,
       idVerificationEnabled: compliance.idVerificationEnabled,
       idVerificationLimit: compliance.idVerificationLimit,
-      currency: settings.currency,
       lowBalanceMargin: settings.lowBalanceMargin,
-      cartridges: settings.cartridges,
-      virtualCartridges: settings.virtualCartridges,
-      zeroConfLimit: settings.zeroConfLimit,
-      coins: settings.coins,
-      direction: 'cashIn'
+      zeroConfLimit: settings.zeroConfLimit
     }
   }
 

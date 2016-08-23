@@ -1,19 +1,42 @@
-{
-  "jsonSchema": {
-    "title": "Global",
-    "type": "object",
-    "required": [],
-    "properties": {
-      "commission": {"type": "number", "title": "Cash-in Commission", "minimum": 0},
-      "cashOutCommission": {"type": "number", "title": "Cash-out Commission", "minimum": 0},
-      "currency": {"type": "string", "title": "Currency"},
-      "zeroConfLimit": {"type": "number", "title": "Zero-conf Limit", "minimum": 0},
-      "fiatTxLimit": {"type": "number", "title": "Cash-out Limit", "minimum": 0},
-      "coins": {"type": "array", "title": "Crypto Coins", "items": {"type": "string"}}
-    }
+[
+  {
+    "code": "cashInTransactionLimit",
+    "display": "Cash-in tx limit",
+    "type": "integer"
   },
-  "uiSchema": {
-    "ui:order": ["commission", "cashOutCommission", "currency", "zeroConfLimit",
-      "fiatTxLimit", "coins"]
+  {
+    "code": "cashOutTransactionLimit",
+    "display": "Cash-out tx limit",
+    "type": "integer"
+  },
+  {
+    "code": "cashInCommission",
+    "display": "Cash-in commission",
+    "type": "percentage"
+  },
+  {
+    "code": "cashOutCommission",
+    "display": "Cash-out commission",
+    "type": "percentage"
+  },
+  {
+    "code": "idVerificationEnabled",
+    "display": "ID verification",
+    "type": "bool"
+  },
+  {
+    "code": "idVerificationLimit",
+    "display": "ID Verification Limit",
+    "type": "int"
+  },
+  {
+    "code": "lowBalanceMargin",
+    "display": "Low balance margin",
+    "type": "percentage"
+  },
+  {
+    "code": "zeroConfLimit",
+    "display": "Zero conf limit",
+    "type": "int"
   }
-}
+]
