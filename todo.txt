@@ -9,3 +9,19 @@
 - add default configuration
 
 - either remove lamassu-config or fix link in package.json
+
+------------------------
+
+schemas:
+
+- global crypto / global machine
+- global crypto / specific machine
+- specific crypto / global machine
+- specific crypto / specific machine
+
+- We'll have one group for config that applies to all 4
+- Machine config applies to only global crypto (machine config screen)
+- Crypto config applies to only specific crypto
+
+v update migrate-config to match lamassu.json schema
+- update machine name

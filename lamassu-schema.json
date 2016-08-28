@@ -1,42 +1,202 @@
 [
   {
-    "code": "cashInTransactionLimit",
-    "display": "Cash-in tx limit",
-    "type": "integer"
+    "group": {
+      "code": "commissions",
+      "display": "Commissions"
+    },
+    "crypto": "both",
+    "machines": "both",
+    "entries": [
+      {
+        "code": "cashInCommission",
+        "display": "Cash-in commission",
+        "type": "percentage"
+      },
+      {
+        "code": "cashOutCommission",
+        "display": "Cash-out commission",
+        "type": "percentage"
+      },
+      {
+        "code": "lowBalanceMargin",
+        "display": "Low balance margin",
+        "type": "percentage"
+      },
+      {
+        "code": "zeroConfLimit",
+        "display": "Zero conf limit",
+        "type": "integer"
+      }
+    ]
   },
   {
-    "code": "cashOutTransactionLimit",
-    "display": "Cash-out tx limit",
-    "type": "integer"
+    "group": {
+      "code": "crypto-services",
+      "display": "Crypto services"
+    },
+    "crypto": "specific",
+    "machines": "both",
+    "entries": [
+      {
+        "code": "ticker",
+        "display": "Ticker",
+        "type": "plugin",
+        "pluginCode": "ticker"
+      },
+      {
+        "code": "wallet",
+        "display": "Wallet",
+        "type": "plugin",
+        "pluginCode": "wallet"
+      },
+      {
+        "code": "exchange",
+        "display": "Exchange",
+        "type": "plugin",
+        "pluginCode": "exchange"
+      }
+    ]
   },
   {
-    "code": "cashInCommission",
-    "display": "Cash-in commission",
-    "type": "percentage"
+    "group": {
+      "code": "fiat",
+      "display": "Fiat"
+    },
+    "crypto": "global",
+    "machines": "both",
+    "entries": [
+      {
+        "code": "fiatCurrency",
+        "display": "Fiat Currency",
+        "type": "currency"
+      },
+      {
+        "code": "topCashOutDenomination",
+        "display": "Top cash-out denominations",
+        "type": "integer"
+      },
+      {
+        "code": "bottomCashOutDenomination",
+        "display": "Bottom cash-out denominations",
+        "type": "integer"
+      }
+    ]
   },
   {
-    "code": "cashOutCommission",
-    "display": "Cash-out commission",
-    "type": "percentage"
+    "group": {
+      "code": "limits",
+      "display": "Limits"
+    },
+    "crypto": "global",
+    "machines": "both",
+    "entries": [
+      {
+        "code": "cashInTransactionLimit",
+        "display": "Cash-in tx limit",
+        "type": "integer"
+      },
+      {
+        "code": "cashOutTransactionLimit",
+        "display": "Cash-out tx limit",
+        "type": "integer"
+      }
+    ]
   },
   {
-    "code": "idVerificationEnabled",
-    "display": "ID verification",
-    "type": "bool"
+    "group": {
+      "code": "compliance",
+      "display": "Compliance"
+    },
+    "crypto": "global",
+    "machines": "both",
+    "entries": [
+      {
+        "code": "idVerificationEnabled",
+        "display": "ID verification",
+        "type": "bool"
+      },
+      {
+        "code": "idVerificationLimit",
+        "display": "ID Verification Limit",
+        "type": "integer"
+      }
+    ]
   },
   {
-    "code": "idVerificationLimit",
-    "display": "ID Verification Limit",
-    "type": "int"
+    "group": {
+      "code": "languages",
+      "display": "Languages"
+    },
+    "crypto": "global",
+    "machines": "both",
+    "entries": [
+      {
+        "code": "machineLanguages",
+        "display": "Languages",
+        "type": "languages"
+      }
+    ]
   },
   {
-    "code": "lowBalanceMargin",
-    "display": "Low balance margin",
-    "type": "percentage"
+    "group": {
+      "code": "machines",
+      "display": "Machines"
+    },
+    "crypto": "global",
+    "machines": "specific",
+    "entries": [
+      {
+        "code": "machineName",
+        "display": "Name",
+        "type": "string"
+      },
+      {
+        "code": "machineLocation",
+        "display": "Location",
+        "type": "string"
+      },
+      {
+        "code": "machineLocationCoordinates",
+        "display": "Location (GPS)",
+        "type": "coordinates"
+      }
+    ]
   },
   {
-    "code": "zeroConfLimit",
-    "display": "Zero conf limit",
-    "type": "int"
+    "group": {
+      "code": "notifications",
+      "display": "Notifications"
+    },
+    "crypto": "global",
+    "machines": "global",
+    "entries": [
+      {
+        "code": "notificationsEnabled",
+        "display": "Notifications",
+        "type": "onOff"
+      },
+      {
+        "code": "notificationsEmailEnabled",
+        "display": "Email notifications",
+        "type": "onOff"
+      },
+      {
+        "code": "notificationsSMSEnabled",
+        "display": "SMS notifications",
+        "type": "onOff"
+      },
+      {
+        "code": "email",
+        "display": "Email",
+        "type": "plugin",
+        "pluginCode": "email"
+      },
+      {
+        "code": "sms",
+        "display": "SMS",
+        "type": "plugin",
+        "pluginCode": "sms"
+      }
+    ]
   }
 ]

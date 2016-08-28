@@ -7,9 +7,10 @@ const psqlUrl = require('../lib/options').postgresql
 
 const db = pgp(psqlUrl)
 
-db.one('select data from user_config where type=$1', 'exchanges')
-.then(data => {
-  const config = data.data
+db.many('select data from user_config', 'exchanges')
+.then(rows => {
+  const config = rows.filter(r => r.type === 'exchanges')[0].data
+  const brain = rows.filter(r => r.type === 'unit')[0].data
   const settings = config.exchanges.settings
   const compliance = settings.compliance
   const newConfig = {
@@ -21,7 +22,12 @@ db.one('select data from user_config where type=$1', 'exchanges')
       idVerificationEnabled: compliance.idVerificationEnabled,
       idVerificationLimit: compliance.idVerificationLimit,
       lowBalanceMargin: settings.lowBalanceMargin,
-      zeroConfLimit: settings.zeroConfLimit
+      zeroConfLimit: settings.zeroConfLimit,
+      fiatCurrency: settings.currency,
+      topCashOutDenomination: settings.cartridges[0],
+      bottomCashOutDenomination: settings.cartridges[1],
+      virtualCashOutDenomination: settings.virtualCartridges[0],
+      machineLanguages: brain.locale.localeInfo.primaryLocales
     }
   }
 
