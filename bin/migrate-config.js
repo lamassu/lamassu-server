@@ -27,8 +27,10 @@ db.many('select data from user_config', 'exchanges')
       topCashOutDenomination: settings.cartridges[0],
       bottomCashOutDenomination: settings.cartridges[1],
       virtualCashOutDenomination: settings.virtualCartridges[0],
-      machineLanguages: brain.locale.localeInfo.primaryLocales
-    }
+      machineLanguages: brain.locale.localeInfo.primaryLocales,
+      coins: settings.coins
+    },
+    accounts: settings.plugins.settings
   }
 
   db.none('insert into user_config (type, data) values ($1, $2)', ['global', newConfig])

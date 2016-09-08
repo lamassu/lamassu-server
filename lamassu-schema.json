@@ -1,201 +1,198 @@
 [
   {
-    "group": {
-      "code": "commissions",
-      "display": "Commissions"
-    },
-    "crypto": "both",
-    "machines": "both",
+    "code": "cryptos",
+    "display": "Supported cryptocurrencies",
+    "cryptoScope": "global",
+    "machineScope": "both",
+    "entries": [
+      {
+        "code": "cryptos",
+        "display": "Cryptocurrencies",
+        "fieldType": "crypto"
+      }
+    ]
+  },
+  {
+    "code": "commissions",
+    "display": "Commissions",
+    "cryptoScope": "both",
+    "machineScope": "both",
     "entries": [
       {
         "code": "cashInCommission",
         "display": "Cash-in commission",
-        "type": "percentage"
+        "fieldType": "percentage"
       },
       {
         "code": "cashOutCommission",
         "display": "Cash-out commission",
-        "type": "percentage"
+        "fieldType": "percentage"
       },
       {
         "code": "lowBalanceMargin",
         "display": "Low balance margin",
-        "type": "percentage"
+        "fieldType": "percentage"
       },
       {
         "code": "zeroConfLimit",
         "display": "Zero conf limit",
-        "type": "integer"
+        "fieldType": "integer"
       }
     ]
   },
   {
-    "group": {
-      "code": "crypto-services",
-      "display": "Crypto services"
-    },
-    "crypto": "specific",
-    "machines": "both",
+    "code": "crypto-services",
+    "display": "Crypto services",
+    "cryptoScope": "specific",
+    "machineScope": "both",
     "entries": [
       {
         "code": "ticker",
         "display": "Ticker",
-        "type": "plugin",
-        "pluginCode": "ticker"
+        "fieldType": "account",
+        "accountClass": "ticker"
       },
       {
         "code": "wallet",
         "display": "Wallet",
-        "type": "plugin",
-        "pluginCode": "wallet"
+        "fieldType": "account",
+        "accountClass": "wallet"
       },
       {
         "code": "exchange",
         "display": "Exchange",
-        "type": "plugin",
-        "pluginCode": "exchange"
+        "fieldType": "account",
+        "accountClass": "exchange"
       }
     ]
   },
   {
-    "group": {
-      "code": "fiat",
-      "display": "Fiat"
-    },
-    "crypto": "global",
-    "machines": "both",
+    "code": "fiat",
+    "display": "Fiat",
+    "cryptoScope": "global",
+    "machineScope": "both",
     "entries": [
       {
         "code": "fiatCurrency",
         "display": "Fiat Currency",
-        "type": "currency"
+        "fieldType": "currency"
       },
       {
         "code": "topCashOutDenomination",
-        "display": "Top cash-out denominations",
-        "type": "integer"
+        "display": "Top cash-out denomination",
+        "fieldType": "integer"
       },
       {
         "code": "bottomCashOutDenomination",
-        "display": "Bottom cash-out denominations",
-        "type": "integer"
+        "display": "Bottom cash-out denomination",
+        "fieldType": "integer"
+      },
+      {
+        "code": "virtualCashOutDenomination",
+        "display": "Virtual cash-out denomination",
+        "fieldType": "integer"
       }
     ]
   },
   {
-    "group": {
-      "code": "limits",
-      "display": "Limits"
-    },
-    "crypto": "global",
-    "machines": "both",
+    "code": "limits",
+    "display": "Limits",
+    "cryptoScope": "global",
+    "machineScope": "both",
     "entries": [
       {
         "code": "cashInTransactionLimit",
         "display": "Cash-in tx limit",
-        "type": "integer"
+        "fieldType": "integer"
       },
       {
         "code": "cashOutTransactionLimit",
         "display": "Cash-out tx limit",
-        "type": "integer"
+        "fieldType": "integer"
       }
     ]
   },
   {
-    "group": {
-      "code": "compliance",
-      "display": "Compliance"
-    },
-    "crypto": "global",
-    "machines": "both",
+    "code": "compliance",
+    "display": "Compliance",
+    "cryptoScope": "global",
+    "machineScope": "both",
     "entries": [
       {
         "code": "idVerificationEnabled",
         "display": "ID verification",
-        "type": "bool"
+        "fieldType": "bool"
       },
       {
         "code": "idVerificationLimit",
         "display": "ID Verification Limit",
-        "type": "integer"
+        "fieldType": "integer"
       }
     ]
   },
   {
-    "group": {
-      "code": "languages",
-      "display": "Languages"
-    },
-    "crypto": "global",
-    "machines": "both",
+    "code": "languages",
+    "display": "Languages",
+    "cryptoScope": "global",
+    "machineScope": "both",
     "entries": [
       {
         "code": "machineLanguages",
         "display": "Languages",
-        "type": "languages"
+        "fieldType": "languages"
       }
     ]
   },
   {
-    "group": {
-      "code": "machines",
-      "display": "Machines"
-    },
-    "crypto": "global",
-    "machines": "specific",
+    "code": "machines",
+    "display": "Machines",
+    "cryptoScope": "global",
+    "machineScope": "specific",
     "entries": [
       {
         "code": "machineName",
         "display": "Name",
-        "type": "string"
+        "fieldType": "string"
       },
       {
         "code": "machineLocation",
         "display": "Location",
-        "type": "string"
-      },
-      {
-        "code": "machineLocationCoordinates",
-        "display": "Location (GPS)",
-        "type": "coordinates"
+        "fieldType": "string"
       }
     ]
   },
   {
-    "group": {
-      "code": "notifications",
-      "display": "Notifications"
-    },
-    "crypto": "global",
-    "machines": "global",
+    "code": "notifications",
+    "display": "Notifications",
+    "cryptoScope": "global",
+    "machineScope": "global",
     "entries": [
       {
         "code": "notificationsEnabled",
         "display": "Notifications",
-        "type": "onOff"
+        "fieldType": "onOff"
       },
       {
         "code": "notificationsEmailEnabled",
         "display": "Email notifications",
-        "type": "onOff"
+        "fieldType": "onOff"
       },
       {
         "code": "notificationsSMSEnabled",
         "display": "SMS notifications",
-        "type": "onOff"
+        "fieldType": "onOff"
       },
       {
         "code": "email",
         "display": "Email",
-        "type": "plugin",
-        "pluginCode": "email"
+        "fieldType": "account",
+        "accountClass": "email"
       },
       {
         "code": "sms",
         "display": "SMS",
-        "type": "plugin",
-        "pluginCode": "sms"
+        "fieldType": "account",
+        "accountClass": "sms"
       }
     ]
   }
