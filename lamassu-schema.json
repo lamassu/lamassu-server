@@ -8,7 +8,8 @@
       {
         "code": "cryptos",
         "display": "Cryptocurrencies",
-        "fieldType": "crypto"
+        "fieldType": "crypto",
+        "fieldClass": null
       }
     ]
   },
@@ -21,22 +22,26 @@
       {
         "code": "cashInCommission",
         "display": "Cash-in commission",
-        "fieldType": "percentage"
+        "fieldType": "percentage",
+        "fieldClass": null
       },
       {
         "code": "cashOutCommission",
         "display": "Cash-out commission",
-        "fieldType": "percentage"
+        "fieldType": "percentage",
+        "fieldClass": null
       },
       {
         "code": "lowBalanceMargin",
         "display": "Low balance margin",
-        "fieldType": "percentage"
+        "fieldType": "percentage",
+        "fieldClass": null
       },
       {
         "code": "zeroConfLimit",
         "display": "Zero conf limit",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       }
     ]
   },
@@ -50,19 +55,19 @@
         "code": "ticker",
         "display": "Ticker",
         "fieldType": "account",
-        "accountClass": "ticker"
+        "fieldClass": "ticker"
       },
       {
         "code": "wallet",
         "display": "Wallet",
         "fieldType": "account",
-        "accountClass": "wallet"
+        "fieldClass": "wallet"
       },
       {
         "code": "exchange",
         "display": "Exchange",
         "fieldType": "account",
-        "accountClass": "exchange"
+        "fieldClass": "exchange"
       }
     ]
   },
@@ -75,22 +80,26 @@
       {
         "code": "fiatCurrency",
         "display": "Fiat Currency",
-        "fieldType": "currency"
+        "fieldType": "currency",
+        "fieldClass": null
       },
       {
         "code": "topCashOutDenomination",
         "display": "Top cash-out denomination",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       },
       {
         "code": "bottomCashOutDenomination",
         "display": "Bottom cash-out denomination",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       },
       {
         "code": "virtualCashOutDenomination",
         "display": "Virtual cash-out denomination",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       }
     ]
   },
@@ -103,12 +112,14 @@
       {
         "code": "cashInTransactionLimit",
         "display": "Cash-in tx limit",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       },
       {
         "code": "cashOutTransactionLimit",
         "display": "Cash-out tx limit",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       }
     ]
   },
@@ -121,12 +132,14 @@
       {
         "code": "idVerificationEnabled",
         "display": "ID verification",
-        "fieldType": "bool"
+        "fieldType": "bool",
+        "fieldClass": null
       },
       {
         "code": "idVerificationLimit",
         "display": "ID Verification Limit",
-        "fieldType": "integer"
+        "fieldType": "integer",
+        "fieldClass": null
       }
     ]
   },
@@ -139,7 +152,8 @@
       {
         "code": "machineLanguages",
         "display": "Languages",
-        "fieldType": "languages"
+        "fieldType": "language",
+        "fieldClass": null
       }
     ]
   },
@@ -152,12 +166,14 @@
       {
         "code": "machineName",
         "display": "Name",
-        "fieldType": "string"
+        "fieldType": "string",
+        "fieldClass": null
       },
       {
         "code": "machineLocation",
         "display": "Location",
-        "fieldType": "string"
+        "fieldType": "string",
+        "fieldClass": null
       }
     ]
   },
@@ -170,29 +186,32 @@
       {
         "code": "notificationsEnabled",
         "display": "Notifications",
-        "fieldType": "onOff"
+        "fieldType": "onOff",
+        "fieldClass": null
       },
       {
         "code": "notificationsEmailEnabled",
         "display": "Email notifications",
-        "fieldType": "onOff"
+        "fieldType": "onOff",
+        "fieldClass": null
       },
       {
         "code": "notificationsSMSEnabled",
         "display": "SMS notifications",
-        "fieldType": "onOff"
+        "fieldType": "onOff",
+        "fieldClass": null
       },
       {
         "code": "email",
         "display": "Email",
         "fieldType": "account",
-        "accountClass": "email"
+        "fieldClass": "email"
       },
       {
         "code": "sms",
         "display": "SMS",
         "fieldType": "account",
-        "accountClass": "sms"
+        "fieldClass": "sms"
       }
     ]
   }
