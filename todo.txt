@@ -38,7 +38,7 @@ v update migrate-config to match lamassu.json schema
 - look into how each plugin is used
     - info plugin not used
 
-- need either transitive closure of all cryptos accross machines,
+- need either transitive closure of all cryptos across machines,
     or add new plugin when needed
 - currently we're looking at all cryptos, so this is probably easier
 

@@ -46,7 +46,7 @@
     ]
   },
   {
-    "code": "crypto-services",
+    "code": "cryptoServices",
     "display": "Crypto services",
     "cryptoScope": "specific",
     "machineScope": "both",
