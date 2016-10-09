@@ -212,6 +212,12 @@
         "display": "SMS",
         "fieldType": "account",
         "fieldClass": "sms"
+      },
+      {
+        "code": "lowBalanceThreshold",
+        "display": "Low Balance Threshold",
+        "fieldType": "integer",
+        "fieldClass": null
       }
     ]
   }
