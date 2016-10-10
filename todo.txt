@@ -89,3 +89,8 @@ options: configure per machine; configure per crypto/fiat
    currencies now. (passed in on trade -- we assume that we're using machine currency, which may not be true)
 
 - consider defining exchange fiat currency in exchange account config, we don't pass in fiat amount, anyway
+
+-----------------------------
+
+- convert result to actual value, not record
+- default values
