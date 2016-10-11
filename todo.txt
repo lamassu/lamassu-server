@@ -92,5 +92,7 @@ options: configure per machine; configure per crypto/fiat
 
 -----------------------------
 
-- convert result to actual value, not record
 - default values
+- server side validation, including required
+    - need to think hard about how to do required checks for scopes
+- what to do if validation fails?

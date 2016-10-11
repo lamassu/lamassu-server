@@ -27,9 +27,11 @@ if (!httpOnly) {
 
 options.mock = argv.mock
 
-var server = createServer(options)
+console.log('DEBUG23')
 
-server.listen(port, function () {
-  console.log('lamassu-server listening on port ' + port + ' ' +
-    (httpOnly ? '(http)' : '(https)'))
+createServer(options)
+.then(server => {
+  console.log('DEBUG22')
+  return server.listen(port, () => console.log('lamassu-server listening on port ' +
+    port + ' ' + (httpOnly ? '(http)' : '(https)')))
 })
