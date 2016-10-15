@@ -97,4 +97,5 @@ options: configure per machine; configure per crypto/fiat
     - need to think hard about how to do required checks for scopes
 - what to do if validation fails?
 
-- need to rethink cachedConfig, don't use global variables
+- need to rethink cachedConfig, don't use global variables [later]
+- add notifications to admin
