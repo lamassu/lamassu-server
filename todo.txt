@@ -98,4 +98,8 @@ options: configure per machine; configure per crypto/fiat
 - what to do if validation fails?
 
 - need to rethink cachedConfig, don't use global variables [later]
-- add notifications to admin
+
+-------------
+
+- fiatBalance should really be per machine
+
