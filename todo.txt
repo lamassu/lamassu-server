@@ -99,7 +99,6 @@ options: configure per machine; configure per crypto/fiat
 
 - need to rethink cachedConfig, don't use global variables [later]
 
--------------
+- cartridge counts -- where to store? already in db, not ideal but can fix later
 
-- fiatBalance should really be per machine
-
+- twoWayMode should be per crypto

@@ -1,19 +1,5 @@
 [
   {
-    "code": "cryptos",
-    "display": "Supported cryptocurrencies",
-    "cryptoScope": "global",
-    "machineScope": "both",
-    "entries": [
-      {
-        "code": "cryptos",
-        "display": "Cryptocurrencies",
-        "fieldType": "crypto",
-        "fieldClass": null
-      }
-    ]
-  },
-  {
     "code": "commissions",
     "display": "Commissions",
     "cryptoScope": "both",
@@ -72,11 +58,17 @@
     ]
   },
   {
-    "code": "fiat",
-    "display": "Fiat",
+    "code": "currencies",
+    "display": "Currencies",
     "cryptoScope": "global",
     "machineScope": "both",
     "entries": [
+      {
+        "code": "cryptoCurrencies",
+        "display": "Crypto Currencies",
+        "fieldType": "cryptoCurrency",
+        "fieldClass": null
+      },
       {
         "code": "fiatCurrency",
         "display": "Fiat Currency",
@@ -132,7 +124,7 @@
       {
         "code": "idVerificationEnabled",
         "display": "ID verification",
-        "fieldType": "bool",
+        "fieldType": "onOff",
         "fieldClass": null
       },
       {
