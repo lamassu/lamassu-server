@@ -102,3 +102,5 @@ options: configure per machine; configure per crypto/fiat
 - cartridge counts -- where to store? already in db, not ideal but can fix later
 
 - twoWayMode should be per crypto
+
+- add cassette count handling in machines/actions in admin
