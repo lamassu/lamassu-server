@@ -30,6 +30,8 @@ options.mock = argv.mock
 
 console.log('DEBUG23')
 
+process.on('unhandledRejection', err => console.log(err.stack))
+
 createServer(options)
 .then(server => {
   console.log('DEBUG22')
