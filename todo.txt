@@ -104,3 +104,8 @@ options: configure per machine; configure per crypto/fiat
 - twoWayMode should be per crypto
 
 - add cassette count handling in machines/actions in admin
+
+--------------------------------
+
+- need to create CA: http://stackoverflow.com/questions/19665863/how-do-i-use-a-self-signed-certificate-for-a-https-node-js-server
+
