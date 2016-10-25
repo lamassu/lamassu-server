@@ -107,5 +107,5 @@ options: configure per machine; configure per crypto/fiat
 
 --------------------------------
 
-- need to create CA: http://stackoverflow.com/questions/19665863/how-do-i-use-a-self-signed-certificate-for-a-https-node-js-server
+v need to create CA: http://stackoverflow.com/questions/19665863/how-do-i-use-a-self-signed-certificate-for-a-https-node-js-server
 
