@@ -109,3 +109,8 @@ options: configure per machine; configure per crypto/fiat
 
 v need to create CA: http://stackoverflow.com/questions/19665863/how-do-i-use-a-self-signed-certificate-for-a-https-node-js-server
 
+--------------------------------
+
+- consistent error handling
+- usage of http status codes (good for got)
+- finish idempotency for all calls
