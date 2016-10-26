@@ -16,7 +16,7 @@ if (!httpOnly) {
   try {
     options.https = {
       key: fs.readFileSync(options.certKeyPath),
-      cert: fs.readFileSync(options.certPath),
+      cert: fs.readFileSync(options.certPath)
     }
   } catch (err) {
     console.log('Please configure your certificate.')

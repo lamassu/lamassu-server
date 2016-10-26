@@ -59,5 +59,7 @@
   "scripts": {
     "test": "mocha --recursive test"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "http-proxy": "^1.15.2"
+  }
 }
