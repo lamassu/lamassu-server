@@ -111,6 +111,6 @@ v need to create CA: http://stackoverflow.com/questions/19665863/how-do-i-use-a-
 
 --------------------------------
 
-- consistent error handling
-- usage of http status codes (good for got)
-- finish idempotency for all calls
+v consistent error handling
+v usage of http status codes (good for got)
+v finish idempotency for all calls
