@@ -117,4 +117,6 @@ v finish idempotency for all calls
 
 -------------
 
-test pending action (action needs to take a while so we can test)
+- test pending action (action needs to take a while so we can test)
+- defaults and validation
+- tweak install script
