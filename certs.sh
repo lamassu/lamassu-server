@@ -1,13 +1,11 @@
-# make directories to work from
+DOMAIN=localhost
+
 mkdir -p certs
 
-# Create your very own Root Certificate Authority
 openssl genrsa \
   -out certs/root-ca.key.pem \
   4096
 
-# Self-sign your Root Certificate Authority
-# Since this is private, the details can be as bogus as you like
 openssl req \
   -x509 \
   -new \
@@ -17,9 +15,6 @@ openssl req \
   -out certs/root-ca.crt.pem \
   -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator CA/CN=lamassu-operator.is"
 
-# Create a Device Certificate for each domain,
-# such as example.com, *.example.com, awesome.example.com
-# NOTE: You MUST match CN to the domain name or ip address you want to use
 openssl genrsa \
   -out certs/server.key.pem \
   4096
@@ -28,7 +23,7 @@ openssl genrsa \
 openssl req -new \
   -key certs/server.key.pem \
   -out certs/server.csr.pem \
-  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=localhost"
+  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=$DOMAIN"
 
 # Sign the request from Device with your Root CA
 openssl x509 \

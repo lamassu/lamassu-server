@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const path = require('path')
+const migrate = require('migrate')
+
+const migrateDir = path.resolve(__dirname, '..', 'migrations')
+const migrateConfig = path.resolve(migrateDir, '.migrate')
+const set = migrate.load(migrateConfig, migrateDir)
+
+set.up(err => {
+  if (err) {
+    console.log('DB Migration failed: %s', err)
+    process.exit(1)
+  }
+
+  console.log('DB Migration succeeded.')
+  process.exit(0)
+})
