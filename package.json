@@ -5,9 +5,6 @@
   "version": "3.1.11",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
-  "engines": {
-    "node": "4.4.x"
-  },
   "dependencies": {
     "async": "~0.2.9",
     "bignumber.js": "^2.3.0",
