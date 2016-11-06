@@ -6,6 +6,7 @@
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
+    "ajv": "^4.8.2",
     "async": "~0.2.9",
     "bignumber.js": "^2.3.0",
     "body-parser": "^1.15.1",
@@ -21,6 +22,7 @@
     "lamassu-config": "lamassu/lamassu-config#alpha",
     "lamassu-identitymind": "^1.2.9",
     "lamassu-kraken": "^1.0.3",
+    "lamassu-mock-wallet": "^1.0.0",
     "lamassu-smtp2go": "^1.0.3",
     "lamassu-twilio": "^1.1.1",
     "migrate": "^0.2.2",
@@ -48,6 +50,7 @@
     "test": "mocha --recursive test"
   },
   "devDependencies": {
-    "http-proxy": "^1.15.2"
+    "http-proxy": "^1.15.2",
+    "json-schema-generator": "^2.0.3"
   }
 }

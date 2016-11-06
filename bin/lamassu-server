@@ -1,39 +1,7 @@
 #!/usr/bin/env node
 
-'use strict'
-
-var fs = require('fs')
-var options = require('../lib/options')
-process.env.LAMASSU_ENV = process.env.LAMASSU_ENV || options.logLevel || 'info'
-
-var createServer = require('../lib/app.js')
-var argv = require('minimist')(process.argv.slice(2))
-
-var port = process.env.PORT || 3000
-var httpOnly = options.httpOnly || argv.http
-
-if (!httpOnly) {
-  try {
-    options.https = {
-      key: fs.readFileSync(options.keyPath),
-      cert: fs.readFileSync(options.certPath)
-    }
-  } catch (err) {
-    console.log('Please configure your certificate.')
-    console.log(err)
-    process.exit(1)
-  }
-}
-
-options.mock = argv.mock
-
-console.log('DEBUG23')
+const app = require('../lib/app')
 
 process.on('unhandledRejection', err => console.log(err.stack))
 
-createServer(options)
-.then(server => {
-  console.log('DEBUG22')
-  return server.listen(port, () => console.log('lamassu-server listening on port ' +
-    port + ' ' + (httpOnly ? '(http)' : '(https)')))
-})
+app.run()
