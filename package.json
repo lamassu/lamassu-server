@@ -42,8 +42,6 @@
   "bin": {
     "lamassu-server": "./bin/lamassu-server",
     "lamassu-migrate": "./bin/lamassu-migrate",
-    "ssu-raqia": "./bin/ssu-raqia",
-    "ssu": "./bin/ssu",
     "hkdf": "./bin/hkdf"
   },
   "scripts": {

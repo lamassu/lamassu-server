@@ -15,7 +15,7 @@ var httpOnly = options.httpOnly || argv.http
 if (!httpOnly) {
   try {
     options.https = {
-      key: fs.readFileSync(options.certKeyPath),
+      key: fs.readFileSync(options.keyPath),
       cert: fs.readFileSync(options.certPath)
     }
   } catch (err) {
