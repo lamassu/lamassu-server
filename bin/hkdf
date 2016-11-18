@@ -8,8 +8,8 @@ const label = process.argv[2]
 const masterSeedHex = process.argv[3].trim()
 
 if (process.argv.length !== 4) {
-  console.log('hdkf <label> <masterKey>')
-  console.log('masterKey should be in hex encoding.')
+  console.error('hdkf <label> <masterKey>')
+  console.error('masterKey should be in hex encoding.')
   process.exit(3)
 }
 

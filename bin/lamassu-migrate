@@ -9,7 +9,7 @@ const set = migrate.load(migrateConfig, migrateDir)
 
 set.up(err => {
   if (err) {
-    console.log('DB Migration failed: %s', err)
+    console.error('DB Migration failed: %s', err)
     process.exit(1)
   }
 

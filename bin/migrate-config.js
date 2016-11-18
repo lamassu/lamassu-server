@@ -39,7 +39,7 @@ db.many('select data from user_config', 'exchanges')
     process.exit(0)
   })
   .catch(err => {
-    console.log('Error: %s', err)
+    console.error('Error: %s', err)
     process.exit(1)
   })
 })
