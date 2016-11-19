@@ -1301,6 +1301,10 @@ referrer-policy@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/referrer-policy/-/referrer-policy-1.0.0.tgz#f60eedc92f942b01a6118121ec932d66e8fd7e14"
 
+reoccur:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/reoccur/-/reoccur-1.0.0.tgz#62578914654cfe7583caf7a609ed30a3e9a4197d"
+
 repeating@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/repeating/-/repeating-2.0.1.tgz#5214c53a926d3552707527fbab415dbc08d06dda"

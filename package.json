@@ -35,6 +35,7 @@
     "pify": "^2.3.0",
     "pretty-ms": "^2.1.0",
     "ramda": "^0.21.0",
+    "reoccur": "^1.0.0",
     "winston": "^2.3.0"
   },
   "repository": {
