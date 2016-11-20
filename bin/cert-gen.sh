@@ -20,7 +20,7 @@ mkdir -p $SEEDS_DIR >> $LOG_FILE 2>&1
 SEED=$(openssl rand -hex 32)
 echo $SEED > $SEED_FILE
 
-echo "Generating SSL certificates (takes a few seconds)..."
+echo "Generating SSL certificates..."
 
 CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
 CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
@@ -33,6 +33,7 @@ openssl genrsa \
 
 openssl req \
   -x509 \
+  -sha256 \
   -new \
   -nodes \
   -key $CA_KEY_PATH \
@@ -48,7 +49,11 @@ openssl genrsa \
 openssl req -new \
   -key $SERVER_KEY_PATH \
   -out /tmp/Lamassu_OP.csr.pem \
-  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=$DOMAIN" \
+  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=$IP" \
+  -reqexts SAN \
+  -sha256 \
+  -config <(cat /etc/ssl/openssl.cnf \
+      <(printf "[SAN]\nsubjectAltName=IP.1:$IP")) \
   >> $LOG_FILE 2>&1
 
 openssl x509 \
@@ -57,6 +62,9 @@ openssl x509 \
   -CAkey $CA_KEY_PATH \
   -CAcreateserial \
   -out $SERVER_CERT_PATH \
+  -extfile <(cat /etc/ssl/openssl.cnf \
+      <(printf "[SAN]\nsubjectAltName=IP.1:$IP")) \
+  -extensions SAN \
   -days 3650 >> $LOG_FILE 2>&1
 
 rm /tmp/Lamassu_OP.csr.pem
