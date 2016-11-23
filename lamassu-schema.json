@@ -58,6 +58,26 @@
     ]
   },
   {
+    "code": "extraServices",
+    "display": "Extra services",
+    "cryptoScope": "global",
+    "machineScope": "global",
+    "entries": [
+      {
+        "code": "sms",
+        "display": "SMS gateway",
+        "fieldType": "account",
+        "fieldClass": "sms"
+      },
+      {
+        "code": "email",
+        "display": "Email gateway",
+        "fieldType": "account",
+        "fieldClass": "email"
+      }
+    ]
+  },
+  {
     "code": "currencies",
     "display": "Currencies",
     "cryptoScope": "global",
@@ -122,10 +142,22 @@
     "machineScope": "both",
     "entries": [
       {
+        "code": "smsVerificationEnabled",
+        "display": "SMS verification",
+        "fieldType": "onOff",
+        "fieldClass": null
+      },
+      {
         "code": "idVerificationEnabled",
         "display": "ID verification",
         "fieldType": "onOff",
         "fieldClass": null
+      },
+      {
+        "code": "idVerifier",
+        "display": "ID verify service",
+        "fieldType": "account",
+        "fieldClass": "idVerifier"
       },
       {
         "code": "idVerificationLimit",
@@ -192,18 +224,6 @@
         "display": "SMS notifications",
         "fieldType": "onOff",
         "fieldClass": null
-      },
-      {
-        "code": "email",
-        "display": "Email",
-        "fieldType": "account",
-        "fieldClass": "email"
-      },
-      {
-        "code": "sms",
-        "display": "SMS",
-        "fieldType": "account",
-        "fieldClass": "sms"
       },
       {
         "code": "lowBalanceThreshold",

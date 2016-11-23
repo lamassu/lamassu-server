@@ -850,9 +850,17 @@ lamassu-kraken@^1.0.3:
     lodash "^4.8.1"
     promptly "^1.1.0"
 
+lamassu-mock-id-verify:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/lamassu-mock-id-verify/-/lamassu-mock-id-verify-1.0.1.tgz#f73a7aef12023b914868d65f602ba7b9d1dc8257"
+
+lamassu-mock-sms:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/lamassu-mock-sms/-/lamassu-mock-sms-1.0.1.tgz#a52b17cf646b5a132b69e94aeb50cc30cb43bc50"
+
 lamassu-mock-wallet:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/lamassu-mock-wallet/-/lamassu-mock-wallet-1.0.0.tgz#6d3ab723332e814fd50463c4917db1ce398845a8"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/lamassu-mock-wallet/-/lamassu-mock-wallet-1.0.3.tgz#1aa9bdf228e38c6916e2ba682bc07c05924533fe"
 
 lamassu-smtp2go@^1.0.3:
   version "1.0.3"
