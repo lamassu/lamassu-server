@@ -7,7 +7,6 @@
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "ajv": "^4.9.0",
-    "async": "^2.1.2",
     "bignumber.js": "^3.0.0",
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
@@ -16,6 +15,7 @@
     "lamassu-bitcoind": "https://github.com/lamassu/lamassu-bitcoind/tarball/alpha",
     "lamassu-bitgo": "https://github.com/lamassu/lamassu-bitgo/tarball/alpha",
     "lamassu-bitpay": "~1.0.0",
+    "lamassu-bitstamp": "https://github.com/lamassu/lamassu-bitstamp/tarball/alpha",
     "lamassu-coindesk": "^1.0.4",
     "lamassu-mailjet": "^1.0.0",
     "lamassu-mock-id-verify": "^1.0.1",
