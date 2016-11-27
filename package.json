@@ -22,6 +22,7 @@
     "lamassu-mock-sms": "^1.0.1",
     "lamassu-mock-wallet": "^1.0.3",
     "lamassu-twilio": "^1.1.3",
+    "mem": "^1.1.0",
     "migrate": "^0.2.2",
     "minimist": "^1.2.0",
     "morgan": "^1.7.0",
