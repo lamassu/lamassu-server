@@ -92,7 +92,7 @@
       {
         "code": "fiatCurrency",
         "display": "Fiat Currency",
-        "fieldType": "currency",
+        "fieldType": "fiatCurrency",
         "fieldClass": null
       },
       {
