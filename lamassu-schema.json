@@ -9,25 +9,36 @@
         "code": "cashInCommission",
         "display": "Cash-in commission",
         "fieldType": "percentage",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "cashOutCommission",
         "display": "Cash-out commission",
         "fieldType": "percentage",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "lowBalanceMargin",
         "display": "Low balance margin",
         "fieldType": "percentage",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
+      },
+      {
+        "code": "cashOut",
+        "display": "Cash-out enabled",
+        "fieldType": "onOff",
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "zeroConfLimit",
         "display": "Zero conf limit",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       }
     ]
   },
@@ -35,25 +46,29 @@
     "code": "cryptoServices",
     "display": "Crypto services",
     "cryptoScope": "specific",
-    "machineScope": "both",
+    "machineScope": "global",
     "entries": [
       {
         "code": "ticker",
         "display": "Ticker",
         "fieldType": "account",
-        "fieldClass": "ticker"
-      },
+        "fieldClass": "ticker",
+        "required": true
+    },
       {
         "code": "wallet",
         "display": "Wallet",
         "fieldType": "account",
-        "fieldClass": "wallet"
+        "fieldClass": "wallet",
+        "required": true
+
       },
       {
         "code": "exchange",
         "display": "Exchange",
         "fieldType": "account",
-        "fieldClass": "exchange"
+        "fieldClass": "exchange",
+        "required": false
       }
     ]
   },
@@ -67,13 +82,15 @@
         "code": "sms",
         "display": "SMS gateway",
         "fieldType": "account",
-        "fieldClass": "sms"
+        "fieldClass": "sms",
+        "required": false
       },
       {
         "code": "email",
         "display": "Email gateway",
         "fieldType": "account",
-        "fieldClass": "email"
+        "fieldClass": "email",
+        "required": false
       }
     ]
   },
@@ -87,31 +104,36 @@
         "code": "cryptoCurrencies",
         "display": "Crypto Currencies",
         "fieldType": "cryptoCurrency",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "fiatCurrency",
         "display": "Fiat Currency",
         "fieldType": "fiatCurrency",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "topCashOutDenomination",
         "display": "Top cash-out denomination",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": false
       },
       {
         "code": "bottomCashOutDenomination",
         "display": "Bottom cash-out denomination",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": false
       },
       {
         "code": "virtualCashOutDenomination",
         "display": "Virtual cash-out denomination",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": false
       }
     ]
   },
@@ -125,13 +147,15 @@
         "code": "cashInTransactionLimit",
         "display": "Cash-in tx limit",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "cashOutTransactionLimit",
         "display": "Cash-out tx limit",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": false
       }
     ]
   },
@@ -145,25 +169,29 @@
         "code": "smsVerificationEnabled",
         "display": "SMS verification",
         "fieldType": "onOff",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "idVerificationEnabled",
         "display": "ID verification",
         "fieldType": "onOff",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "idVerifier",
         "display": "ID verify service",
         "fieldType": "account",
-        "fieldClass": "idVerifier"
+        "fieldClass": "idVerifier",
+        "required": false
       },
       {
         "code": "idVerificationLimit",
         "display": "ID Verification Limit",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": false
       }
     ]
   },
@@ -177,7 +205,8 @@
         "code": "machineLanguages",
         "display": "Languages",
         "fieldType": "language",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       }
     ]
   },
@@ -211,25 +240,29 @@
         "code": "notificationsEnabled",
         "display": "Notifications",
         "fieldType": "onOff",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "notificationsEmailEnabled",
         "display": "Email notifications",
         "fieldType": "onOff",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "notificationsSMSEnabled",
         "display": "SMS notifications",
         "fieldType": "onOff",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": true
       },
       {
         "code": "lowBalanceThreshold",
         "display": "Low Balance Threshold",
         "fieldType": "integer",
-        "fieldClass": null
+        "fieldClass": null,
+        "required": false
       }
     ]
   }
