@@ -14,14 +14,13 @@
     "helmet": "^3.1.0",
     "lamassu-bitcoind": "https://github.com/lamassu/lamassu-bitcoind/tarball/alpha",
     "lamassu-bitgo": "https://github.com/lamassu/lamassu-bitgo/tarball/alpha",
-    "lamassu-bitpay": "~1.0.0",
+    "lamassu-bitpay": "https://github.com/lamassu/lamassu-bitpay/tarball/alpha",
     "lamassu-bitstamp": "https://github.com/lamassu/lamassu-bitstamp/tarball/alpha",
-    "lamassu-coindesk": "^1.0.4",
-    "lamassu-mailjet": "^1.0.0",
-    "lamassu-mock-id-verify": "^1.0.1",
-    "lamassu-mock-sms": "^1.0.1",
-    "lamassu-mock-wallet": "^1.0.3",
-    "lamassu-twilio": "^1.1.3",
+    "lamassu-mailjet": "https://github.com/lamassu/lamassu-mailjet/tarball/master",
+    "lamassu-mock-id-verify": "https://github.com/lamassu/lamassu-mock-id-verify/tarball/master",
+    "lamassu-mock-sms": "https://github.com/lamassu/lamassu-mock-sms/tarball/master",
+    "lamassu-mock-wallet": "https://github.com/lamassu/lamassu-mock-wallet/tarball/master",
+    "lamassu-twilio": "https://github.com/lamassu/lamassu-twilio/tarball/master",
     "mem": "^1.1.0",
     "migrate": "^0.2.2",
     "minimist": "^1.2.0",
@@ -47,10 +46,7 @@
     "hkdf": "./bin/hkdf"
   },
   "scripts": {
-    "test": "mocha --recursive test"
   },
   "devDependencies": {
-    "http-proxy": "^1.15.2",
-    "json-schema-generator": "^2.0.3"
   }
 }

@@ -118,10 +118,6 @@ async@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/async/-/async-1.0.0.tgz#f8fc04ca3a13784ade9e1641af98578cfbd647a9"
 
-asynckit@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
-
 aws-sign2@~0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.6.0.tgz#14342dd38dbcc94d0e5b87d763cd63612c0e794f"
@@ -242,7 +238,7 @@ bl@~1.1.2:
   dependencies:
     readable-stream "~2.0.5"
 
-bluebird@*, bluebird@^3.3.5:
+bluebird@^3.3.5:
   version "3.4.6"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.4.6.tgz#01da8d821d87813d158967e743d5fe6c62cf8c0f"
 
@@ -856,14 +852,6 @@ form-data@~1.0.0-rc4:
     combined-stream "^1.0.5"
     mime-types "^2.1.11"
 
-form-data@~2.1.1:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.1.2.tgz#89c3534008b97eada4cbb157d58f6f5df025eae4"
-  dependencies:
-    asynckit "^0.4.0"
-    combined-stream "^1.0.5"
-    mime-types "^2.1.12"
-
 form-data@1.0.0-rc3:
   version "1.0.0-rc3"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.0-rc3.tgz#d35bc62e7fbc2937ae78f948aaa0d38d90607577"
@@ -1051,13 +1039,6 @@ http-proxy-agent@1:
     debug "2"
     extend "3"
 
-http-proxy@^1.15.2:
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.15.2.tgz#642fdcaffe52d3448d2bda3b0079e9409064da31"
-  dependencies:
-    eventemitter3 "1.x.x"
-    requires-port "1.x.x"
-
 http-proxy@1.11.1:
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.11.1.tgz#71df55757e802d58ea810df2244019dda05ae85d"
@@ -1199,22 +1180,6 @@ json-bigint@^0.2.0:
   dependencies:
     bignumber.js "^2.4.0"
 
-json-promise@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/json-promise/-/json-promise-1.1.8.tgz#7b74120422d16ddb449aa3170403fc69ad416402"
-  dependencies:
-    bluebird "*"
-
-json-schema-generator@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/json-schema-generator/-/json-schema-generator-2.0.3.tgz#e1a77df63cd0db4e1c8dfac03e08e2e4781502d3"
-  dependencies:
-    json-promise "^1.1.8"
-    mkdirp "^0.5.0"
-    optimist "^0.6.1"
-    pretty-data "^0.40.0"
-    request "^2.47.0"
-
 json-schema@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
@@ -1301,13 +1266,12 @@ kind-of@^3.0.2:
     lamassu-config "^0.4.4"
     lodash "^4.17.2"
 
-lamassu-bitpay@~1.0.0:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/lamassu-bitpay/-/lamassu-bitpay-1.0.3.tgz#825c9856d3e591a4cf1fb931a2c7651df290b5a0"
+"lamassu-bitpay@https://github.com/lamassu/lamassu-bitpay/tarball/alpha":
+  version "2.0.0"
+  resolved "https://github.com/lamassu/lamassu-bitpay/tarball/alpha#b1eef0b43db018422eeb0ce4847f66305f394ec0"
   dependencies:
-    async "~0.2.10"
-    lodash "^2.4.1"
-    wreck "^3.0.0"
+    axios "^0.15.2"
+    bignumber.js "^3.0.1"
 
 "lamassu-bitstamp@https://github.com/lamassu/lamassu-bitstamp/tarball/alpha":
   version "1.0.4"
@@ -1317,14 +1281,6 @@ lamassu-bitpay@~1.0.0:
     bignumber.js "^3.0.1"
     lodash "^4.17.2"
 
-lamassu-coindesk@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/lamassu-coindesk/-/lamassu-coindesk-1.0.4.tgz#e5c3ce422acfc8fad0264c21c3b8454e39342b2e"
-  dependencies:
-    async "~0.2.10"
-    lodash "^2.4.1"
-    wreck "^3.0.0"
-
 lamassu-config@^0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/lamassu-config/-/lamassu-config-0.4.4.tgz#013923537c4cc132e6704da6854cc2cdb9945ca8"
@@ -1332,27 +1288,27 @@ lamassu-config@^0.4.4:
     lodash "^2.4.1"
     pg "^4.5.5"
 
-lamassu-mailjet@^1.0.0:
+"lamassu-mailjet@https://github.com/lamassu/lamassu-mailjet/tarball/master":
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/lamassu-mailjet/-/lamassu-mailjet-1.0.0.tgz#8cdc5ddacf1bd07758eebbdb1bda7ddb3167d7a8"
+  resolved "https://github.com/lamassu/lamassu-mailjet/tarball/master#77e4f2af8a6127a6962d000908e8872476b18c0f"
   dependencies:
     node-mailjet "^3.0.6"
 
-lamassu-mock-id-verify@^1.0.1:
+"lamassu-mock-id-verify@https://github.com/lamassu/lamassu-mock-id-verify/tarball/master":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/lamassu-mock-id-verify/-/lamassu-mock-id-verify-1.0.1.tgz#f73a7aef12023b914868d65f602ba7b9d1dc8257"
+  resolved "https://github.com/lamassu/lamassu-mock-id-verify/tarball/master#0ebd6c1aae85d6957f14d119b026bd0755087281"
 
-lamassu-mock-sms@^1.0.1:
+"lamassu-mock-sms@https://github.com/lamassu/lamassu-mock-sms/tarball/master":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/lamassu-mock-sms/-/lamassu-mock-sms-1.0.1.tgz#a52b17cf646b5a132b69e94aeb50cc30cb43bc50"
+  resolved "https://github.com/lamassu/lamassu-mock-sms/tarball/master#33ae4eac98046df0f4e069445b595c3fc6cde11a"
 
-lamassu-mock-wallet@^1.0.3:
+"lamassu-mock-wallet@https://github.com/lamassu/lamassu-mock-wallet/tarball/master":
   version "1.1.0"
-  resolved "https://registry.yarnpkg.com/lamassu-mock-wallet/-/lamassu-mock-wallet-1.1.0.tgz#4e01ac7d939fdea855f9c25e39ae38d9ba3e8624"
+  resolved "https://github.com/lamassu/lamassu-mock-wallet/tarball/master#6c5505cf1f288bfff2200671169769683a5636fd"
 
-lamassu-twilio@^1.1.3:
+"lamassu-twilio@https://github.com/lamassu/lamassu-twilio/tarball/master":
   version "1.1.3"
-  resolved "https://registry.yarnpkg.com/lamassu-twilio/-/lamassu-twilio-1.1.3.tgz#f9eafe46e886b2f9d04e4f3405a7b452911fc7dd"
+  resolved "https://github.com/lamassu/lamassu-twilio/tarball/master#fb4baa8c12b4d16d7c7472daec8eb3ad3f02bd69"
   dependencies:
     ramda "^0.21.0"
     twilio "^2.11.1"
@@ -1466,7 +1422,7 @@ mime-db@~1.25.0:
   version "1.25.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.25.0.tgz#c18dbd7c73a5dbf6f44a024dc0d165a1e7b1c392"
 
-mime-types@^2.1.10, mime-types@^2.1.11, mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.7:
+mime-types@^2.1.10, mime-types@^2.1.11, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.7:
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.13.tgz#e07aaa9c6c6b9a7ca3012c69003ad25a39e92a88"
   dependencies:
@@ -1489,10 +1445,6 @@ mimic-fn@^1.0.0:
 minimist@^1.1.3, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
-
-minimist@~0.0.1:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
 
 minimist@0.0.8:
   version "0.0.8"
@@ -1621,13 +1573,6 @@ once@^1.3.0:
   resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
   dependencies:
     wrappy "1"
-
-optimist@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/optimist/-/optimist-0.6.1.tgz#da3ea74686fa21a19a111c326e90eb15a0196686"
-  dependencies:
-    minimist "~0.0.1"
-    wordwrap "~0.0.2"
 
 optionator@^0.8.1:
   version "0.8.2"
@@ -1842,10 +1787,6 @@ prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
 
-pretty-data@^0.40.0:
-  version "0.40.0"
-  resolved "https://registry.yarnpkg.com/pretty-data/-/pretty-data-0.40.0.tgz#572aa8ea23467467ab94b6b5266a6fd9c8fddd72"
-
 pretty-ms@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/pretty-ms/-/pretty-ms-2.1.0.tgz#4257c256df3fb0b451d6affaab021884126981dc"
@@ -1902,7 +1843,7 @@ qs@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-4.0.0.tgz#c31d9b74ec27df75e543a86c78728ed8d4623607"
 
-qs@^6.1.0, qs@~6.3.0:
+qs@^6.1.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.3.0.tgz#f403b264f23bc01228c74131b407f18d5ea5d442"
 
@@ -2061,31 +2002,6 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-request@^2.47.0:
-  version "2.79.0"
-  resolved "https://registry.yarnpkg.com/request/-/request-2.79.0.tgz#4dfe5bf6be8b8cdc37fcf93e04b65577722710de"
-  dependencies:
-    aws-sign2 "~0.6.0"
-    aws4 "^1.2.1"
-    caseless "~0.11.0"
-    combined-stream "~1.0.5"
-    extend "~3.0.0"
-    forever-agent "~0.6.1"
-    form-data "~2.1.1"
-    har-validator "~2.0.6"
-    hawk "~3.1.3"
-    http-signature "~1.1.0"
-    is-typedarray "~1.0.0"
-    isstream "~0.1.2"
-    json-stringify-safe "~5.0.1"
-    mime-types "~2.1.7"
-    oauth-sign "~0.8.1"
-    qs "~6.3.0"
-    stringstream "~0.0.4"
-    tough-cookie "~2.3.0"
-    tunnel-agent "~0.4.1"
-    uuid "^3.0.0"
-
 request@2.74.x:
   version "2.74.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.74.0.tgz#7693ca768bbb0ea5c8ce08c084a45efa05b892ab"
@@ -2115,10 +2031,6 @@ request@2.74.x:
 requires-port@0.x.x:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-0.0.1.tgz#4b4414411d9df7c855995dd899a8c78a2951c16d"
-
-requires-port@1.x.x:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
 
 right-align@^0.1.1:
   version "0.1.3"
@@ -2560,10 +2472,6 @@ winston@^2.3.0:
     isstream "0.1.x"
     stack-trace "0.0.x"
 
-wordwrap@~0.0.2:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.3.tgz#a3d5da6cd5c0bc0008d37234bbaf1bed63059107"
-
 wordwrap@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
@@ -2575,13 +2483,6 @@ wordwrap@0.0.2:
 wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
-
-wreck@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/wreck/-/wreck-3.0.0.tgz#5151840a6c46d785bc81035a2e67b4e33406ba11"
-  dependencies:
-    boom "2.x.x"
-    hoek "2.x.x"
 
 x-xss-protection@1.0.0:
   version "1.0.0"
