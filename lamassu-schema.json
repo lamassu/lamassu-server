@@ -10,35 +10,38 @@
         "display": "Cash-in commission",
         "fieldType": "percentage",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [
+          {"code": "required"},
+          {"code": "min", "min": 0}
+        ]
       },
       {
         "code": "cashOutCommission",
         "display": "Cash-out commission",
         "fieldType": "percentage",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "lowBalanceMargin",
         "display": "Low balance margin",
         "fieldType": "percentage",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "cashOut",
         "display": "Cash-out enabled",
         "fieldType": "onOff",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "zeroConfLimit",
         "display": "Zero conf limit",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       }
     ]
   },
@@ -53,14 +56,14 @@
         "display": "Ticker",
         "fieldType": "account",
         "fieldClass": "ticker",
-        "required": true
+        "fieldValidation": [{"code": "required"}]
     },
       {
         "code": "wallet",
         "display": "Wallet",
         "fieldType": "account",
         "fieldClass": "wallet",
-        "required": true
+        "fieldValidation": [{"code": "required"}]
 
       },
       {
@@ -68,7 +71,7 @@
         "display": "Exchange",
         "fieldType": "account",
         "fieldClass": "exchange",
-        "required": false
+        "fieldValidation": []
       }
     ]
   },
@@ -83,14 +86,14 @@
         "display": "SMS gateway",
         "fieldType": "account",
         "fieldClass": "sms",
-        "required": false
+        "fieldValidation": []
       },
       {
         "code": "email",
         "display": "Email gateway",
         "fieldType": "account",
         "fieldClass": "email",
-        "required": false
+        "fieldValidation": []
       }
     ]
   },
@@ -105,35 +108,35 @@
         "display": "Crypto Currencies",
         "fieldType": "cryptoCurrency",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "fiatCurrency",
         "display": "Fiat Currency",
         "fieldType": "fiatCurrency",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "topCashOutDenomination",
         "display": "Top cash-out denomination",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": false
+        "fieldValidation": []
       },
       {
         "code": "bottomCashOutDenomination",
         "display": "Bottom cash-out denomination",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": false
+        "fieldValidation": []
       },
       {
         "code": "virtualCashOutDenomination",
         "display": "Virtual cash-out denomination",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": false
+        "fieldValidation": []
       }
     ]
   },
@@ -148,14 +151,14 @@
         "display": "Cash-in tx limit",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "cashOutTransactionLimit",
         "display": "Cash-out tx limit",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": false
+        "fieldValidation": []
       }
     ]
   },
@@ -170,28 +173,28 @@
         "display": "SMS verification",
         "fieldType": "onOff",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "idVerificationEnabled",
         "display": "ID verification",
         "fieldType": "onOff",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "idVerifier",
         "display": "ID verify service",
         "fieldType": "account",
         "fieldClass": "idVerifier",
-        "required": false
+        "fieldValidation": []
       },
       {
         "code": "idVerificationLimit",
         "display": "ID Verification Limit",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": false
+        "fieldValidation": []
       }
     ]
   },
@@ -206,7 +209,7 @@
         "display": "Languages",
         "fieldType": "language",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       }
     ]
   },
@@ -241,28 +244,28 @@
         "display": "Notifications",
         "fieldType": "onOff",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "notificationsEmailEnabled",
         "display": "Email notifications",
         "fieldType": "onOff",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "notificationsSMSEnabled",
         "display": "SMS notifications",
         "fieldType": "onOff",
         "fieldClass": null,
-        "required": true
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "lowBalanceThreshold",
         "display": "Low Balance Threshold",
         "fieldType": "integer",
         "fieldClass": null,
-        "required": false
+        "fieldValidation": []
       }
     ]
   }
