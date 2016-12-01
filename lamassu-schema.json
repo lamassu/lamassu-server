@@ -20,7 +20,7 @@
         "display": "Cash-out commission",
         "fieldType": "percentage",
         "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
+        "fieldValidation": []
       },
       {
         "code": "lowBalanceMargin",
@@ -30,18 +30,11 @@
         "fieldValidation": [{"code": "required"}]
       },
       {
-        "code": "cashOut",
-        "display": "Cash-out enabled",
-        "fieldType": "onOff",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
         "code": "zeroConfLimit",
         "display": "Zero conf limit",
         "fieldType": "integer",
         "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
+        "fieldValidation": []
       }
     ]
   },
@@ -76,44 +69,37 @@
     ]
   },
   {
-    "code": "extraServices",
-    "display": "Extra services",
+    "code": "fiat",
+    "display": "Fiat currencies",
     "cryptoScope": "global",
     "machineScope": "global",
     "entries": [
       {
-        "code": "sms",
-        "display": "SMS gateway",
-        "fieldType": "account",
-        "fieldClass": "sms",
-        "fieldValidation": []
-      },
-      {
-        "code": "email",
-        "display": "Email gateway",
-        "fieldType": "account",
-        "fieldClass": "email",
-        "fieldValidation": []
+        "code": "fiatCurrency",
+        "display": "Fiat Currency",
+        "fieldType": "fiatCurrency",
+        "fieldClass": null,
+        "fieldValidation": [{"code": "required"}]
       }
     ]
   },
   {
-    "code": "currencies",
-    "display": "Currencies",
+    "code": "machineSettings",
+    "display": "Machine settings",
     "cryptoScope": "global",
     "machineScope": "both",
     "entries": [
       {
-        "code": "cryptoCurrencies",
-        "display": "Crypto Currencies",
-        "fieldType": "cryptoCurrency",
+        "code": "machineLanguages",
+        "display": "Languages",
+        "fieldType": "language",
         "fieldClass": null,
         "fieldValidation": [{"code": "required"}]
       },
       {
-        "code": "fiatCurrency",
-        "display": "Fiat Currency",
-        "fieldType": "fiatCurrency",
+        "code": "cryptoCurrencies",
+        "display": "Crypto Currencies",
+        "fieldType": "cryptoCurrency",
         "fieldClass": null,
         "fieldValidation": [{"code": "required"}]
       },
@@ -137,12 +123,19 @@
         "fieldType": "integer",
         "fieldClass": null,
         "fieldValidation": []
+      },
+      {
+        "code": "emptyBillMargin",
+        "display": "Empty bill margin",
+        "fieldType": "integer",
+        "fieldClass": null,
+        "fieldValidation": []
       }
     ]
   },
   {
-    "code": "limits",
-    "display": "Limits",
+    "code": "compliance",
+    "display": "Compliance",
     "cryptoScope": "global",
     "machineScope": "both",
     "entries": [
@@ -159,15 +152,7 @@
         "fieldType": "integer",
         "fieldClass": null,
         "fieldValidation": []
-      }
-    ]
-  },
-  {
-    "code": "compliance",
-    "display": "Compliance",
-    "cryptoScope": "global",
-    "machineScope": "both",
-    "entries": [
+      },
       {
         "code": "smsVerificationEnabled",
         "display": "SMS verification",
@@ -199,21 +184,6 @@
     ]
   },
   {
-    "code": "languages",
-    "display": "Languages",
-    "cryptoScope": "global",
-    "machineScope": "both",
-    "entries": [
-      {
-        "code": "machineLanguages",
-        "display": "Languages",
-        "fieldType": "language",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      }
-    ]
-  },
-  {
     "code": "machines",
     "display": "Machines",
     "cryptoScope": "global",
@@ -223,13 +193,15 @@
         "code": "machineName",
         "display": "Name",
         "fieldType": "string",
-        "fieldClass": null
+        "fieldClass": null,
+        "fieldValidation": [{"code": "required"}]
       },
       {
         "code": "machineLocation",
         "display": "Location",
         "fieldType": "string",
-        "fieldClass": null
+        "fieldClass": null,
+        "fieldValidation": []
       }
     ]
   },
@@ -259,6 +231,20 @@
         "fieldType": "onOff",
         "fieldClass": null,
         "fieldValidation": [{"code": "required"}]
+      },
+      {
+        "code": "sms",
+        "display": "SMS gateway",
+        "fieldType": "account",
+        "fieldClass": "sms",
+        "fieldValidation": []
+      },
+      {
+        "code": "email",
+        "display": "Email gateway",
+        "fieldType": "account",
+        "fieldClass": "email",
+        "fieldValidation": []
       },
       {
         "code": "lowBalanceThreshold",

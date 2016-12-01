@@ -1,0 +1,45 @@
+{
+  "definitions": {
+    "cashOutEnabledTrue": {
+      "properties": {
+        "#/machine/cashOutEnabled": {
+          "constant": true
+        }
+      }
+    },
+    "cashOutEnabledDepencies": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/cashOutEnabledTrue"
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "commissions": {
+      "type": "object",
+      "properties": {
+        "cashInCommission": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cashOutCommission": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "allOf": [
+        { "$ref": "#/definitions/cashOutEnabledDepencies" }
+      ]
+    },
+    "machine": {
+      "type": "object",
+      "properties": {
+        "cashOutEnabled": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
