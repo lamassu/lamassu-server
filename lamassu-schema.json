@@ -1,273 +1,325 @@
-[
-  {
-    "code": "commissions",
-    "display": "Commissions",
-    "cryptoScope": "both",
-    "machineScope": "both",
-    "entries": [
-      {
-        "code": "cashInCommission",
-        "display": "Cash-in commission",
-        "fieldType": "percentage",
-        "fieldClass": null,
-        "fieldValidation": [
-          {"code": "required"},
-          {"code": "min", "min": 0}
-        ]
-      },
-      {
-        "code": "cashOutCommission",
-        "display": "Cash-out commission",
-        "fieldType": "percentage",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "lowBalanceMargin",
-        "display": "Low balance margin",
-        "fieldType": "percentage",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "zeroConfLimit",
-        "display": "Zero conf limit",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-      }
-    ]
-  },
-  {
-    "code": "cryptoServices",
-    "display": "Crypto services",
-    "cryptoScope": "specific",
-    "machineScope": "global",
-    "entries": [
-      {
-        "code": "ticker",
-        "display": "Ticker",
-        "fieldType": "account",
-        "fieldClass": "ticker",
-        "fieldValidation": [{"code": "required"}]
+{
+  "screens": [
+    {
+      "code": "commissions",
+      "display": "Commissions",
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "fields": [
+        "cashInCommission",
+        "cashOutCommission",
+        "lowBalanceMargin",
+        "zeroConfLimit"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "code": "cashInCommission",
+      "display": "Cash-in commission",
+      "fieldType": "percentage",
+      "fieldClass": null,
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
     },
-      {
-        "code": "wallet",
-        "display": "Wallet",
-        "fieldType": "account",
-        "fieldClass": "wallet",
-        "fieldValidation": [{"code": "required"}]
-
-      },
-      {
-        "code": "exchange",
-        "display": "Exchange",
-        "fieldType": "account",
-        "fieldClass": "exchange",
-        "fieldValidation": []
-      }
-    ]
-  },
-  {
-    "code": "fiat",
-    "display": "Fiat currencies",
-    "cryptoScope": "global",
-    "machineScope": "global",
-    "entries": [
-      {
-        "code": "fiatCurrency",
-        "display": "Fiat Currency",
-        "fieldType": "fiatCurrency",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      }
-    ]
-  },
-  {
-    "code": "machineSettings",
-    "display": "Machine settings",
-    "cryptoScope": "global",
-    "machineScope": "both",
-    "entries": [
-      {
-        "code": "machineLanguages",
-        "display": "Languages",
-        "fieldType": "language",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "cryptoCurrencies",
-        "display": "Crypto Currencies",
-        "fieldType": "cryptoCurrency",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "topCashOutDenomination",
-        "display": "Top cash-out denomination",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-
-      },
-      {
-        "code": "bottomCashOutDenomination",
-        "display": "Bottom cash-out denomination",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "virtualCashOutDenomination",
-        "display": "Virtual cash-out denomination",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "emptyBillMargin",
-        "display": "Empty bill margin",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-      }
-    ]
-  },
-  {
-    "code": "compliance",
-    "display": "Compliance",
-    "cryptoScope": "global",
-    "machineScope": "both",
-    "entries": [
-      {
-        "code": "cashInTransactionLimit",
-        "display": "Cash-in tx limit",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "cashOutTransactionLimit",
-        "display": "Cash-out tx limit",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["cashOutEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "smsVerificationEnabled",
-        "display": "SMS verification",
-        "fieldType": "onOff",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "idVerificationEnabled",
-        "display": "ID verification",
-        "fieldType": "onOff",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "idVerifier",
-        "display": "ID verify service",
-        "fieldType": "account",
-        "fieldClass": "idVerifier",
-        "enabledIf": ["idVerificationEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "idVerificationLimit",
-        "display": "ID Verification Limit",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["idVerificationEnabled"],
-        "fieldValidation": []
-      }
-    ]
-  },
-  {
-    "code": "machines",
-    "display": "Machines",
-    "cryptoScope": "global",
-    "machineScope": "specific",
-    "entries": [
-      {
-        "code": "machineName",
-        "display": "Name",
-        "fieldType": "string",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "machineLocation",
-        "display": "Location",
-        "fieldType": "string",
-        "fieldClass": null,
-        "fieldValidation": []
-      }
-    ]
-  },
-  {
-    "code": "notifications",
-    "display": "Notifications",
-    "cryptoScope": "global",
-    "machineScope": "global",
-    "entries": [
-      {
-        "code": "notificationsEnabled",
-        "display": "Notifications",
-        "fieldType": "onOff",
-        "fieldClass": null,
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "notificationsEmailEnabled",
-        "display": "Email notifications",
-        "fieldType": "onOff",
-        "fieldClass": null,
-        "enabledIf": ["notificationsEnabled"],
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "notificationsSMSEnabled",
-        "display": "SMS notifications",
-        "fieldType": "onOff",
-        "fieldClass": null,
-        "enabledIf": ["notificationsEnabled"],
-        "fieldValidation": [{"code": "required"}]
-      },
-      {
-        "code": "sms",
-        "display": "SMS gateway",
-        "fieldType": "account",
-        "fieldClass": "sms",
-        "enabledIf": ["notificationsEnabled", "cashOutEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "email",
-        "display": "Email gateway",
-        "fieldType": "account",
-        "fieldClass": "email",
-        "enabledIf": ["notificationsEnabled"],
-        "fieldValidation": []
-      },
-      {
-        "code": "lowBalanceThreshold",
-        "display": "Low Balance Threshold",
-        "fieldType": "integer",
-        "fieldClass": null,
-        "enabledIf": ["notificationsEnabled"],
-        "fieldValidation": []
-      }
-    ]
-  }
-]
+    {
+      "code": "cashOutCommission",
+      "display": "Cash-out commission",
+      "fieldType": "percentage",
+      "fieldClass": null,
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "lowBalanceMargin",
+      "display": "Low balance margin",
+      "fieldType": "percentage",
+      "fieldClass": null,
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "zeroConfLimit",
+      "display": "Zero conf limit",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "ticker",
+      "display": "Ticker",
+      "fieldType": "account",
+      "fieldClass": "ticker",
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "wallet",
+      "display": "Wallet",
+      "fieldType": "account",
+      "fieldClass": "wallet",
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "exchange",
+      "display": "Exchange",
+      "fieldType": "account",
+      "fieldClass": "exchange",
+      "fieldValidation": []
+    },
+    {
+      "code": "fiatCurrency",
+      "display": "Fiat Currency",
+      "fieldType": "fiatCurrency",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "machineLanguages",
+      "display": "Languages",
+      "fieldType": "language",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "cryptoCurrencies",
+      "display": "Crypto Currencies",
+      "fieldType": "cryptoCurrency",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "topCashOutDenomination",
+      "display": "Top cash-out denomination",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "bottomCashOutDenomination",
+      "display": "Bottom cash-out denomination",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "virtualCashOutDenomination",
+      "display": "Virtual cash-out denomination",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "emptyBillMargin",
+      "display": "Empty bill margin",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "cashInTransactionLimit",
+      "display": "Cash-in tx limit",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "cashOutTransactionLimit",
+      "display": "Cash-out tx limit",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "smsVerificationEnabled",
+      "display": "SMS verification",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "idVerificationEnabled",
+      "display": "ID verification",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "idVerifier",
+      "display": "ID verify service",
+      "fieldType": "account",
+      "fieldClass": "idVerifier",
+      "enabledIf": [
+        "idVerificationEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "idVerificationLimit",
+      "display": "ID Verification Limit",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "idVerificationEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "machineName",
+      "display": "Name",
+      "fieldType": "string",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "machineLocation",
+      "display": "Location",
+      "fieldType": "string",
+      "fieldClass": null,
+      "fieldValidation": []
+    },
+    {
+      "code": "notificationsEnabled",
+      "display": "Notifications",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "notificationsEmailEnabled",
+      "display": "Email notifications",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "notificationsSMSEnabled",
+      "display": "SMS notifications",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "sms",
+      "display": "SMS gateway",
+      "fieldType": "account",
+      "fieldClass": "sms",
+      "enabledIf": [
+        "notificationsEnabled",
+        "cashOutEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "email",
+      "display": "Email gateway",
+      "fieldType": "account",
+      "fieldClass": "email",
+      "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "lowBalanceThreshold",
+      "display": "Low Balance Threshold",
+      "fieldType": "integer",
+      "fieldClass": null,
+      "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": []
+    }
+  ]
+}
