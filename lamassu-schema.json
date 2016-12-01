@@ -20,6 +20,7 @@
         "display": "Cash-out commission",
         "fieldType": "percentage",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
       },
       {
@@ -34,6 +35,7 @@
         "display": "Zero conf limit",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
       }
     ]
@@ -108,13 +110,16 @@
         "display": "Top cash-out denomination",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
+
       },
       {
         "code": "bottomCashOutDenomination",
         "display": "Bottom cash-out denomination",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
       },
       {
@@ -122,6 +127,7 @@
         "display": "Virtual cash-out denomination",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
       },
       {
@@ -129,6 +135,7 @@
         "display": "Empty bill margin",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
       }
     ]
@@ -151,6 +158,7 @@
         "display": "Cash-out tx limit",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["cashOutEnabled"],
         "fieldValidation": []
       },
       {
@@ -172,6 +180,7 @@
         "display": "ID verify service",
         "fieldType": "account",
         "fieldClass": "idVerifier",
+        "enabledIf": ["idVerificationEnabled"],
         "fieldValidation": []
       },
       {
@@ -179,6 +188,7 @@
         "display": "ID Verification Limit",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["idVerificationEnabled"],
         "fieldValidation": []
       }
     ]
@@ -223,6 +233,7 @@
         "display": "Email notifications",
         "fieldType": "onOff",
         "fieldClass": null,
+        "enabledIf": ["notificationsEnabled"],
         "fieldValidation": [{"code": "required"}]
       },
       {
@@ -230,6 +241,7 @@
         "display": "SMS notifications",
         "fieldType": "onOff",
         "fieldClass": null,
+        "enabledIf": ["notificationsEnabled"],
         "fieldValidation": [{"code": "required"}]
       },
       {
@@ -237,6 +249,7 @@
         "display": "SMS gateway",
         "fieldType": "account",
         "fieldClass": "sms",
+        "enabledIf": ["notificationsEnabled", "cashOutEnabled"],
         "fieldValidation": []
       },
       {
@@ -244,6 +257,7 @@
         "display": "Email gateway",
         "fieldType": "account",
         "fieldClass": "email",
+        "enabledIf": ["notificationsEnabled"],
         "fieldValidation": []
       },
       {
@@ -251,6 +265,7 @@
         "display": "Low Balance Threshold",
         "fieldType": "integer",
         "fieldClass": null,
+        "enabledIf": ["notificationsEnabled"],
         "fieldValidation": []
       }
     ]
