@@ -11,6 +11,78 @@
         "lowBalanceMargin",
         "zeroConfLimit"
       ]
+    },
+    {
+      "code": "cryptoServices",
+      "display": "Crypto services",
+      "cryptoScope": "specific",
+      "machineScope": "global",
+      "fields": [
+        "ticker",
+        "wallet",
+        "exchange"
+      ]
+    },
+    {
+      "code": "fiat",
+      "display": "Fiat currencies",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "fiatCurrency"
+      ]
+    },
+    {
+      "code": "machineSettings",
+      "display": "Machine settings",
+      "cryptoScope": "global",
+      "machineScope": "both",
+      "fields": [
+        "machineLanguages",
+        "cryptoCurrencies",
+        "topCashOutDenomination",
+        "bottomCashOutDenomination",
+        "virtualCashOutDenomination",
+        "emptyBillMargin"
+      ]
+    },
+    {
+      "code": "compliance",
+      "display": "Compliance",
+      "cryptoScope": "global",
+      "machineScope": "both",
+      "fields": [
+        "cashInTransactionLimit",
+        "cashOutTransactionLimit",
+        "smsVerificationEnabled",
+        "idVerificationEnabled",
+        "idVerifier",
+        "idVerificationLimit"
+      ]
+    },
+    {
+      "code": "machines",
+      "display": "Machines",
+      "cryptoScope": "global",
+      "machineScope": "specific",
+      "fields": [
+        "machineName",
+        "machineLocation"
+      ]
+    },
+    {
+      "code": "notifications",
+      "display": "Notifications",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "notificationsEnabled",
+        "notificationsEmailEnabled",
+        "notificationsSMSEnabled",
+        "sms",
+        "email",
+        "lowBalanceThreshold"
+      ]
     }
   ],
   "fields": [
