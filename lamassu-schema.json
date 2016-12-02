@@ -1,5 +1,5 @@
 {
-  "screens": [
+  "groups": [
     {
       "code": "commissions",
       "display": "Commissions",
