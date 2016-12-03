@@ -67,6 +67,7 @@
       "machineScope": "specific",
       "fields": [
         "machineName",
+        "cashOutEnabled",
         "machineLocation"
       ]
     },
@@ -309,6 +310,17 @@
       "code": "machineName",
       "display": "Name",
       "fieldType": "string",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "cashOutEnabled",
+      "display": "Cash Out",
+      "fieldType": "onOff",
       "fieldClass": null,
       "fieldValidation": [
         {
