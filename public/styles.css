@@ -1,0 +1,426 @@
+body {
+    font-family: Brandon Text;
+    margin: 0;
+}
+
+p {
+    margin: 0;
+}
+
+.lamassuAdminStatusBar {
+    position: fixed;
+    bottom: 0;
+    padding: 10px 20px;
+    background-color: #5f5f56;
+    color: #ffffff;
+    width: 100%;
+}
+
+.lamassuAdminFormRow {
+    margin: 20px 0;
+}
+
+.lamassuAdminFormRow:first-child {
+    margin: 0;
+}
+
+.lamassuAdminFormRow  label {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.lamassuAdminFormRow  label > div {
+    margin: 0 0 5px;
+    color: #5f5f56;
+}
+
+.lamassuAdminFormRow  input {
+    border: 0;
+    background-color: #ffffff;
+    border-radius: 3px;
+    padding: 6px;
+    text-align: left;
+    font-family: Fira Code;
+    font-weight: 600;
+    width: 50%;
+    outline: none;
+}
+
+.lamassuAdminButtonRow {
+    text-align: right;
+}
+
+.lamassuAdminButton {
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #004062;
+    padding: 10px 15px;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.lamassuAdminButton:hover {
+    background-color: #042c47;
+}
+
+.lamassuAdminButton:active {
+    color: #37e8d7;
+}
+
+.lamassuAdminButton.lamassuAdminActive {
+    color: #37e8d7;
+    background-color: #042c47;
+}
+
+.lamassuAdminMainLeft {
+    background-color: #2d2d2d;
+    height: 100%;
+}
+
+.lamassuAdminMainRight {
+    background-color: #f6f6f4;
+    height: 100%;
+}
+
+.lamassuAdminContent {
+    margin: 20px 20px;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 5px;
+}
+
+.lamassuAdminCryptoTabs {
+    display: flex;
+}
+
+.lamassuAdminCryptoTabs > div {
+    padding: 10px 15px;
+    color: #5f5f56;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #E6E6E3;
+}
+
+.lamassuAdminCryptoTabs > div:hover {
+    background-color: #fcfcfa;
+}
+
+.lamassuAdminCryptoTabs > div:active {
+    color: #5f5f56;
+}
+
+.lamassuAdminCryptoTabs > div.lamassuAdminActive {
+    color: #5f5f56;
+    background-color: #f6f6f4;
+}
+
+.lamassuAdminCryptoTabs > div:first-child {
+    border-radius: 5px 0px 0px 0px;
+}
+
+.lamassuAdminCryptoTabs > div:last-child {
+    border-radius: 0px 5px 0px 0px;
+}
+
+.lamassuAdminSectionLabel {
+    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.lamassuAdminConfigContainer {
+    padding: 20px;
+    border-radius: 0px 7px 7px 7px;
+    background-color: #f6f6f4;
+    margin: 0 0 10px;
+    animation: fadein 0.8s;
+}
+
+.lamassuAdminTxTable {
+    border-radius: 7px;
+    margin: 20px 0;
+    border-collapse: collapse;
+    font-size: 14px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.lamassuAdminTxTable  .lamassuAdminNumberColumn {
+    text-align: right;
+}
+
+.lamassuAdminTxTable  .lamassuAdminDirectionColumn {
+    text-align: left;
+    font-weight: bold;
+    font-size: 90%;
+}
+
+.lamassuAdminTxTable  tbody {
+    font-family: Fira Code;
+    color: #5f5f56;
+}
+
+.lamassuAdminTxTable  tbody  td {
+    padding: 2px 14px;
+    border-bottom: 1px solid #f6f6f4;
+    white-space: nowrap;
+}
+
+.lamassuAdminTxTable  tbody  .lamassuAdminTruncatedColumn {
+    max-width: 0;
+    overflow: hidden;
+    width: 300px;
+    text-overflow: ellipsis;
+}
+
+.lamassuAdminTxTable  thead {
+    font-size: 14px;
+    text-align: center;
+    color: #5f5f56;
+}
+
+.lamassuAdminTxTable  thead  td {
+    border-bottom: 2px solid #f6f6f4;
+    padding: 5px;
+}
+
+.lamassuAdminConfigTable {
+    font-size: 14px;
+    border-radius: 7px;
+    margin: 20px 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer {
+    border-radius: 3px;
+    position: relative;
+    margin: 0;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminNoOptions {
+    background-color: #fcfcfa;
+    font-size: 11px;
+    font-weight: 500;
+    color: #5f5f56;
+    padding: 5px;
+    text-align: center;
+    cursor: default;
+    -webkit-user-select: none;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSelectBox {
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    background-color: inherit;
+    width: 60px;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminBoxContainer {
+    position: absolute;
+    z-index: 100;
+    left: -3px;
+    background-color: #ffffff;
+    text-align: left;
+    font-weight: 500;
+    font-size: 80%;
+    border-radius: 3px;
+    background-color: #ffffff;
+    border: 3px solid #f6f6f4;
+    border-top: 0;
+    color: #5f5f56;
+    width: 15em;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminBoxItemActive {
+    color: #004062;
+    font-weight: 900;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminBoxItem {
+    padding: 3px 6px;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminInfo {
+    padding: 3px 6px;
+    color: #2d2d2d;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminMultiItemContainer  .lamassuAdminSelectedItem {
+    background-color: #004062;
+    color: #ffffff;
+    padding: 4px 4px 3px;
+    margin: 0 1px;
+    font-family: Fira Code;
+    font-size: 70%;
+    font-weight: normal;
+    border-radius: 3px;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminMultiItemContainer  .lamassuAdminFallbackItem {
+    background-color: #5f5f56;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSingleItemContainer  .lamassuAdminSelectedItem {
+    font-family: Fira Code;
+    font-size: 11px;
+    padding: 0;
+    border-radius: 0;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSingleItemContainer  .lamassuAdminFallbackItem {
+    color: #5f5f56;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  input {
+    text-align: left;
+    background-color: inherit;
+    padding: 6px 2px;
+    width: 6em;
+}
+
+.lamassuAdminConfigTable  input {
+    border: 0;
+    border-radius: 3px;
+    padding: 6px;
+    text-align: right;
+    width: 100%;
+    font-family: Fira Code;
+    font-weight: 600;
+    outline: none;
+    background-color: inherit;
+}
+
+.lamassuAdminConfigTable  input:invalid {
+    color: #eb6b6e;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminBasicInputDisabled {
+    background-color: #fcfcfa;
+    height: 25px;
+    line-height: 25px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #5f5f56;
+    text-align: center;
+    cursor: default;
+}
+
+.lamassuAdminConfigTable  td {
+    padding: 3px 4px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminComponent {
+    border-radius: 3px;
+    border: 2px solid #f6f6f4;
+    background-color: #ffffff;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminRequiredComponent {
+    border-top-color: #eb6b6e;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminFocusedComponent {
+    border-top-color: #37e8d7;
+}
+
+.lamassuAdminConfigTable  tbody  td {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.lamassuAdminConfigTable  thead {
+    font-weight: bold;
+    text-align: left;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminConfigTableGlobalRow {
+    font-weight: bold;
+}
+
+.lamassuAdminNavBar {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarRoute {
+    height: 60px;
+    display: block;
+    line-height: 60px;
+    padding: 0px 20px;
+    color: #5f5f56;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #2d2d2d;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarRoute:hover {
+    background-color: #282828;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarRoute:active {
+    color: #37e8d7;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarRoute.lamassuAdminActive {
+    color: #37e8d7;
+    background-color: #282828;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategory {
+    height: 60px;
+    display: block;
+    line-height: 60px;
+    padding: 0px 20px;
+    color: #5f5f56;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #2d2d2d;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategory:hover {
+    background-color: #282828;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategory:active {
+    color: #37e8d7;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategory.lamassuAdminActive {
+    color: #37e8d7;
+    background-color: #282828;
+}
+
+.lamassuAdminNavBar  .lamassuAdminInvalidGroup {
+    color: #eb6b6e !important;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategoryContainer  .lamassuAdminNavBarRoute {
+    color: #5f5f56;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #2d2d2d;
+    padding: 0 20px 0 30px;
+    font-weight: 500;
+    animation: fadein 0.8s;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategoryContainer  .lamassuAdminNavBarRoute:hover {
+    background-color: #282828;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategoryContainer  .lamassuAdminNavBarRoute:active {
+    color: #37e8d7;
+}
+
+.lamassuAdminNavBar  .lamassuAdminNavBarCategoryContainer  .lamassuAdminNavBarRoute.lamassuAdminActive {
+    color: #37e8d7;
+    background-color: #282828;
+}

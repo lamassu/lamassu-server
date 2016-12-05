@@ -1,0 +1,21 @@
+{
+  "name": "qrcodejs",
+  "version": "0.1.0",
+  "homepage": "https://github.com/CatTail/qrcodejs",
+  "authors": [
+    "davidshimjs ssm0123@gmail.com"
+  ],
+  "description": "Cross-browser QRCode generator for javascript",
+  "main": "qrcode.js",
+  "keywords": [
+    "qrcode"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

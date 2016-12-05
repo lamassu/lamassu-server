@@ -1,0 +1,47 @@
+{
+  "name": "qrious",
+  "version": "2.0.2",
+  "description": "Library for QR code generation using canvas",
+  "homepage": "https://github.com/neocotic/qrious",
+  "authors": [
+    {
+      "name": "Alasdair Mercer",
+      "email": "mercer.alasdair@gmail.com",
+      "homepage": "http://neocotic.com"
+    }
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "qr",
+    "code",
+    "encode",
+    "canvas",
+    "image"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neocotic/qrious.git"
+  },
+  "main": "dist/umd/qrious.js",
+  "ignore": [
+    "src/",
+    ".*",
+    "AUTHORS.md",
+    "CHANGES.md",
+    "CONTRIBUTING.md",
+    "demo.html",
+    "Gruntfile.js",
+    "package.json",
+    "README.md"
+  ],
+  "_release": "2.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.0.2",
+    "commit": "1ffd092e97ab3ba212fad21ab865eb1754155296"
+  },
+  "_source": "https://github.com/neocotic/qrious.git",
+  "_target": "^2.0.2",
+  "_originalSource": "qrious",
+  "_direct": true
+}
