@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+const login = require('../lib/admin/login')
+const options = require('../lib/options')
+
+const name = process.argv[2]
+const domain = options.hostname
+
+if (!domain) {
+  console.error('No hostname configured in lamassu.json')
+  process.exit(1)
+}
+
+if (!name) {
+  console.log('Usage: lamassu-register <username>')
+  process.exit(2)
+}
+
+login.generateOTP(name)
+.then(otp => {
+  console.log(`https://${domain}?otp=${otp}`)
+  process.exit(0)
+})
+.catch(err => {
+  console.log('Error: %s', err)
+  process.exit(3)
+})
