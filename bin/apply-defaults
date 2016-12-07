@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const _ = require('lodash/fp')
 
 // const db = require('../lib/db')
