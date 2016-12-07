@@ -50,7 +50,9 @@ function dbNotify () {
   .catch(e => console.error('Error: lamassu-server not responding'))
 }
 
-app.use(morgan('dev'))
+const skip = (req, res) => req.path === '/api/status/' && res.statusCode === 200
+
+app.use(morgan('dev', {skip}))
 app.use(cookieParser())
 app.use(register)
 if (!devMode) app.use(authenticate)
