@@ -123,7 +123,8 @@
       "fieldClass": null,
       "cryptoScope": "both",
       "machineScope": "both",
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [{"code": "required"}],
+      "default": 5
     },
     {
       "code": "zeroConfLimit",
@@ -186,7 +187,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": ["en-US"]
     },
     {
       "code": "cryptoCurrencies",
@@ -197,7 +199,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": ["BTC"]
     },
     {
       "code": "topCashOutDenomination",
@@ -237,7 +240,8 @@
       "enabledIf": [
         "cashOutEnabled"
       ],
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [{"code": "required"}],
+      "default": 0
     },
     {
       "code": "cashInTransactionLimit",
@@ -269,7 +273,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "idVerificationEnabled",
@@ -280,7 +285,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "idVerifier",
@@ -322,7 +328,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "machineLocation",
@@ -340,7 +347,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "notificationsEmailEnabled",
@@ -354,7 +362,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "notificationsSMSEnabled",
@@ -368,7 +377,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "sms",
