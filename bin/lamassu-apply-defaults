@@ -8,8 +8,9 @@ const configManager = require('../lib/config-manager')
 const schema = require('../lamassu-schema.json')
 const newFields = []
 
-settingsLoader.loadConfig()
-.then(config => {
+settingsLoader.loadLatest()
+.then(settings => {
+  const config = settings.config
   schema.groups.forEach(group => {
     return group.fields.forEach(fieldCode => {
       const field = schema.fields.find(r => r.code === fieldCode)
@@ -18,7 +19,7 @@ settingsLoader.loadConfig()
       if (group.cryptoScope === 'specific' || group.machineScope === 'specific') return
 
       const existing = configManager.scopedValue('global', 'global', fieldCode, config)
-      if (existing) return
+      if (!_.isNil(existing)) return
 
       return newFields.push({
         fieldLocator: {
@@ -38,9 +39,13 @@ settingsLoader.loadConfig()
     })
   })
 
-  return settingsLoader.save(config.concat(newFields))
+  return settingsLoader.save({config: config.concat(newFields)})
 })
-.then(() => pp(newFields))
-.then(() => process.exit(0))
-
-function pp (o) { console.log(require('util').inspect(o, {depth: null, colors: true})) }
+.then(() => {
+  console.log('Success.')
+  process.exit(0)
+})
+.catch(err => {
+  console.error(err)
+  process.exit(1)
+})
