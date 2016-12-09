@@ -106,12 +106,6 @@ async@^1.4.0, async@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.1:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.1.4.tgz#2d2160c7788032e4dd6cbe2502f1f9a2c8f6cde4"
-  dependencies:
-    lodash "^4.14.0"
-
 async@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/async/-/async-1.0.0.tgz#f8fc04ca3a13784ade9e1641af98578cfbd647a9"
@@ -489,13 +483,9 @@ cookie@0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
 
-cookiejar@2.0.6:
+cookiejar@2.0.6, cookiejar@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.0.6.tgz#0abf356ad00d1c5a219d88d44518046dd026acfe"
-
-cookiejar@^2.0.6:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.1.0.tgz#86549689539b6d0e269b6637a304be508194d898"
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -866,21 +856,13 @@ form-data@1.0.0-rc3:
     combined-stream "^1.0.5"
     mime-types "^2.1.3"
 
-form-data@1.0.0-rc4:
+form-data@1.0.0-rc4, form-data@~1.0.0-rc4:
   version "1.0.0-rc4"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.0-rc4.tgz#05ac6bc22227b43e4461f488161554699d4f8b5e"
   dependencies:
     async "^1.5.2"
     combined-stream "^1.0.5"
     mime-types "^2.1.10"
-
-form-data@~1.0.0-rc4:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.1.tgz#ae315db9a4907fa065502304a66d7733475ee37c"
-  dependencies:
-    async "^2.0.1"
-    combined-stream "^1.0.5"
-    mime-types "^2.1.11"
 
 formidable@^1.0.17, formidable@~1.0.14:
   version "1.0.17"
@@ -1292,60 +1274,60 @@ kind-of@^3.0.2:
   dependencies:
     is-buffer "^1.0.2"
 
-"lamassu-bitcoind@https://github.com/lamassu/lamassu-bitcoind/tarball/alpha":
+lamassu-bitcoind@lamassu/lamassu-bitcoind#alpha:
   version "1.1.1"
-  resolved "https://github.com/lamassu/lamassu-bitcoind/tarball/alpha#c784ecf51a83c4a0bf63e0c847392ea1b99271dd"
+  resolved "https://codeload.github.com/lamassu/lamassu-bitcoind/tar.gz/6790f844641b72893ea586cabf0d04dcd027b179"
   dependencies:
     bignumber.js "^3.0.1"
     bitcoind-rpc "^0.7.0"
     pify "^2.3.0"
 
-"lamassu-bitgo@https://github.com/lamassu/lamassu-bitgo/tarball/alpha":
+lamassu-bitgo@lamassu/lamassu-bitgo#alpha:
   version "0.2.2"
-  resolved "https://github.com/lamassu/lamassu-bitgo/tarball/alpha#d320634253bc9e3ee260039f0703b39ffbc0b498"
+  resolved "https://codeload.github.com/lamassu/lamassu-bitgo/tar.gz/a3de065df3b69877b216f31f93c067de755c3917"
   dependencies:
     bignumber.js "^3.0.1"
     bitgo "^2.0.4"
     lodash "^4.17.2"
 
-"lamassu-bitpay@https://github.com/lamassu/lamassu-bitpay/tarball/alpha":
+lamassu-bitpay@lamassu/lamassu-bitpay#alpha:
   version "2.0.0"
-  resolved "https://github.com/lamassu/lamassu-bitpay/tarball/alpha#b1eef0b43db018422eeb0ce4847f66305f394ec0"
+  resolved "https://codeload.github.com/lamassu/lamassu-bitpay/tar.gz/72b6b624e33578289cf164ded29908152df4bbeb"
   dependencies:
     axios "^0.15.2"
     bignumber.js "^3.0.1"
 
-"lamassu-bitstamp@https://github.com/lamassu/lamassu-bitstamp/tarball/alpha":
+lamassu-bitstamp@lamassu/lamassu-bitstamp#alpha:
   version "1.0.4"
-  resolved "https://github.com/lamassu/lamassu-bitstamp/tarball/alpha#4e55b2d4c87c9a615d511f40a2a5ef154d64fe74"
+  resolved "https://codeload.github.com/lamassu/lamassu-bitstamp/tar.gz/b350c5dd5588f3df43d080f87c35228377822111"
   dependencies:
     axios "^0.15.2"
     bignumber.js "^3.0.1"
     lodash "^4.17.2"
 
-"lamassu-mailjet@https://github.com/lamassu/lamassu-mailjet/tarball/master":
+lamassu-mailjet@lamassu/lamassu-mailjet:
   version "1.0.0"
-  resolved "https://github.com/lamassu/lamassu-mailjet/tarball/master#77e4f2af8a6127a6962d000908e8872476b18c0f"
+  resolved "https://codeload.github.com/lamassu/lamassu-mailjet/tar.gz/5fdb4f434054483175fe44004dc23c8ed0326742"
   dependencies:
     node-mailjet "^3.0.6"
 
-"lamassu-mock-id-verify@https://github.com/lamassu/lamassu-mock-id-verify/tarball/master":
+lamassu-mock-id-verify@lamassu/lamassu-mock-id-verify:
   version "1.0.1"
-  resolved "https://github.com/lamassu/lamassu-mock-id-verify/tarball/master#0ebd6c1aae85d6957f14d119b026bd0755087281"
+  resolved "https://codeload.github.com/lamassu/lamassu-mock-id-verify/tar.gz/f2b6b785f1d36a8d3e059e06722e7e7d9208d72e"
 
-"lamassu-mock-sms@https://github.com/lamassu/lamassu-mock-sms/tarball/master":
+lamassu-mock-sms@lamassu/lamassu-mock-sms:
   version "1.0.1"
-  resolved "https://github.com/lamassu/lamassu-mock-sms/tarball/master#33ae4eac98046df0f4e069445b595c3fc6cde11a"
+  resolved "https://codeload.github.com/lamassu/lamassu-mock-sms/tar.gz/206fa1edb8fe2635d2fba8b8e81b9029c9dd9141"
 
-"lamassu-mock-wallet@https://github.com/lamassu/lamassu-mock-wallet/tarball/master":
+lamassu-mock-wallet@lamassu/lamassu-mock-wallet:
   version "1.1.0"
-  resolved "https://github.com/lamassu/lamassu-mock-wallet/tarball/master#6c5505cf1f288bfff2200671169769683a5636fd"
+  resolved "https://codeload.github.com/lamassu/lamassu-mock-wallet/tar.gz/bd43d9a57594ed4567f31b59994d3bcb622d952f"
   dependencies:
     bignumber.js "^3.0.1"
 
-"lamassu-twilio@https://github.com/lamassu/lamassu-twilio/tarball/master":
+lamassu-twilio@lamassu/lamassu-twilio:
   version "1.1.3"
-  resolved "https://github.com/lamassu/lamassu-twilio/tarball/master#fb4baa8c12b4d16d7c7472daec8eb3ad3f02bd69"
+  resolved "https://codeload.github.com/lamassu/lamassu-twilio/tar.gz/ba747e8a327dc719c0092314bab138197acab558"
   dependencies:
     ramda "^0.21.0"
     twilio "^2.11.1"
@@ -1385,7 +1367,7 @@ lodash@4.13.1:
   version "4.13.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.13.1.tgz#83e4b10913f48496d4d16fec4a560af2ee744b68"
 
-lodash@^4.14.0, lodash@^4.17.2:
+lodash@^4.17.2:
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
 
@@ -1459,7 +1441,7 @@ mime-db@~1.25.0:
   version "1.25.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.25.0.tgz#c18dbd7c73a5dbf6f44a024dc0d165a1e7b1c392"
 
-mime-types@^2.1.10, mime-types@^2.1.11, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.7:
+mime-types@^2.1.10, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.7:
   version "2.1.13"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.13.tgz#e07aaa9c6c6b9a7ca3012c69003ad25a39e92a88"
   dependencies:
@@ -1577,9 +1559,9 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
 
-numeral@^1.5.3:
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/numeral/-/numeral-1.5.6.tgz#3831db968451b9cf6aff9bf95925f1ef8e37b33f"
+numeral@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/numeral/-/numeral-2.0.1.tgz#905935ce72e316b31e81ca0c7586e6b60e132b4f"
 
 oauth-sign@~0.8.1:
   version "0.8.2"
