@@ -66,7 +66,6 @@
       "cryptoScope": "global",
       "machineScope": "specific",
       "fields": [
-        "machineName",
         "cashOutEnabled",
         "machineLocation"
       ]
@@ -307,17 +306,6 @@
         "idVerificationEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
-    },
-    {
-      "code": "machineName",
-      "display": "Name",
-      "fieldType": "string",
-      "fieldClass": null,
-      "fieldValidation": [
-        {
-          "code": "required"
-        }
-      ]
     },
     {
       "code": "cashOutEnabled",
