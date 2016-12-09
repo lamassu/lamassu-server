@@ -346,7 +346,8 @@ p {
 
 .lamassuAdminNavBar {
     margin: 0;
-    padding: 0;
+    padding: 0 0 60px 0;
+    background-color: #2d2d2d;
     font-size: 18px;
 }
 
