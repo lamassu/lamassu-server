@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$(whoami)" != "postgres" ]; then
+  echo -e "This script has to be run as \033[1mpostgres\033[0m user"
+  exit 3
+fi
+
+DAYS_TO_KEEP=3
+DATE=$(date --utc +%F_%H-%M)
+BACKUP_DIR=/var/backups/postgresql
+BACKUP_FILE=$BACKUP_DIR/backup-$DATE.sql.gz
+
+pg_dump -- lamassu | gzip > $BACKUP_FILE
+find $BACKUP_DIR -maxdepth 1 -mtime +$DAYS_TO_KEEP -exec rm -f '{}' ';'

@@ -52,7 +52,8 @@
     "lamassu-domain": "./bin/lamassu-domain",
     "lamassu-admin-server": "./bin/lamassu-admin-server",
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
-    "hkdf": "./bin/hkdf"
+    "hkdf": "./bin/hkdf",
+    "lamassu-backup-pg": "./bin/lamassu-backup-pg"
   },
   "scripts": {},
   "devDependencies": {}
