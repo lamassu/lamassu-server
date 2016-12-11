@@ -37,6 +37,8 @@
     "pretty-ms": "^2.1.0",
     "ramda": "^0.22.1",
     "serve-static": "^1.11.1",
+    "socket.io": "^1.7.1",
+    "socket.io-client": "^1.7.1",
     "uuid": "^3.0.0",
     "winston": "^2.3.0"
   },
