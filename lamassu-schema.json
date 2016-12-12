@@ -1,6 +1,15 @@
 {
   "groups": [
     {
+      "code": "fiat",
+      "display": "Fiat currencies",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "fiatCurrency"
+      ]
+    },
+    {
       "code": "commissions",
       "display": "Commissions",
       "cryptoScope": "both",
@@ -21,15 +30,6 @@
         "ticker",
         "wallet",
         "exchange"
-      ]
-    },
-    {
-      "code": "fiat",
-      "display": "Fiat currencies",
-      "cryptoScope": "global",
-      "machineScope": "global",
-      "fields": [
-        "fiatCurrency"
       ]
     },
     {
@@ -88,7 +88,9 @@
   "fields": [
     {
       "code": "cashInCommission",
-      "display": "Cash-in commission",
+      "displayTop": "Commissions",
+      "displayTopCount": 2,
+      "displayBottom": "Cash-in",
       "fieldType": "percentage",
       "fieldClass": null,
       "cryptoScope": "both",
@@ -105,7 +107,8 @@
     },
     {
       "code": "cashOutCommission",
-      "display": "Cash-out commission",
+      "displayBottom": "Cash-out",
+      "displayTopCount": 0,
       "fieldType": "percentage",
       "fieldClass": null,
       "cryptoScope": "both",
@@ -117,7 +120,8 @@
     },
     {
       "code": "lowBalanceMargin",
-      "display": "Low balance margin",
+      "displayTop": "Low balance",
+      "displayBottom": "Margin",
       "fieldType": "percentage",
       "fieldClass": null,
       "cryptoScope": "both",
@@ -127,9 +131,10 @@
     },
     {
       "code": "zeroConfLimit",
-      "display": "Zero conf limit",
+      "displayTop": "0-conf",
+      "displayBottom": "Limit",
       "fieldType": "integer",
-      "fieldClass": null,
+      "fieldClass": "fiat",
       "cryptoScope": "both",
       "machineScope": "both",
       "enabledIf": [
@@ -139,7 +144,7 @@
     },
     {
       "code": "ticker",
-      "display": "Ticker",
+      "displayBottom": "Ticker",
       "fieldType": "account",
       "fieldClass": "ticker",
       "fieldValidation": [
@@ -150,7 +155,7 @@
     },
     {
       "code": "wallet",
-      "display": "Wallet",
+      "displayBottom": "Wallet",
       "fieldType": "account",
       "fieldClass": "wallet",
       "fieldValidation": [
@@ -161,14 +166,14 @@
     },
     {
       "code": "exchange",
-      "display": "Exchange",
+      "displayBottom": "Exchange",
       "fieldType": "account",
       "fieldClass": "exchange",
       "fieldValidation": []
     },
     {
       "code": "fiatCurrency",
-      "display": "Fiat Currency",
+      "displayBottom": "Fiat Currency",
       "fieldType": "fiatCurrency",
       "fieldClass": null,
       "fieldValidation": [
@@ -179,7 +184,7 @@
     },
     {
       "code": "machineLanguages",
-      "display": "Languages",
+      "displayBottom": "Languages",
       "fieldType": "language",
       "fieldClass": null,
       "fieldValidation": [
@@ -191,7 +196,7 @@
     },
     {
       "code": "cryptoCurrencies",
-      "display": "Crypto Currencies",
+      "displayBottom": "Crypto Currencies",
       "fieldType": "cryptoCurrency",
       "fieldClass": null,
       "fieldValidation": [
@@ -203,7 +208,9 @@
     },
     {
       "code": "topCashOutDenomination",
-      "display": "Top cash-out denomination",
+      "displayTop": "Cash-out denominations",
+      "displayBottom": "Top",
+      "displayTopCount": 3,
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [
@@ -213,7 +220,8 @@
     },
     {
       "code": "bottomCashOutDenomination",
-      "display": "Bottom cash-out denomination",
+      "displayBottom": "Bottom",
+      "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [
@@ -223,7 +231,8 @@
     },
     {
       "code": "virtualCashOutDenomination",
-      "display": "Virtual cash-out denomination",
+      "displayBottom": "Virtual",
+      "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [
@@ -233,9 +242,10 @@
     },
     {
       "code": "emptyBillMargin",
-      "display": "Empty bill margin",
+      "displayTop": "Empty bill",
+      "displayBottom": "Margin",
       "fieldType": "integer",
-      "fieldClass": null,
+      "fieldClass": "banknotes",
       "enabledIf": [
         "cashOutEnabled"
       ],
@@ -244,9 +254,11 @@
     },
     {
       "code": "cashInTransactionLimit",
-      "display": "Cash-in tx limit",
+      "displayTop": "Tx limits",
+      "displayBottom": "Cash-in",
+      "displayTopCount": 2,
       "fieldType": "integer",
-      "fieldClass": null,
+      "fieldClass": "fiat",
       "fieldValidation": [
         {
           "code": "required"
@@ -255,7 +267,8 @@
     },
     {
       "code": "cashOutTransactionLimit",
-      "display": "Cash-out tx limit",
+      "displayBottom": "Cash-out",
+      "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [
@@ -265,7 +278,9 @@
     },
     {
       "code": "smsVerificationEnabled",
-      "display": "SMS verification",
+      "displayTop": "Verifications enabled",
+      "displayBottom": "SMS",
+      "displayTopCount": 2,
       "fieldType": "onOff",
       "fieldClass": null,
       "fieldValidation": [
@@ -277,7 +292,8 @@
     },
     {
       "code": "idVerificationEnabled",
-      "display": "ID verification",
+      "displayBottom": "ID",
+      "displayTopCount": 0,
       "fieldType": "onOff",
       "fieldClass": null,
       "fieldValidation": [
@@ -289,7 +305,9 @@
     },
     {
       "code": "idVerifier",
-      "display": "ID verify service",
+      "displayTop": "ID verification",
+      "displayTopCount": 2,
+      "displayBottom": "Service",
       "fieldType": "account",
       "fieldClass": "idVerifier",
       "enabledIf": [
@@ -299,7 +317,8 @@
     },
     {
       "code": "idVerificationLimit",
-      "display": "ID Verification Limit",
+      "displayBottom": "Limit",
+      "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [
@@ -309,7 +328,7 @@
     },
     {
       "code": "cashOutEnabled",
-      "display": "Cash Out",
+      "displayBottom": "Cash Out",
       "fieldType": "onOff",
       "fieldClass": null,
       "fieldValidation": [
@@ -321,14 +340,16 @@
     },
     {
       "code": "machineLocation",
-      "display": "Location",
+      "displayBottom": "Location",
       "fieldType": "string",
       "fieldClass": null,
       "fieldValidation": []
     },
     {
       "code": "notificationsEnabled",
-      "display": "Notifications",
+      "displayTop": "Notifications enabled",
+      "displayBottom": "General",
+      "displayTopCount": 3,
       "fieldType": "onOff",
       "fieldClass": null,
       "fieldValidation": [
@@ -340,7 +361,8 @@
     },
     {
       "code": "notificationsEmailEnabled",
-      "display": "Email notifications",
+      "displayBottom": "Email",
+      "displayTopCount": 0,
       "fieldType": "onOff",
       "fieldClass": null,
       "enabledIf": [
@@ -355,7 +377,8 @@
     },
     {
       "code": "notificationsSMSEnabled",
-      "display": "SMS notifications",
+      "displayBottom": "SMS",
+      "displayTopCount": 0,
       "fieldType": "onOff",
       "fieldClass": null,
       "enabledIf": [
@@ -370,7 +393,9 @@
     },
     {
       "code": "sms",
-      "display": "SMS gateway",
+      "displayTop": "Gateways",
+      "displayBottom": "SMS",
+      "displayTopCount": 2,
       "fieldType": "account",
       "fieldClass": "sms",
       "enabledIf": [
@@ -381,7 +406,8 @@
     },
     {
       "code": "email",
-      "display": "Email gateway",
+      "displayBottom": "Email",
+      "displayTopCount": 0,
       "fieldType": "account",
       "fieldClass": "email",
       "enabledIf": [
@@ -391,7 +417,7 @@
     },
     {
       "code": "lowBalanceThreshold",
-      "display": "Low Balance Threshold",
+      "displayBottom": "Low Balance Threshold",
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [
