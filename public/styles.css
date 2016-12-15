@@ -185,6 +185,11 @@ p {
     padding: 5px;
 }
 
+.lamassuAdminEmptyTable {
+    font-size: 20px;
+    font-weight: normal;
+}
+
 .lamassuAdminConfigTable {
     font-size: 14px;
     border-radius: 7px;
