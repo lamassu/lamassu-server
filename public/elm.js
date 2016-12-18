@@ -22266,10 +22266,15 @@ var _tripokey$elm_fuzzy$Fuzzy$addPenalty = function (penalty) {
 	return _tripokey$elm_fuzzy$Fuzzy$AddPenalty(penalty);
 };
 
-var _user$project$FieldSetTypes$Field = F6(
-	function (a, b, c, d, e, f) {
-		return {code: a, display: b, secret: c, required: d, value: e, loadedValue: f};
+var _user$project$FieldSetTypes$Field = F5(
+	function (a, b, c, d, e) {
+		return {code: a, display: b, required: c, value: d, loadedValue: e};
 	});
+var _user$project$FieldSetTypes$PasswordHidden = {ctor: 'PasswordHidden'};
+var _user$project$FieldSetTypes$PasswordEmpty = {ctor: 'PasswordEmpty'};
+var _user$project$FieldSetTypes$Password = function (a) {
+	return {ctor: 'Password', _0: a};
+};
 var _user$project$FieldSetTypes$FieldPassword = function (a) {
 	return {ctor: 'FieldPassword', _0: a};
 };
@@ -22283,7 +22288,7 @@ var _user$project$FieldSetTypes$updateFieldValue = F2(
 			return _user$project$FieldSetTypes$FieldString(stringValue);
 		} else {
 			return _user$project$FieldSetTypes$FieldPassword(
-				_elm_lang$core$Maybe$Just(stringValue));
+				_user$project$FieldSetTypes$Password(stringValue));
 		}
 	});
 
@@ -22292,14 +22297,16 @@ var _user$project$AccountTypes$Account = F3(
 		return {code: a, display: b, fields: c};
 	});
 
+var _user$project$FieldSetDecoder$fieldPasswordDecoder = function (present) {
+	return present ? _user$project$FieldSetTypes$FieldPassword(_user$project$FieldSetTypes$PasswordHidden) : _user$project$FieldSetTypes$FieldPassword(_user$project$FieldSetTypes$PasswordEmpty);
+};
 var _user$project$FieldSetDecoder$fieldValueDecoder = function (fieldType) {
 	var _p0 = fieldType;
 	switch (_p0) {
 		case 'string':
 			return A2(_elm_lang$core$Json_Decode$map, _user$project$FieldSetTypes$FieldString, _elm_lang$core$Json_Decode$string);
 		case 'password':
-			return _elm_lang$core$Json_Decode$succeed(
-				_user$project$FieldSetTypes$FieldPassword(_elm_lang$core$Maybe$Nothing));
+			return A2(_elm_lang$core$Json_Decode$map, _user$project$FieldSetDecoder$fieldPasswordDecoder, _elm_lang$core$Json_Decode$bool);
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'Unsupported field type: ', fieldType));
@@ -22308,12 +22315,11 @@ var _user$project$FieldSetDecoder$fieldValueDecoder = function (fieldType) {
 var _user$project$FieldSetDecoder$fieldDecoder = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	function (fieldType) {
-		return A7(
-			_elm_lang$core$Json_Decode$map6,
+		return A6(
+			_elm_lang$core$Json_Decode$map5,
 			_user$project$FieldSetTypes$Field,
 			A2(_elm_lang$core$Json_Decode$field, 'code', _elm_lang$core$Json_Decode$string),
 			A2(_elm_lang$core$Json_Decode$field, 'display', _elm_lang$core$Json_Decode$string),
-			A2(_elm_lang$core$Json_Decode$field, 'secret', _elm_lang$core$Json_Decode$bool),
 			A2(_elm_lang$core$Json_Decode$field, 'required', _elm_lang$core$Json_Decode$bool),
 			A2(
 				_elm_lang$core$Json_Decode$field,
@@ -22356,7 +22362,7 @@ var _user$project$FieldSetEncoder$encodeFieldValue = function (fieldValue) {
 		return _elm_lang$core$Maybe$Just(_p1._0);
 	} else {
 		var _p2 = _p1._0;
-		if (_p2.ctor === 'Just') {
+		if (_p2.ctor === 'Password') {
 			return _elm_lang$core$Maybe$Just(_p2._0);
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
@@ -22365,40 +22371,25 @@ var _user$project$FieldSetEncoder$encodeFieldValue = function (fieldValue) {
 };
 var _user$project$FieldSetEncoder$encodeField = function (field) {
 	var fieldValue = _user$project$FieldSetEncoder$encodeFieldValue(field.value);
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'code',
-				_1: _elm_lang$core$Json_Encode$string(field.code)
-			},
-			_1: {
+	return _user$project$FieldSetEncoder$isDirty(field) ? _elm_lang$core$Maybe$Just(
+		_elm_lang$core$Json_Encode$object(
+			{
 				ctor: '::',
 				_0: {
 					ctor: '_Tuple2',
-					_0: 'value',
-					_1: _user$project$FieldSetEncoder$maybeString(fieldValue)
+					_0: 'code',
+					_1: _elm_lang$core$Json_Encode$string(field.code)
 				},
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _user$project$FieldSetEncoder$encodeFieldSet = function (fields) {
-	var fieldValues = A2(
-		_elm_lang$core$List$map,
-		_user$project$FieldSetEncoder$encodeField,
-		A2(_elm_lang$core$List$filter, _user$project$FieldSetEncoder$isDirty, fields));
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'fields',
-				_1: _elm_lang$core$Json_Encode$list(fieldValues)
-			},
-			_1: {ctor: '[]'}
-		});
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'value',
+						_1: _user$project$FieldSetEncoder$maybeString(fieldValue)
+					},
+					_1: {ctor: '[]'}
+				}
+			})) : _elm_lang$core$Maybe$Nothing;
 };
 
 var _user$project$AccountEncoder$encodeAccount = function (account) {
@@ -22423,7 +22414,7 @@ var _user$project$AccountEncoder$encodeAccount = function (account) {
 						ctor: '_Tuple2',
 						_0: 'fields',
 						_1: _elm_lang$core$Json_Encode$list(
-							A2(_elm_lang$core$List$map, _user$project$FieldSetEncoder$encodeField, account.fields))
+							A2(_elm_lang$core$List$filterMap, _user$project$FieldSetEncoder$encodeField, account.fields))
 					},
 					_1: {ctor: '[]'}
 				}
@@ -22440,6 +22431,7 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$Saving = {ctor: 'Saving'};
 var _user$project$Css_Classes$EmptyTable = {ctor: 'EmptyTable'};
 var _user$project$Css_Classes$UnitDisplay = {ctor: 'UnitDisplay'};
 var _user$project$Css_Classes$InputContainer = {ctor: 'InputContainer'};
@@ -22531,19 +22523,40 @@ var _user$project$FieldSet$fieldComponent = function (field) {
 				},
 				{ctor: '[]'});
 		} else {
-			return A2(
-				_elm_lang$html$Html$input,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onInput(
-						_user$project$FieldSet$Input(field.code)),
-					_1: {
+			var _p2 = _p1._0;
+			if (_p2.ctor === 'PasswordEmpty') {
+				return A2(
+					_elm_lang$html$Html$input,
+					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('password'),
-						_1: {ctor: '[]'}
-					}
-				},
-				{ctor: '[]'});
+						_0: _elm_lang$html$Html_Events$onInput(
+							_user$project$FieldSet$Input(field.code)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$type_('password'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'});
+			} else {
+				return A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(
+							_user$project$FieldSet$Input(field.code)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$type_('password'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$placeholder('••• Field is set •••'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'});
+			}
 		}
 	}();
 	return A2(
@@ -25303,8 +25316,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1086, column: 17},
-							end: {line: 1091, column: 56}
+							start: {line: 1093, column: 17},
+							end: {line: 1098, column: 56}
 						},
 						_p3)('Shouldn\'t be here');
 				}
@@ -25450,8 +25463,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 926, column: 5},
-				end: {line: 931, column: 59}
+				start: {line: 932, column: 5},
+				end: {line: 937, column: 59}
 			},
 			_p9)('Referenced field must be boolean');
 	}
@@ -25683,8 +25696,8 @@ var _user$project$Config$languageSelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 509, column: 21},
-							end: {line: 514, column: 60}
+							start: {line: 515, column: 21},
+							end: {line: 520, column: 60}
 						},
 						_p15)('Shouldn\'t be here');
 				}
@@ -25725,8 +25738,8 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 463, column: 21},
-							end: {line: 468, column: 60}
+							start: {line: 469, column: 21},
+							end: {line: 474, column: 60}
 						},
 						_p18)('Shouldn\'t be here');
 				}
@@ -25963,8 +25976,8 @@ var _user$project$Config$fieldHolderToList = function (fieldHolder) {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Config',
 					{
-						start: {line: 138, column: 13},
-						end: {line: 146, column: 50}
+						start: {line: 144, column: 13},
+						end: {line: 152, column: 50}
 					},
 					_p28)('Not a list type');
 		}
@@ -26135,6 +26148,7 @@ var _user$project$Config$init = {
 var _user$project$Config$Editing = {ctor: 'Editing'};
 var _user$project$Config$Saved = {ctor: 'Saved'};
 var _user$project$Config$Saving = {ctor: 'Saving'};
+var _user$project$Config$NoOp = {ctor: 'NoOp'};
 var _user$project$Config$HideSaveIndication = {ctor: 'HideSaveIndication'};
 var _user$project$Config$Remove = F2(
 	function (a, b) {
@@ -26192,8 +26206,8 @@ var _user$project$Config$selectizeView = F6(
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Config',
 					{
-						start: {line: 552, column: 9},
-						end: {line: 594, column: 52}
+						start: {line: 558, column: 9},
+						end: {line: 600, column: 52}
 					},
 					_p36)('Not a Selectize field');
 		}
@@ -26840,47 +26854,96 @@ var _user$project$Config$postForm = F2(
 						A2(_user$project$ConfigEncoder$encodeResults, configGroupCode, fieldInstances),
 						_lukewestby$elm_http_builder$HttpBuilder$post('/api/config')))));
 	});
+var _user$project$Config$postFormNoLoad = F2(
+	function (configGroupCode, fieldInstances) {
+		return A2(
+			_elm_lang$core$Platform_Cmd$map,
+			function (_p45) {
+				return _user$project$Config$NoOp;
+			},
+			A2(_user$project$Config$postForm, configGroupCode, fieldInstances));
+	});
+var _user$project$Config$submitNoLoad = function (model) {
+	var _p46 = model.webConfigGroup;
+	if (_p46.ctor === 'Success') {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{status: _user$project$Config$Saving}),
+			{
+				ctor: '::',
+				_0: A2(_user$project$Config$postFormNoLoad, _p46._0.schema.code, model.fieldInstances),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			model,
+			{ctor: '[]'});
+	}
+};
+var _user$project$Config$submit = function (model) {
+	var _p47 = model.webConfigGroup;
+	if (_p47.ctor === 'Success') {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{status: _user$project$Config$Saving}),
+			{
+				ctor: '::',
+				_0: A2(_user$project$Config$postForm, _p47._0.schema.code, model.fieldInstances),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			model,
+			{ctor: '[]'});
+	}
+};
 var _user$project$Config$update = F2(
 	function (msg, model) {
-		var _p45 = msg;
-		switch (_p45.ctor) {
+		var _p48 = msg;
+		switch (_p48.ctor) {
 			case 'Load':
-				var _p52 = _p45._0;
+				var _p55 = _p48._0;
 				var defaultCrypto = function () {
-					var _p46 = _p52;
-					if (_p46.ctor === 'Success') {
-						var _p47 = _p46._0;
+					var _p49 = _p55;
+					if (_p49.ctor === 'Success') {
+						var _p50 = _p49._0;
 						return A2(
 							_elm_lang$core$Maybe$map,
 							function (_) {
 								return _.crypto;
 							},
 							_elm_lang$core$List$head(
-								A3(_user$project$ConfigTypes$allCryptos, _p47.data.cryptoCurrencies, _p47.schema.cryptoScope, _p47.selectedCryptos)));
+								A3(_user$project$ConfigTypes$allCryptos, _p50.data.cryptoCurrencies, _p50.schema.cryptoScope, _p50.selectedCryptos)));
 					} else {
 						return _elm_lang$core$Maybe$Nothing;
 					}
 				}();
 				var crypto = function () {
-					var _p48 = model.crypto;
-					if (_p48.ctor === 'Nothing') {
+					var _p51 = model.crypto;
+					if (_p51.ctor === 'Nothing') {
 						return defaultCrypto;
 					} else {
-						return _elm_lang$core$Maybe$Just(_p48._0);
+						return _elm_lang$core$Maybe$Just(_p51._0);
 					}
 				}();
 				var fiat = function () {
-					var _p49 = _p52;
-					if (_p49.ctor === 'Success') {
-						return _user$project$Config$pickFiat(_p49._0.values);
+					var _p52 = _p55;
+					if (_p52.ctor === 'Success') {
+						return _user$project$Config$pickFiat(_p52._0.values);
 					} else {
 						return _elm_lang$core$Maybe$Nothing;
 					}
 				}();
 				var fieldInstances = function () {
-					var _p50 = _p52;
-					if (_p50.ctor === 'Success') {
-						return _user$project$Config$initFieldInstances(_p50._0);
+					var _p53 = _p55;
+					if (_p53.ctor === 'Success') {
+						return _user$project$Config$initFieldInstances(_p53._0);
 					} else {
 						return {ctor: '[]'};
 					}
@@ -26888,7 +26951,7 @@ var _user$project$Config$update = F2(
 				var status = _elm_lang$core$Native_Utils.eq(model.status, _user$project$Config$Saving) ? _user$project$Config$Saved : model.status;
 				var cmd = _elm_lang$core$Native_Utils.eq(status, _user$project$Config$Saved) ? A2(
 					_elm_lang$core$Task$perform,
-					function (_p51) {
+					function (_p54) {
 						return _user$project$Config$HideSaveIndication;
 					},
 					_elm_lang$core$Process$sleep(2 * _elm_lang$core$Time$second)) : _elm_lang$core$Platform_Cmd$none;
@@ -26896,48 +26959,31 @@ var _user$project$Config$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{webConfigGroup: _p52, fieldInstances: fieldInstances, status: status, crypto: crypto, fiat: fiat}),
+						{webConfigGroup: _p55, fieldInstances: fieldInstances, status: status, crypto: crypto, fiat: fiat}),
 					_1: cmd
 				};
 			case 'Submit':
-				var _p53 = model.webConfigGroup;
-				if (_p53.ctor === 'Success') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{status: _user$project$Config$Saving}),
-						{
-							ctor: '::',
-							_0: A2(_user$project$Config$postForm, _p53._0.schema.code, model.fieldInstances),
-							_1: {ctor: '[]'}
-						});
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				}
+				return _user$project$Config$submit(model);
 			case 'Input':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateInput,
-						_p45._0,
-						_elm_lang$core$Maybe$Just(_p45._1),
+						_p48._0,
+						_elm_lang$core$Maybe$Just(_p48._1),
 						model),
 					{ctor: '[]'});
 			case 'CryptoSwitch':
-				var _p55 = _p45._0;
-				var _p54 = model.webConfigGroup;
-				if (_p54.ctor === 'Success') {
-					var cryptoCode = _user$project$ConfigTypes$cryptoToString(_p55);
+				var _p57 = _p48._0;
+				var _p56 = model.webConfigGroup;
+				if (_p56.ctor === 'Success') {
+					var cryptoCode = _user$project$ConfigTypes$cryptoToString(_p57);
 					var path = A2(
 						_elm_lang$core$Basics_ops['++'],
 						'#config/',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_p54._0.schema.code,
+							_p56._0.schema.code,
 							A2(_elm_lang$core$Basics_ops['++'], '/', cryptoCode)));
 					var command = _elm_lang$navigation$Navigation$newUrl(
 						A2(_elm_lang$core$Debug$log, 'DEBUG123', path));
@@ -26946,7 +26992,7 @@ var _user$project$Config$update = F2(
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								crypto: _elm_lang$core$Maybe$Just(_p55)
+								crypto: _elm_lang$core$Maybe$Just(_p57)
 							}),
 						{
 							ctor: '::',
@@ -26962,64 +27008,69 @@ var _user$project$Config$update = F2(
 			case 'Focus':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(_user$project$Config$updateFocus, _p45._0, true, model),
+					A3(_user$project$Config$updateFocus, _p48._0, true, model),
 					{ctor: '[]'});
 			case 'Blur':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(_user$project$Config$updateFocus, _p45._0, false, model),
+					A3(_user$project$Config$updateFocus, _p48._0, false, model),
 					{ctor: '[]'});
 			case 'SelectizeMsg':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(_user$project$Config$updateSelectize, _p45._0, _p45._1, model),
+					A3(_user$project$Config$updateSelectize, _p48._0, _p48._1, model),
 					{ctor: '[]'});
 			case 'BlurSelectize':
-				var _p56 = _p45._0;
+				var _p58 = _p48._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateFocus,
-						_p56,
+						_p58,
 						false,
-						A3(_user$project$Config$updateSelectize, _p56, _p45._1, model)),
+						A3(_user$project$Config$updateSelectize, _p58, _p48._1, model)),
 					{ctor: '[]'});
 			case 'FocusSelectize':
-				var _p57 = _p45._0;
+				var _p59 = _p48._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateFocus,
-						_p57,
+						_p59,
 						true,
-						A3(_user$project$Config$updateSelectize, _p57, _p45._1, model)),
+						A3(_user$project$Config$updateSelectize, _p59, _p48._1, model)),
 					{ctor: '[]'});
 			case 'Add':
-				var _p58 = _p45._0;
+				var _p60 = _p48._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateInput,
-						_p58,
-						_elm_lang$core$Maybe$Just(_p45._1),
-						A3(_user$project$Config$updateSelectize, _p58, _p45._2, model)),
+						_p60,
+						_elm_lang$core$Maybe$Just(_p48._1),
+						A3(_user$project$Config$updateSelectize, _p60, _p48._2, model)),
 					{ctor: '[]'});
 			case 'Remove':
-				var _p59 = _p45._0;
+				var _p61 = _p48._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateInput,
-						_p59,
+						_p61,
 						_elm_lang$core$Maybe$Nothing,
-						A3(_user$project$Config$updateSelectize, _p59, _p45._1, model)),
+						A3(_user$project$Config$updateSelectize, _p61, _p48._1, model)),
 					{ctor: '[]'});
-			default:
+			case 'HideSaveIndication':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{status: _user$project$Config$NotSaving}),
+					{ctor: '[]'});
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
 					{ctor: '[]'});
 		}
 	});
@@ -27368,7 +27419,7 @@ var _user$project$Machine$updateMachine = F2(
 		return _elm_lang$core$Native_Utils.eq(machine.deviceId, oldMachine.deviceId) ? machine : oldMachine;
 	});
 var _user$project$Machine$updateCassette = F4(
-	function (machine, position, str, machines) {
+	function (machine, position, str, subModel) {
 		var countResult = _elm_lang$core$String$toInt(str);
 		var updatedMachine = function () {
 			var _p0 = countResult;
@@ -27388,15 +27439,47 @@ var _user$project$Machine$updateCassette = F4(
 				return machine;
 			}
 		}();
+		var machines = A2(
+			_elm_lang$core$List$map,
+			_user$project$Machine$updateMachine(updatedMachine),
+			subModel.machines);
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			A2(
-				_elm_lang$core$List$map,
-				_user$project$Machine$updateMachine(updatedMachine),
-				machines),
+			_elm_lang$core$Native_Utils.update(
+				subModel,
+				{machines: machines}),
 			{ctor: '[]'});
 	});
+var _user$project$Machine$toModel = F2(
+	function (status, machines) {
+		return {status: status, machines: machines};
+	});
 var _user$project$Machine$init = _krisajenkins$remotedata$RemoteData$NotAsked;
+var _user$project$Machine$SubModel = F2(
+	function (a, b) {
+		return {status: a, machines: b};
+	});
+var _user$project$Machine$NotSaving = {ctor: 'NotSaving'};
+var _user$project$Machine$Editing = {ctor: 'Editing'};
+var _user$project$Machine$Saved = {ctor: 'Saved'};
+var _user$project$Machine$Saving = {ctor: 'Saving'};
+var _user$project$Machine$HideSaveIndication = {ctor: 'HideSaveIndication'};
+var _user$project$Machine$saveUpdate = function (model) {
+	var cmd = _elm_lang$core$Native_Utils.eq(model.status, _user$project$Machine$Saved) ? A2(
+		_elm_lang$core$Task$perform,
+		function (_p3) {
+			return _user$project$Machine$HideSaveIndication;
+		},
+		_elm_lang$core$Process$sleep(2 * _elm_lang$core$Time$second)) : _elm_lang$core$Platform_Cmd$none;
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		model,
+		{
+			ctor: '::',
+			_0: cmd,
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$Machine$SubmitResetBills = function (a) {
 	return {ctor: 'SubmitResetBills', _0: a};
 };
@@ -27438,7 +27521,13 @@ var _user$project$Machine$getForm = A2(
 	_user$project$Machine$Load,
 	A2(
 		_lukewestby$elm_http_builder$HttpBuilder$send,
-		_krisajenkins$remotedata$RemoteData$fromResult,
+		function (_p4) {
+			return _krisajenkins$remotedata$RemoteData$fromResult(
+				A2(
+					_elm_lang$core$Result$map,
+					_user$project$Machine$toModel(_user$project$Machine$NotSaving),
+					_p4));
+		},
 		A2(
 			_lukewestby$elm_http_builder$HttpBuilder$withExpect,
 			_elm_lang$http$Http$expectJson(_user$project$MachinesDecoder$machinesDecoder),
@@ -27450,7 +27539,13 @@ var _user$project$Machine$postForm = function (action) {
 		_user$project$Machine$Load,
 		A2(
 			_lukewestby$elm_http_builder$HttpBuilder$send,
-			_krisajenkins$remotedata$RemoteData$fromResult,
+			function (_p5) {
+				return _krisajenkins$remotedata$RemoteData$fromResult(
+					A2(
+						_elm_lang$core$Result$map,
+						_user$project$Machine$toModel(_user$project$Machine$Saved),
+						_p5));
+			},
 			A2(
 				_lukewestby$elm_http_builder$HttpBuilder$withExpect,
 				_elm_lang$http$Http$expectJson(_user$project$MachinesDecoder$machinesDecoder),
@@ -27460,10 +27555,10 @@ var _user$project$Machine$postForm = function (action) {
 					_lukewestby$elm_http_builder$HttpBuilder$post('/api/machines')))));
 };
 var _user$project$Machine$updateSubmitCassette = F2(
-	function (machine, machines) {
+	function (machine, subModel) {
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			machines,
+			subModel,
 			{
 				ctor: '::',
 				_0: _user$project$Machine$postForm(
@@ -27473,27 +27568,36 @@ var _user$project$Machine$updateSubmitCassette = F2(
 	});
 var _user$project$Machine$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p6 = msg;
+		switch (_p6.ctor) {
 			case 'Action':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
 			case 'Load':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_p3._0,
-					{ctor: '[]'});
+				return A2(_krisajenkins$remotedata$RemoteData$update, _user$project$Machine$saveUpdate, _p6._0);
 			case 'InputCassette':
 				return A2(
 					_krisajenkins$remotedata$RemoteData$update,
-					A3(_user$project$Machine$updateCassette, _p3._0, _p3._1, _p3._2),
+					A3(_user$project$Machine$updateCassette, _p6._0, _p6._1, _p6._2),
+					model);
+			case 'SubmitResetBills':
+				return A2(
+					_krisajenkins$remotedata$RemoteData$update,
+					_user$project$Machine$updateSubmitCassette(_p6._0),
 					model);
 			default:
 				return A2(
 					_krisajenkins$remotedata$RemoteData$update,
-					_user$project$Machine$updateSubmitCassette(_p3._0),
+					function (subModel) {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								subModel,
+								{status: _user$project$Machine$NotSaving}),
+							{ctor: '[]'});
+					},
 					model);
 		}
 	});
@@ -27693,8 +27797,8 @@ var _user$project$Machine$tableView = function (machines) {
 		});
 };
 var _user$project$Machine$view = function (model) {
-	var _p4 = model;
-	switch (_p4.ctor) {
+	var _p7 = model;
+	switch (_p7.ctor) {
 		case 'NotAsked':
 			return A2(
 				_elm_lang$html$Html$div,
@@ -27716,10 +27820,19 @@ var _user$project$Machine$view = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p4._0)),
+						_elm_lang$core$Basics$toString(_p7._0)),
 					_1: {ctor: '[]'}
 				});
 		default:
+			var _p9 = _p7._0;
+			var statusString = function () {
+				var _p8 = _p9.status;
+				if (_p8.ctor === 'Saved') {
+					return 'Saved';
+				} else {
+					return '';
+				}
+			}();
 			return A2(
 				_elm_lang$html$Html$div,
 				{ctor: '[]'},
@@ -27758,8 +27871,28 @@ var _user$project$Machine$view = function (model) {
 										},
 										{
 											ctor: '::',
-											_0: _user$project$Machine$tableView(_p4._0),
-											_1: {ctor: '[]'}
+											_0: _user$project$Machine$tableView(_p9.machines),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$div,
+													{
+														ctor: '::',
+														_0: _user$project$Css_Admin$class(
+															{
+																ctor: '::',
+																_0: _user$project$Css_Classes$Saving,
+																_1: {ctor: '[]'}
+															}),
+														_1: {ctor: '[]'}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(statusString),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}),
 									_1: {ctor: '[]'}
 								}),
@@ -29485,13 +29618,22 @@ var _user$project$Main$update = F2(
 						{status: newStatus, pair: newPair, config: newConfig}),
 					{ctor: '[]'});
 			case 'NewUrl':
+				var _p18 = _user$project$Config$submitNoLoad(model.config);
+				var configModel = _p18._0;
+				var configCmd = _p18._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					model,
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{config: configModel}),
 					{
 						ctor: '::',
 						_0: _elm_lang$navigation$Navigation$newUrl(_p11._0),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$ConfigMsg, configCmd),
+							_1: {ctor: '[]'}
+						}
 					});
 			case 'UrlChange':
 				return A2(_user$project$Main$urlUpdate, _p11._0, model);
@@ -29530,7 +29672,7 @@ var _user$project$Main$Model = F9(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"FieldSetTypes.FieldValue":{"args":[],"tags":{"FieldString":["String"],"FieldPassword":["Maybe.Maybe String"]}},"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldAccountType":[]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Transaction.Msg":{"args":[],"tags":{"Load":["Transaction.Model"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Msg"],"Submit":[],"HideSaveIndication":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"FieldSet.Msg":{"args":[],"tags":{"Input":["String","String"]}},"CoreTypes.Msg":{"args":[],"tags":{"ConfigMsg":["Config.Msg"],"LoadAccounts":["List ( String, String )"],"MachineMsg":["Machine.Msg"],"NewUrl":["String"],"Interval":[],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Machine.Msg":{"args":[],"tags":{"Action":[],"Load":["Machine.Model"],"InputCassette":["MachineTypes.Machine","Machine.Position","String"],"SubmitResetBills":["MachineTypes.Machine"]}},"Machine.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["TransactionTypes.CashInTxRec"],"CashOutTx":["TransactionTypes.CashOutTxRec"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldCryptoCurrencyValue":["List String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Machine.Model":{"args":[],"type":"RemoteData.WebData MachineTypes.Machines"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , currencyCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSetTypes.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"MachineTypes.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"FieldSetTypes.Field":{"args":[],"type":"{ code : String , display : String , secret : Bool , required : Bool , value : FieldSetTypes.FieldValue , loadedValue : FieldSetTypes.FieldValue }"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"Transaction.Model":{"args":[],"type":"RemoteData.WebData Transaction.Txs"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue }"},"Transaction.Txs":{"args":[],"type":"List TransactionTypes.Tx"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , currencyCode : String , txHash : Maybe.Maybe String , status : String , dispensed : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MachineTypes.Machines":{"args":[],"type":"List MachineTypes.Machine"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIf : List String }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"FieldSetTypes.FieldValue":{"args":[],"tags":{"FieldString":["String"],"FieldPassword":["FieldSetTypes.FieldPasswordType"]}},"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldAccountType":[]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Transaction.Msg":{"args":[],"tags":{"Load":["Transaction.Model"]}},"Machine.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Msg"],"Submit":[],"HideSaveIndication":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"FieldSet.Msg":{"args":[],"tags":{"Input":["String","String"]}},"CoreTypes.Msg":{"args":[],"tags":{"ConfigMsg":["Config.Msg"],"LoadAccounts":["List ( String, String )"],"MachineMsg":["Machine.Msg"],"NewUrl":["String"],"Interval":[],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Machine.Msg":{"args":[],"tags":{"Action":[],"Load":["Machine.Model"],"InputCassette":["MachineTypes.Machine","Machine.Position","String"],"HideSaveIndication":[],"SubmitResetBills":["MachineTypes.Machine"]}},"Machine.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["TransactionTypes.CashInTxRec"],"CashOutTx":["TransactionTypes.CashOutTxRec"]}},"FieldSetTypes.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldCryptoCurrencyValue":["List String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Machine.Model":{"args":[],"type":"RemoteData.WebData Machine.SubModel"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , currencyCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSetTypes.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"MachineTypes.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"FieldSetTypes.Field":{"args":[],"type":"{ code : String , display : String , required : Bool , value : FieldSetTypes.FieldValue , loadedValue : FieldSetTypes.FieldValue }"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"Transaction.Model":{"args":[],"type":"RemoteData.WebData Transaction.Txs"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue }"},"Transaction.Txs":{"args":[],"type":"List TransactionTypes.Tx"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"Machine.SubModel":{"args":[],"type":"{ status : Machine.SavingStatus, machines : MachineTypes.Machines }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , currencyCode : String , txHash : Maybe.Maybe String , status : String , dispensed : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MachineTypes.Machines":{"args":[],"type":"List MachineTypes.Machine"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIf : List String }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

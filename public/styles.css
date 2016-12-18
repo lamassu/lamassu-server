@@ -381,6 +381,12 @@ p {
     font-weight: bold;
 }
 
+.lamassuAdminSaving {
+    font-size: 18px;
+    font-weight: normal;
+    text-align: right;
+}
+
 .lamassuAdminNavBar {
     margin: 0;
     padding: 0 0 60px 0;
