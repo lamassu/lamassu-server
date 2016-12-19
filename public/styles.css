@@ -73,6 +73,12 @@ p {
     background-color: #042c47;
 }
 
+.lamassuAdminButton.lamassuAdminDisabled {
+    background-color: #E6E6E3;
+    color: #ffffff;
+    cursor: default;
+}
+
 .lamassuAdminMainLeft {
     background-color: #2d2d2d;
     height: 100%;
@@ -315,10 +321,6 @@ p {
     background-color: #ffffff;
 }
 
-.lamassuAdminConfigTable  input:invalid {
-    color: #eb6b6e;
-}
-
 .lamassuAdminConfigTable  .lamassuAdminShortCell {
     width: 5em;
 }
@@ -347,8 +349,12 @@ p {
     background-color: #ffffff;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminRequiredComponent {
+.lamassuAdminConfigTable  .lamassuAdminInvalidComponent {
     border-top-color: #eb6b6e;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminInvalidComponent  input {
+    color: #eb6b6e;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminFocusedComponent {
