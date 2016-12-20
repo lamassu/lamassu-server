@@ -21,6 +21,9 @@ const login = require('../lib/admin/login')
 const pairing = require('../lib/admin/pairing')
 const server = require('../lib/admin/server')
 const transactions = require('../lib/admin/transactions')
+const T = require('../lib/time')
+
+const NEVER = new Date(Date.now() + 100 * T.years)
 
 const devMode = argv.dev
 
@@ -151,7 +154,9 @@ function register (req, res, next) {
 
     const cookieOpts = {
       httpOnly: true,
-      secure: true
+      secure: true,
+      domain: hostname,
+      expires: NEVER
     }
 
     const token = r.token
