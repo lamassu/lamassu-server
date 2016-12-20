@@ -254,6 +254,8 @@ p {
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminBoxItem {
     padding: 3px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminInfo {

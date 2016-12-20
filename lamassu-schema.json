@@ -38,6 +38,7 @@
       "cryptoScope": "global",
       "machineScope": "both",
       "fields": [
+        "country",
         "machineLanguages",
         "cryptoCurrencies",
         "topCashOutDenomination",
@@ -175,6 +176,17 @@
       "code": "fiatCurrency",
       "displayBottom": "Fiat Currency",
       "fieldType": "fiatCurrency",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ]
+    },
+    {
+      "code": "country",
+      "displayBottom": "Country",
+      "fieldType": "country",
       "fieldClass": null,
       "fieldValidation": [
         {
