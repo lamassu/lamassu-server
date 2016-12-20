@@ -22936,7 +22936,7 @@ var _user$project$Selectize$rawOnKeyDownNoPrevent = function (tagger) {
 	return A3(
 		_elm_lang$html$Html_Events$onWithOptions,
 		'keydown',
-		{stopPropagation: false, preventDefault: true},
+		{stopPropagation: false, preventDefault: false},
 		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
 };
 var _user$project$Selectize$preventSpecialDecoder = function (specialKeys) {
@@ -22971,7 +22971,11 @@ var _user$project$Selectize$deleteSpecialKeys = {
 			_1: {
 				ctor: '::',
 				_0: 13,
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: 27,
+					_1: {ctor: '[]'}
+				}
 			}
 		}
 	}
@@ -22991,7 +22995,11 @@ var _user$project$Selectize$noDeleteSpecialKeys = {
 				_1: {
 					ctor: '::',
 					_0: 13,
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: 27,
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		}
@@ -23124,9 +23132,10 @@ var _user$project$Selectize$editingBoxView = F3(
 	});
 var _user$project$Selectize$idleBoxView = F3(
 	function (config, items, state) {
-		var remainingItems = _elm_lang$core$List$length(items.availableItems) - _elm_lang$core$List$length(items.selectedItems);
+		var numSelected = _elm_lang$core$List$length(items.selectedItems);
+		var remainingItems = _elm_lang$core$List$length(items.availableItems) - numSelected;
 		var h = config.htmlOptions;
-		var typeForMore = (_elm_lang$core$Native_Utils.cmp(remainingItems, config.boxLength) > 0) ? A2(
+		var typeForMore = (_elm_lang$core$Native_Utils.cmp(remainingItems, config.boxLength) > 0) ? ((_elm_lang$core$Native_Utils.cmp(numSelected, config.maxItems) < 0) ? A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
@@ -23138,12 +23147,23 @@ var _user$project$Selectize$idleBoxView = F3(
 				_0: _elm_lang$html$Html$text(h.typeForMore),
 				_1: {ctor: '[]'}
 			}) : A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class(h.classes.info),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Backspace for more'),
+				_1: {ctor: '[]'}
+			})) : A2(
 			_elm_lang$html$Html$span,
 			{ctor: '[]'},
 			{ctor: '[]'});
-		return _elm_lang$core$Native_Utils.eq(
+		return ((_elm_lang$core$Native_Utils.cmp(config.maxItems, 1) > 0) && _elm_lang$core$Native_Utils.eq(
 			_elm_lang$core$List$length(items.selectedItems),
-			config.maxItems) ? A2(
+			config.maxItems)) ? A2(
 			_elm_lang$html$Html$span,
 			{ctor: '[]'},
 			{ctor: '[]'}) : A2(
@@ -23393,13 +23413,12 @@ var _user$project$Selectize$addSelection = F3(
 	});
 var _user$project$Selectize$updateKeyDown = F4(
 	function (config, items, state, keyCode) {
-		if (_elm_lang$core$Native_Utils.eq(
+		if ((_elm_lang$core$Native_Utils.cmp(config.maxItems, 1) > 0) && _elm_lang$core$Native_Utils.eq(
 			_elm_lang$core$List$length(items.selectedItems),
 			config.maxItems)) {
 			var _p5 = keyCode;
 			if (_p5 === 8) {
-				return (_elm_lang$core$String$isEmpty(
-					A2(_elm_lang$core$Debug$log, 'DEBUG10', state.string)) && function (_p6) {
+				return (_elm_lang$core$String$isEmpty(state.string) && function (_p6) {
 					return !_elm_lang$core$List$isEmpty(_p6);
 				}(items.selectedItems)) ? config.onRemove(state) : config.toMsg(state);
 			} else {
@@ -23450,6 +23469,11 @@ var _user$project$Selectize$onKeyDownNoDelete = F3(
 		return A2(
 			_user$project$Selectize$rawOnKeyDown,
 			_user$project$Selectize$noDeleteSpecialKeys,
+			A3(_user$project$Selectize$updateKeyDown, config, items, state));
+	});
+var _user$project$Selectize$onKeyDown = F3(
+	function (config, items, state) {
+		return _user$project$Selectize$rawOnKeyDownNoPrevent(
 			A3(_user$project$Selectize$updateKeyDown, config, items, state));
 	});
 var _user$project$Selectize$Editing = {ctor: 'Editing'};
@@ -23560,7 +23584,7 @@ var _user$project$Selectize$view = F5(
 					5,
 					A2(config.match, state.string, remainingItems));
 				var items = A3(_user$project$Selectize$buildItems, selectedItems, availableItems, boxItems);
-				var keyDown = (_elm_lang$core$Native_Utils.cmp(config.maxItems, 1) > 0) ? (_elm_lang$core$String$isEmpty(state.string) ? A3(_user$project$Selectize$onKeyDownNoDelete, config, items, state) : A3(_user$project$Selectize$onKeyDownDelete, config, items, state)) : A3(_user$project$Selectize$onKeyDownNoDelete, config, items, state);
+				var keyDown = (_elm_lang$core$Native_Utils.cmp(config.maxItems, 1) > 0) ? (_elm_lang$core$String$isEmpty(state.string) ? A3(_user$project$Selectize$onKeyDownNoDelete, config, items, state) : A3(_user$project$Selectize$onKeyDownDelete, config, items, state)) : A3(_user$project$Selectize$onKeyDown, config, items, state);
 				var h = config.htmlOptions;
 				var editInput = function () {
 					var _p9 = state.status;
@@ -26779,10 +26803,16 @@ var _user$project$Config$view = function (model) {
 				});
 			var machines = _user$project$ConfigTypes$listMachines(resolvedModel.configGroup);
 			var fieldInstances = resolvedModel.fieldInstances;
+			var cryptoFieldInstances = A2(
+				_elm_lang$core$List$filter,
+				function (fi) {
+					return _elm_lang$core$Native_Utils.eq(fi.fieldLocator.fieldScope.crypto, resolvedModel.crypto);
+				},
+				fieldInstances);
 			var submitButton = A2(
 				_elm_lang$core$List$all,
 				A2(_user$project$Config$validateFieldInstance, _p46, fieldInstances),
-				fieldInstances) ? A2(
+				cryptoFieldInstances) ? A2(
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
@@ -27165,8 +27195,7 @@ var _user$project$Config$update = F2(
 							_elm_lang$core$Basics_ops['++'],
 							_p59._0.schema.code,
 							A2(_elm_lang$core$Basics_ops['++'], '/', cryptoCode)));
-					var command = _elm_lang$navigation$Navigation$newUrl(
-						A2(_elm_lang$core$Debug$log, 'DEBUG123', path));
+					var command = _elm_lang$navigation$Navigation$newUrl(path);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
