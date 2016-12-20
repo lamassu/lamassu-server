@@ -154,6 +154,7 @@ p {
 
 .lamassuAdminTxTable  .lamassuAdminNumberColumn {
     text-align: right;
+    width: 10em;
 }
 
 .lamassuAdminTxTable  .lamassuAdminDirectionColumn {
@@ -178,6 +179,14 @@ p {
     overflow: hidden;
     width: 300px;
     text-overflow: ellipsis;
+}
+
+.lamassuAdminTxTable  tbody  .lamassuAdminTxDate {
+    width: 10em;
+}
+
+.lamassuAdminTxTable  tbody  .lamassuAdminTxAddress {
+    width: 25em;
 }
 
 .lamassuAdminTxTable  thead {
