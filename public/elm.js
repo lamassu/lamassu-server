@@ -22456,7 +22456,9 @@ var _user$project$Css_Classes$Active = {ctor: 'Active'};
 var _user$project$Css_Classes$ButtonRow = {ctor: 'ButtonRow'};
 var _user$project$Css_Classes$Button = {ctor: 'Button'};
 var _user$project$Css_Classes$FormRow = {ctor: 'FormRow'};
+var _user$project$Css_Classes$TextCell = {ctor: 'TextCell'};
 var _user$project$Css_Classes$LongCell = {ctor: 'LongCell'};
+var _user$project$Css_Classes$MediumCell = {ctor: 'MediumCell'};
 var _user$project$Css_Classes$ShortCell = {ctor: 'ShortCell'};
 var _user$project$Css_Classes$MultiDisplay = {ctor: 'MultiDisplay'};
 var _user$project$Css_Classes$BottomDisplay = {ctor: 'BottomDisplay'};
@@ -23851,21 +23853,9 @@ var _user$project$ConfigTypes$fieldValueToString = function (fieldValue) {
 		case 'FieldFiatCurrencyValue':
 			return _p8._0;
 		case 'FieldCryptoCurrencyValue':
-			return _elm_lang$core$Native_Utils.crashCase(
-				'ConfigTypes',
-				{
-					start: {line: 192, column: 5},
-					end: {line: 218, column: 43}
-				},
-				_p8)('N/A for cryptoCurrency');
+			return A2(_elm_lang$core$String$join, ',', _p8._0);
 		default:
-			return _elm_lang$core$Native_Utils.crashCase(
-				'ConfigTypes',
-				{
-					start: {line: 192, column: 5},
-					end: {line: 218, column: 43}
-				},
-				_p8)('N/A for language');
+			return A2(_elm_lang$core$String$join, ',', _p8._0);
 	}
 };
 var _user$project$ConfigTypes$accountRecToDisplayRec = function (accountRec) {
@@ -23931,8 +23921,8 @@ var _user$project$ConfigTypes$allCryptos = F3(
 			_elm_lang$core$List$filterMap,
 			_user$project$ConfigTypes$lookupCryptoDisplay(cryptoDisplays),
 			cryptoStrings);
-		var _p11 = cryptoScope;
-		switch (_p11.ctor) {
+		var _p9 = cryptoScope;
+		switch (_p9.ctor) {
 			case 'Global':
 				return {
 					ctor: '::',
@@ -23946,8 +23936,8 @@ var _user$project$ConfigTypes$allCryptos = F3(
 		}
 	});
 var _user$project$ConfigTypes$listCryptos = function (configGroup) {
-	var _p12 = configGroup.schema.cryptoScope;
-	switch (_p12.ctor) {
+	var _p10 = configGroup.schema.cryptoScope;
+	switch (_p10.ctor) {
 		case 'Specific':
 			return configGroup.data.cryptoCurrencies;
 		case 'Global':
@@ -23964,8 +23954,8 @@ var _user$project$ConfigTypes$CryptoCode = function (a) {
 	return {ctor: 'CryptoCode', _0: a};
 };
 var _user$project$ConfigTypes$stringToCrypto = function (string) {
-	var _p13 = string;
-	if (_p13 === 'global') {
+	var _p11 = string;
+	if (_p11 === 'global') {
 		return _user$project$ConfigTypes$GlobalCrypto;
 	} else {
 		return _user$project$ConfigTypes$CryptoCode(string);
@@ -23974,8 +23964,8 @@ var _user$project$ConfigTypes$stringToCrypto = function (string) {
 var _user$project$ConfigTypes$GlobalMachine = {ctor: 'GlobalMachine'};
 var _user$project$ConfigTypes$globalMachineDisplay = {machine: _user$project$ConfigTypes$GlobalMachine, display: 'Global'};
 var _user$project$ConfigTypes$listMachines = function (configGroup) {
-	var _p14 = configGroup.schema.machineScope;
-	switch (_p14.ctor) {
+	var _p12 = configGroup.schema.machineScope;
+	switch (_p12.ctor) {
 		case 'Specific':
 			return configGroup.data.machines;
 		case 'Global':
@@ -24028,11 +24018,11 @@ var _user$project$ConfigTypes$ParsingError = function (a) {
 	return {ctor: 'ParsingError', _0: a};
 };
 var _user$project$ConfigTypes$resultToFieldHolder = function (result) {
-	var _p15 = result;
-	if (_p15.ctor === 'Ok') {
-		return _user$project$ConfigTypes$FieldOk(_p15._0);
+	var _p13 = result;
+	if (_p13.ctor === 'Ok') {
+		return _user$project$ConfigTypes$FieldOk(_p13._0);
 	} else {
-		return _user$project$ConfigTypes$ParsingError(_p15._0);
+		return _user$project$ConfigTypes$ParsingError(_p13._0);
 	}
 };
 var _user$project$ConfigTypes$SelectizeComponent = function (a) {
@@ -24076,8 +24066,8 @@ var _user$project$ConfigTypes$stringToFieldHolder = F2(
 		if (_elm_lang$core$String$isEmpty(s)) {
 			return _user$project$ConfigTypes$FieldEmpty;
 		} else {
-			var _p16 = fieldType;
-			switch (_p16.ctor) {
+			var _p14 = fieldType;
+			switch (_p14.ctor) {
 				case 'FieldStringType':
 					return _user$project$ConfigTypes$FieldOk(
 						_user$project$ConfigTypes$FieldStringValue(s));
@@ -24094,8 +24084,8 @@ var _user$project$ConfigTypes$stringToFieldHolder = F2(
 							_user$project$ConfigTypes$FieldIntegerValue,
 							_elm_lang$core$String$toInt(s)));
 				case 'FieldOnOffType':
-					var _p17 = s;
-					switch (_p17) {
+					var _p15 = s;
+					switch (_p15) {
 						case 'on':
 							return _user$project$ConfigTypes$FieldOk(
 								_user$project$ConfigTypes$FieldOnOffValue(true));
@@ -25113,7 +25103,11 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																					ctor: '::',
 																					_0: _rtfeldman$elm_css$Css$width(
 																						_rtfeldman$elm_css$Css$em(6)),
-																					_1: {ctor: '[]'}
+																					_1: {
+																						ctor: '::',
+																						_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$default),
+																						_1: {ctor: '[]'}
+																					}
 																				}
 																			}
 																		}
@@ -25327,8 +25321,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1154, column: 17},
-							end: {line: 1159, column: 56}
+							start: {line: 1177, column: 17},
+							end: {line: 1182, column: 56}
 						},
 						_p3)('Shouldn\'t be here');
 				}
@@ -25496,8 +25490,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 914, column: 5},
-				end: {line: 919, column: 59}
+				start: {line: 937, column: 5},
+				end: {line: 942, column: 59}
 			},
 			_p11)('Referenced field must be boolean');
 	}
@@ -25771,8 +25765,8 @@ var _user$project$Config$languageSelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 499, column: 21},
-							end: {line: 504, column: 60}
+							start: {line: 511, column: 21},
+							end: {line: 516, column: 60}
 						},
 						_p18)('Shouldn\'t be here');
 				}
@@ -25813,8 +25807,8 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 453, column: 21},
-							end: {line: 458, column: 60}
+							start: {line: 465, column: 21},
+							end: {line: 470, column: 60}
 						},
 						_p21)('Shouldn\'t be here');
 				}
@@ -25915,15 +25909,55 @@ var _user$project$Config$accountSelectizeView = F6(
 			fallbackIds,
 			selectizeState);
 	});
-var _user$project$Config$fieldTypeToClass = function (fieldType) {
-	var _p25 = fieldType;
+var _user$project$Config$fieldInstanceClasses = function (fieldInstance) {
+	var _p25 = fieldInstance.fieldLocator.fieldType;
 	switch (_p25.ctor) {
 		case 'FieldPercentageType':
-			return _user$project$Css_Classes$ShortCell;
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$ShortCell,
+				_1: {ctor: '[]'}
+			};
 		case 'FieldIntegerType':
-			return _user$project$Css_Classes$ShortCell;
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$ShortCell,
+				_1: {ctor: '[]'}
+			};
+		case 'FieldAccountType':
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$MediumCell,
+				_1: {ctor: '[]'}
+			};
+		case 'FieldStringType':
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$LongCell,
+				_1: {
+					ctor: '::',
+					_0: _user$project$Css_Classes$TextCell,
+					_1: {ctor: '[]'}
+				}
+			};
+		case 'FieldLanguageType':
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$MediumCell,
+				_1: {ctor: '[]'}
+			};
+		case 'FieldCryptoCurrencyType':
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$MediumCell,
+				_1: {ctor: '[]'}
+			};
 		default:
-			return _user$project$Css_Classes$LongCell;
+			return {
+				ctor: '::',
+				_0: _user$project$Css_Classes$ShortCell,
+				_1: {ctor: '[]'}
+			};
 	}
 };
 var _user$project$Config$unitDisplay = F2(
@@ -26267,8 +26301,8 @@ var _user$project$Config$selectizeView = F6(
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Config',
 					{
-						start: {line: 542, column: 9},
-						end: {line: 584, column: 52}
+						start: {line: 554, column: 9},
+						end: {line: 596, column: 52}
 					},
 					_p38)('Not a Selectize field');
 		}
@@ -26337,7 +26371,7 @@ var _user$project$Config$Input = F2(
 var _user$project$Config$textInput = F5(
 	function (fiat, fieldInstance, maybeFieldValue, maybeFallbackFieldValue, enabled) {
 		var fieldValid = _user$project$Config$validateFieldInstance;
-		var fieldClass = _user$project$Config$fieldTypeToClass(fieldInstance.fieldLocator.fieldType);
+		var fieldClasses = _user$project$Config$fieldInstanceClasses(fieldInstance);
 		var maybeFallbackString = A2(_elm_lang$core$Maybe$map, _user$project$ConfigTypes$fieldValueToString, maybeFallbackFieldValue);
 		var fallbackString = A2(_elm_lang$core$Maybe$withDefault, '', maybeFallbackString);
 		var maybeSpecificString = A2(_elm_lang$core$Maybe$map, _user$project$ConfigTypes$fieldValueToString, maybeFieldValue);
@@ -26381,15 +26415,7 @@ var _user$project$Config$textInput = F5(
 										_1: {
 											ctor: '::',
 											_0: _user$project$Css_Admin$class(
-												{
-													ctor: '::',
-													_0: _user$project$Css_Classes$BasicInput,
-													_1: {
-														ctor: '::',
-														_0: fieldClass,
-														_1: {ctor: '[]'}
-													}
-												}),
+												{ctor: '::', _0: _user$project$Css_Classes$BasicInput, _1: fieldClasses}),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$type_(inputType),
@@ -26436,6 +26462,12 @@ var _user$project$Config$fieldInput = F5(
 	});
 var _user$project$Config$fieldComponent = F2(
 	function (model, fieldInstance) {
+		var fieldLengthClasses = A2(
+			_elm_lang$core$List$map,
+			function ($class) {
+				return {ctor: '_Tuple2', _0: $class, _1: true};
+			},
+			_user$project$Config$fieldInstanceClasses(fieldInstance));
 		var configGroup = model.configGroup;
 		var maybeSpecific = function () {
 			var _p42 = fieldInstance.fieldHolder;
@@ -26462,19 +26494,22 @@ var _user$project$Config$fieldComponent = F2(
 			{
 				ctor: '::',
 				_0: _user$project$Css_Admin$classList(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
-						_1: {
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: focused},
+							_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$InvalidComponent, _1: !fieldValid},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: focused},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$InvalidComponent, _1: !fieldValid},
+									_1: {ctor: '[]'}
+								}
 							}
-						}
-					}),
+						},
+						fieldLengthClasses)),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -29087,7 +29122,7 @@ var _user$project$NavBar$view = F2(
 										ctor: '::',
 										_0: {
 											ctor: '_Tuple3',
-											_0: 'BitStamp',
+											_0: 'Bitstamp',
 											_1: _user$project$CoreTypes$AccountRoute('bitstamp'),
 											_2: true
 										},
@@ -29352,7 +29387,10 @@ var _user$project$Main$parseRoute = _evancz$url_parser$UrlParser$oneOf(
 								_evancz$url_parser$UrlParser$s('transaction')),
 							_1: {
 								ctor: '::',
-								_0: A2(_evancz$url_parser$UrlParser$map, _user$project$CoreTypes$PairRoute, _evancz$url_parser$UrlParser$top),
+								_0: A2(
+									_evancz$url_parser$UrlParser$map,
+									A2(_user$project$CoreTypes$ConfigRoute, 'fiat', _elm_lang$core$Maybe$Nothing),
+									_evancz$url_parser$UrlParser$top),
 								_1: {ctor: '[]'}
 							}
 						}

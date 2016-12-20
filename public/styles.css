@@ -198,10 +198,10 @@ p {
 
 .lamassuAdminConfigTable {
     font-size: 14px;
+    font-weight: bold;
     border-radius: 7px;
     margin: 20px 0;
     border-collapse: collapse;
-    width: 100%;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer {
@@ -292,6 +292,7 @@ p {
     background-color: inherit;
     padding: 6px 2px;
     width: 6em;
+    cursor: default;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminInputContainer {
@@ -321,10 +322,6 @@ p {
     background-color: #ffffff;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminShortCell {
-    width: 5em;
-}
-
 .lamassuAdminConfigTable  .lamassuAdminBasicInputDisabled {
     background-color: #fcfcfa;
     height: 25px;
@@ -340,7 +337,7 @@ p {
     padding: 3px 4px;
     text-align: center;
     vertical-align: middle;
-    width: 1px;
+    width: 5em;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminComponent {
@@ -366,6 +363,10 @@ p {
     white-space: nowrap;
 }
 
+.lamassuAdminConfigTable  tbody  td:first-child {
+    font-weight: normal;
+}
+
 .lamassuAdminConfigTable  thead {
     font-weight: bold;
     text-align: left;
@@ -383,8 +384,24 @@ p {
     text-align: center;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminConfigTableGlobalRow {
+.lamassuAdminConfigTable  .lamassuAdminConfigTableGlobalRow  td:first-child {
     font-weight: bold;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminTextCell {
+    text-align: left;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminShortCell {
+    min-width: 5em;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminMediumCell {
+    min-width: 10em;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminLongCell {
+    min-width: 20em;
 }
 
 .lamassuAdminSaving {

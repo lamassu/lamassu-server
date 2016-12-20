@@ -417,7 +417,8 @@
     },
     {
       "code": "lowBalanceThreshold",
-      "displayBottom": "Low Balance Threshold",
+      "displayTop": "Low balance",
+      "displayBottom": "Threshold",
       "fieldType": "integer",
       "fieldClass": null,
       "enabledIf": [

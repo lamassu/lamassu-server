@@ -6,7 +6,6 @@ const path = require('path')
 const express = require('express')
 const app = express()
 const https = require('https')
-const http = require('http')
 const bodyParser = require('body-parser')
 const serveStatic = require('serve-static')
 const cookieParser = require('cookie-parser')
@@ -58,7 +57,9 @@ const skip = (req, res) => req.path === '/api/status/' && res.statusCode === 200
 app.use(morgan('dev', {skip}))
 app.use(cookieParser())
 app.use(register)
-if (!devMode) app.use(authenticate)
+// if (!devMode) app.use(authenticate)
+console.log('DEBUG99')
+app.use(authenticate)
 
 app.use(bodyParser.json())
 
@@ -156,6 +157,7 @@ function register (req, res, next) {
       httpOnly: true,
       secure: true,
       domain: hostname,
+      sameSite: true,
       expires: NEVER
     }
 
@@ -182,7 +184,7 @@ process.on('unhandledRejection', err => {
 })
 
 if (devMode) {
-  http.createServer(app).listen(8070, () => {
+  https.createServer(options, app).listen(8070, () => {
     console.log('lamassu-admin-server listening on port 8070')
   })
 } else {
