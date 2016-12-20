@@ -25386,9 +25386,9 @@ var _user$project$Config$validateMax = F2(
 			case 'FieldPercentageValue':
 				return _elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$Basics$floor(_p6._0),
-					max) < 0;
+					max) < 1;
 			case 'FieldIntegerValue':
-				return _elm_lang$core$Native_Utils.cmp(_p6._0, max) < 0;
+				return _elm_lang$core$Native_Utils.cmp(_p6._0, max) < 1;
 			default:
 				return true;
 		}
@@ -25400,9 +25400,9 @@ var _user$project$Config$validateMin = F2(
 			case 'FieldPercentageValue':
 				return _elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$Basics$ceiling(_p7._0),
-					min) > 0;
+					min) > -1;
 			case 'FieldIntegerValue':
-				return _elm_lang$core$Native_Utils.cmp(_p7._0, min) > 0;
+				return _elm_lang$core$Native_Utils.cmp(_p7._0, min) > -1;
 			default:
 				return true;
 		}

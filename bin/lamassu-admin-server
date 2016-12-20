@@ -87,10 +87,11 @@ app.post('/api/account', (req, res) => {
 app.get('/api/config/:config', (req, res) =>
   config.fetchConfigGroup(req.params.config).then(c => res.json(c)))
 
-app.post('/api/config', (req, res) => {
+app.post('/api/config', (req, res, next) => {
   config.saveConfigGroup(req.body)
   .then(c => res.json(c))
   .then(() => dbNotify())
+  .catch(next)
 })
 
 app.get('/api/accounts/account/:account', (req, res) => {
@@ -111,7 +112,7 @@ app.post('/api/machines', (req, res) => {
 })
 
 app.get('/api/status', (req, res, next) => {
-  return Promise.all([server.status(), config.validateConfig()])
+  return Promise.all([server.status(), config.validateCurrentConfig()])
   .then(([serverStatus, invalidConfigGroups]) => res.send({
     server: serverStatus,
     invalidConfigGroups
