@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser')
 const argv = require('minimist')(process.argv.slice(2))
 const got = require('got')
 const morgan = require('morgan')
+const helmet = require('helmet')
 
 const accounts = require('../lib/admin/accounts')
 const machines = require('../lib/admin/machines')
@@ -55,6 +56,9 @@ function dbNotify () {
 const skip = (req, res) => req.path === '/api/status/' && res.statusCode === 200
 
 app.use(morgan('dev', {skip}))
+app.use(helmet({
+  noCache: true
+}))
 app.use(cookieParser())
 app.use(register)
 // if (!devMode) app.use(authenticate)
