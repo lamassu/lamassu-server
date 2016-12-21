@@ -22,12 +22,16 @@ const pairing = require('../lib/admin/pairing')
 const server = require('../lib/admin/server')
 const transactions = require('../lib/admin/transactions')
 const T = require('../lib/time')
+const logger = require('../lib/logger')
 
 const NEVER = new Date(Date.now() + 100 * T.years)
 
 const devMode = argv.dev
 
 let serverConfig
+
+const version = require('../package.json').version
+logger.info('Version: %s', version)
 
 try {
   const homeConfigPath = path.resolve(os.homedir(), '.lamassu', 'lamassu.json')
@@ -161,7 +165,9 @@ function register (req, res, next) {
   return login.register(otp)
   .then(r => {
     if (r.expired) return res.status(401).send('OTP expired, generate new registration link')
-    if (!r.success) return res.status(401).send('Registration failed')
+
+    // Maybe user is using old registration key, attempt to authenticate
+    if (!r.success) return next()
 
     const cookieOpts = {
       httpOnly: true,

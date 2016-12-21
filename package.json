@@ -33,6 +33,7 @@
     "node-hkdf-sync": "^1.0.0",
     "numeral": "^2.0.1",
     "pg": "^6.1.0",
+    "pg-native": "^1.10.0",
     "pg-promise": "^5.4.4",
     "pify": "^2.3.0",
     "pretty-ms": "^2.1.0",

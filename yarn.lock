@@ -192,7 +192,7 @@ bignumber.js@^3.0.0, bignumber.js@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-3.0.1.tgz#807652d10e39de37e9e3497247edc798bb746f76"
 
-bindings@^1.2.1:
+bindings@1.2.1, bindings@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.2.1.tgz#14ad6113812d2d37d72e67b4cacb4bb726505f11"
 
@@ -1480,6 +1480,13 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+libpq@^1.7.0:
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/libpq/-/libpq-1.8.5.tgz#9ef5bb509e1658908c19474088031db3dc7d4e48"
+  dependencies:
+    bindings "1.2.1"
+    nan "^2.3.0"
+
 load-json-file@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/load-json-file/-/load-json-file-1.1.0.tgz#956905708d58b4bab4c2261b04f59f31c99374c0"
@@ -1641,7 +1648,7 @@ ms@0.7.2, ms@^0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
 
-nan@^2.0.5, nan@^2.2.0:
+nan@^2.0.5, nan@^2.2.0, nan@^2.3.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 
@@ -1843,6 +1850,14 @@ pg-minify@0.4:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/pg-minify/-/pg-minify-0.4.1.tgz#a642c6bd256c7da833066590b1e414334a1f6e19"
 
+pg-native@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/pg-native/-/pg-native-1.10.0.tgz#abe299214afa2be51db5f5104e14770c738230fd"
+  dependencies:
+    libpq "^1.7.0"
+    pg-types "1.6.0"
+    readable-stream "1.0.31"
+
 pg-pool@1.*:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-1.6.0.tgz#2e300199927b6d7db6be71e2e3435dddddf07b41"
@@ -1868,6 +1883,10 @@ pg-types@1.*:
     postgres-bytea "~1.0.0"
     postgres-date "~1.0.0"
     postgres-interval "~1.0.0"
+
+pg-types@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/pg-types/-/pg-types-1.6.0.tgz#3872a0f199143025497f4ee2a65fdaf00d7ea8b3"
 
 pg@5.1:
   version "5.1.0"
@@ -2055,6 +2074,15 @@ read-pkg@^1.0.0:
 readable-stream@1.0.27-1:
   version "1.0.27-1"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.0.27-1.tgz#6b67983c20357cefd07f0165001a16d710d91078"
+  dependencies:
+    core-util-is "~1.0.0"
+    inherits "~2.0.1"
+    isarray "0.0.1"
+    string_decoder "~0.10.x"
+
+readable-stream@1.0.31:
+  version "1.0.31"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.0.31.tgz#8f2502e0bc9e3b0da1b94520aabb4e2603ecafae"
   dependencies:
     core-util-is "~1.0.0"
     inherits "~2.0.1"
