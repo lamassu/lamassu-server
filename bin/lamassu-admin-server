@@ -13,6 +13,7 @@ const argv = require('minimist')(process.argv.slice(2))
 const got = require('got')
 const morgan = require('morgan')
 const helmet = require('helmet')
+const RateLimit = require('express-rate-limit')
 
 const accounts = require('../lib/admin/accounts')
 const machines = require('../lib/admin/machines')
@@ -55,14 +56,21 @@ function dbNotify () {
 
 const skip = (req, res) => req.path === '/api/status/' && res.statusCode === 200
 
+const limiter = new RateLimit({
+  windowMs: T.minute,
+  max: 120,
+  delayMs: 0,
+  delayAfter: 0,
+  keyGenerator: () => 'everybody'
+})
+
+app.use(limiter)
 app.use(morgan('dev', {skip}))
 app.use(helmet({
   noCache: true
 }))
 app.use(cookieParser())
 app.use(register)
-// if (!devMode) app.use(authenticate)
-console.log('DEBUG99')
 app.use(authenticate)
 
 app.use(bodyParser.json())
