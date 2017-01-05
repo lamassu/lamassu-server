@@ -22483,6 +22483,7 @@ var _user$project$Css_Classes$NavBarItemActive = {ctor: 'NavBarItemActive'};
 var _user$project$Css_Classes$MainRight = {ctor: 'MainRight'};
 var _user$project$Css_Classes$MainLeft = {ctor: 'MainLeft'};
 var _user$project$Css_Classes$NavBar = {ctor: 'NavBar'};
+var _user$project$Css_Classes$Layout = {ctor: 'Layout'};
 
 var _user$project$FieldSet$updateField = F3(
 	function (fieldCode, fieldValueString, field) {
@@ -26682,7 +26683,16 @@ var _user$project$Config$rowView = F3(
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$td,
-					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _user$project$Css_Admin$class(
+							{
+								ctor: '::',
+								_0: _user$project$Css_Classes$ShortCell,
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(machineDisplay.display),
@@ -29556,62 +29566,33 @@ var _user$project$Main$view = function (model) {
 		A2(_evancz$url_parser$UrlParser$parseHash, _user$project$Main$parseRoute, model.location));
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('grid'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('unit one-quarter no-gutters lamassuAdminMainLeft'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(_user$project$NavBar$view, route, invalidConfigGroups),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('unit three-quarters lamassuAdminMainRight'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('lamassuAdminContent'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: A2(_user$project$Main$content, model, route),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}),
+			_0: _elm_lang$html$Html_Attributes$class('lamassuAdminLayout'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(_user$project$NavBar$view, route, invalidConfigGroups),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Main$statusBar(model.status),
-				_1: {ctor: '[]'}
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('lamassuAdminContent'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(_user$project$Main$content, model, route),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Main$statusBar(model.status),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };

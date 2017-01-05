@@ -7,6 +7,11 @@ p {
     margin: 0;
 }
 
+.lamassuAdminLayout {
+    display: flex;
+    height: 100%;
+}
+
 .lamassuAdminStatusBar {
     position: fixed;
     bottom: 0;
@@ -42,12 +47,12 @@ p {
     text-align: left;
     font-family: Fira Code;
     font-weight: 600;
-    width: 50%;
+    width: 90%;
     outline: none;
 }
 
 .lamassuAdminButtonRow {
-    text-align: right;
+    text-align: left;
 }
 
 .lamassuAdminButton {
@@ -90,10 +95,10 @@ p {
 }
 
 .lamassuAdminContent {
-    margin: 20px 20px;
-    background-color: #ffffff;
-    padding: 40px;
+    padding: 20px;
+    background-color: #f6f6f4;
     border-radius: 5px;
+    width: 100%;
 }
 
 .lamassuAdminCryptoTabs {
@@ -133,14 +138,6 @@ p {
     font-weight: bold;
     font-size: 30px;
     margin-bottom: 10px;
-}
-
-.lamassuAdminConfigContainer {
-    padding: 20px;
-    border-radius: 0px 7px 7px 7px;
-    background-color: #f6f6f4;
-    margin: 0 0 10px;
-    animation: fadein 0.8s;
 }
 
 .lamassuAdminTxTable {
@@ -426,6 +423,9 @@ p {
     padding: 0 0 60px 0;
     background-color: #2d2d2d;
     font-size: 18px;
+    width: 15em;
+    max-width: 15em;
+    min-width: 15em;
 }
 
 .lamassuAdminNavBar  .lamassuAdminNavBarRoute {
