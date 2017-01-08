@@ -1,0 +1,246 @@
+[
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "BTC",
+        "machine": "machine"
+      },
+      "code": "cashInCommission",
+      "fieldType": "percentage",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "percentage",
+      "value": 5
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "BTC",
+        "machine": "machine"
+      },
+      "code": "lowBalanceMargin",
+      "fieldType": "percentage",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "percentage",
+      "value": 5
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "machineLanguages",
+      "fieldType": "language",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "language",
+      "value": [
+        "en-US"
+      ]
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "cryptoCurrencies",
+      "fieldType": "cryptoCurrency",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "cryptoCurrency",
+      "value": [
+        "BTC"
+      ]
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "emptyBillMargin",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 0
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "smsVerificationEnabled",
+      "fieldType": "onOff",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "onOff",
+      "value": false
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "idVerificationEnabled",
+      "fieldType": "onOff",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "onOff",
+      "value": false
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "notificationsEnabled",
+      "fieldType": "onOff",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "onOff",
+      "value": false
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "notificationsEmailEnabled",
+      "fieldType": "onOff",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "onOff",
+      "value": false
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "notificationsSMSEnabled",
+      "fieldType": "onOff",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "onOff",
+      "value": false
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "machineName",
+      "fieldType": "string",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "string",
+      "value": "test1"
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "cashOutEnabled",
+      "fieldType": "onOff",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "onOff",
+      "value": true
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "fiatCurrency",
+      "fieldType": "fiatCurrency",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "fiatCurrency",
+      "value": "USD"
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "BTC",
+        "machine": "global"
+      },
+      "code": "ticker",
+      "fieldType": "account",
+      "fieldClass": "ticker"
+    },
+    "fieldValue": {
+      "fieldType": "account",
+      "value": "mock-ticker"
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "BTC",
+        "machine": "global"
+      },
+      "code": "wallet",
+      "fieldType": "account",
+      "fieldClass": "wallet"
+    },
+    "fieldValue": {
+      "fieldType": "account",
+      "value": "mock-wallet"
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "machine"
+      },
+      "code": "cashInTransactionLimit",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 100
+    }
+  }
+]
