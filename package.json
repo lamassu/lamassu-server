@@ -57,6 +57,10 @@
     "hkdf": "./bin/hkdf",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg"
   },
-  "scripts": {},
-  "devDependencies": {}
+  "scripts": {
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0"
+  }
 }
