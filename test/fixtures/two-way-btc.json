@@ -13,7 +13,6 @@
   "notificationsEnabled": false,
   "notificationsEmailEnabled": false,
   "notificationsSMSEnabled": false,
-  "machineName": "test1",
   "cashOutEnabled": true,
   "fiatCurrency": "USD",
   "ticker": "mock-ticker",
