@@ -1,5 +1,6 @@
 {
   "cashInCommission": 5,
+  "cashOutCommission": 6,
   "lowBalanceMargin": 5,
   "machineLanguages": [
     "en-US"
@@ -17,5 +18,9 @@
   "fiatCurrency": "USD",
   "ticker": "mock-ticker",
   "wallet": "mock-wallet",
-  "cashInTransactionLimit": 100
+  "cashInTransactionLimit": 100,
+  "topCashOutDenomination": 5,
+  "bottomCashOutDenomination": 10,
+  "virtualCashOutDenomination": 100,
+  "cashOutTransactionLimit": 100
 }
