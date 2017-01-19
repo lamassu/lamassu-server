@@ -151,6 +151,13 @@ p {
     min-width: 20em;
 }
 
+.lamassuAdminNoInput {
+    font-family: Inconsolata, monospace;
+    color: #5f5f56;
+    font-weight: normal;
+    text-align: left !important;
+}
+
 .lamassuAdminTxTable {
     border-radius: 7px;
     margin: 20px 0;
