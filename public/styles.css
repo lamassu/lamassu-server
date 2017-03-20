@@ -1,5 +1,5 @@
 body {
-    font-family: Brandon Text;
+    font-family: Nunito, sans-serif;
     margin: 0;
 }
 
@@ -45,14 +45,15 @@ p {
     border-radius: 3px;
     padding: 6px;
     text-align: left;
-    font-family: Fira Code;
+    font-family: Inconsolata, monospace;
+    font-size: 14px;
     font-weight: 600;
     width: 90%;
     outline: none;
 }
 
 .lamassuAdminButtonRow {
-    text-align: left;
+    text-align: right;
 }
 
 .lamassuAdminButton {
@@ -95,10 +96,9 @@ p {
 }
 
 .lamassuAdminContent {
-    padding: 20px;
-    background-color: #f6f6f4;
+    margin: 20px;
+    background-color: #ffffff;
     border-radius: 5px;
-    width: 100%;
 }
 
 .lamassuAdminCryptoTabs {
@@ -140,6 +140,24 @@ p {
     margin-bottom: 10px;
 }
 
+.lamassuAdminConfigContainer {
+    padding: 20px 60px;
+    border-radius: 0px 7px 7px 7px;
+    background-color: #f6f6f4;
+    margin: 0 0 10px;
+    animation: fadein 0.8s;
+    overflow: hidden;
+    min-height: 15em;
+    min-width: 20em;
+}
+
+.lamassuAdminNoInput {
+    font-family: Inconsolata, monospace;
+    color: #5f5f56;
+    font-weight: normal;
+    text-align: left !important;
+}
+
 .lamassuAdminTxTable {
     border-radius: 7px;
     margin: 20px 0;
@@ -161,7 +179,7 @@ p {
 }
 
 .lamassuAdminTxTable  tbody {
-    font-family: Fira Code;
+    font-family: Inconsolata, monospace;
     color: #5f5f56;
 }
 
@@ -218,7 +236,7 @@ p {
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminNoOptions {
     background-color: #fcfcfa;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 500;
     color: #5f5f56;
     padding: 5px;
@@ -274,7 +292,7 @@ p {
     color: #ffffff;
     padding: 4px 4px 3px;
     margin: 0 1px;
-    font-family: Fira Code;
+    font-family: Inconsolata, monospace;
     font-size: 70%;
     font-weight: normal;
     border-radius: 3px;
@@ -285,8 +303,8 @@ p {
 }
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSingleItemContainer  .lamassuAdminSelectedItem {
-    font-family: Fira Code;
-    font-size: 11px;
+    font-family: Inconsolata, monospace;
+    font-size: 14px;
     padding: 0;
     border-radius: 0;
 }
@@ -324,8 +342,9 @@ p {
     padding: 6px;
     text-align: right;
     width: 100%;
-    font-family: Fira Code;
+    font-family: Inconsolata, monospace;
     font-weight: 600;
+    font-size: 14px;
     outline: none;
     background-color: #ffffff;
 }
@@ -334,7 +353,7 @@ p {
     background-color: #fcfcfa;
     height: 25px;
     line-height: 25px;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 500;
     color: #5f5f56;
     text-align: center;

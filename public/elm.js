@@ -24292,7 +24292,7 @@ var _user$project$TransactionTypes$CashInTxRec = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, currencyCode: g, txHash: h, phone: i, error: j, created: k};
+											return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, txHash: h, phone: i, error: j, created: k};
 										};
 									};
 								};
@@ -24320,7 +24320,7 @@ var _user$project$TransactionTypes$CashOutTxRec = function (a) {
 													return function (n) {
 														return function (o) {
 															return function (p) {
-																return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, currencyCode: g, txHash: h, status: i, dispensed: j, notified: k, redeemed: l, phone: m, error: n, created: o, confirmed: p};
+																return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, txHash: h, status: i, dispensed: j, notified: k, redeemed: l, phone: m, error: n, created: o, confirmed: p};
 															};
 														};
 													};
@@ -24388,7 +24388,7 @@ var _user$project$TransactionDecoder$cashInTxDecoder = A3(
 				_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'currencyCode',
+					'fiatCode',
 					_elm_lang$core$Json_Decode$string,
 					A3(
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -24453,7 +24453,7 @@ var _user$project$TransactionDecoder$cashOutTxDecoder = A3(
 									_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'currencyCode',
+										'fiatCode',
 										_elm_lang$core$Json_Decode$string,
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
