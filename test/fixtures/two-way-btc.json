@@ -2,8 +2,8 @@
   {
     "fieldLocator": {
       "fieldScope": {
-        "crypto": "BTC",
-        "machine": "machine"
+        "crypto": "global",
+        "machine": "global"
       },
       "code": "cashInCommission",
       "fieldType": "percentage",
@@ -17,8 +17,23 @@
   {
     "fieldLocator": {
       "fieldScope": {
-        "crypto": "BTC",
-        "machine": "machine"
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "cashOutCommission",
+      "fieldType": "percentage",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "percentage",
+      "value": 5
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
       },
       "code": "lowBalanceMargin",
       "fieldType": "percentage",
@@ -241,6 +256,96 @@
     "fieldValue": {
       "fieldType": "integer",
       "value": 100
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "topCashOutDenomination",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 5
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "bottomCashOutDenomination",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 10
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "virtualCashOutDenomination",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 20
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "cashOutTransactionLimit",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 1000
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "zeroConfLimit",
+      "fieldType": "integer",
+      "fieldClass": null
+    },
+    "fieldValue": {
+      "fieldType": "integer",
+      "value": 20
+    }
+  },
+  {
+    "fieldLocator": {
+      "fieldScope": {
+        "crypto": "global",
+        "machine": "global"
+      },
+      "code": "sms",
+      "fieldType": "account",
+      "fieldClass": "sms"
+    },
+    "fieldValue": {
+      "fieldType": "account",
+      "value": "mock-sms"
     }
   }
 ]
