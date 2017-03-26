@@ -1564,8 +1564,7 @@ function toString(v)
 	var type = typeof v;
 	if (type === 'function')
 	{
-		var name = v.func ? v.func.name : v.name;
-		return '<function' + (name === '' ? '' : ':') + name + '>';
+		return '<function>';
 	}
 
 	if (type === 'boolean')
@@ -2072,6 +2071,13 @@ var _elm_lang$core$List$sortWith = _elm_lang$core$Native_List.sortWith;
 var _elm_lang$core$List$sortBy = _elm_lang$core$Native_List.sortBy;
 var _elm_lang$core$List$sort = function (xs) {
 	return A2(_elm_lang$core$List$sortBy, _elm_lang$core$Basics$identity, xs);
+};
+var _elm_lang$core$List$singleton = function (value) {
+	return {
+		ctor: '::',
+		_0: value,
+		_1: {ctor: '[]'}
+	};
 };
 var _elm_lang$core$List$drop = F2(
 	function (n, list) {
@@ -2891,7 +2897,7 @@ function endsWith(sub, str)
 function indexes(sub, str)
 {
 	var subLen = sub.length;
-	
+
 	if (subLen < 1)
 	{
 		return _elm_lang$core$Native_List.Nil;
@@ -2904,74 +2910,78 @@ function indexes(sub, str)
 	{
 		is.push(i);
 		i = i + subLen;
-	}	
-	
+	}
+
 	return _elm_lang$core$Native_List.fromArray(is);
 }
+
 
 function toInt(s)
 {
 	var len = s.length;
+
+	// if empty
 	if (len === 0)
 	{
-		return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int" );
+		return intErr(s);
 	}
-	var start = 0;
-	if (s[0] === '-')
+
+	// if hex
+	var c = s[0];
+	if (c === '0' && s[1] === 'x')
 	{
-		if (len === 1)
+		for (var i = 2; i < len; ++i)
 		{
-			return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int" );
+			var c = s[i];
+			if (('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'))
+			{
+				continue;
+			}
+			return intErr(s);
 		}
-		start = 1;
+		return _elm_lang$core$Result$Ok(parseInt(s, 16));
 	}
-	for (var i = start; i < len; ++i)
+
+	// is decimal
+	if (c > '9' || (c < '0' && c !== '-' && c !== '+'))
+	{
+		return intErr(s);
+	}
+	for (var i = 1; i < len; ++i)
 	{
 		var c = s[i];
 		if (c < '0' || '9' < c)
 		{
-			return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int" );
+			return intErr(s);
 		}
 	}
+
 	return _elm_lang$core$Result$Ok(parseInt(s, 10));
 }
 
+function intErr(s)
+{
+	return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int");
+}
+
+
 function toFloat(s)
 {
-	var len = s.length;
-	if (len === 0)
+	// check if it is a hex, octal, or binary number
+	if (s.length === 0 || /[\sxbo]/.test(s))
 	{
-		return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float" );
+		return floatErr(s);
 	}
-	var start = 0;
-	if (s[0] === '-')
-	{
-		if (len === 1)
-		{
-			return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float" );
-		}
-		start = 1;
-	}
-	var dotCount = 0;
-	for (var i = start; i < len; ++i)
-	{
-		var c = s[i];
-		if ('0' <= c && c <= '9')
-		{
-			continue;
-		}
-		if (c === '.')
-		{
-			dotCount += 1;
-			if (dotCount <= 1)
-			{
-				continue;
-			}
-		}
-		return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float" );
-	}
-	return _elm_lang$core$Result$Ok(parseFloat(s));
+	var n = +s;
+	// faster isNaN check
+	return n === n ? _elm_lang$core$Result$Ok(n) : floatErr(s);
 }
+
+function floatErr(s)
+{
+	return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float");
+}
+
 
 function toList(str)
 {
@@ -4407,11 +4417,6 @@ function badToString(problem)
 				problem = problem.rest;
 				break;
 
-			case 'index':
-				context += '[' + problem.index + ']';
-				problem = problem.rest;
-				break;
-
 			case 'oneOf':
 				var problems = problem.problems;
 				for (var i = 0; i < problems.length; i++)
@@ -5393,15 +5398,8 @@ function setupIncomingPort(name, callback)
 		sentBeforeInit.push(value);
 	}
 
-	function postInitSend(incomingValue)
+	function postInitSend(value)
 	{
-		var result = A2(_elm_lang$core$Json_Decode$decodeValue, converter, incomingValue);
-		if (result.ctor === 'Err')
-		{
-			throw new Error('Trying to send an unexpected type of value through port `' + name + '`:\n' + result._0);
-		}
-
-		var value = result._0;
 		var temp = subs;
 		while (temp.ctor !== '[]')
 		{
@@ -5412,7 +5410,13 @@ function setupIncomingPort(name, callback)
 
 	function send(incomingValue)
 	{
-		currentSend(incomingValue);
+		var result = A2(_elm_lang$core$Json_Decode$decodeValue, converter, incomingValue);
+		if (result.ctor === 'Err')
+		{
+			throw new Error('Trying to send an unexpected type of value through port `' + name + '`:\n' + result._0);
+		}
+
+		currentSend(result._0);
 	}
 
 	return { send: send };
@@ -6472,33 +6476,48 @@ var _elm_community$json_extra$Json_Decode_Extra$sequence = function (decoders) {
 		_elm_community$json_extra$Json_Decode_Extra$sequenceHelp(decoders),
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$value));
 };
+var _elm_community$json_extra$Json_Decode_Extra$optionalField = F2(
+	function (fieldName, decoder) {
+		var finishDecoding = function (json) {
+			var _p1 = A2(
+				_elm_lang$core$Json_Decode$decodeValue,
+				A2(_elm_lang$core$Json_Decode$field, fieldName, _elm_lang$core$Json_Decode$value),
+				json);
+			if (_p1.ctor === 'Ok') {
+				return A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, decoder);
+			} else {
+				return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
+			}
+		};
+		return A2(_elm_lang$core$Json_Decode$andThen, finishDecoding, _elm_lang$core$Json_Decode$value);
+	});
 var _elm_community$json_extra$Json_Decode_Extra$withDefault = F2(
 	function (fallback, decoder) {
 		return A2(
 			_elm_lang$core$Json_Decode$andThen,
-			function (_p1) {
+			function (_p2) {
 				return _elm_lang$core$Json_Decode$succeed(
-					A2(_elm_lang$core$Maybe$withDefault, fallback, _p1));
+					A2(_elm_lang$core$Maybe$withDefault, fallback, _p2));
 			},
 			_elm_lang$core$Json_Decode$maybe(decoder));
 	});
 var _elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples = F2(
 	function (keyDecoder, tuples) {
-		var _p2 = tuples;
-		if (_p2.ctor === '[]') {
+		var _p3 = tuples;
+		if (_p3.ctor === '[]') {
 			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty);
 		} else {
-			var _p3 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p2._0._0);
-			if (_p3.ctor === 'Ok') {
+			var _p4 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p3._0._0);
+			if (_p4.ctor === 'Ok') {
 				return A2(
 					_elm_lang$core$Json_Decode$andThen,
-					function (_p4) {
+					function (_p5) {
 						return _elm_lang$core$Json_Decode$succeed(
-							A3(_elm_lang$core$Dict$insert, _p3._0, _p2._0._1, _p4));
+							A3(_elm_lang$core$Dict$insert, _p4._0, _p3._0._1, _p5));
 					},
-					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p2._1));
+					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p3._1));
 			} else {
-				return _elm_lang$core$Json_Decode$fail(_p3._0);
+				return _elm_lang$core$Json_Decode$fail(_p4._0);
 			}
 		}
 	});
@@ -6506,28 +6525,28 @@ var _elm_community$json_extra$Json_Decode_Extra$dict2 = F2(
 	function (keyDecoder, valueDecoder) {
 		return A2(
 			_elm_lang$core$Json_Decode$andThen,
-			function (_p5) {
+			function (_p6) {
 				return A2(
 					_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples,
 					keyDecoder,
-					_elm_lang$core$Dict$toList(_p5));
+					_elm_lang$core$Dict$toList(_p6));
 			},
 			_elm_lang$core$Json_Decode$dict(valueDecoder));
 	});
 var _elm_community$json_extra$Json_Decode_Extra$set = function (decoder) {
 	return A2(
 		_elm_lang$core$Json_Decode$andThen,
-		function (_p6) {
+		function (_p7) {
 			return _elm_lang$core$Json_Decode$succeed(
-				_elm_lang$core$Set$fromList(_p6));
+				_elm_lang$core$Set$fromList(_p7));
 		},
 		_elm_lang$core$Json_Decode$list(decoder));
 };
 var _elm_community$json_extra$Json_Decode_Extra$date = A2(
 	_elm_lang$core$Json_Decode$andThen,
-	function (_p7) {
+	function (_p8) {
 		return _elm_community$json_extra$Json_Decode_Extra$fromResult(
-			_elm_lang$core$Date$fromString(_p7));
+			_elm_lang$core$Date$fromString(_p8));
 	},
 	_elm_lang$core$Json_Decode$string);
 var _elm_community$json_extra$Json_Decode_Extra$andMap = _elm_lang$core$Json_Decode$map2(
@@ -6537,6 +6556,28 @@ var _elm_community$json_extra$Json_Decode_Extra$andMap = _elm_lang$core$Json_Dec
 		}));
 var _elm_community$json_extra$Json_Decode_Extra_ops = _elm_community$json_extra$Json_Decode_Extra_ops || {};
 _elm_community$json_extra$Json_Decode_Extra_ops['|:'] = _elm_lang$core$Basics$flip(_elm_community$json_extra$Json_Decode_Extra$andMap);
+
+var _elm_lang$core$Native_Bitwise = function() {
+
+return {
+	and: F2(function and(a, b) { return a & b; }),
+	or: F2(function or(a, b) { return a | b; }),
+	xor: F2(function xor(a, b) { return a ^ b; }),
+	complement: function complement(a) { return ~a; },
+	shiftLeftBy: F2(function(offset, a) { return a << offset; }),
+	shiftRightBy: F2(function(offset, a) { return a >> offset; }),
+	shiftRightZfBy: F2(function(offset, a) { return a >>> offset; })
+};
+
+}();
+
+var _elm_lang$core$Bitwise$shiftRightZfBy = _elm_lang$core$Native_Bitwise.shiftRightZfBy;
+var _elm_lang$core$Bitwise$shiftRightBy = _elm_lang$core$Native_Bitwise.shiftRightBy;
+var _elm_lang$core$Bitwise$shiftLeftBy = _elm_lang$core$Native_Bitwise.shiftLeftBy;
+var _elm_lang$core$Bitwise$complement = _elm_lang$core$Native_Bitwise.complement;
+var _elm_lang$core$Bitwise$xor = _elm_lang$core$Native_Bitwise.xor;
+var _elm_lang$core$Bitwise$or = _elm_lang$core$Native_Bitwise.or;
+var _elm_lang$core$Bitwise$and = _elm_lang$core$Native_Bitwise.and;
 
 //import Maybe, Native.List //
 
@@ -7127,9 +7168,9 @@ function on(name, options, decoder)
 
 function equalEvents(a, b)
 {
-	if (!a.options === b.options)
+	if (a.options !== b.options)
 	{
-		if (a.stopPropagation !== b.stopPropagation || a.preventDefault !== b.preventDefault)
+		if (a.options.stopPropagation !== b.options.stopPropagation || a.options.preventDefault !== b.options.preventDefault)
 		{
 			return false;
 		}
@@ -8405,7 +8446,7 @@ function normalRenderer(parentNode, view)
 var rAF =
 	typeof requestAnimationFrame !== 'undefined'
 		? requestAnimationFrame
-		: function(callback) { callback(); };
+		: function(callback) { setTimeout(callback, 1000 / 60); };
 
 function makeStepper(domNode, view, initialVirtualNode, eventNode)
 {
@@ -8746,3961 +8787,6 @@ return {
 };
 
 }();
-
-var _elm_lang$virtual_dom$Native_Debug = function() {
-
-
-// IMPORT / EXPORT
-
-function unsafeCoerce(value)
-{
-	return value;
-}
-
-var upload = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-{
-	var element = document.createElement('input');
-	element.setAttribute('type', 'file');
-	element.setAttribute('accept', 'text/json');
-	element.style.display = 'none';
-	element.addEventListener('change', function(event)
-	{
-		var fileReader = new FileReader();
-		fileReader.onload = function(e)
-		{
-			callback(_elm_lang$core$Native_Scheduler.succeed(e.target.result));
-		};
-		fileReader.readAsText(event.target.files[0]);
-		document.body.removeChild(element);
-	});
-	document.body.appendChild(element);
-	element.click();
-});
-
-function download(historyLength, json)
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-	{
-		var fileName = 'history-' + historyLength + '.txt';
-		var jsonString = JSON.stringify(json);
-		var mime = 'text/plain;charset=utf-8';
-		var done = _elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0);
-
-		// for IE10+
-		if (navigator.msSaveBlob)
-		{
-			navigator.msSaveBlob(new Blob([jsonString], {type: mime}), fileName);
-			return callback(done);
-		}
-
-		// for HTML5
-		var element = document.createElement('a');
-		element.setAttribute('href', 'data:' + mime + ',' + encodeURIComponent(jsonString));
-		element.setAttribute('download', fileName);
-		element.style.display = 'none';
-		document.body.appendChild(element);
-		element.click();
-		document.body.removeChild(element);
-		callback(done);
-	});
-}
-
-
-// POPOUT
-
-function messageToString(value)
-{
-	switch (typeof value)
-	{
-		case 'boolean':
-			return value ? 'True' : 'False';
-		case 'number':
-			return value + '';
-		case 'string':
-			return '"' + addSlashes(value, false) + '"';
-	}
-	if (value instanceof String)
-	{
-		return '\'' + addSlashes(value, true) + '\'';
-	}
-	if (typeof value !== 'object' || value === null || !('ctor' in value))
-	{
-		return '…';
-	}
-
-	var ctorStarter = value.ctor.substring(0, 5);
-	if (ctorStarter === '_Tupl' || ctorStarter === '_Task')
-	{
-		return '…'
-	}
-	if (['_Array', '<decoder>', '_Process', '::', '[]', 'Set_elm_builtin', 'RBNode_elm_builtin', 'RBEmpty_elm_builtin'].indexOf(value.ctor) >= 0)
-	{
-		return '…';
-	}
-
-	var keys = Object.keys(value);
-	switch (keys.length)
-	{
-		case 1:
-			return value.ctor;
-		case 2:
-			return value.ctor + ' ' + messageToString(value._0);
-		default:
-			return value.ctor + ' … ' + messageToString(value[keys[keys.length - 1]]);
-	}
-}
-
-
-function primitive(str)
-{
-	return { ctor: 'Primitive', _0: str };
-}
-
-
-function init(value)
-{
-	var type = typeof value;
-
-	if (type === 'boolean')
-	{
-		return {
-			ctor: 'Constructor',
-			_0: _elm_lang$core$Maybe$Just(value ? 'True' : 'False'),
-			_1: true,
-			_2: _elm_lang$core$Native_List.Nil
-		};
-	}
-
-	if (type === 'number')
-	{
-		return primitive(value + '');
-	}
-
-	if (type === 'string')
-	{
-		return { ctor: 'S', _0: '"' + addSlashes(value, false) + '"' };
-	}
-
-	if (value instanceof String)
-	{
-		return { ctor: 'S', _0: "'" + addSlashes(value, true) + "'" };
-	}
-
-	if (value instanceof Date)
-	{
-		return primitive('<' + value.toString() + '>');
-	}
-
-	if (value === null)
-	{
-		return primitive('XXX');
-	}
-
-	if (type === 'object' && 'ctor' in value)
-	{
-		var ctor = value.ctor;
-
-		if (ctor === '::' || ctor === '[]')
-		{
-			return {
-				ctor: 'Sequence',
-				_0: {ctor: 'ListSeq'},
-				_1: true,
-				_2: A2(_elm_lang$core$List$map, init, value)
-			};
-		}
-
-		if (ctor === 'Set_elm_builtin')
-		{
-			return {
-				ctor: 'Sequence',
-				_0: {ctor: 'SetSeq'},
-				_1: true,
-				_2: A3(_elm_lang$core$Set$foldr, initCons, _elm_lang$core$Native_List.Nil, value)
-			};
-		}
-
-		if (ctor === 'RBNode_elm_builtin' || ctor == 'RBEmpty_elm_builtin')
-		{
-			return {
-				ctor: 'Dictionary',
-				_0: true,
-				_1: A3(_elm_lang$core$Dict$foldr, initKeyValueCons, _elm_lang$core$Native_List.Nil, value)
-			};
-		}
-
-		if (ctor === '_Array')
-		{
-			return {
-				ctor: 'Sequence',
-				_0: {ctor: 'ArraySeq'},
-				_1: true,
-				_2: A3(_elm_lang$core$Array$foldr, initCons, _elm_lang$core$Native_List.Nil, value)
-			};
-		}
-
-		var ctorStarter = value.ctor.substring(0, 5);
-		if (ctorStarter === '_Task')
-		{
-			return primitive('<task>');
-		}
-
-		if (ctor === '<decoder>')
-		{
-			return primitive(ctor);
-		}
-
-		if (ctor === '_Process')
-		{
-			return primitive('<process>');
-		}
-
-		var list = _elm_lang$core$Native_List.Nil;
-		for (var i in value)
-		{
-			if (i === 'ctor') continue;
-			list = _elm_lang$core$Native_List.Cons(init(value[i]), list);
-		}
-		return {
-			ctor: 'Constructor',
-			_0: ctorStarter === '_Tupl' ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(ctor),
-			_1: true,
-			_2: _elm_lang$core$List$reverse(list)
-		};
-	}
-
-	if (type === 'object')
-	{
-		var dict = _elm_lang$core$Dict$empty;
-		for (var i in value)
-		{
-			dict = A3(_elm_lang$core$Dict$insert, i, init(value[i]), dict);
-		}
-		return { ctor: 'Record', _0: true, _1: dict };
-	}
-
-	return primitive('XXX');
-}
-
-var initCons = F2(initConsHelp);
-
-function initConsHelp(value, list)
-{
-	return _elm_lang$core$Native_List.Cons(init(value), list);
-}
-
-var initKeyValueCons = F3(initKeyValueConsHelp);
-
-function initKeyValueConsHelp(key, value, list)
-{
-	return _elm_lang$core$Native_List.Cons(
-		_elm_lang$core$Native_Utils.Tuple2(init(key), init(value)),
-		list
-	);
-}
-
-function addSlashes(str, isChar)
-{
-	var s = str.replace(/\\/g, '\\\\')
-			  .replace(/\n/g, '\\n')
-			  .replace(/\t/g, '\\t')
-			  .replace(/\r/g, '\\r')
-			  .replace(/\v/g, '\\v')
-			  .replace(/\0/g, '\\0');
-	if (isChar)
-	{
-		return s.replace(/\'/g, '\\\'');
-	}
-	else
-	{
-		return s.replace(/\"/g, '\\"');
-	}
-}
-
-
-return {
-	upload: upload,
-	download: F2(download),
-	unsafeCoerce: unsafeCoerce,
-	messageToString: messageToString,
-	init: init
-}
-
-}();
-
-var _elm_lang$virtual_dom$VirtualDom_Helpers$keyedNode = _elm_lang$virtual_dom$Native_VirtualDom.keyedNode;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$lazy3 = _elm_lang$virtual_dom$Native_VirtualDom.lazy3;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$lazy2 = _elm_lang$virtual_dom$Native_VirtualDom.lazy2;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$lazy = _elm_lang$virtual_dom$Native_VirtualDom.lazy;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$defaultOptions = {stopPropagation: false, preventDefault: false};
-var _elm_lang$virtual_dom$VirtualDom_Helpers$onWithOptions = _elm_lang$virtual_dom$Native_VirtualDom.on;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$on = F2(
-	function (eventName, decoder) {
-		return A3(_elm_lang$virtual_dom$VirtualDom_Helpers$onWithOptions, eventName, _elm_lang$virtual_dom$VirtualDom_Helpers$defaultOptions, decoder);
-	});
-var _elm_lang$virtual_dom$VirtualDom_Helpers$onClick = function (msg) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$on,
-		'click',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$virtual_dom$VirtualDom_Helpers$style = _elm_lang$virtual_dom$Native_VirtualDom.style;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$attribute = _elm_lang$virtual_dom$Native_VirtualDom.attribute;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$id = _elm_lang$virtual_dom$VirtualDom_Helpers$attribute('id');
-var _elm_lang$virtual_dom$VirtualDom_Helpers$property = _elm_lang$virtual_dom$Native_VirtualDom.property;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$class = function (name) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$property,
-		'className',
-		_elm_lang$core$Json_Encode$string(name));
-};
-var _elm_lang$virtual_dom$VirtualDom_Helpers$href = function (name) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$property,
-		'href',
-		_elm_lang$core$Json_Encode$string(name));
-};
-var _elm_lang$virtual_dom$VirtualDom_Helpers$map = _elm_lang$virtual_dom$Native_VirtualDom.map;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$text = _elm_lang$virtual_dom$Native_VirtualDom.text;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$node = _elm_lang$virtual_dom$Native_VirtualDom.node;
-var _elm_lang$virtual_dom$VirtualDom_Helpers$div = _elm_lang$virtual_dom$VirtualDom_Helpers$node('div');
-var _elm_lang$virtual_dom$VirtualDom_Helpers$span = _elm_lang$virtual_dom$VirtualDom_Helpers$node('span');
-var _elm_lang$virtual_dom$VirtualDom_Helpers$a = _elm_lang$virtual_dom$VirtualDom_Helpers$node('a');
-var _elm_lang$virtual_dom$VirtualDom_Helpers$h1 = _elm_lang$virtual_dom$VirtualDom_Helpers$node('h1');
-var _elm_lang$virtual_dom$VirtualDom_Helpers$Options = F2(
-	function (a, b) {
-		return {stopPropagation: a, preventDefault: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Helpers$Node = {ctor: 'Node'};
-var _elm_lang$virtual_dom$VirtualDom_Helpers$Property = {ctor: 'Property'};
-
-var _elm_lang$virtual_dom$VirtualDom_Expando$purple = _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(136, 19, 145)'},
-		_1: {ctor: '[]'}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$blue = _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(28, 0, 207)'},
-		_1: {ctor: '[]'}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$red = _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-	{
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'color', _1: 'rgb(196, 26, 22)'},
-		_1: {ctor: '[]'}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$leftPad = function (maybeKey) {
-	var _p0 = maybeKey;
-	if (_p0.ctor === 'Nothing') {
-		return _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-			{ctor: '[]'});
-	} else {
-		return _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '4ch'},
-				_1: {ctor: '[]'}
-			});
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$makeArrow = function (arrow) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'color', _1: '#777'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '2ch'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '2ch'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(arrow),
-			_1: {ctor: '[]'}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$lineStarter = F3(
-	function (maybeKey, maybeIsClosed, description) {
-		var arrow = function () {
-			var _p1 = maybeIsClosed;
-			if (_p1.ctor === 'Nothing') {
-				return _elm_lang$virtual_dom$VirtualDom_Expando$makeArrow('');
-			} else {
-				if (_p1._0 === true) {
-					return _elm_lang$virtual_dom$VirtualDom_Expando$makeArrow('▸');
-				} else {
-					return _elm_lang$virtual_dom$VirtualDom_Expando$makeArrow('▾');
-				}
-			}
-		}();
-		var _p2 = maybeKey;
-		if (_p2.ctor === 'Nothing') {
-			return {ctor: '::', _0: arrow, _1: description};
-		} else {
-			return {
-				ctor: '::',
-				_0: arrow,
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Expando$purple,
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p2._0),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' = '),
-						_1: description
-					}
-				}
-			};
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewExtraTinyRecord = F3(
-	function (length, starter, entries) {
-		var _p3 = entries;
-		if (_p3.ctor === '[]') {
-			return {
-				ctor: '_Tuple2',
-				_0: length + 1,
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('}'),
-					_1: {ctor: '[]'}
-				}
-			};
-		} else {
-			var _p5 = _p3._0;
-			var nextLength = (length + _elm_lang$core$String$length(_p5)) + 1;
-			if (_elm_lang$core$Native_Utils.cmp(nextLength, 18) > 0) {
-				return {
-					ctor: '_Tuple2',
-					_0: length + 2,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('…}'),
-						_1: {ctor: '[]'}
-					}
-				};
-			} else {
-				var _p4 = A3(_elm_lang$virtual_dom$VirtualDom_Expando$viewExtraTinyRecord, nextLength, ',', _p3._1);
-				var finalLength = _p4._0;
-				var otherNodes = _p4._1;
-				return {
-					ctor: '_Tuple2',
-					_0: finalLength,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(starter),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Expando$purple,
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p5),
-									_1: {ctor: '[]'}
-								}),
-							_1: otherNodes
-						}
-					}
-				};
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$elideMiddle = function (str) {
-	return (_elm_lang$core$Native_Utils.cmp(
-		_elm_lang$core$String$length(str),
-		18) < 1) ? str : A2(
-		_elm_lang$core$Basics_ops['++'],
-		A2(_elm_lang$core$String$left, 8, str),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'...',
-			A2(_elm_lang$core$String$right, 8, str)));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyHelp = function (str) {
-	return {
-		ctor: '_Tuple2',
-		_0: _elm_lang$core$String$length(str),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(str),
-			_1: {ctor: '[]'}
-		}
-	};
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$updateIndex = F3(
-	function (n, func, list) {
-		var _p6 = list;
-		if (_p6.ctor === '[]') {
-			return {ctor: '[]'};
-		} else {
-			var _p8 = _p6._1;
-			var _p7 = _p6._0;
-			return (_elm_lang$core$Native_Utils.cmp(n, 0) < 1) ? {
-				ctor: '::',
-				_0: func(_p7),
-				_1: _p8
-			} : {
-				ctor: '::',
-				_0: _p7,
-				_1: A3(_elm_lang$virtual_dom$VirtualDom_Expando$updateIndex, n - 1, func, _p8)
-			};
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$seqTypeToString = F2(
-	function (n, seqType) {
-		var _p9 = seqType;
-		switch (_p9.ctor) {
-			case 'ListSeq':
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					'List(',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(n),
-						')'));
-			case 'SetSeq':
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					'Set(',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(n),
-						')'));
-			default:
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					'Array(',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(n),
-						')'));
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewTiny = function (value) {
-	var _p10 = value;
-	switch (_p10.ctor) {
-		case 'S':
-			var str = _elm_lang$virtual_dom$VirtualDom_Expando$elideMiddle(_p10._0);
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$String$length(str),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Expando$red,
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(str),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			};
-		case 'Primitive':
-			var _p11 = _p10._0;
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$String$length(_p11),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Expando$blue,
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p11),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			};
-		case 'Sequence':
-			return _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyHelp(
-				A2(
-					_elm_lang$virtual_dom$VirtualDom_Expando$seqTypeToString,
-					_elm_lang$core$List$length(_p10._2),
-					_p10._0));
-		case 'Dictionary':
-			return _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyHelp(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'Dict(',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(
-							_elm_lang$core$List$length(_p10._1)),
-						')')));
-		case 'Record':
-			return _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyRecord(_p10._1);
-		default:
-			if (_p10._2.ctor === '[]') {
-				return _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyHelp(
-					A2(_elm_lang$core$Maybe$withDefault, 'Unit', _p10._0));
-			} else {
-				return _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyHelp(
-					function () {
-						var _p12 = _p10._0;
-						if (_p12.ctor === 'Nothing') {
-							return A2(
-								_elm_lang$core$Basics_ops['++'],
-								'Tuple(',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_elm_lang$core$List$length(_p10._2)),
-									')'));
-						} else {
-							return A2(_elm_lang$core$Basics_ops['++'], _p12._0, ' …');
-						}
-					}());
-			}
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyRecord = function (record) {
-	return _elm_lang$core$Dict$isEmpty(record) ? {
-		ctor: '_Tuple2',
-		_0: 2,
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('{}'),
-			_1: {ctor: '[]'}
-		}
-	} : A3(
-		_elm_lang$virtual_dom$VirtualDom_Expando$viewTinyRecordHelp,
-		0,
-		'{ ',
-		_elm_lang$core$Dict$toList(record));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewTinyRecordHelp = F3(
-	function (length, starter, entries) {
-		var _p13 = entries;
-		if (_p13.ctor === '[]') {
-			return {
-				ctor: '_Tuple2',
-				_0: length + 2,
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' }'),
-					_1: {ctor: '[]'}
-				}
-			};
-		} else {
-			var _p16 = _p13._0._0;
-			var _p14 = _elm_lang$virtual_dom$VirtualDom_Expando$viewExtraTiny(_p13._0._1);
-			var valueLen = _p14._0;
-			var valueNodes = _p14._1;
-			var fieldLen = _elm_lang$core$String$length(_p16);
-			var newLength = ((length + fieldLen) + valueLen) + 5;
-			if (_elm_lang$core$Native_Utils.cmp(newLength, 60) > 0) {
-				return {
-					ctor: '_Tuple2',
-					_0: length + 4,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(', … }'),
-						_1: {ctor: '[]'}
-					}
-				};
-			} else {
-				var _p15 = A3(_elm_lang$virtual_dom$VirtualDom_Expando$viewTinyRecordHelp, newLength, ', ', _p13._1);
-				var finalLength = _p15._0;
-				var otherNodes = _p15._1;
-				return {
-					ctor: '_Tuple2',
-					_0: finalLength,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(starter),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Expando$purple,
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p16),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' = '),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-										{ctor: '[]'},
-										valueNodes),
-									_1: otherNodes
-								}
-							}
-						}
-					}
-				};
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewExtraTiny = function (value) {
-	var _p17 = value;
-	if (_p17.ctor === 'Record') {
-		return A3(
-			_elm_lang$virtual_dom$VirtualDom_Expando$viewExtraTinyRecord,
-			0,
-			'{',
-			_elm_lang$core$Dict$keys(_p17._1));
-	} else {
-		return _elm_lang$virtual_dom$VirtualDom_Expando$viewTiny(value);
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$Constructor = F3(
-	function (a, b, c) {
-		return {ctor: 'Constructor', _0: a, _1: b, _2: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$Record = F2(
-	function (a, b) {
-		return {ctor: 'Record', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$Dictionary = F2(
-	function (a, b) {
-		return {ctor: 'Dictionary', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$Sequence = F3(
-	function (a, b, c) {
-		return {ctor: 'Sequence', _0: a, _1: b, _2: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$initHelp = F2(
-	function (isOuter, expando) {
-		var _p18 = expando;
-		switch (_p18.ctor) {
-			case 'S':
-				return expando;
-			case 'Primitive':
-				return expando;
-			case 'Sequence':
-				var _p20 = _p18._0;
-				var _p19 = _p18._2;
-				return isOuter ? A3(
-					_elm_lang$virtual_dom$VirtualDom_Expando$Sequence,
-					_p20,
-					false,
-					A2(
-						_elm_lang$core$List$map,
-						_elm_lang$virtual_dom$VirtualDom_Expando$initHelp(false),
-						_p19)) : ((_elm_lang$core$Native_Utils.cmp(
-					_elm_lang$core$List$length(_p19),
-					8) < 1) ? A3(_elm_lang$virtual_dom$VirtualDom_Expando$Sequence, _p20, false, _p19) : expando);
-			case 'Dictionary':
-				var _p23 = _p18._1;
-				return isOuter ? A2(
-					_elm_lang$virtual_dom$VirtualDom_Expando$Dictionary,
-					false,
-					A2(
-						_elm_lang$core$List$map,
-						function (_p21) {
-							var _p22 = _p21;
-							return {
-								ctor: '_Tuple2',
-								_0: _p22._0,
-								_1: A2(_elm_lang$virtual_dom$VirtualDom_Expando$initHelp, false, _p22._1)
-							};
-						},
-						_p23)) : ((_elm_lang$core$Native_Utils.cmp(
-					_elm_lang$core$List$length(_p23),
-					8) < 1) ? A2(_elm_lang$virtual_dom$VirtualDom_Expando$Dictionary, false, _p23) : expando);
-			case 'Record':
-				var _p25 = _p18._1;
-				return isOuter ? A2(
-					_elm_lang$virtual_dom$VirtualDom_Expando$Record,
-					false,
-					A2(
-						_elm_lang$core$Dict$map,
-						F2(
-							function (_p24, v) {
-								return A2(_elm_lang$virtual_dom$VirtualDom_Expando$initHelp, false, v);
-							}),
-						_p25)) : ((_elm_lang$core$Native_Utils.cmp(
-					_elm_lang$core$Dict$size(_p25),
-					4) < 1) ? A2(_elm_lang$virtual_dom$VirtualDom_Expando$Record, false, _p25) : expando);
-			default:
-				var _p27 = _p18._0;
-				var _p26 = _p18._2;
-				return isOuter ? A3(
-					_elm_lang$virtual_dom$VirtualDom_Expando$Constructor,
-					_p27,
-					false,
-					A2(
-						_elm_lang$core$List$map,
-						_elm_lang$virtual_dom$VirtualDom_Expando$initHelp(false),
-						_p26)) : ((_elm_lang$core$Native_Utils.cmp(
-					_elm_lang$core$List$length(_p26),
-					4) < 1) ? A3(_elm_lang$virtual_dom$VirtualDom_Expando$Constructor, _p27, false, _p26) : expando);
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$init = function (value) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Expando$initHelp,
-		true,
-		_elm_lang$virtual_dom$Native_Debug.init(value));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$mergeHelp = F2(
-	function (old, $new) {
-		var _p28 = {ctor: '_Tuple2', _0: old, _1: $new};
-		_v12_6:
-		do {
-			if (_p28.ctor === '_Tuple2') {
-				switch (_p28._1.ctor) {
-					case 'S':
-						return $new;
-					case 'Primitive':
-						return $new;
-					case 'Sequence':
-						if (_p28._0.ctor === 'Sequence') {
-							return A3(
-								_elm_lang$virtual_dom$VirtualDom_Expando$Sequence,
-								_p28._1._0,
-								_p28._0._1,
-								A2(_elm_lang$virtual_dom$VirtualDom_Expando$mergeListHelp, _p28._0._2, _p28._1._2));
-						} else {
-							break _v12_6;
-						}
-					case 'Dictionary':
-						if (_p28._0.ctor === 'Dictionary') {
-							return A2(_elm_lang$virtual_dom$VirtualDom_Expando$Dictionary, _p28._0._0, _p28._1._1);
-						} else {
-							break _v12_6;
-						}
-					case 'Record':
-						if (_p28._0.ctor === 'Record') {
-							return A2(
-								_elm_lang$virtual_dom$VirtualDom_Expando$Record,
-								_p28._0._0,
-								A2(
-									_elm_lang$core$Dict$map,
-									_elm_lang$virtual_dom$VirtualDom_Expando$mergeDictHelp(_p28._0._1),
-									_p28._1._1));
-						} else {
-							break _v12_6;
-						}
-					default:
-						if (_p28._0.ctor === 'Constructor') {
-							return A3(
-								_elm_lang$virtual_dom$VirtualDom_Expando$Constructor,
-								_p28._1._0,
-								_p28._0._1,
-								A2(_elm_lang$virtual_dom$VirtualDom_Expando$mergeListHelp, _p28._0._2, _p28._1._2));
-						} else {
-							break _v12_6;
-						}
-				}
-			} else {
-				break _v12_6;
-			}
-		} while(false);
-		return $new;
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$mergeDictHelp = F3(
-	function (oldDict, key, value) {
-		var _p29 = A2(_elm_lang$core$Dict$get, key, oldDict);
-		if (_p29.ctor === 'Nothing') {
-			return value;
-		} else {
-			return A2(_elm_lang$virtual_dom$VirtualDom_Expando$mergeHelp, _p29._0, value);
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$mergeListHelp = F2(
-	function (olds, news) {
-		var _p30 = {ctor: '_Tuple2', _0: olds, _1: news};
-		if (_p30._0.ctor === '[]') {
-			return news;
-		} else {
-			if (_p30._1.ctor === '[]') {
-				return news;
-			} else {
-				return {
-					ctor: '::',
-					_0: A2(_elm_lang$virtual_dom$VirtualDom_Expando$mergeHelp, _p30._0._0, _p30._1._0),
-					_1: A2(_elm_lang$virtual_dom$VirtualDom_Expando$mergeListHelp, _p30._0._1, _p30._1._1)
-				};
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$merge = F2(
-	function (value, expando) {
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Expando$mergeHelp,
-			expando,
-			_elm_lang$virtual_dom$Native_Debug.init(value));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$update = F2(
-	function (msg, value) {
-		var _p31 = value;
-		switch (_p31.ctor) {
-			case 'S':
-				return _elm_lang$core$Native_Utils.crashCase(
-					'VirtualDom.Expando',
-					{
-						start: {line: 168, column: 3},
-						end: {line: 235, column: 50}
-					},
-					_p31)('No messages for primitives');
-			case 'Primitive':
-				return _elm_lang$core$Native_Utils.crashCase(
-					'VirtualDom.Expando',
-					{
-						start: {line: 168, column: 3},
-						end: {line: 235, column: 50}
-					},
-					_p31)('No messages for primitives');
-			case 'Sequence':
-				var _p39 = _p31._2;
-				var _p38 = _p31._0;
-				var _p37 = _p31._1;
-				var _p34 = msg;
-				switch (_p34.ctor) {
-					case 'Toggle':
-						return A3(_elm_lang$virtual_dom$VirtualDom_Expando$Sequence, _p38, !_p37, _p39);
-					case 'Index':
-						if (_p34._0.ctor === 'None') {
-							return A3(
-								_elm_lang$virtual_dom$VirtualDom_Expando$Sequence,
-								_p38,
-								_p37,
-								A3(
-									_elm_lang$virtual_dom$VirtualDom_Expando$updateIndex,
-									_p34._1,
-									_elm_lang$virtual_dom$VirtualDom_Expando$update(_p34._2),
-									_p39));
-						} else {
-							return _elm_lang$core$Native_Utils.crashCase(
-								'VirtualDom.Expando',
-								{
-									start: {line: 176, column: 7},
-									end: {line: 188, column: 46}
-								},
-								_p34)('No redirected indexes on sequences');
-						}
-					default:
-						return _elm_lang$core$Native_Utils.crashCase(
-							'VirtualDom.Expando',
-							{
-								start: {line: 176, column: 7},
-								end: {line: 188, column: 46}
-							},
-							_p34)('No field on sequences');
-				}
-			case 'Dictionary':
-				var _p51 = _p31._1;
-				var _p50 = _p31._0;
-				var _p40 = msg;
-				switch (_p40.ctor) {
-					case 'Toggle':
-						return A2(_elm_lang$virtual_dom$VirtualDom_Expando$Dictionary, !_p50, _p51);
-					case 'Index':
-						var _p48 = _p40._2;
-						var _p47 = _p40._1;
-						var _p41 = _p40._0;
-						switch (_p41.ctor) {
-							case 'None':
-								return _elm_lang$core$Native_Utils.crashCase(
-									'VirtualDom.Expando',
-									{
-										start: {line: 196, column: 11},
-										end: {line: 206, column: 81}
-									},
-									_p41)('must have redirect for dictionaries');
-							case 'Key':
-								return A2(
-									_elm_lang$virtual_dom$VirtualDom_Expando$Dictionary,
-									_p50,
-									A3(
-										_elm_lang$virtual_dom$VirtualDom_Expando$updateIndex,
-										_p47,
-										function (_p43) {
-											var _p44 = _p43;
-											return {
-												ctor: '_Tuple2',
-												_0: A2(_elm_lang$virtual_dom$VirtualDom_Expando$update, _p48, _p44._0),
-												_1: _p44._1
-											};
-										},
-										_p51));
-							default:
-								return A2(
-									_elm_lang$virtual_dom$VirtualDom_Expando$Dictionary,
-									_p50,
-									A3(
-										_elm_lang$virtual_dom$VirtualDom_Expando$updateIndex,
-										_p47,
-										function (_p45) {
-											var _p46 = _p45;
-											return {
-												ctor: '_Tuple2',
-												_0: _p46._0,
-												_1: A2(_elm_lang$virtual_dom$VirtualDom_Expando$update, _p48, _p46._1)
-											};
-										},
-										_p51));
-						}
-					default:
-						return _elm_lang$core$Native_Utils.crashCase(
-							'VirtualDom.Expando',
-							{
-								start: {line: 191, column: 7},
-								end: {line: 209, column: 50}
-							},
-							_p40)('no field for dictionaries');
-				}
-			case 'Record':
-				var _p55 = _p31._1;
-				var _p54 = _p31._0;
-				var _p52 = msg;
-				switch (_p52.ctor) {
-					case 'Toggle':
-						return A2(_elm_lang$virtual_dom$VirtualDom_Expando$Record, !_p54, _p55);
-					case 'Index':
-						return _elm_lang$core$Native_Utils.crashCase(
-							'VirtualDom.Expando',
-							{
-								start: {line: 212, column: 7},
-								end: {line: 220, column: 77}
-							},
-							_p52)('No index for records');
-					default:
-						return A2(
-							_elm_lang$virtual_dom$VirtualDom_Expando$Record,
-							_p54,
-							A3(
-								_elm_lang$core$Dict$update,
-								_p52._0,
-								_elm_lang$virtual_dom$VirtualDom_Expando$updateField(_p52._1),
-								_p55));
-				}
-			default:
-				var _p61 = _p31._2;
-				var _p60 = _p31._0;
-				var _p59 = _p31._1;
-				var _p56 = msg;
-				switch (_p56.ctor) {
-					case 'Toggle':
-						return A3(_elm_lang$virtual_dom$VirtualDom_Expando$Constructor, _p60, !_p59, _p61);
-					case 'Index':
-						if (_p56._0.ctor === 'None') {
-							return A3(
-								_elm_lang$virtual_dom$VirtualDom_Expando$Constructor,
-								_p60,
-								_p59,
-								A3(
-									_elm_lang$virtual_dom$VirtualDom_Expando$updateIndex,
-									_p56._1,
-									_elm_lang$virtual_dom$VirtualDom_Expando$update(_p56._2),
-									_p61));
-						} else {
-							return _elm_lang$core$Native_Utils.crashCase(
-								'VirtualDom.Expando',
-								{
-									start: {line: 223, column: 7},
-									end: {line: 235, column: 50}
-								},
-								_p56)('No redirected indexes on sequences');
-						}
-					default:
-						return _elm_lang$core$Native_Utils.crashCase(
-							'VirtualDom.Expando',
-							{
-								start: {line: 223, column: 7},
-								end: {line: 235, column: 50}
-							},
-							_p56)('No field for constructors');
-				}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$updateField = F2(
-	function (msg, maybeExpando) {
-		var _p62 = maybeExpando;
-		if (_p62.ctor === 'Nothing') {
-			return _elm_lang$core$Native_Utils.crashCase(
-				'VirtualDom.Expando',
-				{
-					start: {line: 253, column: 3},
-					end: {line: 258, column: 32}
-				},
-				_p62)('key does not exist');
-		} else {
-			return _elm_lang$core$Maybe$Just(
-				A2(_elm_lang$virtual_dom$VirtualDom_Expando$update, msg, _p62._0));
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$Primitive = function (a) {
-	return {ctor: 'Primitive', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$S = function (a) {
-	return {ctor: 'S', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$ArraySeq = {ctor: 'ArraySeq'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$SetSeq = {ctor: 'SetSeq'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$ListSeq = {ctor: 'ListSeq'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$Field = F2(
-	function (a, b) {
-		return {ctor: 'Field', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$Index = F3(
-	function (a, b, c) {
-		return {ctor: 'Index', _0: a, _1: b, _2: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$Toggle = {ctor: 'Toggle'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$Value = {ctor: 'Value'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$Key = {ctor: 'Key'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$None = {ctor: 'None'};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewConstructorEntry = F2(
-	function (index, value) {
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-			A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$None, index),
-			A2(
-				_elm_lang$virtual_dom$VirtualDom_Expando$view,
-				_elm_lang$core$Maybe$Just(
-					_elm_lang$core$Basics$toString(index)),
-				value));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$view = F2(
-	function (maybeKey, expando) {
-		var _p64 = expando;
-		switch (_p64.ctor) {
-			case 'S':
-				return A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(maybeKey),
-						_1: {ctor: '[]'}
-					},
-					A3(
-						_elm_lang$virtual_dom$VirtualDom_Expando$lineStarter,
-						maybeKey,
-						_elm_lang$core$Maybe$Nothing,
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Expando$red,
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p64._0),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}));
-			case 'Primitive':
-				return A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(maybeKey),
-						_1: {ctor: '[]'}
-					},
-					A3(
-						_elm_lang$virtual_dom$VirtualDom_Expando$lineStarter,
-						maybeKey,
-						_elm_lang$core$Maybe$Nothing,
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Expando$blue,
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p64._0),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}));
-			case 'Sequence':
-				return A4(_elm_lang$virtual_dom$VirtualDom_Expando$viewSequence, maybeKey, _p64._0, _p64._1, _p64._2);
-			case 'Dictionary':
-				return A3(_elm_lang$virtual_dom$VirtualDom_Expando$viewDictionary, maybeKey, _p64._0, _p64._1);
-			case 'Record':
-				return A3(_elm_lang$virtual_dom$VirtualDom_Expando$viewRecord, maybeKey, _p64._0, _p64._1);
-			default:
-				return A4(_elm_lang$virtual_dom$VirtualDom_Expando$viewConstructor, maybeKey, _p64._0, _p64._1, _p64._2);
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewConstructor = F4(
-	function (maybeKey, maybeName, isClosed, valueList) {
-		var _p65 = function () {
-			var _p66 = valueList;
-			if (_p66.ctor === '[]') {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Maybe$Nothing,
-					_1: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-						{ctor: '[]'},
-						{ctor: '[]'})
-				};
-			} else {
-				if (_p66._1.ctor === '[]') {
-					var _p67 = _p66._0;
-					switch (_p67.ctor) {
-						case 'S':
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Maybe$Nothing,
-								_1: A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-									{ctor: '[]'},
-									{ctor: '[]'})
-							};
-						case 'Primitive':
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Maybe$Nothing,
-								_1: A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-									{ctor: '[]'},
-									{ctor: '[]'})
-							};
-						case 'Sequence':
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Maybe$Just(isClosed),
-								_1: isClosed ? A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-									{ctor: '[]'},
-									{ctor: '[]'}) : A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-									A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$None, 0),
-									_elm_lang$virtual_dom$VirtualDom_Expando$viewSequenceOpen(_p67._2))
-							};
-						case 'Dictionary':
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Maybe$Just(isClosed),
-								_1: isClosed ? A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-									{ctor: '[]'},
-									{ctor: '[]'}) : A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-									A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$None, 0),
-									_elm_lang$virtual_dom$VirtualDom_Expando$viewDictionaryOpen(_p67._1))
-							};
-						case 'Record':
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Maybe$Just(isClosed),
-								_1: isClosed ? A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-									{ctor: '[]'},
-									{ctor: '[]'}) : A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-									A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$None, 0),
-									_elm_lang$virtual_dom$VirtualDom_Expando$viewRecordOpen(_p67._1))
-							};
-						default:
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Maybe$Just(isClosed),
-								_1: isClosed ? A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-									{ctor: '[]'},
-									{ctor: '[]'}) : A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-									A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$None, 0),
-									_elm_lang$virtual_dom$VirtualDom_Expando$viewConstructorOpen(_p67._2))
-							};
-					}
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Maybe$Just(isClosed),
-						_1: isClosed ? A2(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-							{ctor: '[]'},
-							{ctor: '[]'}) : _elm_lang$virtual_dom$VirtualDom_Expando$viewConstructorOpen(valueList)
-					};
-				}
-			}
-		}();
-		var maybeIsClosed = _p65._0;
-		var openHtml = _p65._1;
-		var tinyArgs = A2(
-			_elm_lang$core$List$map,
-			function (_p68) {
-				return _elm_lang$core$Tuple$second(
-					_elm_lang$virtual_dom$VirtualDom_Expando$viewExtraTiny(_p68));
-			},
-			valueList);
-		var description = function () {
-			var _p69 = {ctor: '_Tuple2', _0: maybeName, _1: tinyArgs};
-			if (_p69._0.ctor === 'Nothing') {
-				if (_p69._1.ctor === '[]') {
-					return {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('()'),
-						_1: {ctor: '[]'}
-					};
-				} else {
-					return {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('( '),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-								{ctor: '[]'},
-								_p69._1._0),
-							_1: A3(
-								_elm_lang$core$List$foldr,
-								F2(
-									function (args, rest) {
-										return {
-											ctor: '::',
-											_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(', '),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-													{ctor: '[]'},
-													args),
-												_1: rest
-											}
-										};
-									}),
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' )'),
-									_1: {ctor: '[]'}
-								},
-								_p69._1._1)
-						}
-					};
-				}
-			} else {
-				if (_p69._1.ctor === '[]') {
-					return {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p69._0._0),
-						_1: {ctor: '[]'}
-					};
-				} else {
-					return {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-							A2(_elm_lang$core$Basics_ops['++'], _p69._0._0, ' ')),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-								{ctor: '[]'},
-								_p69._1._0),
-							_1: A3(
-								_elm_lang$core$List$foldr,
-								F2(
-									function (args, rest) {
-										return {
-											ctor: '::',
-											_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' '),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-													{ctor: '[]'},
-													args),
-												_1: rest
-											}
-										};
-									}),
-								{ctor: '[]'},
-								_p69._1._1)
-						}
-					};
-				}
-			}
-		}();
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(maybeKey),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Expando$Toggle),
-						_1: {ctor: '[]'}
-					},
-					A3(_elm_lang$virtual_dom$VirtualDom_Expando$lineStarter, maybeKey, maybeIsClosed, description)),
-				_1: {
-					ctor: '::',
-					_0: openHtml,
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewConstructorOpen = function (valueList) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$indexedMap, _elm_lang$virtual_dom$VirtualDom_Expando$viewConstructorEntry, valueList));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewDictionaryOpen = function (keyValuePairs) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$indexedMap, _elm_lang$virtual_dom$VirtualDom_Expando$viewDictionaryEntry, keyValuePairs));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewDictionaryEntry = F2(
-	function (index, _p70) {
-		var _p71 = _p70;
-		var _p74 = _p71._1;
-		var _p73 = _p71._0;
-		var _p72 = _p73;
-		switch (_p72.ctor) {
-			case 'S':
-				return A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-					A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$Value, index),
-					A2(
-						_elm_lang$virtual_dom$VirtualDom_Expando$view,
-						_elm_lang$core$Maybe$Just(_p72._0),
-						_p74));
-			case 'Primitive':
-				return A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-					A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$Value, index),
-					A2(
-						_elm_lang$virtual_dom$VirtualDom_Expando$view,
-						_elm_lang$core$Maybe$Just(_p72._0),
-						_p74));
-			default:
-				return A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-							A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$Key, index),
-							A2(
-								_elm_lang$virtual_dom$VirtualDom_Expando$view,
-								_elm_lang$core$Maybe$Just('key'),
-								_p73)),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-								A2(_elm_lang$virtual_dom$VirtualDom_Expando$Index, _elm_lang$virtual_dom$VirtualDom_Expando$Value, index),
-								A2(
-									_elm_lang$virtual_dom$VirtualDom_Expando$view,
-									_elm_lang$core$Maybe$Just('value'),
-									_p74)),
-							_1: {ctor: '[]'}
-						}
-					});
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewRecordOpen = function (record) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$map,
-			_elm_lang$virtual_dom$VirtualDom_Expando$viewRecordEntry,
-			_elm_lang$core$Dict$toList(record)));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewRecordEntry = function (_p75) {
-	var _p76 = _p75;
-	var _p77 = _p76._0;
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-		_elm_lang$virtual_dom$VirtualDom_Expando$Field(_p77),
-		A2(
-			_elm_lang$virtual_dom$VirtualDom_Expando$view,
-			_elm_lang$core$Maybe$Just(_p77),
-			_p76._1));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewSequenceOpen = function (values) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$indexedMap, _elm_lang$virtual_dom$VirtualDom_Expando$viewConstructorEntry, values));
-};
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewDictionary = F3(
-	function (maybeKey, isClosed, keyValuePairs) {
-		var starter = A2(
-			_elm_lang$core$Basics_ops['++'],
-			'Dict(',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_elm_lang$core$Basics$toString(
-					_elm_lang$core$List$length(keyValuePairs)),
-				')'));
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(maybeKey),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Expando$Toggle),
-						_1: {ctor: '[]'}
-					},
-					A3(
-						_elm_lang$virtual_dom$VirtualDom_Expando$lineStarter,
-						maybeKey,
-						_elm_lang$core$Maybe$Just(isClosed),
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(starter),
-							_1: {ctor: '[]'}
-						})),
-				_1: {
-					ctor: '::',
-					_0: isClosed ? _elm_lang$virtual_dom$VirtualDom_Helpers$text('') : _elm_lang$virtual_dom$VirtualDom_Expando$viewDictionaryOpen(keyValuePairs),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewRecord = F3(
-	function (maybeKey, isClosed, record) {
-		var _p78 = isClosed ? {
-			ctor: '_Tuple3',
-			_0: _elm_lang$core$Tuple$second(
-				_elm_lang$virtual_dom$VirtualDom_Expando$viewTinyRecord(record)),
-			_1: _elm_lang$virtual_dom$VirtualDom_Helpers$text(''),
-			_2: _elm_lang$virtual_dom$VirtualDom_Helpers$text('')
-		} : {
-			ctor: '_Tuple3',
-			_0: {
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('{'),
-				_1: {ctor: '[]'}
-			},
-			_1: _elm_lang$virtual_dom$VirtualDom_Expando$viewRecordOpen(record),
-			_2: A2(
-				_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(
-						_elm_lang$core$Maybe$Just(
-							{ctor: '_Tuple0'})),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('}'),
-					_1: {ctor: '[]'}
-				})
-		};
-		var start = _p78._0;
-		var middle = _p78._1;
-		var end = _p78._2;
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(maybeKey),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Expando$Toggle),
-						_1: {ctor: '[]'}
-					},
-					A3(
-						_elm_lang$virtual_dom$VirtualDom_Expando$lineStarter,
-						maybeKey,
-						_elm_lang$core$Maybe$Just(isClosed),
-						start)),
-				_1: {
-					ctor: '::',
-					_0: middle,
-					_1: {
-						ctor: '::',
-						_0: end,
-						_1: {ctor: '[]'}
-					}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Expando$viewSequence = F4(
-	function (maybeKey, seqType, isClosed, valueList) {
-		var starter = A2(
-			_elm_lang$virtual_dom$VirtualDom_Expando$seqTypeToString,
-			_elm_lang$core$List$length(valueList),
-			seqType);
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Expando$leftPad(maybeKey),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Expando$Toggle),
-						_1: {ctor: '[]'}
-					},
-					A3(
-						_elm_lang$virtual_dom$VirtualDom_Expando$lineStarter,
-						maybeKey,
-						_elm_lang$core$Maybe$Just(isClosed),
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(starter),
-							_1: {ctor: '[]'}
-						})),
-				_1: {
-					ctor: '::',
-					_0: isClosed ? _elm_lang$virtual_dom$VirtualDom_Helpers$text('') : _elm_lang$virtual_dom$VirtualDom_Expando$viewSequenceOpen(valueList),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-
-var _elm_lang$virtual_dom$VirtualDom_Report$some = function (list) {
-	return !_elm_lang$core$List$isEmpty(list);
-};
-var _elm_lang$virtual_dom$VirtualDom_Report$TagChanges = F4(
-	function (a, b, c, d) {
-		return {removed: a, changed: b, added: c, argsMatch: d};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Report$emptyTagChanges = function (argsMatch) {
-	return A4(
-		_elm_lang$virtual_dom$VirtualDom_Report$TagChanges,
-		{ctor: '[]'},
-		{ctor: '[]'},
-		{ctor: '[]'},
-		argsMatch);
-};
-var _elm_lang$virtual_dom$VirtualDom_Report$hasTagChanges = function (tagChanges) {
-	return _elm_lang$core$Native_Utils.eq(
-		tagChanges,
-		A4(
-			_elm_lang$virtual_dom$VirtualDom_Report$TagChanges,
-			{ctor: '[]'},
-			{ctor: '[]'},
-			{ctor: '[]'},
-			true));
-};
-var _elm_lang$virtual_dom$VirtualDom_Report$SomethingChanged = function (a) {
-	return {ctor: 'SomethingChanged', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Report$MessageChanged = F2(
-	function (a, b) {
-		return {ctor: 'MessageChanged', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Report$VersionChanged = F2(
-	function (a, b) {
-		return {ctor: 'VersionChanged', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Report$CorruptHistory = {ctor: 'CorruptHistory'};
-var _elm_lang$virtual_dom$VirtualDom_Report$UnionChange = F2(
-	function (a, b) {
-		return {ctor: 'UnionChange', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Report$AliasChange = function (a) {
-	return {ctor: 'AliasChange', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Report$Fine = {ctor: 'Fine'};
-var _elm_lang$virtual_dom$VirtualDom_Report$Risky = {ctor: 'Risky'};
-var _elm_lang$virtual_dom$VirtualDom_Report$Impossible = {ctor: 'Impossible'};
-var _elm_lang$virtual_dom$VirtualDom_Report$worstCase = F2(
-	function (status, statusList) {
-		worstCase:
-		while (true) {
-			var _p0 = statusList;
-			if (_p0.ctor === '[]') {
-				return status;
-			} else {
-				switch (_p0._0.ctor) {
-					case 'Impossible':
-						return _elm_lang$virtual_dom$VirtualDom_Report$Impossible;
-					case 'Risky':
-						var _v1 = _elm_lang$virtual_dom$VirtualDom_Report$Risky,
-							_v2 = _p0._1;
-						status = _v1;
-						statusList = _v2;
-						continue worstCase;
-					default:
-						var _v3 = status,
-							_v4 = _p0._1;
-						status = _v3;
-						statusList = _v4;
-						continue worstCase;
-				}
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Report$evaluateChange = function (change) {
-	var _p1 = change;
-	if (_p1.ctor === 'AliasChange') {
-		return _elm_lang$virtual_dom$VirtualDom_Report$Impossible;
-	} else {
-		return ((!_p1._1.argsMatch) || (_elm_lang$virtual_dom$VirtualDom_Report$some(_p1._1.changed) || _elm_lang$virtual_dom$VirtualDom_Report$some(_p1._1.removed))) ? _elm_lang$virtual_dom$VirtualDom_Report$Impossible : (_elm_lang$virtual_dom$VirtualDom_Report$some(_p1._1.added) ? _elm_lang$virtual_dom$VirtualDom_Report$Risky : _elm_lang$virtual_dom$VirtualDom_Report$Fine);
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Report$evaluate = function (report) {
-	var _p2 = report;
-	switch (_p2.ctor) {
-		case 'CorruptHistory':
-			return _elm_lang$virtual_dom$VirtualDom_Report$Impossible;
-		case 'VersionChanged':
-			return _elm_lang$virtual_dom$VirtualDom_Report$Impossible;
-		case 'MessageChanged':
-			return _elm_lang$virtual_dom$VirtualDom_Report$Impossible;
-		default:
-			return A2(
-				_elm_lang$virtual_dom$VirtualDom_Report$worstCase,
-				_elm_lang$virtual_dom$VirtualDom_Report$Fine,
-				A2(_elm_lang$core$List$map, _elm_lang$virtual_dom$VirtualDom_Report$evaluateChange, _p2._0));
-	}
-};
-
-var _elm_lang$virtual_dom$VirtualDom_Metadata$encodeDict = F2(
-	function (f, dict) {
-		return _elm_lang$core$Json_Encode$object(
-			_elm_lang$core$Dict$toList(
-				A2(
-					_elm_lang$core$Dict$map,
-					F2(
-						function (key, value) {
-							return f(value);
-						}),
-					dict)));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$encodeUnion = function (_p0) {
-	var _p1 = _p0;
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'args',
-				_1: _elm_lang$core$Json_Encode$list(
-					A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, _p1.args))
-			},
-			_1: {
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'tags',
-					_1: A2(
-						_elm_lang$virtual_dom$VirtualDom_Metadata$encodeDict,
-						function (_p2) {
-							return _elm_lang$core$Json_Encode$list(
-								A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, _p2));
-						},
-						_p1.tags)
-				},
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$encodeAlias = function (_p3) {
-	var _p4 = _p3;
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'args',
-				_1: _elm_lang$core$Json_Encode$list(
-					A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, _p4.args))
-			},
-			_1: {
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'type',
-					_1: _elm_lang$core$Json_Encode$string(_p4.tipe)
-				},
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$encodeTypes = function (_p5) {
-	var _p6 = _p5;
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'message',
-				_1: _elm_lang$core$Json_Encode$string(_p6.message)
-			},
-			_1: {
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'aliases',
-					_1: A2(_elm_lang$virtual_dom$VirtualDom_Metadata$encodeDict, _elm_lang$virtual_dom$VirtualDom_Metadata$encodeAlias, _p6.aliases)
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'unions',
-						_1: A2(_elm_lang$virtual_dom$VirtualDom_Metadata$encodeDict, _elm_lang$virtual_dom$VirtualDom_Metadata$encodeUnion, _p6.unions)
-					},
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$encodeVersions = function (_p7) {
-	var _p8 = _p7;
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'elm',
-				_1: _elm_lang$core$Json_Encode$string(_p8.elm)
-			},
-			_1: {ctor: '[]'}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$encode = function (_p9) {
-	var _p10 = _p9;
-	return _elm_lang$core$Json_Encode$object(
-		{
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'versions',
-				_1: _elm_lang$virtual_dom$VirtualDom_Metadata$encodeVersions(_p10.versions)
-			},
-			_1: {
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'types',
-					_1: _elm_lang$virtual_dom$VirtualDom_Metadata$encodeTypes(_p10.types)
-				},
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$checkTag = F4(
-	function (tag, old, $new, changes) {
-		return _elm_lang$core$Native_Utils.eq(old, $new) ? changes : _elm_lang$core$Native_Utils.update(
-			changes,
-			{
-				changed: {ctor: '::', _0: tag, _1: changes.changed}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$addTag = F3(
-	function (tag, _p11, changes) {
-		return _elm_lang$core$Native_Utils.update(
-			changes,
-			{
-				added: {ctor: '::', _0: tag, _1: changes.added}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$removeTag = F3(
-	function (tag, _p12, changes) {
-		return _elm_lang$core$Native_Utils.update(
-			changes,
-			{
-				removed: {ctor: '::', _0: tag, _1: changes.removed}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$checkUnion = F4(
-	function (name, old, $new, changes) {
-		var tagChanges = A6(
-			_elm_lang$core$Dict$merge,
-			_elm_lang$virtual_dom$VirtualDom_Metadata$removeTag,
-			_elm_lang$virtual_dom$VirtualDom_Metadata$checkTag,
-			_elm_lang$virtual_dom$VirtualDom_Metadata$addTag,
-			old.tags,
-			$new.tags,
-			_elm_lang$virtual_dom$VirtualDom_Report$emptyTagChanges(
-				_elm_lang$core$Native_Utils.eq(old.args, $new.args)));
-		return _elm_lang$virtual_dom$VirtualDom_Report$hasTagChanges(tagChanges) ? changes : {
-			ctor: '::',
-			_0: A2(_elm_lang$virtual_dom$VirtualDom_Report$UnionChange, name, tagChanges),
-			_1: changes
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$checkAlias = F4(
-	function (name, old, $new, changes) {
-		return (_elm_lang$core$Native_Utils.eq(old.tipe, $new.tipe) && _elm_lang$core$Native_Utils.eq(old.args, $new.args)) ? changes : {
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Report$AliasChange(name),
-			_1: changes
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$ignore = F3(
-	function (key, value, report) {
-		return report;
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$checkTypes = F2(
-	function (old, $new) {
-		return (!_elm_lang$core$Native_Utils.eq(old.message, $new.message)) ? A2(_elm_lang$virtual_dom$VirtualDom_Report$MessageChanged, old.message, $new.message) : _elm_lang$virtual_dom$VirtualDom_Report$SomethingChanged(
-			A6(
-				_elm_lang$core$Dict$merge,
-				_elm_lang$virtual_dom$VirtualDom_Metadata$ignore,
-				_elm_lang$virtual_dom$VirtualDom_Metadata$checkUnion,
-				_elm_lang$virtual_dom$VirtualDom_Metadata$ignore,
-				old.unions,
-				$new.unions,
-				A6(
-					_elm_lang$core$Dict$merge,
-					_elm_lang$virtual_dom$VirtualDom_Metadata$ignore,
-					_elm_lang$virtual_dom$VirtualDom_Metadata$checkAlias,
-					_elm_lang$virtual_dom$VirtualDom_Metadata$ignore,
-					old.aliases,
-					$new.aliases,
-					{ctor: '[]'})));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$check = F2(
-	function (old, $new) {
-		return (!_elm_lang$core$Native_Utils.eq(old.versions.elm, $new.versions.elm)) ? A2(_elm_lang$virtual_dom$VirtualDom_Report$VersionChanged, old.versions.elm, $new.versions.elm) : A2(_elm_lang$virtual_dom$VirtualDom_Metadata$checkTypes, old.types, $new.types);
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$hasProblem = F2(
-	function (tipe, _p13) {
-		var _p14 = _p13;
-		return A2(_elm_lang$core$String$contains, _p14._1, tipe) ? _elm_lang$core$Maybe$Just(_p14._0) : _elm_lang$core$Maybe$Nothing;
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Metadata = F2(
-	function (a, b) {
-		return {versions: a, types: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Versions = function (a) {
-	return {elm: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$decodeVersions = A2(
-	_elm_lang$core$Json_Decode$map,
-	_elm_lang$virtual_dom$VirtualDom_Metadata$Versions,
-	A2(_elm_lang$core$Json_Decode$field, 'elm', _elm_lang$core$Json_Decode$string));
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Types = F3(
-	function (a, b, c) {
-		return {message: a, aliases: b, unions: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Alias = F2(
-	function (a, b) {
-		return {args: a, tipe: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$decodeAlias = A3(
-	_elm_lang$core$Json_Decode$map2,
-	_elm_lang$virtual_dom$VirtualDom_Metadata$Alias,
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'args',
-		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)),
-	A2(_elm_lang$core$Json_Decode$field, 'type', _elm_lang$core$Json_Decode$string));
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Union = F2(
-	function (a, b) {
-		return {args: a, tags: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$decodeUnion = A3(
-	_elm_lang$core$Json_Decode$map2,
-	_elm_lang$virtual_dom$VirtualDom_Metadata$Union,
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'args',
-		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)),
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'tags',
-		_elm_lang$core$Json_Decode$dict(
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string))));
-var _elm_lang$virtual_dom$VirtualDom_Metadata$decodeTypes = A4(
-	_elm_lang$core$Json_Decode$map3,
-	_elm_lang$virtual_dom$VirtualDom_Metadata$Types,
-	A2(_elm_lang$core$Json_Decode$field, 'message', _elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'aliases',
-		_elm_lang$core$Json_Decode$dict(_elm_lang$virtual_dom$VirtualDom_Metadata$decodeAlias)),
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'unions',
-		_elm_lang$core$Json_Decode$dict(_elm_lang$virtual_dom$VirtualDom_Metadata$decodeUnion)));
-var _elm_lang$virtual_dom$VirtualDom_Metadata$decoder = A3(
-	_elm_lang$core$Json_Decode$map2,
-	_elm_lang$virtual_dom$VirtualDom_Metadata$Metadata,
-	A2(_elm_lang$core$Json_Decode$field, 'versions', _elm_lang$virtual_dom$VirtualDom_Metadata$decodeVersions),
-	A2(_elm_lang$core$Json_Decode$field, 'types', _elm_lang$virtual_dom$VirtualDom_Metadata$decodeTypes));
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Error = F2(
-	function (a, b) {
-		return {message: a, problems: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$ProblemType = F2(
-	function (a, b) {
-		return {name: a, problems: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$VirtualDom = {ctor: 'VirtualDom'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Program = {ctor: 'Program'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Request = {ctor: 'Request'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Socket = {ctor: 'Socket'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Process = {ctor: 'Process'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Task = {ctor: 'Task'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Decoder = {ctor: 'Decoder'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$Function = {ctor: 'Function'};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$problemTable = {
-	ctor: '::',
-	_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Function, _1: '->'},
-	_1: {
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Decoder, _1: 'Json.Decode.Decoder'},
-		_1: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Task, _1: 'Task.Task'},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Process, _1: 'Process.Id'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Socket, _1: 'WebSocket.LowLevel.WebSocket'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Request, _1: 'Http.Request'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$Program, _1: 'Platform.Program'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$VirtualDom, _1: 'VirtualDom.Node'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: _elm_lang$virtual_dom$VirtualDom_Metadata$VirtualDom, _1: 'VirtualDom.Attribute'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$findProblems = function (tipe) {
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$virtual_dom$VirtualDom_Metadata$hasProblem(tipe),
-		_elm_lang$virtual_dom$VirtualDom_Metadata$problemTable);
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$collectBadAliases = F3(
-	function (name, _p15, list) {
-		var _p16 = _p15;
-		var _p17 = _elm_lang$virtual_dom$VirtualDom_Metadata$findProblems(_p16.tipe);
-		if (_p17.ctor === '[]') {
-			return list;
-		} else {
-			return {
-				ctor: '::',
-				_0: A2(_elm_lang$virtual_dom$VirtualDom_Metadata$ProblemType, name, _p17),
-				_1: list
-			};
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$collectBadUnions = F3(
-	function (name, _p18, list) {
-		var _p19 = _p18;
-		var _p20 = A2(
-			_elm_lang$core$List$concatMap,
-			_elm_lang$virtual_dom$VirtualDom_Metadata$findProblems,
-			_elm_lang$core$List$concat(
-				_elm_lang$core$Dict$values(_p19.tags)));
-		if (_p20.ctor === '[]') {
-			return list;
-		} else {
-			return {
-				ctor: '::',
-				_0: A2(_elm_lang$virtual_dom$VirtualDom_Metadata$ProblemType, name, _p20),
-				_1: list
-			};
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Metadata$isPortable = function (_p21) {
-	var _p22 = _p21;
-	var _p24 = _p22.types;
-	var badAliases = A3(
-		_elm_lang$core$Dict$foldl,
-		_elm_lang$virtual_dom$VirtualDom_Metadata$collectBadAliases,
-		{ctor: '[]'},
-		_p24.aliases);
-	var _p23 = A3(_elm_lang$core$Dict$foldl, _elm_lang$virtual_dom$VirtualDom_Metadata$collectBadUnions, badAliases, _p24.unions);
-	if (_p23.ctor === '[]') {
-		return _elm_lang$core$Maybe$Nothing;
-	} else {
-		return _elm_lang$core$Maybe$Just(
-			A2(_elm_lang$virtual_dom$VirtualDom_Metadata$Error, _p24.message, _p23));
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Metadata$decode = function (value) {
-	var _p25 = A2(_elm_lang$core$Json_Decode$decodeValue, _elm_lang$virtual_dom$VirtualDom_Metadata$decoder, value);
-	if (_p25.ctor === 'Err') {
-		return _elm_lang$core$Native_Utils.crashCase(
-			'VirtualDom.Metadata',
-			{
-				start: {line: 229, column: 3},
-				end: {line: 239, column: 20}
-			},
-			_p25)('Compiler is generating bad metadata. Report this at <https://github.com/elm-lang/virtual-dom/issues>.');
-	} else {
-		var _p28 = _p25._0;
-		var _p27 = _elm_lang$virtual_dom$VirtualDom_Metadata$isPortable(_p28);
-		if (_p27.ctor === 'Nothing') {
-			return _elm_lang$core$Result$Ok(_p28);
-		} else {
-			return _elm_lang$core$Result$Err(_p27._0);
-		}
-	}
-};
-
-var _elm_lang$virtual_dom$VirtualDom_History$viewMessage = F3(
-	function (currentIndex, index, msg) {
-		var className = _elm_lang$core$Native_Utils.eq(currentIndex, index) ? 'messages-entry messages-entry-selected' : 'messages-entry';
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class(className),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$on,
-						'click',
-						_elm_lang$core$Json_Decode$succeed(index)),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('messages-entry-content'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-							_elm_lang$virtual_dom$Native_Debug.messageToString(msg)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('messages-entry-index'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-								_elm_lang$core$Basics$toString(index)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$consMsg = F3(
-	function (currentIndex, msg, _p0) {
-		var _p1 = _p0;
-		var _p2 = _p1._0;
-		return {
-			ctor: '_Tuple2',
-			_0: _p2 - 1,
-			_1: {
-				ctor: '::',
-				_0: A4(_elm_lang$virtual_dom$VirtualDom_Helpers$lazy3, _elm_lang$virtual_dom$VirtualDom_History$viewMessage, currentIndex, _p2, msg),
-				_1: _p1._1
-			}
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$viewSnapshot = F3(
-	function (currentIndex, index, _p3) {
-		var _p4 = _p3;
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{ctor: '[]'},
-			_elm_lang$core$Tuple$second(
-				A3(
-					_elm_lang$core$Array$foldl,
-					_elm_lang$virtual_dom$VirtualDom_History$consMsg(currentIndex),
-					{
-						ctor: '_Tuple2',
-						_0: index - 1,
-						_1: {ctor: '[]'}
-					},
-					_p4.messages)));
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$undone = function (getResult) {
-	var _p5 = getResult;
-	if (_p5.ctor === 'Done') {
-		return {ctor: '_Tuple2', _0: _p5._1, _1: _p5._0};
-	} else {
-		return _elm_lang$core$Native_Utils.crashCase(
-			'VirtualDom.History',
-			{
-				start: {line: 195, column: 3},
-				end: {line: 200, column: 39}
-			},
-			_p5)('Bug in History.get');
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_History$elmToJs = _elm_lang$virtual_dom$Native_Debug.unsafeCoerce;
-var _elm_lang$virtual_dom$VirtualDom_History$encodeHelp = F2(
-	function (snapshot, allMessages) {
-		return A3(
-			_elm_lang$core$Array$foldl,
-			F2(
-				function (elm, msgs) {
-					return {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_History$elmToJs(elm),
-						_1: msgs
-					};
-				}),
-			allMessages,
-			snapshot.messages);
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$encode = function (_p7) {
-	var _p8 = _p7;
-	var recentJson = A2(
-		_elm_lang$core$List$map,
-		_elm_lang$virtual_dom$VirtualDom_History$elmToJs,
-		_elm_lang$core$List$reverse(_p8.recent.messages));
-	return _elm_lang$core$Json_Encode$list(
-		A3(_elm_lang$core$Array$foldr, _elm_lang$virtual_dom$VirtualDom_History$encodeHelp, recentJson, _p8.snapshots));
-};
-var _elm_lang$virtual_dom$VirtualDom_History$jsToElm = _elm_lang$virtual_dom$Native_Debug.unsafeCoerce;
-var _elm_lang$virtual_dom$VirtualDom_History$initialModel = function (_p9) {
-	var _p10 = _p9;
-	var _p11 = A2(_elm_lang$core$Array$get, 0, _p10.snapshots);
-	if (_p11.ctor === 'Just') {
-		return _p11._0.model;
-	} else {
-		return _p10.recent.model;
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_History$size = function (history) {
-	return history.numMessages;
-};
-var _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize = 64;
-var _elm_lang$virtual_dom$VirtualDom_History$consSnapshot = F3(
-	function (currentIndex, snapshot, _p12) {
-		var _p13 = _p12;
-		var _p14 = _p13._0;
-		var nextIndex = _p14 - _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize;
-		var currentIndexHelp = ((_elm_lang$core$Native_Utils.cmp(nextIndex, currentIndex) < 1) && (_elm_lang$core$Native_Utils.cmp(currentIndex, _p14) < 0)) ? currentIndex : -1;
-		return {
-			ctor: '_Tuple2',
-			_0: _p14 - _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize,
-			_1: {
-				ctor: '::',
-				_0: A4(_elm_lang$virtual_dom$VirtualDom_Helpers$lazy3, _elm_lang$virtual_dom$VirtualDom_History$viewSnapshot, currentIndexHelp, _p14, snapshot),
-				_1: _p13._1
-			}
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$viewSnapshots = F2(
-	function (currentIndex, snapshots) {
-		var highIndex = _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize * _elm_lang$core$Array$length(snapshots);
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{ctor: '[]'},
-			_elm_lang$core$Tuple$second(
-				A3(
-					_elm_lang$core$Array$foldr,
-					_elm_lang$virtual_dom$VirtualDom_History$consSnapshot(currentIndex),
-					{
-						ctor: '_Tuple2',
-						_0: highIndex,
-						_1: {ctor: '[]'}
-					},
-					snapshots)));
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$view = F2(
-	function (maybeIndex, _p15) {
-		var _p16 = _p15;
-		var _p17 = function () {
-			var _p18 = maybeIndex;
-			if (_p18.ctor === 'Nothing') {
-				return {ctor: '_Tuple2', _0: -1, _1: 'debugger-sidebar-messages'};
-			} else {
-				return {ctor: '_Tuple2', _0: _p18._0, _1: 'debugger-sidebar-messages-paused'};
-			}
-		}();
-		var index = _p17._0;
-		var className = _p17._1;
-		var oldStuff = A3(_elm_lang$virtual_dom$VirtualDom_Helpers$lazy2, _elm_lang$virtual_dom$VirtualDom_History$viewSnapshots, index, _p16.snapshots);
-		var newStuff = _elm_lang$core$Tuple$second(
-			A3(
-				_elm_lang$core$List$foldl,
-				_elm_lang$virtual_dom$VirtualDom_History$consMsg(index),
-				{
-					ctor: '_Tuple2',
-					_0: _p16.numMessages - 1,
-					_1: {ctor: '[]'}
-				},
-				_p16.recent.messages));
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class(className),
-				_1: {ctor: '[]'}
-			},
-			{ctor: '::', _0: oldStuff, _1: newStuff});
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$History = F3(
-	function (a, b, c) {
-		return {snapshots: a, recent: b, numMessages: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$RecentHistory = F3(
-	function (a, b, c) {
-		return {model: a, messages: b, numMessages: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$empty = function (model) {
-	return A3(
-		_elm_lang$virtual_dom$VirtualDom_History$History,
-		_elm_lang$core$Array$empty,
-		A3(
-			_elm_lang$virtual_dom$VirtualDom_History$RecentHistory,
-			model,
-			{ctor: '[]'},
-			0),
-		0);
-};
-var _elm_lang$virtual_dom$VirtualDom_History$Snapshot = F2(
-	function (a, b) {
-		return {model: a, messages: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$addRecent = F3(
-	function (msg, newModel, _p19) {
-		var _p20 = _p19;
-		var _p23 = _p20.numMessages;
-		var _p22 = _p20.model;
-		var _p21 = _p20.messages;
-		return _elm_lang$core$Native_Utils.eq(_p23, _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize) ? {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Maybe$Just(
-				A2(
-					_elm_lang$virtual_dom$VirtualDom_History$Snapshot,
-					_p22,
-					_elm_lang$core$Array$fromList(_p21))),
-			_1: A3(
-				_elm_lang$virtual_dom$VirtualDom_History$RecentHistory,
-				newModel,
-				{
-					ctor: '::',
-					_0: msg,
-					_1: {ctor: '[]'}
-				},
-				1)
-		} : {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Maybe$Nothing,
-			_1: A3(
-				_elm_lang$virtual_dom$VirtualDom_History$RecentHistory,
-				_p22,
-				{ctor: '::', _0: msg, _1: _p21},
-				_p23 + 1)
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$add = F3(
-	function (msg, model, _p24) {
-		var _p25 = _p24;
-		var _p28 = _p25.snapshots;
-		var _p27 = _p25.numMessages;
-		var _p26 = A3(_elm_lang$virtual_dom$VirtualDom_History$addRecent, msg, model, _p25.recent);
-		if (_p26._0.ctor === 'Just') {
-			return A3(
-				_elm_lang$virtual_dom$VirtualDom_History$History,
-				A2(_elm_lang$core$Array$push, _p26._0._0, _p28),
-				_p26._1,
-				_p27 + 1);
-		} else {
-			return A3(_elm_lang$virtual_dom$VirtualDom_History$History, _p28, _p26._1, _p27 + 1);
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$decoder = F2(
-	function (initialModel, update) {
-		var addMessage = F2(
-			function (rawMsg, _p29) {
-				var _p30 = _p29;
-				var _p31 = _p30._0;
-				var msg = _elm_lang$virtual_dom$VirtualDom_History$jsToElm(rawMsg);
-				return {
-					ctor: '_Tuple2',
-					_0: A2(update, msg, _p31),
-					_1: A3(_elm_lang$virtual_dom$VirtualDom_History$add, msg, _p31, _p30._1)
-				};
-			});
-		var updateModel = function (rawMsgs) {
-			return A3(
-				_elm_lang$core$List$foldl,
-				addMessage,
-				{
-					ctor: '_Tuple2',
-					_0: initialModel,
-					_1: _elm_lang$virtual_dom$VirtualDom_History$empty(initialModel)
-				},
-				rawMsgs);
-		};
-		return A2(
-			_elm_lang$core$Json_Decode$map,
-			updateModel,
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$value));
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$Done = F2(
-	function (a, b) {
-		return {ctor: 'Done', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$Stepping = F2(
-	function (a, b) {
-		return {ctor: 'Stepping', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$getHelp = F3(
-	function (update, msg, getResult) {
-		var _p32 = getResult;
-		if (_p32.ctor === 'Done') {
-			return getResult;
-		} else {
-			var _p34 = _p32._0;
-			var _p33 = _p32._1;
-			return _elm_lang$core$Native_Utils.eq(_p34, 0) ? A2(
-				_elm_lang$virtual_dom$VirtualDom_History$Done,
-				msg,
-				_elm_lang$core$Tuple$first(
-					A2(update, msg, _p33))) : A2(
-				_elm_lang$virtual_dom$VirtualDom_History$Stepping,
-				_p34 - 1,
-				_elm_lang$core$Tuple$first(
-					A2(update, msg, _p33)));
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_History$get = F3(
-	function (update, index, _p35) {
-		var _p36 = _p35;
-		var _p39 = _p36.recent;
-		var snapshotMax = _p36.numMessages - _p39.numMessages;
-		if (_elm_lang$core$Native_Utils.cmp(index, snapshotMax) > -1) {
-			return _elm_lang$virtual_dom$VirtualDom_History$undone(
-				A3(
-					_elm_lang$core$List$foldr,
-					_elm_lang$virtual_dom$VirtualDom_History$getHelp(update),
-					A2(_elm_lang$virtual_dom$VirtualDom_History$Stepping, index - snapshotMax, _p39.model),
-					_p39.messages));
-		} else {
-			var _p37 = A2(_elm_lang$core$Array$get, (index / _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize) | 0, _p36.snapshots);
-			if (_p37.ctor === 'Nothing') {
-				return _elm_lang$core$Native_Utils.crashCase(
-					'VirtualDom.History',
-					{
-						start: {line: 165, column: 7},
-						end: {line: 171, column: 95}
-					},
-					_p37)('UI should only let you ask for real indexes!');
-			} else {
-				return _elm_lang$virtual_dom$VirtualDom_History$undone(
-					A3(
-						_elm_lang$core$Array$foldr,
-						_elm_lang$virtual_dom$VirtualDom_History$getHelp(update),
-						A2(
-							_elm_lang$virtual_dom$VirtualDom_History$Stepping,
-							A2(_elm_lang$core$Basics$rem, index, _elm_lang$virtual_dom$VirtualDom_History$maxSnapshotSize),
-							_p37._0.model),
-						_p37._0.messages));
-			}
-		}
-	});
-
-var _elm_lang$virtual_dom$VirtualDom_Overlay$styles = A3(
-	_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-	'style',
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('\n\n.elm-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  color: white;\n  pointer-events: none;\n  font-family: \'Trebuchet MS\', \'Lucida Grande\', \'Bitstream Vera Sans\', \'Helvetica Neue\', sans-serif;\n}\n\n.elm-overlay-resume {\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n  text-align: center;\n  pointer-events: auto;\n  background-color: rgba(200, 200, 200, 0.7);\n}\n\n.elm-overlay-resume-words {\n  position: absolute;\n  top: calc(50% - 40px);\n  font-size: 80px;\n  line-height: 80px;\n  height: 80px;\n  width: 100%;\n}\n\n.elm-mini-controls {\n  position: fixed;\n  bottom: 0;\n  right: 6px;\n  border-radius: 4px;\n  background-color: rgb(61, 61, 61);\n  font-family: monospace;\n  pointer-events: auto;\n}\n\n.elm-mini-controls-button {\n  padding: 6px;\n  cursor: pointer;\n  text-align: center;\n  min-width: 24ch;\n}\n\n.elm-mini-controls-import-export {\n  padding: 4px 0;\n  font-size: 0.8em;\n  text-align: center;\n  background-color: rgb(50, 50, 50);\n}\n\n.elm-overlay-message {\n  position: absolute;\n  width: 600px;\n  height: 100%;\n  padding-left: calc(50% - 300px);\n  padding-right: calc(50% - 300px);\n  background-color: rgba(200, 200, 200, 0.7);\n  pointer-events: auto;\n}\n\n.elm-overlay-message-title {\n  font-size: 36px;\n  height: 80px;\n  background-color: rgb(50, 50, 50);\n  padding-left: 22px;\n  vertical-align: middle;\n  line-height: 80px;\n}\n\n.elm-overlay-message-details {\n  padding: 8px 20px;\n  overflow-y: auto;\n  max-height: calc(100% - 156px);\n  background-color: rgb(61, 61, 61);\n}\n\n.elm-overlay-message-details-type {\n  font-size: 1.5em;\n}\n\n.elm-overlay-message-details ul {\n  list-style-type: none;\n  padding-left: 20px;\n}\n\n.elm-overlay-message-details ul ul {\n  list-style-type: disc;\n  padding-left: 2em;\n}\n\n.elm-overlay-message-details li {\n  margin: 8px 0;\n}\n\n.elm-overlay-message-buttons {\n  height: 60px;\n  line-height: 60px;\n  text-align: right;\n  background-color: rgb(50, 50, 50);\n}\n\n.elm-overlay-message-buttons button {\n  margin-right: 20px;\n}\n\n'),
-		_1: {ctor: '[]'}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$button = F2(
-	function (msg, label) {
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(msg),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(label),
-				_1: {ctor: '[]'}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewImportExport = F3(
-	function (props, importMsg, exportMsg) {
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			props,
-			{
-				ctor: '::',
-				_0: A2(_elm_lang$virtual_dom$VirtualDom_Overlay$button, importMsg, 'Import'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' / '),
-					_1: {
-						ctor: '::',
-						_0: A2(_elm_lang$virtual_dom$VirtualDom_Overlay$button, exportMsg, 'Export'),
-						_1: {ctor: '[]'}
-					}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewMiniControls = F2(
-	function (config, numMsgs) {
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-mini-controls'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(config.open),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-mini-controls-button'),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'Explore History (',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(numMsgs),
-									')'))),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A3(
-						_elm_lang$virtual_dom$VirtualDom_Overlay$viewImportExport,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-mini-controls-import-export'),
-							_1: {ctor: '[]'}
-						},
-						config.importHistory,
-						config.exportHistory),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$addCommas = function (items) {
-	var _p0 = items;
-	if (_p0.ctor === '[]') {
-		return '';
-	} else {
-		if (_p0._1.ctor === '[]') {
-			return _p0._0;
-		} else {
-			if (_p0._1._1.ctor === '[]') {
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					_p0._0,
-					A2(_elm_lang$core$Basics_ops['++'], ' and ', _p0._1._0));
-			} else {
-				return A2(
-					_elm_lang$core$String$join,
-					', ',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_p0._1,
-						{
-							ctor: '::',
-							_0: A2(_elm_lang$core$Basics_ops['++'], ' and ', _p0._0),
-							_1: {ctor: '[]'}
-						}));
-			}
-		}
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$problemToString = function (problem) {
-	var _p1 = problem;
-	switch (_p1.ctor) {
-		case 'Function':
-			return 'functions';
-		case 'Decoder':
-			return 'JSON decoders';
-		case 'Task':
-			return 'tasks';
-		case 'Process':
-			return 'processes';
-		case 'Socket':
-			return 'web sockets';
-		case 'Request':
-			return 'HTTP requests';
-		case 'Program':
-			return 'programs';
-		default:
-			return 'virtual DOM values';
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$goodNews2 = '\nfunction can pattern match on that data and call whatever functions, JSON\ndecoders, etc. you need. This makes the code much more explicit and easy to\nfollow for other readers (or you in a few months!)\n';
-var _elm_lang$virtual_dom$VirtualDom_Overlay$goodNews1 = '\nThe good news is that having values like this in your message type is not\nso great in the long run. You are better off using simpler data, like\n';
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode = function (name) {
-	return A3(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-		'code',
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(name),
-			_1: {ctor: '[]'}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewMention = F2(
-	function (tags, verbed) {
-		var _p2 = A2(
-			_elm_lang$core$List$map,
-			_elm_lang$virtual_dom$VirtualDom_Overlay$viewCode,
-			_elm_lang$core$List$reverse(tags));
-		if (_p2.ctor === '[]') {
-			return _elm_lang$virtual_dom$VirtualDom_Helpers$text('');
-		} else {
-			if (_p2._1.ctor === '[]') {
-				return A3(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-					'li',
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(verbed),
-						_1: {
-							ctor: '::',
-							_0: _p2._0,
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('.'),
-								_1: {ctor: '[]'}
-							}
-						}
-					});
-			} else {
-				if (_p2._1._1.ctor === '[]') {
-					return A3(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-						'li',
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(verbed),
-							_1: {
-								ctor: '::',
-								_0: _p2._1._0,
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' and '),
-									_1: {
-										ctor: '::',
-										_0: _p2._0,
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('.'),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						});
-				} else {
-					return A3(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-						'li',
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(verbed),
-							_1: A2(
-								_elm_lang$core$Basics_ops['++'],
-								A2(
-									_elm_lang$core$List$intersperse,
-									_elm_lang$virtual_dom$VirtualDom_Helpers$text(', '),
-									_elm_lang$core$List$reverse(_p2._1)),
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(', and '),
-									_1: {
-										ctor: '::',
-										_0: _p2._0,
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('.'),
-											_1: {ctor: '[]'}
-										}
-									}
-								})
-						});
-				}
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewChange = function (change) {
-	return A3(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-		'li',
-		{ctor: '[]'},
-		function () {
-			var _p3 = change;
-			if (_p3.ctor === 'AliasChange') {
-				return {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-message-details-type'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode(_p3._0),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				};
-			} else {
-				return {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-message-details-type'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode(_p3._0),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A3(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-							'ul',
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$virtual_dom$VirtualDom_Overlay$viewMention, _p3._1.removed, 'Removed '),
-								_1: {
-									ctor: '::',
-									_0: A2(_elm_lang$virtual_dom$VirtualDom_Overlay$viewMention, _p3._1.changed, 'Changed '),
-									_1: {
-										ctor: '::',
-										_0: A2(_elm_lang$virtual_dom$VirtualDom_Overlay$viewMention, _p3._1.added, 'Added '),
-										_1: {ctor: '[]'}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _p3._1.argsMatch ? _elm_lang$virtual_dom$VirtualDom_Helpers$text('') : _elm_lang$virtual_dom$VirtualDom_Helpers$text('This may be due to the fact that the type variable names changed.'),
-							_1: {ctor: '[]'}
-						}
-					}
-				};
-			}
-		}());
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewProblemType = function (_p4) {
-	var _p5 = _p4;
-	return A3(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-		'li',
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode(_p5.name),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						' can contain ',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$virtual_dom$VirtualDom_Overlay$addCommas(
-								A2(_elm_lang$core$List$map, _elm_lang$virtual_dom$VirtualDom_Overlay$problemToString, _p5.problems)),
-							'.'))),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewBadMetadata = function (_p6) {
-	var _p7 = _p6;
-	return {
-		ctor: '::',
-		_0: A3(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-			'p',
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('The '),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode(_p7.message),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' type of your program cannot be reliably serialized for history files.'),
-						_1: {ctor: '[]'}
-					}
-				}
-			}),
-		_1: {
-			ctor: '::',
-			_0: A3(
-				_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-				'p',
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('Functions cannot be serialized, nor can values that contain functions. This is a problem in these places:'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A3(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-					'ul',
-					{ctor: '[]'},
-					A2(_elm_lang$core$List$map, _elm_lang$virtual_dom$VirtualDom_Overlay$viewProblemType, _p7.problems)),
-				_1: {
-					ctor: '::',
-					_0: A3(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-						'p',
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_elm_lang$virtual_dom$VirtualDom_Overlay$goodNews1),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$a,
-									{
-										ctor: '::',
-										_0: _elm_lang$virtual_dom$VirtualDom_Helpers$href('https://guide.elm-lang.org/types/union_types.html'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('union types'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(', in your messages. From there, your '),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode('update'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_elm_lang$virtual_dom$VirtualDom_Overlay$goodNews2),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}
-			}
-		}
-	};
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$explanationRisky = '\nThis history seems old. It will work with this program, but some\nmessages have been added since the history was created:\n';
-var _elm_lang$virtual_dom$VirtualDom_Overlay$explanationBad = '\nThe messages in this history do not match the messages handled by your\nprogram. I noticed changes in the following types:\n';
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewReport = F2(
-	function (isBad, report) {
-		var _p8 = report;
-		switch (_p8.ctor) {
-			case 'CorruptHistory':
-				return {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('Looks like this history file is corrupt. I cannot understand it.'),
-					_1: {ctor: '[]'}
-				};
-			case 'VersionChanged':
-				return {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'This history was created with Elm ',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_p8._0,
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									', but you are using Elm ',
-									A2(_elm_lang$core$Basics_ops['++'], _p8._1, ' right now.'))))),
-					_1: {ctor: '[]'}
-				};
-			case 'MessageChanged':
-				return {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-						A2(_elm_lang$core$Basics_ops['++'], 'To import some other history, the overall message type must', ' be the same. The old history has ')),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode(_p8._0),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' messages, but the new program works with '),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewCode(_p8._1),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' messages.'),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				};
-			default:
-				return {
-					ctor: '::',
-					_0: A3(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-						'p',
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(
-								isBad ? _elm_lang$virtual_dom$VirtualDom_Overlay$explanationBad : _elm_lang$virtual_dom$VirtualDom_Overlay$explanationRisky),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A3(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-							'ul',
-							{ctor: '[]'},
-							A2(_elm_lang$core$List$map, _elm_lang$virtual_dom$VirtualDom_Overlay$viewChange, _p8._0)),
-						_1: {ctor: '[]'}
-					}
-				};
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewResume = function (config) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-resume'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(config.resume),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-resume-words'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('Click to Resume'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$uploadDecoder = A3(
-	_elm_lang$core$Json_Decode$map2,
-	F2(
-		function (v0, v1) {
-			return {ctor: '_Tuple2', _0: v0, _1: v1};
-		}),
-	A2(_elm_lang$core$Json_Decode$field, 'metadata', _elm_lang$virtual_dom$VirtualDom_Metadata$decoder),
-	A2(_elm_lang$core$Json_Decode$field, 'history', _elm_lang$core$Json_Decode$value));
-var _elm_lang$virtual_dom$VirtualDom_Overlay$close = F2(
-	function (msg, state) {
-		var _p9 = state;
-		switch (_p9.ctor) {
-			case 'None':
-				return _elm_lang$core$Maybe$Nothing;
-			case 'BadMetadata':
-				return _elm_lang$core$Maybe$Nothing;
-			case 'BadImport':
-				return _elm_lang$core$Maybe$Nothing;
-			default:
-				var _p10 = msg;
-				if (_p10.ctor === 'Cancel') {
-					return _elm_lang$core$Maybe$Nothing;
-				} else {
-					return _elm_lang$core$Maybe$Just(_p9._1);
-				}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$isBlocking = function (state) {
-	var _p11 = state;
-	if (_p11.ctor === 'None') {
-		return false;
-	} else {
-		return true;
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Config = F5(
-	function (a, b, c, d, e) {
-		return {resume: a, open: b, importHistory: c, exportHistory: d, wrap: e};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$RiskyImport = F2(
-	function (a, b) {
-		return {ctor: 'RiskyImport', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$BadImport = function (a) {
-	return {ctor: 'BadImport', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$corruptImport = _elm_lang$virtual_dom$VirtualDom_Overlay$BadImport(_elm_lang$virtual_dom$VirtualDom_Report$CorruptHistory);
-var _elm_lang$virtual_dom$VirtualDom_Overlay$assessImport = F2(
-	function (metadata, jsonString) {
-		var _p12 = A2(_elm_lang$core$Json_Decode$decodeString, _elm_lang$virtual_dom$VirtualDom_Overlay$uploadDecoder, jsonString);
-		if (_p12.ctor === 'Err') {
-			return _elm_lang$core$Result$Err(_elm_lang$virtual_dom$VirtualDom_Overlay$corruptImport);
-		} else {
-			var _p14 = _p12._0._1;
-			var report = A2(_elm_lang$virtual_dom$VirtualDom_Metadata$check, _p12._0._0, metadata);
-			var _p13 = _elm_lang$virtual_dom$VirtualDom_Report$evaluate(report);
-			switch (_p13.ctor) {
-				case 'Impossible':
-					return _elm_lang$core$Result$Err(
-						_elm_lang$virtual_dom$VirtualDom_Overlay$BadImport(report));
-				case 'Risky':
-					return _elm_lang$core$Result$Err(
-						A2(_elm_lang$virtual_dom$VirtualDom_Overlay$RiskyImport, report, _p14));
-				default:
-					return _elm_lang$core$Result$Ok(_p14);
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$BadMetadata = function (a) {
-	return {ctor: 'BadMetadata', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$badMetadata = _elm_lang$virtual_dom$VirtualDom_Overlay$BadMetadata;
-var _elm_lang$virtual_dom$VirtualDom_Overlay$None = {ctor: 'None'};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$none = _elm_lang$virtual_dom$VirtualDom_Overlay$None;
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Proceed = {ctor: 'Proceed'};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Cancel = {ctor: 'Cancel'};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewButtons = function (buttons) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-message-buttons'),
-			_1: {ctor: '[]'}
-		},
-		function () {
-			var _p15 = buttons;
-			if (_p15.ctor === 'Accept') {
-				return {
-					ctor: '::',
-					_0: A3(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-						'button',
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Overlay$Proceed),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p15._0),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				};
-			} else {
-				return {
-					ctor: '::',
-					_0: A3(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-						'button',
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Overlay$Cancel),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p15._0),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A3(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-							'button',
-							{
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Overlay$Proceed),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(_p15._1),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				};
-			}
-		}());
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Message = {ctor: 'Message'};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewMessage = F4(
-	function (config, title, details, buttons) {
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$virtual_dom$VirtualDom_Overlay$Message,
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-message'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-message-title'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(title),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay-message-details'),
-									_1: {ctor: '[]'}
-								},
-								details),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-									config.wrap,
-									_elm_lang$virtual_dom$VirtualDom_Overlay$viewButtons(buttons)),
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Pause = {ctor: 'Pause'};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Normal = {ctor: 'Normal'};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Choose = F2(
-	function (a, b) {
-		return {ctor: 'Choose', _0: a, _1: b};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$Accept = function (a) {
-	return {ctor: 'Accept', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Overlay$viewHelp = F5(
-	function (config, isPaused, isOpen, numMsgs, state) {
-		var _p16 = state;
-		switch (_p16.ctor) {
-			case 'None':
-				var miniControls = isOpen ? {ctor: '[]'} : {
-					ctor: '::',
-					_0: A2(_elm_lang$virtual_dom$VirtualDom_Overlay$viewMiniControls, config, numMsgs),
-					_1: {ctor: '[]'}
-				};
-				return {
-					ctor: '_Tuple2',
-					_0: isPaused ? _elm_lang$virtual_dom$VirtualDom_Overlay$Pause : _elm_lang$virtual_dom$VirtualDom_Overlay$Normal,
-					_1: (isPaused && (!isOpen)) ? {
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Overlay$viewResume(config),
-						_1: miniControls
-					} : miniControls
-				};
-			case 'BadMetadata':
-				return A4(
-					_elm_lang$virtual_dom$VirtualDom_Overlay$viewMessage,
-					config,
-					'Cannot use Import or Export',
-					_elm_lang$virtual_dom$VirtualDom_Overlay$viewBadMetadata(_p16._0),
-					_elm_lang$virtual_dom$VirtualDom_Overlay$Accept('Ok'));
-			case 'BadImport':
-				return A4(
-					_elm_lang$virtual_dom$VirtualDom_Overlay$viewMessage,
-					config,
-					'Cannot Import History',
-					A2(_elm_lang$virtual_dom$VirtualDom_Overlay$viewReport, true, _p16._0),
-					_elm_lang$virtual_dom$VirtualDom_Overlay$Accept('Ok'));
-			default:
-				return A4(
-					_elm_lang$virtual_dom$VirtualDom_Overlay$viewMessage,
-					config,
-					'Warning',
-					A2(_elm_lang$virtual_dom$VirtualDom_Overlay$viewReport, false, _p16._0),
-					A2(_elm_lang$virtual_dom$VirtualDom_Overlay$Choose, 'Cancel', 'Import Anyway'));
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Overlay$view = F5(
-	function (config, isPaused, isOpen, numMsgs, state) {
-		var _p17 = A5(_elm_lang$virtual_dom$VirtualDom_Overlay$viewHelp, config, isPaused, isOpen, numMsgs, state);
-		var block = _p17._0;
-		var nodes = _p17._1;
-		return {
-			ctor: '_Tuple2',
-			_0: block,
-			_1: A2(
-				_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('elm-overlay'),
-					_1: {ctor: '[]'}
-				},
-				{ctor: '::', _0: _elm_lang$virtual_dom$VirtualDom_Overlay$styles, _1: nodes})
-		};
-	});
-
-var _elm_lang$virtual_dom$VirtualDom_Debug$styles = A3(
-	_elm_lang$virtual_dom$VirtualDom_Helpers$node,
-	'style',
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('\n\nhtml {\n    overflow: hidden;\n    height: 100%;\n}\n\nbody {\n    height: 100%;\n    overflow: auto;\n}\n\n#debugger {\n  width: 100%\n  height: 100%;\n  font-family: monospace;\n}\n\n#values {\n  display: block;\n  float: left;\n  height: 100%;\n  width: calc(100% - 30ch);\n  margin: 0;\n  overflow: auto;\n  cursor: default;\n}\n\n.debugger-sidebar {\n  display: block;\n  float: left;\n  width: 30ch;\n  height: 100%;\n  color: white;\n  background-color: rgb(61, 61, 61);\n}\n\n.debugger-sidebar-controls {\n  width: 100%;\n  text-align: center;\n  background-color: rgb(50, 50, 50);\n}\n\n.debugger-sidebar-controls-import-export {\n  width: 100%;\n  height: 24px;\n  line-height: 24px;\n  font-size: 12px;\n}\n\n.debugger-sidebar-controls-resume {\n  width: 100%;\n  height: 30px;\n  line-height: 30px;\n  cursor: pointer;\n}\n\n.debugger-sidebar-controls-resume:hover {\n  background-color: rgb(41, 41, 41);\n}\n\n.debugger-sidebar-messages {\n  width: 100%;\n  overflow-y: auto;\n  height: calc(100% - 24px);\n}\n\n.debugger-sidebar-messages-paused {\n  width: 100%;\n  overflow-y: auto;\n  height: calc(100% - 54px);\n}\n\n.messages-entry {\n  cursor: pointer;\n  width: 100%;\n}\n\n.messages-entry:hover {\n  background-color: rgb(41, 41, 41);\n}\n\n.messages-entry-selected, .messages-entry-selected:hover {\n  background-color: rgb(10, 10, 10);\n}\n\n.messages-entry-content {\n  width: calc(100% - 7ch);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 1ch;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  overflow: hidden;\n  display: inline-block;\n}\n\n.messages-entry-index {\n  color: #666;\n  width: 5ch;\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-right: 1ch;\n  text-align: right;\n  display: block;\n  float: right;\n}\n\n'),
-		_1: {ctor: '[]'}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$button = F2(
-	function (msg, label) {
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$span,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(msg),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Helpers$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(label),
-				_1: {ctor: '[]'}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$getLatestModel = function (state) {
-	var _p0 = state;
-	if (_p0.ctor === 'Running') {
-		return _p0._0;
-	} else {
-		return _p0._2;
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$withGoodMetadata = F2(
-	function (model, func) {
-		var _p1 = model.metadata;
-		if (_p1.ctor === 'Ok') {
-			return func(_p1._0);
-		} else {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{
-						overlay: _elm_lang$virtual_dom$VirtualDom_Overlay$badMetadata(_p1._0)
-					}),
-				{ctor: '[]'});
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {history: a, state: b, expando: c, metadata: d, overlay: e, isDebuggerOpen: f};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$Paused = F3(
-	function (a, b, c) {
-		return {ctor: 'Paused', _0: a, _1: b, _2: c};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$Running = function (a) {
-	return {ctor: 'Running', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$loadNewHistory = F3(
-	function (rawHistory, userUpdate, model) {
-		var pureUserUpdate = F2(
-			function (msg, userModel) {
-				return _elm_lang$core$Tuple$first(
-					A2(userUpdate, msg, userModel));
-			});
-		var initialUserModel = _elm_lang$virtual_dom$VirtualDom_History$initialModel(model.history);
-		var decoder = A2(_elm_lang$virtual_dom$VirtualDom_History$decoder, initialUserModel, pureUserUpdate);
-		var _p2 = A2(_elm_lang$core$Json_Decode$decodeValue, decoder, rawHistory);
-		if (_p2.ctor === 'Err') {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{overlay: _elm_lang$virtual_dom$VirtualDom_Overlay$corruptImport}),
-				{ctor: '[]'});
-		} else {
-			var _p3 = _p2._0._0;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{
-						history: _p2._0._1,
-						state: _elm_lang$virtual_dom$VirtualDom_Debug$Running(_p3),
-						expando: _elm_lang$virtual_dom$VirtualDom_Expando$init(_p3),
-						overlay: _elm_lang$virtual_dom$VirtualDom_Overlay$none
-					}),
-				{ctor: '[]'});
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$OverlayMsg = function (a) {
-	return {ctor: 'OverlayMsg', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Upload = function (a) {
-	return {ctor: 'Upload', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$upload = A2(_elm_lang$core$Task$perform, _elm_lang$virtual_dom$VirtualDom_Debug$Upload, _elm_lang$virtual_dom$Native_Debug.upload);
-var _elm_lang$virtual_dom$VirtualDom_Debug$Export = {ctor: 'Export'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Import = {ctor: 'Import'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Down = {ctor: 'Down'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Up = {ctor: 'Up'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Close = {ctor: 'Close'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Open = {ctor: 'Open'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Jump = function (a) {
-	return {ctor: 'Jump', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$Resume = {ctor: 'Resume'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$overlayConfig = {resume: _elm_lang$virtual_dom$VirtualDom_Debug$Resume, open: _elm_lang$virtual_dom$VirtualDom_Debug$Open, importHistory: _elm_lang$virtual_dom$VirtualDom_Debug$Import, exportHistory: _elm_lang$virtual_dom$VirtualDom_Debug$Export, wrap: _elm_lang$virtual_dom$VirtualDom_Debug$OverlayMsg};
-var _elm_lang$virtual_dom$VirtualDom_Debug$viewIn = function (_p4) {
-	var _p5 = _p4;
-	var isPaused = function () {
-		var _p6 = _p5.state;
-		if (_p6.ctor === 'Running') {
-			return false;
-		} else {
-			return true;
-		}
-	}();
-	return A5(
-		_elm_lang$virtual_dom$VirtualDom_Overlay$view,
-		_elm_lang$virtual_dom$VirtualDom_Debug$overlayConfig,
-		isPaused,
-		_p5.isDebuggerOpen,
-		_elm_lang$virtual_dom$VirtualDom_History$size(_p5.history),
-		_p5.overlay);
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$resumeButton = A2(
-	_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$virtual_dom$VirtualDom_Helpers$onClick(_elm_lang$virtual_dom$VirtualDom_Debug$Resume),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('debugger-sidebar-controls-resume'),
-			_1: {ctor: '[]'}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text('Resume'),
-		_1: {ctor: '[]'}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$viewResumeButton = function (maybeIndex) {
-	var _p7 = maybeIndex;
-	if (_p7.ctor === 'Nothing') {
-		return _elm_lang$virtual_dom$VirtualDom_Helpers$text('');
-	} else {
-		return _elm_lang$virtual_dom$VirtualDom_Debug$resumeButton;
-	}
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$playButton = function (maybeIndex) {
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('debugger-sidebar-controls'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Debug$viewResumeButton(maybeIndex),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('debugger-sidebar-controls-import-export'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(_elm_lang$virtual_dom$VirtualDom_Debug$button, _elm_lang$virtual_dom$VirtualDom_Debug$Import, 'Import'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$virtual_dom$VirtualDom_Helpers$text(' / '),
-							_1: {
-								ctor: '::',
-								_0: A2(_elm_lang$virtual_dom$VirtualDom_Debug$button, _elm_lang$virtual_dom$VirtualDom_Debug$Export, 'Export'),
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$viewSidebar = F2(
-	function (state, history) {
-		var maybeIndex = function () {
-			var _p8 = state;
-			if (_p8.ctor === 'Running') {
-				return _elm_lang$core$Maybe$Nothing;
-			} else {
-				return _elm_lang$core$Maybe$Just(_p8._0);
-			}
-		}();
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$virtual_dom$VirtualDom_Helpers$class('debugger-sidebar'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-					_elm_lang$virtual_dom$VirtualDom_Debug$Jump,
-					A2(_elm_lang$virtual_dom$VirtualDom_History$view, maybeIndex, history)),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$virtual_dom$VirtualDom_Debug$playButton(maybeIndex),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$ExpandoMsg = function (a) {
-	return {ctor: 'ExpandoMsg', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$viewOut = function (_p9) {
-	var _p10 = _p9;
-	return A2(
-		_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Helpers$id('debugger'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$virtual_dom$VirtualDom_Debug$styles,
-			_1: {
-				ctor: '::',
-				_0: A2(_elm_lang$virtual_dom$VirtualDom_Debug$viewSidebar, _p10.state, _p10.history),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-						_elm_lang$virtual_dom$VirtualDom_Debug$ExpandoMsg,
-						A2(
-							_elm_lang$virtual_dom$VirtualDom_Helpers$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$virtual_dom$VirtualDom_Helpers$id('values'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$virtual_dom$VirtualDom_Expando$view, _elm_lang$core$Maybe$Nothing, _p10.expando),
-								_1: {ctor: '[]'}
-							})),
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$UserMsg = function (a) {
-	return {ctor: 'UserMsg', _0: a};
-};
-var _elm_lang$virtual_dom$VirtualDom_Debug$wrapInit = F2(
-	function (metadata, _p11) {
-		var _p12 = _p11;
-		var _p13 = _p12._0;
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			{
-				history: _elm_lang$virtual_dom$VirtualDom_History$empty(_p13),
-				state: _elm_lang$virtual_dom$VirtualDom_Debug$Running(_p13),
-				expando: _elm_lang$virtual_dom$VirtualDom_Expando$init(_p13),
-				metadata: _elm_lang$virtual_dom$VirtualDom_Metadata$decode(metadata),
-				overlay: _elm_lang$virtual_dom$VirtualDom_Overlay$none,
-				isDebuggerOpen: false
-			},
-			{
-				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _elm_lang$virtual_dom$VirtualDom_Debug$UserMsg, _p12._1),
-				_1: {ctor: '[]'}
-			});
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$wrapSubs = F2(
-	function (userSubscriptions, _p14) {
-		var _p15 = _p14;
-		return A2(
-			_elm_lang$core$Platform_Sub$map,
-			_elm_lang$virtual_dom$VirtualDom_Debug$UserMsg,
-			userSubscriptions(
-				_elm_lang$virtual_dom$VirtualDom_Debug$getLatestModel(_p15.state)));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$wrapView = F2(
-	function (userView, _p16) {
-		var _p17 = _p16;
-		var currentModel = function () {
-			var _p18 = _p17.state;
-			if (_p18.ctor === 'Running') {
-				return _p18._0;
-			} else {
-				return _p18._1;
-			}
-		}();
-		return A2(
-			_elm_lang$virtual_dom$VirtualDom_Helpers$map,
-			_elm_lang$virtual_dom$VirtualDom_Debug$UserMsg,
-			userView(currentModel));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$NoOp = {ctor: 'NoOp'};
-var _elm_lang$virtual_dom$VirtualDom_Debug$download = F2(
-	function (metadata, history) {
-		var json = _elm_lang$core$Json_Encode$object(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'metadata',
-					_1: _elm_lang$virtual_dom$VirtualDom_Metadata$encode(metadata)
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'history',
-						_1: _elm_lang$virtual_dom$VirtualDom_History$encode(history)
-					},
-					_1: {ctor: '[]'}
-				}
-			});
-		var historyLength = _elm_lang$virtual_dom$VirtualDom_History$size(history);
-		return A2(
-			_elm_lang$core$Task$perform,
-			function (_p19) {
-				return _elm_lang$virtual_dom$VirtualDom_Debug$NoOp;
-			},
-			A2(_elm_lang$virtual_dom$Native_Debug.download, historyLength, json));
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$runIf = F2(
-	function (bool, task) {
-		return bool ? A2(
-			_elm_lang$core$Task$perform,
-			_elm_lang$core$Basics$always(_elm_lang$virtual_dom$VirtualDom_Debug$NoOp),
-			task) : _elm_lang$core$Platform_Cmd$none;
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$updateUserMsg = F4(
-	function (userUpdate, scrollTask, userMsg, _p20) {
-		var _p21 = _p20;
-		var _p25 = _p21.state;
-		var _p24 = _p21;
-		var userModel = _elm_lang$virtual_dom$VirtualDom_Debug$getLatestModel(_p25);
-		var newHistory = A3(_elm_lang$virtual_dom$VirtualDom_History$add, userMsg, userModel, _p21.history);
-		var _p22 = A2(userUpdate, userMsg, userModel);
-		var newUserModel = _p22._0;
-		var userCmds = _p22._1;
-		var commands = A2(_elm_lang$core$Platform_Cmd$map, _elm_lang$virtual_dom$VirtualDom_Debug$UserMsg, userCmds);
-		var _p23 = _p25;
-		if (_p23.ctor === 'Running') {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					_p24,
-					{
-						history: newHistory,
-						state: _elm_lang$virtual_dom$VirtualDom_Debug$Running(newUserModel),
-						expando: A2(_elm_lang$virtual_dom$VirtualDom_Expando$merge, newUserModel, _p21.expando)
-					}),
-				{
-					ctor: '::',
-					_0: commands,
-					_1: {
-						ctor: '::',
-						_0: A2(_elm_lang$virtual_dom$VirtualDom_Debug$runIf, _p24.isDebuggerOpen, scrollTask),
-						_1: {ctor: '[]'}
-					}
-				});
-		} else {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					_p24,
-					{
-						history: newHistory,
-						state: A3(_elm_lang$virtual_dom$VirtualDom_Debug$Paused, _p23._0, _p23._1, newUserModel)
-					}),
-				{
-					ctor: '::',
-					_0: commands,
-					_1: {ctor: '[]'}
-				});
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$wrapUpdate = F4(
-	function (userUpdate, scrollTask, msg, model) {
-		wrapUpdate:
-		while (true) {
-			var _p26 = msg;
-			switch (_p26.ctor) {
-				case 'NoOp':
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				case 'UserMsg':
-					return A4(_elm_lang$virtual_dom$VirtualDom_Debug$updateUserMsg, userUpdate, scrollTask, _p26._0, model);
-				case 'ExpandoMsg':
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								expando: A2(_elm_lang$virtual_dom$VirtualDom_Expando$update, _p26._0, model.expando)
-							}),
-						{ctor: '[]'});
-				case 'Resume':
-					var _p27 = model.state;
-					if (_p27.ctor === 'Running') {
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							model,
-							{ctor: '[]'});
-					} else {
-						var _p28 = _p27._2;
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_elm_lang$core$Native_Utils.update(
-								model,
-								{
-									state: _elm_lang$virtual_dom$VirtualDom_Debug$Running(_p28),
-									expando: A2(_elm_lang$virtual_dom$VirtualDom_Expando$merge, _p28, model.expando)
-								}),
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$virtual_dom$VirtualDom_Debug$runIf, model.isDebuggerOpen, scrollTask),
-								_1: {ctor: '[]'}
-							});
-					}
-				case 'Jump':
-					var _p30 = _p26._0;
-					var _p29 = A3(_elm_lang$virtual_dom$VirtualDom_History$get, userUpdate, _p30, model.history);
-					var indexModel = _p29._0;
-					var indexMsg = _p29._1;
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								state: A3(
-									_elm_lang$virtual_dom$VirtualDom_Debug$Paused,
-									_p30,
-									indexModel,
-									_elm_lang$virtual_dom$VirtualDom_Debug$getLatestModel(model.state)),
-								expando: A2(_elm_lang$virtual_dom$VirtualDom_Expando$merge, indexModel, model.expando)
-							}),
-						{ctor: '[]'});
-				case 'Open':
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{isDebuggerOpen: true}),
-						{ctor: '[]'});
-				case 'Close':
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{isDebuggerOpen: false}),
-						{ctor: '[]'});
-				case 'Up':
-					var index = function () {
-						var _p31 = model.state;
-						if (_p31.ctor === 'Paused') {
-							return _p31._0;
-						} else {
-							return _elm_lang$virtual_dom$VirtualDom_History$size(model.history);
-						}
-					}();
-					if (_elm_lang$core$Native_Utils.cmp(index, 0) > 0) {
-						var _v17 = userUpdate,
-							_v18 = scrollTask,
-							_v19 = _elm_lang$virtual_dom$VirtualDom_Debug$Jump(index - 1),
-							_v20 = model;
-						userUpdate = _v17;
-						scrollTask = _v18;
-						msg = _v19;
-						model = _v20;
-						continue wrapUpdate;
-					} else {
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							model,
-							{ctor: '[]'});
-					}
-				case 'Down':
-					var _p32 = model.state;
-					if (_p32.ctor === 'Running') {
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							model,
-							{ctor: '[]'});
-					} else {
-						var _p33 = _p32._0;
-						if (_elm_lang$core$Native_Utils.eq(
-							_p33,
-							_elm_lang$virtual_dom$VirtualDom_History$size(model.history) - 1)) {
-							var _v22 = userUpdate,
-								_v23 = scrollTask,
-								_v24 = _elm_lang$virtual_dom$VirtualDom_Debug$Resume,
-								_v25 = model;
-							userUpdate = _v22;
-							scrollTask = _v23;
-							msg = _v24;
-							model = _v25;
-							continue wrapUpdate;
-						} else {
-							var _v26 = userUpdate,
-								_v27 = scrollTask,
-								_v28 = _elm_lang$virtual_dom$VirtualDom_Debug$Jump(_p33 + 1),
-								_v29 = model;
-							userUpdate = _v26;
-							scrollTask = _v27;
-							msg = _v28;
-							model = _v29;
-							continue wrapUpdate;
-						}
-					}
-				case 'Import':
-					return A2(
-						_elm_lang$virtual_dom$VirtualDom_Debug$withGoodMetadata,
-						model,
-						function (_p34) {
-							return A2(
-								_elm_lang$core$Platform_Cmd_ops['!'],
-								model,
-								{
-									ctor: '::',
-									_0: _elm_lang$virtual_dom$VirtualDom_Debug$upload,
-									_1: {ctor: '[]'}
-								});
-						});
-				case 'Export':
-					return A2(
-						_elm_lang$virtual_dom$VirtualDom_Debug$withGoodMetadata,
-						model,
-						function (metadata) {
-							return A2(
-								_elm_lang$core$Platform_Cmd_ops['!'],
-								model,
-								{
-									ctor: '::',
-									_0: A2(_elm_lang$virtual_dom$VirtualDom_Debug$download, metadata, model.history),
-									_1: {ctor: '[]'}
-								});
-						});
-				case 'Upload':
-					return A2(
-						_elm_lang$virtual_dom$VirtualDom_Debug$withGoodMetadata,
-						model,
-						function (metadata) {
-							var _p35 = A2(_elm_lang$virtual_dom$VirtualDom_Overlay$assessImport, metadata, _p26._0);
-							if (_p35.ctor === 'Err') {
-								return A2(
-									_elm_lang$core$Platform_Cmd_ops['!'],
-									_elm_lang$core$Native_Utils.update(
-										model,
-										{overlay: _p35._0}),
-									{ctor: '[]'});
-							} else {
-								return A3(_elm_lang$virtual_dom$VirtualDom_Debug$loadNewHistory, _p35._0, userUpdate, model);
-							}
-						});
-				default:
-					var _p36 = A2(_elm_lang$virtual_dom$VirtualDom_Overlay$close, _p26._0, model.overlay);
-					if (_p36.ctor === 'Nothing') {
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_elm_lang$core$Native_Utils.update(
-								model,
-								{overlay: _elm_lang$virtual_dom$VirtualDom_Overlay$none}),
-							{ctor: '[]'});
-					} else {
-						return A3(_elm_lang$virtual_dom$VirtualDom_Debug$loadNewHistory, _p36._0, userUpdate, model);
-					}
-			}
-		}
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$wrap = F2(
-	function (metadata, _p37) {
-		var _p38 = _p37;
-		return {
-			init: A2(_elm_lang$virtual_dom$VirtualDom_Debug$wrapInit, metadata, _p38.init),
-			view: _elm_lang$virtual_dom$VirtualDom_Debug$wrapView(_p38.view),
-			update: _elm_lang$virtual_dom$VirtualDom_Debug$wrapUpdate(_p38.update),
-			viewIn: _elm_lang$virtual_dom$VirtualDom_Debug$viewIn,
-			viewOut: _elm_lang$virtual_dom$VirtualDom_Debug$viewOut,
-			subscriptions: _elm_lang$virtual_dom$VirtualDom_Debug$wrapSubs(_p38.subscriptions)
-		};
-	});
-var _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags = F2(
-	function (metadata, _p39) {
-		var _p40 = _p39;
-		return {
-			init: function (flags) {
-				return A2(
-					_elm_lang$virtual_dom$VirtualDom_Debug$wrapInit,
-					metadata,
-					_p40.init(flags));
-			},
-			view: _elm_lang$virtual_dom$VirtualDom_Debug$wrapView(_p40.view),
-			update: _elm_lang$virtual_dom$VirtualDom_Debug$wrapUpdate(_p40.update),
-			viewIn: _elm_lang$virtual_dom$VirtualDom_Debug$viewIn,
-			viewOut: _elm_lang$virtual_dom$VirtualDom_Debug$viewOut,
-			subscriptions: _elm_lang$virtual_dom$VirtualDom_Debug$wrapSubs(_p40.subscriptions)
-		};
-	});
 
 var _elm_lang$virtual_dom$VirtualDom$programWithFlags = function (impl) {
 	return A2(_elm_lang$virtual_dom$Native_VirtualDom.programWithFlags, _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags, impl);
@@ -13690,6 +9776,9 @@ var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
 var _elm_lang$navigation$Native_Navigation = function() {
 
+
+// FAKE NAVIGATION
+
 function go(n)
 {
 	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
@@ -13720,6 +9809,39 @@ function replaceState(url)
 	});
 }
 
+
+// REAL NAVIGATION
+
+function reloadPage(skipCache)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		document.location.reload(skipCache);
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function setLocation(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		try
+		{
+			window.location = url;
+		}
+		catch(err)
+		{
+			// Only Firefox can throw a NS_ERROR_MALFORMED_URI exception here.
+			// Other browsers reload the page, so let's be consistent about that.
+			document.location.reload(false);
+		}
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+
+// GET LOCATION
+
 function getLocation()
 {
 	var location = document.location;
@@ -13740,11 +9862,22 @@ function getLocation()
 }
 
 
+// DETECT IE11 PROBLEMS
+
+function isInternetExplorer11()
+{
+	return window.navigator.userAgent.indexOf('Trident') !== -1;
+}
+
+
 return {
 	go: go,
+	setLocation: setLocation,
+	reloadPage: reloadPage,
 	pushState: pushState,
 	replaceState: replaceState,
-	getLocation: getLocation
+	getLocation: getLocation,
+	isInternetExplorer11: isInternetExplorer11
 };
 
 }();
@@ -13752,38 +9885,26 @@ return {
 var _elm_lang$navigation$Navigation$replaceState = _elm_lang$navigation$Native_Navigation.replaceState;
 var _elm_lang$navigation$Navigation$pushState = _elm_lang$navigation$Native_Navigation.pushState;
 var _elm_lang$navigation$Navigation$go = _elm_lang$navigation$Native_Navigation.go;
-var _elm_lang$navigation$Navigation$spawnPopState = function (router) {
-	return _elm_lang$core$Process$spawn(
-		A3(
-			_elm_lang$dom$Dom_LowLevel$onWindow,
-			'popstate',
-			_elm_lang$core$Json_Decode$value,
-			function (_p0) {
-				return A2(
-					_elm_lang$core$Platform$sendToSelf,
-					router,
-					_elm_lang$navigation$Native_Navigation.getLocation(
-						{ctor: '_Tuple0'}));
-			}));
-};
+var _elm_lang$navigation$Navigation$reloadPage = _elm_lang$navigation$Native_Navigation.reloadPage;
+var _elm_lang$navigation$Navigation$setLocation = _elm_lang$navigation$Native_Navigation.setLocation;
 var _elm_lang$navigation$Navigation_ops = _elm_lang$navigation$Navigation_ops || {};
 _elm_lang$navigation$Navigation_ops['&>'] = F2(
 	function (task1, task2) {
 		return A2(
 			_elm_lang$core$Task$andThen,
-			function (_p1) {
+			function (_p0) {
 				return task2;
 			},
 			task1);
 	});
 var _elm_lang$navigation$Navigation$notify = F3(
 	function (router, subs, location) {
-		var send = function (_p2) {
-			var _p3 = _p2;
+		var send = function (_p1) {
+			var _p2 = _p1;
 			return A2(
 				_elm_lang$core$Platform$sendToApp,
 				router,
-				_p3._0(location));
+				_p2._0(location));
 		};
 		return A2(
 			_elm_lang$navigation$Navigation_ops['&>'],
@@ -13792,30 +9913,45 @@ var _elm_lang$navigation$Navigation$notify = F3(
 			_elm_lang$core$Task$succeed(
 				{ctor: '_Tuple0'}));
 	});
+var _elm_lang$navigation$Navigation$cmdHelp = F3(
+	function (router, subs, cmd) {
+		var _p3 = cmd;
+		switch (_p3.ctor) {
+			case 'Jump':
+				return _elm_lang$navigation$Navigation$go(_p3._0);
+			case 'New':
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A2(_elm_lang$navigation$Navigation$notify, router, subs),
+					_elm_lang$navigation$Navigation$pushState(_p3._0));
+			case 'Modify':
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A2(_elm_lang$navigation$Navigation$notify, router, subs),
+					_elm_lang$navigation$Navigation$replaceState(_p3._0));
+			case 'Visit':
+				return _elm_lang$navigation$Navigation$setLocation(_p3._0);
+			default:
+				return _elm_lang$navigation$Navigation$reloadPage(_p3._0);
+		}
+	});
+var _elm_lang$navigation$Navigation$killPopWatcher = function (popWatcher) {
+	var _p4 = popWatcher;
+	if (_p4.ctor === 'Normal') {
+		return _elm_lang$core$Process$kill(_p4._0);
+	} else {
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Process$kill(_p4._0),
+			_elm_lang$core$Process$kill(_p4._1));
+	}
+};
 var _elm_lang$navigation$Navigation$onSelfMsg = F3(
 	function (router, location, state) {
 		return A2(
 			_elm_lang$navigation$Navigation_ops['&>'],
 			A3(_elm_lang$navigation$Navigation$notify, router, state.subs, location),
 			_elm_lang$core$Task$succeed(state));
-	});
-var _elm_lang$navigation$Navigation$cmdHelp = F3(
-	function (router, subs, cmd) {
-		var _p4 = cmd;
-		switch (_p4.ctor) {
-			case 'Jump':
-				return _elm_lang$navigation$Navigation$go(_p4._0);
-			case 'New':
-				return A2(
-					_elm_lang$core$Task$andThen,
-					A2(_elm_lang$navigation$Navigation$notify, router, subs),
-					_elm_lang$navigation$Navigation$pushState(_p4._0));
-			default:
-				return A2(
-					_elm_lang$core$Task$andThen,
-					A2(_elm_lang$navigation$Navigation$notify, router, subs),
-					_elm_lang$navigation$Navigation$replaceState(_p4._0));
-		}
 	});
 var _elm_lang$navigation$Navigation$subscription = _elm_lang$core$Native_Platform.leaf('Navigation');
 var _elm_lang$navigation$Navigation$command = _elm_lang$core$Native_Platform.leaf('Navigation');
@@ -13844,59 +9980,27 @@ var _elm_lang$navigation$Navigation$Location = function (a) {
 };
 var _elm_lang$navigation$Navigation$State = F2(
 	function (a, b) {
-		return {subs: a, process: b};
+		return {subs: a, popWatcher: b};
 	});
 var _elm_lang$navigation$Navigation$init = _elm_lang$core$Task$succeed(
 	A2(
 		_elm_lang$navigation$Navigation$State,
 		{ctor: '[]'},
 		_elm_lang$core$Maybe$Nothing));
-var _elm_lang$navigation$Navigation$onEffects = F4(
-	function (router, cmds, subs, _p5) {
-		var _p6 = _p5;
-		var _p9 = _p6.process;
-		var stepState = function () {
-			var _p7 = {ctor: '_Tuple2', _0: subs, _1: _p9};
-			_v3_2:
-			do {
-				if (_p7._0.ctor === '[]') {
-					if (_p7._1.ctor === 'Just') {
-						return A2(
-							_elm_lang$navigation$Navigation_ops['&>'],
-							_elm_lang$core$Process$kill(_p7._1._0),
-							_elm_lang$core$Task$succeed(
-								A2(_elm_lang$navigation$Navigation$State, subs, _elm_lang$core$Maybe$Nothing)));
-					} else {
-						break _v3_2;
-					}
-				} else {
-					if (_p7._1.ctor === 'Nothing') {
-						return A2(
-							_elm_lang$core$Task$map,
-							function (_p8) {
-								return A2(
-									_elm_lang$navigation$Navigation$State,
-									subs,
-									_elm_lang$core$Maybe$Just(_p8));
-							},
-							_elm_lang$navigation$Navigation$spawnPopState(router));
-					} else {
-						break _v3_2;
-					}
-				}
-			} while(false);
-			return _elm_lang$core$Task$succeed(
-				A2(_elm_lang$navigation$Navigation$State, subs, _p9));
-		}();
-		return A2(
-			_elm_lang$navigation$Navigation_ops['&>'],
-			_elm_lang$core$Task$sequence(
-				A2(
-					_elm_lang$core$List$map,
-					A2(_elm_lang$navigation$Navigation$cmdHelp, router, subs),
-					cmds)),
-			stepState);
-	});
+var _elm_lang$navigation$Navigation$Reload = function (a) {
+	return {ctor: 'Reload', _0: a};
+};
+var _elm_lang$navigation$Navigation$reload = _elm_lang$navigation$Navigation$command(
+	_elm_lang$navigation$Navigation$Reload(false));
+var _elm_lang$navigation$Navigation$reloadAndSkipCache = _elm_lang$navigation$Navigation$command(
+	_elm_lang$navigation$Navigation$Reload(true));
+var _elm_lang$navigation$Navigation$Visit = function (a) {
+	return {ctor: 'Visit', _0: a};
+};
+var _elm_lang$navigation$Navigation$load = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Visit(url));
+};
 var _elm_lang$navigation$Navigation$Modify = function (a) {
 	return {ctor: 'Modify', _0: a};
 };
@@ -13923,15 +10027,19 @@ var _elm_lang$navigation$Navigation$forward = function (n) {
 		_elm_lang$navigation$Navigation$Jump(n));
 };
 var _elm_lang$navigation$Navigation$cmdMap = F2(
-	function (_p10, myCmd) {
-		var _p11 = myCmd;
-		switch (_p11.ctor) {
+	function (_p5, myCmd) {
+		var _p6 = myCmd;
+		switch (_p6.ctor) {
 			case 'Jump':
-				return _elm_lang$navigation$Navigation$Jump(_p11._0);
+				return _elm_lang$navigation$Navigation$Jump(_p6._0);
 			case 'New':
-				return _elm_lang$navigation$Navigation$New(_p11._0);
+				return _elm_lang$navigation$Navigation$New(_p6._0);
+			case 'Modify':
+				return _elm_lang$navigation$Navigation$Modify(_p6._0);
+			case 'Visit':
+				return _elm_lang$navigation$Navigation$Visit(_p6._0);
 			default:
-				return _elm_lang$navigation$Navigation$Modify(_p11._0);
+				return _elm_lang$navigation$Navigation$Reload(_p6._0);
 		}
 	});
 var _elm_lang$navigation$Navigation$Monitor = function (a) {
@@ -13984,15 +10092,430 @@ var _elm_lang$navigation$Navigation$programWithFlags = F2(
 			{init: init, view: stuff.view, update: stuff.update, subscriptions: subs});
 	});
 var _elm_lang$navigation$Navigation$subMap = F2(
-	function (func, _p12) {
-		var _p13 = _p12;
+	function (func, _p7) {
+		var _p8 = _p7;
 		return _elm_lang$navigation$Navigation$Monitor(
-			function (_p14) {
+			function (_p9) {
 				return func(
-					_p13._0(_p14));
+					_p8._0(_p9));
 			});
 	});
+var _elm_lang$navigation$Navigation$InternetExplorer = F2(
+	function (a, b) {
+		return {ctor: 'InternetExplorer', _0: a, _1: b};
+	});
+var _elm_lang$navigation$Navigation$Normal = function (a) {
+	return {ctor: 'Normal', _0: a};
+};
+var _elm_lang$navigation$Navigation$spawnPopWatcher = function (router) {
+	var reportLocation = function (_p10) {
+		return A2(
+			_elm_lang$core$Platform$sendToSelf,
+			router,
+			_elm_lang$navigation$Native_Navigation.getLocation(
+				{ctor: '_Tuple0'}));
+	};
+	return _elm_lang$navigation$Native_Navigation.isInternetExplorer11(
+		{ctor: '_Tuple0'}) ? A3(
+		_elm_lang$core$Task$map2,
+		_elm_lang$navigation$Navigation$InternetExplorer,
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'popstate', _elm_lang$core$Json_Decode$value, reportLocation)),
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'hashchange', _elm_lang$core$Json_Decode$value, reportLocation))) : A2(
+		_elm_lang$core$Task$map,
+		_elm_lang$navigation$Navigation$Normal,
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'popstate', _elm_lang$core$Json_Decode$value, reportLocation)));
+};
+var _elm_lang$navigation$Navigation$onEffects = F4(
+	function (router, cmds, subs, _p11) {
+		var _p12 = _p11;
+		var _p15 = _p12.popWatcher;
+		var stepState = function () {
+			var _p13 = {ctor: '_Tuple2', _0: subs, _1: _p15};
+			_v6_2:
+			do {
+				if (_p13._0.ctor === '[]') {
+					if (_p13._1.ctor === 'Just') {
+						return A2(
+							_elm_lang$navigation$Navigation_ops['&>'],
+							_elm_lang$navigation$Navigation$killPopWatcher(_p13._1._0),
+							_elm_lang$core$Task$succeed(
+								A2(_elm_lang$navigation$Navigation$State, subs, _elm_lang$core$Maybe$Nothing)));
+					} else {
+						break _v6_2;
+					}
+				} else {
+					if (_p13._1.ctor === 'Nothing') {
+						return A2(
+							_elm_lang$core$Task$map,
+							function (_p14) {
+								return A2(
+									_elm_lang$navigation$Navigation$State,
+									subs,
+									_elm_lang$core$Maybe$Just(_p14));
+							},
+							_elm_lang$navigation$Navigation$spawnPopWatcher(router));
+					} else {
+						break _v6_2;
+					}
+				}
+			} while(false);
+			return _elm_lang$core$Task$succeed(
+				A2(_elm_lang$navigation$Navigation$State, subs, _p15));
+		}();
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					A2(_elm_lang$navigation$Navigation$cmdHelp, router, subs),
+					cmds)),
+			stepState);
+	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
+
+var _elm_lang$svg$Svg$map = _elm_lang$virtual_dom$VirtualDom$map;
+var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
+var _elm_lang$svg$Svg$svgNamespace = A2(
+	_elm_lang$virtual_dom$VirtualDom$property,
+	'namespace',
+	_elm_lang$core$Json_Encode$string('http://www.w3.org/2000/svg'));
+var _elm_lang$svg$Svg$node = F3(
+	function (name, attributes, children) {
+		return A3(
+			_elm_lang$virtual_dom$VirtualDom$node,
+			name,
+			{ctor: '::', _0: _elm_lang$svg$Svg$svgNamespace, _1: attributes},
+			children);
+	});
+var _elm_lang$svg$Svg$svg = _elm_lang$svg$Svg$node('svg');
+var _elm_lang$svg$Svg$foreignObject = _elm_lang$svg$Svg$node('foreignObject');
+var _elm_lang$svg$Svg$animate = _elm_lang$svg$Svg$node('animate');
+var _elm_lang$svg$Svg$animateColor = _elm_lang$svg$Svg$node('animateColor');
+var _elm_lang$svg$Svg$animateMotion = _elm_lang$svg$Svg$node('animateMotion');
+var _elm_lang$svg$Svg$animateTransform = _elm_lang$svg$Svg$node('animateTransform');
+var _elm_lang$svg$Svg$mpath = _elm_lang$svg$Svg$node('mpath');
+var _elm_lang$svg$Svg$set = _elm_lang$svg$Svg$node('set');
+var _elm_lang$svg$Svg$a = _elm_lang$svg$Svg$node('a');
+var _elm_lang$svg$Svg$defs = _elm_lang$svg$Svg$node('defs');
+var _elm_lang$svg$Svg$g = _elm_lang$svg$Svg$node('g');
+var _elm_lang$svg$Svg$marker = _elm_lang$svg$Svg$node('marker');
+var _elm_lang$svg$Svg$mask = _elm_lang$svg$Svg$node('mask');
+var _elm_lang$svg$Svg$pattern = _elm_lang$svg$Svg$node('pattern');
+var _elm_lang$svg$Svg$switch = _elm_lang$svg$Svg$node('switch');
+var _elm_lang$svg$Svg$symbol = _elm_lang$svg$Svg$node('symbol');
+var _elm_lang$svg$Svg$desc = _elm_lang$svg$Svg$node('desc');
+var _elm_lang$svg$Svg$metadata = _elm_lang$svg$Svg$node('metadata');
+var _elm_lang$svg$Svg$title = _elm_lang$svg$Svg$node('title');
+var _elm_lang$svg$Svg$feBlend = _elm_lang$svg$Svg$node('feBlend');
+var _elm_lang$svg$Svg$feColorMatrix = _elm_lang$svg$Svg$node('feColorMatrix');
+var _elm_lang$svg$Svg$feComponentTransfer = _elm_lang$svg$Svg$node('feComponentTransfer');
+var _elm_lang$svg$Svg$feComposite = _elm_lang$svg$Svg$node('feComposite');
+var _elm_lang$svg$Svg$feConvolveMatrix = _elm_lang$svg$Svg$node('feConvolveMatrix');
+var _elm_lang$svg$Svg$feDiffuseLighting = _elm_lang$svg$Svg$node('feDiffuseLighting');
+var _elm_lang$svg$Svg$feDisplacementMap = _elm_lang$svg$Svg$node('feDisplacementMap');
+var _elm_lang$svg$Svg$feFlood = _elm_lang$svg$Svg$node('feFlood');
+var _elm_lang$svg$Svg$feFuncA = _elm_lang$svg$Svg$node('feFuncA');
+var _elm_lang$svg$Svg$feFuncB = _elm_lang$svg$Svg$node('feFuncB');
+var _elm_lang$svg$Svg$feFuncG = _elm_lang$svg$Svg$node('feFuncG');
+var _elm_lang$svg$Svg$feFuncR = _elm_lang$svg$Svg$node('feFuncR');
+var _elm_lang$svg$Svg$feGaussianBlur = _elm_lang$svg$Svg$node('feGaussianBlur');
+var _elm_lang$svg$Svg$feImage = _elm_lang$svg$Svg$node('feImage');
+var _elm_lang$svg$Svg$feMerge = _elm_lang$svg$Svg$node('feMerge');
+var _elm_lang$svg$Svg$feMergeNode = _elm_lang$svg$Svg$node('feMergeNode');
+var _elm_lang$svg$Svg$feMorphology = _elm_lang$svg$Svg$node('feMorphology');
+var _elm_lang$svg$Svg$feOffset = _elm_lang$svg$Svg$node('feOffset');
+var _elm_lang$svg$Svg$feSpecularLighting = _elm_lang$svg$Svg$node('feSpecularLighting');
+var _elm_lang$svg$Svg$feTile = _elm_lang$svg$Svg$node('feTile');
+var _elm_lang$svg$Svg$feTurbulence = _elm_lang$svg$Svg$node('feTurbulence');
+var _elm_lang$svg$Svg$font = _elm_lang$svg$Svg$node('font');
+var _elm_lang$svg$Svg$linearGradient = _elm_lang$svg$Svg$node('linearGradient');
+var _elm_lang$svg$Svg$radialGradient = _elm_lang$svg$Svg$node('radialGradient');
+var _elm_lang$svg$Svg$stop = _elm_lang$svg$Svg$node('stop');
+var _elm_lang$svg$Svg$circle = _elm_lang$svg$Svg$node('circle');
+var _elm_lang$svg$Svg$ellipse = _elm_lang$svg$Svg$node('ellipse');
+var _elm_lang$svg$Svg$image = _elm_lang$svg$Svg$node('image');
+var _elm_lang$svg$Svg$line = _elm_lang$svg$Svg$node('line');
+var _elm_lang$svg$Svg$path = _elm_lang$svg$Svg$node('path');
+var _elm_lang$svg$Svg$polygon = _elm_lang$svg$Svg$node('polygon');
+var _elm_lang$svg$Svg$polyline = _elm_lang$svg$Svg$node('polyline');
+var _elm_lang$svg$Svg$rect = _elm_lang$svg$Svg$node('rect');
+var _elm_lang$svg$Svg$use = _elm_lang$svg$Svg$node('use');
+var _elm_lang$svg$Svg$feDistantLight = _elm_lang$svg$Svg$node('feDistantLight');
+var _elm_lang$svg$Svg$fePointLight = _elm_lang$svg$Svg$node('fePointLight');
+var _elm_lang$svg$Svg$feSpotLight = _elm_lang$svg$Svg$node('feSpotLight');
+var _elm_lang$svg$Svg$altGlyph = _elm_lang$svg$Svg$node('altGlyph');
+var _elm_lang$svg$Svg$altGlyphDef = _elm_lang$svg$Svg$node('altGlyphDef');
+var _elm_lang$svg$Svg$altGlyphItem = _elm_lang$svg$Svg$node('altGlyphItem');
+var _elm_lang$svg$Svg$glyph = _elm_lang$svg$Svg$node('glyph');
+var _elm_lang$svg$Svg$glyphRef = _elm_lang$svg$Svg$node('glyphRef');
+var _elm_lang$svg$Svg$textPath = _elm_lang$svg$Svg$node('textPath');
+var _elm_lang$svg$Svg$text_ = _elm_lang$svg$Svg$node('text');
+var _elm_lang$svg$Svg$tref = _elm_lang$svg$Svg$node('tref');
+var _elm_lang$svg$Svg$tspan = _elm_lang$svg$Svg$node('tspan');
+var _elm_lang$svg$Svg$clipPath = _elm_lang$svg$Svg$node('clipPath');
+var _elm_lang$svg$Svg$colorProfile = _elm_lang$svg$Svg$node('colorProfile');
+var _elm_lang$svg$Svg$cursor = _elm_lang$svg$Svg$node('cursor');
+var _elm_lang$svg$Svg$filter = _elm_lang$svg$Svg$node('filter');
+var _elm_lang$svg$Svg$script = _elm_lang$svg$Svg$node('script');
+var _elm_lang$svg$Svg$style = _elm_lang$svg$Svg$node('style');
+var _elm_lang$svg$Svg$view = _elm_lang$svg$Svg$node('view');
+
+var _elm_lang$svg$Svg_Attributes$writingMode = _elm_lang$virtual_dom$VirtualDom$attribute('writing-mode');
+var _elm_lang$svg$Svg_Attributes$wordSpacing = _elm_lang$virtual_dom$VirtualDom$attribute('word-spacing');
+var _elm_lang$svg$Svg_Attributes$visibility = _elm_lang$virtual_dom$VirtualDom$attribute('visibility');
+var _elm_lang$svg$Svg_Attributes$unicodeBidi = _elm_lang$virtual_dom$VirtualDom$attribute('unicode-bidi');
+var _elm_lang$svg$Svg_Attributes$textRendering = _elm_lang$virtual_dom$VirtualDom$attribute('text-rendering');
+var _elm_lang$svg$Svg_Attributes$textDecoration = _elm_lang$virtual_dom$VirtualDom$attribute('text-decoration');
+var _elm_lang$svg$Svg_Attributes$textAnchor = _elm_lang$virtual_dom$VirtualDom$attribute('text-anchor');
+var _elm_lang$svg$Svg_Attributes$stroke = _elm_lang$virtual_dom$VirtualDom$attribute('stroke');
+var _elm_lang$svg$Svg_Attributes$strokeWidth = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-width');
+var _elm_lang$svg$Svg_Attributes$strokeOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-opacity');
+var _elm_lang$svg$Svg_Attributes$strokeMiterlimit = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-miterlimit');
+var _elm_lang$svg$Svg_Attributes$strokeLinejoin = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-linejoin');
+var _elm_lang$svg$Svg_Attributes$strokeLinecap = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-linecap');
+var _elm_lang$svg$Svg_Attributes$strokeDashoffset = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-dashoffset');
+var _elm_lang$svg$Svg_Attributes$strokeDasharray = _elm_lang$virtual_dom$VirtualDom$attribute('stroke-dasharray');
+var _elm_lang$svg$Svg_Attributes$stopOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('stop-opacity');
+var _elm_lang$svg$Svg_Attributes$stopColor = _elm_lang$virtual_dom$VirtualDom$attribute('stop-color');
+var _elm_lang$svg$Svg_Attributes$shapeRendering = _elm_lang$virtual_dom$VirtualDom$attribute('shape-rendering');
+var _elm_lang$svg$Svg_Attributes$pointerEvents = _elm_lang$virtual_dom$VirtualDom$attribute('pointer-events');
+var _elm_lang$svg$Svg_Attributes$overflow = _elm_lang$virtual_dom$VirtualDom$attribute('overflow');
+var _elm_lang$svg$Svg_Attributes$opacity = _elm_lang$virtual_dom$VirtualDom$attribute('opacity');
+var _elm_lang$svg$Svg_Attributes$mask = _elm_lang$virtual_dom$VirtualDom$attribute('mask');
+var _elm_lang$svg$Svg_Attributes$markerStart = _elm_lang$virtual_dom$VirtualDom$attribute('marker-start');
+var _elm_lang$svg$Svg_Attributes$markerMid = _elm_lang$virtual_dom$VirtualDom$attribute('marker-mid');
+var _elm_lang$svg$Svg_Attributes$markerEnd = _elm_lang$virtual_dom$VirtualDom$attribute('marker-end');
+var _elm_lang$svg$Svg_Attributes$lightingColor = _elm_lang$virtual_dom$VirtualDom$attribute('lighting-color');
+var _elm_lang$svg$Svg_Attributes$letterSpacing = _elm_lang$virtual_dom$VirtualDom$attribute('letter-spacing');
+var _elm_lang$svg$Svg_Attributes$kerning = _elm_lang$virtual_dom$VirtualDom$attribute('kerning');
+var _elm_lang$svg$Svg_Attributes$imageRendering = _elm_lang$virtual_dom$VirtualDom$attribute('image-rendering');
+var _elm_lang$svg$Svg_Attributes$glyphOrientationVertical = _elm_lang$virtual_dom$VirtualDom$attribute('glyph-orientation-vertical');
+var _elm_lang$svg$Svg_Attributes$glyphOrientationHorizontal = _elm_lang$virtual_dom$VirtualDom$attribute('glyph-orientation-horizontal');
+var _elm_lang$svg$Svg_Attributes$fontWeight = _elm_lang$virtual_dom$VirtualDom$attribute('font-weight');
+var _elm_lang$svg$Svg_Attributes$fontVariant = _elm_lang$virtual_dom$VirtualDom$attribute('font-variant');
+var _elm_lang$svg$Svg_Attributes$fontStyle = _elm_lang$virtual_dom$VirtualDom$attribute('font-style');
+var _elm_lang$svg$Svg_Attributes$fontStretch = _elm_lang$virtual_dom$VirtualDom$attribute('font-stretch');
+var _elm_lang$svg$Svg_Attributes$fontSize = _elm_lang$virtual_dom$VirtualDom$attribute('font-size');
+var _elm_lang$svg$Svg_Attributes$fontSizeAdjust = _elm_lang$virtual_dom$VirtualDom$attribute('font-size-adjust');
+var _elm_lang$svg$Svg_Attributes$fontFamily = _elm_lang$virtual_dom$VirtualDom$attribute('font-family');
+var _elm_lang$svg$Svg_Attributes$floodOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('flood-opacity');
+var _elm_lang$svg$Svg_Attributes$floodColor = _elm_lang$virtual_dom$VirtualDom$attribute('flood-color');
+var _elm_lang$svg$Svg_Attributes$filter = _elm_lang$virtual_dom$VirtualDom$attribute('filter');
+var _elm_lang$svg$Svg_Attributes$fill = _elm_lang$virtual_dom$VirtualDom$attribute('fill');
+var _elm_lang$svg$Svg_Attributes$fillRule = _elm_lang$virtual_dom$VirtualDom$attribute('fill-rule');
+var _elm_lang$svg$Svg_Attributes$fillOpacity = _elm_lang$virtual_dom$VirtualDom$attribute('fill-opacity');
+var _elm_lang$svg$Svg_Attributes$enableBackground = _elm_lang$virtual_dom$VirtualDom$attribute('enable-background');
+var _elm_lang$svg$Svg_Attributes$dominantBaseline = _elm_lang$virtual_dom$VirtualDom$attribute('dominant-baseline');
+var _elm_lang$svg$Svg_Attributes$display = _elm_lang$virtual_dom$VirtualDom$attribute('display');
+var _elm_lang$svg$Svg_Attributes$direction = _elm_lang$virtual_dom$VirtualDom$attribute('direction');
+var _elm_lang$svg$Svg_Attributes$cursor = _elm_lang$virtual_dom$VirtualDom$attribute('cursor');
+var _elm_lang$svg$Svg_Attributes$color = _elm_lang$virtual_dom$VirtualDom$attribute('color');
+var _elm_lang$svg$Svg_Attributes$colorRendering = _elm_lang$virtual_dom$VirtualDom$attribute('color-rendering');
+var _elm_lang$svg$Svg_Attributes$colorProfile = _elm_lang$virtual_dom$VirtualDom$attribute('color-profile');
+var _elm_lang$svg$Svg_Attributes$colorInterpolation = _elm_lang$virtual_dom$VirtualDom$attribute('color-interpolation');
+var _elm_lang$svg$Svg_Attributes$colorInterpolationFilters = _elm_lang$virtual_dom$VirtualDom$attribute('color-interpolation-filters');
+var _elm_lang$svg$Svg_Attributes$clip = _elm_lang$virtual_dom$VirtualDom$attribute('clip');
+var _elm_lang$svg$Svg_Attributes$clipRule = _elm_lang$virtual_dom$VirtualDom$attribute('clip-rule');
+var _elm_lang$svg$Svg_Attributes$clipPath = _elm_lang$virtual_dom$VirtualDom$attribute('clip-path');
+var _elm_lang$svg$Svg_Attributes$baselineShift = _elm_lang$virtual_dom$VirtualDom$attribute('baseline-shift');
+var _elm_lang$svg$Svg_Attributes$alignmentBaseline = _elm_lang$virtual_dom$VirtualDom$attribute('alignment-baseline');
+var _elm_lang$svg$Svg_Attributes$zoomAndPan = _elm_lang$virtual_dom$VirtualDom$attribute('zoomAndPan');
+var _elm_lang$svg$Svg_Attributes$z = _elm_lang$virtual_dom$VirtualDom$attribute('z');
+var _elm_lang$svg$Svg_Attributes$yChannelSelector = _elm_lang$virtual_dom$VirtualDom$attribute('yChannelSelector');
+var _elm_lang$svg$Svg_Attributes$y2 = _elm_lang$virtual_dom$VirtualDom$attribute('y2');
+var _elm_lang$svg$Svg_Attributes$y1 = _elm_lang$virtual_dom$VirtualDom$attribute('y1');
+var _elm_lang$svg$Svg_Attributes$y = _elm_lang$virtual_dom$VirtualDom$attribute('y');
+var _elm_lang$svg$Svg_Attributes$xmlSpace = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:space');
+var _elm_lang$svg$Svg_Attributes$xmlLang = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:lang');
+var _elm_lang$svg$Svg_Attributes$xmlBase = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:base');
+var _elm_lang$svg$Svg_Attributes$xlinkType = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:type');
+var _elm_lang$svg$Svg_Attributes$xlinkTitle = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:title');
+var _elm_lang$svg$Svg_Attributes$xlinkShow = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:show');
+var _elm_lang$svg$Svg_Attributes$xlinkRole = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:role');
+var _elm_lang$svg$Svg_Attributes$xlinkHref = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:href');
+var _elm_lang$svg$Svg_Attributes$xlinkArcrole = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:arcrole');
+var _elm_lang$svg$Svg_Attributes$xlinkActuate = A2(_elm_lang$virtual_dom$VirtualDom$attributeNS, 'http://www.w3.org/1999/xlink', 'xlink:actuate');
+var _elm_lang$svg$Svg_Attributes$xChannelSelector = _elm_lang$virtual_dom$VirtualDom$attribute('xChannelSelector');
+var _elm_lang$svg$Svg_Attributes$x2 = _elm_lang$virtual_dom$VirtualDom$attribute('x2');
+var _elm_lang$svg$Svg_Attributes$x1 = _elm_lang$virtual_dom$VirtualDom$attribute('x1');
+var _elm_lang$svg$Svg_Attributes$xHeight = _elm_lang$virtual_dom$VirtualDom$attribute('x-height');
+var _elm_lang$svg$Svg_Attributes$x = _elm_lang$virtual_dom$VirtualDom$attribute('x');
+var _elm_lang$svg$Svg_Attributes$widths = _elm_lang$virtual_dom$VirtualDom$attribute('widths');
+var _elm_lang$svg$Svg_Attributes$width = _elm_lang$virtual_dom$VirtualDom$attribute('width');
+var _elm_lang$svg$Svg_Attributes$viewTarget = _elm_lang$virtual_dom$VirtualDom$attribute('viewTarget');
+var _elm_lang$svg$Svg_Attributes$viewBox = _elm_lang$virtual_dom$VirtualDom$attribute('viewBox');
+var _elm_lang$svg$Svg_Attributes$vertOriginY = _elm_lang$virtual_dom$VirtualDom$attribute('vert-origin-y');
+var _elm_lang$svg$Svg_Attributes$vertOriginX = _elm_lang$virtual_dom$VirtualDom$attribute('vert-origin-x');
+var _elm_lang$svg$Svg_Attributes$vertAdvY = _elm_lang$virtual_dom$VirtualDom$attribute('vert-adv-y');
+var _elm_lang$svg$Svg_Attributes$version = _elm_lang$virtual_dom$VirtualDom$attribute('version');
+var _elm_lang$svg$Svg_Attributes$values = _elm_lang$virtual_dom$VirtualDom$attribute('values');
+var _elm_lang$svg$Svg_Attributes$vMathematical = _elm_lang$virtual_dom$VirtualDom$attribute('v-mathematical');
+var _elm_lang$svg$Svg_Attributes$vIdeographic = _elm_lang$virtual_dom$VirtualDom$attribute('v-ideographic');
+var _elm_lang$svg$Svg_Attributes$vHanging = _elm_lang$virtual_dom$VirtualDom$attribute('v-hanging');
+var _elm_lang$svg$Svg_Attributes$vAlphabetic = _elm_lang$virtual_dom$VirtualDom$attribute('v-alphabetic');
+var _elm_lang$svg$Svg_Attributes$unitsPerEm = _elm_lang$virtual_dom$VirtualDom$attribute('units-per-em');
+var _elm_lang$svg$Svg_Attributes$unicodeRange = _elm_lang$virtual_dom$VirtualDom$attribute('unicode-range');
+var _elm_lang$svg$Svg_Attributes$unicode = _elm_lang$virtual_dom$VirtualDom$attribute('unicode');
+var _elm_lang$svg$Svg_Attributes$underlineThickness = _elm_lang$virtual_dom$VirtualDom$attribute('underline-thickness');
+var _elm_lang$svg$Svg_Attributes$underlinePosition = _elm_lang$virtual_dom$VirtualDom$attribute('underline-position');
+var _elm_lang$svg$Svg_Attributes$u2 = _elm_lang$virtual_dom$VirtualDom$attribute('u2');
+var _elm_lang$svg$Svg_Attributes$u1 = _elm_lang$virtual_dom$VirtualDom$attribute('u1');
+var _elm_lang$svg$Svg_Attributes$type_ = _elm_lang$virtual_dom$VirtualDom$attribute('type');
+var _elm_lang$svg$Svg_Attributes$transform = _elm_lang$virtual_dom$VirtualDom$attribute('transform');
+var _elm_lang$svg$Svg_Attributes$to = _elm_lang$virtual_dom$VirtualDom$attribute('to');
+var _elm_lang$svg$Svg_Attributes$title = _elm_lang$virtual_dom$VirtualDom$attribute('title');
+var _elm_lang$svg$Svg_Attributes$textLength = _elm_lang$virtual_dom$VirtualDom$attribute('textLength');
+var _elm_lang$svg$Svg_Attributes$targetY = _elm_lang$virtual_dom$VirtualDom$attribute('targetY');
+var _elm_lang$svg$Svg_Attributes$targetX = _elm_lang$virtual_dom$VirtualDom$attribute('targetX');
+var _elm_lang$svg$Svg_Attributes$target = _elm_lang$virtual_dom$VirtualDom$attribute('target');
+var _elm_lang$svg$Svg_Attributes$tableValues = _elm_lang$virtual_dom$VirtualDom$attribute('tableValues');
+var _elm_lang$svg$Svg_Attributes$systemLanguage = _elm_lang$virtual_dom$VirtualDom$attribute('systemLanguage');
+var _elm_lang$svg$Svg_Attributes$surfaceScale = _elm_lang$virtual_dom$VirtualDom$attribute('surfaceScale');
+var _elm_lang$svg$Svg_Attributes$style = _elm_lang$virtual_dom$VirtualDom$attribute('style');
+var _elm_lang$svg$Svg_Attributes$string = _elm_lang$virtual_dom$VirtualDom$attribute('string');
+var _elm_lang$svg$Svg_Attributes$strikethroughThickness = _elm_lang$virtual_dom$VirtualDom$attribute('strikethrough-thickness');
+var _elm_lang$svg$Svg_Attributes$strikethroughPosition = _elm_lang$virtual_dom$VirtualDom$attribute('strikethrough-position');
+var _elm_lang$svg$Svg_Attributes$stitchTiles = _elm_lang$virtual_dom$VirtualDom$attribute('stitchTiles');
+var _elm_lang$svg$Svg_Attributes$stemv = _elm_lang$virtual_dom$VirtualDom$attribute('stemv');
+var _elm_lang$svg$Svg_Attributes$stemh = _elm_lang$virtual_dom$VirtualDom$attribute('stemh');
+var _elm_lang$svg$Svg_Attributes$stdDeviation = _elm_lang$virtual_dom$VirtualDom$attribute('stdDeviation');
+var _elm_lang$svg$Svg_Attributes$startOffset = _elm_lang$virtual_dom$VirtualDom$attribute('startOffset');
+var _elm_lang$svg$Svg_Attributes$spreadMethod = _elm_lang$virtual_dom$VirtualDom$attribute('spreadMethod');
+var _elm_lang$svg$Svg_Attributes$speed = _elm_lang$virtual_dom$VirtualDom$attribute('speed');
+var _elm_lang$svg$Svg_Attributes$specularExponent = _elm_lang$virtual_dom$VirtualDom$attribute('specularExponent');
+var _elm_lang$svg$Svg_Attributes$specularConstant = _elm_lang$virtual_dom$VirtualDom$attribute('specularConstant');
+var _elm_lang$svg$Svg_Attributes$spacing = _elm_lang$virtual_dom$VirtualDom$attribute('spacing');
+var _elm_lang$svg$Svg_Attributes$slope = _elm_lang$virtual_dom$VirtualDom$attribute('slope');
+var _elm_lang$svg$Svg_Attributes$seed = _elm_lang$virtual_dom$VirtualDom$attribute('seed');
+var _elm_lang$svg$Svg_Attributes$scale = _elm_lang$virtual_dom$VirtualDom$attribute('scale');
+var _elm_lang$svg$Svg_Attributes$ry = _elm_lang$virtual_dom$VirtualDom$attribute('ry');
+var _elm_lang$svg$Svg_Attributes$rx = _elm_lang$virtual_dom$VirtualDom$attribute('rx');
+var _elm_lang$svg$Svg_Attributes$rotate = _elm_lang$virtual_dom$VirtualDom$attribute('rotate');
+var _elm_lang$svg$Svg_Attributes$result = _elm_lang$virtual_dom$VirtualDom$attribute('result');
+var _elm_lang$svg$Svg_Attributes$restart = _elm_lang$virtual_dom$VirtualDom$attribute('restart');
+var _elm_lang$svg$Svg_Attributes$requiredFeatures = _elm_lang$virtual_dom$VirtualDom$attribute('requiredFeatures');
+var _elm_lang$svg$Svg_Attributes$requiredExtensions = _elm_lang$virtual_dom$VirtualDom$attribute('requiredExtensions');
+var _elm_lang$svg$Svg_Attributes$repeatDur = _elm_lang$virtual_dom$VirtualDom$attribute('repeatDur');
+var _elm_lang$svg$Svg_Attributes$repeatCount = _elm_lang$virtual_dom$VirtualDom$attribute('repeatCount');
+var _elm_lang$svg$Svg_Attributes$renderingIntent = _elm_lang$virtual_dom$VirtualDom$attribute('rendering-intent');
+var _elm_lang$svg$Svg_Attributes$refY = _elm_lang$virtual_dom$VirtualDom$attribute('refY');
+var _elm_lang$svg$Svg_Attributes$refX = _elm_lang$virtual_dom$VirtualDom$attribute('refX');
+var _elm_lang$svg$Svg_Attributes$radius = _elm_lang$virtual_dom$VirtualDom$attribute('radius');
+var _elm_lang$svg$Svg_Attributes$r = _elm_lang$virtual_dom$VirtualDom$attribute('r');
+var _elm_lang$svg$Svg_Attributes$primitiveUnits = _elm_lang$virtual_dom$VirtualDom$attribute('primitiveUnits');
+var _elm_lang$svg$Svg_Attributes$preserveAspectRatio = _elm_lang$virtual_dom$VirtualDom$attribute('preserveAspectRatio');
+var _elm_lang$svg$Svg_Attributes$preserveAlpha = _elm_lang$virtual_dom$VirtualDom$attribute('preserveAlpha');
+var _elm_lang$svg$Svg_Attributes$pointsAtZ = _elm_lang$virtual_dom$VirtualDom$attribute('pointsAtZ');
+var _elm_lang$svg$Svg_Attributes$pointsAtY = _elm_lang$virtual_dom$VirtualDom$attribute('pointsAtY');
+var _elm_lang$svg$Svg_Attributes$pointsAtX = _elm_lang$virtual_dom$VirtualDom$attribute('pointsAtX');
+var _elm_lang$svg$Svg_Attributes$points = _elm_lang$virtual_dom$VirtualDom$attribute('points');
+var _elm_lang$svg$Svg_Attributes$pointOrder = _elm_lang$virtual_dom$VirtualDom$attribute('point-order');
+var _elm_lang$svg$Svg_Attributes$patternUnits = _elm_lang$virtual_dom$VirtualDom$attribute('patternUnits');
+var _elm_lang$svg$Svg_Attributes$patternTransform = _elm_lang$virtual_dom$VirtualDom$attribute('patternTransform');
+var _elm_lang$svg$Svg_Attributes$patternContentUnits = _elm_lang$virtual_dom$VirtualDom$attribute('patternContentUnits');
+var _elm_lang$svg$Svg_Attributes$pathLength = _elm_lang$virtual_dom$VirtualDom$attribute('pathLength');
+var _elm_lang$svg$Svg_Attributes$path = _elm_lang$virtual_dom$VirtualDom$attribute('path');
+var _elm_lang$svg$Svg_Attributes$panose1 = _elm_lang$virtual_dom$VirtualDom$attribute('panose-1');
+var _elm_lang$svg$Svg_Attributes$overlineThickness = _elm_lang$virtual_dom$VirtualDom$attribute('overline-thickness');
+var _elm_lang$svg$Svg_Attributes$overlinePosition = _elm_lang$virtual_dom$VirtualDom$attribute('overline-position');
+var _elm_lang$svg$Svg_Attributes$origin = _elm_lang$virtual_dom$VirtualDom$attribute('origin');
+var _elm_lang$svg$Svg_Attributes$orientation = _elm_lang$virtual_dom$VirtualDom$attribute('orientation');
+var _elm_lang$svg$Svg_Attributes$orient = _elm_lang$virtual_dom$VirtualDom$attribute('orient');
+var _elm_lang$svg$Svg_Attributes$order = _elm_lang$virtual_dom$VirtualDom$attribute('order');
+var _elm_lang$svg$Svg_Attributes$operator = _elm_lang$virtual_dom$VirtualDom$attribute('operator');
+var _elm_lang$svg$Svg_Attributes$offset = _elm_lang$virtual_dom$VirtualDom$attribute('offset');
+var _elm_lang$svg$Svg_Attributes$numOctaves = _elm_lang$virtual_dom$VirtualDom$attribute('numOctaves');
+var _elm_lang$svg$Svg_Attributes$name = _elm_lang$virtual_dom$VirtualDom$attribute('name');
+var _elm_lang$svg$Svg_Attributes$mode = _elm_lang$virtual_dom$VirtualDom$attribute('mode');
+var _elm_lang$svg$Svg_Attributes$min = _elm_lang$virtual_dom$VirtualDom$attribute('min');
+var _elm_lang$svg$Svg_Attributes$method = _elm_lang$virtual_dom$VirtualDom$attribute('method');
+var _elm_lang$svg$Svg_Attributes$media = _elm_lang$virtual_dom$VirtualDom$attribute('media');
+var _elm_lang$svg$Svg_Attributes$max = _elm_lang$virtual_dom$VirtualDom$attribute('max');
+var _elm_lang$svg$Svg_Attributes$mathematical = _elm_lang$virtual_dom$VirtualDom$attribute('mathematical');
+var _elm_lang$svg$Svg_Attributes$maskUnits = _elm_lang$virtual_dom$VirtualDom$attribute('maskUnits');
+var _elm_lang$svg$Svg_Attributes$maskContentUnits = _elm_lang$virtual_dom$VirtualDom$attribute('maskContentUnits');
+var _elm_lang$svg$Svg_Attributes$markerWidth = _elm_lang$virtual_dom$VirtualDom$attribute('markerWidth');
+var _elm_lang$svg$Svg_Attributes$markerUnits = _elm_lang$virtual_dom$VirtualDom$attribute('markerUnits');
+var _elm_lang$svg$Svg_Attributes$markerHeight = _elm_lang$virtual_dom$VirtualDom$attribute('markerHeight');
+var _elm_lang$svg$Svg_Attributes$local = _elm_lang$virtual_dom$VirtualDom$attribute('local');
+var _elm_lang$svg$Svg_Attributes$limitingConeAngle = _elm_lang$virtual_dom$VirtualDom$attribute('limitingConeAngle');
+var _elm_lang$svg$Svg_Attributes$lengthAdjust = _elm_lang$virtual_dom$VirtualDom$attribute('lengthAdjust');
+var _elm_lang$svg$Svg_Attributes$lang = _elm_lang$virtual_dom$VirtualDom$attribute('lang');
+var _elm_lang$svg$Svg_Attributes$keyTimes = _elm_lang$virtual_dom$VirtualDom$attribute('keyTimes');
+var _elm_lang$svg$Svg_Attributes$keySplines = _elm_lang$virtual_dom$VirtualDom$attribute('keySplines');
+var _elm_lang$svg$Svg_Attributes$keyPoints = _elm_lang$virtual_dom$VirtualDom$attribute('keyPoints');
+var _elm_lang$svg$Svg_Attributes$kernelUnitLength = _elm_lang$virtual_dom$VirtualDom$attribute('kernelUnitLength');
+var _elm_lang$svg$Svg_Attributes$kernelMatrix = _elm_lang$virtual_dom$VirtualDom$attribute('kernelMatrix');
+var _elm_lang$svg$Svg_Attributes$k4 = _elm_lang$virtual_dom$VirtualDom$attribute('k4');
+var _elm_lang$svg$Svg_Attributes$k3 = _elm_lang$virtual_dom$VirtualDom$attribute('k3');
+var _elm_lang$svg$Svg_Attributes$k2 = _elm_lang$virtual_dom$VirtualDom$attribute('k2');
+var _elm_lang$svg$Svg_Attributes$k1 = _elm_lang$virtual_dom$VirtualDom$attribute('k1');
+var _elm_lang$svg$Svg_Attributes$k = _elm_lang$virtual_dom$VirtualDom$attribute('k');
+var _elm_lang$svg$Svg_Attributes$intercept = _elm_lang$virtual_dom$VirtualDom$attribute('intercept');
+var _elm_lang$svg$Svg_Attributes$in2 = _elm_lang$virtual_dom$VirtualDom$attribute('in2');
+var _elm_lang$svg$Svg_Attributes$in_ = _elm_lang$virtual_dom$VirtualDom$attribute('in');
+var _elm_lang$svg$Svg_Attributes$ideographic = _elm_lang$virtual_dom$VirtualDom$attribute('ideographic');
+var _elm_lang$svg$Svg_Attributes$id = _elm_lang$virtual_dom$VirtualDom$attribute('id');
+var _elm_lang$svg$Svg_Attributes$horizOriginY = _elm_lang$virtual_dom$VirtualDom$attribute('horiz-origin-y');
+var _elm_lang$svg$Svg_Attributes$horizOriginX = _elm_lang$virtual_dom$VirtualDom$attribute('horiz-origin-x');
+var _elm_lang$svg$Svg_Attributes$horizAdvX = _elm_lang$virtual_dom$VirtualDom$attribute('horiz-adv-x');
+var _elm_lang$svg$Svg_Attributes$height = _elm_lang$virtual_dom$VirtualDom$attribute('height');
+var _elm_lang$svg$Svg_Attributes$hanging = _elm_lang$virtual_dom$VirtualDom$attribute('hanging');
+var _elm_lang$svg$Svg_Attributes$gradientUnits = _elm_lang$virtual_dom$VirtualDom$attribute('gradientUnits');
+var _elm_lang$svg$Svg_Attributes$gradientTransform = _elm_lang$virtual_dom$VirtualDom$attribute('gradientTransform');
+var _elm_lang$svg$Svg_Attributes$glyphRef = _elm_lang$virtual_dom$VirtualDom$attribute('glyphRef');
+var _elm_lang$svg$Svg_Attributes$glyphName = _elm_lang$virtual_dom$VirtualDom$attribute('glyph-name');
+var _elm_lang$svg$Svg_Attributes$g2 = _elm_lang$virtual_dom$VirtualDom$attribute('g2');
+var _elm_lang$svg$Svg_Attributes$g1 = _elm_lang$virtual_dom$VirtualDom$attribute('g1');
+var _elm_lang$svg$Svg_Attributes$fy = _elm_lang$virtual_dom$VirtualDom$attribute('fy');
+var _elm_lang$svg$Svg_Attributes$fx = _elm_lang$virtual_dom$VirtualDom$attribute('fx');
+var _elm_lang$svg$Svg_Attributes$from = _elm_lang$virtual_dom$VirtualDom$attribute('from');
+var _elm_lang$svg$Svg_Attributes$format = _elm_lang$virtual_dom$VirtualDom$attribute('format');
+var _elm_lang$svg$Svg_Attributes$filterUnits = _elm_lang$virtual_dom$VirtualDom$attribute('filterUnits');
+var _elm_lang$svg$Svg_Attributes$filterRes = _elm_lang$virtual_dom$VirtualDom$attribute('filterRes');
+var _elm_lang$svg$Svg_Attributes$externalResourcesRequired = _elm_lang$virtual_dom$VirtualDom$attribute('externalResourcesRequired');
+var _elm_lang$svg$Svg_Attributes$exponent = _elm_lang$virtual_dom$VirtualDom$attribute('exponent');
+var _elm_lang$svg$Svg_Attributes$end = _elm_lang$virtual_dom$VirtualDom$attribute('end');
+var _elm_lang$svg$Svg_Attributes$elevation = _elm_lang$virtual_dom$VirtualDom$attribute('elevation');
+var _elm_lang$svg$Svg_Attributes$edgeMode = _elm_lang$virtual_dom$VirtualDom$attribute('edgeMode');
+var _elm_lang$svg$Svg_Attributes$dy = _elm_lang$virtual_dom$VirtualDom$attribute('dy');
+var _elm_lang$svg$Svg_Attributes$dx = _elm_lang$virtual_dom$VirtualDom$attribute('dx');
+var _elm_lang$svg$Svg_Attributes$dur = _elm_lang$virtual_dom$VirtualDom$attribute('dur');
+var _elm_lang$svg$Svg_Attributes$divisor = _elm_lang$virtual_dom$VirtualDom$attribute('divisor');
+var _elm_lang$svg$Svg_Attributes$diffuseConstant = _elm_lang$virtual_dom$VirtualDom$attribute('diffuseConstant');
+var _elm_lang$svg$Svg_Attributes$descent = _elm_lang$virtual_dom$VirtualDom$attribute('descent');
+var _elm_lang$svg$Svg_Attributes$decelerate = _elm_lang$virtual_dom$VirtualDom$attribute('decelerate');
+var _elm_lang$svg$Svg_Attributes$d = _elm_lang$virtual_dom$VirtualDom$attribute('d');
+var _elm_lang$svg$Svg_Attributes$cy = _elm_lang$virtual_dom$VirtualDom$attribute('cy');
+var _elm_lang$svg$Svg_Attributes$cx = _elm_lang$virtual_dom$VirtualDom$attribute('cx');
+var _elm_lang$svg$Svg_Attributes$contentStyleType = _elm_lang$virtual_dom$VirtualDom$attribute('contentStyleType');
+var _elm_lang$svg$Svg_Attributes$contentScriptType = _elm_lang$virtual_dom$VirtualDom$attribute('contentScriptType');
+var _elm_lang$svg$Svg_Attributes$clipPathUnits = _elm_lang$virtual_dom$VirtualDom$attribute('clipPathUnits');
+var _elm_lang$svg$Svg_Attributes$class = _elm_lang$virtual_dom$VirtualDom$attribute('class');
+var _elm_lang$svg$Svg_Attributes$capHeight = _elm_lang$virtual_dom$VirtualDom$attribute('cap-height');
+var _elm_lang$svg$Svg_Attributes$calcMode = _elm_lang$virtual_dom$VirtualDom$attribute('calcMode');
+var _elm_lang$svg$Svg_Attributes$by = _elm_lang$virtual_dom$VirtualDom$attribute('by');
+var _elm_lang$svg$Svg_Attributes$bias = _elm_lang$virtual_dom$VirtualDom$attribute('bias');
+var _elm_lang$svg$Svg_Attributes$begin = _elm_lang$virtual_dom$VirtualDom$attribute('begin');
+var _elm_lang$svg$Svg_Attributes$bbox = _elm_lang$virtual_dom$VirtualDom$attribute('bbox');
+var _elm_lang$svg$Svg_Attributes$baseProfile = _elm_lang$virtual_dom$VirtualDom$attribute('baseProfile');
+var _elm_lang$svg$Svg_Attributes$baseFrequency = _elm_lang$virtual_dom$VirtualDom$attribute('baseFrequency');
+var _elm_lang$svg$Svg_Attributes$azimuth = _elm_lang$virtual_dom$VirtualDom$attribute('azimuth');
+var _elm_lang$svg$Svg_Attributes$autoReverse = _elm_lang$virtual_dom$VirtualDom$attribute('autoReverse');
+var _elm_lang$svg$Svg_Attributes$attributeType = _elm_lang$virtual_dom$VirtualDom$attribute('attributeType');
+var _elm_lang$svg$Svg_Attributes$attributeName = _elm_lang$virtual_dom$VirtualDom$attribute('attributeName');
+var _elm_lang$svg$Svg_Attributes$ascent = _elm_lang$virtual_dom$VirtualDom$attribute('ascent');
+var _elm_lang$svg$Svg_Attributes$arabicForm = _elm_lang$virtual_dom$VirtualDom$attribute('arabic-form');
+var _elm_lang$svg$Svg_Attributes$amplitude = _elm_lang$virtual_dom$VirtualDom$attribute('amplitude');
+var _elm_lang$svg$Svg_Attributes$allowReorder = _elm_lang$virtual_dom$VirtualDom$attribute('allowReorder');
+var _elm_lang$svg$Svg_Attributes$alphabetic = _elm_lang$virtual_dom$VirtualDom$attribute('alphabetic');
+var _elm_lang$svg$Svg_Attributes$additive = _elm_lang$virtual_dom$VirtualDom$attribute('additive');
+var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$attribute('accumulate');
+var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
+var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
 
 var _evancz$elm_markdown$Native_Markdown = function() {
 
@@ -14058,8 +10581,9 @@ var marked = function() {
 	 * marked - a markdown parser
 	 * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
 	 * https://github.com/chjj/marked
+	 * commit cd2f6f5b7091154c5526e79b5f3bfb4d15995a51
 	 */
-	(function(){var block={newline:/^\n+/,code:/^( {4}[^\n]+\n*)+/,fences:noop,hr:/^( *[-*_]){3,} *(?:\n+|$)/,heading:/^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,nptable:noop,lheading:/^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,blockquote:/^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,list:/^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,html:/^ *(?:comment|closed|closing) *(?:\n{2,}|\s*$)/,def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,table:noop,paragraph:/^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,text:/^[^\n]+/};block.bullet=/(?:[*+-]|\d+\.)/;block.item=/^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;block.item=replace(block.item,"gm")(/bull/g,block.bullet)();block.list=replace(block.list)(/bull/g,block.bullet)("hr","\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))")("def","\\n+(?="+block.def.source+")")();block.blockquote=replace(block.blockquote)("def",block.def)();block._tag="(?!(?:"+"a|em|strong|small|s|cite|q|dfn|abbr|data|time|code"+"|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo"+"|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b";block.html=replace(block.html)("comment",/<!--[\s\S]*?-->/)("closed",/<(tag)[\s\S]+?<\/\1>/)("closing",/<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)(/tag/g,block._tag)();block.paragraph=replace(block.paragraph)("hr",block.hr)("heading",block.heading)("lheading",block.lheading)("blockquote",block.blockquote)("tag","<"+block._tag)("def",block.def)();block.normal=merge({},block);block.gfm=merge({},block.normal,{fences:/^ *(`{3,}|~{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)/,paragraph:/^/});block.gfm.paragraph=replace(block.paragraph)("(?!","(?!"+block.gfm.fences.source.replace("\\1","\\2")+"|"+block.list.source.replace("\\1","\\3")+"|")();block.tables=merge({},block.gfm,{nptable:/^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,table:/^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/});function Lexer(options){this.tokens=[];this.tokens.links={};this.options=options||marked.defaults;this.rules=block.normal;if(this.options.gfm){if(this.options.tables){this.rules=block.tables}else{this.rules=block.gfm}}}Lexer.rules=block;Lexer.lex=function(src,options){var lexer=new Lexer(options);return lexer.lex(src)};Lexer.prototype.lex=function(src){src=src.replace(/\r\n|\r/g,"\n").replace(/\t/g,"    ").replace(/\u00a0/g," ").replace(/\u2424/g,"\n");return this.token(src,true)};Lexer.prototype.token=function(src,top,bq){var src=src.replace(/^ +$/gm,""),next,loose,cap,bull,b,item,space,i,l;while(src){if(cap=this.rules.newline.exec(src)){src=src.substring(cap[0].length);if(cap[0].length>1){this.tokens.push({type:"space"})}}if(cap=this.rules.code.exec(src)){src=src.substring(cap[0].length);cap=cap[0].replace(/^ {4}/gm,"");this.tokens.push({type:"code",text:!this.options.pedantic?cap.replace(/\n+$/,""):cap});continue}if(cap=this.rules.fences.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"code",lang:cap[2],text:cap[3]});continue}if(cap=this.rules.heading.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"heading",depth:cap[1].length,text:cap[2]});continue}if(top&&(cap=this.rules.nptable.exec(src))){src=src.substring(cap[0].length);item={type:"table",header:cap[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:cap[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:cap[3].replace(/\n$/,"").split("\n")};for(i=0;i<item.align.length;i++){if(/^ *-+: *$/.test(item.align[i])){item.align[i]="right"}else if(/^ *:-+: *$/.test(item.align[i])){item.align[i]="center"}else if(/^ *:-+ *$/.test(item.align[i])){item.align[i]="left"}else{item.align[i]=null}}for(i=0;i<item.cells.length;i++){item.cells[i]=item.cells[i].split(/ *\| */)}this.tokens.push(item);continue}if(cap=this.rules.lheading.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"heading",depth:cap[2]==="="?1:2,text:cap[1]});continue}if(cap=this.rules.hr.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"hr"});continue}if(cap=this.rules.blockquote.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"blockquote_start"});cap=cap[0].replace(/^ *> ?/gm,"");this.token(cap,top,true);this.tokens.push({type:"blockquote_end"});continue}if(cap=this.rules.list.exec(src)){src=src.substring(cap[0].length);bull=cap[2];this.tokens.push({type:"list_start",ordered:bull.length>1});cap=cap[0].match(this.rules.item);next=false;l=cap.length;i=0;for(;i<l;i++){item=cap[i];space=item.length;item=item.replace(/^ *([*+-]|\d+\.) +/,"");if(~item.indexOf("\n ")){space-=item.length;item=!this.options.pedantic?item.replace(new RegExp("^ {1,"+space+"}","gm"),""):item.replace(/^ {1,4}/gm,"")}if(this.options.smartLists&&i!==l-1){b=block.bullet.exec(cap[i+1])[0];if(bull!==b&&!(bull.length>1&&b.length>1)){src=cap.slice(i+1).join("\n")+src;i=l-1}}loose=next||/\n\n(?!\s*$)/.test(item);if(i!==l-1){next=item.charAt(item.length-1)==="\n";if(!loose)loose=next}this.tokens.push({type:loose?"loose_item_start":"list_item_start"});this.token(item,false,bq);this.tokens.push({type:"list_item_end"})}this.tokens.push({type:"list_end"});continue}if(cap=this.rules.html.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:this.options.sanitize?"paragraph":"html",pre:cap[1]==="pre"||cap[1]==="script"||cap[1]==="style",text:cap[0]});continue}if(!bq&&top&&(cap=this.rules.def.exec(src))){src=src.substring(cap[0].length);this.tokens.links[cap[1].toLowerCase()]={href:cap[2],title:cap[3]};continue}if(top&&(cap=this.rules.table.exec(src))){src=src.substring(cap[0].length);item={type:"table",header:cap[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:cap[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:cap[3].replace(/(?: *\| *)?\n$/,"").split("\n")};for(i=0;i<item.align.length;i++){if(/^ *-+: *$/.test(item.align[i])){item.align[i]="right"}else if(/^ *:-+: *$/.test(item.align[i])){item.align[i]="center"}else if(/^ *:-+ *$/.test(item.align[i])){item.align[i]="left"}else{item.align[i]=null}}for(i=0;i<item.cells.length;i++){item.cells[i]=item.cells[i].replace(/^ *\| *| *\| *$/g,"").split(/ *\| */)}this.tokens.push(item);continue}if(top&&(cap=this.rules.paragraph.exec(src))){src=src.substring(cap[0].length);this.tokens.push({type:"paragraph",text:cap[1].charAt(cap[1].length-1)==="\n"?cap[1].slice(0,-1):cap[1]});continue}if(cap=this.rules.text.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"text",text:cap[0]});continue}if(src){throw new Error("Infinite loop on byte: "+src.charCodeAt(0))}}return this.tokens};var inline={escape:/^\\([\\`*{}\[\]()#+\-.!_>])/,autolink:/^<([^ >]+(@|:\/)[^ >]+)>/,url:noop,tag:/^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,link:/^!?\[(inside)\]\(href\)/,reflink:/^!?\[(inside)\]\s*\[([^\]]*)\]/,nolink:/^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,strong:/^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,em:/^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,code:/^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,br:/^ {2,}\n(?!\s*$)/,del:noop,text:/^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/};inline._inside=/(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;inline._href=/\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;inline.link=replace(inline.link)("inside",inline._inside)("href",inline._href)();inline.reflink=replace(inline.reflink)("inside",inline._inside)();inline.normal=merge({},inline);inline.pedantic=merge({},inline.normal,{strong:/^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,em:/^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/});inline.gfm=merge({},inline.normal,{escape:replace(inline.escape)("])","~|])")(),url:/^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,del:/^~~(?=\S)([\s\S]*?\S)~~/,text:replace(inline.text)("]|","~]|")("|","|https?://|")()});inline.breaks=merge({},inline.gfm,{br:replace(inline.br)("{2,}","*")(),text:replace(inline.gfm.text)("{2,}","*")()});function InlineLexer(links,options){this.options=options||marked.defaults;this.links=links;this.rules=inline.normal;this.renderer=this.options.renderer||new Renderer;this.renderer.options=this.options;if(!this.links){throw new Error("Tokens array requires a `links` property.")}if(this.options.gfm){if(this.options.breaks){this.rules=inline.breaks}else{this.rules=inline.gfm}}else if(this.options.pedantic){this.rules=inline.pedantic}}InlineLexer.rules=inline;InlineLexer.output=function(src,links,options){var inline=new InlineLexer(links,options);return inline.output(src)};InlineLexer.prototype.output=function(src){var out="",link,text,href,cap;while(src){if(cap=this.rules.escape.exec(src)){src=src.substring(cap[0].length);out+=cap[1];continue}if(cap=this.rules.autolink.exec(src)){src=src.substring(cap[0].length);if(cap[2]==="@"){text=cap[1].charAt(6)===":"?this.mangle(cap[1].substring(7)):this.mangle(cap[1]);href=this.mangle("mailto:")+text}else{text=escape(cap[1]);href=text}out+=this.renderer.link(href,null,text);continue}if(!this.inLink&&(cap=this.rules.url.exec(src))){src=src.substring(cap[0].length);text=escape(cap[1]);href=text;out+=this.renderer.link(href,null,text);continue}if(cap=this.rules.tag.exec(src)){if(!this.inLink&&/^<a /i.test(cap[0])){this.inLink=true}else if(this.inLink&&/^<\/a>/i.test(cap[0])){this.inLink=false}src=src.substring(cap[0].length);out+=this.options.sanitize?escape(cap[0]):cap[0];continue}if(cap=this.rules.link.exec(src)){src=src.substring(cap[0].length);this.inLink=true;out+=this.outputLink(cap,{href:cap[2],title:cap[3]});this.inLink=false;continue}if((cap=this.rules.reflink.exec(src))||(cap=this.rules.nolink.exec(src))){src=src.substring(cap[0].length);link=(cap[2]||cap[1]).replace(/\s+/g," ");link=this.links[link.toLowerCase()];if(!link||!link.href){out+=cap[0].charAt(0);src=cap[0].substring(1)+src;continue}this.inLink=true;out+=this.outputLink(cap,link);this.inLink=false;continue}if(cap=this.rules.strong.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.strong(this.output(cap[2]||cap[1]));continue}if(cap=this.rules.em.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.em(this.output(cap[2]||cap[1]));continue}if(cap=this.rules.code.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.codespan(escape(cap[2],true));continue}if(cap=this.rules.br.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.br();continue}if(cap=this.rules.del.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.del(this.output(cap[1]));continue}if(cap=this.rules.text.exec(src)){src=src.substring(cap[0].length);out+=escape(this.smartypants(cap[0]));continue}if(src){throw new Error("Infinite loop on byte: "+src.charCodeAt(0))}}return out};InlineLexer.prototype.outputLink=function(cap,link){var href=escape(link.href),title=link.title?escape(link.title):null;return cap[0].charAt(0)!=="!"?this.renderer.link(href,title,this.output(cap[1])):this.renderer.image(href,title,escape(cap[1]))};InlineLexer.prototype.smartypants=function(text){if(!this.options.smartypants)return text;return text.replace(/--/g,"—").replace(/(^|[-\u2014/(\[{"\s])'/g,"$1‘").replace(/'/g,"’").replace(/(^|[-\u2014/(\[{\u2018\s])"/g,"$1“").replace(/"/g,"”").replace(/\.{3}/g,"…")};InlineLexer.prototype.mangle=function(text){var out="",l=text.length,i=0,ch;for(;i<l;i++){ch=text.charCodeAt(i);if(Math.random()>.5){ch="x"+ch.toString(16)}out+="&#"+ch+";"}return out};function Renderer(options){this.options=options||{}}Renderer.prototype.code=function(code,lang,escaped){if(this.options.highlight){var out=this.options.highlight(code,lang);if(out!=null&&out!==code){escaped=true;code=out}}if(!lang){return"<pre><code>"+(escaped?code:escape(code,true))+"\n</code></pre>"}return'<pre><code class="'+this.options.langPrefix+escape(lang,true)+'">'+(escaped?code:escape(code,true))+"\n</code></pre>\n"};Renderer.prototype.blockquote=function(quote){return"<blockquote>\n"+quote+"</blockquote>\n"};Renderer.prototype.html=function(html){return html};Renderer.prototype.heading=function(text,level,raw){return"<h"+level+' id="'+this.options.headerPrefix+raw.toLowerCase().replace(/[^\w]+/g,"-")+'">'+text+"</h"+level+">\n"};Renderer.prototype.hr=function(){return this.options.xhtml?"<hr/>\n":"<hr>\n"};Renderer.prototype.list=function(body,ordered){var type=ordered?"ol":"ul";return"<"+type+">\n"+body+"</"+type+">\n"};Renderer.prototype.listitem=function(text){return"<li>"+text+"</li>\n"};Renderer.prototype.paragraph=function(text){return"<p>"+text+"</p>\n"};Renderer.prototype.table=function(header,body){return"<table>\n"+"<thead>\n"+header+"</thead>\n"+"<tbody>\n"+body+"</tbody>\n"+"</table>\n"};Renderer.prototype.tablerow=function(content){return"<tr>\n"+content+"</tr>\n"};Renderer.prototype.tablecell=function(content,flags){var type=flags.header?"th":"td";var tag=flags.align?"<"+type+' style="text-align:'+flags.align+'">':"<"+type+">";return tag+content+"</"+type+">\n"};Renderer.prototype.strong=function(text){return"<strong>"+text+"</strong>"};Renderer.prototype.em=function(text){return"<em>"+text+"</em>"};Renderer.prototype.codespan=function(text){return"<code>"+text+"</code>"};Renderer.prototype.br=function(){return this.options.xhtml?"<br/>":"<br>"};Renderer.prototype.del=function(text){return"<del>"+text+"</del>"};Renderer.prototype.link=function(href,title,text){if(this.options.sanitize){try{var prot=decodeURIComponent(unescape(href)).replace(/[^\w:]/g,"").toLowerCase()}catch(e){return""}if(prot.indexOf("javascript:")===0){return""}}var out='<a href="'+href+'"';if(title){out+=' title="'+title+'"'}out+=">"+text+"</a>";return out};Renderer.prototype.image=function(href,title,text){var out='<img src="'+href+'" alt="'+text+'"';if(title){out+=' title="'+title+'"'}out+=this.options.xhtml?"/>":">";return out};function Parser(options){this.tokens=[];this.token=null;this.options=options||marked.defaults;this.options.renderer=this.options.renderer||new Renderer;this.renderer=this.options.renderer;this.renderer.options=this.options}Parser.parse=function(src,options,renderer){var parser=new Parser(options,renderer);return parser.parse(src)};Parser.prototype.parse=function(src){this.inline=new InlineLexer(src.links,this.options,this.renderer);this.tokens=src.reverse();var out="";while(this.next()){out+=this.tok()}return out};Parser.prototype.next=function(){return this.token=this.tokens.pop()};Parser.prototype.peek=function(){return this.tokens[this.tokens.length-1]||0};Parser.prototype.parseText=function(){var body=this.token.text;while(this.peek().type==="text"){body+="\n"+this.next().text}return this.inline.output(body)};Parser.prototype.tok=function(){switch(this.token.type){case"space":{return""}case"hr":{return this.renderer.hr()}case"heading":{return this.renderer.heading(this.inline.output(this.token.text),this.token.depth,this.token.text)}case"code":{return this.renderer.code(this.token.text,this.token.lang,this.token.escaped)}case"table":{var header="",body="",i,row,cell,flags,j;cell="";for(i=0;i<this.token.header.length;i++){flags={header:true,align:this.token.align[i]};cell+=this.renderer.tablecell(this.inline.output(this.token.header[i]),{header:true,align:this.token.align[i]})}header+=this.renderer.tablerow(cell);for(i=0;i<this.token.cells.length;i++){row=this.token.cells[i];cell="";for(j=0;j<row.length;j++){cell+=this.renderer.tablecell(this.inline.output(row[j]),{header:false,align:this.token.align[j]})}body+=this.renderer.tablerow(cell)}return this.renderer.table(header,body)}case"blockquote_start":{var body="";while(this.next().type!=="blockquote_end"){body+=this.tok()}return this.renderer.blockquote(body)}case"list_start":{var body="",ordered=this.token.ordered;while(this.next().type!=="list_end"){body+=this.tok()}return this.renderer.list(body,ordered)}case"list_item_start":{var body="";while(this.next().type!=="list_item_end"){body+=this.token.type==="text"?this.parseText():this.tok()}return this.renderer.listitem(body)}case"loose_item_start":{var body="";while(this.next().type!=="list_item_end"){body+=this.tok()}return this.renderer.listitem(body)}case"html":{var html=!this.token.pre&&!this.options.pedantic?this.inline.output(this.token.text):this.token.text;return this.renderer.html(html)}case"paragraph":{return this.renderer.paragraph(this.inline.output(this.token.text))}case"text":{return this.renderer.paragraph(this.parseText())}}};function escape(html,encode){return html.replace(!encode?/&(?!#?\w+;)/g:/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}function unescape(html){return html.replace(/&([#\w]+);/g,function(_,n){n=n.toLowerCase();if(n==="colon")return":";if(n.charAt(0)==="#"){return n.charAt(1)==="x"?String.fromCharCode(parseInt(n.substring(2),16)):String.fromCharCode(+n.substring(1))}return""})}function replace(regex,opt){regex=regex.source;opt=opt||"";return function self(name,val){if(!name)return new RegExp(regex,opt);val=val.source||val;val=val.replace(/(^|[^\[])\^/g,"$1");regex=regex.replace(name,val);return self}}function noop(){}noop.exec=noop;function merge(obj){var i=1,target,key;for(;i<arguments.length;i++){target=arguments[i];for(key in target){if(Object.prototype.hasOwnProperty.call(target,key)){obj[key]=target[key]}}}return obj}function marked(src,opt,callback){if(callback||typeof opt==="function"){if(!callback){callback=opt;opt=null}opt=merge({},marked.defaults,opt||{});var highlight=opt.highlight,tokens,pending,i=0;try{tokens=Lexer.lex(src,opt)}catch(e){return callback(e)}pending=tokens.length;var done=function(err){if(err){opt.highlight=highlight;return callback(err)}var out;try{out=Parser.parse(tokens,opt)}catch(e){err=e}opt.highlight=highlight;return err?callback(err):callback(null,out)};if(!highlight||highlight.length<3){return done()}delete opt.highlight;if(!pending)return done();for(;i<tokens.length;i++){(function(token){if(token.type!=="code"){return--pending||done()}return highlight(token.text,token.lang,function(err,code){if(err)return done(err);if(code==null||code===token.text){return--pending||done()}token.text=code;token.escaped=true;--pending||done()})})(tokens[i])}return}try{if(opt)opt=merge({},marked.defaults,opt);return Parser.parse(Lexer.lex(src,opt),opt)}catch(e){e.message+="\nPlease report this to https://github.com/chjj/marked.";if((opt||marked.defaults).silent){return"<p>An error occured:</p><pre>"+escape(e.message+"",true)+"</pre>"}throw e}}marked.options=marked.setOptions=function(opt){merge(marked.defaults,opt);return marked};marked.defaults={gfm:true,tables:true,breaks:false,pedantic:false,sanitize:false,smartLists:false,silent:false,highlight:null,langPrefix:"lang-",smartypants:false,headerPrefix:"",renderer:new Renderer,xhtml:false};marked.Parser=Parser;marked.parser=Parser.parse;marked.Renderer=Renderer;marked.Lexer=Lexer;marked.lexer=Lexer.lex;marked.InlineLexer=InlineLexer;marked.inlineLexer=InlineLexer.output;marked.parse=marked;if(typeof module!=="undefined"&&typeof exports==="object"){module.exports=marked}else if(typeof define==="function"&&define.amd){define(function(){return marked})}else{this.marked=marked}}).call(function(){return this||(typeof window!=="undefined"?window:global)}());
+	(function(){var block={newline:/^\n+/,code:/^( {4}[^\n]+\n*)+/,fences:noop,hr:/^( *[-*_]){3,} *(?:\n+|$)/,heading:/^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,nptable:noop,lheading:/^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,blockquote:/^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,list:/^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,html:/^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,table:noop,paragraph:/^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,text:/^[^\n]+/};block.bullet=/(?:[*+-]|\d+\.)/;block.item=/^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;block.item=replace(block.item,"gm")(/bull/g,block.bullet)();block.list=replace(block.list)(/bull/g,block.bullet)("hr","\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))")("def","\\n+(?="+block.def.source+")")();block.blockquote=replace(block.blockquote)("def",block.def)();block._tag="(?!(?:"+"a|em|strong|small|s|cite|q|dfn|abbr|data|time|code"+"|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo"+"|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b";block.html=replace(block.html)("comment",/<!--[\s\S]*?-->/)("closed",/<(tag)[\s\S]+?<\/\1>/)("closing",/<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)(/tag/g,block._tag)();block.paragraph=replace(block.paragraph)("hr",block.hr)("heading",block.heading)("lheading",block.lheading)("blockquote",block.blockquote)("tag","<"+block._tag)("def",block.def)();block.normal=merge({},block);block.gfm=merge({},block.normal,{fences:/^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\s*\1 *(?:\n+|$)/,paragraph:/^/,heading:/^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/});block.gfm.paragraph=replace(block.paragraph)("(?!","(?!"+block.gfm.fences.source.replace("\\1","\\2")+"|"+block.list.source.replace("\\1","\\3")+"|")();block.tables=merge({},block.gfm,{nptable:/^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,table:/^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/});function Lexer(options){this.tokens=[];this.tokens.links={};this.options=options||marked.defaults;this.rules=block.normal;if(this.options.gfm){if(this.options.tables){this.rules=block.tables}else{this.rules=block.gfm}}}Lexer.rules=block;Lexer.lex=function(src,options){var lexer=new Lexer(options);return lexer.lex(src)};Lexer.prototype.lex=function(src){src=src.replace(/\r\n|\r/g,"\n").replace(/\t/g,"    ").replace(/\u00a0/g," ").replace(/\u2424/g,"\n");return this.token(src,true)};Lexer.prototype.token=function(src,top,bq){var src=src.replace(/^ +$/gm,""),next,loose,cap,bull,b,item,space,i,l;while(src){if(cap=this.rules.newline.exec(src)){src=src.substring(cap[0].length);if(cap[0].length>1){this.tokens.push({type:"space"})}}if(cap=this.rules.code.exec(src)){src=src.substring(cap[0].length);cap=cap[0].replace(/^ {4}/gm,"");this.tokens.push({type:"code",text:!this.options.pedantic?cap.replace(/\n+$/,""):cap});continue}if(cap=this.rules.fences.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"code",lang:cap[2],text:cap[3]||""});continue}if(cap=this.rules.heading.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"heading",depth:cap[1].length,text:cap[2]});continue}if(top&&(cap=this.rules.nptable.exec(src))){src=src.substring(cap[0].length);item={type:"table",header:cap[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:cap[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:cap[3].replace(/\n$/,"").split("\n")};for(i=0;i<item.align.length;i++){if(/^ *-+: *$/.test(item.align[i])){item.align[i]="right"}else if(/^ *:-+: *$/.test(item.align[i])){item.align[i]="center"}else if(/^ *:-+ *$/.test(item.align[i])){item.align[i]="left"}else{item.align[i]=null}}for(i=0;i<item.cells.length;i++){item.cells[i]=item.cells[i].split(/ *\| */)}this.tokens.push(item);continue}if(cap=this.rules.lheading.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"heading",depth:cap[2]==="="?1:2,text:cap[1]});continue}if(cap=this.rules.hr.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"hr"});continue}if(cap=this.rules.blockquote.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"blockquote_start"});cap=cap[0].replace(/^ *> ?/gm,"");this.token(cap,top,true);this.tokens.push({type:"blockquote_end"});continue}if(cap=this.rules.list.exec(src)){src=src.substring(cap[0].length);bull=cap[2];this.tokens.push({type:"list_start",ordered:bull.length>1});cap=cap[0].match(this.rules.item);next=false;l=cap.length;i=0;for(;i<l;i++){item=cap[i];space=item.length;item=item.replace(/^ *([*+-]|\d+\.) +/,"");if(~item.indexOf("\n ")){space-=item.length;item=!this.options.pedantic?item.replace(new RegExp("^ {1,"+space+"}","gm"),""):item.replace(/^ {1,4}/gm,"")}if(this.options.smartLists&&i!==l-1){b=block.bullet.exec(cap[i+1])[0];if(bull!==b&&!(bull.length>1&&b.length>1)){src=cap.slice(i+1).join("\n")+src;i=l-1}}loose=next||/\n\n(?!\s*$)/.test(item);if(i!==l-1){next=item.charAt(item.length-1)==="\n";if(!loose)loose=next}this.tokens.push({type:loose?"loose_item_start":"list_item_start"});this.token(item,false,bq);this.tokens.push({type:"list_item_end"})}this.tokens.push({type:"list_end"});continue}if(cap=this.rules.html.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:this.options.sanitize?"paragraph":"html",pre:!this.options.sanitizer&&(cap[1]==="pre"||cap[1]==="script"||cap[1]==="style"),text:cap[0]});continue}if(!bq&&top&&(cap=this.rules.def.exec(src))){src=src.substring(cap[0].length);this.tokens.links[cap[1].toLowerCase()]={href:cap[2],title:cap[3]};continue}if(top&&(cap=this.rules.table.exec(src))){src=src.substring(cap[0].length);item={type:"table",header:cap[1].replace(/^ *| *\| *$/g,"").split(/ *\| */),align:cap[2].replace(/^ *|\| *$/g,"").split(/ *\| */),cells:cap[3].replace(/(?: *\| *)?\n$/,"").split("\n")};for(i=0;i<item.align.length;i++){if(/^ *-+: *$/.test(item.align[i])){item.align[i]="right"}else if(/^ *:-+: *$/.test(item.align[i])){item.align[i]="center"}else if(/^ *:-+ *$/.test(item.align[i])){item.align[i]="left"}else{item.align[i]=null}}for(i=0;i<item.cells.length;i++){item.cells[i]=item.cells[i].replace(/^ *\| *| *\| *$/g,"").split(/ *\| */)}this.tokens.push(item);continue}if(top&&(cap=this.rules.paragraph.exec(src))){src=src.substring(cap[0].length);this.tokens.push({type:"paragraph",text:cap[1].charAt(cap[1].length-1)==="\n"?cap[1].slice(0,-1):cap[1]});continue}if(cap=this.rules.text.exec(src)){src=src.substring(cap[0].length);this.tokens.push({type:"text",text:cap[0]});continue}if(src){throw new Error("Infinite loop on byte: "+src.charCodeAt(0))}}return this.tokens};var inline={escape:/^\\([\\`*{}\[\]()#+\-.!_>])/,autolink:/^<([^ >]+(@|:\/)[^ >]+)>/,url:noop,tag:/^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,link:/^!?\[(inside)\]\(href\)/,reflink:/^!?\[(inside)\]\s*\[([^\]]*)\]/,nolink:/^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,strong:/^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,em:/^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,code:/^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,br:/^ {2,}\n(?!\s*$)/,del:noop,text:/^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/};inline._inside=/(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;inline._href=/\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;inline.link=replace(inline.link)("inside",inline._inside)("href",inline._href)();inline.reflink=replace(inline.reflink)("inside",inline._inside)();inline.normal=merge({},inline);inline.pedantic=merge({},inline.normal,{strong:/^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,em:/^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/});inline.gfm=merge({},inline.normal,{escape:replace(inline.escape)("])","~|])")(),url:/^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,del:/^~~(?=\S)([\s\S]*?\S)~~/,text:replace(inline.text)("]|","~]|")("|","|https?://|")()});inline.breaks=merge({},inline.gfm,{br:replace(inline.br)("{2,}","*")(),text:replace(inline.gfm.text)("{2,}","*")()});function InlineLexer(links,options){this.options=options||marked.defaults;this.links=links;this.rules=inline.normal;this.renderer=this.options.renderer||new Renderer;this.renderer.options=this.options;if(!this.links){throw new Error("Tokens array requires a `links` property.")}if(this.options.gfm){if(this.options.breaks){this.rules=inline.breaks}else{this.rules=inline.gfm}}else if(this.options.pedantic){this.rules=inline.pedantic}}InlineLexer.rules=inline;InlineLexer.output=function(src,links,options){var inline=new InlineLexer(links,options);return inline.output(src)};InlineLexer.prototype.output=function(src){var out="",link,text,href,cap;while(src){if(cap=this.rules.escape.exec(src)){src=src.substring(cap[0].length);out+=cap[1];continue}if(cap=this.rules.autolink.exec(src)){src=src.substring(cap[0].length);if(cap[2]==="@"){text=cap[1].charAt(6)===":"?this.mangle(cap[1].substring(7)):this.mangle(cap[1]);href=this.mangle("mailto:")+text}else{text=escape(cap[1]);href=text}out+=this.renderer.link(href,null,text);continue}if(!this.inLink&&(cap=this.rules.url.exec(src))){src=src.substring(cap[0].length);text=escape(cap[1]);href=text;out+=this.renderer.link(href,null,text);continue}if(cap=this.rules.tag.exec(src)){if(!this.inLink&&/^<a /i.test(cap[0])){this.inLink=true}else if(this.inLink&&/^<\/a>/i.test(cap[0])){this.inLink=false}src=src.substring(cap[0].length);out+=this.options.sanitize?this.options.sanitizer?this.options.sanitizer(cap[0]):escape(cap[0]):cap[0];continue}if(cap=this.rules.link.exec(src)){src=src.substring(cap[0].length);this.inLink=true;out+=this.outputLink(cap,{href:cap[2],title:cap[3]});this.inLink=false;continue}if((cap=this.rules.reflink.exec(src))||(cap=this.rules.nolink.exec(src))){src=src.substring(cap[0].length);link=(cap[2]||cap[1]).replace(/\s+/g," ");link=this.links[link.toLowerCase()];if(!link||!link.href){out+=cap[0].charAt(0);src=cap[0].substring(1)+src;continue}this.inLink=true;out+=this.outputLink(cap,link);this.inLink=false;continue}if(cap=this.rules.strong.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.strong(this.output(cap[2]||cap[1]));continue}if(cap=this.rules.em.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.em(this.output(cap[2]||cap[1]));continue}if(cap=this.rules.code.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.codespan(escape(cap[2],true));continue}if(cap=this.rules.br.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.br();continue}if(cap=this.rules.del.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.del(this.output(cap[1]));continue}if(cap=this.rules.text.exec(src)){src=src.substring(cap[0].length);out+=this.renderer.text(escape(this.smartypants(cap[0])));continue}if(src){throw new Error("Infinite loop on byte: "+src.charCodeAt(0))}}return out};InlineLexer.prototype.outputLink=function(cap,link){var href=escape(link.href),title=link.title?escape(link.title):null;return cap[0].charAt(0)!=="!"?this.renderer.link(href,title,this.output(cap[1])):this.renderer.image(href,title,escape(cap[1]))};InlineLexer.prototype.smartypants=function(text){if(!this.options.smartypants)return text;return text.replace(/---/g,"—").replace(/--/g,"–").replace(/(^|[-\u2014\/(\[{"\s])'/g,"$1‘").replace(/'/g,"’").replace(/(^|[-\u2014\/(\[{\u2018\s])"/g,"$1“").replace(/"/g,"”").replace(/\.{3}/g,"…")};InlineLexer.prototype.mangle=function(text){if(!this.options.mangle)return text;var out="",l=text.length,i=0,ch;for(;i<l;i++){ch=text.charCodeAt(i);if(Math.random()>.5){ch="x"+ch.toString(16)}out+="&#"+ch+";"}return out};function Renderer(options){this.options=options||{}}Renderer.prototype.code=function(code,lang,escaped){if(this.options.highlight){var out=this.options.highlight(code,lang);if(out!=null&&out!==code){escaped=true;code=out}}if(!lang){return"<pre><code>"+(escaped?code:escape(code,true))+"\n</code></pre>"}return'<pre><code class="'+this.options.langPrefix+escape(lang,true)+'">'+(escaped?code:escape(code,true))+"\n</code></pre>\n"};Renderer.prototype.blockquote=function(quote){return"<blockquote>\n"+quote+"</blockquote>\n"};Renderer.prototype.html=function(html){return html};Renderer.prototype.heading=function(text,level,raw){return"<h"+level+' id="'+this.options.headerPrefix+raw.toLowerCase().replace(/[^\w]+/g,"-")+'">'+text+"</h"+level+">\n"};Renderer.prototype.hr=function(){return this.options.xhtml?"<hr/>\n":"<hr>\n"};Renderer.prototype.list=function(body,ordered){var type=ordered?"ol":"ul";return"<"+type+">\n"+body+"</"+type+">\n"};Renderer.prototype.listitem=function(text){return"<li>"+text+"</li>\n"};Renderer.prototype.paragraph=function(text){return"<p>"+text+"</p>\n"};Renderer.prototype.table=function(header,body){return"<table>\n"+"<thead>\n"+header+"</thead>\n"+"<tbody>\n"+body+"</tbody>\n"+"</table>\n"};Renderer.prototype.tablerow=function(content){return"<tr>\n"+content+"</tr>\n"};Renderer.prototype.tablecell=function(content,flags){var type=flags.header?"th":"td";var tag=flags.align?"<"+type+' style="text-align:'+flags.align+'">':"<"+type+">";return tag+content+"</"+type+">\n"};Renderer.prototype.strong=function(text){return"<strong>"+text+"</strong>"};Renderer.prototype.em=function(text){return"<em>"+text+"</em>"};Renderer.prototype.codespan=function(text){return"<code>"+text+"</code>"};Renderer.prototype.br=function(){return this.options.xhtml?"<br/>":"<br>"};Renderer.prototype.del=function(text){return"<del>"+text+"</del>"};Renderer.prototype.link=function(href,title,text){if(this.options.sanitize){try{var prot=decodeURIComponent(unescape(href)).replace(/[^\w:]/g,"").toLowerCase()}catch(e){return""}if(prot.indexOf("javascript:")===0||prot.indexOf("vbscript:")===0||prot.indexOf("data:")===0){return""}}var out='<a href="'+href+'"';if(title){out+=' title="'+title+'"'}out+=">"+text+"</a>";return out};Renderer.prototype.image=function(href,title,text){var out='<img src="'+href+'" alt="'+text+'"';if(title){out+=' title="'+title+'"'}out+=this.options.xhtml?"/>":">";return out};Renderer.prototype.text=function(text){return text};function Parser(options){this.tokens=[];this.token=null;this.options=options||marked.defaults;this.options.renderer=this.options.renderer||new Renderer;this.renderer=this.options.renderer;this.renderer.options=this.options}Parser.parse=function(src,options,renderer){var parser=new Parser(options,renderer);return parser.parse(src)};Parser.prototype.parse=function(src){this.inline=new InlineLexer(src.links,this.options,this.renderer);this.tokens=src.reverse();var out="";while(this.next()){out+=this.tok()}return out};Parser.prototype.next=function(){return this.token=this.tokens.pop()};Parser.prototype.peek=function(){return this.tokens[this.tokens.length-1]||0};Parser.prototype.parseText=function(){var body=this.token.text;while(this.peek().type==="text"){body+="\n"+this.next().text}return this.inline.output(body)};Parser.prototype.tok=function(){switch(this.token.type){case"space":{return""}case"hr":{return this.renderer.hr()}case"heading":{return this.renderer.heading(this.inline.output(this.token.text),this.token.depth,this.token.text)}case"code":{return this.renderer.code(this.token.text,this.token.lang,this.token.escaped)}case"table":{var header="",body="",i,row,cell,flags,j;cell="";for(i=0;i<this.token.header.length;i++){flags={header:true,align:this.token.align[i]};cell+=this.renderer.tablecell(this.inline.output(this.token.header[i]),{header:true,align:this.token.align[i]})}header+=this.renderer.tablerow(cell);for(i=0;i<this.token.cells.length;i++){row=this.token.cells[i];cell="";for(j=0;j<row.length;j++){cell+=this.renderer.tablecell(this.inline.output(row[j]),{header:false,align:this.token.align[j]})}body+=this.renderer.tablerow(cell)}return this.renderer.table(header,body)}case"blockquote_start":{var body="";while(this.next().type!=="blockquote_end"){body+=this.tok()}return this.renderer.blockquote(body)}case"list_start":{var body="",ordered=this.token.ordered;while(this.next().type!=="list_end"){body+=this.tok()}return this.renderer.list(body,ordered)}case"list_item_start":{var body="";while(this.next().type!=="list_item_end"){body+=this.token.type==="text"?this.parseText():this.tok()}return this.renderer.listitem(body)}case"loose_item_start":{var body="";while(this.next().type!=="list_item_end"){body+=this.tok()}return this.renderer.listitem(body)}case"html":{var html=!this.token.pre&&!this.options.pedantic?this.inline.output(this.token.text):this.token.text;return this.renderer.html(html)}case"paragraph":{return this.renderer.paragraph(this.inline.output(this.token.text))}case"text":{return this.renderer.paragraph(this.parseText())}}};function escape(html,encode){return html.replace(!encode?/&(?!#?\w+;)/g:/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}function unescape(html){return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/g,function(_,n){n=n.toLowerCase();if(n==="colon")return":";if(n.charAt(0)==="#"){return n.charAt(1)==="x"?String.fromCharCode(parseInt(n.substring(2),16)):String.fromCharCode(+n.substring(1))}return""})}function replace(regex,opt){regex=regex.source;opt=opt||"";return function self(name,val){if(!name)return new RegExp(regex,opt);val=val.source||val;val=val.replace(/(^|[^\[])\^/g,"$1");regex=regex.replace(name,val);return self}}function noop(){}noop.exec=noop;function merge(obj){var i=1,target,key;for(;i<arguments.length;i++){target=arguments[i];for(key in target){if(Object.prototype.hasOwnProperty.call(target,key)){obj[key]=target[key]}}}return obj}function marked(src,opt,callback){if(callback||typeof opt==="function"){if(!callback){callback=opt;opt=null}opt=merge({},marked.defaults,opt||{});var highlight=opt.highlight,tokens,pending,i=0;try{tokens=Lexer.lex(src,opt)}catch(e){return callback(e)}pending=tokens.length;var done=function(err){if(err){opt.highlight=highlight;return callback(err)}var out;try{out=Parser.parse(tokens,opt)}catch(e){err=e}opt.highlight=highlight;return err?callback(err):callback(null,out)};if(!highlight||highlight.length<3){return done()}delete opt.highlight;if(!pending)return done();for(;i<tokens.length;i++){(function(token){if(token.type!=="code"){return--pending||done()}return highlight(token.text,token.lang,function(err,code){if(err)return done(err);if(code==null||code===token.text){return--pending||done()}token.text=code;token.escaped=true;--pending||done()})})(tokens[i])}return}try{if(opt)opt=merge({},marked.defaults,opt);return Parser.parse(Lexer.lex(src,opt),opt)}catch(e){e.message+="\nPlease report this to https://github.com/chjj/marked.";if((opt||marked.defaults).silent){return"<p>An error occured:</p><pre>"+escape(e.message+"",true)+"</pre>"}throw e}}marked.options=marked.setOptions=function(opt){merge(marked.defaults,opt);return marked};marked.defaults={gfm:true,tables:true,breaks:false,pedantic:false,sanitize:false,sanitizer:null,mangle:true,smartLists:false,silent:false,highlight:null,langPrefix:"lang-",smartypants:false,headerPrefix:"",renderer:new Renderer,xhtml:false};marked.Parser=Parser;marked.parser=Parser.parse;marked.Renderer=Renderer;marked.Lexer=Lexer;marked.lexer=Lexer.lex;marked.InlineLexer=InlineLexer;marked.inlineLexer=InlineLexer.output;marked.parse=marked;if(typeof module!=="undefined"&&typeof exports==="object"){module.exports=marked}else if(typeof define==="function"&&define.amd){define(function(){return marked})}else{this.marked=marked}}).call(function(){return this||(typeof window!=="undefined"?window:global)}());
 
 	return module.exports;
 }();
@@ -14511,18 +11035,37 @@ var _ggb$numeral_elm$Numeral$processDecimal = function (numeral) {
 		numeral,
 		{decimal: d});
 };
+var _ggb$numeral_elm$Numeral$processLeadingZeros = function (numeral) {
+	var w = _elm_lang$core$String$length(
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			_elm_lang$core$List$head(
+				A2(_elm_lang$core$String$split, '.', numeral.word))));
+	var n = numeral.leadingZeros - w;
+	var prefix = A2(_elm_lang$core$String$repeat, n, '0');
+	return _elm_lang$core$Native_Utils.update(
+		numeral,
+		{
+			word: A2(_elm_lang$core$Basics_ops['++'], prefix, numeral.word)
+		});
+};
 var _ggb$numeral_elm$Numeral$getPrecision = function (numeral) {
+	var splitted = A2(_elm_lang$core$String$split, '.', numeral.format);
+	var leadingZeros = _elm_lang$core$String$length(
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			_elm_lang$core$List$head(splitted)));
+	var leadingZeros_ = A2(_elm_lang$core$String$contains, ',', numeral.format) ? 0 : leadingZeros;
 	var precision = A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
 		_elm_lang$core$List$head(
-			A2(
-				_elm_lang$core$List$drop,
-				1,
-				A2(_elm_lang$core$String$split, '.', numeral.format))));
+			A2(_elm_lang$core$List$drop, 1, splitted)));
 	return _elm_lang$core$Native_Utils.update(
 		numeral,
-		{precision: precision});
+		{precision: precision, leadingZeros: leadingZeros_});
 };
 var _ggb$numeral_elm$Numeral$processWord = function (numeral) {
 	var w = A2(
@@ -15028,16 +11571,17 @@ var _ggb$numeral_elm$Numeral$formatNumber = function (numeral) {
 						_ggb$numeral_elm$Numeral$checkIfNegative(
 							_ggb$numeral_elm$Numeral$checkThousandsDelimiter(
 								_ggb$numeral_elm$Numeral$processDecimal(
-									_ggb$numeral_elm$Numeral$processPrecision(
-										_ggb$numeral_elm$Numeral$getPrecision(
-											_ggb$numeral_elm$Numeral$processWord(
-												_ggb$numeral_elm$Numeral$updateStringValue(
-													_ggb$numeral_elm$Numeral$checkOptionalDec(
-														_ggb$numeral_elm$Numeral$checkOrdinal(
-															_ggb$numeral_elm$Numeral$checkByte(
-																_ggb$numeral_elm$Numeral$checkAbbreviation(
-																	_ggb$numeral_elm$Numeral$checkForCustomSuffix(
-																		_ggb$numeral_elm$Numeral$checkParensAndSign(numeral))))))))))))))))));
+									_ggb$numeral_elm$Numeral$processLeadingZeros(
+										_ggb$numeral_elm$Numeral$processPrecision(
+											_ggb$numeral_elm$Numeral$getPrecision(
+												_ggb$numeral_elm$Numeral$processWord(
+													_ggb$numeral_elm$Numeral$updateStringValue(
+														_ggb$numeral_elm$Numeral$checkOptionalDec(
+															_ggb$numeral_elm$Numeral$checkOrdinal(
+																_ggb$numeral_elm$Numeral$checkByte(
+																	_ggb$numeral_elm$Numeral$checkAbbreviation(
+																		_ggb$numeral_elm$Numeral$checkForCustomSuffix(
+																			_ggb$numeral_elm$Numeral$checkParensAndSign(numeral)))))))))))))))))));
 };
 var _ggb$numeral_elm$Numeral$empty = F3(
 	function (lang, format, value) {
@@ -15058,6 +11602,7 @@ var _ggb$numeral_elm$Numeral$empty = F3(
 			optionalDecimal: false,
 			parens: {ctor: '_Tuple2', _0: '', _1: ''},
 			precision: '',
+			leadingZeros: 0,
 			minus: '',
 			plus: ''
 		};
@@ -15233,7 +11778,9 @@ var _ggb$numeral_elm$Numeral$Numeral = function (a) {
 															return function (p) {
 																return function (q) {
 																	return function (r) {
-																		return {language: a, format: b, value: c, word: d, strValue: e, signed: f, neg: g, negP: h, customSuffix: i, abbreviation: j, bytes: k, ordinal: l, decimal: m, optionalDecimal: n, parens: o, precision: p, minus: q, plus: r};
+																		return function (s) {
+																			return {language: a, format: b, value: c, word: d, strValue: e, signed: f, neg: g, negP: h, customSuffix: i, abbreviation: j, bytes: k, ordinal: l, decimal: m, optionalDecimal: n, parens: o, precision: p, leadingZeros: q, minus: r, plus: s};
+																		};
 																	};
 																};
 															};
@@ -16470,19 +13017,6 @@ var _justinmimbs$elm_date_extra$Date_Internal_Parse$offsetTimeFromIsoString = fu
 					s))));
 };
 
-var _justinmimbs$elm_date_extra$Date_Extra$unfold = F2(
-	function (f, seed) {
-		var _p0 = f(seed);
-		if (_p0.ctor === 'Nothing') {
-			return {ctor: '[]'};
-		} else {
-			return {
-				ctor: '::',
-				_0: _p0._0._0,
-				_1: A2(_justinmimbs$elm_date_extra$Date_Extra$unfold, f, _p0._0._1)
-			};
-		}
-	});
 var _justinmimbs$elm_date_extra$Date_Extra$toParts = function (date) {
 	return {
 		ctor: '_Tuple7',
@@ -16496,8 +13030,8 @@ var _justinmimbs$elm_date_extra$Date_Extra$toParts = function (date) {
 	};
 };
 var _justinmimbs$elm_date_extra$Date_Extra$monthFromQuarter = function (q) {
-	var _p1 = q;
-	switch (_p1) {
+	var _p0 = q;
+	switch (_p0) {
 		case 1:
 			return _elm_lang$core$Date$Jan;
 		case 2:
@@ -16577,25 +13111,25 @@ var _justinmimbs$elm_date_extra$Date_Extra$toUtcFormattedString = _justinmimbs$e
 var _justinmimbs$elm_date_extra$Date_Extra$toUtcIsoString = _justinmimbs$elm_date_extra$Date_Extra$toUtcFormattedString('yyyy-MM-dd\'T\'HH:mm:ss.SSSXXX');
 var _justinmimbs$elm_date_extra$Date_Extra$toFormattedString = _justinmimbs$elm_date_extra$Date_Internal_Format$toFormattedString(false);
 var _justinmimbs$elm_date_extra$Date_Extra$toIsoString = _justinmimbs$elm_date_extra$Date_Extra$toFormattedString('yyyy-MM-dd\'T\'HH:mm:ss.SSSxxx');
-var _justinmimbs$elm_date_extra$Date_Extra$fromTime = function (_p2) {
+var _justinmimbs$elm_date_extra$Date_Extra$fromTime = function (_p1) {
 	return _elm_lang$core$Date$fromTime(
-		_elm_lang$core$Basics$toFloat(_p2));
+		_elm_lang$core$Basics$toFloat(_p1));
 };
-var _justinmimbs$elm_date_extra$Date_Extra$fromOffsetTime = function (_p3) {
-	var _p4 = _p3;
-	var _p6 = _p4._1;
-	var _p5 = _p4._0;
-	if (_p5.ctor === 'Just') {
-		return _justinmimbs$elm_date_extra$Date_Extra$fromTime(_p6 - (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * _p5._0));
+var _justinmimbs$elm_date_extra$Date_Extra$fromOffsetTime = function (_p2) {
+	var _p3 = _p2;
+	var _p5 = _p3._1;
+	var _p4 = _p3._0;
+	if (_p4.ctor === 'Just') {
+		return _justinmimbs$elm_date_extra$Date_Extra$fromTime(_p5 - (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * _p4._0));
 	} else {
 		var offset0 = _justinmimbs$elm_date_extra$Date_Extra$offsetFromUtc(
-			_justinmimbs$elm_date_extra$Date_Extra$fromTime(_p6));
-		var date1 = _justinmimbs$elm_date_extra$Date_Extra$fromTime(_p6 - (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * offset0));
+			_justinmimbs$elm_date_extra$Date_Extra$fromTime(_p5));
+		var date1 = _justinmimbs$elm_date_extra$Date_Extra$fromTime(_p5 - (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * offset0));
 		var offset1 = _justinmimbs$elm_date_extra$Date_Extra$offsetFromUtc(date1);
 		if (_elm_lang$core$Native_Utils.eq(offset0, offset1)) {
 			return date1;
 		} else {
-			var date2 = _justinmimbs$elm_date_extra$Date_Extra$fromTime(_p6 - (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * offset1));
+			var date2 = _justinmimbs$elm_date_extra$Date_Extra$fromTime(_p5 - (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * offset1));
 			var offset2 = _justinmimbs$elm_date_extra$Date_Extra$offsetFromUtc(date2);
 			return _elm_lang$core$Native_Utils.eq(offset1, offset2) ? date2 : date1;
 		}
@@ -16616,14 +13150,14 @@ var _justinmimbs$elm_date_extra$Date_Extra$addMonths = F2(
 		var y_ = (om / 12) | 0;
 		var m_ = _justinmimbs$elm_date_extra$Date_Extra_Facts$monthFromMonthNumber(
 			A2(_elm_lang$core$Basics_ops['%'], om, 12) + 1);
-		var _p7 = _justinmimbs$elm_date_extra$Date_Extra$toParts(date);
-		var y = _p7._0;
-		var m = _p7._1;
-		var d = _p7._2;
-		var hh = _p7._3;
-		var mm = _p7._4;
-		var ss = _p7._5;
-		var ms = _p7._6;
+		var _p6 = _justinmimbs$elm_date_extra$Date_Extra$toParts(date);
+		var y = _p6._0;
+		var m = _p6._1;
+		var d = _p6._2;
+		var hh = _p6._3;
+		var mm = _p6._4;
+		var ss = _p6._5;
+		var ms = _p6._6;
 		var d_ = A2(
 			_elm_lang$core$Basics$min,
 			d,
@@ -16632,16 +13166,16 @@ var _justinmimbs$elm_date_extra$Date_Extra$addMonths = F2(
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$add = F3(
 	function (interval, n, date) {
-		var _p8 = _justinmimbs$elm_date_extra$Date_Extra$toParts(date);
-		var y = _p8._0;
-		var m = _p8._1;
-		var d = _p8._2;
-		var hh = _p8._3;
-		var mm = _p8._4;
-		var ss = _p8._5;
-		var ms = _p8._6;
-		var _p9 = interval;
-		switch (_p9.ctor) {
+		var _p7 = _justinmimbs$elm_date_extra$Date_Extra$toParts(date);
+		var y = _p7._0;
+		var m = _p7._1;
+		var d = _p7._2;
+		var hh = _p7._3;
+		var mm = _p7._4;
+		var ss = _p7._5;
+		var ms = _p7._6;
+		var _p8 = interval;
+		switch (_p8.ctor) {
 			case 'Millisecond':
 				return _elm_lang$core$Date$fromTime(
 					_elm_lang$core$Date$toTime(date) + _elm_lang$core$Basics$toFloat(n));
@@ -16668,6 +13202,29 @@ var _justinmimbs$elm_date_extra$Date_Extra$add = F3(
 				return A7(_justinmimbs$elm_date_extra$Date_Extra$fromParts, y, m, d + (n * 7), hh, mm, ss, ms);
 		}
 	});
+var _justinmimbs$elm_date_extra$Date_Extra$rangeHelp = F5(
+	function (result, interval, step, start, date) {
+		rangeHelp:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(
+				_elm_lang$core$Date$toTime(date),
+				_elm_lang$core$Date$toTime(start)) < 0) {
+				return result;
+			} else {
+				var _v4 = {ctor: '::', _0: date, _1: result},
+					_v5 = interval,
+					_v6 = step,
+					_v7 = start,
+					_v8 = A3(_justinmimbs$elm_date_extra$Date_Extra$add, interval, step, date);
+				result = _v4;
+				interval = _v5;
+				step = _v6;
+				start = _v7;
+				date = _v8;
+				continue rangeHelp;
+			}
+		}
+	});
 var _justinmimbs$elm_date_extra$Date_Extra$fromCalendarDate = F3(
 	function (y, m, d) {
 		return _justinmimbs$elm_date_extra$Date_Extra$fromOffsetTime(
@@ -16679,15 +13236,15 @@ var _justinmimbs$elm_date_extra$Date_Extra$fromCalendarDate = F3(
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$floor = F2(
 	function (interval, date) {
-		var _p10 = _justinmimbs$elm_date_extra$Date_Extra$toParts(date);
-		var y = _p10._0;
-		var m = _p10._1;
-		var d = _p10._2;
-		var hh = _p10._3;
-		var mm = _p10._4;
-		var ss = _p10._5;
-		var _p11 = interval;
-		switch (_p11.ctor) {
+		var _p9 = _justinmimbs$elm_date_extra$Date_Extra$toParts(date);
+		var y = _p9._0;
+		var m = _p9._1;
+		var d = _p9._2;
+		var hh = _p9._3;
+		var mm = _p9._4;
+		var ss = _p9._5;
+		var _p10 = interval;
+		switch (_p10.ctor) {
 			case 'Millisecond':
 				return date;
 			case 'Second':
@@ -16768,38 +13325,32 @@ var _justinmimbs$elm_date_extra$Date_Extra$ceiling = F2(
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$range = F4(
 	function (interval, step, start, end) {
-		var next = function (date) {
-			return (_elm_lang$core$Native_Utils.cmp(
-				_elm_lang$core$Date$toTime(date),
-				_elm_lang$core$Date$toTime(end)) > -1) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
-				{
-					ctor: '_Tuple2',
-					_0: date,
-					_1: A3(
-						_justinmimbs$elm_date_extra$Date_Extra$add,
-						interval,
-						A2(_elm_lang$core$Basics$max, 1, step),
-						date)
-				});
-		};
-		return A2(
-			_justinmimbs$elm_date_extra$Date_Extra$unfold,
-			next,
-			A2(_justinmimbs$elm_date_extra$Date_Extra$ceiling, interval, start));
+		var stepBack = _elm_lang$core$Basics$negate(
+			A2(_elm_lang$core$Basics$max, 1, step));
+		return A5(
+			_justinmimbs$elm_date_extra$Date_Extra$rangeHelp,
+			{ctor: '[]'},
+			interval,
+			stepBack,
+			start,
+			A2(
+				_justinmimbs$elm_date_extra$Date_Extra$ceiling,
+				interval,
+				A3(_justinmimbs$elm_date_extra$Date_Extra$add, interval, stepBack, end)));
 	});
-var _justinmimbs$elm_date_extra$Date_Extra$fromIsoString = function (_p12) {
+var _justinmimbs$elm_date_extra$Date_Extra$fromIsoString = function (_p11) {
 	return A2(
 		_elm_lang$core$Maybe$map,
 		_justinmimbs$elm_date_extra$Date_Extra$fromOffsetTime,
-		_justinmimbs$elm_date_extra$Date_Internal_Parse$offsetTimeFromIsoString(_p12));
+		_justinmimbs$elm_date_extra$Date_Internal_Parse$offsetTimeFromIsoString(_p11));
 };
 var _justinmimbs$elm_date_extra$Date_Extra$fromSpec = F3(
-	function (_p15, _p14, _p13) {
-		var _p16 = _p15;
-		var _p17 = _p14;
-		var _p18 = _p13;
+	function (_p14, _p13, _p12) {
+		var _p15 = _p14;
+		var _p16 = _p13;
+		var _p17 = _p12;
 		return _justinmimbs$elm_date_extra$Date_Extra$fromOffsetTime(
-			{ctor: '_Tuple2', _0: _p16._0, _1: _p18._0 + _p17._0});
+			{ctor: '_Tuple2', _0: _p15._0, _1: _p17._0 + _p16._0});
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$Offset = function (a) {
 	return {ctor: 'Offset', _0: a};
@@ -16854,8 +13405,8 @@ var _justinmimbs$elm_date_extra$Date_Extra$diff = F3(
 	function (interval, date1, date2) {
 		var diffMS = _elm_lang$core$Basics$floor(
 			_elm_lang$core$Date$toTime(date2) - _elm_lang$core$Date$toTime(date1));
-		var _p19 = interval;
-		switch (_p19.ctor) {
+		var _p18 = interval;
+		switch (_p18.ctor) {
 			case 'Millisecond':
 				return diffMS;
 			case 'Second':
@@ -16875,12 +13426,12 @@ var _justinmimbs$elm_date_extra$Date_Extra$diff = F3(
 			case 'Week':
 				return (A3(_justinmimbs$elm_date_extra$Date_Extra$diff, _justinmimbs$elm_date_extra$Date_Extra$Day, date1, date2) / 7) | 0;
 			default:
-				var _p20 = _p19;
+				var _p19 = _p18;
 				return (A3(
 					_justinmimbs$elm_date_extra$Date_Extra$diff,
 					_justinmimbs$elm_date_extra$Date_Extra$Day,
-					A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p20, date1),
-					A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p20, date2)) / 7) | 0;
+					A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p19, date1),
+					A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p19, date2)) / 7) | 0;
 		}
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$Hour = {ctor: 'Hour'};
@@ -16889,8 +13440,8 @@ var _justinmimbs$elm_date_extra$Date_Extra$equalBy = F3(
 	function (interval, date1, date2) {
 		equalBy:
 		while (true) {
-			var _p21 = interval;
-			switch (_p21.ctor) {
+			var _p20 = interval;
+			switch (_p20.ctor) {
 				case 'Millisecond':
 					return _elm_lang$core$Native_Utils.eq(
 						_elm_lang$core$Date$toTime(date1),
@@ -16930,13 +13481,13 @@ var _justinmimbs$elm_date_extra$Date_Extra$equalBy = F3(
 						_justinmimbs$elm_date_extra$Date_Extra$weekYear(date1),
 						_justinmimbs$elm_date_extra$Date_Extra$weekYear(date2));
 				default:
-					var _p22 = _p21;
-					var _v11 = _justinmimbs$elm_date_extra$Date_Extra$Day,
-						_v12 = A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p22, date1),
-						_v13 = A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p22, date2);
-					interval = _v11;
-					date1 = _v12;
-					date2 = _v13;
+					var _p21 = _p20;
+					var _v15 = _justinmimbs$elm_date_extra$Date_Extra$Day,
+						_v16 = A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p21, date1),
+						_v17 = A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p21, date2);
+					interval = _v15;
+					date1 = _v16;
+					date2 = _v17;
 					continue equalBy;
 			}
 		}
@@ -17012,38 +13563,48 @@ var _krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 	}
 };
 var _krisajenkins$remotedata$RemoteData$asCmd = _elm_lang$core$Task$attempt(_krisajenkins$remotedata$RemoteData$fromResult);
+var _krisajenkins$remotedata$RemoteData$sendRequest = _elm_lang$http$Http$send(_krisajenkins$remotedata$RemoteData$fromResult);
+var _krisajenkins$remotedata$RemoteData$fromTask = function (_p7) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		function (_p8) {
+			return _elm_lang$core$Task$succeed(
+				_krisajenkins$remotedata$RemoteData$Failure(_p8));
+		},
+		A2(_elm_lang$core$Task$map, _krisajenkins$remotedata$RemoteData$Success, _p7));
+};
 var _krisajenkins$remotedata$RemoteData$Loading = {ctor: 'Loading'};
 var _krisajenkins$remotedata$RemoteData$NotAsked = {ctor: 'NotAsked'};
 var _krisajenkins$remotedata$RemoteData$map = F2(
 	function (f, data) {
-		var _p7 = data;
-		switch (_p7.ctor) {
+		var _p9 = data;
+		switch (_p9.ctor) {
 			case 'Success':
 				return _krisajenkins$remotedata$RemoteData$Success(
-					f(_p7._0));
+					f(_p9._0));
 			case 'Loading':
 				return _krisajenkins$remotedata$RemoteData$Loading;
 			case 'NotAsked':
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 			default:
-				return _krisajenkins$remotedata$RemoteData$Failure(_p7._0);
+				return _krisajenkins$remotedata$RemoteData$Failure(_p9._0);
 		}
 	});
-var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p8) {
+var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p10) {
 	return A2(
 		_krisajenkins$remotedata$RemoteData$withDefault,
 		_elm_lang$core$Maybe$Nothing,
-		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p8));
+		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p10));
 };
 var _krisajenkins$remotedata$RemoteData$mapError = F2(
 	function (f, data) {
-		var _p9 = data;
-		switch (_p9.ctor) {
+		var _p11 = data;
+		switch (_p11.ctor) {
 			case 'Success':
-				return _krisajenkins$remotedata$RemoteData$Success(_p9._0);
+				return _krisajenkins$remotedata$RemoteData$Success(_p11._0);
 			case 'Failure':
 				return _krisajenkins$remotedata$RemoteData$Failure(
-					f(_p9._0));
+					f(_p11._0));
 			case 'Loading':
 				return _krisajenkins$remotedata$RemoteData$Loading;
 			default:
@@ -17052,14 +13613,14 @@ var _krisajenkins$remotedata$RemoteData$mapError = F2(
 	});
 var _krisajenkins$remotedata$RemoteData$mapBoth = F3(
 	function (successFn, errorFn, data) {
-		var _p10 = data;
-		switch (_p10.ctor) {
+		var _p12 = data;
+		switch (_p12.ctor) {
 			case 'Success':
 				return _krisajenkins$remotedata$RemoteData$Success(
-					successFn(_p10._0));
+					successFn(_p12._0));
 			case 'Failure':
 				return _krisajenkins$remotedata$RemoteData$Failure(
-					errorFn(_p10._0));
+					errorFn(_p12._0));
 			case 'Loading':
 				return _krisajenkins$remotedata$RemoteData$Loading;
 			default:
@@ -17068,12 +13629,12 @@ var _krisajenkins$remotedata$RemoteData$mapBoth = F3(
 	});
 var _krisajenkins$remotedata$RemoteData$andThen = F2(
 	function (f, data) {
-		var _p11 = data;
-		switch (_p11.ctor) {
+		var _p13 = data;
+		switch (_p13.ctor) {
 			case 'Success':
-				return f(_p11._0);
+				return f(_p13._0);
 			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(_p11._0);
+				return _krisajenkins$remotedata$RemoteData$Failure(_p13._0);
 			case 'NotAsked':
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 			default:
@@ -17082,61 +13643,34 @@ var _krisajenkins$remotedata$RemoteData$andThen = F2(
 	});
 var _krisajenkins$remotedata$RemoteData$andMap = F2(
 	function (wrappedValue, wrappedFunction) {
-		var _p12 = {ctor: '_Tuple2', _0: wrappedFunction, _1: wrappedValue};
-		_v11_5:
-		do {
-			_v11_4:
-			do {
-				_v11_3:
-				do {
-					_v11_2:
-					do {
-						switch (_p12._0.ctor) {
-							case 'Success':
-								switch (_p12._1.ctor) {
-									case 'Success':
-										return _krisajenkins$remotedata$RemoteData$Success(
-											_p12._0._0(_p12._1._0));
-									case 'Failure':
-										break _v11_2;
-									case 'Loading':
-										break _v11_4;
-									default:
-										return _krisajenkins$remotedata$RemoteData$NotAsked;
-								}
-							case 'Failure':
-								return _krisajenkins$remotedata$RemoteData$Failure(_p12._0._0);
-							case 'Loading':
-								switch (_p12._1.ctor) {
-									case 'Failure':
-										break _v11_2;
-									case 'Loading':
-										break _v11_3;
-									case 'NotAsked':
-										break _v11_3;
-									default:
-										break _v11_3;
-								}
-							default:
-								switch (_p12._1.ctor) {
-									case 'Failure':
-										break _v11_2;
-									case 'Loading':
-										break _v11_4;
-									case 'NotAsked':
-										break _v11_5;
-									default:
-										break _v11_5;
-								}
-						}
-					} while(false);
-					return _krisajenkins$remotedata$RemoteData$Failure(_p12._1._0);
-				} while(false);
+		var _p14 = wrappedFunction;
+		switch (_p14.ctor) {
+			case 'Success':
+				return A2(_krisajenkins$remotedata$RemoteData$map, _p14._0, wrappedValue);
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(_p14._0);
+			case 'Loading':
 				return _krisajenkins$remotedata$RemoteData$Loading;
-			} while(false);
-			return _krisajenkins$remotedata$RemoteData$Loading;
-		} while(false);
-		return _krisajenkins$remotedata$RemoteData$NotAsked;
+			default:
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$map2 = F3(
+	function (f, a, b) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			b,
+			A2(_krisajenkins$remotedata$RemoteData$map, f, a));
+	});
+var _krisajenkins$remotedata$RemoteData$map3 = F4(
+	function (f, a, b, c) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			c,
+			A2(
+				_krisajenkins$remotedata$RemoteData$andMap,
+				b,
+				A2(_krisajenkins$remotedata$RemoteData$map, f, a)));
 	});
 var _krisajenkins$remotedata$RemoteData$append = F2(
 	function (a, b) {
@@ -17153,12 +13687,12 @@ var _krisajenkins$remotedata$RemoteData$append = F2(
 	});
 var _krisajenkins$remotedata$RemoteData$update = F2(
 	function (f, remoteData) {
-		var _p13 = remoteData;
-		switch (_p13.ctor) {
+		var _p15 = remoteData;
+		switch (_p15.ctor) {
 			case 'Success':
-				var _p14 = f(_p13._0);
-				var first = _p14._0;
-				var second = _p14._1;
+				var _p16 = f(_p15._0);
+				var first = _p16._0;
+				var second = _p16._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _krisajenkins$remotedata$RemoteData$Success(first),
@@ -17171,7 +13705,7 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 			default:
 				return {
 					ctor: '_Tuple2',
-					_0: _krisajenkins$remotedata$RemoteData$Failure(_p13._0),
+					_0: _krisajenkins$remotedata$RemoteData$Failure(_p15._0),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -17367,6 +13901,7388 @@ var _lukewestby$elm_http_builder$HttpBuilder$withQueryParams = function (queryPa
 					queryParams: A2(_elm_lang$core$Basics_ops['++'], details.queryParams, queryParams)
 				});
 		});
+};
+
+var _pablohirafuji$elm_qrcode$QRCode_Error$InputLengthOverflow = {ctor: 'InputLengthOverflow'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$PolynomialMod = {ctor: 'PolynomialMod'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$PolynomialMultiply = {ctor: 'PolynomialMultiply'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$LogTableException = function (a) {
+	return {ctor: 'LogTableException', _0: a};
+};
+var _pablohirafuji$elm_qrcode$QRCode_Error$InvalidBinaryConversion = {ctor: 'InvalidBinaryConversion'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$InvalidUTF8Char = {ctor: 'InvalidUTF8Char'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$InvalidAlphanumericChar = {ctor: 'InvalidAlphanumericChar'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$InvalidNumericChar = {ctor: 'InvalidNumericChar'};
+var _pablohirafuji$elm_qrcode$QRCode_Error$AlignmentPatternNotFound = {ctor: 'AlignmentPatternNotFound'};
+
+var _pablohirafuji$elm_qrcode$QRCode_Helpers$transpose = function (ll) {
+	transpose:
+	while (true) {
+		var _p0 = ll;
+		if (_p0.ctor === '[]') {
+			return {ctor: '[]'};
+		} else {
+			if (_p0._0.ctor === '[]') {
+				var _v1 = _p0._1;
+				ll = _v1;
+				continue transpose;
+			} else {
+				var _p1 = _p0._1;
+				var tails = A2(_elm_lang$core$List$filterMap, _elm_lang$core$List$tail, _p1);
+				var heads = A2(_elm_lang$core$List$filterMap, _elm_lang$core$List$head, _p1);
+				return {
+					ctor: '::',
+					_0: {ctor: '::', _0: _p0._0._0, _1: heads},
+					_1: _pablohirafuji$elm_qrcode$QRCode_Helpers$transpose(
+						{ctor: '::', _0: _p0._0._1, _1: tails})
+				};
+			}
+		}
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Helpers$breaker = F3(
+	function (width, string, acc) {
+		breaker:
+		while (true) {
+			var _p2 = string;
+			if (_p2 === '') {
+				return _elm_lang$core$List$reverse(acc);
+			} else {
+				var _v3 = width,
+					_v4 = A2(_elm_lang$core$String$dropLeft, width, string),
+					_v5 = {
+					ctor: '::',
+					_0: A3(_elm_lang$core$String$slice, 0, width, string),
+					_1: acc
+				};
+				width = _v3;
+				string = _v4;
+				acc = _v5;
+				continue breaker;
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Helpers$breakStr = F2(
+	function (width, string) {
+		return (_elm_lang$core$Native_Utils.eq(width, 0) || _elm_lang$core$Native_Utils.eq(string, '')) ? {
+			ctor: '::',
+			_0: string,
+			_1: {ctor: '[]'}
+		} : A3(
+			_pablohirafuji$elm_qrcode$QRCode_Helpers$breaker,
+			width,
+			string,
+			{ctor: '[]'});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Helpers$listResult = F3(
+	function (fun, listb, lista) {
+		var _p3 = lista;
+		if (_p3.ctor === '::') {
+			return A2(
+				_elm_lang$core$Result$andThen,
+				A2(
+					_elm_lang$core$Basics$flip,
+					_pablohirafuji$elm_qrcode$QRCode_Helpers$listResult(fun),
+					_p3._1),
+				A2(
+					_elm_lang$core$Result$map,
+					function (r) {
+						return {ctor: '::', _0: r, _1: listb};
+					},
+					fun(_p3._0)));
+		} else {
+			return _elm_lang$core$Result$Ok(
+				_elm_lang$core$List$reverse(listb));
+		}
+	});
+
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$blockByteCapacity = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0 * _p1._1;
+};
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$byteCapacity = F2(
+	function (group1, maybeGroup2) {
+		var _p2 = maybeGroup2;
+		if (_p2.ctor === 'Just') {
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$blockByteCapacity(group1) + _pablohirafuji$elm_qrcode$QRCode_GroupInfo$blockByteCapacity(_p2._0);
+		} else {
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$blockByteCapacity(group1);
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$newGroupInfo = function (_p3) {
+	var _p4 = _p3;
+	var _p6 = _p4._3;
+	var _p5 = _p4._2;
+	return {
+		version: _p4._0,
+		ecPerBlock: _p4._1,
+		group1: _p5,
+		maybeGroup2: _p6,
+		capacity: A2(_pablohirafuji$elm_qrcode$QRCode_GroupInfo$byteCapacity, _p5, _p6) * 8
+	};
+};
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataL = A2(
+	_elm_lang$core$List$map,
+	_pablohirafuji$elm_qrcode$QRCode_GroupInfo$newGroupInfo,
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple4',
+			_0: 1,
+			_1: 7,
+			_2: {ctor: '_Tuple2', _0: 1, _1: 19},
+			_3: _elm_lang$core$Maybe$Nothing
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple4',
+				_0: 2,
+				_1: 10,
+				_2: {ctor: '_Tuple2', _0: 1, _1: 34},
+				_3: _elm_lang$core$Maybe$Nothing
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple4',
+					_0: 3,
+					_1: 15,
+					_2: {ctor: '_Tuple2', _0: 1, _1: 55},
+					_3: _elm_lang$core$Maybe$Nothing
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple4',
+						_0: 4,
+						_1: 20,
+						_2: {ctor: '_Tuple2', _0: 1, _1: 80},
+						_3: _elm_lang$core$Maybe$Nothing
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple4',
+							_0: 5,
+							_1: 26,
+							_2: {ctor: '_Tuple2', _0: 1, _1: 108},
+							_3: _elm_lang$core$Maybe$Nothing
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple4',
+								_0: 6,
+								_1: 18,
+								_2: {ctor: '_Tuple2', _0: 2, _1: 68},
+								_3: _elm_lang$core$Maybe$Nothing
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple4',
+									_0: 7,
+									_1: 20,
+									_2: {ctor: '_Tuple2', _0: 2, _1: 78},
+									_3: _elm_lang$core$Maybe$Nothing
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple4',
+										_0: 8,
+										_1: 24,
+										_2: {ctor: '_Tuple2', _0: 2, _1: 97},
+										_3: _elm_lang$core$Maybe$Nothing
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple4',
+											_0: 9,
+											_1: 30,
+											_2: {ctor: '_Tuple2', _0: 2, _1: 116},
+											_3: _elm_lang$core$Maybe$Nothing
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple4',
+												_0: 10,
+												_1: 18,
+												_2: {ctor: '_Tuple2', _0: 2, _1: 68},
+												_3: _elm_lang$core$Maybe$Just(
+													{ctor: '_Tuple2', _0: 2, _1: 69})
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple4',
+													_0: 11,
+													_1: 20,
+													_2: {ctor: '_Tuple2', _0: 4, _1: 81},
+													_3: _elm_lang$core$Maybe$Nothing
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple4',
+														_0: 12,
+														_1: 24,
+														_2: {ctor: '_Tuple2', _0: 2, _1: 92},
+														_3: _elm_lang$core$Maybe$Just(
+															{ctor: '_Tuple2', _0: 2, _1: 93})
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple4',
+															_0: 13,
+															_1: 26,
+															_2: {ctor: '_Tuple2', _0: 4, _1: 107},
+															_3: _elm_lang$core$Maybe$Nothing
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple4',
+																_0: 14,
+																_1: 30,
+																_2: {ctor: '_Tuple2', _0: 3, _1: 115},
+																_3: _elm_lang$core$Maybe$Just(
+																	{ctor: '_Tuple2', _0: 1, _1: 116})
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple4',
+																	_0: 15,
+																	_1: 22,
+																	_2: {ctor: '_Tuple2', _0: 5, _1: 87},
+																	_3: _elm_lang$core$Maybe$Just(
+																		{ctor: '_Tuple2', _0: 1, _1: 88})
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple4',
+																		_0: 16,
+																		_1: 24,
+																		_2: {ctor: '_Tuple2', _0: 5, _1: 98},
+																		_3: _elm_lang$core$Maybe$Just(
+																			{ctor: '_Tuple2', _0: 1, _1: 99})
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple4',
+																			_0: 17,
+																			_1: 28,
+																			_2: {ctor: '_Tuple2', _0: 1, _1: 107},
+																			_3: _elm_lang$core$Maybe$Just(
+																				{ctor: '_Tuple2', _0: 5, _1: 108})
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple4',
+																				_0: 18,
+																				_1: 30,
+																				_2: {ctor: '_Tuple2', _0: 5, _1: 120},
+																				_3: _elm_lang$core$Maybe$Just(
+																					{ctor: '_Tuple2', _0: 1, _1: 121})
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '_Tuple4',
+																					_0: 19,
+																					_1: 28,
+																					_2: {ctor: '_Tuple2', _0: 3, _1: 113},
+																					_3: _elm_lang$core$Maybe$Just(
+																						{ctor: '_Tuple2', _0: 4, _1: 114})
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '_Tuple4',
+																						_0: 20,
+																						_1: 28,
+																						_2: {ctor: '_Tuple2', _0: 3, _1: 107},
+																						_3: _elm_lang$core$Maybe$Just(
+																							{ctor: '_Tuple2', _0: 5, _1: 108})
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '_Tuple4',
+																							_0: 21,
+																							_1: 28,
+																							_2: {ctor: '_Tuple2', _0: 4, _1: 116},
+																							_3: _elm_lang$core$Maybe$Just(
+																								{ctor: '_Tuple2', _0: 4, _1: 117})
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '_Tuple4',
+																								_0: 22,
+																								_1: 28,
+																								_2: {ctor: '_Tuple2', _0: 2, _1: 111},
+																								_3: _elm_lang$core$Maybe$Just(
+																									{ctor: '_Tuple2', _0: 7, _1: 112})
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '_Tuple4',
+																									_0: 23,
+																									_1: 30,
+																									_2: {ctor: '_Tuple2', _0: 4, _1: 121},
+																									_3: _elm_lang$core$Maybe$Just(
+																										{ctor: '_Tuple2', _0: 5, _1: 122})
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '_Tuple4',
+																										_0: 24,
+																										_1: 30,
+																										_2: {ctor: '_Tuple2', _0: 6, _1: 117},
+																										_3: _elm_lang$core$Maybe$Just(
+																											{ctor: '_Tuple2', _0: 4, _1: 118})
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '_Tuple4',
+																											_0: 25,
+																											_1: 26,
+																											_2: {ctor: '_Tuple2', _0: 8, _1: 106},
+																											_3: _elm_lang$core$Maybe$Just(
+																												{ctor: '_Tuple2', _0: 4, _1: 107})
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '_Tuple4',
+																												_0: 26,
+																												_1: 28,
+																												_2: {ctor: '_Tuple2', _0: 10, _1: 114},
+																												_3: _elm_lang$core$Maybe$Just(
+																													{ctor: '_Tuple2', _0: 2, _1: 115})
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '_Tuple4',
+																													_0: 27,
+																													_1: 30,
+																													_2: {ctor: '_Tuple2', _0: 8, _1: 122},
+																													_3: _elm_lang$core$Maybe$Just(
+																														{ctor: '_Tuple2', _0: 4, _1: 123})
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '_Tuple4',
+																														_0: 28,
+																														_1: 30,
+																														_2: {ctor: '_Tuple2', _0: 3, _1: 117},
+																														_3: _elm_lang$core$Maybe$Just(
+																															{ctor: '_Tuple2', _0: 10, _1: 118})
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '_Tuple4',
+																															_0: 29,
+																															_1: 30,
+																															_2: {ctor: '_Tuple2', _0: 7, _1: 116},
+																															_3: _elm_lang$core$Maybe$Just(
+																																{ctor: '_Tuple2', _0: 7, _1: 117})
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '_Tuple4',
+																																_0: 30,
+																																_1: 30,
+																																_2: {ctor: '_Tuple2', _0: 5, _1: 115},
+																																_3: _elm_lang$core$Maybe$Just(
+																																	{ctor: '_Tuple2', _0: 10, _1: 116})
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '_Tuple4',
+																																	_0: 31,
+																																	_1: 30,
+																																	_2: {ctor: '_Tuple2', _0: 13, _1: 115},
+																																	_3: _elm_lang$core$Maybe$Just(
+																																		{ctor: '_Tuple2', _0: 3, _1: 116})
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '_Tuple4',
+																																		_0: 32,
+																																		_1: 30,
+																																		_2: {ctor: '_Tuple2', _0: 17, _1: 115},
+																																		_3: _elm_lang$core$Maybe$Nothing
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '_Tuple4',
+																																			_0: 33,
+																																			_1: 30,
+																																			_2: {ctor: '_Tuple2', _0: 17, _1: 115},
+																																			_3: _elm_lang$core$Maybe$Just(
+																																				{ctor: '_Tuple2', _0: 1, _1: 116})
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '_Tuple4',
+																																				_0: 34,
+																																				_1: 30,
+																																				_2: {ctor: '_Tuple2', _0: 13, _1: 115},
+																																				_3: _elm_lang$core$Maybe$Just(
+																																					{ctor: '_Tuple2', _0: 6, _1: 116})
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '_Tuple4',
+																																					_0: 35,
+																																					_1: 30,
+																																					_2: {ctor: '_Tuple2', _0: 12, _1: 121},
+																																					_3: _elm_lang$core$Maybe$Just(
+																																						{ctor: '_Tuple2', _0: 7, _1: 122})
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '_Tuple4',
+																																						_0: 36,
+																																						_1: 30,
+																																						_2: {ctor: '_Tuple2', _0: 6, _1: 121},
+																																						_3: _elm_lang$core$Maybe$Just(
+																																							{ctor: '_Tuple2', _0: 14, _1: 122})
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '_Tuple4',
+																																							_0: 37,
+																																							_1: 30,
+																																							_2: {ctor: '_Tuple2', _0: 17, _1: 122},
+																																							_3: _elm_lang$core$Maybe$Just(
+																																								{ctor: '_Tuple2', _0: 4, _1: 123})
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '_Tuple4',
+																																								_0: 38,
+																																								_1: 30,
+																																								_2: {ctor: '_Tuple2', _0: 4, _1: 122},
+																																								_3: _elm_lang$core$Maybe$Just(
+																																									{ctor: '_Tuple2', _0: 18, _1: 123})
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '_Tuple4',
+																																									_0: 39,
+																																									_1: 30,
+																																									_2: {ctor: '_Tuple2', _0: 20, _1: 117},
+																																									_3: _elm_lang$core$Maybe$Just(
+																																										{ctor: '_Tuple2', _0: 4, _1: 118})
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '_Tuple4',
+																																										_0: 40,
+																																										_1: 30,
+																																										_2: {ctor: '_Tuple2', _0: 19, _1: 118},
+																																										_3: _elm_lang$core$Maybe$Just(
+																																											{ctor: '_Tuple2', _0: 6, _1: 119})
+																																									},
+																																									_1: {ctor: '[]'}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataM = A2(
+	_elm_lang$core$List$map,
+	_pablohirafuji$elm_qrcode$QRCode_GroupInfo$newGroupInfo,
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple4',
+			_0: 1,
+			_1: 10,
+			_2: {ctor: '_Tuple2', _0: 1, _1: 16},
+			_3: _elm_lang$core$Maybe$Nothing
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple4',
+				_0: 2,
+				_1: 16,
+				_2: {ctor: '_Tuple2', _0: 1, _1: 28},
+				_3: _elm_lang$core$Maybe$Nothing
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple4',
+					_0: 3,
+					_1: 26,
+					_2: {ctor: '_Tuple2', _0: 1, _1: 44},
+					_3: _elm_lang$core$Maybe$Nothing
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple4',
+						_0: 4,
+						_1: 18,
+						_2: {ctor: '_Tuple2', _0: 2, _1: 32},
+						_3: _elm_lang$core$Maybe$Nothing
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple4',
+							_0: 5,
+							_1: 24,
+							_2: {ctor: '_Tuple2', _0: 2, _1: 43},
+							_3: _elm_lang$core$Maybe$Nothing
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple4',
+								_0: 6,
+								_1: 16,
+								_2: {ctor: '_Tuple2', _0: 4, _1: 27},
+								_3: _elm_lang$core$Maybe$Nothing
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple4',
+									_0: 7,
+									_1: 18,
+									_2: {ctor: '_Tuple2', _0: 4, _1: 31},
+									_3: _elm_lang$core$Maybe$Nothing
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple4',
+										_0: 8,
+										_1: 22,
+										_2: {ctor: '_Tuple2', _0: 2, _1: 38},
+										_3: _elm_lang$core$Maybe$Just(
+											{ctor: '_Tuple2', _0: 2, _1: 39})
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple4',
+											_0: 9,
+											_1: 22,
+											_2: {ctor: '_Tuple2', _0: 3, _1: 36},
+											_3: _elm_lang$core$Maybe$Just(
+												{ctor: '_Tuple2', _0: 2, _1: 37})
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple4',
+												_0: 10,
+												_1: 26,
+												_2: {ctor: '_Tuple2', _0: 4, _1: 43},
+												_3: _elm_lang$core$Maybe$Just(
+													{ctor: '_Tuple2', _0: 1, _1: 44})
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple4',
+													_0: 11,
+													_1: 30,
+													_2: {ctor: '_Tuple2', _0: 1, _1: 50},
+													_3: _elm_lang$core$Maybe$Just(
+														{ctor: '_Tuple2', _0: 4, _1: 51})
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple4',
+														_0: 12,
+														_1: 22,
+														_2: {ctor: '_Tuple2', _0: 6, _1: 36},
+														_3: _elm_lang$core$Maybe$Just(
+															{ctor: '_Tuple2', _0: 2, _1: 37})
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple4',
+															_0: 13,
+															_1: 22,
+															_2: {ctor: '_Tuple2', _0: 8, _1: 37},
+															_3: _elm_lang$core$Maybe$Just(
+																{ctor: '_Tuple2', _0: 1, _1: 38})
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple4',
+																_0: 14,
+																_1: 24,
+																_2: {ctor: '_Tuple2', _0: 4, _1: 40},
+																_3: _elm_lang$core$Maybe$Just(
+																	{ctor: '_Tuple2', _0: 5, _1: 41})
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple4',
+																	_0: 15,
+																	_1: 24,
+																	_2: {ctor: '_Tuple2', _0: 5, _1: 41},
+																	_3: _elm_lang$core$Maybe$Just(
+																		{ctor: '_Tuple2', _0: 5, _1: 42})
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple4',
+																		_0: 16,
+																		_1: 28,
+																		_2: {ctor: '_Tuple2', _0: 7, _1: 45},
+																		_3: _elm_lang$core$Maybe$Just(
+																			{ctor: '_Tuple2', _0: 3, _1: 46})
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple4',
+																			_0: 17,
+																			_1: 28,
+																			_2: {ctor: '_Tuple2', _0: 10, _1: 46},
+																			_3: _elm_lang$core$Maybe$Just(
+																				{ctor: '_Tuple2', _0: 1, _1: 47})
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple4',
+																				_0: 18,
+																				_1: 26,
+																				_2: {ctor: '_Tuple2', _0: 9, _1: 43},
+																				_3: _elm_lang$core$Maybe$Just(
+																					{ctor: '_Tuple2', _0: 4, _1: 44})
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '_Tuple4',
+																					_0: 19,
+																					_1: 26,
+																					_2: {ctor: '_Tuple2', _0: 3, _1: 44},
+																					_3: _elm_lang$core$Maybe$Just(
+																						{ctor: '_Tuple2', _0: 11, _1: 45})
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '_Tuple4',
+																						_0: 20,
+																						_1: 26,
+																						_2: {ctor: '_Tuple2', _0: 3, _1: 41},
+																						_3: _elm_lang$core$Maybe$Just(
+																							{ctor: '_Tuple2', _0: 13, _1: 42})
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '_Tuple4',
+																							_0: 21,
+																							_1: 26,
+																							_2: {ctor: '_Tuple2', _0: 17, _1: 42},
+																							_3: _elm_lang$core$Maybe$Nothing
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '_Tuple4',
+																								_0: 22,
+																								_1: 28,
+																								_2: {ctor: '_Tuple2', _0: 17, _1: 46},
+																								_3: _elm_lang$core$Maybe$Nothing
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '_Tuple4',
+																									_0: 23,
+																									_1: 28,
+																									_2: {ctor: '_Tuple2', _0: 4, _1: 47},
+																									_3: _elm_lang$core$Maybe$Just(
+																										{ctor: '_Tuple2', _0: 14, _1: 48})
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '_Tuple4',
+																										_0: 24,
+																										_1: 28,
+																										_2: {ctor: '_Tuple2', _0: 6, _1: 45},
+																										_3: _elm_lang$core$Maybe$Just(
+																											{ctor: '_Tuple2', _0: 14, _1: 46})
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '_Tuple4',
+																											_0: 25,
+																											_1: 28,
+																											_2: {ctor: '_Tuple2', _0: 8, _1: 47},
+																											_3: _elm_lang$core$Maybe$Just(
+																												{ctor: '_Tuple2', _0: 13, _1: 48})
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '_Tuple4',
+																												_0: 26,
+																												_1: 28,
+																												_2: {ctor: '_Tuple2', _0: 19, _1: 46},
+																												_3: _elm_lang$core$Maybe$Just(
+																													{ctor: '_Tuple2', _0: 4, _1: 47})
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '_Tuple4',
+																													_0: 27,
+																													_1: 28,
+																													_2: {ctor: '_Tuple2', _0: 22, _1: 45},
+																													_3: _elm_lang$core$Maybe$Just(
+																														{ctor: '_Tuple2', _0: 3, _1: 46})
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '_Tuple4',
+																														_0: 28,
+																														_1: 28,
+																														_2: {ctor: '_Tuple2', _0: 3, _1: 45},
+																														_3: _elm_lang$core$Maybe$Just(
+																															{ctor: '_Tuple2', _0: 23, _1: 46})
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '_Tuple4',
+																															_0: 29,
+																															_1: 28,
+																															_2: {ctor: '_Tuple2', _0: 21, _1: 45},
+																															_3: _elm_lang$core$Maybe$Just(
+																																{ctor: '_Tuple2', _0: 7, _1: 46})
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '_Tuple4',
+																																_0: 30,
+																																_1: 28,
+																																_2: {ctor: '_Tuple2', _0: 19, _1: 47},
+																																_3: _elm_lang$core$Maybe$Just(
+																																	{ctor: '_Tuple2', _0: 10, _1: 48})
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '_Tuple4',
+																																	_0: 31,
+																																	_1: 28,
+																																	_2: {ctor: '_Tuple2', _0: 2, _1: 46},
+																																	_3: _elm_lang$core$Maybe$Just(
+																																		{ctor: '_Tuple2', _0: 29, _1: 47})
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '_Tuple4',
+																																		_0: 32,
+																																		_1: 28,
+																																		_2: {ctor: '_Tuple2', _0: 10, _1: 46},
+																																		_3: _elm_lang$core$Maybe$Just(
+																																			{ctor: '_Tuple2', _0: 23, _1: 47})
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '_Tuple4',
+																																			_0: 33,
+																																			_1: 28,
+																																			_2: {ctor: '_Tuple2', _0: 14, _1: 46},
+																																			_3: _elm_lang$core$Maybe$Just(
+																																				{ctor: '_Tuple2', _0: 21, _1: 47})
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '_Tuple4',
+																																				_0: 34,
+																																				_1: 28,
+																																				_2: {ctor: '_Tuple2', _0: 14, _1: 46},
+																																				_3: _elm_lang$core$Maybe$Just(
+																																					{ctor: '_Tuple2', _0: 23, _1: 47})
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '_Tuple4',
+																																					_0: 35,
+																																					_1: 28,
+																																					_2: {ctor: '_Tuple2', _0: 12, _1: 47},
+																																					_3: _elm_lang$core$Maybe$Just(
+																																						{ctor: '_Tuple2', _0: 26, _1: 48})
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '_Tuple4',
+																																						_0: 36,
+																																						_1: 28,
+																																						_2: {ctor: '_Tuple2', _0: 6, _1: 47},
+																																						_3: _elm_lang$core$Maybe$Just(
+																																							{ctor: '_Tuple2', _0: 34, _1: 48})
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '_Tuple4',
+																																							_0: 37,
+																																							_1: 28,
+																																							_2: {ctor: '_Tuple2', _0: 29, _1: 46},
+																																							_3: _elm_lang$core$Maybe$Just(
+																																								{ctor: '_Tuple2', _0: 14, _1: 47})
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '_Tuple4',
+																																								_0: 38,
+																																								_1: 28,
+																																								_2: {ctor: '_Tuple2', _0: 13, _1: 46},
+																																								_3: _elm_lang$core$Maybe$Just(
+																																									{ctor: '_Tuple2', _0: 32, _1: 47})
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '_Tuple4',
+																																									_0: 39,
+																																									_1: 28,
+																																									_2: {ctor: '_Tuple2', _0: 40, _1: 47},
+																																									_3: _elm_lang$core$Maybe$Just(
+																																										{ctor: '_Tuple2', _0: 7, _1: 48})
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '_Tuple4',
+																																										_0: 40,
+																																										_1: 28,
+																																										_2: {ctor: '_Tuple2', _0: 18, _1: 47},
+																																										_3: _elm_lang$core$Maybe$Just(
+																																											{ctor: '_Tuple2', _0: 31, _1: 48})
+																																									},
+																																									_1: {ctor: '[]'}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataQ = A2(
+	_elm_lang$core$List$map,
+	_pablohirafuji$elm_qrcode$QRCode_GroupInfo$newGroupInfo,
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple4',
+			_0: 1,
+			_1: 13,
+			_2: {ctor: '_Tuple2', _0: 1, _1: 13},
+			_3: _elm_lang$core$Maybe$Nothing
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple4',
+				_0: 2,
+				_1: 22,
+				_2: {ctor: '_Tuple2', _0: 1, _1: 22},
+				_3: _elm_lang$core$Maybe$Nothing
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple4',
+					_0: 3,
+					_1: 18,
+					_2: {ctor: '_Tuple2', _0: 2, _1: 17},
+					_3: _elm_lang$core$Maybe$Nothing
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple4',
+						_0: 4,
+						_1: 26,
+						_2: {ctor: '_Tuple2', _0: 2, _1: 24},
+						_3: _elm_lang$core$Maybe$Nothing
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple4',
+							_0: 5,
+							_1: 18,
+							_2: {ctor: '_Tuple2', _0: 2, _1: 15},
+							_3: _elm_lang$core$Maybe$Just(
+								{ctor: '_Tuple2', _0: 2, _1: 16})
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple4',
+								_0: 6,
+								_1: 24,
+								_2: {ctor: '_Tuple2', _0: 4, _1: 19},
+								_3: _elm_lang$core$Maybe$Nothing
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple4',
+									_0: 7,
+									_1: 18,
+									_2: {ctor: '_Tuple2', _0: 2, _1: 14},
+									_3: _elm_lang$core$Maybe$Just(
+										{ctor: '_Tuple2', _0: 4, _1: 15})
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple4',
+										_0: 8,
+										_1: 22,
+										_2: {ctor: '_Tuple2', _0: 4, _1: 18},
+										_3: _elm_lang$core$Maybe$Just(
+											{ctor: '_Tuple2', _0: 2, _1: 19})
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple4',
+											_0: 9,
+											_1: 20,
+											_2: {ctor: '_Tuple2', _0: 4, _1: 16},
+											_3: _elm_lang$core$Maybe$Just(
+												{ctor: '_Tuple2', _0: 4, _1: 17})
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple4',
+												_0: 10,
+												_1: 24,
+												_2: {ctor: '_Tuple2', _0: 6, _1: 19},
+												_3: _elm_lang$core$Maybe$Just(
+													{ctor: '_Tuple2', _0: 2, _1: 20})
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple4',
+													_0: 11,
+													_1: 28,
+													_2: {ctor: '_Tuple2', _0: 4, _1: 22},
+													_3: _elm_lang$core$Maybe$Just(
+														{ctor: '_Tuple2', _0: 4, _1: 23})
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple4',
+														_0: 12,
+														_1: 26,
+														_2: {ctor: '_Tuple2', _0: 4, _1: 20},
+														_3: _elm_lang$core$Maybe$Just(
+															{ctor: '_Tuple2', _0: 6, _1: 21})
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple4',
+															_0: 13,
+															_1: 24,
+															_2: {ctor: '_Tuple2', _0: 8, _1: 20},
+															_3: _elm_lang$core$Maybe$Just(
+																{ctor: '_Tuple2', _0: 4, _1: 21})
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple4',
+																_0: 14,
+																_1: 20,
+																_2: {ctor: '_Tuple2', _0: 11, _1: 16},
+																_3: _elm_lang$core$Maybe$Just(
+																	{ctor: '_Tuple2', _0: 5, _1: 17})
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple4',
+																	_0: 15,
+																	_1: 30,
+																	_2: {ctor: '_Tuple2', _0: 5, _1: 24},
+																	_3: _elm_lang$core$Maybe$Just(
+																		{ctor: '_Tuple2', _0: 7, _1: 25})
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple4',
+																		_0: 16,
+																		_1: 24,
+																		_2: {ctor: '_Tuple2', _0: 15, _1: 19},
+																		_3: _elm_lang$core$Maybe$Just(
+																			{ctor: '_Tuple2', _0: 2, _1: 20})
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple4',
+																			_0: 17,
+																			_1: 28,
+																			_2: {ctor: '_Tuple2', _0: 1, _1: 22},
+																			_3: _elm_lang$core$Maybe$Just(
+																				{ctor: '_Tuple2', _0: 15, _1: 23})
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple4',
+																				_0: 18,
+																				_1: 28,
+																				_2: {ctor: '_Tuple2', _0: 17, _1: 22},
+																				_3: _elm_lang$core$Maybe$Just(
+																					{ctor: '_Tuple2', _0: 1, _1: 23})
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '_Tuple4',
+																					_0: 19,
+																					_1: 26,
+																					_2: {ctor: '_Tuple2', _0: 17, _1: 21},
+																					_3: _elm_lang$core$Maybe$Just(
+																						{ctor: '_Tuple2', _0: 4, _1: 22})
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '_Tuple4',
+																						_0: 20,
+																						_1: 30,
+																						_2: {ctor: '_Tuple2', _0: 15, _1: 24},
+																						_3: _elm_lang$core$Maybe$Just(
+																							{ctor: '_Tuple2', _0: 5, _1: 25})
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '_Tuple4',
+																							_0: 21,
+																							_1: 28,
+																							_2: {ctor: '_Tuple2', _0: 17, _1: 22},
+																							_3: _elm_lang$core$Maybe$Just(
+																								{ctor: '_Tuple2', _0: 6, _1: 23})
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '_Tuple4',
+																								_0: 22,
+																								_1: 30,
+																								_2: {ctor: '_Tuple2', _0: 7, _1: 24},
+																								_3: _elm_lang$core$Maybe$Just(
+																									{ctor: '_Tuple2', _0: 16, _1: 25})
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '_Tuple4',
+																									_0: 23,
+																									_1: 30,
+																									_2: {ctor: '_Tuple2', _0: 11, _1: 24},
+																									_3: _elm_lang$core$Maybe$Just(
+																										{ctor: '_Tuple2', _0: 14, _1: 25})
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '_Tuple4',
+																										_0: 24,
+																										_1: 30,
+																										_2: {ctor: '_Tuple2', _0: 11, _1: 24},
+																										_3: _elm_lang$core$Maybe$Just(
+																											{ctor: '_Tuple2', _0: 16, _1: 25})
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '_Tuple4',
+																											_0: 25,
+																											_1: 30,
+																											_2: {ctor: '_Tuple2', _0: 7, _1: 24},
+																											_3: _elm_lang$core$Maybe$Just(
+																												{ctor: '_Tuple2', _0: 22, _1: 25})
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '_Tuple4',
+																												_0: 26,
+																												_1: 28,
+																												_2: {ctor: '_Tuple2', _0: 28, _1: 22},
+																												_3: _elm_lang$core$Maybe$Just(
+																													{ctor: '_Tuple2', _0: 6, _1: 23})
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '_Tuple4',
+																													_0: 27,
+																													_1: 30,
+																													_2: {ctor: '_Tuple2', _0: 8, _1: 23},
+																													_3: _elm_lang$core$Maybe$Just(
+																														{ctor: '_Tuple2', _0: 26, _1: 24})
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '_Tuple4',
+																														_0: 28,
+																														_1: 30,
+																														_2: {ctor: '_Tuple2', _0: 4, _1: 24},
+																														_3: _elm_lang$core$Maybe$Just(
+																															{ctor: '_Tuple2', _0: 31, _1: 25})
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '_Tuple4',
+																															_0: 29,
+																															_1: 30,
+																															_2: {ctor: '_Tuple2', _0: 1, _1: 23},
+																															_3: _elm_lang$core$Maybe$Just(
+																																{ctor: '_Tuple2', _0: 37, _1: 24})
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '_Tuple4',
+																																_0: 30,
+																																_1: 30,
+																																_2: {ctor: '_Tuple2', _0: 15, _1: 24},
+																																_3: _elm_lang$core$Maybe$Just(
+																																	{ctor: '_Tuple2', _0: 25, _1: 25})
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '_Tuple4',
+																																	_0: 31,
+																																	_1: 30,
+																																	_2: {ctor: '_Tuple2', _0: 42, _1: 24},
+																																	_3: _elm_lang$core$Maybe$Just(
+																																		{ctor: '_Tuple2', _0: 1, _1: 25})
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '_Tuple4',
+																																		_0: 32,
+																																		_1: 30,
+																																		_2: {ctor: '_Tuple2', _0: 10, _1: 24},
+																																		_3: _elm_lang$core$Maybe$Just(
+																																			{ctor: '_Tuple2', _0: 35, _1: 25})
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '_Tuple4',
+																																			_0: 33,
+																																			_1: 30,
+																																			_2: {ctor: '_Tuple2', _0: 29, _1: 24},
+																																			_3: _elm_lang$core$Maybe$Just(
+																																				{ctor: '_Tuple2', _0: 19, _1: 25})
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '_Tuple4',
+																																				_0: 34,
+																																				_1: 30,
+																																				_2: {ctor: '_Tuple2', _0: 44, _1: 24},
+																																				_3: _elm_lang$core$Maybe$Just(
+																																					{ctor: '_Tuple2', _0: 7, _1: 25})
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '_Tuple4',
+																																					_0: 35,
+																																					_1: 30,
+																																					_2: {ctor: '_Tuple2', _0: 39, _1: 24},
+																																					_3: _elm_lang$core$Maybe$Just(
+																																						{ctor: '_Tuple2', _0: 14, _1: 25})
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '_Tuple4',
+																																						_0: 36,
+																																						_1: 30,
+																																						_2: {ctor: '_Tuple2', _0: 46, _1: 24},
+																																						_3: _elm_lang$core$Maybe$Just(
+																																							{ctor: '_Tuple2', _0: 10, _1: 25})
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '_Tuple4',
+																																							_0: 37,
+																																							_1: 30,
+																																							_2: {ctor: '_Tuple2', _0: 49, _1: 24},
+																																							_3: _elm_lang$core$Maybe$Just(
+																																								{ctor: '_Tuple2', _0: 10, _1: 25})
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '_Tuple4',
+																																								_0: 38,
+																																								_1: 30,
+																																								_2: {ctor: '_Tuple2', _0: 48, _1: 24},
+																																								_3: _elm_lang$core$Maybe$Just(
+																																									{ctor: '_Tuple2', _0: 14, _1: 25})
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '_Tuple4',
+																																									_0: 39,
+																																									_1: 30,
+																																									_2: {ctor: '_Tuple2', _0: 43, _1: 24},
+																																									_3: _elm_lang$core$Maybe$Just(
+																																										{ctor: '_Tuple2', _0: 22, _1: 25})
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '_Tuple4',
+																																										_0: 40,
+																																										_1: 30,
+																																										_2: {ctor: '_Tuple2', _0: 34, _1: 24},
+																																										_3: _elm_lang$core$Maybe$Just(
+																																											{ctor: '_Tuple2', _0: 34, _1: 25})
+																																									},
+																																									_1: {ctor: '[]'}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataH = A2(
+	_elm_lang$core$List$map,
+	_pablohirafuji$elm_qrcode$QRCode_GroupInfo$newGroupInfo,
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple4',
+			_0: 1,
+			_1: 17,
+			_2: {ctor: '_Tuple2', _0: 1, _1: 9},
+			_3: _elm_lang$core$Maybe$Nothing
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple4',
+				_0: 2,
+				_1: 28,
+				_2: {ctor: '_Tuple2', _0: 1, _1: 16},
+				_3: _elm_lang$core$Maybe$Nothing
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple4',
+					_0: 3,
+					_1: 22,
+					_2: {ctor: '_Tuple2', _0: 2, _1: 13},
+					_3: _elm_lang$core$Maybe$Nothing
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple4',
+						_0: 4,
+						_1: 16,
+						_2: {ctor: '_Tuple2', _0: 4, _1: 9},
+						_3: _elm_lang$core$Maybe$Nothing
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple4',
+							_0: 5,
+							_1: 22,
+							_2: {ctor: '_Tuple2', _0: 2, _1: 11},
+							_3: _elm_lang$core$Maybe$Just(
+								{ctor: '_Tuple2', _0: 2, _1: 12})
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple4',
+								_0: 6,
+								_1: 28,
+								_2: {ctor: '_Tuple2', _0: 4, _1: 15},
+								_3: _elm_lang$core$Maybe$Nothing
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple4',
+									_0: 7,
+									_1: 26,
+									_2: {ctor: '_Tuple2', _0: 4, _1: 13},
+									_3: _elm_lang$core$Maybe$Just(
+										{ctor: '_Tuple2', _0: 1, _1: 14})
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple4',
+										_0: 8,
+										_1: 26,
+										_2: {ctor: '_Tuple2', _0: 4, _1: 14},
+										_3: _elm_lang$core$Maybe$Just(
+											{ctor: '_Tuple2', _0: 2, _1: 15})
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple4',
+											_0: 9,
+											_1: 24,
+											_2: {ctor: '_Tuple2', _0: 4, _1: 12},
+											_3: _elm_lang$core$Maybe$Just(
+												{ctor: '_Tuple2', _0: 4, _1: 13})
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple4',
+												_0: 10,
+												_1: 28,
+												_2: {ctor: '_Tuple2', _0: 6, _1: 15},
+												_3: _elm_lang$core$Maybe$Just(
+													{ctor: '_Tuple2', _0: 2, _1: 16})
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple4',
+													_0: 11,
+													_1: 24,
+													_2: {ctor: '_Tuple2', _0: 3, _1: 12},
+													_3: _elm_lang$core$Maybe$Just(
+														{ctor: '_Tuple2', _0: 8, _1: 13})
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple4',
+														_0: 12,
+														_1: 28,
+														_2: {ctor: '_Tuple2', _0: 7, _1: 14},
+														_3: _elm_lang$core$Maybe$Just(
+															{ctor: '_Tuple2', _0: 4, _1: 15})
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple4',
+															_0: 13,
+															_1: 22,
+															_2: {ctor: '_Tuple2', _0: 12, _1: 11},
+															_3: _elm_lang$core$Maybe$Just(
+																{ctor: '_Tuple2', _0: 4, _1: 12})
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple4',
+																_0: 14,
+																_1: 24,
+																_2: {ctor: '_Tuple2', _0: 11, _1: 12},
+																_3: _elm_lang$core$Maybe$Just(
+																	{ctor: '_Tuple2', _0: 5, _1: 13})
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple4',
+																	_0: 15,
+																	_1: 24,
+																	_2: {ctor: '_Tuple2', _0: 11, _1: 12},
+																	_3: _elm_lang$core$Maybe$Just(
+																		{ctor: '_Tuple2', _0: 7, _1: 13})
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple4',
+																		_0: 16,
+																		_1: 30,
+																		_2: {ctor: '_Tuple2', _0: 3, _1: 15},
+																		_3: _elm_lang$core$Maybe$Just(
+																			{ctor: '_Tuple2', _0: 13, _1: 16})
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple4',
+																			_0: 17,
+																			_1: 28,
+																			_2: {ctor: '_Tuple2', _0: 2, _1: 14},
+																			_3: _elm_lang$core$Maybe$Just(
+																				{ctor: '_Tuple2', _0: 17, _1: 15})
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple4',
+																				_0: 18,
+																				_1: 28,
+																				_2: {ctor: '_Tuple2', _0: 2, _1: 14},
+																				_3: _elm_lang$core$Maybe$Just(
+																					{ctor: '_Tuple2', _0: 19, _1: 15})
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '_Tuple4',
+																					_0: 19,
+																					_1: 26,
+																					_2: {ctor: '_Tuple2', _0: 9, _1: 13},
+																					_3: _elm_lang$core$Maybe$Just(
+																						{ctor: '_Tuple2', _0: 16, _1: 14})
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '_Tuple4',
+																						_0: 20,
+																						_1: 28,
+																						_2: {ctor: '_Tuple2', _0: 15, _1: 15},
+																						_3: _elm_lang$core$Maybe$Just(
+																							{ctor: '_Tuple2', _0: 10, _1: 16})
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '_Tuple4',
+																							_0: 21,
+																							_1: 30,
+																							_2: {ctor: '_Tuple2', _0: 19, _1: 16},
+																							_3: _elm_lang$core$Maybe$Just(
+																								{ctor: '_Tuple2', _0: 6, _1: 17})
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '_Tuple4',
+																								_0: 22,
+																								_1: 24,
+																								_2: {ctor: '_Tuple2', _0: 34, _1: 13},
+																								_3: _elm_lang$core$Maybe$Nothing
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '_Tuple4',
+																									_0: 23,
+																									_1: 30,
+																									_2: {ctor: '_Tuple2', _0: 16, _1: 15},
+																									_3: _elm_lang$core$Maybe$Just(
+																										{ctor: '_Tuple2', _0: 14, _1: 16})
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '_Tuple4',
+																										_0: 24,
+																										_1: 30,
+																										_2: {ctor: '_Tuple2', _0: 30, _1: 16},
+																										_3: _elm_lang$core$Maybe$Just(
+																											{ctor: '_Tuple2', _0: 2, _1: 17})
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '_Tuple4',
+																											_0: 25,
+																											_1: 30,
+																											_2: {ctor: '_Tuple2', _0: 22, _1: 15},
+																											_3: _elm_lang$core$Maybe$Just(
+																												{ctor: '_Tuple2', _0: 13, _1: 16})
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '_Tuple4',
+																												_0: 26,
+																												_1: 30,
+																												_2: {ctor: '_Tuple2', _0: 33, _1: 16},
+																												_3: _elm_lang$core$Maybe$Just(
+																													{ctor: '_Tuple2', _0: 4, _1: 17})
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '_Tuple4',
+																													_0: 27,
+																													_1: 30,
+																													_2: {ctor: '_Tuple2', _0: 12, _1: 15},
+																													_3: _elm_lang$core$Maybe$Just(
+																														{ctor: '_Tuple2', _0: 28, _1: 16})
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '_Tuple4',
+																														_0: 28,
+																														_1: 30,
+																														_2: {ctor: '_Tuple2', _0: 11, _1: 15},
+																														_3: _elm_lang$core$Maybe$Just(
+																															{ctor: '_Tuple2', _0: 31, _1: 16})
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '_Tuple4',
+																															_0: 29,
+																															_1: 30,
+																															_2: {ctor: '_Tuple2', _0: 19, _1: 15},
+																															_3: _elm_lang$core$Maybe$Just(
+																																{ctor: '_Tuple2', _0: 26, _1: 16})
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '_Tuple4',
+																																_0: 30,
+																																_1: 30,
+																																_2: {ctor: '_Tuple2', _0: 23, _1: 15},
+																																_3: _elm_lang$core$Maybe$Just(
+																																	{ctor: '_Tuple2', _0: 25, _1: 16})
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '_Tuple4',
+																																	_0: 31,
+																																	_1: 30,
+																																	_2: {ctor: '_Tuple2', _0: 23, _1: 15},
+																																	_3: _elm_lang$core$Maybe$Just(
+																																		{ctor: '_Tuple2', _0: 28, _1: 16})
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '_Tuple4',
+																																		_0: 32,
+																																		_1: 30,
+																																		_2: {ctor: '_Tuple2', _0: 19, _1: 15},
+																																		_3: _elm_lang$core$Maybe$Just(
+																																			{ctor: '_Tuple2', _0: 35, _1: 16})
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '_Tuple4',
+																																			_0: 33,
+																																			_1: 30,
+																																			_2: {ctor: '_Tuple2', _0: 11, _1: 15},
+																																			_3: _elm_lang$core$Maybe$Just(
+																																				{ctor: '_Tuple2', _0: 46, _1: 16})
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '_Tuple4',
+																																				_0: 34,
+																																				_1: 30,
+																																				_2: {ctor: '_Tuple2', _0: 59, _1: 16},
+																																				_3: _elm_lang$core$Maybe$Just(
+																																					{ctor: '_Tuple2', _0: 1, _1: 17})
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '_Tuple4',
+																																					_0: 35,
+																																					_1: 30,
+																																					_2: {ctor: '_Tuple2', _0: 22, _1: 15},
+																																					_3: _elm_lang$core$Maybe$Just(
+																																						{ctor: '_Tuple2', _0: 41, _1: 16})
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '_Tuple4',
+																																						_0: 36,
+																																						_1: 30,
+																																						_2: {ctor: '_Tuple2', _0: 2, _1: 15},
+																																						_3: _elm_lang$core$Maybe$Just(
+																																							{ctor: '_Tuple2', _0: 64, _1: 16})
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '_Tuple4',
+																																							_0: 37,
+																																							_1: 30,
+																																							_2: {ctor: '_Tuple2', _0: 24, _1: 15},
+																																							_3: _elm_lang$core$Maybe$Just(
+																																								{ctor: '_Tuple2', _0: 46, _1: 16})
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '_Tuple4',
+																																								_0: 38,
+																																								_1: 30,
+																																								_2: {ctor: '_Tuple2', _0: 42, _1: 15},
+																																								_3: _elm_lang$core$Maybe$Just(
+																																									{ctor: '_Tuple2', _0: 32, _1: 16})
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '_Tuple4',
+																																									_0: 39,
+																																									_1: 30,
+																																									_2: {ctor: '_Tuple2', _0: 10, _1: 15},
+																																									_3: _elm_lang$core$Maybe$Just(
+																																										{ctor: '_Tuple2', _0: 67, _1: 16})
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '_Tuple4',
+																																										_0: 40,
+																																										_1: 30,
+																																										_2: {ctor: '_Tuple2', _0: 20, _1: 15},
+																																										_3: _elm_lang$core$Maybe$Just(
+																																											{ctor: '_Tuple2', _0: 61, _1: 16})
+																																									},
+																																									_1: {ctor: '[]'}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$GroupInfo = F5(
+	function (a, b, c, d, e) {
+		return {version: a, ecPerBlock: b, group1: c, maybeGroup2: d, capacity: e};
+	});
+
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$logTable = _elm_lang$core$Array$fromList(
+	{
+		ctor: '::',
+		_0: 0,
+		_1: {
+			ctor: '::',
+			_0: 1,
+			_1: {
+				ctor: '::',
+				_0: 25,
+				_1: {
+					ctor: '::',
+					_0: 2,
+					_1: {
+						ctor: '::',
+						_0: 50,
+						_1: {
+							ctor: '::',
+							_0: 26,
+							_1: {
+								ctor: '::',
+								_0: 198,
+								_1: {
+									ctor: '::',
+									_0: 3,
+									_1: {
+										ctor: '::',
+										_0: 223,
+										_1: {
+											ctor: '::',
+											_0: 51,
+											_1: {
+												ctor: '::',
+												_0: 238,
+												_1: {
+													ctor: '::',
+													_0: 27,
+													_1: {
+														ctor: '::',
+														_0: 104,
+														_1: {
+															ctor: '::',
+															_0: 199,
+															_1: {
+																ctor: '::',
+																_0: 75,
+																_1: {
+																	ctor: '::',
+																	_0: 4,
+																	_1: {
+																		ctor: '::',
+																		_0: 100,
+																		_1: {
+																			ctor: '::',
+																			_0: 224,
+																			_1: {
+																				ctor: '::',
+																				_0: 14,
+																				_1: {
+																					ctor: '::',
+																					_0: 52,
+																					_1: {
+																						ctor: '::',
+																						_0: 141,
+																						_1: {
+																							ctor: '::',
+																							_0: 239,
+																							_1: {
+																								ctor: '::',
+																								_0: 129,
+																								_1: {
+																									ctor: '::',
+																									_0: 28,
+																									_1: {
+																										ctor: '::',
+																										_0: 193,
+																										_1: {
+																											ctor: '::',
+																											_0: 105,
+																											_1: {
+																												ctor: '::',
+																												_0: 248,
+																												_1: {
+																													ctor: '::',
+																													_0: 200,
+																													_1: {
+																														ctor: '::',
+																														_0: 8,
+																														_1: {
+																															ctor: '::',
+																															_0: 76,
+																															_1: {
+																																ctor: '::',
+																																_0: 113,
+																																_1: {
+																																	ctor: '::',
+																																	_0: 5,
+																																	_1: {
+																																		ctor: '::',
+																																		_0: 138,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 101,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 47,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 225,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 36,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 15,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 33,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 53,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 147,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 142,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 218,
+																																												_1: {
+																																													ctor: '::',
+																																													_0: 240,
+																																													_1: {
+																																														ctor: '::',
+																																														_0: 18,
+																																														_1: {
+																																															ctor: '::',
+																																															_0: 130,
+																																															_1: {
+																																																ctor: '::',
+																																																_0: 69,
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: 29,
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: 181,
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: 194,
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: 125,
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: 106,
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: 39,
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: 249,
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: 185,
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: 201,
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: 154,
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: 9,
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: 120,
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: 77,
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: 228,
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: 114,
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: 166,
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: 6,
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: 191,
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: 139,
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: 98,
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: 102,
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: 221,
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: 48,
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: 253,
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: 226,
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: 152,
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: 37,
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: 179,
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: 16,
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: 145,
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: 34,
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: 136,
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: 54,
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: 208,
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: 148,
+																																																																																			_1: {
+																																																																																				ctor: '::',
+																																																																																				_0: 206,
+																																																																																				_1: {
+																																																																																					ctor: '::',
+																																																																																					_0: 143,
+																																																																																					_1: {
+																																																																																						ctor: '::',
+																																																																																						_0: 150,
+																																																																																						_1: {
+																																																																																							ctor: '::',
+																																																																																							_0: 219,
+																																																																																							_1: {
+																																																																																								ctor: '::',
+																																																																																								_0: 189,
+																																																																																								_1: {
+																																																																																									ctor: '::',
+																																																																																									_0: 241,
+																																																																																									_1: {
+																																																																																										ctor: '::',
+																																																																																										_0: 210,
+																																																																																										_1: {
+																																																																																											ctor: '::',
+																																																																																											_0: 19,
+																																																																																											_1: {
+																																																																																												ctor: '::',
+																																																																																												_0: 92,
+																																																																																												_1: {
+																																																																																													ctor: '::',
+																																																																																													_0: 131,
+																																																																																													_1: {
+																																																																																														ctor: '::',
+																																																																																														_0: 56,
+																																																																																														_1: {
+																																																																																															ctor: '::',
+																																																																																															_0: 70,
+																																																																																															_1: {
+																																																																																																ctor: '::',
+																																																																																																_0: 64,
+																																																																																																_1: {
+																																																																																																	ctor: '::',
+																																																																																																	_0: 30,
+																																																																																																	_1: {
+																																																																																																		ctor: '::',
+																																																																																																		_0: 66,
+																																																																																																		_1: {
+																																																																																																			ctor: '::',
+																																																																																																			_0: 182,
+																																																																																																			_1: {
+																																																																																																				ctor: '::',
+																																																																																																				_0: 163,
+																																																																																																				_1: {
+																																																																																																					ctor: '::',
+																																																																																																					_0: 195,
+																																																																																																					_1: {
+																																																																																																						ctor: '::',
+																																																																																																						_0: 72,
+																																																																																																						_1: {
+																																																																																																							ctor: '::',
+																																																																																																							_0: 126,
+																																																																																																							_1: {
+																																																																																																								ctor: '::',
+																																																																																																								_0: 110,
+																																																																																																								_1: {
+																																																																																																									ctor: '::',
+																																																																																																									_0: 107,
+																																																																																																									_1: {
+																																																																																																										ctor: '::',
+																																																																																																										_0: 58,
+																																																																																																										_1: {
+																																																																																																											ctor: '::',
+																																																																																																											_0: 40,
+																																																																																																											_1: {
+																																																																																																												ctor: '::',
+																																																																																																												_0: 84,
+																																																																																																												_1: {
+																																																																																																													ctor: '::',
+																																																																																																													_0: 250,
+																																																																																																													_1: {
+																																																																																																														ctor: '::',
+																																																																																																														_0: 133,
+																																																																																																														_1: {
+																																																																																																															ctor: '::',
+																																																																																																															_0: 186,
+																																																																																																															_1: {
+																																																																																																																ctor: '::',
+																																																																																																																_0: 61,
+																																																																																																																_1: {
+																																																																																																																	ctor: '::',
+																																																																																																																	_0: 202,
+																																																																																																																	_1: {
+																																																																																																																		ctor: '::',
+																																																																																																																		_0: 94,
+																																																																																																																		_1: {
+																																																																																																																			ctor: '::',
+																																																																																																																			_0: 155,
+																																																																																																																			_1: {
+																																																																																																																				ctor: '::',
+																																																																																																																				_0: 159,
+																																																																																																																				_1: {
+																																																																																																																					ctor: '::',
+																																																																																																																					_0: 10,
+																																																																																																																					_1: {
+																																																																																																																						ctor: '::',
+																																																																																																																						_0: 21,
+																																																																																																																						_1: {
+																																																																																																																							ctor: '::',
+																																																																																																																							_0: 121,
+																																																																																																																							_1: {
+																																																																																																																								ctor: '::',
+																																																																																																																								_0: 43,
+																																																																																																																								_1: {
+																																																																																																																									ctor: '::',
+																																																																																																																									_0: 78,
+																																																																																																																									_1: {
+																																																																																																																										ctor: '::',
+																																																																																																																										_0: 212,
+																																																																																																																										_1: {
+																																																																																																																											ctor: '::',
+																																																																																																																											_0: 229,
+																																																																																																																											_1: {
+																																																																																																																												ctor: '::',
+																																																																																																																												_0: 172,
+																																																																																																																												_1: {
+																																																																																																																													ctor: '::',
+																																																																																																																													_0: 115,
+																																																																																																																													_1: {
+																																																																																																																														ctor: '::',
+																																																																																																																														_0: 243,
+																																																																																																																														_1: {
+																																																																																																																															ctor: '::',
+																																																																																																																															_0: 167,
+																																																																																																																															_1: {
+																																																																																																																																ctor: '::',
+																																																																																																																																_0: 87,
+																																																																																																																																_1: {
+																																																																																																																																	ctor: '::',
+																																																																																																																																	_0: 7,
+																																																																																																																																	_1: {
+																																																																																																																																		ctor: '::',
+																																																																																																																																		_0: 112,
+																																																																																																																																		_1: {
+																																																																																																																																			ctor: '::',
+																																																																																																																																			_0: 192,
+																																																																																																																																			_1: {
+																																																																																																																																				ctor: '::',
+																																																																																																																																				_0: 247,
+																																																																																																																																				_1: {
+																																																																																																																																					ctor: '::',
+																																																																																																																																					_0: 140,
+																																																																																																																																					_1: {
+																																																																																																																																						ctor: '::',
+																																																																																																																																						_0: 128,
+																																																																																																																																						_1: {
+																																																																																																																																							ctor: '::',
+																																																																																																																																							_0: 99,
+																																																																																																																																							_1: {
+																																																																																																																																								ctor: '::',
+																																																																																																																																								_0: 13,
+																																																																																																																																								_1: {
+																																																																																																																																									ctor: '::',
+																																																																																																																																									_0: 103,
+																																																																																																																																									_1: {
+																																																																																																																																										ctor: '::',
+																																																																																																																																										_0: 74,
+																																																																																																																																										_1: {
+																																																																																																																																											ctor: '::',
+																																																																																																																																											_0: 222,
+																																																																																																																																											_1: {
+																																																																																																																																												ctor: '::',
+																																																																																																																																												_0: 237,
+																																																																																																																																												_1: {
+																																																																																																																																													ctor: '::',
+																																																																																																																																													_0: 49,
+																																																																																																																																													_1: {
+																																																																																																																																														ctor: '::',
+																																																																																																																																														_0: 197,
+																																																																																																																																														_1: {
+																																																																																																																																															ctor: '::',
+																																																																																																																																															_0: 254,
+																																																																																																																																															_1: {
+																																																																																																																																																ctor: '::',
+																																																																																																																																																_0: 24,
+																																																																																																																																																_1: {
+																																																																																																																																																	ctor: '::',
+																																																																																																																																																	_0: 227,
+																																																																																																																																																	_1: {
+																																																																																																																																																		ctor: '::',
+																																																																																																																																																		_0: 165,
+																																																																																																																																																		_1: {
+																																																																																																																																																			ctor: '::',
+																																																																																																																																																			_0: 153,
+																																																																																																																																																			_1: {
+																																																																																																																																																				ctor: '::',
+																																																																																																																																																				_0: 119,
+																																																																																																																																																				_1: {
+																																																																																																																																																					ctor: '::',
+																																																																																																																																																					_0: 38,
+																																																																																																																																																					_1: {
+																																																																																																																																																						ctor: '::',
+																																																																																																																																																						_0: 184,
+																																																																																																																																																						_1: {
+																																																																																																																																																							ctor: '::',
+																																																																																																																																																							_0: 180,
+																																																																																																																																																							_1: {
+																																																																																																																																																								ctor: '::',
+																																																																																																																																																								_0: 124,
+																																																																																																																																																								_1: {
+																																																																																																																																																									ctor: '::',
+																																																																																																																																																									_0: 17,
+																																																																																																																																																									_1: {
+																																																																																																																																																										ctor: '::',
+																																																																																																																																																										_0: 68,
+																																																																																																																																																										_1: {
+																																																																																																																																																											ctor: '::',
+																																																																																																																																																											_0: 146,
+																																																																																																																																																											_1: {
+																																																																																																																																																												ctor: '::',
+																																																																																																																																																												_0: 217,
+																																																																																																																																																												_1: {
+																																																																																																																																																													ctor: '::',
+																																																																																																																																																													_0: 35,
+																																																																																																																																																													_1: {
+																																																																																																																																																														ctor: '::',
+																																																																																																																																																														_0: 32,
+																																																																																																																																																														_1: {
+																																																																																																																																																															ctor: '::',
+																																																																																																																																																															_0: 137,
+																																																																																																																																																															_1: {
+																																																																																																																																																																ctor: '::',
+																																																																																																																																																																_0: 46,
+																																																																																																																																																																_1: {
+																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																	_0: 55,
+																																																																																																																																																																	_1: {
+																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																		_0: 63,
+																																																																																																																																																																		_1: {
+																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																			_0: 209,
+																																																																																																																																																																			_1: {
+																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																				_0: 91,
+																																																																																																																																																																				_1: {
+																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																					_0: 149,
+																																																																																																																																																																					_1: {
+																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																						_0: 188,
+																																																																																																																																																																						_1: {
+																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																							_0: 207,
+																																																																																																																																																																							_1: {
+																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																								_0: 205,
+																																																																																																																																																																								_1: {
+																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																									_0: 144,
+																																																																																																																																																																									_1: {
+																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																										_0: 135,
+																																																																																																																																																																										_1: {
+																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																											_0: 151,
+																																																																																																																																																																											_1: {
+																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																												_0: 178,
+																																																																																																																																																																												_1: {
+																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																													_0: 220,
+																																																																																																																																																																													_1: {
+																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																														_0: 252,
+																																																																																																																																																																														_1: {
+																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																															_0: 190,
+																																																																																																																																																																															_1: {
+																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																_0: 97,
+																																																																																																																																																																																_1: {
+																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																	_0: 242,
+																																																																																																																																																																																	_1: {
+																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																		_0: 86,
+																																																																																																																																																																																		_1: {
+																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																			_0: 211,
+																																																																																																																																																																																			_1: {
+																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																				_0: 171,
+																																																																																																																																																																																				_1: {
+																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																					_0: 20,
+																																																																																																																																																																																					_1: {
+																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																						_0: 42,
+																																																																																																																																																																																						_1: {
+																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																							_0: 93,
+																																																																																																																																																																																							_1: {
+																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																								_0: 158,
+																																																																																																																																																																																								_1: {
+																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																									_0: 132,
+																																																																																																																																																																																									_1: {
+																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																										_0: 60,
+																																																																																																																																																																																										_1: {
+																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																											_0: 57,
+																																																																																																																																																																																											_1: {
+																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																												_0: 83,
+																																																																																																																																																																																												_1: {
+																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																													_0: 71,
+																																																																																																																																																																																													_1: {
+																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																														_0: 109,
+																																																																																																																																																																																														_1: {
+																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																															_0: 65,
+																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																_0: 162,
+																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																	_0: 31,
+																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																		_0: 45,
+																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																			_0: 67,
+																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																				_0: 216,
+																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																					_0: 183,
+																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																						_0: 123,
+																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																							_0: 164,
+																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																								_0: 118,
+																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																									_0: 196,
+																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																										_0: 23,
+																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																											_0: 73,
+																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																												_0: 236,
+																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																													_0: 127,
+																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																														_0: 12,
+																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																															_0: 111,
+																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																_0: 246,
+																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																	_0: 108,
+																																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																																		_0: 161,
+																																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																																			_0: 59,
+																																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																																				_0: 82,
+																																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																																					_0: 41,
+																																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																																						_0: 157,
+																																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																																							_0: 85,
+																																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																																								_0: 170,
+																																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																																									_0: 251,
+																																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																																										_0: 96,
+																																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																																											_0: 134,
+																																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																																												_0: 177,
+																																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																																													_0: 187,
+																																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																																														_0: 204,
+																																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																																															_0: 62,
+																																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																																_0: 90,
+																																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																																	_0: 203,
+																																																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																																																		_0: 89,
+																																																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																																																			_0: 95,
+																																																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																																																				_0: 176,
+																																																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																																																					_0: 156,
+																																																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																																																						_0: 169,
+																																																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																																																							_0: 160,
+																																																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																																																								_0: 81,
+																																																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																																																									_0: 11,
+																																																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																																																										_0: 245,
+																																																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																																																											_0: 22,
+																																																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																																																												_0: 235,
+																																																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																																																													_0: 122,
+																																																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																																																														_0: 117,
+																																																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																																																															_0: 44,
+																																																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																																																_0: 215,
+																																																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																																																	_0: 79,
+																																																																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																																																																		_0: 174,
+																																																																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																																																																			_0: 213,
+																																																																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																																																																				_0: 233,
+																																																																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																																																																					_0: 230,
+																																																																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																																																																						_0: 231,
+																																																																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																																																																							_0: 173,
+																																																																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																																																																								_0: 232,
+																																																																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																																																																									_0: 116,
+																																																																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																																																																										_0: 214,
+																																																																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																																																																											_0: 244,
+																																																																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																																																																												_0: 234,
+																																																																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																																																																													_0: 168,
+																																																																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																																																																														_0: 80,
+																																																																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																																																																															_0: 88,
+																																																																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																																																																_0: 175,
+																																																																																																																																																																																																																																																																_1: {ctor: '[]'}
+																																																																																																																																																																																																																																																															}
+																																																																																																																																																																																																																																																														}
+																																																																																																																																																																																																																																																													}
+																																																																																																																																																																																																																																																												}
+																																																																																																																																																																																																																																																											}
+																																																																																																																																																																																																																																																										}
+																																																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																																																								}
+																																																																																																																																																																																																																																																							}
+																																																																																																																																																																																																																																																						}
+																																																																																																																																																																																																																																																					}
+																																																																																																																																																																																																																																																				}
+																																																																																																																																																																																																																																																			}
+																																																																																																																																																																																																																																																		}
+																																																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																																																}
+																																																																																																																																																																																																																																															}
+																																																																																																																																																																																																																																														}
+																																																																																																																																																																																																																																													}
+																																																																																																																																																																																																																																												}
+																																																																																																																																																																																																																																											}
+																																																																																																																																																																																																																																										}
+																																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																																								}
+																																																																																																																																																																																																																																							}
+																																																																																																																																																																																																																																						}
+																																																																																																																																																																																																																																					}
+																																																																																																																																																																																																																																				}
+																																																																																																																																																																																																																																			}
+																																																																																																																																																																																																																																		}
+																																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																																}
+																																																																																																																																																																																																																															}
+																																																																																																																																																																																																																														}
+																																																																																																																																																																																																																													}
+																																																																																																																																																																																																																												}
+																																																																																																																																																																																																																											}
+																																																																																																																																																																																																																										}
+																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																								}
+																																																																																																																																																																																																																							}
+																																																																																																																																																																																																																						}
+																																																																																																																																																																																																																					}
+																																																																																																																																																																																																																				}
+																																																																																																																																																																																																																			}
+																																																																																																																																																																																																																		}
+																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																}
+																																																																																																																																																																																																															}
+																																																																																																																																																																																																														}
+																																																																																																																																																																																																													}
+																																																																																																																																																																																																												}
+																																																																																																																																																																																																											}
+																																																																																																																																																																																																										}
+																																																																																																																																																																																																									}
+																																																																																																																																																																																																								}
+																																																																																																																																																																																																							}
+																																																																																																																																																																																																						}
+																																																																																																																																																																																																					}
+																																																																																																																																																																																																				}
+																																																																																																																																																																																																			}
+																																																																																																																																																																																																		}
+																																																																																																																																																																																																	}
+																																																																																																																																																																																																}
+																																																																																																																																																																																															}
+																																																																																																																																																																																														}
+																																																																																																																																																																																													}
+																																																																																																																																																																																												}
+																																																																																																																																																																																											}
+																																																																																																																																																																																										}
+																																																																																																																																																																																									}
+																																																																																																																																																																																								}
+																																																																																																																																																																																							}
+																																																																																																																																																																																						}
+																																																																																																																																																																																					}
+																																																																																																																																																																																				}
+																																																																																																																																																																																			}
+																																																																																																																																																																																		}
+																																																																																																																																																																																	}
+																																																																																																																																																																																}
+																																																																																																																																																																															}
+																																																																																																																																																																														}
+																																																																																																																																																																													}
+																																																																																																																																																																												}
+																																																																																																																																																																											}
+																																																																																																																																																																										}
+																																																																																																																																																																									}
+																																																																																																																																																																								}
+																																																																																																																																																																							}
+																																																																																																																																																																						}
+																																																																																																																																																																					}
+																																																																																																																																																																				}
+																																																																																																																																																																			}
+																																																																																																																																																																		}
+																																																																																																																																																																	}
+																																																																																																																																																																}
+																																																																																																																																																															}
+																																																																																																																																																														}
+																																																																																																																																																													}
+																																																																																																																																																												}
+																																																																																																																																																											}
+																																																																																																																																																										}
+																																																																																																																																																									}
+																																																																																																																																																								}
+																																																																																																																																																							}
+																																																																																																																																																						}
+																																																																																																																																																					}
+																																																																																																																																																				}
+																																																																																																																																																			}
+																																																																																																																																																		}
+																																																																																																																																																	}
+																																																																																																																																																}
+																																																																																																																																															}
+																																																																																																																																														}
+																																																																																																																																													}
+																																																																																																																																												}
+																																																																																																																																											}
+																																																																																																																																										}
+																																																																																																																																									}
+																																																																																																																																								}
+																																																																																																																																							}
+																																																																																																																																						}
+																																																																																																																																					}
+																																																																																																																																				}
+																																																																																																																																			}
+																																																																																																																																		}
+																																																																																																																																	}
+																																																																																																																																}
+																																																																																																																															}
+																																																																																																																														}
+																																																																																																																													}
+																																																																																																																												}
+																																																																																																																											}
+																																																																																																																										}
+																																																																																																																									}
+																																																																																																																								}
+																																																																																																																							}
+																																																																																																																						}
+																																																																																																																					}
+																																																																																																																				}
+																																																																																																																			}
+																																																																																																																		}
+																																																																																																																	}
+																																																																																																																}
+																																																																																																															}
+																																																																																																														}
+																																																																																																													}
+																																																																																																												}
+																																																																																																											}
+																																																																																																										}
+																																																																																																									}
+																																																																																																								}
+																																																																																																							}
+																																																																																																						}
+																																																																																																					}
+																																																																																																				}
+																																																																																																			}
+																																																																																																		}
+																																																																																																	}
+																																																																																																}
+																																																																																															}
+																																																																																														}
+																																																																																													}
+																																																																																												}
+																																																																																											}
+																																																																																										}
+																																																																																									}
+																																																																																								}
+																																																																																							}
+																																																																																						}
+																																																																																					}
+																																																																																				}
+																																																																																			}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getLog = function (index) {
+	return (_elm_lang$core$Native_Utils.cmp(index, 1) < 0) ? _elm_lang$core$Result$Err(
+		_pablohirafuji$elm_qrcode$QRCode_Error$LogTableException(index)) : A2(
+		_elm_lang$core$Result$fromMaybe,
+		_pablohirafuji$elm_qrcode$QRCode_Error$LogTableException(index),
+		A2(_elm_lang$core$Array$get, index - 1, _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$logTable));
+};
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$expTable = _elm_lang$core$Array$fromList(
+	{
+		ctor: '::',
+		_0: 1,
+		_1: {
+			ctor: '::',
+			_0: 2,
+			_1: {
+				ctor: '::',
+				_0: 4,
+				_1: {
+					ctor: '::',
+					_0: 8,
+					_1: {
+						ctor: '::',
+						_0: 16,
+						_1: {
+							ctor: '::',
+							_0: 32,
+							_1: {
+								ctor: '::',
+								_0: 64,
+								_1: {
+									ctor: '::',
+									_0: 128,
+									_1: {
+										ctor: '::',
+										_0: 29,
+										_1: {
+											ctor: '::',
+											_0: 58,
+											_1: {
+												ctor: '::',
+												_0: 116,
+												_1: {
+													ctor: '::',
+													_0: 232,
+													_1: {
+														ctor: '::',
+														_0: 205,
+														_1: {
+															ctor: '::',
+															_0: 135,
+															_1: {
+																ctor: '::',
+																_0: 19,
+																_1: {
+																	ctor: '::',
+																	_0: 38,
+																	_1: {
+																		ctor: '::',
+																		_0: 76,
+																		_1: {
+																			ctor: '::',
+																			_0: 152,
+																			_1: {
+																				ctor: '::',
+																				_0: 45,
+																				_1: {
+																					ctor: '::',
+																					_0: 90,
+																					_1: {
+																						ctor: '::',
+																						_0: 180,
+																						_1: {
+																							ctor: '::',
+																							_0: 117,
+																							_1: {
+																								ctor: '::',
+																								_0: 234,
+																								_1: {
+																									ctor: '::',
+																									_0: 201,
+																									_1: {
+																										ctor: '::',
+																										_0: 143,
+																										_1: {
+																											ctor: '::',
+																											_0: 3,
+																											_1: {
+																												ctor: '::',
+																												_0: 6,
+																												_1: {
+																													ctor: '::',
+																													_0: 12,
+																													_1: {
+																														ctor: '::',
+																														_0: 24,
+																														_1: {
+																															ctor: '::',
+																															_0: 48,
+																															_1: {
+																																ctor: '::',
+																																_0: 96,
+																																_1: {
+																																	ctor: '::',
+																																	_0: 192,
+																																	_1: {
+																																		ctor: '::',
+																																		_0: 157,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 39,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 78,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 156,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 37,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 74,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 148,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 53,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 106,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 212,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 181,
+																																												_1: {
+																																													ctor: '::',
+																																													_0: 119,
+																																													_1: {
+																																														ctor: '::',
+																																														_0: 238,
+																																														_1: {
+																																															ctor: '::',
+																																															_0: 193,
+																																															_1: {
+																																																ctor: '::',
+																																																_0: 159,
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: 35,
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: 70,
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: 140,
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: 5,
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: 10,
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: 20,
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: 40,
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: 80,
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: 160,
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: 93,
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: 186,
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: 105,
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: 210,
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: 185,
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: 111,
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: 222,
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: 161,
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: 95,
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: 190,
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: 97,
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: 194,
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: 153,
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: 47,
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: 94,
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: 188,
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: 101,
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: 202,
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: 137,
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: 15,
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: 30,
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: 60,
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: 120,
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: 240,
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: 253,
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: 231,
+																																																																																			_1: {
+																																																																																				ctor: '::',
+																																																																																				_0: 211,
+																																																																																				_1: {
+																																																																																					ctor: '::',
+																																																																																					_0: 187,
+																																																																																					_1: {
+																																																																																						ctor: '::',
+																																																																																						_0: 107,
+																																																																																						_1: {
+																																																																																							ctor: '::',
+																																																																																							_0: 214,
+																																																																																							_1: {
+																																																																																								ctor: '::',
+																																																																																								_0: 177,
+																																																																																								_1: {
+																																																																																									ctor: '::',
+																																																																																									_0: 127,
+																																																																																									_1: {
+																																																																																										ctor: '::',
+																																																																																										_0: 254,
+																																																																																										_1: {
+																																																																																											ctor: '::',
+																																																																																											_0: 225,
+																																																																																											_1: {
+																																																																																												ctor: '::',
+																																																																																												_0: 223,
+																																																																																												_1: {
+																																																																																													ctor: '::',
+																																																																																													_0: 163,
+																																																																																													_1: {
+																																																																																														ctor: '::',
+																																																																																														_0: 91,
+																																																																																														_1: {
+																																																																																															ctor: '::',
+																																																																																															_0: 182,
+																																																																																															_1: {
+																																																																																																ctor: '::',
+																																																																																																_0: 113,
+																																																																																																_1: {
+																																																																																																	ctor: '::',
+																																																																																																	_0: 226,
+																																																																																																	_1: {
+																																																																																																		ctor: '::',
+																																																																																																		_0: 217,
+																																																																																																		_1: {
+																																																																																																			ctor: '::',
+																																																																																																			_0: 175,
+																																																																																																			_1: {
+																																																																																																				ctor: '::',
+																																																																																																				_0: 67,
+																																																																																																				_1: {
+																																																																																																					ctor: '::',
+																																																																																																					_0: 134,
+																																																																																																					_1: {
+																																																																																																						ctor: '::',
+																																																																																																						_0: 17,
+																																																																																																						_1: {
+																																																																																																							ctor: '::',
+																																																																																																							_0: 34,
+																																																																																																							_1: {
+																																																																																																								ctor: '::',
+																																																																																																								_0: 68,
+																																																																																																								_1: {
+																																																																																																									ctor: '::',
+																																																																																																									_0: 136,
+																																																																																																									_1: {
+																																																																																																										ctor: '::',
+																																																																																																										_0: 13,
+																																																																																																										_1: {
+																																																																																																											ctor: '::',
+																																																																																																											_0: 26,
+																																																																																																											_1: {
+																																																																																																												ctor: '::',
+																																																																																																												_0: 52,
+																																																																																																												_1: {
+																																																																																																													ctor: '::',
+																																																																																																													_0: 104,
+																																																																																																													_1: {
+																																																																																																														ctor: '::',
+																																																																																																														_0: 208,
+																																																																																																														_1: {
+																																																																																																															ctor: '::',
+																																																																																																															_0: 189,
+																																																																																																															_1: {
+																																																																																																																ctor: '::',
+																																																																																																																_0: 103,
+																																																																																																																_1: {
+																																																																																																																	ctor: '::',
+																																																																																																																	_0: 206,
+																																																																																																																	_1: {
+																																																																																																																		ctor: '::',
+																																																																																																																		_0: 129,
+																																																																																																																		_1: {
+																																																																																																																			ctor: '::',
+																																																																																																																			_0: 31,
+																																																																																																																			_1: {
+																																																																																																																				ctor: '::',
+																																																																																																																				_0: 62,
+																																																																																																																				_1: {
+																																																																																																																					ctor: '::',
+																																																																																																																					_0: 124,
+																																																																																																																					_1: {
+																																																																																																																						ctor: '::',
+																																																																																																																						_0: 248,
+																																																																																																																						_1: {
+																																																																																																																							ctor: '::',
+																																																																																																																							_0: 237,
+																																																																																																																							_1: {
+																																																																																																																								ctor: '::',
+																																																																																																																								_0: 199,
+																																																																																																																								_1: {
+																																																																																																																									ctor: '::',
+																																																																																																																									_0: 147,
+																																																																																																																									_1: {
+																																																																																																																										ctor: '::',
+																																																																																																																										_0: 59,
+																																																																																																																										_1: {
+																																																																																																																											ctor: '::',
+																																																																																																																											_0: 118,
+																																																																																																																											_1: {
+																																																																																																																												ctor: '::',
+																																																																																																																												_0: 236,
+																																																																																																																												_1: {
+																																																																																																																													ctor: '::',
+																																																																																																																													_0: 197,
+																																																																																																																													_1: {
+																																																																																																																														ctor: '::',
+																																																																																																																														_0: 151,
+																																																																																																																														_1: {
+																																																																																																																															ctor: '::',
+																																																																																																																															_0: 51,
+																																																																																																																															_1: {
+																																																																																																																																ctor: '::',
+																																																																																																																																_0: 102,
+																																																																																																																																_1: {
+																																																																																																																																	ctor: '::',
+																																																																																																																																	_0: 204,
+																																																																																																																																	_1: {
+																																																																																																																																		ctor: '::',
+																																																																																																																																		_0: 133,
+																																																																																																																																		_1: {
+																																																																																																																																			ctor: '::',
+																																																																																																																																			_0: 23,
+																																																																																																																																			_1: {
+																																																																																																																																				ctor: '::',
+																																																																																																																																				_0: 46,
+																																																																																																																																				_1: {
+																																																																																																																																					ctor: '::',
+																																																																																																																																					_0: 92,
+																																																																																																																																					_1: {
+																																																																																																																																						ctor: '::',
+																																																																																																																																						_0: 184,
+																																																																																																																																						_1: {
+																																																																																																																																							ctor: '::',
+																																																																																																																																							_0: 109,
+																																																																																																																																							_1: {
+																																																																																																																																								ctor: '::',
+																																																																																																																																								_0: 218,
+																																																																																																																																								_1: {
+																																																																																																																																									ctor: '::',
+																																																																																																																																									_0: 169,
+																																																																																																																																									_1: {
+																																																																																																																																										ctor: '::',
+																																																																																																																																										_0: 79,
+																																																																																																																																										_1: {
+																																																																																																																																											ctor: '::',
+																																																																																																																																											_0: 158,
+																																																																																																																																											_1: {
+																																																																																																																																												ctor: '::',
+																																																																																																																																												_0: 33,
+																																																																																																																																												_1: {
+																																																																																																																																													ctor: '::',
+																																																																																																																																													_0: 66,
+																																																																																																																																													_1: {
+																																																																																																																																														ctor: '::',
+																																																																																																																																														_0: 132,
+																																																																																																																																														_1: {
+																																																																																																																																															ctor: '::',
+																																																																																																																																															_0: 21,
+																																																																																																																																															_1: {
+																																																																																																																																																ctor: '::',
+																																																																																																																																																_0: 42,
+																																																																																																																																																_1: {
+																																																																																																																																																	ctor: '::',
+																																																																																																																																																	_0: 84,
+																																																																																																																																																	_1: {
+																																																																																																																																																		ctor: '::',
+																																																																																																																																																		_0: 168,
+																																																																																																																																																		_1: {
+																																																																																																																																																			ctor: '::',
+																																																																																																																																																			_0: 77,
+																																																																																																																																																			_1: {
+																																																																																																																																																				ctor: '::',
+																																																																																																																																																				_0: 154,
+																																																																																																																																																				_1: {
+																																																																																																																																																					ctor: '::',
+																																																																																																																																																					_0: 41,
+																																																																																																																																																					_1: {
+																																																																																																																																																						ctor: '::',
+																																																																																																																																																						_0: 82,
+																																																																																																																																																						_1: {
+																																																																																																																																																							ctor: '::',
+																																																																																																																																																							_0: 164,
+																																																																																																																																																							_1: {
+																																																																																																																																																								ctor: '::',
+																																																																																																																																																								_0: 85,
+																																																																																																																																																								_1: {
+																																																																																																																																																									ctor: '::',
+																																																																																																																																																									_0: 170,
+																																																																																																																																																									_1: {
+																																																																																																																																																										ctor: '::',
+																																																																																																																																																										_0: 73,
+																																																																																																																																																										_1: {
+																																																																																																																																																											ctor: '::',
+																																																																																																																																																											_0: 146,
+																																																																																																																																																											_1: {
+																																																																																																																																																												ctor: '::',
+																																																																																																																																																												_0: 57,
+																																																																																																																																																												_1: {
+																																																																																																																																																													ctor: '::',
+																																																																																																																																																													_0: 114,
+																																																																																																																																																													_1: {
+																																																																																																																																																														ctor: '::',
+																																																																																																																																																														_0: 228,
+																																																																																																																																																														_1: {
+																																																																																																																																																															ctor: '::',
+																																																																																																																																																															_0: 213,
+																																																																																																																																																															_1: {
+																																																																																																																																																																ctor: '::',
+																																																																																																																																																																_0: 183,
+																																																																																																																																																																_1: {
+																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																	_0: 115,
+																																																																																																																																																																	_1: {
+																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																		_0: 230,
+																																																																																																																																																																		_1: {
+																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																			_0: 209,
+																																																																																																																																																																			_1: {
+																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																				_0: 191,
+																																																																																																																																																																				_1: {
+																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																					_0: 99,
+																																																																																																																																																																					_1: {
+																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																						_0: 198,
+																																																																																																																																																																						_1: {
+																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																							_0: 145,
+																																																																																																																																																																							_1: {
+																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																								_0: 63,
+																																																																																																																																																																								_1: {
+																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																									_0: 126,
+																																																																																																																																																																									_1: {
+																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																										_0: 252,
+																																																																																																																																																																										_1: {
+																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																											_0: 229,
+																																																																																																																																																																											_1: {
+																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																												_0: 215,
+																																																																																																																																																																												_1: {
+																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																													_0: 179,
+																																																																																																																																																																													_1: {
+																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																														_0: 123,
+																																																																																																																																																																														_1: {
+																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																															_0: 246,
+																																																																																																																																																																															_1: {
+																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																_0: 241,
+																																																																																																																																																																																_1: {
+																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																	_0: 255,
+																																																																																																																																																																																	_1: {
+																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																		_0: 227,
+																																																																																																																																																																																		_1: {
+																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																			_0: 219,
+																																																																																																																																																																																			_1: {
+																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																				_0: 171,
+																																																																																																																																																																																				_1: {
+																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																					_0: 75,
+																																																																																																																																																																																					_1: {
+																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																						_0: 150,
+																																																																																																																																																																																						_1: {
+																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																							_0: 49,
+																																																																																																																																																																																							_1: {
+																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																								_0: 98,
+																																																																																																																																																																																								_1: {
+																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																									_0: 196,
+																																																																																																																																																																																									_1: {
+																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																										_0: 149,
+																																																																																																																																																																																										_1: {
+																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																											_0: 55,
+																																																																																																																																																																																											_1: {
+																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																												_0: 110,
+																																																																																																																																																																																												_1: {
+																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																													_0: 220,
+																																																																																																																																																																																													_1: {
+																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																														_0: 165,
+																																																																																																																																																																																														_1: {
+																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																															_0: 87,
+																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																_0: 174,
+																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																	_0: 65,
+																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																		_0: 130,
+																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																			_0: 25,
+																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																				_0: 50,
+																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																					_0: 100,
+																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																						_0: 200,
+																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																							_0: 141,
+																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																								_0: 7,
+																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																									_0: 14,
+																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																										_0: 28,
+																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																											_0: 56,
+																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																												_0: 112,
+																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																													_0: 224,
+																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																														_0: 221,
+																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																															_0: 167,
+																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																_0: 83,
+																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																	_0: 166,
+																																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																																		_0: 81,
+																																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																																			_0: 162,
+																																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																																				_0: 89,
+																																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																																					_0: 178,
+																																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																																						_0: 121,
+																																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																																							_0: 242,
+																																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																																								_0: 249,
+																																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																																									_0: 239,
+																																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																																										_0: 195,
+																																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																																											_0: 155,
+																																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																																												_0: 43,
+																																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																																													_0: 86,
+																																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																																														_0: 172,
+																																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																																															_0: 69,
+																																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																																_0: 138,
+																																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																																	_0: 9,
+																																																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																																																		_0: 18,
+																																																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																																																			_0: 36,
+																																																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																																																				_0: 72,
+																																																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																																																					_0: 144,
+																																																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																																																						_0: 61,
+																																																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																																																							_0: 122,
+																																																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																																																								_0: 244,
+																																																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																																																									_0: 245,
+																																																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																																																										_0: 247,
+																																																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																																																											_0: 243,
+																																																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																																																												_0: 251,
+																																																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																																																													_0: 235,
+																																																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																																																														_0: 203,
+																																																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																																																															_0: 139,
+																																																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																																																_0: 11,
+																																																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																																																	_0: 22,
+																																																																																																																																																																																																																																																	_1: {
+																																																																																																																																																																																																																																																		ctor: '::',
+																																																																																																																																																																																																																																																		_0: 44,
+																																																																																																																																																																																																																																																		_1: {
+																																																																																																																																																																																																																																																			ctor: '::',
+																																																																																																																																																																																																																																																			_0: 88,
+																																																																																																																																																																																																																																																			_1: {
+																																																																																																																																																																																																																																																				ctor: '::',
+																																																																																																																																																																																																																																																				_0: 176,
+																																																																																																																																																																																																																																																				_1: {
+																																																																																																																																																																																																																																																					ctor: '::',
+																																																																																																																																																																																																																																																					_0: 125,
+																																																																																																																																																																																																																																																					_1: {
+																																																																																																																																																																																																																																																						ctor: '::',
+																																																																																																																																																																																																																																																						_0: 250,
+																																																																																																																																																																																																																																																						_1: {
+																																																																																																																																																																																																																																																							ctor: '::',
+																																																																																																																																																																																																																																																							_0: 233,
+																																																																																																																																																																																																																																																							_1: {
+																																																																																																																																																																																																																																																								ctor: '::',
+																																																																																																																																																																																																																																																								_0: 207,
+																																																																																																																																																																																																																																																								_1: {
+																																																																																																																																																																																																																																																									ctor: '::',
+																																																																																																																																																																																																																																																									_0: 131,
+																																																																																																																																																																																																																																																									_1: {
+																																																																																																																																																																																																																																																										ctor: '::',
+																																																																																																																																																																																																																																																										_0: 27,
+																																																																																																																																																																																																																																																										_1: {
+																																																																																																																																																																																																																																																											ctor: '::',
+																																																																																																																																																																																																																																																											_0: 54,
+																																																																																																																																																																																																																																																											_1: {
+																																																																																																																																																																																																																																																												ctor: '::',
+																																																																																																																																																																																																																																																												_0: 108,
+																																																																																																																																																																																																																																																												_1: {
+																																																																																																																																																																																																																																																													ctor: '::',
+																																																																																																																																																																																																																																																													_0: 216,
+																																																																																																																																																																																																																																																													_1: {
+																																																																																																																																																																																																																																																														ctor: '::',
+																																																																																																																																																																																																																																																														_0: 173,
+																																																																																																																																																																																																																																																														_1: {
+																																																																																																																																																																																																																																																															ctor: '::',
+																																																																																																																																																																																																																																																															_0: 71,
+																																																																																																																																																																																																																																																															_1: {
+																																																																																																																																																																																																																																																																ctor: '::',
+																																																																																																																																																																																																																																																																_0: 142,
+																																																																																																																																																																																																																																																																_1: {
+																																																																																																																																																																																																																																																																	ctor: '::',
+																																																																																																																																																																																																																																																																	_0: 1,
+																																																																																																																																																																																																																																																																	_1: {ctor: '[]'}
+																																																																																																																																																																																																																																																																}
+																																																																																																																																																																																																																																																															}
+																																																																																																																																																																																																																																																														}
+																																																																																																																																																																																																																																																													}
+																																																																																																																																																																																																																																																												}
+																																																																																																																																																																																																																																																											}
+																																																																																																																																																																																																																																																										}
+																																																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																																																								}
+																																																																																																																																																																																																																																																							}
+																																																																																																																																																																																																																																																						}
+																																																																																																																																																																																																																																																					}
+																																																																																																																																																																																																																																																				}
+																																																																																																																																																																																																																																																			}
+																																																																																																																																																																																																																																																		}
+																																																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																																																}
+																																																																																																																																																																																																																																															}
+																																																																																																																																																																																																																																														}
+																																																																																																																																																																																																																																													}
+																																																																																																																																																																																																																																												}
+																																																																																																																																																																																																																																											}
+																																																																																																																																																																																																																																										}
+																																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																																								}
+																																																																																																																																																																																																																																							}
+																																																																																																																																																																																																																																						}
+																																																																																																																																																																																																																																					}
+																																																																																																																																																																																																																																				}
+																																																																																																																																																																																																																																			}
+																																																																																																																																																																																																																																		}
+																																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																																}
+																																																																																																																																																																																																																															}
+																																																																																																																																																																																																																														}
+																																																																																																																																																																																																																													}
+																																																																																																																																																																																																																												}
+																																																																																																																																																																																																																											}
+																																																																																																																																																																																																																										}
+																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																								}
+																																																																																																																																																																																																																							}
+																																																																																																																																																																																																																						}
+																																																																																																																																																																																																																					}
+																																																																																																																																																																																																																				}
+																																																																																																																																																																																																																			}
+																																																																																																																																																																																																																		}
+																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																}
+																																																																																																																																																																																																															}
+																																																																																																																																																																																																														}
+																																																																																																																																																																																																													}
+																																																																																																																																																																																																												}
+																																																																																																																																																																																																											}
+																																																																																																																																																																																																										}
+																																																																																																																																																																																																									}
+																																																																																																																																																																																																								}
+																																																																																																																																																																																																							}
+																																																																																																																																																																																																						}
+																																																																																																																																																																																																					}
+																																																																																																																																																																																																				}
+																																																																																																																																																																																																			}
+																																																																																																																																																																																																		}
+																																																																																																																																																																																																	}
+																																																																																																																																																																																																}
+																																																																																																																																																																																															}
+																																																																																																																																																																																														}
+																																																																																																																																																																																													}
+																																																																																																																																																																																												}
+																																																																																																																																																																																											}
+																																																																																																																																																																																										}
+																																																																																																																																																																																									}
+																																																																																																																																																																																								}
+																																																																																																																																																																																							}
+																																																																																																																																																																																						}
+																																																																																																																																																																																					}
+																																																																																																																																																																																				}
+																																																																																																																																																																																			}
+																																																																																																																																																																																		}
+																																																																																																																																																																																	}
+																																																																																																																																																																																}
+																																																																																																																																																																															}
+																																																																																																																																																																														}
+																																																																																																																																																																													}
+																																																																																																																																																																												}
+																																																																																																																																																																											}
+																																																																																																																																																																										}
+																																																																																																																																																																									}
+																																																																																																																																																																								}
+																																																																																																																																																																							}
+																																																																																																																																																																						}
+																																																																																																																																																																					}
+																																																																																																																																																																				}
+																																																																																																																																																																			}
+																																																																																																																																																																		}
+																																																																																																																																																																	}
+																																																																																																																																																																}
+																																																																																																																																																															}
+																																																																																																																																																														}
+																																																																																																																																																													}
+																																																																																																																																																												}
+																																																																																																																																																											}
+																																																																																																																																																										}
+																																																																																																																																																									}
+																																																																																																																																																								}
+																																																																																																																																																							}
+																																																																																																																																																						}
+																																																																																																																																																					}
+																																																																																																																																																				}
+																																																																																																																																																			}
+																																																																																																																																																		}
+																																																																																																																																																	}
+																																																																																																																																																}
+																																																																																																																																															}
+																																																																																																																																														}
+																																																																																																																																													}
+																																																																																																																																												}
+																																																																																																																																											}
+																																																																																																																																										}
+																																																																																																																																									}
+																																																																																																																																								}
+																																																																																																																																							}
+																																																																																																																																						}
+																																																																																																																																					}
+																																																																																																																																				}
+																																																																																																																																			}
+																																																																																																																																		}
+																																																																																																																																	}
+																																																																																																																																}
+																																																																																																																															}
+																																																																																																																														}
+																																																																																																																													}
+																																																																																																																												}
+																																																																																																																											}
+																																																																																																																										}
+																																																																																																																									}
+																																																																																																																								}
+																																																																																																																							}
+																																																																																																																						}
+																																																																																																																					}
+																																																																																																																				}
+																																																																																																																			}
+																																																																																																																		}
+																																																																																																																	}
+																																																																																																																}
+																																																																																																															}
+																																																																																																														}
+																																																																																																													}
+																																																																																																												}
+																																																																																																											}
+																																																																																																										}
+																																																																																																									}
+																																																																																																								}
+																																																																																																							}
+																																																																																																						}
+																																																																																																					}
+																																																																																																				}
+																																																																																																			}
+																																																																																																		}
+																																																																																																	}
+																																																																																																}
+																																																																																															}
+																																																																																														}
+																																																																																													}
+																																																																																												}
+																																																																																											}
+																																																																																										}
+																																																																																									}
+																																																																																								}
+																																																																																							}
+																																																																																						}
+																																																																																					}
+																																																																																				}
+																																																																																			}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getExp = function (index) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		0,
+		A2(
+			_elm_lang$core$Array$get,
+			A2(_elm_lang$core$Basics_ops['%'], index, 255),
+			_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$expTable));
+};
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getOffset = function (_p0) {
+	getOffset:
+	while (true) {
+		var _p1 = _p0;
+		var _p3 = _p1._1;
+		var _p2 = _p1._0;
+		if (_p2.ctor === '::') {
+			if (_elm_lang$core$Native_Utils.eq(_p2._0, 0)) {
+				var _v2 = {ctor: '_Tuple2', _0: _p2._1, _1: _p3 + 1};
+				_p0 = _v2;
+				continue getOffset;
+			} else {
+				return _p3;
+			}
+		} else {
+			return _p3;
+		}
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$newPolynomial = F2(
+	function (num, shift) {
+		var numArray = _elm_lang$core$Array$fromList(num);
+		var offset = _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getOffset(
+			{ctor: '_Tuple2', _0: num, _1: 0});
+		return A2(
+			_elm_lang$core$Array$initialize,
+			(_elm_lang$core$List$length(num) - offset) + shift,
+			function (index) {
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					0,
+					A2(_elm_lang$core$Array$get, index + offset, numArray));
+			});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$multiply = F2(
+	function (poly1, poly2) {
+		var process__ = F3(
+			function (indexSum, num_, exp) {
+				return A2(
+					_elm_lang$core$Result$fromMaybe,
+					_pablohirafuji$elm_qrcode$QRCode_Error$PolynomialMultiply,
+					A2(
+						_elm_lang$core$Maybe$map,
+						_elm_lang$core$Bitwise$xor(exp),
+						A2(_elm_lang$core$Array$get, indexSum, num_)));
+			});
+		var process_ = F2(
+			function (_p4, num_) {
+				var _p5 = _p4;
+				var _p6 = _p5._0;
+				return A2(
+					_elm_lang$core$Result$map,
+					function (r) {
+						return A3(_elm_lang$core$Array$set, _p6, r, num_);
+					},
+					A2(
+						_elm_lang$core$Result$andThen,
+						A2(process__, _p6, num_),
+						A2(
+							_elm_lang$core$Result$map,
+							_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getExp,
+							A3(
+								_elm_lang$core$Result$map2,
+								F2(
+									function (x, y) {
+										return x + y;
+									}),
+								_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getLog(_p5._1),
+								_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getLog(_p5._2)))));
+			});
+		var process = F2(
+			function (args, numResult) {
+				return A2(
+					_elm_lang$core$Result$andThen,
+					process_(args),
+					numResult);
+			});
+		var valuesArray = A2(
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (index1, value1) {
+					return A2(
+						_elm_lang$core$List$indexedMap,
+						F2(
+							function (index2, value2) {
+								return {ctor: '_Tuple3', _0: index1 + index2, _1: value1, _2: value2};
+							}),
+						_elm_lang$core$Array$toList(poly2));
+				}),
+			_elm_lang$core$Array$toList(poly1));
+		var num = A2(
+			_elm_lang$core$Array$initialize,
+			(_elm_lang$core$Array$length(poly1) + _elm_lang$core$Array$length(poly2)) - 1,
+			_elm_lang$core$Basics$always(0));
+		return A2(
+			_elm_lang$core$Result$map,
+			A2(_elm_lang$core$Basics$flip, _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$newPolynomial, 0),
+			A2(
+				_elm_lang$core$Result$map,
+				_elm_lang$core$Array$toList,
+				A3(
+					_elm_lang$core$List$foldl,
+					process,
+					_elm_lang$core$Result$Ok(num),
+					_elm_lang$core$List$concat(valuesArray))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$mod = F2(
+	function (poly1, poly2) {
+		if (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$Array$length(poly1) - _elm_lang$core$Array$length(poly2),
+			0) < 0) {
+			return _elm_lang$core$Result$Ok(poly1);
+		} else {
+			var helper_ = F3(
+				function (index2, poly1_, exp) {
+					return A2(
+						_elm_lang$core$Result$fromMaybe,
+						_pablohirafuji$elm_qrcode$QRCode_Error$PolynomialMod,
+						A2(
+							_elm_lang$core$Maybe$map,
+							_elm_lang$core$Bitwise$xor(exp),
+							A2(_elm_lang$core$Array$get, index2, poly1_)));
+				});
+			var getHead = function (poly) {
+				return A2(
+					_elm_lang$core$Result$andThen,
+					_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getLog,
+					A2(
+						_elm_lang$core$Result$fromMaybe,
+						_pablohirafuji$elm_qrcode$QRCode_Error$PolynomialMod,
+						A2(_elm_lang$core$Array$get, 0, poly)));
+			};
+			var ratio = A3(
+				_elm_lang$core$Result$map2,
+				F2(
+					function (x, y) {
+						return x - y;
+					}),
+				getHead(poly1),
+				getHead(poly2));
+			var helper = F2(
+				function (_p7, poly1_) {
+					var _p8 = _p7;
+					var _p9 = _p8._0;
+					return A2(
+						_elm_lang$core$Result$map,
+						function (r) {
+							return A3(_elm_lang$core$Array$set, _p9, r, poly1_);
+						},
+						A2(
+							_elm_lang$core$Result$andThen,
+							A2(helper_, _p9, poly1_),
+							A2(
+								_elm_lang$core$Result$map,
+								_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getExp,
+								A3(
+									_elm_lang$core$Result$map2,
+									F2(
+										function (x, y) {
+											return x + y;
+										}),
+									ratio,
+									_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getLog(_p8._1)))));
+				});
+			var numFold = F2(
+				function (args, poly1Result) {
+					return A2(
+						_elm_lang$core$Result$andThen,
+						helper(args),
+						poly1Result);
+				});
+			var numResult = A3(
+				_elm_lang$core$Array$foldl,
+				numFold,
+				_elm_lang$core$Result$Ok(poly1),
+				A2(
+					_elm_lang$core$Array$indexedMap,
+					F2(
+						function (v0, v1) {
+							return {ctor: '_Tuple2', _0: v0, _1: v1};
+						}),
+					poly2));
+			return A2(
+				_elm_lang$core$Result$andThen,
+				A2(_elm_lang$core$Basics$flip, _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$mod, poly2),
+				A2(
+					_elm_lang$core$Result$map,
+					A2(_elm_lang$core$Basics$flip, _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$newPolynomial, 0),
+					A2(_elm_lang$core$Result$map, _elm_lang$core$Array$toList, numResult)));
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getECPolynomial = function (ecLength) {
+	var generate = F2(
+		function (count, polyResult) {
+			generate:
+			while (true) {
+				if (_elm_lang$core$Native_Utils.cmp(count, ecLength) < 0) {
+					var _v5 = count + 1,
+						_v6 = A2(
+						_elm_lang$core$Result$andThen,
+						A2(
+							_elm_lang$core$Basics$flip,
+							_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$multiply,
+							A2(
+								_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$newPolynomial,
+								{
+									ctor: '::',
+									_0: 1,
+									_1: {
+										ctor: '::',
+										_0: _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getExp(count),
+										_1: {ctor: '[]'}
+									}
+								},
+								0)),
+						polyResult);
+					count = _v5;
+					polyResult = _v6;
+					continue generate;
+				} else {
+					return polyResult;
+				}
+			}
+		});
+	return A2(
+		generate,
+		0,
+		_elm_lang$core$Result$Ok(
+			A2(
+				_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$newPolynomial,
+				{
+					ctor: '::',
+					_0: 1,
+					_1: {ctor: '[]'}
+				},
+				0)));
+};
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get___ = F2(
+	function (ecLength, modPoly) {
+		return _elm_lang$core$Array$toList(
+			A2(
+				_elm_lang$core$Array$initialize,
+				ecLength,
+				function (index) {
+					var modIndex = (index + _elm_lang$core$Array$length(modPoly)) - ecLength;
+					return (_elm_lang$core$Native_Utils.cmp(modIndex, 0) > -1) ? A2(
+						_elm_lang$core$Maybe$withDefault,
+						0,
+						A2(_elm_lang$core$Array$get, modIndex, modPoly)) : 0;
+				}));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get__ = F2(
+	function (rsPoly, dataCodewords) {
+		return A2(
+			_elm_lang$core$Result$map,
+			_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get___(
+				_elm_lang$core$Array$length(rsPoly) - 1),
+			A3(
+				_elm_lang$core$Basics$flip,
+				_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$mod,
+				rsPoly,
+				A2(
+					_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$newPolynomial,
+					dataCodewords,
+					_elm_lang$core$Array$length(rsPoly) - 1)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get_ = F2(
+	function (byteBlocks, rsPoly) {
+		return A3(
+			_pablohirafuji$elm_qrcode$QRCode_Helpers$listResult,
+			_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get__(rsPoly),
+			{ctor: '[]'},
+			byteBlocks);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get = F2(
+	function (ecPerBlock, byteBlocks) {
+		return A2(
+			_elm_lang$core$Result$andThen,
+			_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get_(byteBlocks),
+			_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$getECPolynomial(ecPerBlock));
+	});
+
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$numericLength = function (str) {
+	var _p0 = _elm_lang$core$String$length(str);
+	switch (_p0) {
+		case 1:
+			return 4;
+		case 2:
+			return 7;
+		default:
+			return 10;
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$encodeHelp = function (str) {
+	return A2(
+		_elm_lang$core$Result$mapError,
+		_elm_lang$core$Basics$always(_pablohirafuji$elm_qrcode$QRCode_Error$InvalidNumericChar),
+		A2(
+			_elm_lang$core$Result$map,
+			A2(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				_pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$numericLength(str)),
+			_elm_lang$core$String$toInt(str)));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$encode = function (str) {
+	return A3(
+		_pablohirafuji$elm_qrcode$QRCode_Helpers$listResult,
+		_pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$encodeHelp,
+		{ctor: '[]'},
+		A2(_pablohirafuji$elm_qrcode$QRCode_Helpers$breakStr, 3, str));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$regex = _elm_lang$core$Regex$regex('^[0-9]+$');
+
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$alphanumericCodes = _elm_lang$core$Dict$fromList(
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.chr('0'),
+			_1: 0
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.chr('1'),
+				_1: 1
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('2'),
+					_1: 2
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.chr('3'),
+						_1: 3
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.chr('4'),
+							_1: 4
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.chr('5'),
+								_1: 5
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: _elm_lang$core$Native_Utils.chr('6'),
+									_1: 6
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: _elm_lang$core$Native_Utils.chr('7'),
+										_1: 7
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: _elm_lang$core$Native_Utils.chr('8'),
+											_1: 8
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple2',
+												_0: _elm_lang$core$Native_Utils.chr('9'),
+												_1: 9
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple2',
+													_0: _elm_lang$core$Native_Utils.chr('A'),
+													_1: 10
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple2',
+														_0: _elm_lang$core$Native_Utils.chr('B'),
+														_1: 11
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple2',
+															_0: _elm_lang$core$Native_Utils.chr('C'),
+															_1: 12
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple2',
+																_0: _elm_lang$core$Native_Utils.chr('D'),
+																_1: 13
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple2',
+																	_0: _elm_lang$core$Native_Utils.chr('E'),
+																	_1: 14
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple2',
+																		_0: _elm_lang$core$Native_Utils.chr('F'),
+																		_1: 15
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple2',
+																			_0: _elm_lang$core$Native_Utils.chr('G'),
+																			_1: 16
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple2',
+																				_0: _elm_lang$core$Native_Utils.chr('H'),
+																				_1: 17
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '_Tuple2',
+																					_0: _elm_lang$core$Native_Utils.chr('I'),
+																					_1: 18
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '_Tuple2',
+																						_0: _elm_lang$core$Native_Utils.chr('J'),
+																						_1: 19
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '_Tuple2',
+																							_0: _elm_lang$core$Native_Utils.chr('K'),
+																							_1: 20
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '_Tuple2',
+																								_0: _elm_lang$core$Native_Utils.chr('L'),
+																								_1: 21
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '_Tuple2',
+																									_0: _elm_lang$core$Native_Utils.chr('M'),
+																									_1: 22
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '_Tuple2',
+																										_0: _elm_lang$core$Native_Utils.chr('N'),
+																										_1: 23
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '_Tuple2',
+																											_0: _elm_lang$core$Native_Utils.chr('O'),
+																											_1: 24
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '_Tuple2',
+																												_0: _elm_lang$core$Native_Utils.chr('P'),
+																												_1: 25
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '_Tuple2',
+																													_0: _elm_lang$core$Native_Utils.chr('Q'),
+																													_1: 26
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '_Tuple2',
+																														_0: _elm_lang$core$Native_Utils.chr('R'),
+																														_1: 27
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '_Tuple2',
+																															_0: _elm_lang$core$Native_Utils.chr('S'),
+																															_1: 28
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '_Tuple2',
+																																_0: _elm_lang$core$Native_Utils.chr('T'),
+																																_1: 29
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '_Tuple2',
+																																	_0: _elm_lang$core$Native_Utils.chr('U'),
+																																	_1: 30
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '_Tuple2',
+																																		_0: _elm_lang$core$Native_Utils.chr('V'),
+																																		_1: 31
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '_Tuple2',
+																																			_0: _elm_lang$core$Native_Utils.chr('W'),
+																																			_1: 32
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '_Tuple2',
+																																				_0: _elm_lang$core$Native_Utils.chr('X'),
+																																				_1: 33
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '_Tuple2',
+																																					_0: _elm_lang$core$Native_Utils.chr('Y'),
+																																					_1: 34
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '_Tuple2',
+																																						_0: _elm_lang$core$Native_Utils.chr('Z'),
+																																						_1: 35
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '_Tuple2',
+																																							_0: _elm_lang$core$Native_Utils.chr(' '),
+																																							_1: 36
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '_Tuple2',
+																																								_0: _elm_lang$core$Native_Utils.chr('$'),
+																																								_1: 37
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '_Tuple2',
+																																									_0: _elm_lang$core$Native_Utils.chr('%'),
+																																									_1: 38
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '_Tuple2',
+																																										_0: _elm_lang$core$Native_Utils.chr('*'),
+																																										_1: 39
+																																									},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {
+																																											ctor: '_Tuple2',
+																																											_0: _elm_lang$core$Native_Utils.chr('+'),
+																																											_1: 40
+																																										},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {
+																																												ctor: '_Tuple2',
+																																												_0: _elm_lang$core$Native_Utils.chr('-'),
+																																												_1: 41
+																																											},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {
+																																													ctor: '_Tuple2',
+																																													_0: _elm_lang$core$Native_Utils.chr('.'),
+																																													_1: 42
+																																												},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {
+																																														ctor: '_Tuple2',
+																																														_0: _elm_lang$core$Native_Utils.chr('/'),
+																																														_1: 43
+																																													},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {
+																																															ctor: '_Tuple2',
+																																															_0: _elm_lang$core$Native_Utils.chr(':'),
+																																															_1: 44
+																																														},
+																																														_1: {ctor: '[]'}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$toAlphanumericCode = function ($char) {
+	return A2(
+		_elm_lang$core$Result$fromMaybe,
+		_pablohirafuji$elm_qrcode$QRCode_Error$InvalidAlphanumericChar,
+		A2(_elm_lang$core$Dict$get, $char, _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$alphanumericCodes));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$toBinary = function (str) {
+	var _p0 = _elm_lang$core$String$toList(str);
+	_v0_2:
+	do {
+		if (_p0.ctor === '::') {
+			if (_p0._1.ctor === '::') {
+				if (_p0._1._1.ctor === '[]') {
+					return A2(
+						_elm_lang$core$Result$map,
+						A2(
+							_elm_lang$core$Basics$flip,
+							F2(
+								function (v0, v1) {
+									return {ctor: '_Tuple2', _0: v0, _1: v1};
+								}),
+							11),
+						A2(
+							_elm_lang$core$Result$map,
+							function (_p1) {
+								var _p2 = _p1;
+								return (_p2._0 * 45) + _p2._1;
+							},
+							A2(
+								_elm_lang$core$Result$andThen,
+								function (firstCode) {
+									return A2(
+										_elm_lang$core$Result$map,
+										F2(
+											function (v0, v1) {
+												return {ctor: '_Tuple2', _0: v0, _1: v1};
+											})(firstCode),
+										_pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$toAlphanumericCode(_p0._1._0));
+								},
+								_pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$toAlphanumericCode(_p0._0))));
+				} else {
+					break _v0_2;
+				}
+			} else {
+				return A2(
+					_elm_lang$core$Result$map,
+					A2(
+						_elm_lang$core$Basics$flip,
+						F2(
+							function (v0, v1) {
+								return {ctor: '_Tuple2', _0: v0, _1: v1};
+							}),
+						6),
+					_pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$toAlphanumericCode(_p0._0));
+			}
+		} else {
+			break _v0_2;
+		}
+	} while(false);
+	return _elm_lang$core$Result$Err(_pablohirafuji$elm_qrcode$QRCode_Error$InvalidAlphanumericChar);
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$encode = function (str) {
+	return A3(
+		_pablohirafuji$elm_qrcode$QRCode_Helpers$listResult,
+		_pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$toBinary,
+		{ctor: '[]'},
+		A2(_pablohirafuji$elm_qrcode$QRCode_Helpers$breakStr, 2, str));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$regex = _elm_lang$core$Regex$regex('^[0-9A-Z $%*+\\-.\\/:]+$');
+
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Byte$encodeHelp = F2(
+	function (str, bytes) {
+		encodeHelp:
+		while (true) {
+			var _p0 = _elm_lang$core$String$uncons(str);
+			if (_p0.ctor === 'Just') {
+				var _v1 = _p0._0._1,
+					_v2 = A3(
+					_elm_lang$core$Basics$flip,
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						}),
+					bytes,
+					_elm_lang$core$Char$toCode(_p0._0._0));
+				str = _v1;
+				bytes = _v2;
+				continue encodeHelp;
+			} else {
+				return _elm_lang$core$Result$Ok(
+					_elm_lang$core$List$reverse(bytes));
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Byte$encode = function (str) {
+	return A2(
+		_elm_lang$core$Result$map,
+		_elm_lang$core$List$map(
+			A2(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				8)),
+		A2(
+			_pablohirafuji$elm_qrcode$QRCode_Encode_Byte$encodeHelp,
+			str,
+			{ctor: '[]'}));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode_Byte$regex = _elm_lang$core$Regex$regex('^[\\u0000-\\u00ff]+$');
+
+var _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63 = _elm_lang$core$Bitwise$and(63);
+var _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encodeHelp = F2(
+	function (str, list) {
+		var _p0 = _elm_lang$core$String$uncons(str);
+		if (_p0.ctor === 'Just') {
+			return A3(
+				_pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$utf8ToByte,
+				list,
+				_p0._0._1,
+				_elm_lang$core$Char$toCode(_p0._0._0));
+		} else {
+			return _elm_lang$core$Result$Ok(
+				_elm_lang$core$List$reverse(list));
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$utf8ToByte = F3(
+	function (list, remainStr, charCode) {
+		if (_elm_lang$core$Native_Utils.cmp(charCode, 128) < 0) {
+			return A2(
+				_pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encodeHelp,
+				remainStr,
+				{ctor: '::', _0: charCode, _1: list});
+		} else {
+			if (_elm_lang$core$Native_Utils.cmp(charCode, 2048) < 0) {
+				return A2(
+					_pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encodeHelp,
+					remainStr,
+					A2(
+						F2(
+							function (x, y) {
+								return {ctor: '::', _0: x, _1: y};
+							}),
+						128 | _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63(charCode),
+						A2(
+							F2(
+								function (x, y) {
+									return {ctor: '::', _0: x, _1: y};
+								}),
+							192 | (charCode >> 6),
+							list)));
+			} else {
+				if ((_elm_lang$core$Native_Utils.cmp(charCode, 55296) < 0) || (_elm_lang$core$Native_Utils.cmp(charCode, 57344) > -1)) {
+					return A2(
+						_pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encodeHelp,
+						remainStr,
+						A2(
+							F2(
+								function (x, y) {
+									return {ctor: '::', _0: x, _1: y};
+								}),
+							128 | _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63(charCode),
+							A2(
+								F2(
+									function (x, y) {
+										return {ctor: '::', _0: x, _1: y};
+									}),
+								128 | _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63(charCode >> 6),
+								A2(
+									F2(
+										function (x, y) {
+											return {ctor: '::', _0: x, _1: y};
+										}),
+									224 | (charCode >> 12),
+									list))));
+				} else {
+					var _p1 = _elm_lang$core$String$uncons(remainStr);
+					if (_p1.ctor === 'Just') {
+						var nextCharCode = _elm_lang$core$Char$toCode(_p1._0._0);
+						var charC = A2(
+							F2(
+								function (x, y) {
+									return x + y;
+								}),
+							65536,
+							(1023 & nextCharCode) | ((1023 & charCode) << 10));
+						var byte1 = 240 | (charC >> 18);
+						var byte2 = 128 | _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63(charC >> 12);
+						var byte3 = 128 | _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63(charC >> 6);
+						var byte4 = 128 | _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$and63(charC);
+						return A2(
+							_pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encodeHelp,
+							_p1._0._1,
+							{
+								ctor: '::',
+								_0: byte4,
+								_1: {
+									ctor: '::',
+									_0: byte3,
+									_1: {
+										ctor: '::',
+										_0: byte2,
+										_1: {ctor: '::', _0: byte1, _1: list}
+									}
+								}
+							});
+					} else {
+						return _elm_lang$core$Result$Err(_pablohirafuji$elm_qrcode$QRCode_Error$InvalidUTF8Char);
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encode = function (str) {
+	return A2(
+		_elm_lang$core$Result$map,
+		_elm_lang$core$List$map(
+			A2(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				8)),
+		A2(
+			_pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encodeHelp,
+			str,
+			{ctor: '[]'}));
+};
+
+var _pablohirafuji$elm_qrcode$QRCode_Encode$concatTranspose = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		F2(
+			function (v0, v1) {
+				return {ctor: '_Tuple2', _0: v0, _1: v1};
+			}),
+		_p1._0,
+		_elm_lang$core$List$concat(
+			A2(
+				F2(
+					function (x, y) {
+						return A2(_elm_lang$core$Basics_ops['++'], x, y);
+					}),
+				_pablohirafuji$elm_qrcode$QRCode_Helpers$transpose(_p1._1),
+				_pablohirafuji$elm_qrcode$QRCode_Helpers$transpose(_p1._2))));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$getErrorCorrection = function (_p2) {
+	var _p3 = _p2;
+	var _p5 = _p3._0;
+	var _p4 = _p3._1;
+	return A2(
+		_elm_lang$core$Result$map,
+		A2(
+			F3(
+				function (v0, v1, v2) {
+					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+				}),
+			_p5,
+			_p4),
+		A2(_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get, _p5.groupInfo.ecPerBlock, _p4));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$ecLevelToInt = function (ecLevel) {
+	var _p6 = ecLevel;
+	switch (_p6.ctor) {
+		case 'L':
+			return 1;
+		case 'M':
+			return 0;
+		case 'Q':
+			return 3;
+		default:
+			return 2;
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$breakList = F3(
+	function (checkFinish, _p8, _p7) {
+		breakList:
+		while (true) {
+			var _p9 = _p8;
+			var _p14 = _p9._0;
+			var _p13 = _p9._1;
+			var _p10 = _p7;
+			var _p12 = _p10._1;
+			var _p11 = _p10._0;
+			if (_elm_lang$core$Native_Utils.cmp(_p14, 0) > 0) {
+				var remainList = A2(_elm_lang$core$List$drop, _p13, _p11);
+				var block = A2(_elm_lang$core$List$take, _p13, _p11);
+				var _v5 = checkFinish,
+					_v6 = {ctor: '_Tuple2', _0: _p14 - 1, _1: _p13},
+					_v7 = {
+					ctor: '_Tuple2',
+					_0: remainList,
+					_1: {ctor: '::', _0: block, _1: _p12}
+				};
+				checkFinish = _v5;
+				_p8 = _v6;
+				_p7 = _v7;
+				continue breakList;
+			} else {
+				if (checkFinish && (_elm_lang$core$Native_Utils.cmp(
+					_elm_lang$core$List$length(_p11),
+					0) > 0)) {
+					return _elm_lang$core$Result$Err(_pablohirafuji$elm_qrcode$QRCode_Error$InputLengthOverflow);
+				} else {
+					return _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple2', _0: _p11, _1: _p12});
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$toBlocks = function (_p15) {
+	var _p16 = _p15;
+	var _p22 = _p16._0;
+	var _p21 = _p16._0.groupInfo;
+	var _p20 = _p16._1;
+	var _p17 = _p21.maybeGroup2;
+	if (_p17.ctor === 'Just') {
+		return A2(
+			_elm_lang$core$Result$map,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				})(_p22),
+			A2(
+				_elm_lang$core$Result$map,
+				function (_p18) {
+					return _elm_lang$core$List$reverse(
+						_elm_lang$core$Tuple$second(_p18));
+				},
+				A2(
+					_elm_lang$core$Result$andThen,
+					A2(_pablohirafuji$elm_qrcode$QRCode_Encode$breakList, true, _p17._0),
+					A3(
+						_pablohirafuji$elm_qrcode$QRCode_Encode$breakList,
+						false,
+						_p21.group1,
+						{
+							ctor: '_Tuple2',
+							_0: _p20,
+							_1: {ctor: '[]'}
+						}))));
+	} else {
+		return A2(
+			_elm_lang$core$Result$map,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				})(_p22),
+			A2(
+				_elm_lang$core$Result$map,
+				function (_p19) {
+					return _elm_lang$core$List$reverse(
+						_elm_lang$core$Tuple$second(_p19));
+				},
+				A3(
+					_pablohirafuji$elm_qrcode$QRCode_Encode$breakList,
+					true,
+					_p21.group1,
+					{
+						ctor: '_Tuple2',
+						_0: _p20,
+						_1: {ctor: '[]'}
+					})));
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$secondFillerByte = 17;
+var _pablohirafuji$elm_qrcode$QRCode_Encode$firstFillerByte = 236;
+var _pablohirafuji$elm_qrcode$QRCode_Encode$addFiller = F2(
+	function (capacity, bytes) {
+		var fillerLength = ((capacity / 8) | 0) - _elm_lang$core$List$length(bytes);
+		return A2(
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$Basics_ops['++'], x, y);
+				}),
+			bytes,
+			(_elm_lang$core$Native_Utils.eq(
+				A2(_elm_lang$core$Basics_ops['%'], fillerLength, 2),
+				0) ? _elm_lang$core$Basics$identity : A2(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (x, y) {
+						return A2(_elm_lang$core$Basics_ops['++'], x, y);
+					}),
+				{
+					ctor: '::',
+					_0: _pablohirafuji$elm_qrcode$QRCode_Encode$firstFillerByte,
+					_1: {ctor: '[]'}
+				}))(
+				_elm_lang$core$List$concat(
+					A2(
+						_elm_lang$core$List$repeat,
+						(fillerLength / 2) | 0,
+						{
+							ctor: '::',
+							_0: _pablohirafuji$elm_qrcode$QRCode_Encode$firstFillerByte,
+							_1: {
+								ctor: '::',
+								_0: _pablohirafuji$elm_qrcode$QRCode_Encode$secondFillerByte,
+								_1: {ctor: '[]'}
+							}
+						}))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes3 = function (_p23) {
+	bitsToBytes3:
+	while (true) {
+		var _p24 = _p23;
+		var _p27 = _p24._0._1;
+		var _p26 = _p24._1;
+		var _p25 = _p24._0._0;
+		if (_elm_lang$core$Native_Utils.cmp(_p27, 8) > -1) {
+			var remLength = _p27 - 8;
+			var remBits = _p25 & A3(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (x, y) {
+						return x - y;
+					}),
+				1,
+				1 << remLength);
+			var $byte = _p25 >> remLength;
+			var _v11 = {
+				ctor: '_Tuple2',
+				_0: {ctor: '_Tuple2', _0: remBits, _1: remLength},
+				_1: {ctor: '::', _0: $byte, _1: _p26}
+			};
+			_p23 = _v11;
+			continue bitsToBytes3;
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: {ctor: '_Tuple2', _0: _p25, _1: _p27},
+				_1: _p26
+			};
+		}
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes2 = F2(
+	function (_p29, _p28) {
+		var _p30 = _p29;
+		var _p32 = _p30._1;
+		var _p31 = _p28;
+		var bitsSum = _p30._0 | (_p31._0._0 << _p32);
+		var lengthSum = _p32 + _p31._0._1;
+		return _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes3(
+			{
+				ctor: '_Tuple2',
+				_0: {ctor: '_Tuple2', _0: bitsSum, _1: lengthSum},
+				_1: _p31._1
+			});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes1 = F2(
+	function (bits, _p33) {
+		bitsToBytes1:
+		while (true) {
+			var _p34 = _p33;
+			var _p38 = _p34._0._1;
+			var _p37 = _p34._0._0;
+			var _p36 = _p34._1;
+			var _p35 = bits;
+			if (_p35.ctor === '::') {
+				var _v16 = _p35._1,
+					_v17 = A2(
+					_pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes2,
+					_p35._0,
+					{
+						ctor: '_Tuple2',
+						_0: {ctor: '_Tuple2', _0: _p37, _1: _p38},
+						_1: _p36
+					});
+				bits = _v16;
+				_p33 = _v17;
+				continue bitsToBytes1;
+			} else {
+				return _elm_lang$core$Native_Utils.eq(_p38, 0) ? _elm_lang$core$List$reverse(_p36) : _elm_lang$core$List$reverse(
+					A3(
+						_elm_lang$core$Basics$flip,
+						F2(
+							function (x, y) {
+								return {ctor: '::', _0: x, _1: y};
+							}),
+						_p36,
+						_p37 << (8 - _p38)));
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes = function (bits) {
+	return A2(
+		_pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes1,
+		bits,
+		{
+			ctor: '_Tuple2',
+			_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+			_1: {ctor: '[]'}
+		});
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$addTerminator = F3(
+	function (capacity, bitsCount, bits) {
+		return A2(
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$Basics_ops['++'], x, y);
+				}),
+			bits,
+			A3(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (x, y) {
+						return {ctor: '::', _0: x, _1: y};
+					}),
+				{ctor: '[]'},
+				A2(
+					F2(
+						function (v0, v1) {
+							return {ctor: '_Tuple2', _0: v0, _1: v1};
+						}),
+					0,
+					A2(_elm_lang$core$Basics$min, 4, capacity - bitsCount))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength = F2(
+	function (mode, version) {
+		if (_elm_lang$core$Native_Utils.cmp(version, 9) < 1) {
+			var _p39 = mode;
+			switch (_p39.ctor) {
+				case 'Numeric':
+					return 10;
+				case 'Alphanumeric':
+					return 9;
+				case 'Byte':
+					return 8;
+				default:
+					return 8;
+			}
+		} else {
+			if (_elm_lang$core$Native_Utils.cmp(version, 26) < 1) {
+				var _p40 = mode;
+				switch (_p40.ctor) {
+					case 'Numeric':
+						return 12;
+					case 'Alphanumeric':
+						return 11;
+					case 'Byte':
+						return 16;
+					default:
+						return 16;
+				}
+			} else {
+				var _p41 = mode;
+				switch (_p41.ctor) {
+					case 'Numeric':
+						return 14;
+					case 'Alphanumeric':
+						return 13;
+					case 'Byte':
+						return 16;
+					default:
+						return 16;
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$filterCapacity = F3(
+	function (mode, dataLength, _p42) {
+		var _p43 = _p42;
+		return function (length) {
+			return _elm_lang$core$Native_Utils.cmp(length, _p43.capacity) < 1;
+		}(
+			A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, mode, _p43.version) + dataLength);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$getGroupData = function (ecLevel) {
+	var _p44 = ecLevel;
+	switch (_p44.ctor) {
+		case 'L':
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataL;
+		case 'M':
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataM;
+		case 'Q':
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataQ;
+		default:
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataH;
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$getVersion = F3(
+	function (ecLevel, mode, dataLength) {
+		return A2(
+			_elm_lang$core$Result$fromMaybe,
+			_pablohirafuji$elm_qrcode$QRCode_Error$InputLengthOverflow,
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$List$sortBy,
+					function (_) {
+						return _.capacity;
+					},
+					A2(
+						_elm_lang$core$List$filter,
+						A2(_pablohirafuji$elm_qrcode$QRCode_Encode$filterCapacity, mode, dataLength),
+						_pablohirafuji$elm_qrcode$QRCode_Encode$getGroupData(ecLevel)))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$versionToModel = F5(
+	function (inputStr, ecLevel, mode, partialBitsCount, groupInfo) {
+		return {
+			inputStr: inputStr,
+			ecLevel: ecLevel,
+			mode: mode,
+			groupInfo: groupInfo,
+			bitsCount: partialBitsCount + A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, mode, groupInfo.version)
+		};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$selectVersion = F4(
+	function (inputStr, ecLevel, mode, encodedStr) {
+		var partialBitsCount = A2(
+			F2(
+				function (x, y) {
+					return x + y;
+				}),
+			4,
+			A3(
+				_elm_lang$core$List$foldl,
+				F2(
+					function (a, b) {
+						return _elm_lang$core$Tuple$second(a) + b;
+					}),
+				0,
+				encodedStr));
+		return A2(
+			_elm_lang$core$Result$map,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				})(encodedStr),
+			A2(
+				_elm_lang$core$Result$map,
+				A4(_pablohirafuji$elm_qrcode$QRCode_Encode$versionToModel, inputStr, ecLevel, mode, partialBitsCount),
+				A3(_pablohirafuji$elm_qrcode$QRCode_Encode$getVersion, ecLevel, mode, partialBitsCount)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$modeIndicator = function (mode) {
+	var _p45 = mode;
+	switch (_p45.ctor) {
+		case 'Numeric':
+			return 1;
+		case 'Alphanumeric':
+			return 2;
+		case 'Byte':
+			return 4;
+		default:
+			return 4;
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$encoder = function (mode) {
+	var _p46 = mode;
+	switch (_p46.ctor) {
+		case 'Numeric':
+			return _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$encode;
+		case 'Alphanumeric':
+			return _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$encode;
+		case 'Byte':
+			return _pablohirafuji$elm_qrcode$QRCode_Encode_Byte$encode;
+		default:
+			return _pablohirafuji$elm_qrcode$QRCode_Encode_UTF8$encode;
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$Model = F5(
+	function (a, b, c, d, e) {
+		return {inputStr: a, ecLevel: b, mode: c, groupInfo: d, bitsCount: e};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$UTF8 = {ctor: 'UTF8'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicator = F2(
+	function (_p47, bits) {
+		var _p48 = _p47;
+		var _p49 = _p48.mode;
+		var length = A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, _p49, _p48.groupInfo.version);
+		var charCount = _elm_lang$core$Native_Utils.eq(_p49, _pablohirafuji$elm_qrcode$QRCode_Encode$UTF8) ? _elm_lang$core$List$length(bits) : _elm_lang$core$String$length(_p48.inputStr);
+		return {ctor: '_Tuple2', _0: charCount, _1: length};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$addInfoAndFinalBits = function (_p50) {
+	var _p51 = _p50;
+	var _p53 = _p51._1;
+	var _p52 = _p51._0;
+	return A2(
+		F2(
+			function (v0, v1) {
+				return {ctor: '_Tuple2', _0: v0, _1: v1};
+			}),
+		_p53,
+		A2(
+			_pablohirafuji$elm_qrcode$QRCode_Encode$addFiller,
+			_p53.groupInfo.capacity,
+			_pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes(
+				A3(
+					_pablohirafuji$elm_qrcode$QRCode_Encode$addTerminator,
+					_p53.groupInfo.capacity,
+					_p53.bitsCount,
+					A2(
+						F2(
+							function (x, y) {
+								return {ctor: '::', _0: x, _1: y};
+							}),
+						{
+							ctor: '_Tuple2',
+							_0: _pablohirafuji$elm_qrcode$QRCode_Encode$modeIndicator(_p53.mode),
+							_1: 4
+						},
+						A2(
+							F2(
+								function (x, y) {
+									return {ctor: '::', _0: x, _1: y};
+								}),
+							A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicator, _p53, _p52),
+							_p52))))));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$Byte = {ctor: 'Byte'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$Alphanumeric = {ctor: 'Alphanumeric'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$Numeric = {ctor: 'Numeric'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$selectMode = function (inputStr) {
+	return A2(_elm_lang$core$Regex$contains, _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$regex, inputStr) ? _pablohirafuji$elm_qrcode$QRCode_Encode$Numeric : (A2(_elm_lang$core$Regex$contains, _pablohirafuji$elm_qrcode$QRCode_Encode_Alphanumeric$regex, inputStr) ? _pablohirafuji$elm_qrcode$QRCode_Encode$Alphanumeric : (A2(_elm_lang$core$Regex$contains, _pablohirafuji$elm_qrcode$QRCode_Encode_Byte$regex, inputStr) ? _pablohirafuji$elm_qrcode$QRCode_Encode$Byte : _pablohirafuji$elm_qrcode$QRCode_Encode$UTF8));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$encode = F2(
+	function (inputStr, ecLevel) {
+		var mode = _pablohirafuji$elm_qrcode$QRCode_Encode$selectMode(inputStr);
+		return A2(
+			_elm_lang$core$Result$map,
+			_pablohirafuji$elm_qrcode$QRCode_Encode$concatTranspose,
+			A2(
+				_elm_lang$core$Result$andThen,
+				_pablohirafuji$elm_qrcode$QRCode_Encode$getErrorCorrection,
+				A2(
+					_elm_lang$core$Result$andThen,
+					_pablohirafuji$elm_qrcode$QRCode_Encode$toBlocks,
+					A2(
+						_elm_lang$core$Result$map,
+						_pablohirafuji$elm_qrcode$QRCode_Encode$addInfoAndFinalBits,
+						A2(
+							_elm_lang$core$Result$andThen,
+							A3(_pablohirafuji$elm_qrcode$QRCode_Encode$selectVersion, inputStr, ecLevel, mode),
+							A2(_pablohirafuji$elm_qrcode$QRCode_Encode$encoder, mode, inputStr))))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Encode$H = {ctor: 'H'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$Q = {ctor: 'Q'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$M = {ctor: 'M'};
+var _pablohirafuji$elm_qrcode$QRCode_Encode$L = {ctor: 'L'};
+
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentPatternData = _elm_lang$core$Array$fromList(
+	{
+		ctor: '::',
+		_0: {ctor: '[]'},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '::',
+				_0: 6,
+				_1: {
+					ctor: '::',
+					_0: 18,
+					_1: {ctor: '[]'}
+				}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: 6,
+					_1: {
+						ctor: '::',
+						_0: 22,
+						_1: {ctor: '[]'}
+					}
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '::',
+						_0: 6,
+						_1: {
+							ctor: '::',
+							_0: 26,
+							_1: {ctor: '[]'}
+						}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '::',
+							_0: 6,
+							_1: {
+								ctor: '::',
+								_0: 30,
+								_1: {ctor: '[]'}
+							}
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '::',
+								_0: 6,
+								_1: {
+									ctor: '::',
+									_0: 34,
+									_1: {ctor: '[]'}
+								}
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '::',
+									_0: 6,
+									_1: {
+										ctor: '::',
+										_0: 22,
+										_1: {
+											ctor: '::',
+											_0: 38,
+											_1: {ctor: '[]'}
+										}
+									}
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '::',
+										_0: 6,
+										_1: {
+											ctor: '::',
+											_0: 24,
+											_1: {
+												ctor: '::',
+												_0: 42,
+												_1: {ctor: '[]'}
+											}
+										}
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '::',
+											_0: 6,
+											_1: {
+												ctor: '::',
+												_0: 26,
+												_1: {
+													ctor: '::',
+													_0: 46,
+													_1: {ctor: '[]'}
+												}
+											}
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '::',
+												_0: 6,
+												_1: {
+													ctor: '::',
+													_0: 28,
+													_1: {
+														ctor: '::',
+														_0: 50,
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '::',
+													_0: 6,
+													_1: {
+														ctor: '::',
+														_0: 30,
+														_1: {
+															ctor: '::',
+															_0: 54,
+															_1: {ctor: '[]'}
+														}
+													}
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '::',
+														_0: 6,
+														_1: {
+															ctor: '::',
+															_0: 32,
+															_1: {
+																ctor: '::',
+																_0: 58,
+																_1: {ctor: '[]'}
+															}
+														}
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '::',
+															_0: 6,
+															_1: {
+																ctor: '::',
+																_0: 34,
+																_1: {
+																	ctor: '::',
+																	_0: 62,
+																	_1: {ctor: '[]'}
+																}
+															}
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '::',
+																_0: 6,
+																_1: {
+																	ctor: '::',
+																	_0: 26,
+																	_1: {
+																		ctor: '::',
+																		_0: 46,
+																		_1: {
+																			ctor: '::',
+																			_0: 66,
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '::',
+																	_0: 6,
+																	_1: {
+																		ctor: '::',
+																		_0: 26,
+																		_1: {
+																			ctor: '::',
+																			_0: 48,
+																			_1: {
+																				ctor: '::',
+																				_0: 70,
+																				_1: {ctor: '[]'}
+																			}
+																		}
+																	}
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '::',
+																		_0: 6,
+																		_1: {
+																			ctor: '::',
+																			_0: 26,
+																			_1: {
+																				ctor: '::',
+																				_0: 50,
+																				_1: {
+																					ctor: '::',
+																					_0: 74,
+																					_1: {ctor: '[]'}
+																				}
+																			}
+																		}
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '::',
+																			_0: 6,
+																			_1: {
+																				ctor: '::',
+																				_0: 30,
+																				_1: {
+																					ctor: '::',
+																					_0: 54,
+																					_1: {
+																						ctor: '::',
+																						_0: 78,
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '::',
+																				_0: 6,
+																				_1: {
+																					ctor: '::',
+																					_0: 30,
+																					_1: {
+																						ctor: '::',
+																						_0: 56,
+																						_1: {
+																							ctor: '::',
+																							_0: 82,
+																							_1: {ctor: '[]'}
+																						}
+																					}
+																				}
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '::',
+																					_0: 6,
+																					_1: {
+																						ctor: '::',
+																						_0: 30,
+																						_1: {
+																							ctor: '::',
+																							_0: 58,
+																							_1: {
+																								ctor: '::',
+																								_0: 86,
+																								_1: {ctor: '[]'}
+																							}
+																						}
+																					}
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '::',
+																						_0: 6,
+																						_1: {
+																							ctor: '::',
+																							_0: 34,
+																							_1: {
+																								ctor: '::',
+																								_0: 62,
+																								_1: {
+																									ctor: '::',
+																									_0: 90,
+																									_1: {ctor: '[]'}
+																								}
+																							}
+																						}
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '::',
+																							_0: 6,
+																							_1: {
+																								ctor: '::',
+																								_0: 28,
+																								_1: {
+																									ctor: '::',
+																									_0: 50,
+																									_1: {
+																										ctor: '::',
+																										_0: 72,
+																										_1: {
+																											ctor: '::',
+																											_0: 94,
+																											_1: {ctor: '[]'}
+																										}
+																									}
+																								}
+																							}
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '::',
+																								_0: 6,
+																								_1: {
+																									ctor: '::',
+																									_0: 26,
+																									_1: {
+																										ctor: '::',
+																										_0: 50,
+																										_1: {
+																											ctor: '::',
+																											_0: 74,
+																											_1: {
+																												ctor: '::',
+																												_0: 98,
+																												_1: {ctor: '[]'}
+																											}
+																										}
+																									}
+																								}
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '::',
+																									_0: 6,
+																									_1: {
+																										ctor: '::',
+																										_0: 30,
+																										_1: {
+																											ctor: '::',
+																											_0: 54,
+																											_1: {
+																												ctor: '::',
+																												_0: 78,
+																												_1: {
+																													ctor: '::',
+																													_0: 102,
+																													_1: {ctor: '[]'}
+																												}
+																											}
+																										}
+																									}
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '::',
+																										_0: 6,
+																										_1: {
+																											ctor: '::',
+																											_0: 28,
+																											_1: {
+																												ctor: '::',
+																												_0: 54,
+																												_1: {
+																													ctor: '::',
+																													_0: 80,
+																													_1: {
+																														ctor: '::',
+																														_0: 106,
+																														_1: {ctor: '[]'}
+																													}
+																												}
+																											}
+																										}
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '::',
+																											_0: 6,
+																											_1: {
+																												ctor: '::',
+																												_0: 32,
+																												_1: {
+																													ctor: '::',
+																													_0: 58,
+																													_1: {
+																														ctor: '::',
+																														_0: 84,
+																														_1: {
+																															ctor: '::',
+																															_0: 110,
+																															_1: {ctor: '[]'}
+																														}
+																													}
+																												}
+																											}
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '::',
+																												_0: 6,
+																												_1: {
+																													ctor: '::',
+																													_0: 30,
+																													_1: {
+																														ctor: '::',
+																														_0: 58,
+																														_1: {
+																															ctor: '::',
+																															_0: 86,
+																															_1: {
+																																ctor: '::',
+																																_0: 114,
+																																_1: {ctor: '[]'}
+																															}
+																														}
+																													}
+																												}
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '::',
+																													_0: 6,
+																													_1: {
+																														ctor: '::',
+																														_0: 34,
+																														_1: {
+																															ctor: '::',
+																															_0: 62,
+																															_1: {
+																																ctor: '::',
+																																_0: 90,
+																																_1: {
+																																	ctor: '::',
+																																	_0: 118,
+																																	_1: {ctor: '[]'}
+																																}
+																															}
+																														}
+																													}
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '::',
+																														_0: 6,
+																														_1: {
+																															ctor: '::',
+																															_0: 26,
+																															_1: {
+																																ctor: '::',
+																																_0: 50,
+																																_1: {
+																																	ctor: '::',
+																																	_0: 74,
+																																	_1: {
+																																		ctor: '::',
+																																		_0: 98,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 122,
+																																			_1: {ctor: '[]'}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '::',
+																															_0: 6,
+																															_1: {
+																																ctor: '::',
+																																_0: 30,
+																																_1: {
+																																	ctor: '::',
+																																	_0: 54,
+																																	_1: {
+																																		ctor: '::',
+																																		_0: 78,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 102,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 126,
+																																				_1: {ctor: '[]'}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '::',
+																																_0: 6,
+																																_1: {
+																																	ctor: '::',
+																																	_0: 26,
+																																	_1: {
+																																		ctor: '::',
+																																		_0: 52,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 78,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 104,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 130,
+																																					_1: {ctor: '[]'}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '::',
+																																	_0: 6,
+																																	_1: {
+																																		ctor: '::',
+																																		_0: 30,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 56,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 82,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 108,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 134,
+																																						_1: {ctor: '[]'}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '::',
+																																		_0: 6,
+																																		_1: {
+																																			ctor: '::',
+																																			_0: 34,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 60,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 86,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 112,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 138,
+																																							_1: {ctor: '[]'}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '::',
+																																			_0: 6,
+																																			_1: {
+																																				ctor: '::',
+																																				_0: 30,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 58,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 86,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 114,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 142,
+																																								_1: {ctor: '[]'}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '::',
+																																				_0: 6,
+																																				_1: {
+																																					ctor: '::',
+																																					_0: 34,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 62,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 90,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 118,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 146,
+																																									_1: {ctor: '[]'}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '::',
+																																					_0: 6,
+																																					_1: {
+																																						ctor: '::',
+																																						_0: 30,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 54,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 78,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 102,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 126,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 150,
+																																											_1: {ctor: '[]'}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '::',
+																																						_0: 6,
+																																						_1: {
+																																							ctor: '::',
+																																							_0: 24,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 50,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 76,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 102,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 128,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 154,
+																																												_1: {ctor: '[]'}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '::',
+																																							_0: 6,
+																																							_1: {
+																																								ctor: '::',
+																																								_0: 28,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 54,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 80,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 106,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 132,
+																																												_1: {
+																																													ctor: '::',
+																																													_0: 158,
+																																													_1: {ctor: '[]'}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '::',
+																																								_0: 6,
+																																								_1: {
+																																									ctor: '::',
+																																									_0: 32,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 58,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 84,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 110,
+																																												_1: {
+																																													ctor: '::',
+																																													_0: 136,
+																																													_1: {
+																																														ctor: '::',
+																																														_0: 162,
+																																														_1: {ctor: '[]'}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '::',
+																																									_0: 6,
+																																									_1: {
+																																										ctor: '::',
+																																										_0: 26,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 54,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 82,
+																																												_1: {
+																																													ctor: '::',
+																																													_0: 110,
+																																													_1: {
+																																														ctor: '::',
+																																														_0: 138,
+																																														_1: {
+																																															ctor: '::',
+																																															_0: 166,
+																																															_1: {ctor: '[]'}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '::',
+																																										_0: 6,
+																																										_1: {
+																																											ctor: '::',
+																																											_0: 30,
+																																											_1: {
+																																												ctor: '::',
+																																												_0: 58,
+																																												_1: {
+																																													ctor: '::',
+																																													_0: 86,
+																																													_1: {
+																																														ctor: '::',
+																																														_0: 114,
+																																														_1: {
+																																															ctor: '::',
+																																															_0: 142,
+																																															_1: {
+																																																ctor: '::',
+																																																_0: 170,
+																																																_1: {ctor: '[]'}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									},
+																																									_1: {ctor: '[]'}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit = function ($int) {
+	var helper = F2(
+		function (digit, $int) {
+			helper:
+			while (true) {
+				if (!_elm_lang$core$Native_Utils.eq($int, 0)) {
+					var _v0 = digit + 1,
+						_v1 = $int >>> 1;
+					digit = _v0;
+					$int = _v1;
+					continue helper;
+				} else {
+					return digit;
+				}
+			}
+		});
+	return A2(helper, 0, $int);
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getAreaCoord = F2(
+	function (rows, cols) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			F2(
+				function (row, list) {
+					return A3(
+						_elm_lang$core$List$foldl,
+						F2(
+							function (col, list_) {
+								return {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: row, _1: col},
+									_1: list_
+								};
+							}),
+						list,
+						cols);
+				}),
+			{ctor: '[]'},
+			rows);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getCoord = F2(
+	function (size, index) {
+		return {
+			ctor: '_Tuple2',
+			_0: (index / size) | 0,
+			_1: A2(_elm_lang$core$Basics_ops['%'], index, size)
+		};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex = F3(
+	function (size, row, col) {
+		return (size * row) + col;
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$isOccupy = F4(
+	function (row, col, size, matrix) {
+		var _p0 = A2(
+			_elm_lang$core$Array$get,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, row, col),
+			matrix);
+		if (_p0.ctor === 'Just') {
+			var _p1 = _p0._0;
+			if (_p1.ctor === 'Just') {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$applyMaskColor = F2(
+	function (maybeModule, isChange) {
+		if (isChange) {
+			var _p2 = maybeModule;
+			if (((_p2.ctor === 'Just') && (_p2._0.ctor === '_Tuple2')) && (_p2._0._0 === false)) {
+				return _elm_lang$core$Maybe$Just(
+					{ctor: '_Tuple2', _0: false, _1: !_p2._0._1});
+			} else {
+				return maybeModule;
+			}
+		} else {
+			return maybeModule;
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$applyMaskFunction = F4(
+	function ($function, size, index, maybeModule) {
+		return A2(
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$applyMaskColor,
+			maybeModule,
+			$function(
+				A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$getCoord, size, index)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$isDarkModule = function (_p3) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		false,
+		A2(_elm_lang$core$Maybe$map, _elm_lang$core$Tuple$second, _p3));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule4Score = F2(
+	function (size, simplifiedList) {
+		var moduleCount = _elm_lang$core$Basics$toFloat(size * size);
+		var darkCount = _elm_lang$core$List$length(
+			A2(_elm_lang$core$List$filter, _elm_lang$core$Basics$identity, simplifiedList));
+		var ratio = _elm_lang$core$Basics$abs(
+			(((_elm_lang$core$Basics$toFloat(100 * darkCount) / moduleCount) / moduleCount) - 50) / 5);
+		return _elm_lang$core$Basics$round(ratio * 10);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule3Score_ = F2(
+	function (simplifiedList, score) {
+		rule3Score_:
+		while (true) {
+			var _p4 = simplifiedList;
+			_v5_3:
+			do {
+				if (_p4.ctor === '[]') {
+					return score;
+				} else {
+					if (_p4._0 === false) {
+						if ((((((((((((((((((((_p4._1.ctor === '::') && (_p4._1._0 === false)) && (_p4._1._1.ctor === '::')) && (_p4._1._1._0 === false)) && (_p4._1._1._1.ctor === '::')) && (_p4._1._1._1._0 === false)) && (_p4._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._0 === true)) && (_p4._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._0 === false)) && (_p4._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._0 === true)) && (_p4._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._0 === true)) && (_p4._1._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._1._0 === true)) && (_p4._1._1._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._1._1._0 === false)) && (_p4._1._1._1._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._1._1._1._0 === true)) {
+							var _v6 = _p4._1._1._1._1._1._1._1._1._1._1._1,
+								_v7 = score + 40;
+							simplifiedList = _v6;
+							score = _v7;
+							continue rule3Score_;
+						} else {
+							break _v5_3;
+						}
+					} else {
+						if ((((((((((((((((((((_p4._1.ctor === '::') && (_p4._1._0 === false)) && (_p4._1._1.ctor === '::')) && (_p4._1._1._0 === true)) && (_p4._1._1._1.ctor === '::')) && (_p4._1._1._1._0 === true)) && (_p4._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._0 === true)) && (_p4._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._0 === false)) && (_p4._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._0 === true)) && (_p4._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._0 === false)) && (_p4._1._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._1._0 === false)) && (_p4._1._1._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._1._1._0 === false)) && (_p4._1._1._1._1._1._1._1._1._1._1.ctor === '::')) && (_p4._1._1._1._1._1._1._1._1._1._1._0 === false)) {
+							var _v8 = _p4._1._1._1._1._1._1._1._1._1._1._1,
+								_v9 = score + 40;
+							simplifiedList = _v8;
+							score = _v9;
+							continue rule3Score_;
+						} else {
+							break _v5_3;
+						}
+					}
+				}
+			} while(false);
+			var _v10 = _p4._1,
+				_v11 = score;
+			simplifiedList = _v10;
+			score = _v11;
+			continue rule3Score_;
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule3Score = A2(_elm_lang$core$List$foldl, _pablohirafuji$elm_qrcode$QRCode_Matrix$rule3Score_, 0);
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule2Score_ = F4(
+	function (row1, row2, maybeLast, score) {
+		rule2Score_:
+		while (true) {
+			var _p5 = row1;
+			if (_p5.ctor === '[]') {
+				return score;
+			} else {
+				var _p9 = _p5._1;
+				var _p8 = _p5._0;
+				var _p6 = row2;
+				if (_p6.ctor === '[]') {
+					return score;
+				} else {
+					var _p7 = _p6._1;
+					if (_elm_lang$core$Native_Utils.eq(_p8, _p6._0)) {
+						if (_elm_lang$core$Native_Utils.eq(
+							_elm_lang$core$Maybe$Just(_p8),
+							maybeLast)) {
+							var _v14 = _p9,
+								_v15 = _p7,
+								_v16 = _elm_lang$core$Maybe$Just(_p8),
+								_v17 = score + 3;
+							row1 = _v14;
+							row2 = _v15;
+							maybeLast = _v16;
+							score = _v17;
+							continue rule2Score_;
+						} else {
+							var _v18 = _p9,
+								_v19 = _p7,
+								_v20 = _elm_lang$core$Maybe$Just(_p8),
+								_v21 = score;
+							row1 = _v18;
+							row2 = _v19;
+							maybeLast = _v20;
+							score = _v21;
+							continue rule2Score_;
+						}
+					} else {
+						var _v22 = _p9,
+							_v23 = _p7,
+							_v24 = _elm_lang$core$Maybe$Nothing,
+							_v25 = score;
+						row1 = _v22;
+						row2 = _v23;
+						maybeLast = _v24;
+						score = _v25;
+						continue rule2Score_;
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule2Score = F2(
+	function (list, score) {
+		rule2Score:
+		while (true) {
+			var _p10 = list;
+			if ((_p10.ctor === '::') && (_p10._1.ctor === '::')) {
+				var _v27 = _p10._1._1,
+					_v28 = A2(
+					F2(
+						function (x, y) {
+							return x + y;
+						}),
+					score,
+					A4(_pablohirafuji$elm_qrcode$QRCode_Matrix$rule2Score_, _p10._0, _p10._1._0, _elm_lang$core$Maybe$Nothing, 0));
+				list = _v27;
+				score = _v28;
+				continue rule2Score;
+			} else {
+				return score;
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule1Score_ = F2(
+	function (simplifiedList, _p11) {
+		rule1Score_:
+		while (true) {
+			var _p12 = _p11;
+			var _p18 = _p12._2;
+			var _p17 = _p12._1;
+			var _p16 = _p12._0;
+			var _p13 = simplifiedList;
+			if (_p13.ctor === '[]') {
+				return (_elm_lang$core$Native_Utils.cmp(_p17, 5) > -1) ? ((_p18 + _p17) - 2) : _p18;
+			} else {
+				var _p15 = _p13._1;
+				var _p14 = _p13._0;
+				if (_elm_lang$core$Native_Utils.eq(_p16, _p14)) {
+					var _v31 = _p15,
+						_v32 = {ctor: '_Tuple3', _0: _p16, _1: _p17 + 1, _2: _p18};
+					simplifiedList = _v31;
+					_p11 = _v32;
+					continue rule1Score_;
+				} else {
+					if (_elm_lang$core$Native_Utils.cmp(_p17, 5) > -1) {
+						var _v33 = _p15,
+							_v34 = {ctor: '_Tuple3', _0: _p14, _1: 0, _2: (_p18 + _p17) - 2};
+						simplifiedList = _v33;
+						_p11 = _v34;
+						continue rule1Score_;
+					} else {
+						var _v35 = _p15,
+							_v36 = {ctor: '_Tuple3', _0: _p14, _1: 0, _2: _p18};
+						simplifiedList = _v35;
+						_p11 = _v36;
+						continue rule1Score_;
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$rule1Score = function (_p19) {
+	return _elm_lang$core$List$sum(
+		A2(
+			_elm_lang$core$List$map,
+			A2(
+				_elm_lang$core$Basics$flip,
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$rule1Score_,
+				{ctor: '_Tuple3', _0: false, _1: 0, _2: 0}),
+			_p19));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$breakList = F3(
+	function (width, list, acc) {
+		breakList:
+		while (true) {
+			var _p20 = list;
+			if (_p20.ctor === '[]') {
+				return _elm_lang$core$List$reverse(acc);
+			} else {
+				var _v38 = width,
+					_v39 = A2(_elm_lang$core$List$drop, width, list),
+					_v40 = {
+					ctor: '::',
+					_0: A2(_elm_lang$core$List$take, width, list),
+					_1: acc
+				};
+				width = _v38;
+				list = _v39;
+				acc = _v40;
+				continue breakList;
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getMaskScore = F2(
+	function (size, matrix) {
+		var list = A2(
+			_elm_lang$core$List$map,
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$isDarkModule,
+			_elm_lang$core$Array$toList(matrix));
+		var rowList = A3(
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$breakList,
+			size,
+			list,
+			{ctor: '[]'});
+		var transposedRowList = _pablohirafuji$elm_qrcode$QRCode_Helpers$transpose(rowList);
+		return A2(
+			F2(
+				function (x, y) {
+					return x + y;
+				}),
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$rule4Score, size, list),
+			A2(
+				F2(
+					function (x, y) {
+						return x + y;
+					}),
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$rule3Score(transposedRowList),
+				A2(
+					F2(
+						function (x, y) {
+							return x + y;
+						}),
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$rule3Score(rowList),
+					A2(
+						F2(
+							function (x, y) {
+								return x + y;
+							}),
+						A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$rule2Score, rowList, 0),
+						A2(
+							F2(
+								function (x, y) {
+									return x + y;
+								}),
+							_pablohirafuji$elm_qrcode$QRCode_Matrix$rule1Score(transposedRowList),
+							_pablohirafuji$elm_qrcode$QRCode_Matrix$rule1Score(rowList))))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$maskFunction = function (mask) {
+	var _p21 = mask;
+	switch (_p21.ctor) {
+		case 'Pattern0':
+			return function (_p22) {
+				var _p23 = _p22;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(_elm_lang$core$Basics_ops['%'], _p23._0 + _p23._1, 2),
+					0);
+			};
+		case 'Pattern1':
+			return function (_p24) {
+				var _p25 = _p24;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(_elm_lang$core$Basics_ops['%'], _p25._0, 2),
+					0);
+			};
+		case 'Pattern2':
+			return function (_p26) {
+				var _p27 = _p26;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(_elm_lang$core$Basics_ops['%'], _p27._1, 3),
+					0);
+			};
+		case 'Pattern3':
+			return function (_p28) {
+				var _p29 = _p28;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(_elm_lang$core$Basics_ops['%'], _p29._0 + _p29._1, 3),
+					0);
+			};
+		case 'Pattern4':
+			return function (_p30) {
+				var _p31 = _p30;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(
+						_elm_lang$core$Basics_ops['%'],
+						_elm_lang$core$Basics$floor(
+							_elm_lang$core$Basics$toFloat(_p31._0) / 2) + _elm_lang$core$Basics$floor(
+							_elm_lang$core$Basics$toFloat(_p31._1) / 3),
+						2),
+					0);
+			};
+		case 'Pattern5':
+			return function (_p32) {
+				var _p33 = _p32;
+				var _p35 = _p33._0;
+				var _p34 = _p33._1;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(_elm_lang$core$Basics_ops['%'], _p35 * _p34, 2) + A2(_elm_lang$core$Basics_ops['%'], _p35 * _p34, 3),
+					0);
+			};
+		case 'Pattern6':
+			return function (_p36) {
+				var _p37 = _p36;
+				var _p39 = _p37._0;
+				var _p38 = _p37._1;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(
+						_elm_lang$core$Basics_ops['%'],
+						A2(_elm_lang$core$Basics_ops['%'], _p39 * _p38, 2) + A2(_elm_lang$core$Basics_ops['%'], _p39 * _p38, 3),
+						2),
+					0);
+			};
+		default:
+			return function (_p40) {
+				var _p41 = _p40;
+				var _p43 = _p41._0;
+				var _p42 = _p41._1;
+				return _elm_lang$core$Native_Utils.eq(
+					A2(
+						_elm_lang$core$Basics_ops['%'],
+						A2(_elm_lang$core$Basics_ops['%'], _p43 * _p42, 3) + A2(_elm_lang$core$Basics_ops['%'], _p43 + _p42, 2),
+						2),
+					0);
+			};
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$applyMask = F3(
+	function (size, mask, matrix) {
+		return A3(
+			_elm_lang$core$Basics$flip,
+			_elm_lang$core$Array$indexedMap,
+			matrix,
+			A2(
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$applyMaskFunction,
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$maskFunction(mask),
+				size));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask_ = F4(
+	function (size, matrix, mask, maybeMin) {
+		var maskedMatrix = A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$applyMask, size, mask, matrix);
+		var maskScore = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$getMaskScore, size, maskedMatrix);
+		var $return = function () {
+			var _p44 = maybeMin;
+			if (_p44.ctor === 'Just') {
+				var _p45 = _p44._0._0;
+				return (_elm_lang$core$Native_Utils.cmp(_p45, maskScore) < 0) ? {ctor: '_Tuple3', _0: _p45, _1: _p44._0._1, _2: _p44._0._2} : {ctor: '_Tuple3', _0: maskScore, _1: mask, _2: maskedMatrix};
+			} else {
+				return {ctor: '_Tuple3', _0: maskScore, _1: mask, _2: maskedMatrix};
+			}
+		}();
+		return _elm_lang$core$Maybe$Just($return);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$maskToInt = function (mask) {
+	var _p46 = mask;
+	switch (_p46.ctor) {
+		case 'Pattern0':
+			return 0;
+		case 'Pattern1':
+			return 1;
+		case 'Pattern2':
+			return 2;
+		case 'Pattern3':
+			return 3;
+		case 'Pattern4':
+			return 4;
+		case 'Pattern5':
+			return 5;
+		case 'Pattern6':
+			return 6;
+		default:
+			return 7;
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$bitToColor = F2(
+	function ($byte, offset) {
+		return A2(
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				}),
+			1,
+			1 & ($byte >> (7 - offset)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setDataModule = F3(
+	function (_p47, $byte, offset) {
+		var _p48 = _p47;
+		return A2(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, _p48.size, _p48.row, _p48.col),
+			_elm_lang$core$Maybe$Just(
+				{
+					ctor: '_Tuple2',
+					_0: false,
+					_1: A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$bitToColor, $byte, offset)
+				}));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$nextModule = function (_p49) {
+	var _p50 = _p49;
+	var _p53 = _p50.row;
+	var _p52 = _p50;
+	var _p51 = _p50.col;
+	return _p50.isRight ? _elm_lang$core$Native_Utils.update(
+		_p52,
+		{col: _p51 - 1, isRight: false}) : (_p50.isUp ? _elm_lang$core$Native_Utils.update(
+		_p52,
+		{row: _p53 - 1, col: _p51 + 1, isRight: true}) : _elm_lang$core$Native_Utils.update(
+		_p52,
+		{row: _p53 + 1, col: _p51 + 1, isRight: true}));
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$addDataModule = F4(
+	function (_p54, bytes, offset, matrix) {
+		addDataModule:
+		while (true) {
+			var _p55 = _p54;
+			var _p60 = _p55.size;
+			var _p59 = _p55.row;
+			var _p58 = _p55;
+			var _p57 = _p55.col;
+			var _p56 = bytes;
+			if (_p56.ctor === '[]') {
+				return matrix;
+			} else {
+				if (_elm_lang$core$Native_Utils.cmp(offset, 8) > -1) {
+					var _v56 = _p58,
+						_v57 = _p56._1,
+						_v58 = 0,
+						_v59 = matrix;
+					_p54 = _v56;
+					bytes = _v57;
+					offset = _v58;
+					matrix = _v59;
+					continue addDataModule;
+				} else {
+					if (_elm_lang$core$Native_Utils.eq(_p57, 6)) {
+						var _v60 = _elm_lang$core$Native_Utils.update(
+							_p58,
+							{col: _p57 - 1, isRight: true}),
+							_v61 = bytes,
+							_v62 = offset,
+							_v63 = matrix;
+						_p54 = _v60;
+						bytes = _v61;
+						offset = _v62;
+						matrix = _v63;
+						continue addDataModule;
+					} else {
+						if (_elm_lang$core$Native_Utils.cmp(_p59, 0) < 0) {
+							var _v64 = _elm_lang$core$Native_Utils.update(
+								_p58,
+								{row: 0, col: _p57 - 2, isRight: true, isUp: false}),
+								_v65 = bytes,
+								_v66 = offset,
+								_v67 = matrix;
+							_p54 = _v64;
+							bytes = _v65;
+							offset = _v66;
+							matrix = _v67;
+							continue addDataModule;
+						} else {
+							if (_elm_lang$core$Native_Utils.cmp(_p59, _p60) > -1) {
+								var _v68 = _elm_lang$core$Native_Utils.update(
+									_p58,
+									{row: _p60 - 1, col: _p57 - 2, isRight: true, isUp: true}),
+									_v69 = bytes,
+									_v70 = offset,
+									_v71 = matrix;
+								_p54 = _v68;
+								bytes = _v69;
+								offset = _v70;
+								matrix = _v71;
+								continue addDataModule;
+							} else {
+								if (A4(_pablohirafuji$elm_qrcode$QRCode_Matrix$isOccupy, _p59, _p57, _p60, matrix)) {
+									var _v72 = _pablohirafuji$elm_qrcode$QRCode_Matrix$nextModule(_p58),
+										_v73 = bytes,
+										_v74 = offset,
+										_v75 = matrix;
+									_p54 = _v72;
+									bytes = _v73;
+									offset = _v74;
+									matrix = _v75;
+									continue addDataModule;
+								} else {
+									var _v76 = _pablohirafuji$elm_qrcode$QRCode_Matrix$nextModule(_p58),
+										_v77 = bytes,
+										_v78 = offset + 1,
+										_v79 = A4(_pablohirafuji$elm_qrcode$QRCode_Matrix$setDataModule, _p58, _p56._0, offset, matrix);
+									_p54 = _v76;
+									bytes = _v77;
+									offset = _v78;
+									matrix = _v79;
+									continue addDataModule;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$initPlacement = function (size) {
+	return {size: size, row: size + 1, col: size + 1, isRight: true, isUp: true};
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$addData = F3(
+	function (size, bytes, matrix) {
+		return A4(
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$addDataModule,
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$initPlacement(size),
+			bytes,
+			0,
+			matrix);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentColor = F2(
+	function (row, col) {
+		return (_elm_lang$core$Native_Utils.eq(row, -2) || (_elm_lang$core$Native_Utils.eq(row, 2) || (_elm_lang$core$Native_Utils.eq(col, -2) || (_elm_lang$core$Native_Utils.eq(col, 2) || (_elm_lang$core$Native_Utils.eq(row, 0) && _elm_lang$core$Native_Utils.eq(col, 0)))))) ? _elm_lang$core$Maybe$Just(
+			{ctor: '_Tuple2', _0: true, _1: true}) : _elm_lang$core$Maybe$Just(
+			{ctor: '_Tuple2', _0: true, _1: false});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setAlignModule = F4(
+	function (size, rowPos, colPos, _p61) {
+		var _p62 = _p61;
+		var _p64 = _p62._0;
+		var _p63 = _p62._1;
+		return A2(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, _p64 + rowPos, _p63 + colPos),
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentColor, _p64, _p63));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentRange = A2(_elm_lang$core$List$range, -2, 2);
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setAlignment = F3(
+	function (size, _p65, matrix) {
+		var _p66 = _p65;
+		return A3(
+			_elm_lang$core$List$foldl,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$setAlignModule, size, _p66._0, _p66._1),
+			matrix,
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$getAreaCoord, _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentRange, _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentRange));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$isValidAlign = F2(
+	function (size, _p67) {
+		var _p68 = _p67;
+		var _p70 = _p68._0;
+		var _p69 = _p68._1;
+		return ((_elm_lang$core$Native_Utils.cmp(_p70, 10) > 0) || ((_elm_lang$core$Native_Utils.cmp(10, _p69) < 0) && (_elm_lang$core$Native_Utils.cmp(_p69, size - 10) < 0))) && ((_elm_lang$core$Native_Utils.cmp(_p70, size - 10) < 0) || (_elm_lang$core$Native_Utils.cmp(_p69, 10) > 0));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setAlignments = F3(
+	function (size, locations, matrix) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$setAlignment(size),
+			matrix,
+			A2(
+				_elm_lang$core$List$filter,
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$isValidAlign(size),
+				A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$getAreaCoord, locations, locations)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentPattern = F3(
+	function (version, size, matrix) {
+		return A2(
+			_elm_lang$core$Result$map,
+			A2(
+				_elm_lang$core$Basics$flip,
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$setAlignments(size),
+				matrix),
+			A2(
+				_elm_lang$core$Result$fromMaybe,
+				_pablohirafuji$elm_qrcode$QRCode_Error$AlignmentPatternNotFound,
+				A2(_elm_lang$core$Array$get, version - 1, _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentPatternData)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$timingColor = F2(
+	function (row, col) {
+		return _elm_lang$core$Native_Utils.eq(
+			A2(_elm_lang$core$Basics_ops['%'], row + col, 2),
+			0) ? _elm_lang$core$Maybe$Just(
+			{ctor: '_Tuple2', _0: true, _1: true}) : _elm_lang$core$Maybe$Just(
+			{ctor: '_Tuple2', _0: true, _1: false});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setTiming = F3(
+	function (size, row, col) {
+		return A2(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, row, col),
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$timingColor, row, col));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$timingPattern = F2(
+	function (size, matrix) {
+		var range = A2(_elm_lang$core$List$range, 8, size - 9);
+		return A3(
+			_elm_lang$core$Basics$flip,
+			_elm_lang$core$List$foldl(
+				A2(
+					_elm_lang$core$Basics$flip,
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$setTiming(size),
+					6)),
+			range,
+			A3(
+				_elm_lang$core$List$foldl,
+				A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$setTiming, size, 6),
+				matrix,
+				range));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$darkModule = F2(
+	function (version, size) {
+		return A2(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, (4 * version) + 9, 8),
+			_elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple2', _0: true, _1: true}));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$encodeVersionInfo = function (version) {
+	var g18Int = 7973;
+	var g18Digit = _pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(g18Int);
+	var helper = function (d_) {
+		helper:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(d_) - g18Digit,
+				0) > -1) {
+				var _v83 = d_ ^ A3(
+					_elm_lang$core$Basics$flip,
+					_elm_lang$core$Bitwise$shiftLeftBy,
+					g18Int,
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(d_) - g18Digit);
+				d_ = _v83;
+				continue helper;
+			} else {
+				return d_ | (version << 12);
+			}
+		}
+	};
+	var d = version << 12;
+	return helper(d);
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionModule = F3(
+	function (size, isBlack, _p71) {
+		var _p72 = _p71;
+		return A2(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, _p72._0, _p72._1),
+			_elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple2', _0: true, _1: isBlack}));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionInfo_ = F4(
+	function (size, isBlackFn, count, matrix) {
+		setVersionInfo_:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(count, 18) < 0) {
+				var isBlack = isBlackFn(count);
+				var bottomLeft = {
+					ctor: '_Tuple2',
+					_0: ((A2(_elm_lang$core$Basics_ops['%'], count, 3) + size) - 8) - 3,
+					_1: _elm_lang$core$Basics$floor(
+						_elm_lang$core$Basics$toFloat(count) / 3)
+				};
+				var topRight = {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Basics$floor(
+						_elm_lang$core$Basics$toFloat(count) / 3),
+					_1: ((A2(_elm_lang$core$Basics_ops['%'], count, 3) + size) - 8) - 3
+				};
+				var _v85 = size,
+					_v86 = isBlackFn,
+					_v87 = count + 1,
+					_v88 = A4(
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionModule,
+					size,
+					isBlack,
+					bottomLeft,
+					A4(_pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionModule, size, isBlack, topRight, matrix));
+				size = _v85;
+				isBlackFn = _v86;
+				count = _v87;
+				matrix = _v88;
+				continue setVersionInfo_;
+			} else {
+				return matrix;
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionInfo = F3(
+	function (version, size, matrix) {
+		if (_elm_lang$core$Native_Utils.cmp(version, 7) > -1) {
+			var isBlack = F2(
+				function (bits_, count) {
+					return A2(
+						F2(
+							function (x, y) {
+								return _elm_lang$core$Native_Utils.eq(x, y);
+							}),
+						1,
+						1 & (bits_ >> count));
+				});
+			var bits = _pablohirafuji$elm_qrcode$QRCode_Matrix$encodeVersionInfo(version);
+			return A4(
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionInfo_,
+				size,
+				isBlack(bits),
+				0,
+				matrix);
+		} else {
+			return matrix;
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$encodeFormatInfo = F2(
+	function (ecLevel, mask) {
+		var g15Mask = 21522;
+		var g15Int = 1335;
+		var g15Digit = _pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(g15Int);
+		var formatInfoInt = _pablohirafuji$elm_qrcode$QRCode_Matrix$maskToInt(mask) | (_pablohirafuji$elm_qrcode$QRCode_Encode$ecLevelToInt(ecLevel) << 3);
+		var d = formatInfoInt << 10;
+		var helper = function (d_) {
+			helper:
+			while (true) {
+				if (_elm_lang$core$Native_Utils.cmp(
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(d_) - g15Digit,
+					0) > -1) {
+					var _v89 = d_ ^ A3(
+						_elm_lang$core$Basics$flip,
+						_elm_lang$core$Bitwise$shiftLeftBy,
+						g15Int,
+						_pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(d_) - g15Digit);
+					d_ = _v89;
+					continue helper;
+				} else {
+					return g15Mask ^ (d_ | (formatInfoInt << 10));
+				}
+			}
+		};
+		return helper(d);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatModule = F4(
+	function (size, isBlack, row, col) {
+		return A2(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, row, col),
+			_elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple2', _0: true, _1: isBlack}));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoVertical = F2(
+	function (size, count) {
+		return (_elm_lang$core$Native_Utils.cmp(count, 6) < 0) ? {ctor: '_Tuple2', _0: count, _1: 8} : ((_elm_lang$core$Native_Utils.cmp(count, 8) < 0) ? {ctor: '_Tuple2', _0: count + 1, _1: 8} : {ctor: '_Tuple2', _0: (size - 15) + count, _1: 8});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoHorizontal = F2(
+	function (size, count) {
+		return (_elm_lang$core$Native_Utils.cmp(count, 8) < 0) ? {ctor: '_Tuple2', _0: 8, _1: (size - count) - 1} : ((_elm_lang$core$Native_Utils.cmp(count, 9) < 0) ? {ctor: '_Tuple2', _0: 8, _1: 15 - count} : {ctor: '_Tuple2', _0: 8, _1: (15 - count) - 1});
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo_ = F4(
+	function (size, isBlackFn, count, matrix) {
+		setFormatInfo_:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(count, 15) < 0) {
+				var isBlack = isBlackFn(count);
+				var _p73 = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoVertical, size, count);
+				var x2 = _p73._0;
+				var y2 = _p73._1;
+				var _p74 = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoHorizontal, size, count);
+				var x1 = _p74._0;
+				var y1 = _p74._1;
+				var _v90 = size,
+					_v91 = isBlackFn,
+					_v92 = count + 1,
+					_v93 = A5(
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatModule,
+					size,
+					isBlack,
+					x2,
+					y2,
+					A5(_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatModule, size, isBlack, x1, y1, matrix));
+				size = _v90;
+				isBlackFn = _v91;
+				count = _v92;
+				matrix = _v93;
+				continue setFormatInfo_;
+			} else {
+				return matrix;
+			}
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo = F3(
+	function (ecLevel, size, _p75) {
+		var _p76 = _p75;
+		var isBlack = F2(
+			function (bits_, count) {
+				return A2(
+					F2(
+						function (x, y) {
+							return _elm_lang$core$Native_Utils.eq(x, y);
+						}),
+					1,
+					1 & (bits_ >> count));
+			});
+		var bits = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$encodeFormatInfo, ecLevel, _p76._0);
+		return A4(
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo_,
+			size,
+			isBlack(bits),
+			0,
+			_p76._1);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$reserveFormatInfo = F2(
+	function (size, matrix) {
+		return A4(
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo_,
+			size,
+			_elm_lang$core$Basics$always(true),
+			0,
+			matrix);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$finderColor = F2(
+	function (row, col) {
+		return ((_elm_lang$core$Native_Utils.cmp(1, row) < 1) && ((_elm_lang$core$Native_Utils.cmp(row, 7) < 1) && (_elm_lang$core$Native_Utils.eq(col, 1) || _elm_lang$core$Native_Utils.eq(col, 7)))) || (((_elm_lang$core$Native_Utils.cmp(1, col) < 1) && ((_elm_lang$core$Native_Utils.cmp(col, 7) < 1) && (_elm_lang$core$Native_Utils.eq(row, 1) || _elm_lang$core$Native_Utils.eq(row, 7)))) || ((_elm_lang$core$Native_Utils.cmp(3, row) < 1) && ((_elm_lang$core$Native_Utils.cmp(row, 5) < 1) && ((_elm_lang$core$Native_Utils.cmp(3, col) < 1) && (_elm_lang$core$Native_Utils.cmp(col, 5) < 1)))));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFinder = F5(
+	function (size, rowOffset, colOffset, _p77, matrix) {
+		var _p78 = _p77;
+		var _p80 = _p78._0;
+		var _p79 = _p78._1;
+		var finalCol = _p79 + colOffset;
+		var finalRow = _p80 + rowOffset;
+		return ((_elm_lang$core$Native_Utils.cmp(finalRow, 0) < 0) || ((_elm_lang$core$Native_Utils.cmp(finalCol, 0) < 0) || ((_elm_lang$core$Native_Utils.cmp(finalRow, size) > -1) || (_elm_lang$core$Native_Utils.cmp(finalCol, size) > -1)))) ? matrix : A3(
+			_elm_lang$core$Array$set,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, finalRow, finalCol),
+			_elm_lang$core$Maybe$Just(
+				{
+					ctor: '_Tuple2',
+					_0: true,
+					_1: A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$finderColor, _p80, _p79)
+				}),
+			matrix);
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$finderRange = A2(_elm_lang$core$List$range, 0, 8);
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$finderPattern = F4(
+	function (size, rowOffset, colOffset, matrix) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$setFinder, size, rowOffset, colOffset),
+			matrix,
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$getAreaCoord, _pablohirafuji$elm_qrcode$QRCode_Matrix$finderRange, _pablohirafuji$elm_qrcode$QRCode_Matrix$finderRange));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Model = F2(
+	function (a, b) {
+		return {size: a, matrix: b};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Placement = F5(
+	function (a, b, c, d, e) {
+		return {size: a, row: b, col: c, isRight: d, isUp: e};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern7 = {ctor: 'Pattern7'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern6 = {ctor: 'Pattern6'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern5 = {ctor: 'Pattern5'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern4 = {ctor: 'Pattern4'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern3 = {ctor: 'Pattern3'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern2 = {ctor: 'Pattern2'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern1 = {ctor: 'Pattern1'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern0 = {ctor: 'Pattern0'};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$patternList = {
+	ctor: '::',
+	_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern0,
+	_1: {
+		ctor: '::',
+		_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern1,
+		_1: {
+			ctor: '::',
+			_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern2,
+			_1: {
+				ctor: '::',
+				_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern3,
+				_1: {
+					ctor: '::',
+					_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern4,
+					_1: {
+						ctor: '::',
+						_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern5,
+						_1: {
+							ctor: '::',
+							_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern6,
+							_1: {
+								ctor: '::',
+								_0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern7,
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask = F2(
+	function (size, matrix) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '_Tuple2', _0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern0, _1: matrix},
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p81) {
+					var _p82 = _p81;
+					return {ctor: '_Tuple2', _0: _p82._1, _1: _p82._2};
+				},
+				A3(
+					_elm_lang$core$List$foldl,
+					A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask_, size, matrix),
+					_elm_lang$core$Maybe$Nothing,
+					_pablohirafuji$elm_qrcode$QRCode_Matrix$patternList)));
+	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$apply = function (_p83) {
+	var _p84 = _p83;
+	var version = _p84._0.groupInfo.version;
+	var size = ((version - 1) * 4) + 21;
+	return A2(
+		_elm_lang$core$Result$map,
+		_pablohirafuji$elm_qrcode$QRCode_Matrix$Model(size),
+		A2(
+			_elm_lang$core$Result$map,
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo, _p84._0.ecLevel, size),
+			A2(
+				_elm_lang$core$Result$map,
+				_pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask(size),
+				A2(
+					_elm_lang$core$Result$map,
+					A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$addData, size, _p84._1),
+					A3(
+						_pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentPattern,
+						version,
+						size,
+						A2(
+							_pablohirafuji$elm_qrcode$QRCode_Matrix$timingPattern,
+							size,
+							A3(
+								_pablohirafuji$elm_qrcode$QRCode_Matrix$darkModule,
+								version,
+								size,
+								A3(
+									_pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionInfo,
+									version,
+									size,
+									A2(
+										_pablohirafuji$elm_qrcode$QRCode_Matrix$reserveFormatInfo,
+										size,
+										A4(
+											_pablohirafuji$elm_qrcode$QRCode_Matrix$finderPattern,
+											size,
+											-1,
+											size - 8,
+											A4(
+												_pablohirafuji$elm_qrcode$QRCode_Matrix$finderPattern,
+												size,
+												size - 8,
+												-1,
+												A4(
+													_pablohirafuji$elm_qrcode$QRCode_Matrix$finderPattern,
+													size,
+													-1,
+													-1,
+													A2(
+														_elm_lang$core$Array$initialize,
+														size * size,
+														_elm_lang$core$Basics$always(_elm_lang$core$Maybe$Nothing))))))))))))));
+};
+
+var _pablohirafuji$elm_qrcode$QRCode_View$indexToModuleView = F2(
+	function (size, index) {
+		return {
+			row: ((index / size) | 0) + 4,
+			col: A2(_elm_lang$core$Basics_ops['%'], index, size) + 4
+		};
+	});
+var _pablohirafuji$elm_qrcode$QRCode_View$moduleView = F3(
+	function (size, index, maybeModule) {
+		var _p0 = maybeModule;
+		if (((_p0.ctor === 'Just') && (_p0._0.ctor === '_Tuple2')) && (_p0._0._1 === true)) {
+			return _elm_lang$core$Maybe$Just(
+				A2(_pablohirafuji$elm_qrcode$QRCode_View$indexToModuleView, size, index));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _pablohirafuji$elm_qrcode$QRCode_View$moduleSize = 5;
+var _pablohirafuji$elm_qrcode$QRCode_View$rectView = function (_p1) {
+	var _p2 = _p1;
+	return A2(
+		_elm_lang$svg$Svg$rect,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$x(
+				_elm_lang$core$Basics$toString(_p2.col * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(_p2.row * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$height(
+							_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fill('black'),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		{ctor: '[]'});
+};
+var _pablohirafuji$elm_qrcode$QRCode_View$toSvg = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4.size;
+	var quietZone = 8 * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize;
+	var sizePx = _elm_lang$core$Basics$toString((_p5 * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize) + quietZone);
+	return A2(
+		_elm_lang$svg$Svg$svg,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$width(sizePx),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$height(sizePx),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$viewBox(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'0 0 ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								sizePx,
+								A2(_elm_lang$core$Basics_ops['++'], ' ', sizePx)))),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			_pablohirafuji$elm_qrcode$QRCode_View$rectView,
+			A2(
+				_elm_lang$core$List$filterMap,
+				_elm_lang$core$Basics$identity,
+				A2(
+					_elm_lang$core$List$indexedMap,
+					_pablohirafuji$elm_qrcode$QRCode_View$moduleView(_p5),
+					_elm_lang$core$Array$toList(_p4.matrix)))));
+};
+var _pablohirafuji$elm_qrcode$QRCode_View$ModuleView = F2(
+	function (a, b) {
+		return {row: a, col: b};
+	});
+
+var _pablohirafuji$elm_qrcode$QRCode$toMatrix = F2(
+	function (inputStr, ecLevel) {
+		return A2(
+			_elm_lang$core$Result$andThen,
+			_pablohirafuji$elm_qrcode$QRCode_Matrix$apply,
+			A2(_pablohirafuji$elm_qrcode$QRCode_Encode$encode, inputStr, ecLevel));
+	});
+var _pablohirafuji$elm_qrcode$QRCode$toSvg = function (inputStr) {
+	return A2(
+		_elm_lang$core$Result$map,
+		_pablohirafuji$elm_qrcode$QRCode_View$toSvg,
+		A2(_pablohirafuji$elm_qrcode$QRCode$toMatrix, inputStr, _pablohirafuji$elm_qrcode$QRCode_Encode$Q));
 };
 
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
@@ -27294,6 +31210,16 @@ var _user$project$Config$update = F2(
 		}
 	});
 
+var _user$project$Pair$qrCode = function (s) {
+	var resultQRCode = _pablohirafuji$elm_qrcode$QRCode$toSvg(s);
+	var _p0 = resultQRCode;
+	if (_p0.ctor === 'Ok') {
+		return _p0._0;
+	} else {
+		return _elm_lang$html$Html$text(
+			_elm_lang$core$Basics$toString(_p0._0));
+	}
+};
 var _user$project$Pair$updateStatus = F2(
 	function (isUp, model) {
 		return _elm_lang$core$Native_Utils.update(
@@ -27311,8 +31237,8 @@ var _user$project$Pair$InputName = function (a) {
 };
 var _user$project$Pair$view = function (model) {
 	if (model.serverStatus) {
-		var _p0 = model.totem;
-		switch (_p0.ctor) {
+		var _p1 = model.totem;
+		switch (_p1.ctor) {
 			case 'NotAsked':
 				return A2(
 					_elm_lang$html$Html$div,
@@ -27418,7 +31344,7 @@ var _user$project$Pair$view = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(_p0._0)),
+							_elm_lang$core$Basics$toString(_p1._0)),
 						_1: {ctor: '[]'}
 					});
 			default:
@@ -27443,11 +31369,15 @@ var _user$project$Pair$view = function (model) {
 												_0: {ctor: '_Tuple2', _0: 'width', _1: '225px'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '20px'},
+													_0: {ctor: '_Tuple2', _0: 'height', _1: '225px'},
 													_1: {
 														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '6px'},
-														_1: {ctor: '[]'}
+														_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '20px'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '6px'},
+															_1: {ctor: '[]'}
+														}
 													}
 												}
 											}
@@ -27457,15 +31387,7 @@ var _user$project$Pair$view = function (model) {
 							},
 							{
 								ctor: '::',
-								_0: A3(
-									_elm_lang$html$Html$node,
-									'qr-code',
-									{
-										ctor: '::',
-										_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data', _p0._0),
-										_1: {ctor: '[]'}
-									},
-									{ctor: '[]'}),
+								_0: _user$project$Pair$qrCode('8:.WR8EF*FTN2-A0SR+0D:082HQOZBG$IC 6X/W0WLZJ/GS'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -27535,26 +31457,26 @@ var _user$project$Pair$getTotem = function (name) {
 };
 var _user$project$Pair$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
 			case 'Load':
-				var _p3 = _p1._0;
-				var _p2 = A2(
+				var _p4 = _p2._0;
+				var _p3 = A2(
 					_elm_lang$core$Debug$log,
 					'TOTEM',
-					A2(_krisajenkins$remotedata$RemoteData$withDefault, 'Network Error', _p3));
+					A2(_krisajenkins$remotedata$RemoteData$withDefault, 'Network Error', _p4));
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{totem: _p3}),
+						{totem: _p4}),
 					{ctor: '[]'});
 			case 'InputName':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{name: _p1._0}),
+						{name: _p2._0}),
 					{ctor: '[]'});
 			default:
 				return A2(
@@ -30012,7 +33934,7 @@ var _user$project$Main$Model = F9(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"FieldSetTypes.FieldValue":{"args":[],"tags":{"FieldString":["String"],"FieldPassword":["FieldSetTypes.FieldPasswordType"]}},"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Transaction.Msg":{"args":[],"tags":{"Load":["Transaction.Model"]}},"Machine.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Msg"],"Submit":[],"HideSaveIndication":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"FieldSet.Msg":{"args":[],"tags":{"Input":["String","String"]}},"CoreTypes.Msg":{"args":[],"tags":{"ConfigMsg":["Config.Msg"],"LoadAccounts":["List ( String, String )"],"MachineMsg":["Machine.Msg"],"NewUrl":["String"],"Interval":[],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Machine.Msg":{"args":[],"tags":{"Action":[],"Load":["Machine.Model"],"InputCassette":["MachineTypes.Machine","Machine.Position","String"],"Submit":["MachineTypes.MachineAction"],"HideSaveIndication":[]}},"Machine.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["TransactionTypes.CashInTxRec"],"CashOutTx":["TransactionTypes.CashOutTxRec"]}},"FieldSetTypes.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}},"MachineTypes.MachineAction":{"args":[],"tags":{"ResetCashOutBills":["MachineTypes.Machine"],"UnpairMachine":["MachineTypes.Machine"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Machine.Model":{"args":[],"type":"RemoteData.WebData Machine.SubModel"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSetTypes.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"MachineTypes.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"FieldSetTypes.Field":{"args":[],"type":"{ code : String , display : String , required : Bool , value : FieldSetTypes.FieldValue , loadedValue : FieldSetTypes.FieldValue }"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"Transaction.Model":{"args":[],"type":"RemoteData.WebData Transaction.Txs"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue }"},"Transaction.Txs":{"args":[],"type":"List TransactionTypes.Tx"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"Machine.SubModel":{"args":[],"type":"{ status : Machine.SavingStatus, machines : MachineTypes.Machines }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , status : String , dispensed : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MachineTypes.Machines":{"args":[],"type":"List MachineTypes.Machine"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIf : List String }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', undefined);
 }
 
 if (typeof define === "function" && define['amd'])
