@@ -7,6 +7,18 @@ p {
     margin: 0;
 }
 
+.lamassuAdminQrCode {
+    background-color: #f6f6f4;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+.lamassuAdminQrCode  svg {
+    height: 400px;
+    width: 400px;
+}
+
 .lamassuAdminLayout {
     display: flex;
     height: 100%;

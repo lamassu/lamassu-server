@@ -6579,6 +6579,172 @@ var _elm_lang$core$Bitwise$xor = _elm_lang$core$Native_Bitwise.xor;
 var _elm_lang$core$Bitwise$or = _elm_lang$core$Native_Bitwise.or;
 var _elm_lang$core$Bitwise$and = _elm_lang$core$Native_Bitwise.and;
 
+var _elm_lang$core$Color$fmod = F2(
+	function (f, n) {
+		var integer = _elm_lang$core$Basics$floor(f);
+		return (_elm_lang$core$Basics$toFloat(
+			A2(_elm_lang$core$Basics_ops['%'], integer, n)) + f) - _elm_lang$core$Basics$toFloat(integer);
+	});
+var _elm_lang$core$Color$rgbToHsl = F3(
+	function (red, green, blue) {
+		var b = _elm_lang$core$Basics$toFloat(blue) / 255;
+		var g = _elm_lang$core$Basics$toFloat(green) / 255;
+		var r = _elm_lang$core$Basics$toFloat(red) / 255;
+		var cMax = A2(
+			_elm_lang$core$Basics$max,
+			A2(_elm_lang$core$Basics$max, r, g),
+			b);
+		var cMin = A2(
+			_elm_lang$core$Basics$min,
+			A2(_elm_lang$core$Basics$min, r, g),
+			b);
+		var c = cMax - cMin;
+		var lightness = (cMax + cMin) / 2;
+		var saturation = _elm_lang$core$Native_Utils.eq(lightness, 0) ? 0 : (c / (1 - _elm_lang$core$Basics$abs((2 * lightness) - 1)));
+		var hue = _elm_lang$core$Basics$degrees(60) * (_elm_lang$core$Native_Utils.eq(cMax, r) ? A2(_elm_lang$core$Color$fmod, (g - b) / c, 6) : (_elm_lang$core$Native_Utils.eq(cMax, g) ? (((b - r) / c) + 2) : (((r - g) / c) + 4)));
+		return {ctor: '_Tuple3', _0: hue, _1: saturation, _2: lightness};
+	});
+var _elm_lang$core$Color$hslToRgb = F3(
+	function (hue, saturation, lightness) {
+		var normHue = hue / _elm_lang$core$Basics$degrees(60);
+		var chroma = (1 - _elm_lang$core$Basics$abs((2 * lightness) - 1)) * saturation;
+		var x = chroma * (1 - _elm_lang$core$Basics$abs(
+			A2(_elm_lang$core$Color$fmod, normHue, 2) - 1));
+		var _p0 = (_elm_lang$core$Native_Utils.cmp(normHue, 0) < 0) ? {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 1) < 0) ? {ctor: '_Tuple3', _0: chroma, _1: x, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 2) < 0) ? {ctor: '_Tuple3', _0: x, _1: chroma, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 3) < 0) ? {ctor: '_Tuple3', _0: 0, _1: chroma, _2: x} : ((_elm_lang$core$Native_Utils.cmp(normHue, 4) < 0) ? {ctor: '_Tuple3', _0: 0, _1: x, _2: chroma} : ((_elm_lang$core$Native_Utils.cmp(normHue, 5) < 0) ? {ctor: '_Tuple3', _0: x, _1: 0, _2: chroma} : ((_elm_lang$core$Native_Utils.cmp(normHue, 6) < 0) ? {ctor: '_Tuple3', _0: chroma, _1: 0, _2: x} : {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0}))))));
+		var r = _p0._0;
+		var g = _p0._1;
+		var b = _p0._2;
+		var m = lightness - (chroma / 2);
+		return {ctor: '_Tuple3', _0: r + m, _1: g + m, _2: b + m};
+	});
+var _elm_lang$core$Color$toRgb = function (color) {
+	var _p1 = color;
+	if (_p1.ctor === 'RGBA') {
+		return {red: _p1._0, green: _p1._1, blue: _p1._2, alpha: _p1._3};
+	} else {
+		var _p2 = A3(_elm_lang$core$Color$hslToRgb, _p1._0, _p1._1, _p1._2);
+		var r = _p2._0;
+		var g = _p2._1;
+		var b = _p2._2;
+		return {
+			red: _elm_lang$core$Basics$round(255 * r),
+			green: _elm_lang$core$Basics$round(255 * g),
+			blue: _elm_lang$core$Basics$round(255 * b),
+			alpha: _p1._3
+		};
+	}
+};
+var _elm_lang$core$Color$toHsl = function (color) {
+	var _p3 = color;
+	if (_p3.ctor === 'HSLA') {
+		return {hue: _p3._0, saturation: _p3._1, lightness: _p3._2, alpha: _p3._3};
+	} else {
+		var _p4 = A3(_elm_lang$core$Color$rgbToHsl, _p3._0, _p3._1, _p3._2);
+		var h = _p4._0;
+		var s = _p4._1;
+		var l = _p4._2;
+		return {hue: h, saturation: s, lightness: l, alpha: _p3._3};
+	}
+};
+var _elm_lang$core$Color$HSLA = F4(
+	function (a, b, c, d) {
+		return {ctor: 'HSLA', _0: a, _1: b, _2: c, _3: d};
+	});
+var _elm_lang$core$Color$hsla = F4(
+	function (hue, saturation, lightness, alpha) {
+		return A4(
+			_elm_lang$core$Color$HSLA,
+			hue - _elm_lang$core$Basics$turns(
+				_elm_lang$core$Basics$toFloat(
+					_elm_lang$core$Basics$floor(hue / (2 * _elm_lang$core$Basics$pi)))),
+			saturation,
+			lightness,
+			alpha);
+	});
+var _elm_lang$core$Color$hsl = F3(
+	function (hue, saturation, lightness) {
+		return A4(_elm_lang$core$Color$hsla, hue, saturation, lightness, 1);
+	});
+var _elm_lang$core$Color$complement = function (color) {
+	var _p5 = color;
+	if (_p5.ctor === 'HSLA') {
+		return A4(
+			_elm_lang$core$Color$hsla,
+			_p5._0 + _elm_lang$core$Basics$degrees(180),
+			_p5._1,
+			_p5._2,
+			_p5._3);
+	} else {
+		var _p6 = A3(_elm_lang$core$Color$rgbToHsl, _p5._0, _p5._1, _p5._2);
+		var h = _p6._0;
+		var s = _p6._1;
+		var l = _p6._2;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			h + _elm_lang$core$Basics$degrees(180),
+			s,
+			l,
+			_p5._3);
+	}
+};
+var _elm_lang$core$Color$grayscale = function (p) {
+	return A4(_elm_lang$core$Color$HSLA, 0, 0, 1 - p, 1);
+};
+var _elm_lang$core$Color$greyscale = function (p) {
+	return A4(_elm_lang$core$Color$HSLA, 0, 0, 1 - p, 1);
+};
+var _elm_lang$core$Color$RGBA = F4(
+	function (a, b, c, d) {
+		return {ctor: 'RGBA', _0: a, _1: b, _2: c, _3: d};
+	});
+var _elm_lang$core$Color$rgba = _elm_lang$core$Color$RGBA;
+var _elm_lang$core$Color$rgb = F3(
+	function (r, g, b) {
+		return A4(_elm_lang$core$Color$RGBA, r, g, b, 1);
+	});
+var _elm_lang$core$Color$lightRed = A4(_elm_lang$core$Color$RGBA, 239, 41, 41, 1);
+var _elm_lang$core$Color$red = A4(_elm_lang$core$Color$RGBA, 204, 0, 0, 1);
+var _elm_lang$core$Color$darkRed = A4(_elm_lang$core$Color$RGBA, 164, 0, 0, 1);
+var _elm_lang$core$Color$lightOrange = A4(_elm_lang$core$Color$RGBA, 252, 175, 62, 1);
+var _elm_lang$core$Color$orange = A4(_elm_lang$core$Color$RGBA, 245, 121, 0, 1);
+var _elm_lang$core$Color$darkOrange = A4(_elm_lang$core$Color$RGBA, 206, 92, 0, 1);
+var _elm_lang$core$Color$lightYellow = A4(_elm_lang$core$Color$RGBA, 255, 233, 79, 1);
+var _elm_lang$core$Color$yellow = A4(_elm_lang$core$Color$RGBA, 237, 212, 0, 1);
+var _elm_lang$core$Color$darkYellow = A4(_elm_lang$core$Color$RGBA, 196, 160, 0, 1);
+var _elm_lang$core$Color$lightGreen = A4(_elm_lang$core$Color$RGBA, 138, 226, 52, 1);
+var _elm_lang$core$Color$green = A4(_elm_lang$core$Color$RGBA, 115, 210, 22, 1);
+var _elm_lang$core$Color$darkGreen = A4(_elm_lang$core$Color$RGBA, 78, 154, 6, 1);
+var _elm_lang$core$Color$lightBlue = A4(_elm_lang$core$Color$RGBA, 114, 159, 207, 1);
+var _elm_lang$core$Color$blue = A4(_elm_lang$core$Color$RGBA, 52, 101, 164, 1);
+var _elm_lang$core$Color$darkBlue = A4(_elm_lang$core$Color$RGBA, 32, 74, 135, 1);
+var _elm_lang$core$Color$lightPurple = A4(_elm_lang$core$Color$RGBA, 173, 127, 168, 1);
+var _elm_lang$core$Color$purple = A4(_elm_lang$core$Color$RGBA, 117, 80, 123, 1);
+var _elm_lang$core$Color$darkPurple = A4(_elm_lang$core$Color$RGBA, 92, 53, 102, 1);
+var _elm_lang$core$Color$lightBrown = A4(_elm_lang$core$Color$RGBA, 233, 185, 110, 1);
+var _elm_lang$core$Color$brown = A4(_elm_lang$core$Color$RGBA, 193, 125, 17, 1);
+var _elm_lang$core$Color$darkBrown = A4(_elm_lang$core$Color$RGBA, 143, 89, 2, 1);
+var _elm_lang$core$Color$black = A4(_elm_lang$core$Color$RGBA, 0, 0, 0, 1);
+var _elm_lang$core$Color$white = A4(_elm_lang$core$Color$RGBA, 255, 255, 255, 1);
+var _elm_lang$core$Color$lightGrey = A4(_elm_lang$core$Color$RGBA, 238, 238, 236, 1);
+var _elm_lang$core$Color$grey = A4(_elm_lang$core$Color$RGBA, 211, 215, 207, 1);
+var _elm_lang$core$Color$darkGrey = A4(_elm_lang$core$Color$RGBA, 186, 189, 182, 1);
+var _elm_lang$core$Color$lightGray = A4(_elm_lang$core$Color$RGBA, 238, 238, 236, 1);
+var _elm_lang$core$Color$gray = A4(_elm_lang$core$Color$RGBA, 211, 215, 207, 1);
+var _elm_lang$core$Color$darkGray = A4(_elm_lang$core$Color$RGBA, 186, 189, 182, 1);
+var _elm_lang$core$Color$lightCharcoal = A4(_elm_lang$core$Color$RGBA, 136, 138, 133, 1);
+var _elm_lang$core$Color$charcoal = A4(_elm_lang$core$Color$RGBA, 85, 87, 83, 1);
+var _elm_lang$core$Color$darkCharcoal = A4(_elm_lang$core$Color$RGBA, 46, 52, 54, 1);
+var _elm_lang$core$Color$Radial = F5(
+	function (a, b, c, d, e) {
+		return {ctor: 'Radial', _0: a, _1: b, _2: c, _3: d, _4: e};
+	});
+var _elm_lang$core$Color$radial = _elm_lang$core$Color$Radial;
+var _elm_lang$core$Color$Linear = F3(
+	function (a, b, c) {
+		return {ctor: 'Linear', _0: a, _1: b, _2: c};
+	});
+var _elm_lang$core$Color$linear = _elm_lang$core$Color$Linear;
+
 //import Maybe, Native.List //
 
 var _elm_lang$core$Native_Regex = function() {
@@ -13743,48 +13909,160 @@ var _lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded = function (args) {
 		'&',
 		A2(_elm_lang$core$List$map, _lukewestby$elm_http_builder$HttpBuilder$queryPair, args));
 };
-var _lukewestby$elm_http_builder$HttpBuilder$toRequest = function (_p4) {
-	var _p5 = _p4;
-	var _p6 = _p5._0;
-	var encodedParams = _lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded(_p6.queryParams);
-	var fullUrl = _elm_lang$core$String$isEmpty(encodedParams) ? _p6.url : A2(
+var _lukewestby$elm_http_builder$HttpBuilder$toRequest = function (builder) {
+	var encodedParams = _lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded(builder.queryParams);
+	var fullUrl = _elm_lang$core$String$isEmpty(encodedParams) ? builder.url : A2(
 		_elm_lang$core$Basics_ops['++'],
-		_p6.url,
+		builder.url,
 		A2(_elm_lang$core$Basics_ops['++'], '?', encodedParams));
 	return _elm_lang$http$Http$request(
-		{method: _p6.method, url: fullUrl, headers: _p6.headers, body: _p6.body, expect: _p6.expect, timeout: _p6.timeout, withCredentials: _p6.withCredentials});
+		{method: builder.method, url: fullUrl, headers: builder.headers, body: builder.body, expect: builder.expect, timeout: builder.timeout, withCredentials: builder.withCredentials});
+};
+var _lukewestby$elm_http_builder$HttpBuilder$toTaskPlain = function (builder) {
+	return _elm_lang$http$Http$toTask(
+		_lukewestby$elm_http_builder$HttpBuilder$toRequest(builder));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withCacheBuster = F2(
+	function (paramName, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				cacheBuster: _elm_lang$core$Maybe$Just(paramName)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withQueryParams = F2(
+	function (queryParams, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				queryParams: A2(_elm_lang$core$Basics_ops['++'], builder.queryParams, queryParams)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$toTaskWithCacheBuster = F2(
+	function (paramName, builder) {
+		var request = function (timestamp) {
+			return _lukewestby$elm_http_builder$HttpBuilder$toTaskPlain(
+				A2(
+					_lukewestby$elm_http_builder$HttpBuilder$withQueryParams,
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: paramName,
+							_1: _elm_lang$core$Basics$toString(timestamp)
+						},
+						_1: {ctor: '[]'}
+					},
+					builder));
+		};
+		return A2(_elm_lang$core$Task$andThen, request, _elm_lang$core$Time$now);
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$toTask = function (builder) {
+	var _p4 = builder.cacheBuster;
+	if (_p4.ctor === 'Just') {
+		return A2(_lukewestby$elm_http_builder$HttpBuilder$toTaskWithCacheBuster, _p4._0, builder);
+	} else {
+		return _lukewestby$elm_http_builder$HttpBuilder$toTaskPlain(builder);
+	}
 };
 var _lukewestby$elm_http_builder$HttpBuilder$send = F2(
 	function (tagger, builder) {
 		return A2(
-			_elm_lang$http$Http$send,
+			_elm_lang$core$Task$attempt,
 			tagger,
-			_lukewestby$elm_http_builder$HttpBuilder$toRequest(builder));
+			_lukewestby$elm_http_builder$HttpBuilder$toTask(builder));
 	});
-var _lukewestby$elm_http_builder$HttpBuilder$RequestDetails = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g, queryParams: h};
+var _lukewestby$elm_http_builder$HttpBuilder$withExpect = F2(
+	function (expect, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{expect: expect});
 	});
-var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = function (a) {
-	return {ctor: 'RequestBuilder', _0: a};
+var _lukewestby$elm_http_builder$HttpBuilder$withCredentials = function (builder) {
+	return _elm_lang$core$Native_Utils.update(
+		builder,
+		{withCredentials: true});
 };
+var _lukewestby$elm_http_builder$HttpBuilder$withTimeout = F2(
+	function (timeout, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				timeout: _elm_lang$core$Maybe$Just(timeout)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withBody = F2(
+	function (body, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{body: body});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withStringBody = F2(
+	function (contentType, value) {
+		return _lukewestby$elm_http_builder$HttpBuilder$withBody(
+			A2(_elm_lang$http$Http$stringBody, contentType, value));
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withUrlEncodedBody = function (_p5) {
+	return A2(
+		_lukewestby$elm_http_builder$HttpBuilder$withStringBody,
+		'application/x-www-form-urlencoded',
+		_lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded(_p5));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withJsonBody = function (value) {
+	return _lukewestby$elm_http_builder$HttpBuilder$withBody(
+		_elm_lang$http$Http$jsonBody(value));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withMultipartStringBody = function (partPairs) {
+	return _lukewestby$elm_http_builder$HttpBuilder$withBody(
+		_elm_lang$http$Http$multipartBody(
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$stringPart),
+				partPairs)));
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withHeaders = F2(
+	function (headerPairs, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				headers: A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(
+						_elm_lang$core$List$map,
+						_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$header),
+						headerPairs),
+					builder.headers)
+			});
+	});
+var _lukewestby$elm_http_builder$HttpBuilder$withHeader = F3(
+	function (key, value, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, key, value),
+					_1: builder.headers
+				}
+			});
+	});
 var _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl = F2(
 	function (method, url) {
-		return _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder(
-			{
-				method: method,
-				url: url,
-				headers: {ctor: '[]'},
-				body: _elm_lang$http$Http$emptyBody,
-				expect: _elm_lang$http$Http$expectStringResponse(
-					function (_p7) {
-						return _elm_lang$core$Result$Ok(
-							{ctor: '_Tuple0'});
-					}),
-				timeout: _elm_lang$core$Maybe$Nothing,
-				withCredentials: false,
-				queryParams: {ctor: '[]'}
-			});
+		return {
+			method: method,
+			url: url,
+			headers: {ctor: '[]'},
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectStringResponse(
+				function (_p6) {
+					return _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple0'});
+				}),
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false,
+			queryParams: {ctor: '[]'},
+			cacheBuster: _elm_lang$core$Maybe$Nothing
+		};
 	});
 var _lukewestby$elm_http_builder$HttpBuilder$get = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('GET');
 var _lukewestby$elm_http_builder$HttpBuilder$post = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('POST');
@@ -13794,114 +14072,15 @@ var _lukewestby$elm_http_builder$HttpBuilder$delete = _lukewestby$elm_http_build
 var _lukewestby$elm_http_builder$HttpBuilder$options = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('OPTIONS');
 var _lukewestby$elm_http_builder$HttpBuilder$trace = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('TRACE');
 var _lukewestby$elm_http_builder$HttpBuilder$head = _lukewestby$elm_http_builder$HttpBuilder$requestWithMethodAndUrl('HEAD');
-var _lukewestby$elm_http_builder$HttpBuilder$map = F2(
-	function (fn, _p8) {
-		var _p9 = _p8;
-		return _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder(
-			fn(_p9._0));
+var _lukewestby$elm_http_builder$HttpBuilder$RequestBuilder = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g, queryParams: h, cacheBuster: i};
 	});
-var _lukewestby$elm_http_builder$HttpBuilder$withHeader = F2(
-	function (key, value) {
-		return _lukewestby$elm_http_builder$HttpBuilder$map(
-			function (details) {
-				return _elm_lang$core$Native_Utils.update(
-					details,
-					{
-						headers: {
-							ctor: '::',
-							_0: A2(_elm_lang$http$Http$header, key, value),
-							_1: details.headers
-						}
-					});
-			});
-	});
-var _lukewestby$elm_http_builder$HttpBuilder$withHeaders = function (headerPairs) {
-	return _lukewestby$elm_http_builder$HttpBuilder$map(
-		function (details) {
-			return _elm_lang$core$Native_Utils.update(
-				details,
-				{
-					headers: A2(
-						_elm_lang$core$Basics_ops['++'],
-						A2(
-							_elm_lang$core$List$map,
-							_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$header),
-							headerPairs),
-						details.headers)
-				});
-		});
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withBody = function (body) {
-	return _lukewestby$elm_http_builder$HttpBuilder$map(
-		function (details) {
-			return _elm_lang$core$Native_Utils.update(
-				details,
-				{body: body});
-		});
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withStringBody = F2(
-	function (contentType, value) {
-		return _lukewestby$elm_http_builder$HttpBuilder$withBody(
-			A2(_elm_lang$http$Http$stringBody, contentType, value));
-	});
-var _lukewestby$elm_http_builder$HttpBuilder$withUrlEncodedBody = function (_p10) {
-	return A2(
-		_lukewestby$elm_http_builder$HttpBuilder$withStringBody,
-		'application/x-www-form-urlencoded',
-		_lukewestby$elm_http_builder$HttpBuilder$joinUrlEncoded(_p10));
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withJsonBody = function (value) {
-	return _lukewestby$elm_http_builder$HttpBuilder$withBody(
-		_elm_lang$http$Http$jsonBody(value));
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withMultipartStringBody = function (partPairs) {
-	return _lukewestby$elm_http_builder$HttpBuilder$map(
-		function (details) {
-			return _elm_lang$core$Native_Utils.update(
-				details,
-				{
-					body: _elm_lang$http$Http$multipartBody(
-						A2(
-							_elm_lang$core$List$map,
-							_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$stringPart),
-							partPairs))
-				});
-		});
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withTimeout = function (timeout) {
-	return _lukewestby$elm_http_builder$HttpBuilder$map(
-		function (details) {
-			return _elm_lang$core$Native_Utils.update(
-				details,
-				{
-					timeout: _elm_lang$core$Maybe$Just(timeout)
-				});
-		});
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withCredentials = _lukewestby$elm_http_builder$HttpBuilder$map(
-	function (details) {
-		return _elm_lang$core$Native_Utils.update(
-			details,
-			{withCredentials: true});
-	});
-var _lukewestby$elm_http_builder$HttpBuilder$withExpect = function (expect) {
-	return _lukewestby$elm_http_builder$HttpBuilder$map(
-		function (details) {
-			return _elm_lang$core$Native_Utils.update(
-				details,
-				{expect: expect});
-		});
-};
-var _lukewestby$elm_http_builder$HttpBuilder$withQueryParams = function (queryParams) {
-	return _lukewestby$elm_http_builder$HttpBuilder$map(
-		function (details) {
-			return _elm_lang$core$Native_Utils.update(
-				details,
-				{
-					queryParams: A2(_elm_lang$core$Basics_ops['++'], details.queryParams, queryParams)
-				});
-		});
-};
+
+var _pablohirafuji$elm_qrcode$QRCode_ECLevel$H = {ctor: 'H'};
+var _pablohirafuji$elm_qrcode$QRCode_ECLevel$Q = {ctor: 'Q'};
+var _pablohirafuji$elm_qrcode$QRCode_ECLevel$M = {ctor: 'M'};
+var _pablohirafuji$elm_qrcode$QRCode_ECLevel$L = {ctor: 'L'};
 
 var _pablohirafuji$elm_qrcode$QRCode_Error$InputLengthOverflow = {ctor: 'InputLengthOverflow'};
 var _pablohirafuji$elm_qrcode$QRCode_Error$PolynomialMod = {ctor: 'PolynomialMod'};
@@ -15765,6 +15944,19 @@ var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataH = A2(
 			}
 		}
 	});
+var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$getGroupData = function (ecLevel) {
+	var _p7 = ecLevel;
+	switch (_p7.ctor) {
+		case 'L':
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataL;
+		case 'M':
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataM;
+		case 'Q':
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataQ;
+		default:
+			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataH;
+	}
+};
 var _pablohirafuji$elm_qrcode$QRCode_GroupInfo$GroupInfo = F5(
 	function (a, b, c, d, e) {
 		return {version: a, ecPerBlock: b, group1: c, maybeGroup2: d, capacity: e};
@@ -18776,84 +18968,71 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$getErrorCorrection = function (_p2) 
 			_p4),
 		A2(_pablohirafuji$elm_qrcode$QRCode_ErrorCorrection$get, _p5.groupInfo.ecPerBlock, _p4));
 };
-var _pablohirafuji$elm_qrcode$QRCode_Encode$ecLevelToInt = function (ecLevel) {
-	var _p6 = ecLevel;
-	switch (_p6.ctor) {
-		case 'L':
-			return 1;
-		case 'M':
-			return 0;
-		case 'Q':
-			return 3;
-		default:
-			return 2;
-	}
-};
 var _pablohirafuji$elm_qrcode$QRCode_Encode$breakList = F3(
-	function (checkFinish, _p8, _p7) {
+	function (checkFinish, _p7, _p6) {
 		breakList:
 		while (true) {
-			var _p9 = _p8;
-			var _p14 = _p9._0;
-			var _p13 = _p9._1;
-			var _p10 = _p7;
-			var _p12 = _p10._1;
-			var _p11 = _p10._0;
-			if (_elm_lang$core$Native_Utils.cmp(_p14, 0) > 0) {
-				var remainList = A2(_elm_lang$core$List$drop, _p13, _p11);
-				var block = A2(_elm_lang$core$List$take, _p13, _p11);
-				var _v5 = checkFinish,
-					_v6 = {ctor: '_Tuple2', _0: _p14 - 1, _1: _p13},
-					_v7 = {
+			var _p8 = _p7;
+			var _p13 = _p8._0;
+			var _p12 = _p8._1;
+			var _p9 = _p6;
+			var _p11 = _p9._1;
+			var _p10 = _p9._0;
+			if (_elm_lang$core$Native_Utils.cmp(_p13, 0) > 0) {
+				var remainList = A2(_elm_lang$core$List$drop, _p12, _p10);
+				var block = A2(_elm_lang$core$List$take, _p12, _p10);
+				var _v4 = checkFinish,
+					_v5 = {ctor: '_Tuple2', _0: _p13 - 1, _1: _p12},
+					_v6 = {
 					ctor: '_Tuple2',
 					_0: remainList,
-					_1: {ctor: '::', _0: block, _1: _p12}
+					_1: {ctor: '::', _0: block, _1: _p11}
 				};
-				checkFinish = _v5;
-				_p8 = _v6;
-				_p7 = _v7;
+				checkFinish = _v4;
+				_p7 = _v5;
+				_p6 = _v6;
 				continue breakList;
 			} else {
 				if (checkFinish && (_elm_lang$core$Native_Utils.cmp(
-					_elm_lang$core$List$length(_p11),
+					_elm_lang$core$List$length(_p10),
 					0) > 0)) {
 					return _elm_lang$core$Result$Err(_pablohirafuji$elm_qrcode$QRCode_Error$InputLengthOverflow);
 				} else {
 					return _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple2', _0: _p11, _1: _p12});
+						{ctor: '_Tuple2', _0: _p10, _1: _p11});
 				}
 			}
 		}
 	});
-var _pablohirafuji$elm_qrcode$QRCode_Encode$toBlocks = function (_p15) {
-	var _p16 = _p15;
-	var _p22 = _p16._0;
-	var _p21 = _p16._0.groupInfo;
-	var _p20 = _p16._1;
-	var _p17 = _p21.maybeGroup2;
-	if (_p17.ctor === 'Just') {
+var _pablohirafuji$elm_qrcode$QRCode_Encode$toBlocks = function (_p14) {
+	var _p15 = _p14;
+	var _p21 = _p15._0;
+	var _p20 = _p15._0.groupInfo;
+	var _p19 = _p15._1;
+	var _p16 = _p20.maybeGroup2;
+	if (_p16.ctor === 'Just') {
 		return A2(
 			_elm_lang$core$Result$map,
 			F2(
 				function (v0, v1) {
 					return {ctor: '_Tuple2', _0: v0, _1: v1};
-				})(_p22),
+				})(_p21),
 			A2(
 				_elm_lang$core$Result$map,
-				function (_p18) {
+				function (_p17) {
 					return _elm_lang$core$List$reverse(
-						_elm_lang$core$Tuple$second(_p18));
+						_elm_lang$core$Tuple$second(_p17));
 				},
 				A2(
 					_elm_lang$core$Result$andThen,
-					A2(_pablohirafuji$elm_qrcode$QRCode_Encode$breakList, true, _p17._0),
+					A2(_pablohirafuji$elm_qrcode$QRCode_Encode$breakList, true, _p16._0),
 					A3(
 						_pablohirafuji$elm_qrcode$QRCode_Encode$breakList,
 						false,
-						_p21.group1,
+						_p20.group1,
 						{
 							ctor: '_Tuple2',
-							_0: _p20,
+							_0: _p19,
 							_1: {ctor: '[]'}
 						}))));
 	} else {
@@ -18862,20 +19041,20 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$toBlocks = function (_p15) {
 			F2(
 				function (v0, v1) {
 					return {ctor: '_Tuple2', _0: v0, _1: v1};
-				})(_p22),
+				})(_p21),
 			A2(
 				_elm_lang$core$Result$map,
-				function (_p19) {
+				function (_p18) {
 					return _elm_lang$core$List$reverse(
-						_elm_lang$core$Tuple$second(_p19));
+						_elm_lang$core$Tuple$second(_p18));
 				},
 				A3(
 					_pablohirafuji$elm_qrcode$QRCode_Encode$breakList,
 					true,
-					_p21.group1,
+					_p20.group1,
 					{
 						ctor: '_Tuple2',
-						_0: _p20,
+						_0: _p19,
 						_1: {ctor: '[]'}
 					})));
 	}
@@ -18918,16 +19097,16 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$addFiller = F2(
 							}
 						}))));
 	});
-var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes3 = function (_p23) {
+var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes3 = function (_p22) {
 	bitsToBytes3:
 	while (true) {
-		var _p24 = _p23;
-		var _p27 = _p24._0._1;
-		var _p26 = _p24._1;
-		var _p25 = _p24._0._0;
-		if (_elm_lang$core$Native_Utils.cmp(_p27, 8) > -1) {
-			var remLength = _p27 - 8;
-			var remBits = _p25 & A3(
+		var _p23 = _p22;
+		var _p26 = _p23._0._1;
+		var _p25 = _p23._1;
+		var _p24 = _p23._0._0;
+		if (_elm_lang$core$Native_Utils.cmp(_p26, 8) > -1) {
+			var remLength = _p26 - 8;
+			var remBits = _p24 & A3(
 				_elm_lang$core$Basics$flip,
 				F2(
 					function (x, y) {
@@ -18935,69 +19114,69 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes3 = function (_p23) {
 					}),
 				1,
 				1 << remLength);
-			var $byte = _p25 >> remLength;
-			var _v11 = {
+			var $byte = _p24 >> remLength;
+			var _v10 = {
 				ctor: '_Tuple2',
 				_0: {ctor: '_Tuple2', _0: remBits, _1: remLength},
-				_1: {ctor: '::', _0: $byte, _1: _p26}
+				_1: {ctor: '::', _0: $byte, _1: _p25}
 			};
-			_p23 = _v11;
+			_p22 = _v10;
 			continue bitsToBytes3;
 		} else {
 			return {
 				ctor: '_Tuple2',
-				_0: {ctor: '_Tuple2', _0: _p25, _1: _p27},
-				_1: _p26
+				_0: {ctor: '_Tuple2', _0: _p24, _1: _p26},
+				_1: _p25
 			};
 		}
 	}
 };
 var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes2 = F2(
-	function (_p29, _p28) {
-		var _p30 = _p29;
-		var _p32 = _p30._1;
-		var _p31 = _p28;
-		var bitsSum = _p30._0 | (_p31._0._0 << _p32);
-		var lengthSum = _p32 + _p31._0._1;
+	function (_p28, _p27) {
+		var _p29 = _p28;
+		var _p31 = _p29._1;
+		var _p30 = _p27;
+		var bitsSum = _p29._0 | (_p30._0._0 << _p31);
+		var lengthSum = _p31 + _p30._0._1;
 		return _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes3(
 			{
 				ctor: '_Tuple2',
 				_0: {ctor: '_Tuple2', _0: bitsSum, _1: lengthSum},
-				_1: _p31._1
+				_1: _p30._1
 			});
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes1 = F2(
-	function (bits, _p33) {
+	function (bits, _p32) {
 		bitsToBytes1:
 		while (true) {
-			var _p34 = _p33;
-			var _p38 = _p34._0._1;
-			var _p37 = _p34._0._0;
-			var _p36 = _p34._1;
-			var _p35 = bits;
-			if (_p35.ctor === '::') {
-				var _v16 = _p35._1,
-					_v17 = A2(
+			var _p33 = _p32;
+			var _p37 = _p33._0._1;
+			var _p36 = _p33._0._0;
+			var _p35 = _p33._1;
+			var _p34 = bits;
+			if (_p34.ctor === '::') {
+				var _v15 = _p34._1,
+					_v16 = A2(
 					_pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes2,
-					_p35._0,
+					_p34._0,
 					{
 						ctor: '_Tuple2',
-						_0: {ctor: '_Tuple2', _0: _p37, _1: _p38},
-						_1: _p36
+						_0: {ctor: '_Tuple2', _0: _p36, _1: _p37},
+						_1: _p35
 					});
-				bits = _v16;
-				_p33 = _v17;
+				bits = _v15;
+				_p32 = _v16;
 				continue bitsToBytes1;
 			} else {
-				return _elm_lang$core$Native_Utils.eq(_p38, 0) ? _elm_lang$core$List$reverse(_p36) : _elm_lang$core$List$reverse(
+				return _elm_lang$core$Native_Utils.eq(_p37, 0) ? _elm_lang$core$List$reverse(_p35) : _elm_lang$core$List$reverse(
 					A3(
 						_elm_lang$core$Basics$flip,
 						F2(
 							function (x, y) {
 								return {ctor: '::', _0: x, _1: y};
 							}),
-						_p36,
-						_p37 << (8 - _p38)));
+						_p35,
+						_p36 << (8 - _p37)));
 			}
 		}
 	});
@@ -19037,8 +19216,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$addTerminator = F3(
 var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength = F2(
 	function (mode, version) {
 		if (_elm_lang$core$Native_Utils.cmp(version, 9) < 1) {
-			var _p39 = mode;
-			switch (_p39.ctor) {
+			var _p38 = mode;
+			switch (_p38.ctor) {
 				case 'Numeric':
 					return 10;
 				case 'Alphanumeric':
@@ -19050,8 +19229,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength = F2(
 			}
 		} else {
 			if (_elm_lang$core$Native_Utils.cmp(version, 26) < 1) {
-				var _p40 = mode;
-				switch (_p40.ctor) {
+				var _p39 = mode;
+				switch (_p39.ctor) {
 					case 'Numeric':
 						return 12;
 					case 'Alphanumeric':
@@ -19062,8 +19241,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength = F2(
 						return 16;
 				}
 			} else {
-				var _p41 = mode;
-				switch (_p41.ctor) {
+				var _p40 = mode;
+				switch (_p40.ctor) {
 					case 'Numeric':
 						return 14;
 					case 'Alphanumeric':
@@ -19077,26 +19256,13 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength = F2(
 		}
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Encode$filterCapacity = F3(
-	function (mode, dataLength, _p42) {
-		var _p43 = _p42;
+	function (mode, dataLength, _p41) {
+		var _p42 = _p41;
 		return function (length) {
-			return _elm_lang$core$Native_Utils.cmp(length, _p43.capacity) < 1;
+			return _elm_lang$core$Native_Utils.cmp(length, _p42.capacity) < 1;
 		}(
-			A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, mode, _p43.version) + dataLength);
+			A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, mode, _p42.version) + dataLength);
 	});
-var _pablohirafuji$elm_qrcode$QRCode_Encode$getGroupData = function (ecLevel) {
-	var _p44 = ecLevel;
-	switch (_p44.ctor) {
-		case 'L':
-			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataL;
-		case 'M':
-			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataM;
-		case 'Q':
-			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataQ;
-		default:
-			return _pablohirafuji$elm_qrcode$QRCode_GroupInfo$dataH;
-	}
-};
 var _pablohirafuji$elm_qrcode$QRCode_Encode$getVersion = F3(
 	function (ecLevel, mode, dataLength) {
 		return A2(
@@ -19111,7 +19277,7 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$getVersion = F3(
 					A2(
 						_elm_lang$core$List$filter,
 						A2(_pablohirafuji$elm_qrcode$QRCode_Encode$filterCapacity, mode, dataLength),
-						_pablohirafuji$elm_qrcode$QRCode_Encode$getGroupData(ecLevel)))));
+						_pablohirafuji$elm_qrcode$QRCode_GroupInfo$getGroupData(ecLevel)))));
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Encode$versionToModel = F5(
 	function (inputStr, ecLevel, mode, partialBitsCount, groupInfo) {
@@ -19151,8 +19317,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$selectVersion = F4(
 				A3(_pablohirafuji$elm_qrcode$QRCode_Encode$getVersion, ecLevel, mode, partialBitsCount)));
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Encode$modeIndicator = function (mode) {
-	var _p45 = mode;
-	switch (_p45.ctor) {
+	var _p43 = mode;
+	switch (_p43.ctor) {
 		case 'Numeric':
 			return 1;
 		case 'Alphanumeric':
@@ -19164,8 +19330,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$modeIndicator = function (mode) {
 	}
 };
 var _pablohirafuji$elm_qrcode$QRCode_Encode$encoder = function (mode) {
-	var _p46 = mode;
-	switch (_p46.ctor) {
+	var _p44 = mode;
+	switch (_p44.ctor) {
 		case 'Numeric':
 			return _pablohirafuji$elm_qrcode$QRCode_Encode_Numeric$encode;
 		case 'Alphanumeric':
@@ -19182,31 +19348,31 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$Model = F5(
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Encode$UTF8 = {ctor: 'UTF8'};
 var _pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicator = F2(
-	function (_p47, bits) {
-		var _p48 = _p47;
-		var _p49 = _p48.mode;
-		var length = A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, _p49, _p48.groupInfo.version);
-		var charCount = _elm_lang$core$Native_Utils.eq(_p49, _pablohirafuji$elm_qrcode$QRCode_Encode$UTF8) ? _elm_lang$core$List$length(bits) : _elm_lang$core$String$length(_p48.inputStr);
+	function (_p45, bits) {
+		var _p46 = _p45;
+		var _p47 = _p46.mode;
+		var length = A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicatorLength, _p47, _p46.groupInfo.version);
+		var charCount = _elm_lang$core$Native_Utils.eq(_p47, _pablohirafuji$elm_qrcode$QRCode_Encode$UTF8) ? _elm_lang$core$List$length(bits) : _elm_lang$core$String$length(_p46.inputStr);
 		return {ctor: '_Tuple2', _0: charCount, _1: length};
 	});
-var _pablohirafuji$elm_qrcode$QRCode_Encode$addInfoAndFinalBits = function (_p50) {
-	var _p51 = _p50;
-	var _p53 = _p51._1;
-	var _p52 = _p51._0;
+var _pablohirafuji$elm_qrcode$QRCode_Encode$addInfoAndFinalBits = function (_p48) {
+	var _p49 = _p48;
+	var _p51 = _p49._1;
+	var _p50 = _p49._0;
 	return A2(
 		F2(
 			function (v0, v1) {
 				return {ctor: '_Tuple2', _0: v0, _1: v1};
 			}),
-		_p53,
+		_p51,
 		A2(
 			_pablohirafuji$elm_qrcode$QRCode_Encode$addFiller,
-			_p53.groupInfo.capacity,
+			_p51.groupInfo.capacity,
 			_pablohirafuji$elm_qrcode$QRCode_Encode$bitsToBytes(
 				A3(
 					_pablohirafuji$elm_qrcode$QRCode_Encode$addTerminator,
-					_p53.groupInfo.capacity,
-					_p53.bitsCount,
+					_p51.groupInfo.capacity,
+					_p51.bitsCount,
 					A2(
 						F2(
 							function (x, y) {
@@ -19214,7 +19380,7 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$addInfoAndFinalBits = function (_p50
 							}),
 						{
 							ctor: '_Tuple2',
-							_0: _pablohirafuji$elm_qrcode$QRCode_Encode$modeIndicator(_p53.mode),
+							_0: _pablohirafuji$elm_qrcode$QRCode_Encode$modeIndicator(_p51.mode),
 							_1: 4
 						},
 						A2(
@@ -19222,8 +19388,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$addInfoAndFinalBits = function (_p50
 								function (x, y) {
 									return {ctor: '::', _0: x, _1: y};
 								}),
-							A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicator, _p53, _p52),
-							_p52))))));
+							A2(_pablohirafuji$elm_qrcode$QRCode_Encode$charCountIndicator, _p51, _p50),
+							_p50))))));
 };
 var _pablohirafuji$elm_qrcode$QRCode_Encode$Byte = {ctor: 'Byte'};
 var _pablohirafuji$elm_qrcode$QRCode_Encode$Alphanumeric = {ctor: 'Alphanumeric'};
@@ -19251,10 +19417,6 @@ var _pablohirafuji$elm_qrcode$QRCode_Encode$encode = F2(
 							A3(_pablohirafuji$elm_qrcode$QRCode_Encode$selectVersion, inputStr, ecLevel, mode),
 							A2(_pablohirafuji$elm_qrcode$QRCode_Encode$encoder, mode, inputStr))))));
 	});
-var _pablohirafuji$elm_qrcode$QRCode_Encode$H = {ctor: 'H'};
-var _pablohirafuji$elm_qrcode$QRCode_Encode$Q = {ctor: 'Q'};
-var _pablohirafuji$elm_qrcode$QRCode_Encode$M = {ctor: 'M'};
-var _pablohirafuji$elm_qrcode$QRCode_Encode$L = {ctor: 'L'};
 
 var _pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentPatternData = _elm_lang$core$Array$fromList(
 	{
@@ -20922,12 +21084,25 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$setVersionInfo = F3(
 			return matrix;
 		}
 	});
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$ecLevelToInt = function (ecLevel) {
+	var _p73 = ecLevel;
+	switch (_p73.ctor) {
+		case 'L':
+			return 1;
+		case 'M':
+			return 0;
+		case 'Q':
+			return 3;
+		default:
+			return 2;
+	}
+};
 var _pablohirafuji$elm_qrcode$QRCode_Matrix$encodeFormatInfo = F2(
 	function (ecLevel, mask) {
 		var g15Mask = 21522;
 		var g15Int = 1335;
 		var g15Digit = _pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(g15Int);
-		var formatInfoInt = _pablohirafuji$elm_qrcode$QRCode_Matrix$maskToInt(mask) | (_pablohirafuji$elm_qrcode$QRCode_Encode$ecLevelToInt(ecLevel) << 3);
+		var formatInfoInt = _pablohirafuji$elm_qrcode$QRCode_Matrix$maskToInt(mask) | (_pablohirafuji$elm_qrcode$QRCode_Matrix$ecLevelToInt(ecLevel) << 3);
 		var d = formatInfoInt << 10;
 		var helper = function (d_) {
 			helper:
@@ -20935,12 +21110,12 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$encodeFormatInfo = F2(
 				if (_elm_lang$core$Native_Utils.cmp(
 					_pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(d_) - g15Digit,
 					0) > -1) {
-					var _v89 = d_ ^ A3(
+					var _v90 = d_ ^ A3(
 						_elm_lang$core$Basics$flip,
 						_elm_lang$core$Bitwise$shiftLeftBy,
 						g15Int,
 						_pablohirafuji$elm_qrcode$QRCode_Matrix$getBCHDigit(d_) - g15Digit);
-					d_ = _v89;
+					d_ = _v90;
 					continue helper;
 				} else {
 					return g15Mask ^ (d_ | (formatInfoInt << 10));
@@ -20971,26 +21146,26 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo_ = F4(
 		while (true) {
 			if (_elm_lang$core$Native_Utils.cmp(count, 15) < 0) {
 				var isBlack = isBlackFn(count);
-				var _p73 = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoVertical, size, count);
-				var x2 = _p73._0;
-				var y2 = _p73._1;
-				var _p74 = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoHorizontal, size, count);
-				var x1 = _p74._0;
-				var y1 = _p74._1;
-				var _v90 = size,
-					_v91 = isBlackFn,
-					_v92 = count + 1,
-					_v93 = A5(
+				var _p74 = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoVertical, size, count);
+				var x2 = _p74._0;
+				var y2 = _p74._1;
+				var _p75 = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$formatInfoHorizontal, size, count);
+				var x1 = _p75._0;
+				var y1 = _p75._1;
+				var _v91 = size,
+					_v92 = isBlackFn,
+					_v93 = count + 1,
+					_v94 = A5(
 					_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatModule,
 					size,
 					isBlack,
 					x2,
 					y2,
 					A5(_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatModule, size, isBlack, x1, y1, matrix));
-				size = _v90;
-				isBlackFn = _v91;
-				count = _v92;
-				matrix = _v93;
+				size = _v91;
+				isBlackFn = _v92;
+				count = _v93;
+				matrix = _v94;
 				continue setFormatInfo_;
 			} else {
 				return matrix;
@@ -20998,8 +21173,8 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo_ = F4(
 		}
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo = F3(
-	function (ecLevel, size, _p75) {
-		var _p76 = _p75;
+	function (ecLevel, size, _p76) {
+		var _p77 = _p76;
 		var isBlack = F2(
 			function (bits_, count) {
 				return A2(
@@ -21010,13 +21185,13 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo = F3(
 					1,
 					1 & (bits_ >> count));
 			});
-		var bits = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$encodeFormatInfo, ecLevel, _p76._0);
+		var bits = A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$encodeFormatInfo, ecLevel, _p77._0);
 		return A4(
 			_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo_,
 			size,
 			isBlack(bits),
 			0,
-			_p76._1);
+			_p77._1);
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Matrix$reserveFormatInfo = F2(
 	function (size, matrix) {
@@ -21032,12 +21207,12 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$finderColor = F2(
 		return ((_elm_lang$core$Native_Utils.cmp(1, row) < 1) && ((_elm_lang$core$Native_Utils.cmp(row, 7) < 1) && (_elm_lang$core$Native_Utils.eq(col, 1) || _elm_lang$core$Native_Utils.eq(col, 7)))) || (((_elm_lang$core$Native_Utils.cmp(1, col) < 1) && ((_elm_lang$core$Native_Utils.cmp(col, 7) < 1) && (_elm_lang$core$Native_Utils.eq(row, 1) || _elm_lang$core$Native_Utils.eq(row, 7)))) || ((_elm_lang$core$Native_Utils.cmp(3, row) < 1) && ((_elm_lang$core$Native_Utils.cmp(row, 5) < 1) && ((_elm_lang$core$Native_Utils.cmp(3, col) < 1) && (_elm_lang$core$Native_Utils.cmp(col, 5) < 1)))));
 	});
 var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFinder = F5(
-	function (size, rowOffset, colOffset, _p77, matrix) {
-		var _p78 = _p77;
-		var _p80 = _p78._0;
-		var _p79 = _p78._1;
-		var finalCol = _p79 + colOffset;
-		var finalRow = _p80 + rowOffset;
+	function (size, rowOffset, colOffset, _p78, matrix) {
+		var _p79 = _p78;
+		var _p81 = _p79._0;
+		var _p80 = _p79._1;
+		var finalCol = _p80 + colOffset;
+		var finalRow = _p81 + rowOffset;
 		return ((_elm_lang$core$Native_Utils.cmp(finalRow, 0) < 0) || ((_elm_lang$core$Native_Utils.cmp(finalCol, 0) < 0) || ((_elm_lang$core$Native_Utils.cmp(finalRow, size) > -1) || (_elm_lang$core$Native_Utils.cmp(finalCol, size) > -1)))) ? matrix : A3(
 			_elm_lang$core$Array$set,
 			A3(_pablohirafuji$elm_qrcode$QRCode_Matrix$getIndex, size, finalRow, finalCol),
@@ -21045,7 +21220,7 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$setFinder = F5(
 				{
 					ctor: '_Tuple2',
 					_0: true,
-					_1: A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$finderColor, _p80, _p79)
+					_1: A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$finderColor, _p81, _p80)
 				}),
 			matrix);
 	});
@@ -21114,9 +21289,9 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask = F2(
 			{ctor: '_Tuple2', _0: _pablohirafuji$elm_qrcode$QRCode_Matrix$Pattern0, _1: matrix},
 			A2(
 				_elm_lang$core$Maybe$map,
-				function (_p81) {
-					var _p82 = _p81;
-					return {ctor: '_Tuple2', _0: _p82._1, _1: _p82._2};
+				function (_p82) {
+					var _p83 = _p82;
+					return {ctor: '_Tuple2', _0: _p83._1, _1: _p83._2};
 				},
 				A3(
 					_elm_lang$core$List$foldl,
@@ -21124,22 +21299,22 @@ var _pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask = F2(
 					_elm_lang$core$Maybe$Nothing,
 					_pablohirafuji$elm_qrcode$QRCode_Matrix$patternList)));
 	});
-var _pablohirafuji$elm_qrcode$QRCode_Matrix$apply = function (_p83) {
-	var _p84 = _p83;
-	var version = _p84._0.groupInfo.version;
+var _pablohirafuji$elm_qrcode$QRCode_Matrix$apply = function (_p84) {
+	var _p85 = _p84;
+	var version = _p85._0.groupInfo.version;
 	var size = ((version - 1) * 4) + 21;
 	return A2(
 		_elm_lang$core$Result$map,
 		_pablohirafuji$elm_qrcode$QRCode_Matrix$Model(size),
 		A2(
 			_elm_lang$core$Result$map,
-			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo, _p84._0.ecLevel, size),
+			A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$setFormatInfo, _p85._0.ecLevel, size),
 			A2(
 				_elm_lang$core$Result$map,
 				_pablohirafuji$elm_qrcode$QRCode_Matrix$getBestMask(size),
 				A2(
 					_elm_lang$core$Result$map,
-					A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$addData, size, _p84._1),
+					A2(_pablohirafuji$elm_qrcode$QRCode_Matrix$addData, size, _p85._1),
 					A3(
 						_pablohirafuji$elm_qrcode$QRCode_Matrix$alignmentPattern,
 						version,
@@ -21282,8 +21457,15 @@ var _pablohirafuji$elm_qrcode$QRCode$toSvg = function (inputStr) {
 	return A2(
 		_elm_lang$core$Result$map,
 		_pablohirafuji$elm_qrcode$QRCode_View$toSvg,
-		A2(_pablohirafuji$elm_qrcode$QRCode$toMatrix, inputStr, _pablohirafuji$elm_qrcode$QRCode_Encode$Q));
+		A2(_pablohirafuji$elm_qrcode$QRCode$toMatrix, inputStr, _pablohirafuji$elm_qrcode$QRCode_ECLevel$Q));
 };
+var _pablohirafuji$elm_qrcode$QRCode$toSvgWithECLevel = F2(
+	function (inputStr, ecLevel) {
+		return A2(
+			_elm_lang$core$Result$map,
+			_pablohirafuji$elm_qrcode$QRCode_View$toSvg,
+			A2(_pablohirafuji$elm_qrcode$QRCode$toMatrix, inputStr, ecLevel));
+	});
 
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
 	return A4(
@@ -23212,6 +23394,201 @@ var _rtfeldman$elm_css$Css_Preprocess_Resolve$DeclarationsAndWarnings = F2(
 		return {declarations: a, warnings: b};
 	});
 
+var _rtfeldman$hex$Hex$toString = function (num) {
+	return _elm_lang$core$String$fromList(
+		(_elm_lang$core$Native_Utils.cmp(num, 0) < 0) ? {
+			ctor: '::',
+			_0: _elm_lang$core$Native_Utils.chr('-'),
+			_1: A2(
+				_rtfeldman$hex$Hex$unsafePositiveToDigits,
+				{ctor: '[]'},
+				_elm_lang$core$Basics$negate(num))
+		} : A2(
+			_rtfeldman$hex$Hex$unsafePositiveToDigits,
+			{ctor: '[]'},
+			num));
+};
+var _rtfeldman$hex$Hex$unsafePositiveToDigits = F2(
+	function (digits, num) {
+		unsafePositiveToDigits:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(num, 16) < 0) {
+				return {
+					ctor: '::',
+					_0: _rtfeldman$hex$Hex$unsafeToDigit(num),
+					_1: digits
+				};
+			} else {
+				var _v0 = {
+					ctor: '::',
+					_0: _rtfeldman$hex$Hex$unsafeToDigit(
+						A2(_elm_lang$core$Basics_ops['%'], num, 16)),
+					_1: digits
+				},
+					_v1 = (num / 16) | 0;
+				digits = _v0;
+				num = _v1;
+				continue unsafePositiveToDigits;
+			}
+		}
+	});
+var _rtfeldman$hex$Hex$unsafeToDigit = function (num) {
+	var _p0 = num;
+	switch (_p0) {
+		case 0:
+			return _elm_lang$core$Native_Utils.chr('0');
+		case 1:
+			return _elm_lang$core$Native_Utils.chr('1');
+		case 2:
+			return _elm_lang$core$Native_Utils.chr('2');
+		case 3:
+			return _elm_lang$core$Native_Utils.chr('3');
+		case 4:
+			return _elm_lang$core$Native_Utils.chr('4');
+		case 5:
+			return _elm_lang$core$Native_Utils.chr('5');
+		case 6:
+			return _elm_lang$core$Native_Utils.chr('6');
+		case 7:
+			return _elm_lang$core$Native_Utils.chr('7');
+		case 8:
+			return _elm_lang$core$Native_Utils.chr('8');
+		case 9:
+			return _elm_lang$core$Native_Utils.chr('9');
+		case 10:
+			return _elm_lang$core$Native_Utils.chr('a');
+		case 11:
+			return _elm_lang$core$Native_Utils.chr('b');
+		case 12:
+			return _elm_lang$core$Native_Utils.chr('c');
+		case 13:
+			return _elm_lang$core$Native_Utils.chr('d');
+		case 14:
+			return _elm_lang$core$Native_Utils.chr('e');
+		case 15:
+			return _elm_lang$core$Native_Utils.chr('f');
+		default:
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Hex',
+				{
+					start: {line: 138, column: 5},
+					end: {line: 188, column: 84}
+				},
+				_p0)(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Tried to convert ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_rtfeldman$hex$Hex$toString(num),
+						' to hexadecimal.')));
+	}
+};
+var _rtfeldman$hex$Hex$fromStringHelp = F3(
+	function (position, chars, accumulated) {
+		var _p2 = chars;
+		if (_p2.ctor === '[]') {
+			return _elm_lang$core$Result$Ok(accumulated);
+		} else {
+			var recurse = function (additional) {
+				return A3(
+					_rtfeldman$hex$Hex$fromStringHelp,
+					position - 1,
+					_p2._1,
+					accumulated + (additional * Math.pow(16, position)));
+			};
+			var _p3 = _p2._0;
+			switch (_p3.valueOf()) {
+				case '0':
+					return recurse(0);
+				case '1':
+					return recurse(1);
+				case '2':
+					return recurse(2);
+				case '3':
+					return recurse(3);
+				case '4':
+					return recurse(4);
+				case '5':
+					return recurse(5);
+				case '6':
+					return recurse(6);
+				case '7':
+					return recurse(7);
+				case '8':
+					return recurse(8);
+				case '9':
+					return recurse(9);
+				case 'a':
+					return recurse(10);
+				case 'b':
+					return recurse(11);
+				case 'c':
+					return recurse(12);
+				case 'd':
+					return recurse(13);
+				case 'e':
+					return recurse(14);
+				case 'f':
+					return recurse(15);
+				default:
+					return _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p3),
+							' is not a valid hexadecimal character.'));
+			}
+		}
+	});
+var _rtfeldman$hex$Hex$fromString = function (str) {
+	if (_elm_lang$core$String$isEmpty(str)) {
+		return _elm_lang$core$Result$Err('Empty strings are not valid hexadecimal strings.');
+	} else {
+		var formatError = function (err) {
+			return A2(
+				_elm_lang$core$String$join,
+				' ',
+				{
+					ctor: '::',
+					_0: _elm_lang$core$Basics$toString(str),
+					_1: {
+						ctor: '::',
+						_0: 'is not a valid hexadecimal string because',
+						_1: {
+							ctor: '::',
+							_0: err,
+							_1: {ctor: '[]'}
+						}
+					}
+				});
+		};
+		var result = function () {
+			if (A2(_elm_lang$core$String$startsWith, '-', str)) {
+				var list = A2(
+					_elm_lang$core$Maybe$withDefault,
+					{ctor: '[]'},
+					_elm_lang$core$List$tail(
+						_elm_lang$core$String$toList(str)));
+				return A2(
+					_elm_lang$core$Result$map,
+					_elm_lang$core$Basics$negate,
+					A3(
+						_rtfeldman$hex$Hex$fromStringHelp,
+						_elm_lang$core$List$length(list) - 1,
+						list,
+						0));
+			} else {
+				return A3(
+					_rtfeldman$hex$Hex$fromStringHelp,
+					_elm_lang$core$String$length(str) - 1,
+					_elm_lang$core$String$toList(str),
+					0);
+			}
+		}();
+		return A2(_elm_lang$core$Result$mapError, formatError, result);
+	}
+};
+
 var _rtfeldman$elm_css$Css$asPairs = _rtfeldman$elm_css$Css_Preprocess$toPropertyPairs;
 var _rtfeldman$elm_css$Css$collectSelectors = function (declarations) {
 	collectSelectors:
@@ -23326,116 +23703,88 @@ var _rtfeldman$elm_css$Css$withClass = function ($class) {
 			A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, '', $class)));
 };
 var _rtfeldman$elm_css$Css$children = _rtfeldman$elm_css$Css_Preprocess$NestSnippet(_rtfeldman$elm_css$Css_Structure$Child);
-var _rtfeldman$elm_css$Css$selection = _rtfeldman$elm_css$Css_Preprocess$WithPseudoElement(
-	_rtfeldman$elm_css$Css_Structure$PseudoElement('selection'));
-var _rtfeldman$elm_css$Css$firstLine = _rtfeldman$elm_css$Css_Preprocess$WithPseudoElement(
-	_rtfeldman$elm_css$Css_Structure$PseudoElement('first-line'));
-var _rtfeldman$elm_css$Css$firstLetter = _rtfeldman$elm_css$Css_Preprocess$WithPseudoElement(
-	_rtfeldman$elm_css$Css_Structure$PseudoElement('first-letter'));
-var _rtfeldman$elm_css$Css$before = _rtfeldman$elm_css$Css_Preprocess$WithPseudoElement(
-	_rtfeldman$elm_css$Css_Structure$PseudoElement('before'));
-var _rtfeldman$elm_css$Css$after = _rtfeldman$elm_css$Css_Preprocess$WithPseudoElement(
-	_rtfeldman$elm_css$Css_Structure$PseudoElement('after'));
-var _rtfeldman$elm_css$Css$valid = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('valid'));
-var _rtfeldman$elm_css$Css$target = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('target'));
-var _rtfeldman$elm_css$Css$scope = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('scope'));
-var _rtfeldman$elm_css$Css$root = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('root'));
-var _rtfeldman$elm_css$Css$required = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('required'));
-var _rtfeldman$elm_css$Css$readWrite = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('read-write'));
-var _rtfeldman$elm_css$Css$outOfRange = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('out-of-range'));
-var _rtfeldman$elm_css$Css$optional = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('optional'));
-var _rtfeldman$elm_css$Css$onlyOfType = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('only-of-type'));
-var _rtfeldman$elm_css$Css$onlyChild = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('only-child'));
-var _rtfeldman$elm_css$Css$nthOfType = function (str) {
-	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'nth-of-type(',
-				A2(_elm_lang$core$Basics_ops['++'], str, ')'))));
+var _rtfeldman$elm_css$Css$pseudoElement = function (element) {
+	return _rtfeldman$elm_css$Css_Preprocess$WithPseudoElement(
+		_rtfeldman$elm_css$Css_Structure$PseudoElement(element));
 };
-var _rtfeldman$elm_css$Css$nthLastOfType = function (str) {
+var _rtfeldman$elm_css$Css$after = _rtfeldman$elm_css$Css$pseudoElement('after');
+var _rtfeldman$elm_css$Css$before = _rtfeldman$elm_css$Css$pseudoElement('before');
+var _rtfeldman$elm_css$Css$firstLetter = _rtfeldman$elm_css$Css$pseudoElement('first-letter');
+var _rtfeldman$elm_css$Css$firstLine = _rtfeldman$elm_css$Css$pseudoElement('first-line');
+var _rtfeldman$elm_css$Css$selection = _rtfeldman$elm_css$Css$pseudoElement('selection');
+var _rtfeldman$elm_css$Css$pseudoClass = function ($class) {
 	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'nth-last-of-type(',
-				A2(_elm_lang$core$Basics_ops['++'], str, ')'))));
+		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector($class));
+};
+var _rtfeldman$elm_css$Css$active = _rtfeldman$elm_css$Css$pseudoClass('active');
+var _rtfeldman$elm_css$Css$any = function (str) {
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'any(',
+			A2(_elm_lang$core$Basics_ops['++'], str, ')')));
+};
+var _rtfeldman$elm_css$Css$checked = _rtfeldman$elm_css$Css$pseudoClass('checked');
+var _rtfeldman$elm_css$Css$disabled = _rtfeldman$elm_css$Css$pseudoClass('disabled');
+var _rtfeldman$elm_css$Css$empty = _rtfeldman$elm_css$Css$pseudoClass('empty');
+var _rtfeldman$elm_css$Css$enabled = _rtfeldman$elm_css$Css$pseudoClass('enabled');
+var _rtfeldman$elm_css$Css$first = _rtfeldman$elm_css$Css$pseudoClass('first');
+var _rtfeldman$elm_css$Css$firstChild = _rtfeldman$elm_css$Css$pseudoClass('first-child');
+var _rtfeldman$elm_css$Css$firstOfType = _rtfeldman$elm_css$Css$pseudoClass('first-of-type');
+var _rtfeldman$elm_css$Css$fullscreen = _rtfeldman$elm_css$Css$pseudoClass('fullscreen');
+var _rtfeldman$elm_css$Css$focus = _rtfeldman$elm_css$Css$pseudoClass('focus');
+var _rtfeldman$elm_css$Css$hover = _rtfeldman$elm_css$Css$pseudoClass('hover');
+var _rtfeldman$elm_css$Css$visited = _rtfeldman$elm_css$Css$pseudoClass('visited');
+var _rtfeldman$elm_css$Css$indeterminate = _rtfeldman$elm_css$Css$pseudoClass('indeterminate');
+var _rtfeldman$elm_css$Css$invalid = _rtfeldman$elm_css$Css$pseudoClass('invalid');
+var _rtfeldman$elm_css$Css$lang = function (str) {
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'lang(',
+			A2(_elm_lang$core$Basics_ops['++'], str, ')')));
+};
+var _rtfeldman$elm_css$Css$lastChild = _rtfeldman$elm_css$Css$pseudoClass('last-child');
+var _rtfeldman$elm_css$Css$lastOfType = _rtfeldman$elm_css$Css$pseudoClass('last-of-type');
+var _rtfeldman$elm_css$Css$link = _rtfeldman$elm_css$Css$pseudoClass('link');
+var _rtfeldman$elm_css$Css$nthChild = function (str) {
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'nth-child(',
+			A2(_elm_lang$core$Basics_ops['++'], str, ')')));
 };
 var _rtfeldman$elm_css$Css$nthLastChild = function (str) {
-	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'nth-last-child(',
-				A2(_elm_lang$core$Basics_ops['++'], str, ')'))));
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'nth-last-child(',
+			A2(_elm_lang$core$Basics_ops['++'], str, ')')));
 };
-var _rtfeldman$elm_css$Css$nthChild = function (str) {
-	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'nth-child(',
-				A2(_elm_lang$core$Basics_ops['++'], str, ')'))));
+var _rtfeldman$elm_css$Css$nthLastOfType = function (str) {
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'nth-last-of-type(',
+			A2(_elm_lang$core$Basics_ops['++'], str, ')')));
 };
-var _rtfeldman$elm_css$Css$link = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('link'));
-var _rtfeldman$elm_css$Css$lastOfType = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('last-of-type'));
-var _rtfeldman$elm_css$Css$lastChild = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('last-child'));
-var _rtfeldman$elm_css$Css$lang = function (str) {
-	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'lang(',
-				A2(_elm_lang$core$Basics_ops['++'], str, ')'))));
+var _rtfeldman$elm_css$Css$nthOfType = function (str) {
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'nth-of-type(',
+			A2(_elm_lang$core$Basics_ops['++'], str, ')')));
 };
-var _rtfeldman$elm_css$Css$invalid = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('invalid'));
-var _rtfeldman$elm_css$Css$indeterminate = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('indeterminate'));
-var _rtfeldman$elm_css$Css$hover = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('hover'));
-var _rtfeldman$elm_css$Css$focus = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('focus'));
-var _rtfeldman$elm_css$Css$fullscreen = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('fullscreen'));
-var _rtfeldman$elm_css$Css$firstOfType = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('first-of-type'));
-var _rtfeldman$elm_css$Css$firstChild = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('first-child'));
-var _rtfeldman$elm_css$Css$first = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('first'));
-var _rtfeldman$elm_css$Css$enabled = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('enabled'));
-var _rtfeldman$elm_css$Css$empty = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('empty'));
-var _rtfeldman$elm_css$Css$disabled = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('disabled'));
-var _rtfeldman$elm_css$Css$checked = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('checked'));
-var _rtfeldman$elm_css$Css$any = function (str) {
-	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'any(',
-				A2(_elm_lang$core$Basics_ops['++'], str, ')'))));
-};
-var _rtfeldman$elm_css$Css$active = _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-	_rtfeldman$elm_css$Css_Structure$PseudoClassSelector('active'));
+var _rtfeldman$elm_css$Css$onlyChild = _rtfeldman$elm_css$Css$pseudoClass('only-child');
+var _rtfeldman$elm_css$Css$onlyOfType = _rtfeldman$elm_css$Css$pseudoClass('only-of-type');
+var _rtfeldman$elm_css$Css$optional = _rtfeldman$elm_css$Css$pseudoClass('optional');
+var _rtfeldman$elm_css$Css$outOfRange = _rtfeldman$elm_css$Css$pseudoClass('out-of-range');
+var _rtfeldman$elm_css$Css$readWrite = _rtfeldman$elm_css$Css$pseudoClass('read-write');
+var _rtfeldman$elm_css$Css$required = _rtfeldman$elm_css$Css$pseudoClass('required');
+var _rtfeldman$elm_css$Css$root = _rtfeldman$elm_css$Css$pseudoClass('root');
+var _rtfeldman$elm_css$Css$scope = _rtfeldman$elm_css$Css$pseudoClass('scope');
+var _rtfeldman$elm_css$Css$target = _rtfeldman$elm_css$Css$pseudoClass('target');
+var _rtfeldman$elm_css$Css$valid = _rtfeldman$elm_css$Css$pseudoClass('valid');
 var _rtfeldman$elm_css$Css$directionalityToString = function (directionality) {
 	var _p2 = directionality;
 	if (_p2.ctor === 'Ltr') {
@@ -23445,15 +23794,14 @@ var _rtfeldman$elm_css$Css$directionalityToString = function (directionality) {
 	}
 };
 var _rtfeldman$elm_css$Css$dir = function (directionality) {
-	return _rtfeldman$elm_css$Css_Preprocess$ExtendSelector(
-		_rtfeldman$elm_css$Css_Structure$PseudoClassSelector(
+	return _rtfeldman$elm_css$Css$pseudoClass(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'dir(',
 			A2(
 				_elm_lang$core$Basics_ops['++'],
-				'dir(',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_rtfeldman$elm_css$Css$directionalityToString(directionality),
-					')'))));
+				_rtfeldman$elm_css$Css$directionalityToString(directionality),
+				')')));
 };
 var _rtfeldman$elm_css$Css$propertyWithWarnings = F3(
 	function (warnings, key, value) {
@@ -23481,8 +23829,7 @@ var _rtfeldman$elm_css$Css$makeSnippet = F2(
 				_1: {ctor: '[]'}
 			});
 	});
-var _rtfeldman$elm_css$Css_ops = _rtfeldman$elm_css$Css_ops || {};
-_rtfeldman$elm_css$Css_ops['.'] = F2(
+var _rtfeldman$elm_css$Css$class = F2(
 	function ($class, mixins) {
 		return A2(
 			_rtfeldman$elm_css$Css$makeSnippet,
@@ -23512,9 +23859,8 @@ var _rtfeldman$elm_css$Css$everything = function (mixins) {
 		_rtfeldman$elm_css$Css_Structure$UniversalSelectorSequence(
 			{ctor: '[]'}));
 };
-var _rtfeldman$elm_css$Css_ops = _rtfeldman$elm_css$Css_ops || {};
-_rtfeldman$elm_css$Css_ops['#'] = F2(
-	function (id, mixins) {
+var _rtfeldman$elm_css$Css$id = F2(
+	function (identifier, mixins) {
 		return A2(
 			_rtfeldman$elm_css$Css$makeSnippet,
 			mixins,
@@ -23522,7 +23868,7 @@ _rtfeldman$elm_css$Css_ops['#'] = F2(
 				{
 					ctor: '::',
 					_0: _rtfeldman$elm_css$Css_Structure$IdSelector(
-						A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, '', id)),
+						A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, '', identifier)),
 					_1: {ctor: '[]'}
 				}));
 	});
@@ -23801,6 +24147,41 @@ var _rtfeldman$elm_css$Css$textEmphasisColor = function (c) {
 var _rtfeldman$elm_css$Css$textDecorationColor = function (c) {
 	return A3(_rtfeldman$elm_css$Css$propertyWithWarnings, c.warnings, 'text-decoration-color', c.value);
 };
+var _rtfeldman$elm_css$Css$prop6 = F7(
+	function (key, argA, argB, argC, argD, argE, argF) {
+		return A2(
+			_rtfeldman$elm_css$Css$property,
+			key,
+			A2(
+				_elm_lang$core$String$join,
+				' ',
+				{
+					ctor: '::',
+					_0: argA.value,
+					_1: {
+						ctor: '::',
+						_0: argB.value,
+						_1: {
+							ctor: '::',
+							_0: argC.value,
+							_1: {
+								ctor: '::',
+								_0: argD.value,
+								_1: {
+									ctor: '::',
+									_0: argE.value,
+									_1: {
+										ctor: '::',
+										_0: argF.value,
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}));
+	});
+var _rtfeldman$elm_css$Css$boxShadow6 = _rtfeldman$elm_css$Css$prop6('box-shadow');
 var _rtfeldman$elm_css$Css$prop5 = F6(
 	function (key, argA, argB, argC, argD, argE) {
 		return A2(
@@ -24044,9 +24425,12 @@ var _rtfeldman$elm_css$Css$outline = _rtfeldman$elm_css$Css$prop1('outline');
 var _rtfeldman$elm_css$Css$outlineWidth = _rtfeldman$elm_css$Css$prop1('outline-width');
 var _rtfeldman$elm_css$Css$outlineStyle = _rtfeldman$elm_css$Css$prop1('outline-style');
 var _rtfeldman$elm_css$Css$outlineOffset = _rtfeldman$elm_css$Css$prop1('outline-offset');
+var _rtfeldman$elm_css$Css$resize = _rtfeldman$elm_css$Css$prop1('resize');
+var _rtfeldman$elm_css$Css$fill = _rtfeldman$elm_css$Css$prop1('fill');
 var _rtfeldman$elm_css$Css$overflow = _rtfeldman$elm_css$Css$prop1('overflow');
 var _rtfeldman$elm_css$Css$overflowX = _rtfeldman$elm_css$Css$prop1('overflow-x');
 var _rtfeldman$elm_css$Css$overflowY = _rtfeldman$elm_css$Css$prop1('overflow-y');
+var _rtfeldman$elm_css$Css$overflowWrap = _rtfeldman$elm_css$Css$prop1('overflow-wrap');
 var _rtfeldman$elm_css$Css$whiteSpace = _rtfeldman$elm_css$Css$prop1('white-space');
 var _rtfeldman$elm_css$Css$backgroundRepeat = _rtfeldman$elm_css$Css$prop1('background-repeat');
 var _rtfeldman$elm_css$Css$backgroundAttachment = _rtfeldman$elm_css$Css$prop1('background-attachment');
@@ -24091,6 +24475,7 @@ var _rtfeldman$elm_css$Css$textDecorationLines = function (_p15) {
 		_rtfeldman$elm_css$Css$valuesOrNone(_p15));
 };
 var _rtfeldman$elm_css$Css$textDecorationStyle = _rtfeldman$elm_css$Css$prop1('text-decoration-style');
+var _rtfeldman$elm_css$Css$zIndex = _rtfeldman$elm_css$Css$prop1('z-index');
 var _rtfeldman$elm_css$Css$position = _rtfeldman$elm_css$Css$prop1('position');
 var _rtfeldman$elm_css$Css$textBottom = _rtfeldman$elm_css$Css$prop1('text-bottom');
 var _rtfeldman$elm_css$Css$textTop = _rtfeldman$elm_css$Css$prop1('text-top');
@@ -24099,6 +24484,8 @@ var _rtfeldman$elm_css$Css$sub = _rtfeldman$elm_css$Css$prop1('sub');
 var _rtfeldman$elm_css$Css$baseline = _rtfeldman$elm_css$Css$prop1('baseline');
 var _rtfeldman$elm_css$Css$middle = _rtfeldman$elm_css$Css$prop1('middle');
 var _rtfeldman$elm_css$Css$stretch = _rtfeldman$elm_css$Css$prop1('stretch');
+var _rtfeldman$elm_css$Css$spaceBetween = _rtfeldman$elm_css$Css$prop1('space-between');
+var _rtfeldman$elm_css$Css$spaceAround = _rtfeldman$elm_css$Css$prop1('space-around');
 var _rtfeldman$elm_css$Css$flexEnd = _rtfeldman$elm_css$Css$prop1('flex-end');
 var _rtfeldman$elm_css$Css$flexStart = _rtfeldman$elm_css$Css$prop1('flex-start');
 var _rtfeldman$elm_css$Css$order = _rtfeldman$elm_css$Css$prop1('order');
@@ -24141,6 +24528,12 @@ var _rtfeldman$elm_css$Css$start = _rtfeldman$elm_css$Css$prop1('start');
 var _rtfeldman$elm_css$Css$justifyAll = _rtfeldman$elm_css$Css$prop1('justify-all');
 var _rtfeldman$elm_css$Css$textJustify = _rtfeldman$elm_css$Css$prop1('text-justify');
 var _rtfeldman$elm_css$Css$center = _rtfeldman$elm_css$Css$prop1('center');
+var _rtfeldman$elm_css$Css$withPrecedingHash = function (str) {
+	return A2(_elm_lang$core$String$startsWith, '#', str) ? str : A2(
+		_elm_lang$core$String$cons,
+		_elm_lang$core$Native_Utils.chr('#'),
+		str);
+};
 var _rtfeldman$elm_css$Css$luminosity = _rtfeldman$elm_css$Css$prop1('luminosity');
 var _rtfeldman$elm_css$Css$saturation = _rtfeldman$elm_css$Css$prop1('saturation');
 var _rtfeldman$elm_css$Css$hue = _rtfeldman$elm_css$Css$prop1('hue');
@@ -24164,9 +24557,10 @@ var _rtfeldman$elm_css$Css$important = _rtfeldman$elm_css$Css_Preprocess$mapLast
 var _rtfeldman$elm_css$Css$all = _rtfeldman$elm_css$Css$prop1('all');
 var _rtfeldman$elm_css$Css$combineLengths = F3(
 	function (operation, first, second) {
+		var numericValue = A2(operation, first.numericValue, second.numericValue);
 		var value = A2(
 			_elm_lang$core$String$join,
-			' ',
+			'',
 			A2(
 				_elm_lang$core$List$filter,
 				function (_p17) {
@@ -24174,8 +24568,7 @@ var _rtfeldman$elm_css$Css$combineLengths = F3(
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$core$Basics$toString(
-						A2(operation, first.numericValue, second.numericValue)),
+					_0: _elm_lang$core$Basics$toString(numericValue),
 					_1: {
 						ctor: '::',
 						_0: first.unitLabel,
@@ -24184,7 +24577,7 @@ var _rtfeldman$elm_css$Css$combineLengths = F3(
 				}));
 		return _elm_lang$core$Native_Utils.update(
 			first,
-			{value: value});
+			{value: value, numericValue: numericValue});
 	});
 var _rtfeldman$elm_css$Css_ops = _rtfeldman$elm_css$Css_ops || {};
 _rtfeldman$elm_css$Css_ops['|*|'] = _rtfeldman$elm_css$Css$combineLengths(
@@ -24425,7 +24818,11 @@ var _rtfeldman$elm_css$Css$BasicProperty = function (a) {
 																																											return function (_18) {
 																																												return function (_19) {
 																																													return function (_20) {
-																																														return {value: a, all: b, alignItems: c, borderStyle: d, boxSizing: e, color: f, cursor: g, display: h, flexBasis: i, flexWrap: j, flexDirection: k, flexDirectionOrWrap: l, none: m, number: n, outline: o, overflow: p, textDecorationLine: q, textRendering: r, textIndent: s, textDecorationStyle: t, length: u, lengthOrAuto: v, lengthOrNone: w, lengthOrNumber: x, lengthOrMinMaxDimension: y, lengthOrNoneOrMinMaxDimension: z, lengthOrNumberOrAutoOrNoneOrContent: _1, listStyleType: _2, listStylePosition: _3, listStyleTypeOrPositionOrImage: _4, fontFamily: _5, fontSize: _6, fontStyle: _7, fontWeight: _8, fontVariant: _9, units: _10, numericValue: _11, unitLabel: _12, warnings: _13, backgroundRepeat: _14, backgroundRepeatShorthand: _15, backgroundAttachment: _16, backgroundBlendMode: _17, backgroundOrigin: _18, backgroundImage: _19, lengthOrAutoOrCoverOrContain: _20};
+																																														return function (_21) {
+																																															return function (_22) {
+																																																return {value: a, all: b, alignItems: c, borderStyle: d, boxSizing: e, color: f, cursor: g, display: h, flexBasis: i, flexWrap: j, flexDirection: k, flexDirectionOrWrap: l, justifyContent: m, none: n, number: o, outline: p, overflow: q, textDecorationLine: r, textRendering: s, textIndent: t, textDecorationStyle: u, length: v, lengthOrAuto: w, lengthOrNone: x, lengthOrNumber: y, lengthOrMinMaxDimension: z, lengthOrNoneOrMinMaxDimension: _1, lengthOrNumberOrAutoOrNoneOrContent: _2, listStyleType: _3, listStylePosition: _4, listStyleTypeOrPositionOrImage: _5, fontFamily: _6, fontSize: _7, fontStyle: _8, fontWeight: _9, fontVariant: _10, units: _11, numericValue: _12, unitLabel: _13, warnings: _14, backgroundRepeat: _15, backgroundRepeatShorthand: _16, backgroundAttachment: _17, backgroundBlendMode: _18, backgroundOrigin: _19, backgroundImage: _20, lengthOrAutoOrCoverOrContain: _21, intOrAuto: _22};
+																																															};
+																																														};
 																																													};
 																																												};
 																																											};
@@ -24493,6 +24890,10 @@ var _rtfeldman$elm_css$Css$currentColor = {
 };
 var _rtfeldman$elm_css$Css$visible = {value: 'visible', overflow: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$scroll = {value: 'scroll', overflow: _rtfeldman$elm_css$Css$Compatible, backgroundAttachment: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$breakWord = {value: 'break-word', overflowWrap: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$both = {value: 'both', resize: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$horizontal = {value: 'horizontal', resize: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$vertical = {value: 'vertical', resize: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$paddingBox = {value: 'padding-box', backgroundClip: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$url = function (urlValue) {
 	return {
@@ -24625,44 +25026,186 @@ var _rtfeldman$elm_css$Css$rgba = F4(
 			alpha: alpha
 		};
 	});
-var _rtfeldman$elm_css$Css$hex = function (str) {
-	var value = _elm_lang$core$Native_Utils.eq(
-		A3(_elm_lang$core$String$slice, 0, 1, str),
-		'#') ? str : A2(_elm_lang$core$Basics_ops['++'], '#', str);
-	var warnings = A2(
-		_elm_lang$core$Regex$contains,
-		_elm_lang$core$Regex$regex('^#([a-fA-F0-9]{8}|[a-fA-F0-9]{6}|[a-fA-F0-9]{4}|[a-fA-F0-9]{3})$'),
-		value) ? {ctor: '[]'} : {
-		ctor: '::',
-		_0: A2(
-			_elm_lang$core$String$join,
-			' ',
-			{
-				ctor: '::',
-				_0: 'The syntax of a hex-color is a token whose value consists of 3, 4, 6, or 8 hexadecimal digits.',
-				_1: {
+var _rtfeldman$elm_css$Css$erroneousHex = function (str) {
+	return {
+		value: _rtfeldman$elm_css$Css$withPrecedingHash(str),
+		color: _rtfeldman$elm_css$Css$Compatible,
+		red: 0,
+		green: 0,
+		blue: 0,
+		alpha: 1,
+		warnings: _elm_lang$core$List$singleton(
+			A2(
+				_elm_lang$core$String$join,
+				' ',
+				{
 					ctor: '::',
-					_0: value,
+					_0: 'Hex color strings must contain exactly 3, 4, 6, or 8 hexadecimal digits, optionally preceded by \"#\".',
 					_1: {
 						ctor: '::',
-						_0: 'is not valid.',
+						_0: _elm_lang$core$Basics$toString(str),
 						_1: {
 							ctor: '::',
-							_0: 'Please see: https://drafts.csswg.org/css-color/#hex-notation',
-							_1: {ctor: '[]'}
+							_0: 'is an invalid hex color string.',
+							_1: {
+								ctor: '::',
+								_0: 'Please see: https://drafts.csswg.org/css-color/#hex-notation',
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
-			}),
-		_1: {ctor: '[]'}
+				}))
 	};
-	return {value: value, color: _rtfeldman$elm_css$Css$Compatible, red: 0, green: 0, blue: 0, alpha: 1, warnings: warnings};
+};
+var _rtfeldman$elm_css$Css$validHex = F5(
+	function (str, _p22, _p21, _p20, _p19) {
+		var _p23 = _p22;
+		var _p24 = _p21;
+		var _p25 = _p20;
+		var _p26 = _p19;
+		var toResult = function (_p27) {
+			return _rtfeldman$hex$Hex$fromString(
+				_elm_lang$core$String$toLower(
+					_elm_lang$core$String$fromList(_p27)));
+		};
+		var results = {
+			ctor: '_Tuple4',
+			_0: toResult(
+				{
+					ctor: '::',
+					_0: _p23._0,
+					_1: {
+						ctor: '::',
+						_0: _p23._1,
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: toResult(
+				{
+					ctor: '::',
+					_0: _p24._0,
+					_1: {
+						ctor: '::',
+						_0: _p24._1,
+						_1: {ctor: '[]'}
+					}
+				}),
+			_2: toResult(
+				{
+					ctor: '::',
+					_0: _p25._0,
+					_1: {
+						ctor: '::',
+						_0: _p25._1,
+						_1: {ctor: '[]'}
+					}
+				}),
+			_3: toResult(
+				{
+					ctor: '::',
+					_0: _p26._0,
+					_1: {
+						ctor: '::',
+						_0: _p26._1,
+						_1: {ctor: '[]'}
+					}
+				})
+		};
+		var _p28 = results;
+		if (((((_p28.ctor === '_Tuple4') && (_p28._0.ctor === 'Ok')) && (_p28._1.ctor === 'Ok')) && (_p28._2.ctor === 'Ok')) && (_p28._3.ctor === 'Ok')) {
+			return {
+				value: _rtfeldman$elm_css$Css$withPrecedingHash(str),
+				color: _rtfeldman$elm_css$Css$Compatible,
+				red: _p28._0._0,
+				green: _p28._1._0,
+				blue: _p28._2._0,
+				alpha: _elm_lang$core$Basics$toFloat(_p28._3._0) / 255,
+				warnings: {ctor: '[]'}
+			};
+		} else {
+			return _rtfeldman$elm_css$Css$erroneousHex(str);
+		}
+	});
+var _rtfeldman$elm_css$Css$hex = function (str) {
+	var withoutHash = A2(_elm_lang$core$String$startsWith, '#', str) ? A2(_elm_lang$core$String$dropLeft, 1, str) : str;
+	var _p29 = _elm_lang$core$String$toList(withoutHash);
+	_v22_4:
+	do {
+		if (((_p29.ctor === '::') && (_p29._1.ctor === '::')) && (_p29._1._1.ctor === '::')) {
+			if (_p29._1._1._1.ctor === '[]') {
+				var _p32 = _p29._0;
+				var _p31 = _p29._1._0;
+				var _p30 = _p29._1._1._0;
+				return A5(
+					_rtfeldman$elm_css$Css$validHex,
+					str,
+					{ctor: '_Tuple2', _0: _p32, _1: _p32},
+					{ctor: '_Tuple2', _0: _p31, _1: _p31},
+					{ctor: '_Tuple2', _0: _p30, _1: _p30},
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.chr('f'),
+						_1: _elm_lang$core$Native_Utils.chr('f')
+					});
+			} else {
+				if (_p29._1._1._1._1.ctor === '[]') {
+					var _p36 = _p29._0;
+					var _p35 = _p29._1._0;
+					var _p34 = _p29._1._1._0;
+					var _p33 = _p29._1._1._1._0;
+					return A5(
+						_rtfeldman$elm_css$Css$validHex,
+						str,
+						{ctor: '_Tuple2', _0: _p36, _1: _p36},
+						{ctor: '_Tuple2', _0: _p35, _1: _p35},
+						{ctor: '_Tuple2', _0: _p34, _1: _p34},
+						{ctor: '_Tuple2', _0: _p33, _1: _p33});
+				} else {
+					if (_p29._1._1._1._1._1.ctor === '::') {
+						if (_p29._1._1._1._1._1._1.ctor === '[]') {
+							return A5(
+								_rtfeldman$elm_css$Css$validHex,
+								str,
+								{ctor: '_Tuple2', _0: _p29._0, _1: _p29._1._0},
+								{ctor: '_Tuple2', _0: _p29._1._1._0, _1: _p29._1._1._1._0},
+								{ctor: '_Tuple2', _0: _p29._1._1._1._1._0, _1: _p29._1._1._1._1._1._0},
+								{
+									ctor: '_Tuple2',
+									_0: _elm_lang$core$Native_Utils.chr('f'),
+									_1: _elm_lang$core$Native_Utils.chr('f')
+								});
+						} else {
+							if ((_p29._1._1._1._1._1._1._1.ctor === '::') && (_p29._1._1._1._1._1._1._1._1.ctor === '[]')) {
+								return A5(
+									_rtfeldman$elm_css$Css$validHex,
+									str,
+									{ctor: '_Tuple2', _0: _p29._0, _1: _p29._1._0},
+									{ctor: '_Tuple2', _0: _p29._1._1._0, _1: _p29._1._1._1._0},
+									{ctor: '_Tuple2', _0: _p29._1._1._1._1._0, _1: _p29._1._1._1._1._1._0},
+									{ctor: '_Tuple2', _0: _p29._1._1._1._1._1._1._0, _1: _p29._1._1._1._1._1._1._1._0});
+							} else {
+								break _v22_4;
+							}
+						}
+					} else {
+						break _v22_4;
+					}
+				}
+			}
+		} else {
+			break _v22_4;
+		}
+	} while(false);
+	return _rtfeldman$elm_css$Css$erroneousHex(str);
 };
 var _rtfeldman$elm_css$Css$hslaToRgba = F6(
-	function (value, warnings, hue, saturation, lightness, alpha) {
-		var blue = 0;
-		var green = 0;
-		var red = 0;
+	function (value, warnings, hue, saturation, lightness, hslAlpha) {
+		var _p37 = _elm_lang$core$Color$toRgb(
+			A4(_elm_lang$core$Color$hsla, hue, saturation, lightness, hslAlpha));
+		var red = _p37.red;
+		var green = _p37.green;
+		var blue = _p37.blue;
+		var alpha = _p37.alpha;
 		return {value: value, color: _rtfeldman$elm_css$Css$Compatible, red: red, green: green, blue: blue, alpha: alpha, warnings: warnings};
 	});
 var _rtfeldman$elm_css$Css$hsl = F3(
@@ -24747,13 +25290,13 @@ var _rtfeldman$elm_css$Css$outset = {value: 'outset', borderStyle: _rtfeldman$el
 var _rtfeldman$elm_css$Css$separate = {value: 'separate', borderCollapse: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$collapse = {value: 'collapse', borderCollapse: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$lengthConverter = F3(
-	function (units, unitLabel, num) {
+	function (units, unitLabel, numericValue) {
 		return {
 			value: A2(
 				_elm_lang$core$Basics_ops['++'],
-				_rtfeldman$elm_css$Css$numberToString(num),
+				_rtfeldman$elm_css$Css$numberToString(numericValue),
 				unitLabel),
-			numericValue: num,
+			numericValue: numericValue,
 			units: units,
 			unitLabel: unitLabel,
 			length: _rtfeldman$elm_css$Css$Compatible,
@@ -24939,65 +25482,65 @@ var _rtfeldman$elm_css$Css$perspective = function (l) {
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$rotate = function (_p19) {
-	var _p20 = _p19;
+var _rtfeldman$elm_css$Css$rotate = function (_p38) {
+	var _p39 = _p38;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'rotate',
 			{
 				ctor: '::',
-				_0: _p20.value,
+				_0: _p39.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$rotateX = function (_p21) {
-	var _p22 = _p21;
+var _rtfeldman$elm_css$Css$rotateX = function (_p40) {
+	var _p41 = _p40;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'rotateX',
 			{
 				ctor: '::',
-				_0: _p22.value,
+				_0: _p41.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$rotateY = function (_p23) {
-	var _p24 = _p23;
+var _rtfeldman$elm_css$Css$rotateY = function (_p42) {
+	var _p43 = _p42;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'rotateY',
 			{
 				ctor: '::',
-				_0: _p24.value,
+				_0: _p43.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$rotateZ = function (_p25) {
-	var _p26 = _p25;
+var _rtfeldman$elm_css$Css$rotateZ = function (_p44) {
+	var _p45 = _p44;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'rotateZ',
 			{
 				ctor: '::',
-				_0: _p26.value,
+				_0: _p45.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
 var _rtfeldman$elm_css$Css$rotate3d = F4(
-	function (x, y, z, _p27) {
-		var _p28 = _p27;
+	function (x, y, z, _p46) {
+		var _p47 = _p46;
 		var coordsAsStrings = A2(
 			_elm_lang$core$List$map,
 			_rtfeldman$elm_css$Css$numberToString,
@@ -25023,7 +25566,7 @@ var _rtfeldman$elm_css$Css$rotate3d = F4(
 					coordsAsStrings,
 					{
 						ctor: '::',
-						_0: _p28.value,
+						_0: _p47.value,
 						_1: {ctor: '[]'}
 					})),
 			transform: _rtfeldman$elm_css$Css$Compatible
@@ -25114,15 +25657,15 @@ var _rtfeldman$elm_css$Css$scale3d = F3(
 			transform: _rtfeldman$elm_css$Css$Compatible
 		};
 	});
-var _rtfeldman$elm_css$Css$skew = function (_p29) {
-	var _p30 = _p29;
+var _rtfeldman$elm_css$Css$skew = function (_p48) {
+	var _p49 = _p48;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'skew',
 			{
 				ctor: '::',
-				_0: _p30.value,
+				_0: _p49.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
@@ -25146,43 +25689,43 @@ var _rtfeldman$elm_css$Css$skew2 = F2(
 			transform: _rtfeldman$elm_css$Css$Compatible
 		};
 	});
-var _rtfeldman$elm_css$Css$skewX = function (_p31) {
-	var _p32 = _p31;
+var _rtfeldman$elm_css$Css$skewX = function (_p50) {
+	var _p51 = _p50;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'skewX',
 			{
 				ctor: '::',
-				_0: _p32.value,
+				_0: _p51.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$skewY = function (_p33) {
-	var _p34 = _p33;
+var _rtfeldman$elm_css$Css$skewY = function (_p52) {
+	var _p53 = _p52;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'skewY',
 			{
 				ctor: '::',
-				_0: _p34.value,
+				_0: _p53.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$translate = function (_p35) {
-	var _p36 = _p35;
+var _rtfeldman$elm_css$Css$translate = function (_p54) {
+	var _p55 = _p54;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'translate',
 			{
 				ctor: '::',
-				_0: _p36.value,
+				_0: _p55.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
@@ -25206,43 +25749,43 @@ var _rtfeldman$elm_css$Css$translate2 = F2(
 			transform: _rtfeldman$elm_css$Css$Compatible
 		};
 	});
-var _rtfeldman$elm_css$Css$translateX = function (_p37) {
-	var _p38 = _p37;
+var _rtfeldman$elm_css$Css$translateX = function (_p56) {
+	var _p57 = _p56;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'translateX',
 			{
 				ctor: '::',
-				_0: _p38.value,
+				_0: _p57.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$translateY = function (_p39) {
-	var _p40 = _p39;
+var _rtfeldman$elm_css$Css$translateY = function (_p58) {
+	var _p59 = _p58;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'translateY',
 			{
 				ctor: '::',
-				_0: _p40.value,
+				_0: _p59.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
 	};
 };
-var _rtfeldman$elm_css$Css$translateZ = function (_p41) {
-	var _p42 = _p41;
+var _rtfeldman$elm_css$Css$translateZ = function (_p60) {
+	var _p61 = _p60;
 	return {
 		value: A2(
 			_rtfeldman$elm_css$Css$cssFunction,
 			'translateZ',
 			{
 				ctor: '::',
-				_0: _p42.value,
+				_0: _p61.value,
 				_1: {ctor: '[]'}
 			}),
 		transform: _rtfeldman$elm_css$Css$Compatible
@@ -25337,12 +25880,19 @@ var _rtfeldman$elm_css$Css$block = {value: 'block', display: _rtfeldman$elm_css$
 var _rtfeldman$elm_css$Css$inlineBlock = {value: 'inline-block', display: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$inline = {value: 'inline', display: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$table = {value: 'table', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$inlineTable = {value: 'inline-table', display: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$tableRow = {value: 'table-row', display: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$tableCell = {value: 'table-cell', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$tableColumn = {value: 'table-column', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$tableCaption = {value: 'table-caption', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$tableRowGroup = {value: 'table-row-group', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$tableColumnGroup = {value: 'table-column-group', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$tableHeaderGroup = {value: 'table-header-group', display: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$tableFooterGroup = {value: 'table-footer-group', display: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$listItem = {value: 'list-item', display: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$inlineListItem = {value: 'inline-list-item', display: _rtfeldman$elm_css$Css$Compatible};
-var _rtfeldman$elm_css$Css$none = {value: 'none', cursor: _rtfeldman$elm_css$Css$Compatible, none: _rtfeldman$elm_css$Css$Compatible, lengthOrNone: _rtfeldman$elm_css$Css$Compatible, lengthOrNoneOrMinMaxDimension: _rtfeldman$elm_css$Css$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css$Compatible, textDecorationLine: _rtfeldman$elm_css$Css$Compatible, listStyleType: _rtfeldman$elm_css$Css$Compatible, listStyleTypeOrPositionOrImage: _rtfeldman$elm_css$Css$Compatible, display: _rtfeldman$elm_css$Css$Compatible, outline: _rtfeldman$elm_css$Css$Compatible, transform: _rtfeldman$elm_css$Css$Compatible, borderStyle: _rtfeldman$elm_css$Css$Compatible};
-var _rtfeldman$elm_css$Css$auto = {value: 'auto', cursor: _rtfeldman$elm_css$Css$Compatible, flexBasis: _rtfeldman$elm_css$Css$Compatible, overflow: _rtfeldman$elm_css$Css$Compatible, textRendering: _rtfeldman$elm_css$Css$Compatible, lengthOrAuto: _rtfeldman$elm_css$Css$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css$Compatible, alignItemsOrAuto: _rtfeldman$elm_css$Css$Compatible, lengthOrAutoOrCoverOrContain: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$none = {value: 'none', cursor: _rtfeldman$elm_css$Css$Compatible, none: _rtfeldman$elm_css$Css$Compatible, lengthOrNone: _rtfeldman$elm_css$Css$Compatible, lengthOrNoneOrMinMaxDimension: _rtfeldman$elm_css$Css$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css$Compatible, textDecorationLine: _rtfeldman$elm_css$Css$Compatible, listStyleType: _rtfeldman$elm_css$Css$Compatible, listStyleTypeOrPositionOrImage: _rtfeldman$elm_css$Css$Compatible, display: _rtfeldman$elm_css$Css$Compatible, outline: _rtfeldman$elm_css$Css$Compatible, resize: _rtfeldman$elm_css$Css$Compatible, transform: _rtfeldman$elm_css$Css$Compatible, borderStyle: _rtfeldman$elm_css$Css$Compatible};
+var _rtfeldman$elm_css$Css$auto = {value: 'auto', cursor: _rtfeldman$elm_css$Css$Compatible, flexBasis: _rtfeldman$elm_css$Css$Compatible, overflow: _rtfeldman$elm_css$Css$Compatible, textRendering: _rtfeldman$elm_css$Css$Compatible, lengthOrAuto: _rtfeldman$elm_css$Css$Compatible, lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css$Compatible, alignItemsOrAuto: _rtfeldman$elm_css$Css$Compatible, lengthOrAutoOrCoverOrContain: _rtfeldman$elm_css$Css$Compatible, justifyContentOrAuto: _rtfeldman$elm_css$Css$Compatible, intOrAuto: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$noWrap = {value: 'nowrap', whiteSpace: _rtfeldman$elm_css$Css$Compatible, flexWrap: _rtfeldman$elm_css$Css$Compatible, flexDirectionOrWrap: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$fillAvailable = {value: 'fill-available', minMaxDimension: _rtfeldman$elm_css$Css$Compatible, lengthOrMinMaxDimension: _rtfeldman$elm_css$Css$Compatible, lengthOrNoneOrMinMaxDimension: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$maxContent = _elm_lang$core$Native_Utils.update(
@@ -25378,7 +25928,8 @@ var _rtfeldman$elm_css$Css$normal = {
 	warnings: {ctor: '[]'},
 	fontStyle: _rtfeldman$elm_css$Css$Compatible,
 	fontWeight: _rtfeldman$elm_css$Css$Compatible,
-	featureTagValue: _rtfeldman$elm_css$Css$Compatible
+	featureTagValue: _rtfeldman$elm_css$Css$Compatible,
+	overflowWrap: _rtfeldman$elm_css$Css$Compatible
 };
 var _rtfeldman$elm_css$Css$italic = {value: 'italic', fontStyle: _rtfeldman$elm_css$Css$Compatible};
 var _rtfeldman$elm_css$Css$oblique = {value: 'oblique', fontStyle: _rtfeldman$elm_css$Css$Compatible};
@@ -25537,6 +26088,7 @@ var _rtfeldman$elm_css$Css$int = function (val) {
 		number: _rtfeldman$elm_css$Css$Compatible,
 		fontWeight: _rtfeldman$elm_css$Css$Compatible,
 		lengthOrNumberOrAutoOrNoneOrContent: _rtfeldman$elm_css$Css$Compatible,
+		intOrAuto: _rtfeldman$elm_css$Css$Compatible,
 		numericValue: _elm_lang$core$Basics$toFloat(val),
 		unitLabel: '',
 		units: _rtfeldman$elm_css$Css$UnitlessInteger
@@ -25571,6 +26123,7 @@ var _rtfeldman$elm_css$Css$initial = {
 	display: _rtfeldman$elm_css$Css$Compatible,
 	all: _rtfeldman$elm_css$Css$Compatible,
 	alignItems: _rtfeldman$elm_css$Css$Compatible,
+	justifyContent: _rtfeldman$elm_css$Css$Compatible,
 	length: _rtfeldman$elm_css$Css$Compatible,
 	lengthOrAuto: _rtfeldman$elm_css$Css$Compatible,
 	lengthOrNone: _rtfeldman$elm_css$Css$Compatible,
@@ -25601,7 +26154,8 @@ var _rtfeldman$elm_css$Css$initial = {
 	backgroundBlendMode: _rtfeldman$elm_css$Css$Compatible,
 	backgroundOrigin: _rtfeldman$elm_css$Css$Compatible,
 	backgroundImage: _rtfeldman$elm_css$Css$Compatible,
-	lengthOrAutoOrCoverOrContain: _rtfeldman$elm_css$Css$Compatible
+	lengthOrAutoOrCoverOrContain: _rtfeldman$elm_css$Css$Compatible,
+	intOrAuto: _rtfeldman$elm_css$Css$Compatible
 };
 var _rtfeldman$elm_css$Css$unset = _elm_lang$core$Native_Utils.update(
 	_rtfeldman$elm_css$Css$initial,
@@ -25622,6 +26176,13 @@ var _rtfeldman$elm_css$Css$alignSelf = function (fn) {
 		_rtfeldman$elm_css$Css$getOverloadedProperty,
 		'alignSelf',
 		'align-self',
+		fn(_rtfeldman$elm_css$Css$lengthForOverloadedProperty));
+};
+var _rtfeldman$elm_css$Css$justifyContent = function (fn) {
+	return A3(
+		_rtfeldman$elm_css$Css$getOverloadedProperty,
+		'justifyContent',
+		'justify-content',
 		fn(_rtfeldman$elm_css$Css$lengthForOverloadedProperty));
 };
 var _rtfeldman$elm_css$Css$float = function (fn) {
@@ -25715,6 +26276,8 @@ var _rtfeldman$elm_css$Css_Elements$code = _rtfeldman$elm_css$Css_Elements$typeS
 var _rtfeldman$elm_css$Css_Elements$small = _rtfeldman$elm_css$Css_Elements$typeSelector('small');
 var _rtfeldman$elm_css$Css_Elements$span = _rtfeldman$elm_css$Css_Elements$typeSelector('span');
 var _rtfeldman$elm_css$Css_Elements$strong = _rtfeldman$elm_css$Css_Elements$typeSelector('strong');
+var _rtfeldman$elm_css$Css_Elements$i = _rtfeldman$elm_css$Css_Elements$typeSelector('i');
+var _rtfeldman$elm_css$Css_Elements$em = _rtfeldman$elm_css$Css_Elements$typeSelector('em');
 var _rtfeldman$elm_css$Css_Elements$img = _rtfeldman$elm_css$Css_Elements$typeSelector('img');
 var _rtfeldman$elm_css$Css_Elements$audio = _rtfeldman$elm_css$Css_Elements$typeSelector('audio');
 var _rtfeldman$elm_css$Css_Elements$video = _rtfeldman$elm_css$Css_Elements$typeSelector('video');
@@ -25739,6 +26302,16 @@ var _rtfeldman$elm_css$Css_Elements$optgroup = _rtfeldman$elm_css$Css_Elements$t
 var _rtfeldman$elm_css$Css_Elements$option = _rtfeldman$elm_css$Css_Elements$typeSelector('option');
 var _rtfeldman$elm_css$Css_Elements$progress = _rtfeldman$elm_css$Css_Elements$typeSelector('progress');
 var _rtfeldman$elm_css$Css_Elements$select = _rtfeldman$elm_css$Css_Elements$typeSelector('select');
+var _rtfeldman$elm_css$Css_Elements$textarea = _rtfeldman$elm_css$Css_Elements$typeSelector('textarea');
+var _rtfeldman$elm_css$Css_Elements$blockquote = _rtfeldman$elm_css$Css_Elements$typeSelector('blockquote');
+var _rtfeldman$elm_css$Css_Elements$svg = _rtfeldman$elm_css$Css_Elements$typeSelector('svg');
+var _rtfeldman$elm_css$Css_Elements$path = _rtfeldman$elm_css$Css_Elements$typeSelector('path');
+var _rtfeldman$elm_css$Css_Elements$rect = _rtfeldman$elm_css$Css_Elements$typeSelector('rect');
+var _rtfeldman$elm_css$Css_Elements$circle = _rtfeldman$elm_css$Css_Elements$typeSelector('circle');
+var _rtfeldman$elm_css$Css_Elements$ellipse = _rtfeldman$elm_css$Css_Elements$typeSelector('ellipse');
+var _rtfeldman$elm_css$Css_Elements$line = _rtfeldman$elm_css$Css_Elements$typeSelector('line');
+var _rtfeldman$elm_css$Css_Elements$polyline = _rtfeldman$elm_css$Css_Elements$typeSelector('polyline');
+var _rtfeldman$elm_css$Css_Elements$polygon = _rtfeldman$elm_css$Css_Elements$typeSelector('polygon');
 
 var _rtfeldman$elm_css_helpers$Html_CssHelpers$stylesheetLink = function (url) {
 	return A3(
@@ -26347,6 +26920,7 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$QrCode = {ctor: 'QrCode'};
 var _user$project$Css_Classes$TxAddress = {ctor: 'TxAddress'};
 var _user$project$Css_Classes$TxPhone = {ctor: 'TxPhone'};
 var _user$project$Css_Classes$TxCrypto = {ctor: 'TxCrypto'};
@@ -28659,17 +29233,17 @@ var _user$project$ConfigEncoder$encodeResults = F2(
 				}));
 	});
 
-var _user$project$Css_Colors$red = _rtfeldman$elm_css$Css$hex('eb6b6e');
-var _user$project$Css_Colors$darkerGrey = _rtfeldman$elm_css$Css$hex('282828');
-var _user$project$Css_Colors$darkGrey = _rtfeldman$elm_css$Css$hex('2d2d2d');
-var _user$project$Css_Colors$darkerLightGrey = _rtfeldman$elm_css$Css$hex('E6E6E3');
-var _user$project$Css_Colors$lighterLightGrey = _rtfeldman$elm_css$Css$hex('fcfcfa');
-var _user$project$Css_Colors$lightGrey = _rtfeldman$elm_css$Css$hex('f6f6f4');
-var _user$project$Css_Colors$sandstone = _rtfeldman$elm_css$Css$hex('5f5f56');
-var _user$project$Css_Colors$white = _rtfeldman$elm_css$Css$hex('ffffff');
-var _user$project$Css_Colors$amazonite = _rtfeldman$elm_css$Css$hex('37e8d7');
-var _user$project$Css_Colors$darkCobalt = _rtfeldman$elm_css$Css$hex('042c47');
-var _user$project$Css_Colors$cobalt = _rtfeldman$elm_css$Css$hex('004062');
+var _user$project$Css_LocalColors$red = _rtfeldman$elm_css$Css$hex('eb6b6e');
+var _user$project$Css_LocalColors$darkerGrey = _rtfeldman$elm_css$Css$hex('282828');
+var _user$project$Css_LocalColors$darkGrey = _rtfeldman$elm_css$Css$hex('2d2d2d');
+var _user$project$Css_LocalColors$darkerLightGrey = _rtfeldman$elm_css$Css$hex('E6E6E3');
+var _user$project$Css_LocalColors$lighterLightGrey = _rtfeldman$elm_css$Css$hex('fcfcfa');
+var _user$project$Css_LocalColors$lightGrey = _rtfeldman$elm_css$Css$hex('f6f6f4');
+var _user$project$Css_LocalColors$sandstone = _rtfeldman$elm_css$Css$hex('5f5f56');
+var _user$project$Css_LocalColors$white = _rtfeldman$elm_css$Css$hex('ffffff');
+var _user$project$Css_LocalColors$amazonite = _rtfeldman$elm_css$Css$hex('37e8d7');
+var _user$project$Css_LocalColors$darkCobalt = _rtfeldman$elm_css$Css$hex('042c47');
+var _user$project$Css_LocalColors$cobalt = _rtfeldman$elm_css$Css$hex('004062');
 
 var _user$project$Css_Selectize$codeFonts = {
 	ctor: '::',
@@ -28713,14 +29287,11 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 						{
 							ctor: '::',
 							_0: A2(
-								F2(
-									function (x, y) {
-										return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-									}),
+								_rtfeldman$elm_css$Css$class,
 								_user$project$Css_Selectize$NoOptions,
 								{
 									ctor: '::',
-									_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_Colors$lighterLightGrey),
+									_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_LocalColors$lighterLightGrey),
 									_1: {
 										ctor: '::',
 										_0: _rtfeldman$elm_css$Css$fontSize(
@@ -28731,7 +29302,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 												_rtfeldman$elm_css$Css$int(500)),
 											_1: {
 												ctor: '::',
-												_0: _rtfeldman$elm_css$Css$color(_user$project$Css_Colors$sandstone),
+												_0: _rtfeldman$elm_css$Css$color(_user$project$Css_LocalColors$sandstone),
 												_1: {
 													ctor: '::',
 													_0: _rtfeldman$elm_css$Css$padding(
@@ -28757,10 +29328,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 							_1: {
 								ctor: '::',
 								_0: A2(
-									F2(
-										function (x, y) {
-											return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-										}),
+									_rtfeldman$elm_css$Css$class,
 									_user$project$Css_Selectize$SelectBox,
 									{
 										ctor: '::',
@@ -28790,10 +29358,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 								_1: {
 									ctor: '::',
 									_0: A2(
-										F2(
-											function (x, y) {
-												return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-											}),
+										_rtfeldman$elm_css$Css$class,
 										_user$project$Css_Selectize$BoxContainer,
 										{
 											ctor: '::',
@@ -28807,7 +29372,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 														_rtfeldman$elm_css$Css$px(-3)),
 													_1: {
 														ctor: '::',
-														_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_Colors$white),
+														_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_LocalColors$white),
 														_1: {
 															ctor: '::',
 															_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$left),
@@ -28825,20 +29390,20 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																			_rtfeldman$elm_css$Css$px(3)),
 																		_1: {
 																			ctor: '::',
-																			_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_Colors$white),
+																			_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_LocalColors$white),
 																			_1: {
 																				ctor: '::',
 																				_0: A3(
 																					_rtfeldman$elm_css$Css$border3,
 																					_rtfeldman$elm_css$Css$px(3),
 																					_rtfeldman$elm_css$Css$solid,
-																					_user$project$Css_Colors$lightGrey),
+																					_user$project$Css_LocalColors$lightGrey),
 																				_1: {
 																					ctor: '::',
 																					_0: _rtfeldman$elm_css$Css$borderTop(_rtfeldman$elm_css$Css$zero),
 																					_1: {
 																						ctor: '::',
-																						_0: _rtfeldman$elm_css$Css$color(_user$project$Css_Colors$sandstone),
+																						_0: _rtfeldman$elm_css$Css$color(_user$project$Css_LocalColors$sandstone),
 																						_1: {
 																							ctor: '::',
 																							_0: _rtfeldman$elm_css$Css$width(
@@ -28869,23 +29434,17 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 									_1: {
 										ctor: '::',
 										_0: A2(
-											F2(
-												function (x, y) {
-													return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-												}),
+											_rtfeldman$elm_css$Css$class,
 											_user$project$Css_Selectize$BoxItems,
 											{ctor: '[]'}),
 										_1: {
 											ctor: '::',
 											_0: A2(
-												F2(
-													function (x, y) {
-														return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-													}),
+												_rtfeldman$elm_css$Css$class,
 												_user$project$Css_Selectize$BoxItemActive,
 												{
 													ctor: '::',
-													_0: _rtfeldman$elm_css$Css$color(_user$project$Css_Colors$cobalt),
+													_0: _rtfeldman$elm_css$Css$color(_user$project$Css_LocalColors$cobalt),
 													_1: {
 														ctor: '::',
 														_0: _rtfeldman$elm_css$Css$fontWeight(
@@ -28896,10 +29455,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 											_1: {
 												ctor: '::',
 												_0: A2(
-													F2(
-														function (x, y) {
-															return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-														}),
+													_rtfeldman$elm_css$Css$class,
 													_user$project$Css_Selectize$BoxItem,
 													{
 														ctor: '::',
@@ -28920,10 +29476,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 												_1: {
 													ctor: '::',
 													_0: A2(
-														F2(
-															function (x, y) {
-																return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-															}),
+														_rtfeldman$elm_css$Css$class,
 														_user$project$Css_Selectize$Info,
 														{
 															ctor: '::',
@@ -28933,17 +29486,14 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																_rtfeldman$elm_css$Css$px(6)),
 															_1: {
 																ctor: '::',
-																_0: _rtfeldman$elm_css$Css$color(_user$project$Css_Colors$darkGrey),
+																_0: _rtfeldman$elm_css$Css$color(_user$project$Css_LocalColors$darkGrey),
 																_1: {ctor: '[]'}
 															}
 														}),
 													_1: {
 														ctor: '::',
 														_0: A2(
-															F2(
-																function (x, y) {
-																	return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-																}),
+															_rtfeldman$elm_css$Css$class,
 															_user$project$Css_Selectize$MultiItemContainer,
 															{
 																ctor: '::',
@@ -28951,17 +29501,14 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																	{
 																		ctor: '::',
 																		_0: A2(
-																			F2(
-																				function (x, y) {
-																					return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-																				}),
+																			_rtfeldman$elm_css$Css$class,
 																			_user$project$Css_Selectize$SelectedItem,
 																			{
 																				ctor: '::',
-																				_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_Colors$cobalt),
+																				_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_LocalColors$cobalt),
 																				_1: {
 																					ctor: '::',
-																					_0: _rtfeldman$elm_css$Css$color(_user$project$Css_Colors$white),
+																					_0: _rtfeldman$elm_css$Css$color(_user$project$Css_LocalColors$white),
 																					_1: {
 																						ctor: '::',
 																						_0: A3(
@@ -29001,14 +29548,11 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																		_1: {
 																			ctor: '::',
 																			_0: A2(
-																				F2(
-																					function (x, y) {
-																						return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-																					}),
+																				_rtfeldman$elm_css$Css$class,
 																				_user$project$Css_Selectize$FallbackItem,
 																				{
 																					ctor: '::',
-																					_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_Colors$sandstone),
+																					_0: _rtfeldman$elm_css$Css$backgroundColor(_user$project$Css_LocalColors$sandstone),
 																					_1: {ctor: '[]'}
 																				}),
 																			_1: {ctor: '[]'}
@@ -29019,10 +29563,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 														_1: {
 															ctor: '::',
 															_0: A2(
-																F2(
-																	function (x, y) {
-																		return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-																	}),
+																_rtfeldman$elm_css$Css$class,
 																_user$project$Css_Selectize$SingleItemContainer,
 																{
 																	ctor: '::',
@@ -29030,10 +29571,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																		{
 																			ctor: '::',
 																			_0: A2(
-																				F2(
-																					function (x, y) {
-																						return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-																					}),
+																				_rtfeldman$elm_css$Css$class,
 																				_user$project$Css_Selectize$SelectedItem,
 																				{
 																					ctor: '::',
@@ -29056,14 +29594,11 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$mixin(
 																			_1: {
 																				ctor: '::',
 																				_0: A2(
-																					F2(
-																						function (x, y) {
-																							return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
-																						}),
+																					_rtfeldman$elm_css$Css$class,
 																					_user$project$Css_Selectize$FallbackItem,
 																					{
 																						ctor: '::',
-																						_0: _rtfeldman$elm_css$Css$color(_user$project$Css_Colors$sandstone),
+																						_0: _rtfeldman$elm_css$Css$color(_user$project$Css_LocalColors$sandstone),
 																						_1: {ctor: '[]'}
 																					}),
 																				_1: {ctor: '[]'}
@@ -31211,7 +31746,7 @@ var _user$project$Config$update = F2(
 	});
 
 var _user$project$Pair$qrCode = function (s) {
-	var resultQRCode = _pablohirafuji$elm_qrcode$QRCode$toSvg(s);
+	var resultQRCode = A2(_pablohirafuji$elm_qrcode$QRCode$toSvgWithECLevel, s, _pablohirafuji$elm_qrcode$QRCode_ECLevel$L);
 	var _p0 = resultQRCode;
 	if (_p0.ctor === 'Ok') {
 		return _p0._0;
@@ -31357,37 +31892,17 @@ var _user$project$Pair$view = function (model) {
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$style(
+								_0: _user$project$Css_Admin$class(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#eee'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'padding', _1: '10px'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'width', _1: '225px'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'height', _1: '225px'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '20px'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '6px'},
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}
+										_0: _user$project$Css_Classes$QrCode,
+										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
 							},
 							{
 								ctor: '::',
-								_0: _user$project$Pair$qrCode('8:.WR8EF*FTN2-A0SR+0D:082HQOZBG$IC 6X/W0WLZJ/GS'),
+								_0: _user$project$Pair$qrCode(_p1._0),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -31402,7 +31917,7 @@ var _user$project$Pair$view = function (model) {
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Scan this QR to pair '),
+											_0: _elm_lang$html$Html$text('Scan this QR Code to pair '),
 											_1: {ctor: '[]'}
 										}),
 									_1: {

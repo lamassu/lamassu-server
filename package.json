@@ -18,6 +18,7 @@
     "lamassu-bitgo": "lamassu/lamassu-bitgo#alpha",
     "lamassu-bitpay": "lamassu/lamassu-bitpay#alpha",
     "lamassu-bitstamp": "lamassu/lamassu-bitstamp#alpha",
+    "lamassu-kraken": "^1.0.3",
     "lamassu-mailjet": "lamassu/lamassu-mailjet",
     "lamassu-mock-id-verify": "lamassu/lamassu-mock-id-verify",
     "lamassu-mock-sms": "lamassu/lamassu-mock-sms",
