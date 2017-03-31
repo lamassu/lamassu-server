@@ -33,6 +33,10 @@ p {
     width: 100%;
 }
 
+.lamassuAdminCashOut {
+    background-color: #f6f6f4;
+}
+
 .lamassuAdminFormRow {
     margin: 20px 0;
 }

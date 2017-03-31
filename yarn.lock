@@ -3421,7 +3421,7 @@ pg-minify@0.4:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/pg-minify/-/pg-minify-0.4.1.tgz#a642c6bd256c7da833066590b1e414334a1f6e19"
 
-pg-native@^1.10.0:
+pg-native@latest:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/pg-native/-/pg-native-1.10.0.tgz#abe299214afa2be51db5f5104e14770c738230fd"
   dependencies:
@@ -3436,14 +3436,14 @@ pg-pool@1.*:
     generic-pool "2.4.2"
     object-assign "4.1.0"
 
-pg-promise@^5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/pg-promise/-/pg-promise-5.5.0.tgz#a89c7e25e8695c343a51f7821d4e16bb5f46d5cc"
+pg-promise@^5.6.4:
+  version "5.6.4"
+  resolved "https://registry.yarnpkg.com/pg-promise/-/pg-promise-5.6.4.tgz#80b18a2a1bdd9af7fb0087e01a1b87ada8559a71"
   dependencies:
     manakin "0.4"
     pg "5.1"
     pg-minify "0.4"
-    spex "1.1"
+    spex "1.2"
 
 pg-types@1.*, pg-types@1.6.0:
   version "1.6.0"
@@ -4266,9 +4266,9 @@ spdx-license-ids@^1.0.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-1.2.2.tgz#c9df7a3424594ade6bd11900d596696dc06bac57"
 
-spex@1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/spex/-/spex-1.1.1.tgz#ceede36b128e7dcb26100b89e2b049a5f4477d50"
+spex@1.2:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/spex/-/spex-1.2.0.tgz#6264b3b8acbc444477f06dbb66d425c0ee1074c0"
 
 split@^1.0.0:
   version "1.0.0"

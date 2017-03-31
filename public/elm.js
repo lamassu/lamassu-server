@@ -26920,6 +26920,8 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$CashIn = {ctor: 'CashIn'};
+var _user$project$Css_Classes$CashOut = {ctor: 'CashOut'};
 var _user$project$Css_Classes$QrCode = {ctor: 'QrCode'};
 var _user$project$Css_Classes$TxAddress = {ctor: 'TxAddress'};
 var _user$project$Css_Classes$TxPhone = {ctor: 'TxPhone'};
@@ -32711,9 +32713,7 @@ var _user$project$TransactionTypes$CashOutTxRec = function (a) {
 												return function (m) {
 													return function (n) {
 														return function (o) {
-															return function (p) {
-																return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, txHash: h, status: i, dispensed: j, notified: k, redeemed: l, phone: m, error: n, created: o, confirmed: p};
-															};
+															return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, status: h, dispensed: i, notified: j, redeemed: k, phone: l, error: m, created: n, confirmed: o};
 														};
 													};
 												};
@@ -32841,37 +32841,33 @@ var _user$project$TransactionDecoder$cashOutTxDecoder = A3(
 								_elm_lang$core$Json_Decode$string,
 								A3(
 									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-									'txHash',
-									_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+									'fiatCode',
+									_elm_lang$core$Json_Decode$string,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'fiatCode',
-										_elm_lang$core$Json_Decode$string,
+										'fiat',
+										_user$project$TransactionDecoder$floatString,
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'fiat',
-											_user$project$TransactionDecoder$floatString,
+											'cryptoCode',
+											_elm_lang$core$Json_Decode$string,
 											A3(
 												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'cryptoCode',
-												_elm_lang$core$Json_Decode$string,
+												'cryptoAtoms',
+												_user$project$TransactionDecoder$intString,
 												A3(
 													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-													'cryptoAtoms',
-													_user$project$TransactionDecoder$intString,
+													'toAddress',
+													_elm_lang$core$Json_Decode$string,
 													A3(
 														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-														'toAddress',
+														'machineName',
 														_elm_lang$core$Json_Decode$string,
 														A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-															'machineName',
+															'id',
 															_elm_lang$core$Json_Decode$string,
-															A3(
-																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																'id',
-																_elm_lang$core$Json_Decode$string,
-																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$TransactionTypes$CashOutTxRec)))))))))))))))));
+															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$TransactionTypes$CashOutTxRec))))))))))))))));
 var _user$project$TransactionDecoder$txDecode = function (txClass) {
 	var _p3 = txClass;
 	switch (_p3) {
@@ -32893,95 +32889,104 @@ var _user$project$TransactionDecoder$txsDecoder = A2(
 	'transactions',
 	_elm_lang$core$Json_Decode$list(_user$project$TransactionDecoder$txDecoder));
 
+var _user$project$Transaction$multiplier = function (code) {
+	var _p0 = code;
+	switch (_p0) {
+		case 'BTC':
+			return 1.0e8;
+		case 'ETH':
+			return 1.0e18;
+		default:
+			return 1.0;
+	}
+};
 var _user$project$Transaction$rowView = function (tx) {
-	var _p0 = tx;
-	if (_p0.ctor === 'CashInTx') {
-		var _p1 = _p0._0;
+	var _p1 = tx;
+	if (_p1.ctor === 'CashInTx') {
+		var _p2 = _p1._0;
 		return A2(
 			_elm_lang$html$Html$tr,
-			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _user$project$Css_Admin$class(
+					{
+						ctor: '::',
+						_0: _user$project$Css_Classes$CashIn,
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
 			{
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$td,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _user$project$Css_Admin$class(
-							{
-								ctor: '::',
-								_0: _user$project$Css_Classes$NumberColumn,
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p1.created)),
+						_0: _elm_lang$html$Html$text('Cash in'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$td,
-						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p1.machineName),
+							_0: _user$project$Css_Admin$class(
+								{
+									ctor: '::',
+									_0: _user$project$Css_Classes$NumberColumn,
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p2.created)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$td,
+							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _user$project$Css_Admin$class(
-									{
-										ctor: '::',
-										_0: _user$project$Css_Classes$NumberColumn,
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									A2(
-										_ggb$numeral_elm$Numeral$format,
-										'0,0.000000',
-										_elm_lang$core$Basics$negate(
-											_elm_lang$core$Basics$toFloat(_p1.cryptoAtoms)) / 1.0e8)),
+								_0: _elm_lang$html$Html$text(_p2.machineName),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$td,
-								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(_p1.cryptoCode),
+									_0: _user$project$Css_Admin$class(
+										{
+											ctor: '::',
+											_0: _user$project$Css_Classes$NumberColumn,
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										A2(
+											_ggb$numeral_elm$Numeral$format,
+											'0,0.000000',
+											_elm_lang$core$Basics$toFloat(_p2.cryptoAtoms) / _user$project$Transaction$multiplier(_p2.cryptoCode))),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
 									_elm_lang$html$Html$td,
+									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _user$project$Css_Admin$class(
-											{
-												ctor: '::',
-												_0: _user$project$Css_Classes$NumberColumn,
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(_ggb$numeral_elm$Numeral$format, '0,0.00', _p1.fiat)),
+										_0: _elm_lang$html$Html$text(_p2.cryptoCode),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -33001,7 +33006,7 @@ var _user$project$Transaction$rowView = function (tx) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text(
-												A2(_elm_lang$core$Maybe$withDefault, '', _p1.phone)),
+												A2(_ggb$numeral_elm$Numeral$format, '0,0.00', _p2.fiat)),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -33013,17 +33018,38 @@ var _user$project$Transaction$rowView = function (tx) {
 												_0: _user$project$Css_Admin$class(
 													{
 														ctor: '::',
-														_0: _user$project$Css_Classes$TxAddress,
+														_0: _user$project$Css_Classes$NumberColumn,
 														_1: {ctor: '[]'}
 													}),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text(_p1.toAddress),
+												_0: _elm_lang$html$Html$text(
+													A2(_elm_lang$core$Maybe$withDefault, '', _p2.phone)),
 												_1: {ctor: '[]'}
 											}),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{
+													ctor: '::',
+													_0: _user$project$Css_Admin$class(
+														{
+															ctor: '::',
+															_0: _user$project$Css_Classes$TxAddress,
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(_p2.toAddress),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -33032,98 +33058,94 @@ var _user$project$Transaction$rowView = function (tx) {
 				}
 			});
 	} else {
-		var _p2 = _p0._0;
+		var _p3 = _p1._0;
 		return A2(
 			_elm_lang$html$Html$tr,
-			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _user$project$Css_Admin$class(
+					{
+						ctor: '::',
+						_0: _user$project$Css_Classes$CashOut,
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
 			{
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$td,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _user$project$Css_Admin$class(
-							{
-								ctor: '::',
-								_0: _user$project$Css_Classes$NumberColumn,
-								_1: {
-									ctor: '::',
-									_0: _user$project$Css_Classes$DateColumn,
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p2.created)),
+						_0: _elm_lang$html$Html$text('Cash out'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$td,
-						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p2.machineName),
+							_0: _user$project$Css_Admin$class(
+								{
+									ctor: '::',
+									_0: _user$project$Css_Classes$NumberColumn,
+									_1: {
+										ctor: '::',
+										_0: _user$project$Css_Classes$DateColumn,
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p3.created)),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$td,
+							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _user$project$Css_Admin$class(
-									{
-										ctor: '::',
-										_0: _user$project$Css_Classes$NumberColumn,
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									A2(
-										_ggb$numeral_elm$Numeral$format,
-										'0,0.000000',
-										_elm_lang$core$Basics$toFloat(_p2.cryptoAtoms) / 1.0e8)),
+								_0: _elm_lang$html$Html$text(_p3.machineName),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$td,
-								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(_p2.cryptoCode),
+									_0: _user$project$Css_Admin$class(
+										{
+											ctor: '::',
+											_0: _user$project$Css_Classes$NumberColumn,
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										A2(
+											_ggb$numeral_elm$Numeral$format,
+											'0,0.000000',
+											_elm_lang$core$Basics$toFloat(_p3.cryptoAtoms) / _user$project$Transaction$multiplier(_p3.cryptoCode))),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
 									_elm_lang$html$Html$td,
+									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _user$project$Css_Admin$class(
-											{
-												ctor: '::',
-												_0: _user$project$Css_Classes$NumberColumn,
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(
-												_ggb$numeral_elm$Numeral$format,
-												'0,0.00',
-												_elm_lang$core$Basics$negate(_p2.fiat))),
+										_0: _elm_lang$html$Html$text(_p3.cryptoCode),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -33143,7 +33165,7 @@ var _user$project$Transaction$rowView = function (tx) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text(
-												A2(_elm_lang$core$Maybe$withDefault, '', _p2.phone)),
+												A2(_ggb$numeral_elm$Numeral$format, '0,0.00', _p3.fiat)),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -33155,17 +33177,38 @@ var _user$project$Transaction$rowView = function (tx) {
 												_0: _user$project$Css_Admin$class(
 													{
 														ctor: '::',
-														_0: _user$project$Css_Classes$TxAddress,
+														_0: _user$project$Css_Classes$NumberColumn,
 														_1: {ctor: '[]'}
 													}),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text(_p2.toAddress),
+												_0: _elm_lang$html$Html$text(
+													A2(_elm_lang$core$Maybe$withDefault, '', _p3.phone)),
 												_1: {ctor: '[]'}
 											}),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{
+													ctor: '::',
+													_0: _user$project$Css_Admin$class(
+														{
+															ctor: '::',
+															_0: _user$project$Css_Classes$TxAddress,
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(_p3.toAddress),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -33209,21 +33252,8 @@ var _user$project$Transaction$tableView = function (txs) {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$td,
-								{
-									ctor: '::',
-									_0: _user$project$Css_Admin$class(
-										{
-											ctor: '::',
-											_0: _user$project$Css_Classes$TxDate,
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Time'),
-									_1: {ctor: '[]'}
-								}),
+								{ctor: '[]'},
+								{ctor: '[]'}),
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -33233,14 +33263,14 @@ var _user$project$Transaction$tableView = function (txs) {
 										_0: _user$project$Css_Admin$class(
 											{
 												ctor: '::',
-												_0: _user$project$Css_Classes$TxMachine,
+												_0: _user$project$Css_Classes$TxDate,
 												_1: {ctor: '[]'}
 											}),
 										_1: {ctor: '[]'}
 									},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Machine'),
+										_0: _elm_lang$html$Html$text('Time'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -33249,12 +33279,17 @@ var _user$project$Transaction$tableView = function (txs) {
 										_elm_lang$html$Html$td,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$colspan(2),
+											_0: _user$project$Css_Admin$class(
+												{
+													ctor: '::',
+													_0: _user$project$Css_Classes$TxMachine,
+													_1: {ctor: '[]'}
+												}),
 											_1: {ctor: '[]'}
 										},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Crypto'),
+											_0: _elm_lang$html$Html$text('Machine'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -33263,17 +33298,12 @@ var _user$project$Transaction$tableView = function (txs) {
 											_elm_lang$html$Html$td,
 											{
 												ctor: '::',
-												_0: _user$project$Css_Admin$class(
-													{
-														ctor: '::',
-														_0: _user$project$Css_Classes$TxAmount,
-														_1: {ctor: '[]'}
-													}),
+												_0: _elm_lang$html$Html_Attributes$colspan(2),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('Fiat'),
+												_0: _elm_lang$html$Html$text('Crypto'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
@@ -33285,14 +33315,14 @@ var _user$project$Transaction$tableView = function (txs) {
 													_0: _user$project$Css_Admin$class(
 														{
 															ctor: '::',
-															_0: _user$project$Css_Classes$TxPhone,
+															_0: _user$project$Css_Classes$TxAmount,
 															_1: {ctor: '[]'}
 														}),
 													_1: {ctor: '[]'}
 												},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('Phone'),
+													_0: _elm_lang$html$Html$text('Fiat'),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
@@ -33304,17 +33334,37 @@ var _user$project$Transaction$tableView = function (txs) {
 														_0: _user$project$Css_Admin$class(
 															{
 																ctor: '::',
-																_0: _user$project$Css_Classes$TxAddress,
+																_0: _user$project$Css_Classes$TxPhone,
 																_1: {ctor: '[]'}
 															}),
 														_1: {ctor: '[]'}
 													},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('To address'),
+														_0: _elm_lang$html$Html$text('Phone'),
 														_1: {ctor: '[]'}
 													}),
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{
+															ctor: '::',
+															_0: _user$project$Css_Admin$class(
+																{
+																	ctor: '::',
+																	_0: _user$project$Css_Classes$TxAddress,
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('To address'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -33334,8 +33384,8 @@ var _user$project$Transaction$tableView = function (txs) {
 		});
 };
 var _user$project$Transaction$view = function (model) {
-	var _p3 = model;
-	switch (_p3.ctor) {
+	var _p4 = model;
+	switch (_p4.ctor) {
 		case 'NotAsked':
 			return A2(
 				_elm_lang$html$Html$div,
@@ -33357,7 +33407,7 @@ var _user$project$Transaction$view = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p3._0)),
+						_elm_lang$core$Basics$toString(_p4._0)),
 					_1: {ctor: '[]'}
 				});
 		default:
@@ -33366,17 +33416,17 @@ var _user$project$Transaction$view = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _user$project$Transaction$tableView(_p3._0),
+					_0: _user$project$Transaction$tableView(_p4._0),
 					_1: {ctor: '[]'}
 				});
 	}
 };
 var _user$project$Transaction$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
+		var _p5 = msg;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			_p4._0,
+			_p5._0,
 			{ctor: '[]'});
 	});
 var _user$project$Transaction$init = _krisajenkins$remotedata$RemoteData$NotAsked;
