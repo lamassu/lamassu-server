@@ -7,6 +7,7 @@
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "bignumber.js": "^3.0.0",
+    "bip39": "^2.3.0",
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.13.4",
@@ -57,7 +58,8 @@
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
     "hkdf": "./bin/hkdf",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
-    "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind"
+    "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind",
+    "lamassu-mnemonic": "./bin/lamassu-mnemonic"
   },
   "scripts": {
     "test": "ava"
