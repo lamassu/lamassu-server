@@ -56,7 +56,8 @@
     "lamassu-admin-server": "./bin/lamassu-admin-server",
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
     "hkdf": "./bin/hkdf",
-    "lamassu-backup-pg": "./bin/lamassu-backup-pg"
+    "lamassu-backup-pg": "./bin/lamassu-backup-pg",
+    "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind"
   },
   "scripts": {
     "test": "ava"
