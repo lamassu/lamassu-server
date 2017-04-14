@@ -6,7 +6,7 @@
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
-    "bignumber.js": "^3.0.0",
+    "bignumber.js": "^4.0.1",
     "bip39": "^2.3.0",
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
@@ -19,7 +19,7 @@
     "lamassu-bitgo": "lamassu/lamassu-bitgo#alpha",
     "lamassu-bitpay": "lamassu/lamassu-bitpay#alpha",
     "lamassu-bitstamp": "lamassu/lamassu-bitstamp#alpha",
-    "lamassu-kraken": "^1.0.3",
+    "lamassu-kraken": "^1.1.1",
     "lamassu-mailjet": "lamassu/lamassu-mailjet",
     "lamassu-mock-id-verify": "lamassu/lamassu-mock-id-verify",
     "lamassu-mock-sms": "lamassu/lamassu-mock-sms",
@@ -65,6 +65,6 @@
     "test": "ava"
   },
   "devDependencies": {
-    "ava": "^0.17.0"
+    "ava": "^0.19.1"
   }
 }
