@@ -1,0 +1,34 @@
+{
+  "code": "twilio",
+  "display": "Twilio",
+  "fields": [
+    {
+      "code": "accountSid",
+      "display": "Account SID",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "authToken",
+      "display": "Auth token",
+      "fieldType": "password",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "fromNumber",
+      "display": "From number",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "toNumber",
+      "display": "To number",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    }
+  ]
+}

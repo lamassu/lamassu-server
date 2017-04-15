@@ -1,0 +1,30 @@
+{
+  "code": "bitgo",
+  "display": "BitGo",
+  "fields": [
+    {
+      "code": "token",
+      "display": "API token",
+      "fieldType": "string",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "walletId",
+      "display": "Wallet ID",
+      "fieldType": "string",
+      "secret": false,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "walletPassphrase",
+      "display": "Wallet passphrase",
+      "fieldType": "string",
+      "secret": true,
+      "required": true,
+      "value": ""
+    }
+  ]
+}

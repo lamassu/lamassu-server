@@ -1,0 +1,34 @@
+{
+  "code": "mailjet",
+  "display": "Mailjet",
+  "fields": [
+    {
+      "code": "apiKey",
+      "display": "API key",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "apiSecret",
+      "display": "API secret",
+      "fieldType": "password",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "fromEmail",
+      "display": "From email",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "toEmail",
+      "display": "To email",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    }
+  ]
+}

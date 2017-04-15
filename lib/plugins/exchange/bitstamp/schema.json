@@ -1,0 +1,27 @@
+{
+  "code": "bitstamp",
+  "display": "Bitstamp",
+  "fields": [
+    {
+      "code": "clientId",
+      "display": "Client ID",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "key",
+      "display": "API key",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "secret",
+      "display": "API secret",
+      "fieldType": "password",
+      "required": true,
+      "value": ""
+    }
+  ]
+}
