@@ -53,6 +53,7 @@
     "hkdf": "./bin/hkdf",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
     "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind",
+    "lamassu-install-geth": "./bin/lamassu-install-geth",
     "lamassu-mnemonic": "./bin/lamassu-mnemonic"
   },
   "scripts": {
