@@ -11,6 +11,7 @@
     "bignumber.js": "^4.0.1",
     "bip39": "^2.3.0",
     "bitcoind-rpc": "^0.7.0",
+    "bitgo": "^2.2.4",
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.13.4",
@@ -36,6 +37,7 @@
     "serve-static": "^1.11.1",
     "socket.io": "^1.7.1",
     "socket.io-client": "^1.7.1",
+    "twilio": "^2.11.1",
     "uuid": "^3.0.0",
     "winston": "^2.3.0"
   },
