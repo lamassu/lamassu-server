@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$(whoami)" != "root" ]; then
+  echo -e "This script has to be run as \033[1mroot\033[0m user"
+  exit 3
+fi
+
+echo "Activating geth (Ethereum server wallet)..."
+
+export LOG_FILE=/tmp/install.log
+
+SEEDS_DIR=$HOME/seeds
+SEED_FILE=$SEEDS_DIR/seed.txt
+SEED=$(cat $SEED_FILE)
+PASS_FILE=$SEEDS_DIR/geth.txt
+hkdf geth-pw $SEED > $PASS_FILE
+ACCOUNT_STR=$(geth --password $PASS_FILE account new)
+ACCOUNT=$(echo $ACCOUNT_STR | grep -o '{.*}' | tr -d '{}')
+
+ufw allow 30303/tcp >> $LOG_FILE 2>&1 # Ethereum
+
+SCRIPTS_DIR=$HOME/scripts
+mkdir -p $SCRIPTS_DIR
+GETH_SCRIPT=$SCRIPTS_DIR/geth.sh
+
+# NOTE: We need to combine stderr with stdout because geth prints info to stderr
+echo "geth --fast --rpc --unlock $ACCOUNT --password $PASS_FILE 2>&1" > $GETH_SCRIPT
+
+chmod 755 $GETH_SCRIPT
+pm2 start $GETH_SCRIPT >> $LOG_FILE 2>&1
+pm2 save >> $LOG_FILE 2>&1
+
+echo "Success. Your main account is 0x$ACCOUNT."
