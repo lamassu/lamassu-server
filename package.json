@@ -6,6 +6,7 @@
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
+    "@fczbkk/uuid4": "^3.0.0",
     "axios": "^0.16.1",
     "base-x": "^3.0.0",
     "bignumber.js": "^4.0.1",
@@ -56,7 +57,8 @@
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
     "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind",
     "lamassu-install-geth": "./bin/lamassu-install-geth",
-    "lamassu-mnemonic": "./bin/lamassu-mnemonic"
+    "lamassu-mnemonic": "./bin/lamassu-mnemonic",
+    "lamassu-cancel": "./bin/lamassu-cancel"
   },
   "scripts": {
     "test": "ava"
