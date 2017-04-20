@@ -117,7 +117,15 @@
       "enabledIf": [
         "cashOutEnabled"
       ],
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
     },
     {
       "code": "lowBalanceMargin",
