@@ -4,13 +4,12 @@ exports.up = function (next) {
   var sql = [
     `create table cash_out_actions (
       id serial primary key,
-      tx_id uuid references cash_out_txs not null,
+      tx_id uuid not null,
       action text not null,
       to_address text,
       error text,
       error_code text,
       tx_hash text,
-      success boolean not null,
       provisioned_1 integer,
       provisioned_2 integer,
       dispensed_1 integer,
@@ -30,7 +29,8 @@ exports.up = function (next) {
     'alter table cash_out_txs drop column denomination_1',
     'alter table cash_out_txs drop column denomination_2',
     'alter table cash_out_txs drop column dispense_error',
-    'alter table cash_out_txs add column dispense_confirmed boolean default false'
+    'alter table cash_out_txs add column dispense_confirmed boolean default false',
+    'alter table cash_out_txs rename column dispensed to dispense'
   ]
   db.multi(sql, next)
 }
