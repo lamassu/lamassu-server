@@ -30,7 +30,6 @@ exports.up = function (next) {
     'alter table cash_out_txs drop column denomination_2',
     'alter table cash_out_txs drop column dispense_error',
     'alter table cash_out_txs drop column dispense_time',
-    'alter table cash_out_txs drop column confirmation_time',
     'alter table cash_out_txs add column dispense_confirmed boolean default false',
     'alter table cash_out_txs rename column dispensed to dispense'
   ]
