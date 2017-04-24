@@ -32713,7 +32713,7 @@ var _user$project$TransactionTypes$CashOutTxRec = function (a) {
 												return function (m) {
 													return function (n) {
 														return function (o) {
-															return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, status: h, dispensed: i, notified: j, redeemed: k, phone: l, error: m, created: n, confirmed: o};
+															return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, status: h, dispense: i, notified: j, redeemed: k, phone: l, error: m, created: n, confirmed: o};
 														};
 													};
 												};
@@ -32833,7 +32833,7 @@ var _user$project$TransactionDecoder$cashOutTxDecoder = A3(
 						_elm_lang$core$Json_Decode$bool,
 						A3(
 							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-							'dispensed',
+							'dispense',
 							_elm_lang$core$Json_Decode$bool,
 							A3(
 								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
