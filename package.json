@@ -58,7 +58,8 @@
     "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind",
     "lamassu-install-geth": "./bin/lamassu-install-geth",
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
-    "lamassu-cancel": "./bin/lamassu-cancel"
+    "lamassu-cancel": "./bin/lamassu-cancel",
+    "lamassu-nuke-db": "./bin/lamassu-nuke-db"
   },
   "scripts": {
     "test": "ava"
