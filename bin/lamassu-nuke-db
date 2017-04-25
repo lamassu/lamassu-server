@@ -15,8 +15,8 @@ case ${answer:0:1} in
         createdb lamassu
 EOF
 
-      CURRENT_DIR=`dirname $0`
-      rm "$CURRENT_DIR/../migrations/.migrate"
+      CURRENT_DIR=`dirname "$(readlink -f "$0")"`
+      rm -f "$CURRENT_DIR/../migrations/.migrate"
       lamassu-migrate
       echo "Done."
     ;;
