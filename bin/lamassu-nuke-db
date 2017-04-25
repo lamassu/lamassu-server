@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$(whoami)" != "root" ]; then
+  echo -e "This script has to be run as \033[1mroot\033[0m user"
+  exit 3
+fi
+
+read -p "This will DELETE ALL YOUR DATA! Sure? (y/n) " answer
+case ${answer:0:1} in
+    y|Y )
+      echo "Deleting database..."
+      su -l postgres <<EOF
+        dropdb lamassu
+        createdb lamassu
+EOF
+
+      CURRENT_DIR=`dirname $0`
+      rm "$CURRENT_DIR/../migrations/.migrate"
+      lamassu-migrate
+      echo "Done."
+    ;;
+    * )
+        echo "No harm done."
+    ;;
+esac
