@@ -26410,6 +26410,15 @@ var _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace = function (name) {
 		name: name
 	};
 };
+var _rtfeldman$elm_css_helpers$Html_CssHelpers$withClass = F3(
+	function (className, makeElem, attrs) {
+		return makeElem(
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class(className),
+				_1: attrs
+			});
+	});
 var _rtfeldman$elm_css_helpers$Html_CssHelpers$Helpers = F3(
 	function (a, b, c) {
 		return {$class: a, classList: b, id: c};
@@ -26976,6 +26985,7 @@ var _user$project$Css_Classes$NavBarItemActive = {ctor: 'NavBarItemActive'};
 var _user$project$Css_Classes$MainRight = {ctor: 'MainRight'};
 var _user$project$Css_Classes$MainLeft = {ctor: 'MainLeft'};
 var _user$project$Css_Classes$NavBar = {ctor: 'NavBar'};
+var _user$project$Css_Classes$Main = {ctor: 'Main'};
 var _user$project$Css_Classes$Layout = {ctor: 'Layout'};
 
 var _user$project$FieldSet$updateField = F3(
@@ -27037,8 +27047,12 @@ var _user$project$FieldSet$fieldComponent = function (field) {
 							_user$project$FieldSet$Input(field.code)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$type_('password'),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$html$Html_Attributes$name(field.code),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$type_('password'),
+								_1: {ctor: '[]'}
+							}
 						}
 					},
 					{ctor: '[]'});
@@ -27051,11 +27065,15 @@ var _user$project$FieldSet$fieldComponent = function (field) {
 							_user$project$FieldSet$Input(field.code)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$type_('password'),
+							_0: _elm_lang$html$Html_Attributes$name(field.code),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$placeholder('••• Field is set •••'),
-								_1: {ctor: '[]'}
+								_0: _elm_lang$html$Html_Attributes$type_('password'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$placeholder('••• Field is set •••'),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					},
@@ -27218,8 +27236,12 @@ var _user$project$Account$view = function (webModel) {
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$div,
-							{ctor: '[]'},
+							_elm_lang$html$Html$form,
+							{
+								ctor: '::',
+								_0: _user$project$Css_Admin$id(_p3.account.code),
+								_1: {ctor: '[]'}
+							},
 							{
 								ctor: '::',
 								_0: fieldSetView,
@@ -34174,26 +34196,37 @@ var _user$project$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A2(_user$project$NavBar$view, route, invalidConfigGroups),
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('lamassuAdminMain'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(_user$project$NavBar$view, route, invalidConfigGroups),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('lamassuAdminContent'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(_user$project$Main$content, model, route),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('lamassuAdminContent'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(_user$project$Main$content, model, route),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Main$statusBar(model.status),
-					_1: {ctor: '[]'}
-				}
+				_0: _user$project$Main$statusBar(model.status),
+				_1: {ctor: '[]'}
 			}
 		});
 };

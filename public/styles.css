@@ -19,7 +19,7 @@ p {
     width: 400px;
 }
 
-.lamassuAdminLayout {
+.lamassuAdminMain {
     display: flex;
     height: 100%;
 }
@@ -455,12 +455,13 @@ p {
 
 .lamassuAdminNavBar {
     margin: 0;
-    padding: 0 0 60px 0;
+    padding: 0 0 80px 0;
     background-color: #2d2d2d;
     font-size: 18px;
     width: 15em;
     max-width: 15em;
     min-width: 15em;
+    height: 100%;
 }
 
 .lamassuAdminNavBar  .lamassuAdminNavBarRoute {
