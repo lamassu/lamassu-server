@@ -27207,10 +27207,22 @@ var _user$project$Account$view = function (webModel) {
 					return '';
 				}
 			}();
-			var fieldSetView = A2(
-				_elm_lang$html$Html$map,
-				_user$project$Account$FieldSetMsg,
-				_user$project$FieldSet$view(_p3.account.fields));
+			var fieldSetView = A3(
+				_elm_lang$html$Html_Keyed$node,
+				'div',
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: _p3.account.code,
+						_1: A2(
+							_elm_lang$html$Html$map,
+							_user$project$Account$FieldSetMsg,
+							_user$project$FieldSet$view(_p3.account.fields))
+					},
+					_1: {ctor: '[]'}
+				});
 			return A2(
 				_elm_lang$html$Html$div,
 				{ctor: '[]'},

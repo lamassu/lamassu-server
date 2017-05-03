@@ -130,6 +130,7 @@ app.post('/api/machines', (req, res) => {
 })
 
 app.get('/api/status', (req, res, next) => {
+  console.log('DEBUG100')
   return Promise.all([server.status(), config.validateCurrentConfig()])
   .then(([serverStatus, invalidConfigGroups]) => res.send({
     server: serverStatus,
