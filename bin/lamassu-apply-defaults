@@ -4,22 +4,17 @@ const _ = require('lodash/fp')
 
 // const db = require('../lib/db')
 const settingsLoader = require('../lib/settings-loader')
-const configManager = require('../lib/config-manager')
 const schema = require('../lamassu-schema.json')
 const newFields = []
 
-settingsLoader.loadLatest()
-.then(settings => {
-  const config = settings.config
+Promise.resolve()
+.then(() => {
   schema.groups.forEach(group => {
     return group.fields.forEach(fieldCode => {
       const field = schema.fields.find(r => r.code === fieldCode)
       if (!field) throw new Error('No such field: ' + fieldCode)
       if (_.isNil(field.default)) return
       if (group.cryptoScope === 'specific' || group.machineScope === 'specific') return
-
-      const existing = configManager.scopedValue('global', 'global', fieldCode, config)
-      if (!_.isNil(existing)) return
 
       return newFields.push({
         fieldLocator: {
@@ -39,7 +34,7 @@ settingsLoader.loadLatest()
     })
   })
 
-  return settingsLoader.save({config: config.concat(newFields)})
+  return settingsLoader.save(newFields)
 })
 .then(() => {
   console.log('Success.')
