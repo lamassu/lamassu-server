@@ -1,12 +1,31 @@
 {
   "groups": [
     {
-      "code": "fiat",
-      "display": "Fiat currencies",
+      "code": "setup",
+      "display": "Setup",
       "cryptoScope": "global",
-      "machineScope": "global",
+      "machineScope": "both",
       "fields": [
-        "fiatCurrency"
+        "machineName",
+        "machineModel",
+        "fiatCurrency",
+        "country",
+        "machineLanguages",
+        "cryptoCurrencies",
+        "machineLocation"
+      ]
+    },
+    {
+      "code": "cashOut",
+      "display": "Cash Out",
+      "cryptoScope": "global",
+      "machineScope": "both",
+      "fields": [
+        "cashOutEnabled",
+        "topCashOutDenomination",
+        "bottomCashOutDenomination",
+        "virtualCashOutDenomination",
+        "zeroConfLimit"
       ]
     },
     {
@@ -16,35 +35,9 @@
       "machineScope": "both",
       "fields": [
         "cashInCommission",
+        "cashInFee",
         "cashOutCommission",
-        "lowBalanceMargin",
-        "zeroConfLimit"
-      ]
-    },
-    {
-      "code": "cryptoServices",
-      "display": "Crypto services",
-      "cryptoScope": "specific",
-      "machineScope": "global",
-      "fields": [
-        "ticker",
-        "wallet",
-        "exchange"
-      ]
-    },
-    {
-      "code": "machineSettings",
-      "display": "Machine settings",
-      "cryptoScope": "global",
-      "machineScope": "both",
-      "fields": [
-        "country",
-        "machineLanguages",
-        "cryptoCurrencies",
-        "topCashOutDenomination",
-        "bottomCashOutDenomination",
-        "virtualCashOutDenomination",
-        "emptyBillMargin"
+        "cashOutFee"
       ]
     },
     {
@@ -62,13 +55,14 @@
       ]
     },
     {
-      "code": "machines",
-      "display": "Machines",
-      "cryptoScope": "global",
-      "machineScope": "specific",
+      "code": "walletSettings",
+      "display": "Wallet Settings",
+      "cryptoScope": "specific",
+      "machineScope": "global",
       "fields": [
-        "cashOutEnabled",
-        "machineLocation"
+        "ticker",
+        "wallet",
+        "exchange"
       ]
     },
     {
@@ -82,7 +76,7 @@
         "notificationsSMSEnabled",
         "sms",
         "email",
-        "lowBalanceThreshold"
+        "balanceThreshold"
       ]
     }
   ],
@@ -114,6 +108,48 @@
       "fieldClass": null,
       "cryptoScope": "both",
       "machineScope": "both",
+      "enabledIf": [
+        "cashOutEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "code": "cashInFee",
+      "displayTop": "Fixed Fees",
+      "displayTopCount": 2,
+      "displayBottom": "Cash-in",
+      "fieldType": "integer",
+      "fieldClass": "fiat",
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "default": 0,
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "code": "cashOutFee",
+      "displayBottom": "Cash-out",
+      "displayTopCount": 0,
+      "fieldType": "integer",
+      "fieldClass": "fiat",
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "default": 0,
       "enabledIf": [
         "cashOutEnabled"
       ],
@@ -184,6 +220,8 @@
       "code": "fiatCurrency",
       "displayBottom": "Fiat Currency",
       "fieldType": "fiatCurrency",
+      "cryptoScope": "both",
+      "machineScope": "both",
       "fieldClass": null,
       "fieldValidation": [
         {
@@ -357,6 +395,21 @@
         }
       ],
       "default": false
+    },
+    {
+      "code": "machineName",
+      "displayBottom": "Name",
+      "fieldType": "string",
+      "fieldClass": null,
+      "fieldValidation": [{"code": "required"}]
+    },
+    {
+      "code": "machineModel",
+      "displayBottom": "Model",
+      "fieldType": "string",
+      "fieldClass": null,
+      "readOnly": true,
+      "fieldValidation": []
     },
     {
       "code": "machineLocation",
