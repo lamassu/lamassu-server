@@ -36,6 +36,7 @@
     "pg-promise": "^5.6.4",
     "pify": "^2.3.0",
     "pretty-ms": "^2.1.0",
+    "promise-sequential": "^1.1.1",
     "ramda": "^0.22.1",
     "serve-static": "^1.11.1",
     "socket.io": "^1.7.1",

@@ -1,46 +1,4 @@
-'use strict'
-
-var db = require('./db')
-
-var exchanges = {
-  exchanges: {
-    settings: {
-      commission: 1.0,
-      compliance: {
-        maximum: {
-          limit: null
-        }
-      }
-    },
-    plugins: {
-      current: {
-        BTC: {
-          ticker: 'bitpay',
-          transfer: 'bitgo'
-        },
-        email: 'smtp2go',
-        sms: 'twilio',
-        notify: []
-      },
-      settings: {
-        bitpay: {},
-        bitgo: {}
-      }
-    }
-  }
-}
-
-var unit = {
-  brain: {
-    locale: {
-      currency: 'USD',
-      localeInfo: {
-        primaryLocale: 'en-US',
-        primaryLocales: ['en-US']
-      }
-    }
-  }
-}
+const db = require('./db')
 
 exports.up = function (next) {
   var sqls = [
@@ -69,13 +27,7 @@ exports.up = function (next) {
     'userName text NOT NULL UNIQUE, ' +
     'salt text NOT NULL, ' +
     'pwdHash text NOT NULL ' +
-    ')',
-
-    'INSERT INTO user_config (type, data) ' +
-    "VALUES ('exchanges', '" + JSON.stringify(exchanges) + "')",
-
-    'INSERT INTO user_config (type, data) ' +
-    "VALUES ('unit', '" + JSON.stringify(unit) + "')"
+    ')'
   ]
 
   db.multi(sqls, next)

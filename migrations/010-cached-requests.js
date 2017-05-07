@@ -3,7 +3,7 @@
 var db = require('./db')
 
 exports.up = function (next) {
-  db.query('CREATE TABLE IF NOT EXISTS cached_responses ( ' +
+  db.multi(['CREATE TABLE IF NOT EXISTS cached_responses ( ' +
     'id serial PRIMARY KEY, ' +
     'device_fingerprint text NOT NULL, ' +
     'session_id uuid NOT NULL, ' +
@@ -12,7 +12,7 @@ exports.up = function (next) {
     'body json NOT NULL, ' +
     'created timestamptz NOT NULL DEFAULT now(), ' +
     'UNIQUE (device_fingerprint, session_id, path, method) ' +
-    ')', next)
+    ')'], next)
 }
 
 exports.down = function (next) {

@@ -1,15 +1,14 @@
-'use strict';
+var db = require('./db')
 
-var db = require('./db');
+function singleQuotify (item) { return '\'' + item + '\'' }
 
-function singleQuotify(item) { return '\'' + item + '\''; }
-
-exports.up = function(next) {
+exports.up = function (next) {
   var stages = ['initial_request', 'partial_request', 'final_request',
-    'partial_send', 'deposit', 'dispense_request', 'dispense'].
-    map(singleQuotify).join(',');
+    'partial_send', 'deposit', 'dispense_request', 'dispense']
+    .map(singleQuotify).join(',')
+
   var authorizations = ['timeout', 'machine', 'pending', 'rejected',
-    'published', 'authorized', 'confirmed'].map(singleQuotify).join(',');
+    'published', 'authorized', 'confirmed'].map(singleQuotify).join(',')
 
   var sqls = [
     'CREATE TYPE transaction_stage AS ENUM (' + stages + ')',
