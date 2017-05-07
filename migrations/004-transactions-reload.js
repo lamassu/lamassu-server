@@ -59,16 +59,11 @@ exports.up = function (next) {
     'created timestamp NOT NULL DEFAULT now() ' +
     ')',
     'CREATE INDEX ON dispenses (device_fingerprint)'
-  ];
+  ]
 
-  // Need to call this separately to ignore error
-  // in case transactions doesn't exist
-  var renameSql = 'ALTER TABLE transactions RENAME TO transactions_old';
-  db.silentQuery(renameSql, function() {
-    db.multi(sqls, next);
-  });
-};
+  db.multi(sqls, next)
+}
 
-exports.down = function(next) {
-  next();
-};
+exports.down = function (next) {
+  next()
+}

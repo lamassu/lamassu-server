@@ -1,10 +1,8 @@
-'use strict';
+var db = require('./db')
 
-var db = require('./db');
-
-exports.up = function(next) {
-  var sql =
-    'CREATE TABLE bills ( ' +
+exports.up = function (next) {
+  const sql =
+    ['CREATE TABLE bills ( ' +
     'id uuid PRIMARY KEY, ' +
     'device_fingerprint text NOT NULL, ' +
     'denomination integer NOT NULL, ' +
@@ -13,13 +11,11 @@ exports.up = function(next) {
     'to_address text NOT NULL, ' +
     'session_id uuid NOT NULL, ' +
     'device_time bigint NOT NULL, ' +
-    'created timestamp NOT NULL DEFAULT now() )';
+    'created timestamp NOT NULL DEFAULT now() )']
 
-  db.silentQuery('ALTER TABLE bills RENAME TO bills_old', function() {
-    db.query(sql, next);
-  });
-};
+  db.multi(sql, next)
+}
 
-exports.down = function(next) {
-  next();
-};
+exports.down = function (next) {
+  next()
+}
