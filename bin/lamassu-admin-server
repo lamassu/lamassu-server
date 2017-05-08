@@ -14,15 +14,16 @@ const got = require('got')
 const morgan = require('morgan')
 const helmet = require('helmet')
 
+const machineLoader = require('../lib/machine-loader')
+const T = require('../lib/time')
+const logger = require('../lib/logger')
+
 const accounts = require('../lib/admin/accounts')
-const machines = require('../lib/admin/machines')
 const config = require('../lib/admin/config')
 const login = require('../lib/admin/login')
 const pairing = require('../lib/admin/pairing')
 const server = require('../lib/admin/server')
 const transactions = require('../lib/admin/transactions')
-const T = require('../lib/time')
-const logger = require('../lib/logger')
 
 const NEVER = new Date(Date.now() + 100 * T.years)
 
@@ -118,19 +119,18 @@ app.get('/api/accounts/account/:account', (req, res) => {
 })
 
 app.get('/api/machines', (req, res) => {
-  machines.getMachines()
+  machineLoader.getMachineNames()
   .then(r => res.send({machines: r}))
 })
 
 app.post('/api/machines', (req, res) => {
-  machines.setMachine(req.body)
-  .then(() => machines.getMachines())
+  machineLoader.setMachine(req.body)
+  .then(() => machineLoader.getMachineNames())
   .then(r => res.send({machines: r}))
   .then(() => dbNotify())
 })
 
 app.get('/api/status', (req, res, next) => {
-  console.log('DEBUG100')
   return Promise.all([server.status(), config.validateCurrentConfig()])
   .then(([serverStatus, invalidConfigGroups]) => res.send({
     server: serverStatus,

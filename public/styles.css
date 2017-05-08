@@ -366,14 +366,28 @@ p {
 }
 
 .lamassuAdminConfigTable  .lamassuAdminBasicInputDisabled {
-    background-color: #fcfcfa;
     height: 25px;
     line-height: 25px;
     font-size: 14px;
     font-weight: 500;
     color: #5f5f56;
-    text-align: center;
+    text-align: left;
+    padding: 0 1em;
     cursor: default;
+    background: repeating-linear-gradient(45deg,#dfdfdc,#dfdfdc 2px,#e6e6e3 5px);
+}
+
+.lamassuAdminConfigTable  .lamassuAdminBasicInputReadOnly {
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #5f5f56;
+    text-align: left;
+    padding: 0 1em;
+    cursor: default;
+    background-color: #f6f6f4;
+    border: 2px solid #E6E6E3;
 }
 
 .lamassuAdminConfigTable  td {

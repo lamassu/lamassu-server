@@ -1,18 +1,26 @@
 {
   "groups": [
     {
+      "code": "definition",
+      "display": "Definition",
+      "cryptoScope": "global",
+      "machineScope": "specific",
+      "fields": [
+        "machineName",
+        "machineModel",
+        "machineLocation"
+      ]
+    },
+    {
       "code": "setup",
       "display": "Setup",
       "cryptoScope": "global",
       "machineScope": "both",
       "fields": [
-        "machineName",
-        "machineModel",
         "fiatCurrency",
         "country",
         "machineLanguages",
-        "cryptoCurrencies",
-        "machineLocation"
+        "cryptoCurrencies"
       ]
     },
     {
@@ -35,8 +43,8 @@
       "machineScope": "both",
       "fields": [
         "cashInCommission",
-        "cashInFee",
         "cashOutCommission",
+        "cashInFee",
         "cashOutFee"
       ]
     },
@@ -76,7 +84,7 @@
         "notificationsSMSEnabled",
         "sms",
         "email",
-        "balanceThreshold"
+        "balancesThreshold"
       ]
     }
   ],
@@ -164,17 +172,6 @@
       ]
     },
     {
-      "code": "lowBalanceMargin",
-      "displayTop": "Low balance",
-      "displayBottom": "Margin",
-      "fieldType": "percentage",
-      "fieldClass": null,
-      "cryptoScope": "both",
-      "machineScope": "both",
-      "fieldValidation": [{"code": "required"}],
-      "default": 5
-    },
-    {
       "code": "zeroConfLimit",
       "displayTop": "0-conf",
       "displayBottom": "Limit",
@@ -220,8 +217,8 @@
       "code": "fiatCurrency",
       "displayBottom": "Fiat Currency",
       "fieldType": "fiatCurrency",
-      "cryptoScope": "both",
-      "machineScope": "both",
+      "cryptoScope": "global",
+      "machineScope": "global",
       "fieldClass": null,
       "fieldValidation": [
         {
@@ -398,6 +395,8 @@
     },
     {
       "code": "machineName",
+      "cryptoScope": "global",
+      "machineScope": "specific",
       "displayBottom": "Name",
       "fieldType": "string",
       "fieldClass": null,
@@ -405,6 +404,8 @@
     },
     {
       "code": "machineModel",
+      "cryptoScope": "global",
+      "machineScope": "specific",
       "displayBottom": "Model",
       "fieldType": "string",
       "fieldClass": null,
@@ -489,10 +490,10 @@
       "fieldValidation": [{"code": "required"}]
     },
     {
-      "code": "lowBalanceThreshold",
-      "displayTop": "Low balance",
+      "code": "balancesThreshold",
+      "displayTop": "Balances",
       "displayBottom": "Threshold",
-      "fieldType": "integer",
+      "fieldType": "percentage",
       "fieldClass": null,
       "enabledIf": [
         "notificationsEnabled"
