@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 
+const assert = require('assert')
 const _ = require('lodash/fp')
 
 // const db = require('../lib/db')
 const settingsLoader = require('../lib/settings-loader')
 const schema = require('../lamassu-schema.json')
 const newFields = []
+
+const DEFAULT_CRYPTO = _.first(_.find(['code', 'cryptoCurrencies'], schema.fields).default)
+
+assert(DEFAULT_CRYPTO)
 
 Promise.resolve()
 .then(() => {
@@ -14,12 +19,16 @@ Promise.resolve()
       const field = schema.fields.find(r => r.code === fieldCode)
       if (!field) throw new Error('No such field: ' + fieldCode)
       if (_.isNil(field.default)) return
-      if (group.cryptoScope === 'specific' || group.machineScope === 'specific') return
+      if (group.machineScope === 'specific') return
+
+      const crypto = group.cryptoScope === 'specific'
+      ? DEFAULT_CRYPTO
+      : 'global'
 
       return newFields.push({
         fieldLocator: {
           fieldScope: {
-            crypto: 'global',
+            crypto,
             machine: 'global'
           },
           code: fieldCode,

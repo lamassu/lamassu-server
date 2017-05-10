@@ -211,7 +211,8 @@
       "displayBottom": "Exchange",
       "fieldType": "account",
       "fieldClass": "exchange",
-      "fieldValidation": []
+      "fieldValidation": [],
+      "default": "no-exchange"
     },
     {
       "code": "fiatCurrency",
