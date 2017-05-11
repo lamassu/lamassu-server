@@ -34774,7 +34774,7 @@ var _user$project$Main$parseRoute = _evancz$url_parser$UrlParser$oneOf(
 								ctor: '::',
 								_0: A2(
 									_evancz$url_parser$UrlParser$map,
-									A2(_user$project$CoreTypes$ConfigRoute, 'fiat', _elm_lang$core$Maybe$Nothing),
+									A2(_user$project$CoreTypes$ConfigRoute, 'setup', _elm_lang$core$Maybe$Nothing),
 									_evancz$url_parser$UrlParser$top),
 								_1: {ctor: '[]'}
 							}
