@@ -2,12 +2,12 @@
 
 const path = require('path')
 const migrate = require('migrate')
+const options = require('../lib/options')
 
 const migrateDir = path.resolve(__dirname, '..', 'migrations')
-const migrateConfig = path.resolve(migrateDir, '.migrate')
-const set = migrate.load(migrateConfig, migrateDir)
+const migration = migrate.load(options.migrateStatePath, migrateDir)
 
-set.up(err => {
+migration.up(err => {
   if (err) {
     console.error('DB Migration failed: %s', err)
     process.exit(1)
