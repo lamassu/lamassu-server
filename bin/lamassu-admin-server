@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const EventEmitter = require('events')
+const qs = require('querystring')
 const os = require('os')
 const fs = require('fs')
 const path = require('path')
@@ -13,6 +15,9 @@ const argv = require('minimist')(process.argv.slice(2))
 const got = require('got')
 const morgan = require('morgan')
 const helmet = require('helmet')
+const WebSocket = require('ws')
+const http = require('http')
+const SocketIo = require('socket.io')
 
 const machineLoader = require('../lib/machine-loader')
 const T = require('../lib/time')
@@ -26,6 +31,7 @@ const server = require('../lib/admin/server')
 const transactions = require('../lib/admin/transactions')
 
 const NEVER = new Date(Date.now() + 100 * T.years)
+const REAUTHENTICATE_INTERVAL = T.minute
 
 const devMode = argv.dev
 
@@ -200,12 +206,58 @@ process.on('unhandledRejection', err => {
   process.exit(1)
 })
 
+const socketServer = http.createServer()
+const io = SocketIo(socketServer)
+socketServer.listen(3060)
+const socketEmitter = new EventEmitter()
+
+io.on('connection', client => {
+  client.on('message', msg => socketEmitter.emit('message', msg))
+})
+
+const webServer = https.createServer(options, app)
+const wss = new WebSocket.Server({server: webServer})
+
+function establishSocket (ws, token) {
+  return login.authenticate(token)
+  .then(success => {
+    if (!success) return ws.close(1008, 'Authentication error')
+
+    const listener = data => {
+      console.log('DEBUG200: %j', data)
+      ws.send(JSON.stringify(data))
+    }
+
+    // Reauthenticate every once in a while, in case token expired
+    setInterval(() => {
+      return login.authenticate(token)
+      .then(success => {
+        if (!success) {
+          socketEmitter.removeListener('message', listener)
+          ws.close()
+        }
+      })
+    }, REAUTHENTICATE_INTERVAL)
+
+    socketEmitter.on('message', listener)
+
+    console.log('DEBUG120: %j', token)
+    ws.send('Testing123')
+  })
+}
+
+wss.on('connection', ws => {
+  const token = qs.parse(ws.upgradeReq.headers.cookie).token
+
+  return establishSocket(ws, token)
+})
+
 if (devMode) {
-  https.createServer(options, app).listen(8070, () => {
+  webServer.listen(8070, () => {
     console.log('lamassu-admin-server listening on port 8070')
   })
 } else {
-  https.createServer(options, app).listen(443, () => {
+  webServer.listen(443, () => {
     console.log('lamassu-admin-server listening on port 443')
   })
 }

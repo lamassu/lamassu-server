@@ -20,6 +20,7 @@
     "express": "^4.13.4",
     "express-limiter": "^1.6.0",
     "express-rate-limit": "^2.6.0",
+    "express-ws": "^3.0.0",
     "got": "^6.6.3",
     "helmet": "^3.1.0",
     "lodash": "^4.17.2",
@@ -39,12 +40,13 @@
     "promise-sequential": "^1.1.1",
     "ramda": "^0.22.1",
     "serve-static": "^1.11.1",
-    "socket.io": "^1.7.1",
+    "socket.io": "^1.7.4",
     "socket.io-client": "^1.7.1",
     "twilio": "^2.11.1",
     "uuid": "^3.0.0",
     "web3": "^0.18.4",
-    "winston": "^2.3.0"
+    "winston": "^2.3.0",
+    "ws": "^2.3.1"
   },
   "repository": {
     "type": "git",
