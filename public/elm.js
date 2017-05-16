@@ -27493,6 +27493,7 @@ var _user$project$Css_Classes$InvalidComponent = {ctor: 'InvalidComponent'};
 var _user$project$Css_Classes$FocusedComponent = {ctor: 'FocusedComponent'};
 var _user$project$Css_Classes$Component = {ctor: 'Component'};
 var _user$project$Css_Classes$NoInput = {ctor: 'NoInput'};
+var _user$project$Css_Classes$CellDisabled = {ctor: 'CellDisabled'};
 var _user$project$Css_Classes$BasicInputReadOnly = {ctor: 'BasicInputReadOnly'};
 var _user$project$Css_Classes$BasicInputDisabled = {ctor: 'BasicInputDisabled'};
 var _user$project$Css_Classes$BasicInput = {ctor: 'BasicInput'};
@@ -32729,9 +32730,9 @@ var _user$project$Maintenance_Types$SubModel = F2(
 	function (a, b) {
 		return {status: a, machines: b};
 	});
-var _user$project$Maintenance_Types$Machine = F6(
-	function (a, b, c, d, e, f) {
-		return {deviceId: a, name: b, cashbox: c, cassette1: d, cassette2: e, paired: f};
+var _user$project$Maintenance_Types$Machine = F7(
+	function (a, b, c, d, e, f, g) {
+		return {deviceId: a, name: b, cashbox: c, cassette1: d, cassette2: e, paired: f, cashOut: g};
 	});
 var _user$project$Maintenance_Types$NotSaving = {ctor: 'NotSaving'};
 var _user$project$Maintenance_Types$Editing = {ctor: 'Editing'};
@@ -34117,15 +34118,16 @@ var _user$project$Maintenance_Rest$encodeAction = function (action) {
 			});
 	}
 };
-var _user$project$Maintenance_Rest$machineDecoder = A7(
-	_elm_lang$core$Json_Decode$map6,
+var _user$project$Maintenance_Rest$machineDecoder = A8(
+	_elm_lang$core$Json_Decode$map7,
 	_user$project$Maintenance_Types$Machine,
 	A2(_elm_lang$core$Json_Decode$field, 'deviceId', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'cashbox', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'cassette1', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'cassette2', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode$field, 'paired', _elm_lang$core$Json_Decode$bool));
+	A2(_elm_lang$core$Json_Decode$field, 'paired', _elm_lang$core$Json_Decode$bool),
+	A2(_elm_lang$core$Json_Decode$field, 'cashOut', _elm_lang$core$Json_Decode$bool));
 var _user$project$Maintenance_Rest$machinesDecoder = A2(
 	_elm_lang$core$Json_Decode$map,
 	_elm_lang$core$Basics$identity,
@@ -34718,7 +34720,7 @@ var _user$project$Maintenance_View$inputCassetteView = F3(
 			{ctor: '[]'});
 	});
 var _user$project$Maintenance_View$rowView = function (machine) {
-	var actions = machine.paired ? {
+	var cassetteCounts = machine.cashOut ? {
 		ctor: '::',
 		_0: A2(
 			_elm_lang$html$Html$td,
@@ -34726,26 +34728,24 @@ var _user$project$Maintenance_View$rowView = function (machine) {
 			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$button,
+					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _user$project$Css_Admin$class(
+						_0: _user$project$Css_Admin$classList(
 							{
 								ctor: '::',
-								_0: _user$project$Css_Classes$TableButton,
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: false},
+									_1: {ctor: '[]'}
+								}
 							}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Maintenance_Types$Submit(
-									_user$project$Maintenance_Types$ResetCashOutBills(machine))),
-							_1: {ctor: '[]'}
-						}
+						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('Reset Bills'),
+						_0: A3(_user$project$Maintenance_View$inputCassetteView, machine, _user$project$Maintenance_Types$Top, machine.cassette1),
 						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
@@ -34758,26 +34758,24 @@ var _user$project$Maintenance_View$rowView = function (machine) {
 				{
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$button,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _user$project$Css_Admin$class(
+							_0: _user$project$Css_Admin$classList(
 								{
 									ctor: '::',
-									_0: _user$project$Css_Classes$TableButton,
-									_1: {ctor: '[]'}
+									_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: false},
+										_1: {ctor: '[]'}
+									}
 								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									_user$project$Maintenance_Types$Submit(
-										_user$project$Maintenance_Types$UnpairMachine(machine))),
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Unpair'),
+							_0: A3(_user$project$Maintenance_View$inputCassetteView, machine, _user$project$Maintenance_Types$Bottom, machine.cassette2),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -34785,6 +34783,72 @@ var _user$project$Maintenance_View$rowView = function (machine) {
 			_1: {ctor: '[]'}
 		}
 	} : {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$td,
+			{
+				ctor: '::',
+				_0: _user$project$Css_Admin$class(
+					{
+						ctor: '::',
+						_0: _user$project$Css_Classes$CellDisabled,
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{ctor: '[]'}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{
+					ctor: '::',
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$CellDisabled,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		}
+	};
+	var resetBills = machine.cashOut ? A2(
+		_elm_lang$html$Html$td,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$TableButton,
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							_user$project$Maintenance_Types$Submit(
+								_user$project$Maintenance_Types$ResetCashOutBills(machine))),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Update Counts'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$td,
+		{ctor: '[]'},
+		{ctor: '[]'});
+	var actions = {
 		ctor: '::',
 		_0: A2(
 			_elm_lang$html$Html$td,
@@ -34805,36 +34869,20 @@ var _user$project$Maintenance_View$rowView = function (machine) {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
 								_user$project$Maintenance_Types$Submit(
-									_user$project$Maintenance_Types$ResetCashOutBills(machine))),
+									_user$project$Maintenance_Types$UnpairMachine(machine))),
 							_1: {ctor: '[]'}
 						}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('Reset Bills'),
+						_0: _elm_lang$html$Html$text('Unpair'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
 			}),
 		_1: {
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{
-					ctor: '::',
-					_0: _user$project$Css_Admin$class(
-						{
-							ctor: '::',
-							_0: _user$project$Css_Classes$NoInput,
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Unpaired'),
-					_1: {ctor: '[]'}
-				}),
+			_0: resetBills,
 			_1: {ctor: '[]'}
 		}
 	};
@@ -34853,71 +34901,9 @@ var _user$project$Maintenance_View$rowView = function (machine) {
 						_0: _elm_lang$html$Html$text(machine.name),
 						_1: {ctor: '[]'}
 					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _user$project$Css_Admin$classList(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: false},
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: A3(_user$project$Maintenance_View$inputCassetteView, machine, _user$project$Maintenance_Types$Top, machine.cassette1),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$td,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _user$project$Css_Admin$classList(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: false},
-													_1: {ctor: '[]'}
-												}
-											}),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: A3(_user$project$Maintenance_View$inputCassetteView, machine, _user$project$Maintenance_Types$Bottom, machine.cassette2),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}
+				_1: {ctor: '[]'}
 			},
-			actions));
+			A2(_elm_lang$core$Basics_ops['++'], cassetteCounts, actions)));
 };
 var _user$project$Maintenance_View$tableView = function (machines) {
 	return _elm_lang$core$List$isEmpty(machines) ? A2(

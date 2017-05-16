@@ -365,6 +365,10 @@ p {
     background-color: #ffffff;
 }
 
+.lamassuAdminConfigTable  .lamassuAdminCellDisabled {
+    background: repeating-linear-gradient(45deg,#dfdfdc,#dfdfdc 2px,#e6e6e3 5px);
+}
+
 .lamassuAdminConfigTable  .lamassuAdminBasicInputDisabled {
     height: 25px;
     line-height: 25px;
