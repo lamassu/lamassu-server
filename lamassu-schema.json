@@ -45,7 +45,7 @@
         "cashInCommission",
         "cashOutCommission",
         "cashInFee",
-        "cashOutFee"
+        "minimumTx"
       ]
     },
     {
@@ -131,9 +131,9 @@
     },
     {
       "code": "cashInFee",
-      "displayTop": "Fixed Fees",
+      "displayTop": "Cash-in",
+      "displayBottom": "Fixed Fee",
       "displayTopCount": 2,
-      "displayBottom": "Cash-in",
       "fieldType": "integer",
       "fieldClass": "fiat",
       "cryptoScope": "both",
@@ -150,8 +150,8 @@
       ]
     },
     {
-      "code": "cashOutFee",
-      "displayBottom": "Cash-out",
+      "code": "minimumTx",
+      "displayBottom": "Minimum Tx",
       "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": "fiat",
@@ -159,7 +159,6 @@
       "machineScope": "both",
       "default": 0,
       "enabledIf": [
-        "cashOutEnabled"
       ],
       "fieldValidation": [
         {
