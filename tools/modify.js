@@ -1,40 +1,12 @@
-'use strict'
+const settingsLoader = require('../lib/settings-loader')
 
-const R = require('ramda')
-const db = require('../db')
+const fields = [
+  settingsLoader.configDeleteField({crypto: 'global', machine: 'global'}, 'cashOutFee'),
+  settingsLoader.configDeleteField({crypto: 'global', machine: 'global'}, 'minTx')
+]
 
-function pp (o) {
-  console.log(require('util').inspect(o, {depth: null, colors: true}))
-}
-
-function dbFetchConfig () {
-  return db.oneOrNone('select data from user_config where type=$1', ['config'])
-  .then(row => row && row.data)
-}
-
-dbFetchConfig()
-.then(c => {
-  const groups = c.groups
-  .filter(g => g.code !== 'fiat')
-  .map(g => {
-    if (g.code === 'currencies') {
-      const values = g.values.filter(v => v.fieldLocator.code !== 'cryptoCurrencies')
-      return R.assoc('values', values, g)
-    }
-
-    return g
-  })
-
-  return {groups: groups}
-})
-.then(config => {
-  pp(config)
-  return db.none('update user_config set data=$1 where type=$2', [config, 'config'])
-})
+settingsLoader.modifyConfig(fields)
 .then(() => {
+  console.log('success.')
   process.exit(0)
-})
-.catch(e => {
-  console.log(e)
-  process.exit(1)
 })
