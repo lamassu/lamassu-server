@@ -70,7 +70,8 @@
       "fields": [
         "ticker",
         "wallet",
-        "exchange"
+        "exchange",
+        "zeroConf"
       ]
     },
     {
@@ -176,7 +177,7 @@
       "displayBottom": "Limit",
       "fieldType": "integer",
       "fieldClass": "fiat",
-      "cryptoScope": "both",
+      "cryptoScope": "global",
       "machineScope": "both",
       "enabledIf": [
         "cashOutEnabled"
@@ -212,6 +213,14 @@
       "fieldClass": "exchange",
       "fieldValidation": [],
       "default": "no-exchange"
+    },
+    {
+      "code": "zeroConf",
+      "displayBottom": "Zero Conf",
+      "fieldType": "account",
+      "fieldClass": "zeroConf",
+      "fieldValidation": [],
+      "default": "all-zero-conf"
     },
     {
       "code": "fiatCurrency",

@@ -1,0 +1,20 @@
+{
+  "code": "blockcypher",
+  "display": "Blockcypher",
+  "fields": [
+    {
+      "code": "token",
+      "display": "API token",
+      "fieldType": "password",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "confidenceFactor",
+      "display": "Confidence Factor",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    }
+  ]
+}
