@@ -30492,8 +30492,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1329, column: 17},
-							end: {line: 1334, column: 56}
+							start: {line: 1330, column: 17},
+							end: {line: 1335, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -30668,8 +30668,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 1025, column: 5},
-				end: {line: 1030, column: 59}
+				start: {line: 1026, column: 5},
+				end: {line: 1031, column: 59}
 			},
 			_p12)('Referenced field must be boolean');
 	}
@@ -30888,18 +30888,28 @@ var _user$project$Config$checkEnabled = F3(
 				var outGroup = _p17._1;
 				var enabledInstances = A2(
 					_elm_lang$core$Basics_ops['++'],
-					A3(_user$project$Config$referenceFields, fieldScope, configGroup.values, outGroup),
-					A4(_user$project$Config$referenceFieldInstances, configGroup, fieldScope, fieldInstances, inGroup));
-				var _p18 = _elm_lang$core$Native_Utils.eq(fieldInstance.fieldLocator.code, 'cashOutTransactionLimit') ? A2(
+					A3(
+						_user$project$Config$referenceFields,
+						fieldScope,
+						A2(_elm_lang$core$Debug$log, 'DEBUG104', configGroup.values),
+						A2(_elm_lang$core$Debug$log, 'DEBUG101', outGroup)),
+					A4(
+						_user$project$Config$referenceFieldInstances,
+						configGroup,
+						fieldScope,
+						fieldInstances,
+						A2(_elm_lang$core$Debug$log, 'DEBUG102', outGroup)));
+				var _p18 = _elm_lang$core$Native_Utils.eq(fieldInstance.fieldLocator.code, 'cashOutCommission') ? A2(
 					_elm_lang$core$Basics$always,
 					{ctor: '_Tuple0'},
 					A2(
 						_elm_lang$core$Debug$log,
 						'DEBUG100',
 						{
-							ctor: '_Tuple2',
-							_0: A3(_user$project$Config$referenceFields, fieldScope, configGroup.values, outGroup),
-							_1: A4(_user$project$Config$referenceFieldInstances, configGroup, fieldScope, fieldInstances, inGroup)
+							ctor: '_Tuple3',
+							_0: fieldInstance.fieldLocator,
+							_1: A3(_user$project$Config$referenceFields, fieldScope, configGroup.values, outGroup),
+							_2: A4(_user$project$Config$referenceFieldInstances, configGroup, fieldScope, fieldInstances, inGroup)
 						})) : {ctor: '_Tuple0'};
 				return A2(_elm_lang$core$List$any, _user$project$Config$isField, enabledInstances);
 			}
