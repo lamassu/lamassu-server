@@ -12,7 +12,7 @@
     {
       "code": "confidenceFactor",
       "display": "Confidence Factor",
-      "fieldType": "string",
+      "fieldType": "integer",
       "required": true,
       "value": ""
     }
