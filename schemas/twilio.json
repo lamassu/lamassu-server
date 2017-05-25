@@ -21,6 +21,7 @@
       "display": "From number",
       "fieldType": "string",
       "required": true,
+      "placeholder": "+14155552671",
       "value": ""
     },
     {
