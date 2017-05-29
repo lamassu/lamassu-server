@@ -49,6 +49,18 @@
       ]
     },
     {
+      "code": "balanceAlerts",
+      "display": "Balance Alerts",
+      "cryptoScope": "both",
+      "machineScope": "both",
+      "fields": [
+        "cryptoAlertThreshold",
+        "cashInAlertThreshold",
+        "cashOutCassette1AlertThreshold",
+        "cashOutCassette2AlertThreshold"
+      ]
+    },
+    {
       "code": "compliance",
       "display": "Compliance",
       "cryptoScope": "global",
@@ -84,8 +96,7 @@
         "notificationsEmailEnabled",
         "notificationsSMSEnabled",
         "sms",
-        "email",
-        "balancesThreshold"
+        "email"
       ]
     }
   ],
@@ -160,6 +171,93 @@
       "machineScope": "both",
       "default": 0,
       "enabledIf": [
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "code": "cryptoAlertThreshold",
+      "displayTop": "Crypto",
+      "displayBottom": "Threshold",
+      "fieldType": "integer",
+      "fieldClass": "fiat",
+      "cryptoScope": "both",
+      "machineScope": "global",
+      "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "code": "cashInAlertThreshold",
+      "displayTop": "Cash-in",
+      "displayBottom": "Threshold",
+      "fieldType": "integer",
+      "fieldClass": "banknotes",
+      "cryptoScope": "global",
+      "machineScope": "both",
+        "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "code": "cashOutCassette1AlertThreshold",
+      "displayTop": "Cash-out Thresholds",
+      "displayTopCount": 2,
+      "displayBottom": "Top",
+      "fieldType": "integer",
+      "fieldClass": "banknotes",
+      "cryptoScope": "global",
+      "machineScope": "both",
+      "default": 10,
+      "enabledIf": [
+        "notificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        },
+        {
+          "code": "min",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "code": "cashOutCassette2AlertThreshold",
+      "displayTopCount": 0,
+      "displayBottom": "Bottom",
+      "fieldType": "integer",
+      "fieldClass": "banknotes",
+      "cryptoScope": "global",
+      "machineScope": "both",
+      "default": 10,
+      "enabledIf": [
+        "notificationsEnabled"
       ],
       "fieldValidation": [
         {
@@ -495,17 +593,6 @@
       "fieldClass": "email",
       "enabledIf": [
         "notificationsEmailEnabled"
-      ],
-      "fieldValidation": [{"code": "required"}]
-    },
-    {
-      "code": "balancesThreshold",
-      "displayTop": "Balances",
-      "displayBottom": "Threshold",
-      "fieldType": "percentage",
-      "fieldClass": null,
-      "enabledIf": [
-        "notificationsEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
     }

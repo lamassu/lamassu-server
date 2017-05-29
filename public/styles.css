@@ -248,6 +248,8 @@ p {
     border-radius: 3px;
     position: relative;
     margin: 0;
+    border: 2px solid #E6E6E3;
+    border-radius: 3px;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminNoOptions {
@@ -279,7 +281,7 @@ p {
     font-size: 80%;
     border-radius: 3px;
     background-color: #ffffff;
-    border: 3px solid #f6f6f4;
+    border: 2px solid #E6E6E3;
     border-top: 0;
     color: #5f5f56;
     width: 15em;
@@ -306,7 +308,7 @@ p {
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminMultiItemContainer  .lamassuAdminSelectedItem {
     background-color: #004062;
     color: #ffffff;
-    padding: 4px 4px 3px;
+    padding: 2px;
     margin: 0 1px;
     font-family: Inconsolata, monospace;
     font-size: 70%;
@@ -315,7 +317,7 @@ p {
 }
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminMultiItemContainer  .lamassuAdminFallbackItem {
-    background-color: #5f5f56;
+    background-color: #37e8d7;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSingleItemContainer  .lamassuAdminSelectedItem {
@@ -340,16 +342,19 @@ p {
 .lamassuAdminConfigTable  .lamassuAdminInputContainer {
     display: flex;
     justify-content: flex-end;
+    border: 2px solid #E6E6E3;
+    border-radius: 3px;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminUnitDisplay {
-    border-radius: 0px 3px 3px 0px;
     background-color: #E6E6E3;
     color: #5f5f56;
     padding: 0 5px;
     font-weight: 700;
     font-size: 80%;
     line-height: 25px;
+    cursor: default;
+    font-family: Nunito, sans-serif;
 }
 
 .lamassuAdminConfigTable  input {
@@ -369,29 +374,35 @@ p {
     background: repeating-linear-gradient(45deg,#dfdfdc,#dfdfdc 2px,#e6e6e3 5px);
 }
 
+.lamassuAdminConfigTable  .lamassuAdminBasicInput::placeholder {
+    color: #37e8d7;
+    opacity: 1;
+}
+
 .lamassuAdminConfigTable  .lamassuAdminBasicInputDisabled {
     height: 25px;
     line-height: 25px;
     font-size: 14px;
     font-weight: 500;
     color: #5f5f56;
+    opacity: 0.7;
     text-align: left;
     padding: 0 1em;
-    cursor: default;
     background: repeating-linear-gradient(45deg,#dfdfdc,#dfdfdc 2px,#e6e6e3 5px);
 }
 
-.lamassuAdminConfigTable  .lamassuAdminBasicInputReadOnly {
-    height: 25px;
+.lamassuAdminConfigTable  .lamassuAdminReadOnly {
     line-height: 25px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #5f5f56;
-    text-align: left;
-    padding: 0 1em;
-    cursor: default;
     background-color: #f6f6f4;
-    border: 2px solid #E6E6E3;
+    font-family: Inconsolata, monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5f5f56;
+    cursor: default;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminReadOnly > .lamassuAdminBasicInputReadOnly {
+    padding: 0 5px;
 }
 
 .lamassuAdminConfigTable  td {
@@ -407,16 +418,16 @@ p {
     background-color: #ffffff;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminInvalidComponent {
-    border-top-color: #eb6b6e;
+.lamassuAdminConfigTable  .lamassuAdminFocusedComponent > .lamassuAdminInputContainer {
+    border-color: #37e8d7;
 }
 
 .lamassuAdminConfigTable  .lamassuAdminInvalidComponent  input {
     color: #eb6b6e;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminFocusedComponent {
-    border-top-color: #37e8d7;
+.lamassuAdminConfigTable  .lamassuAdminInvalidComponent > .lamassuAdminInputContainer {
+    border-color: #eb6b6e;
 }
 
 .lamassuAdminConfigTable  tbody  td {
