@@ -146,7 +146,7 @@
       "displayTop": "Cash-in",
       "displayBottom": "Fixed Fee",
       "displayTopCount": 2,
-      "fieldType": "integer",
+      "fieldType": "decimal",
       "fieldClass": "fiat",
       "cryptoScope": "both",
       "machineScope": "both",
