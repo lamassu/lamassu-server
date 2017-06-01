@@ -56,7 +56,6 @@
     "lamassu-server": "./bin/lamassu-server",
     "lamassu-migrate": "./bin/lamassu-migrate",
     "lamassu-register": "./bin/lamassu-register",
-    "lamassu-domain": "./bin/lamassu-domain",
     "lamassu-admin-server": "./bin/lamassu-admin-server",
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
     "hkdf": "./bin/hkdf",
