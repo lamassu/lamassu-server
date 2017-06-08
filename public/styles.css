@@ -430,6 +430,10 @@ p {
     border-color: #eb6b6e;
 }
 
+.lamassuAdminConfigTable  .lamassuAdminInvalidComponent > .lamassuAdminSelectizeContainer {
+    border-color: #eb6b6e;
+}
+
 .lamassuAdminConfigTable  tbody  td {
     text-align: right;
     white-space: nowrap;
