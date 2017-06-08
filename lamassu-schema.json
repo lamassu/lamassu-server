@@ -128,7 +128,7 @@
       "fieldClass": null,
       "cryptoScope": "both",
       "machineScope": "both",
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [
@@ -170,7 +170,7 @@
       "cryptoScope": "both",
       "machineScope": "both",
       "default": 0,
-      "enabledIf": [
+      "enabledIfAny": [
       ],
       "fieldValidation": [
         {
@@ -190,7 +190,7 @@
       "fieldClass": "fiat",
       "cryptoScope": "both",
       "machineScope": "global",
-      "enabledIf": [
+      "enabledIfAny": [
         "notificationsEnabled"
       ],
       "fieldValidation": [
@@ -211,7 +211,7 @@
       "fieldClass": "banknotes",
       "cryptoScope": "global",
       "machineScope": "both",
-        "enabledIf": [
+      "enabledIfAny": [
         "notificationsEnabled"
       ],
       "fieldValidation": [
@@ -234,8 +234,9 @@
       "cryptoScope": "global",
       "machineScope": "both",
       "default": 10,
-      "enabledIf": [
-        "notificationsEnabled"
+      "enabledIfAll": [
+        "notificationsEnabled",
+        "cashOutEnabled"
       ],
       "fieldValidation": [
         {
@@ -256,8 +257,9 @@
       "cryptoScope": "global",
       "machineScope": "both",
       "default": 10,
-      "enabledIf": [
-        "notificationsEnabled"
+      "enabledIfAll": [
+        "notificationsEnabled",
+        "cashOutEnabled"
       ],
       "fieldValidation": [
         {
@@ -277,7 +279,7 @@
       "fieldClass": "fiat",
       "cryptoScope": "global",
       "machineScope": "both",
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -375,7 +377,7 @@
       "displayTopCount": 3,
       "fieldType": "integer",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -386,7 +388,7 @@
       "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -397,7 +399,7 @@
       "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -408,7 +410,7 @@
       "displayBottom": "Margin",
       "fieldType": "integer",
       "fieldClass": "banknotes",
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [{"code": "required"}],
@@ -433,7 +435,7 @@
       "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "cashOutEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -472,7 +474,7 @@
       "displayBottom": "Service",
       "fieldType": "account",
       "fieldClass": "idVerifier",
-      "enabledIf": [
+      "enabledIfAny": [
         "idVerificationEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -483,7 +485,7 @@
       "displayTopCount": 0,
       "fieldType": "integer",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "idVerificationEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
@@ -546,7 +548,7 @@
       "displayTopCount": 0,
       "fieldType": "onOff",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "notificationsEnabled"
       ],
       "fieldValidation": [
@@ -562,7 +564,7 @@
       "displayTopCount": 0,
       "fieldType": "onOff",
       "fieldClass": null,
-      "enabledIf": [
+      "enabledIfAny": [
         "notificationsEnabled"
       ],
       "fieldValidation": [
@@ -579,7 +581,7 @@
       "displayTopCount": 2,
       "fieldType": "account",
       "fieldClass": "sms",
-      "enabledIf": [
+      "enabledIfAny": [
         "notificationsSMSEnabled",
         "cashOutEnabled"
       ],
@@ -591,7 +593,7 @@
       "displayTopCount": 0,
       "fieldType": "account",
       "fieldClass": "email",
-      "enabledIf": [
+      "enabledIfAny": [
         "notificationsEmailEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
