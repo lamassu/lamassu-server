@@ -21,7 +21,7 @@
     {
       "code": "walletPassphrase",
       "display": "Wallet passphrase",
-      "fieldType": "string",
+      "fieldType": "password",
       "secret": true,
       "required": true,
       "value": ""
