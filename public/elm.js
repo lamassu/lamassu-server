@@ -36275,6 +36275,9 @@ var _user$project$Maintenance_Types$NotSaving = {ctor: 'NotSaving'};
 var _user$project$Maintenance_Types$Editing = {ctor: 'Editing'};
 var _user$project$Maintenance_Types$Saved = {ctor: 'Saved'};
 var _user$project$Maintenance_Types$Saving = {ctor: 'Saving'};
+var _user$project$Maintenance_Types$RebootMachine = function (a) {
+	return {ctor: 'RebootMachine', _0: a};
+};
 var _user$project$Maintenance_Types$UnpairMachine = function (a) {
 	return {ctor: 'UnpairMachine', _0: a};
 };
@@ -37614,63 +37617,83 @@ var _user$project$StatusDecoder$statusDecoder = A3(
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 
 var _user$project$Maintenance_Rest$encodeAction = function (action) {
-	var _p0 = action;
-	if (_p0.ctor === 'ResetCashOutBills') {
-		var _p1 = _p0._0;
-		return _elm_lang$core$Json_Encode$object(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'action',
-					_1: _elm_lang$core$Json_Encode$string('resetCashOutBills')
-				},
-				_1: {
+	var _p0 = A2(_elm_lang$core$Debug$log, 'DEBUG101', action);
+	switch (_p0.ctor) {
+		case 'ResetCashOutBills':
+			var _p1 = _p0._0;
+			return _elm_lang$core$Json_Encode$object(
+				{
 					ctor: '::',
 					_0: {
 						ctor: '_Tuple2',
-						_0: 'deviceId',
-						_1: _elm_lang$core$Json_Encode$string(_p1.deviceId)
+						_0: 'action',
+						_1: _elm_lang$core$Json_Encode$string('resetCashOutBills')
 					},
 					_1: {
 						ctor: '::',
 						_0: {
 							ctor: '_Tuple2',
-							_0: 'cassettes',
-							_1: _elm_lang$core$Json_Encode$list(
-								{
-									ctor: '::',
-									_0: _elm_lang$core$Json_Encode$int(_p1.cassette1),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$core$Json_Encode$int(_p1.cassette2),
-										_1: {ctor: '[]'}
-									}
-								})
+							_0: 'deviceId',
+							_1: _elm_lang$core$Json_Encode$string(_p1.deviceId)
 						},
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'cassettes',
+								_1: _elm_lang$core$Json_Encode$list(
+									{
+										ctor: '::',
+										_0: _elm_lang$core$Json_Encode$int(_p1.cassette1),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$core$Json_Encode$int(_p1.cassette2),
+											_1: {ctor: '[]'}
+										}
+									})
+							},
+							_1: {ctor: '[]'}
+						}
 					}
-				}
-			});
-	} else {
-		return _elm_lang$core$Json_Encode$object(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'action',
-					_1: _elm_lang$core$Json_Encode$string('unpair')
-				},
-				_1: {
+				});
+		case 'UnpairMachine':
+			return _elm_lang$core$Json_Encode$object(
+				{
 					ctor: '::',
 					_0: {
 						ctor: '_Tuple2',
-						_0: 'deviceId',
-						_1: _elm_lang$core$Json_Encode$string(_p0._0.deviceId)
+						_0: 'action',
+						_1: _elm_lang$core$Json_Encode$string('unpair')
 					},
-					_1: {ctor: '[]'}
-				}
-			});
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'deviceId',
+							_1: _elm_lang$core$Json_Encode$string(_p0._0.deviceId)
+						},
+						_1: {ctor: '[]'}
+					}
+				});
+		default:
+			return _elm_lang$core$Json_Encode$object(
+				{
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'action',
+						_1: _elm_lang$core$Json_Encode$string('reboot')
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'deviceId',
+							_1: _elm_lang$core$Json_Encode$string(_p0._0.deviceId)
+						},
+						_1: {ctor: '[]'}
+					}
+				});
 	}
 };
 var _user$project$Maintenance_Rest$machineDecoder = A8(
@@ -37732,425 +37755,10 @@ var _user$project$Maintenance_Rest$postForm = function (action) {
 					_lukewestby$elm_http_builder$HttpBuilder$post('/api/machines')))));
 };
 
-var _user$project$Maintenance_State$inputCassetteView = F3(
-	function (machine, position, count) {
-		return A2(
-			_elm_lang$html$Html$input,
-			{
-				ctor: '::',
-				_0: _user$project$Css_Admin$class(
-					{
-						ctor: '::',
-						_0: _user$project$Css_Classes$BasicInput,
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onInput(
-						A2(_user$project$Maintenance_Types$InputCassette, machine, position)),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$defaultValue(
-							_elm_lang$core$Basics$toString(count)),
-						_1: {ctor: '[]'}
-					}
-				}
-			},
-			{ctor: '[]'});
-	});
-var _user$project$Maintenance_State$rowView = function (machine) {
-	var actions = machine.paired ? {
-		ctor: '::',
-		_0: A2(
-			_elm_lang$html$Html$td,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$button,
-					{
-						ctor: '::',
-						_0: _user$project$Css_Admin$class(
-							{
-								ctor: '::',
-								_0: _user$project$Css_Classes$TableButton,
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Maintenance_Types$Submit(
-									_user$project$Maintenance_Types$ResetCashOutBills(machine))),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Reset Bills'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _user$project$Css_Admin$class(
-								{
-									ctor: '::',
-									_0: _user$project$Css_Classes$TableButton,
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									_user$project$Maintenance_Types$Submit(
-										_user$project$Maintenance_Types$UnpairMachine(machine))),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Unpair'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		}
-	} : {
-		ctor: '::',
-		_0: A2(
-			_elm_lang$html$Html$td,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$button,
-					{
-						ctor: '::',
-						_0: _user$project$Css_Admin$class(
-							{
-								ctor: '::',
-								_0: _user$project$Css_Classes$TableButton,
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Maintenance_Types$Submit(
-									_user$project$Maintenance_Types$ResetCashOutBills(machine))),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Reset Bills'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{
-					ctor: '::',
-					_0: _user$project$Css_Admin$class(
-						{
-							ctor: '::',
-							_0: _user$project$Css_Classes$NoInput,
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Unpaired'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		}
-	};
-	return A2(
-		_elm_lang$html$Html$tr,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(machine.name),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _user$project$Css_Admin$classList(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: false},
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: A3(_user$project$Maintenance_State$inputCassetteView, machine, _user$project$Maintenance_Types$Top, machine.cassette1),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$td,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _user$project$Css_Admin$classList(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: false},
-													_1: {ctor: '[]'}
-												}
-											}),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: A3(_user$project$Maintenance_State$inputCassetteView, machine, _user$project$Maintenance_Types$Bottom, machine.cassette2),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}
-			},
-			actions));
-};
-var _user$project$Maintenance_State$tableView = function (machines) {
-	return _elm_lang$core$List$isEmpty(machines) ? A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _user$project$Css_Admin$class(
-				{
-					ctor: '::',
-					_0: _user$project$Css_Classes$EmptyTable,
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text('No paired machines.'),
-			_1: {ctor: '[]'}
-		}) : A2(
-		_elm_lang$html$Html$table,
-		{
-			ctor: '::',
-			_0: _user$project$Css_Admin$class(
-				{
-					ctor: '::',
-					_0: _user$project$Css_Classes$ConfigTable,
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$thead,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$tr,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$td,
-								{ctor: '[]'},
-								{ctor: '[]'}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$td,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Top Bill Count'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$td,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('Bottom Bill Count'),
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$tbody,
-					{ctor: '[]'},
-					A2(_elm_lang$core$List$map, _user$project$Maintenance_State$rowView, machines)),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _user$project$Maintenance_State$view = function (model) {
-	var _p0 = model;
-	switch (_p0.ctor) {
-		case 'NotAsked':
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{ctor: '[]'});
-		case 'Loading':
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Loading...'),
-					_1: {ctor: '[]'}
-				});
-		case 'Failure':
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p0._0)),
-					_1: {ctor: '[]'}
-				});
-		default:
-			var _p2 = _p0._0;
-			var statusString = function () {
-				var _p1 = _p2.status;
-				if (_p1.ctor === 'Saved') {
-					return 'Saved';
-				} else {
-					return '';
-				}
-			}();
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _user$project$Css_Admin$class(
-								{
-									ctor: '::',
-									_0: _user$project$Css_Classes$SectionLabel,
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$div,
-										{
-											ctor: '::',
-											_0: _user$project$Css_Admin$class(
-												{
-													ctor: '::',
-													_0: _user$project$Css_Classes$ConfigContainer,
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _user$project$Maintenance_State$tableView(_p2.machines),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _user$project$Css_Admin$class(
-															{
-																ctor: '::',
-																_0: _user$project$Css_Classes$Saving,
-																_1: {ctor: '[]'}
-															}),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text(statusString),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				});
-	}
-};
 var _user$project$Maintenance_State$saveUpdate = function (model) {
 	var cmd = _elm_lang$core$Native_Utils.eq(model.status, _user$project$Maintenance_Types$Saved) ? A2(
 		_elm_lang$core$Task$perform,
-		function (_p3) {
+		function (_p0) {
 			return _user$project$Maintenance_Types$HideSaveIndication;
 		},
 		_elm_lang$core$Process$sleep(2 * _elm_lang$core$Time$second)) : _elm_lang$core$Platform_Cmd$none;
@@ -38182,18 +37790,18 @@ var _user$project$Maintenance_State$updateCassette = F4(
 	function (machine, position, str, subModel) {
 		var countResult = _elm_lang$core$String$toInt(str);
 		var updatedMachine = function () {
-			var _p4 = countResult;
-			if (_p4.ctor === 'Ok') {
-				var _p6 = _p4._0;
-				var _p5 = position;
-				if (_p5.ctor === 'Top') {
+			var _p1 = countResult;
+			if (_p1.ctor === 'Ok') {
+				var _p3 = _p1._0;
+				var _p2 = position;
+				if (_p2.ctor === 'Top') {
 					return _elm_lang$core$Native_Utils.update(
 						machine,
-						{cassette1: _p6});
+						{cassette1: _p3});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						machine,
-						{cassette2: _p6});
+						{cassette2: _p3});
 				}
 			} else {
 				return machine;
@@ -38212,24 +37820,25 @@ var _user$project$Maintenance_State$updateCassette = F4(
 	});
 var _user$project$Maintenance_State$update = F2(
 	function (msg, model) {
-		var _p7 = msg;
-		switch (_p7.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'Action':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
 			case 'Load':
-				return A2(_krisajenkins$remotedata$RemoteData$update, _user$project$Maintenance_State$saveUpdate, _p7._0);
+				return A2(_krisajenkins$remotedata$RemoteData$update, _user$project$Maintenance_State$saveUpdate, _p4._0);
 			case 'InputCassette':
 				return A2(
 					_krisajenkins$remotedata$RemoteData$update,
-					A3(_user$project$Maintenance_State$updateCassette, _p7._0, _p7._1, _p7._2),
+					A3(_user$project$Maintenance_State$updateCassette, _p4._0, _p4._1, _p4._2),
 					model);
 			case 'Submit':
 				return A2(
 					_krisajenkins$remotedata$RemoteData$update,
-					_user$project$Maintenance_State$updateAction(_p7._0),
+					_user$project$Maintenance_State$updateAction(
+						A2(_elm_lang$core$Debug$log, 'DEBUG102', _p4._0)),
 					model);
 			default:
 				return A2(
@@ -38437,8 +38046,41 @@ var _user$project$Maintenance_View$rowView = function (machine) {
 			}),
 		_1: {
 			ctor: '::',
-			_0: resetBills,
-			_1: {ctor: '[]'}
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _user$project$Css_Admin$class(
+								{
+									ctor: '::',
+									_0: _user$project$Css_Classes$TableButton,
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_user$project$Maintenance_Types$Submit(
+										_user$project$Maintenance_Types$RebootMachine(machine))),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Reboot'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: resetBills,
+				_1: {ctor: '[]'}
+			}
 		}
 	};
 	return A2(
@@ -39254,7 +38896,7 @@ var _user$project$Main$Model = F9(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"Maintenance.Types.Msg":{"args":[],"tags":{"Action":[],"Load":["Maintenance.Types.Model"],"InputCassette":["Maintenance.Types.Machine","Maintenance.Types.Position","String"],"Submit":["Maintenance.Types.MachineAction"],"HideSaveIndication":[]}},"FieldSet.Types.Msg":{"args":[],"tags":{"Input":["String","String"]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldDecimalType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Transaction.Msg":{"args":[],"tags":{"Load":["Transaction.Model"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Types.Msg"],"Submit":[],"HideSaveIndication":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"CoreTypes.Msg":{"args":[],"tags":{"WebSocketMsg":["String"],"ConfigMsg":["Config.Msg"],"LoadAccounts":["List ( String, String )"],"MaintenanceMsg":["Maintenance.Types.Msg"],"NewUrl":["String"],"Interval":[],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Maintenance.Types.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}},"FieldSet.Types.FieldValue":{"args":[],"tags":{"FieldInteger":["Int"],"FieldString":["String"],"FieldPassword":["FieldSet.Types.FieldPasswordType"]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"Maintenance.Types.MachineAction":{"args":[],"tags":{"ResetCashOutBills":["Maintenance.Types.Machine"],"UnpairMachine":["Maintenance.Types.Machine"]}},"TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["TransactionTypes.CashInTxRec"],"CashOutTx":["TransactionTypes.CashOutTxRec"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Maintenance.Types.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldDecimalValue":["Float"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}},"FieldSet.Types.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSet.Types.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"Maintenance.Types.Machines":{"args":[],"type":"List Maintenance.Types.Machine"},"Maintenance.Types.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool , cashOut : Bool }"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"FieldSet.Types.Field":{"args":[],"type":"{ code : String , display : String , placeholder : String , required : Bool , value : FieldSet.Types.FieldValue , loadedValue : FieldSet.Types.FieldValue }"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"Transaction.Model":{"args":[],"type":"RemoteData.WebData Transaction.Txs"},"Maintenance.Types.SubModel":{"args":[],"type":"{ status : Maintenance.Types.SavingStatus , machines : Maintenance.Types.Machines }"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , inScope : Bool }"},"Transaction.Txs":{"args":[],"type":"List TransactionTypes.Tx"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String , wasConfigured : Bool }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , status : String , dispense : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , readOnly : Bool }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Maintenance.Types.Model":{"args":[],"type":"RemoteData.WebData Maintenance.Types.SubModel"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"Maintenance.Types.Msg":{"args":[],"tags":{"Action":[],"Load":["Maintenance.Types.Model"],"InputCassette":["Maintenance.Types.Machine","Maintenance.Types.Position","String"],"Submit":["Maintenance.Types.MachineAction"],"HideSaveIndication":[]}},"FieldSet.Types.Msg":{"args":[],"tags":{"Input":["String","String"]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldDecimalType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Transaction.Msg":{"args":[],"tags":{"Load":["Transaction.Model"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Types.Msg"],"Submit":[],"HideSaveIndication":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"CoreTypes.Msg":{"args":[],"tags":{"WebSocketMsg":["String"],"ConfigMsg":["Config.Msg"],"LoadAccounts":["List ( String, String )"],"MaintenanceMsg":["Maintenance.Types.Msg"],"NewUrl":["String"],"Interval":[],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Maintenance.Types.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}},"FieldSet.Types.FieldValue":{"args":[],"tags":{"FieldInteger":["Int"],"FieldString":["String"],"FieldPassword":["FieldSet.Types.FieldPasswordType"]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"Maintenance.Types.MachineAction":{"args":[],"tags":{"RebootMachine":["Maintenance.Types.Machine"],"ResetCashOutBills":["Maintenance.Types.Machine"],"UnpairMachine":["Maintenance.Types.Machine"]}},"TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["TransactionTypes.CashInTxRec"],"CashOutTx":["TransactionTypes.CashOutTxRec"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Maintenance.Types.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldDecimalValue":["Float"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}},"FieldSet.Types.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSet.Types.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"Maintenance.Types.Machines":{"args":[],"type":"List Maintenance.Types.Machine"},"Maintenance.Types.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool , cashOut : Bool }"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"FieldSet.Types.Field":{"args":[],"type":"{ code : String , display : String , placeholder : String , required : Bool , value : FieldSet.Types.FieldValue , loadedValue : FieldSet.Types.FieldValue }"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"Transaction.Model":{"args":[],"type":"RemoteData.WebData Transaction.Txs"},"Maintenance.Types.SubModel":{"args":[],"type":"{ status : Maintenance.Types.SavingStatus , machines : Maintenance.Types.Machines }"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , inScope : Bool }"},"Transaction.Txs":{"args":[],"type":"List TransactionTypes.Tx"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String , wasConfigured : Bool }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , status : String , dispense : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , readOnly : Bool }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"},"Maintenance.Types.Model":{"args":[],"type":"RemoteData.WebData Maintenance.Types.SubModel"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
