@@ -25,6 +25,15 @@
       "secret": true,
       "required": true,
       "value": ""
+    },
+    {
+      "code": "environment",
+      "display": "Environment (prod or test)",
+      "fieldType": "string",
+      "secret": false,
+      "required": false,
+      "placeholder": "prod",
+      "value": ""
     }
   ]
 }
