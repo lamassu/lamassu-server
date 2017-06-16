@@ -117,36 +117,57 @@ p {
     border-radius: 5px;
 }
 
+.lamassuAdminContainer {
+    padding: 30px;
+    background-color: #f6f6f4;
+    border-radius: 0px 5px 5px 5px;
+    width: 30em;
+}
+
+.lamassuAdminCryptoAddress {
+    font-family: Inconsolata, monospace;
+}
+
+.lamassuAdminBalanceSection {
+    margin-top: 2em;
+}
+
+.lamassuAdminBalanceSection  h2 {
+    font-size: 1.2em;
+    margin-bottom: 0.2em;
+}
+
 .lamassuAdminCryptoTabs {
     display: flex;
 }
 
-.lamassuAdminCryptoTabs > div {
+.lamassuAdminCryptoTabs > .lamassuAdminCryptoTab {
     padding: 10px 15px;
     color: #5f5f56;
     font-weight: bold;
     cursor: pointer;
     background-color: #E6E6E3;
+    text-decoration: none;
 }
 
-.lamassuAdminCryptoTabs > div:hover {
+.lamassuAdminCryptoTabs > .lamassuAdminCryptoTab:hover {
     background-color: #fcfcfa;
 }
 
-.lamassuAdminCryptoTabs > div:active {
+.lamassuAdminCryptoTabs > .lamassuAdminCryptoTab:active {
     color: #5f5f56;
 }
 
-.lamassuAdminCryptoTabs > div.lamassuAdminActive {
+.lamassuAdminCryptoTabs > .lamassuAdminCryptoTab.lamassuAdminActive {
     color: #5f5f56;
     background-color: #f6f6f4;
 }
 
-.lamassuAdminCryptoTabs > div:first-child {
+.lamassuAdminCryptoTabs > .lamassuAdminCryptoTab:first-child {
     border-radius: 5px 0px 0px 0px;
 }
 
-.lamassuAdminCryptoTabs > div:last-child {
+.lamassuAdminCryptoTabs > .lamassuAdminCryptoTab:last-child {
     border-radius: 0px 5px 0px 0px;
 }
 
