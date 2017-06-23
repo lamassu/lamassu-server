@@ -32590,6 +32590,8 @@ var _user$project$Transaction$multiplier = function (code) {
 			return 1.0e8;
 		case 'ETH':
 			return 1.0e18;
+		case 'ZEC':
+			return 1.0e8;
 		default:
 			return 1.0;
 	}
@@ -33670,8 +33672,8 @@ var _user$project$NavBar$view = F2(
 													ctor: '::',
 													_0: {
 														ctor: '_Tuple3',
-														_0: 'Twilio',
-														_1: _user$project$CoreTypes$AccountRoute('twilio'),
+														_0: 'Kraken',
+														_1: _user$project$CoreTypes$AccountRoute('kraken'),
 														_2: true
 													},
 													_1: {
@@ -33682,7 +33684,16 @@ var _user$project$NavBar$view = F2(
 															_1: _user$project$CoreTypes$AccountRoute('mailjet'),
 															_2: true
 														},
-														_1: {ctor: '[]'}
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple3',
+																_0: 'Twilio',
+																_1: _user$project$CoreTypes$AccountRoute('twilio'),
+																_2: true
+															},
+															_1: {ctor: '[]'}
+														}
 													}
 												}
 											}

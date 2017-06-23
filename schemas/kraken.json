@@ -1,0 +1,22 @@
+{
+  "code": "kraken",
+  "display": "Kraken",
+  "fields": [
+    {
+      "code": "apiKey",
+      "display": "API Key",
+      "fieldType": "string",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "privateKey",
+      "display": "Private Key",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    }
+  ]
+}

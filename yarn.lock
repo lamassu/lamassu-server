@@ -3108,6 +3108,13 @@ kind-of@^3.0.2:
   dependencies:
     is-buffer "^1.1.5"
 
+kraken-api@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/kraken-api/-/kraken-api-0.1.7.tgz#b752435e6917ba71d9e734a5fed3fa5961622de8"
+  dependencies:
+    querystring ">=0.2.0"
+    request ">=2.27.0"
+
 last-line-stream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/last-line-stream/-/last-line-stream-1.0.0.tgz#d1b64d69f86ff24af2d04883a2ceee14520a5600"
@@ -4122,6 +4129,10 @@ qs@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-4.0.0.tgz#c31d9b74ec27df75e543a86c78728ed8d4623607"
 
+querystring@>=0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
+
 ramda@^0.22.1:
   version "0.22.1"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.22.1.tgz#031da0c3df417c5b33c96234757eb37033f36a0e"
@@ -4356,7 +4367,7 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-request@2.81.x, request@^2.81.0:
+request@2.81.x, request@>=2.27.0, request@^2.81.0:
   version "2.81.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
   dependencies:
