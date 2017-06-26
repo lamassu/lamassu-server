@@ -32592,6 +32592,10 @@ var _user$project$Transaction$multiplier = function (code) {
 			return 1.0e18;
 		case 'ZEC':
 			return 1.0e8;
+		case 'DASH':
+			return 1.0e8;
+		case 'LTC':
+			return 1.0e8;
 		default:
 			return 1.0;
 	}
