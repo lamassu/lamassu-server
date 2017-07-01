@@ -33,3 +33,6 @@ scratch/
 seeds/
 certs/
 lamassu.json
+
+terraform.*
+.terraform

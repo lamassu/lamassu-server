@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+const path = require('path')
+const crypto = require('crypto')
+const fs = require('fs')
+
+const options = require('../../lib/options')
+
+const blockchainDir = options.blockchainDir
+const confPath = path.resolve(blockchainDir, 'zcash.conf')
+const password = crypto.randomBytes(32).toString('hex')
+
+const conf = `rpcuser=username
+rpcpassword=${password}
+mainnet=1
+addnode=mainnet.z.cash
+dbcache=500
+`
+
+fs.writeFileSync(confPath, conf)

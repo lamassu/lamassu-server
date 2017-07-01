@@ -21386,16 +21386,24 @@ var _pablohirafuji$elm_qrcode$QRCode_View$rectView = function (_p1) {
 					_elm_lang$core$Basics$toString(_p2.row * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$width(
-						_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+					_0: _elm_lang$svg$Svg_Attributes$rx('0'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$height(
-							_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+						_0: _elm_lang$svg$Svg_Attributes$ry('0'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$fill('black'),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$svg$Svg_Attributes$width(
+								_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$height(
+									_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$fill('black'),
+									_1: {ctor: '[]'}
+								}
+							}
 						}
 					}
 				}
