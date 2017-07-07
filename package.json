@@ -64,11 +64,10 @@
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
     "hkdf": "./bin/hkdf",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
-    "lamassu-install-bitcoind": "./bin/lamassu-install-bitcoind",
-    "lamassu-install-geth": "./bin/lamassu-install-geth",
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
     "lamassu-cancel": "./bin/lamassu-cancel",
-    "lamassu-nuke-db": "./bin/lamassu-nuke-db"
+    "lamassu-nuke-db": "./bin/lamassu-nuke-db",
+    "lamassu-coins": "./bin/lamassu-coins"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
