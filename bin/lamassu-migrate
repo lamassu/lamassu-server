@@ -7,6 +7,7 @@ const options = require('../lib/options')
 const migrateDir = path.resolve(__dirname, '..', 'migrations')
 const migration = migrate.load(options.migrateStatePath, migrateDir)
 
+console.log(options.migrateStatePath)
 migration.up(err => {
   if (err) {
     console.error('DB Migration failed: %s', err)
