@@ -30,3 +30,5 @@ raqia.json
 scratch/
 
 *.pem
+certs/
+seeds/
