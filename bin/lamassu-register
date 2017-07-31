@@ -18,7 +18,12 @@ if (!name) {
 
 login.generateOTP(name)
 .then(otp => {
-  console.log(`https://${domain}?otp=${otp}`)
+  if (domain === 'localhost') {
+    console.log(`https://${domain}:8070?otp=${otp}`)
+  } else {
+    console.log(`https://${domain}?otp=${otp}`)
+  }
+
   process.exit(0)
 })
 .catch(err => {
