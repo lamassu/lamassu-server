@@ -68,7 +68,8 @@
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
     "lamassu-cancel": "./bin/lamassu-cancel",
     "lamassu-nuke-db": "./bin/lamassu-nuke-db",
-    "lamassu-coins": "./bin/lamassu-coins"
+    "lamassu-coins": "./bin/lamassu-coins",
+    "lamassu-backup-wallet": "./bin/lamassu-backup-wallet"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
