@@ -1,4 +1,5 @@
 var db = require('./db')
+var anonymous = require('../lib/constants').anonymous_customer
 
 exports.up = function(next) {
   const sql =
@@ -20,8 +21,9 @@ exports.up = function(next) {
     id_card_image_path text,
     id_card_image_at timestamptz,
     created timestamptz NOT NULL DEFAULT now() )`,
-    `alter table cash_in_txs add column customer_id uuid references customers (id)`,
-    `alter table cash_out_txs add column customer_id uuid references customers (id)`
+    `insert into customers (id, name) VALUES ( '${anonymous.uuid}','${anonymous.name}' )`,
+    `alter table cash_in_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`,
+    `alter table cash_out_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`,
   ]
 
   db.multi(sql, next)
