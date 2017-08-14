@@ -6454,6 +6454,29 @@ var _elm_community$json_extra$Json_Decode_Extra$fromResult = function (result) {
 		return _elm_lang$core$Json_Decode$fail(_p0._0);
 	}
 };
+var _elm_community$json_extra$Json_Decode_Extra$parseInt = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (_p1) {
+		return _elm_community$json_extra$Json_Decode_Extra$fromResult(
+			_elm_lang$core$String$toInt(_p1));
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_community$json_extra$Json_Decode_Extra$parseFloat = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (_p2) {
+		return _elm_community$json_extra$Json_Decode_Extra$fromResult(
+			_elm_lang$core$String$toFloat(_p2));
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_community$json_extra$Json_Decode_Extra$doubleEncoded = function (decoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (_p3) {
+			return _elm_community$json_extra$Json_Decode_Extra$fromResult(
+				A2(_elm_lang$core$Json_Decode$decodeString, decoder, _p3));
+		},
+		_elm_lang$core$Json_Decode$string);
+};
 var _elm_community$json_extra$Json_Decode_Extra$sequenceHelp = F2(
 	function (decoders, jsonValues) {
 		return (!_elm_lang$core$Native_Utils.eq(
@@ -6476,15 +6499,33 @@ var _elm_community$json_extra$Json_Decode_Extra$sequence = function (decoders) {
 		_elm_community$json_extra$Json_Decode_Extra$sequenceHelp(decoders),
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$value));
 };
+var _elm_community$json_extra$Json_Decode_Extra$indexedList = function (indexedDecoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (values) {
+			return _elm_community$json_extra$Json_Decode_Extra$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					indexedDecoder,
+					A2(
+						_elm_lang$core$List$range,
+						0,
+						_elm_lang$core$List$length(values) - 1)));
+		},
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$value));
+};
 var _elm_community$json_extra$Json_Decode_Extra$optionalField = F2(
 	function (fieldName, decoder) {
 		var finishDecoding = function (json) {
-			var _p1 = A2(
+			var _p4 = A2(
 				_elm_lang$core$Json_Decode$decodeValue,
 				A2(_elm_lang$core$Json_Decode$field, fieldName, _elm_lang$core$Json_Decode$value),
 				json);
-			if (_p1.ctor === 'Ok') {
-				return A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, decoder);
+			if (_p4.ctor === 'Ok') {
+				return A2(
+					_elm_lang$core$Json_Decode$map,
+					_elm_lang$core$Maybe$Just,
+					A2(_elm_lang$core$Json_Decode$field, fieldName, decoder));
 			} else {
 				return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
 			}
@@ -6494,30 +6535,27 @@ var _elm_community$json_extra$Json_Decode_Extra$optionalField = F2(
 var _elm_community$json_extra$Json_Decode_Extra$withDefault = F2(
 	function (fallback, decoder) {
 		return A2(
-			_elm_lang$core$Json_Decode$andThen,
-			function (_p2) {
-				return _elm_lang$core$Json_Decode$succeed(
-					A2(_elm_lang$core$Maybe$withDefault, fallback, _p2));
-			},
+			_elm_lang$core$Json_Decode$map,
+			_elm_lang$core$Maybe$withDefault(fallback),
 			_elm_lang$core$Json_Decode$maybe(decoder));
 	});
 var _elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples = F2(
 	function (keyDecoder, tuples) {
-		var _p3 = tuples;
-		if (_p3.ctor === '[]') {
+		var _p5 = tuples;
+		if (_p5.ctor === '[]') {
 			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty);
 		} else {
-			var _p4 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p3._0._0);
-			if (_p4.ctor === 'Ok') {
+			var _p6 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p5._0._0);
+			if (_p6.ctor === 'Ok') {
 				return A2(
 					_elm_lang$core$Json_Decode$andThen,
-					function (_p5) {
+					function (_p7) {
 						return _elm_lang$core$Json_Decode$succeed(
-							A3(_elm_lang$core$Dict$insert, _p4._0, _p3._0._1, _p5));
+							A3(_elm_lang$core$Dict$insert, _p6._0, _p5._0._1, _p7));
 					},
-					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p3._1));
+					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p5._1));
 			} else {
-				return _elm_lang$core$Json_Decode$fail(_p4._0);
+				return _elm_lang$core$Json_Decode$fail(_p6._0);
 			}
 		}
 	});
@@ -6525,21 +6563,13 @@ var _elm_community$json_extra$Json_Decode_Extra$dict2 = F2(
 	function (keyDecoder, valueDecoder) {
 		return A2(
 			_elm_lang$core$Json_Decode$andThen,
-			function (_p6) {
-				return A2(
-					_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples,
-					keyDecoder,
-					_elm_lang$core$Dict$toList(_p6));
-			},
-			_elm_lang$core$Json_Decode$dict(valueDecoder));
+			_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples(keyDecoder),
+			_elm_lang$core$Json_Decode$keyValuePairs(valueDecoder));
 	});
 var _elm_community$json_extra$Json_Decode_Extra$set = function (decoder) {
 	return A2(
-		_elm_lang$core$Json_Decode$andThen,
-		function (_p7) {
-			return _elm_lang$core$Json_Decode$succeed(
-				_elm_lang$core$Set$fromList(_p7));
-		},
+		_elm_lang$core$Json_Decode$map,
+		_elm_lang$core$Set$fromList,
 		_elm_lang$core$Json_Decode$list(decoder));
 };
 var _elm_community$json_extra$Json_Decode_Extra$date = A2(
@@ -6556,6 +6586,185 @@ var _elm_community$json_extra$Json_Decode_Extra$andMap = _elm_lang$core$Json_Dec
 		}));
 var _elm_community$json_extra$Json_Decode_Extra_ops = _elm_community$json_extra$Json_Decode_Extra_ops || {};
 _elm_community$json_extra$Json_Decode_Extra_ops['|:'] = _elm_lang$core$Basics$flip(_elm_community$json_extra$Json_Decode_Extra$andMap);
+
+var _elm_community$maybe_extra$Maybe_Extra$foldrValues = F2(
+	function (item, list) {
+		var _p0 = item;
+		if (_p0.ctor === 'Nothing') {
+			return list;
+		} else {
+			return {ctor: '::', _0: _p0._0, _1: list};
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$values = A2(
+	_elm_lang$core$List$foldr,
+	_elm_community$maybe_extra$Maybe_Extra$foldrValues,
+	{ctor: '[]'});
+var _elm_community$maybe_extra$Maybe_Extra$filter = F2(
+	function (f, m) {
+		var _p1 = A2(_elm_lang$core$Maybe$map, f, m);
+		if ((_p1.ctor === 'Just') && (_p1._0 === true)) {
+			return m;
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$traverseArray = function (f) {
+	var step = F2(
+		function (e, acc) {
+			var _p2 = f(e);
+			if (_p2.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return A2(
+					_elm_lang$core$Maybe$map,
+					_elm_lang$core$Array$push(_p2._0),
+					acc);
+			}
+		});
+	return A2(
+		_elm_lang$core$Array$foldl,
+		step,
+		_elm_lang$core$Maybe$Just(_elm_lang$core$Array$empty));
+};
+var _elm_community$maybe_extra$Maybe_Extra$combineArray = _elm_community$maybe_extra$Maybe_Extra$traverseArray(_elm_lang$core$Basics$identity);
+var _elm_community$maybe_extra$Maybe_Extra$traverse = function (f) {
+	var step = F2(
+		function (e, acc) {
+			var _p3 = f(e);
+			if (_p3.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return A2(
+					_elm_lang$core$Maybe$map,
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						})(_p3._0),
+					acc);
+			}
+		});
+	return A2(
+		_elm_lang$core$List$foldr,
+		step,
+		_elm_lang$core$Maybe$Just(
+			{ctor: '[]'}));
+};
+var _elm_community$maybe_extra$Maybe_Extra$combine = _elm_community$maybe_extra$Maybe_Extra$traverse(_elm_lang$core$Basics$identity);
+var _elm_community$maybe_extra$Maybe_Extra$toArray = function (m) {
+	var _p4 = m;
+	if (_p4.ctor === 'Nothing') {
+		return _elm_lang$core$Array$empty;
+	} else {
+		return A2(_elm_lang$core$Array$repeat, 1, _p4._0);
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$toList = function (m) {
+	var _p5 = m;
+	if (_p5.ctor === 'Nothing') {
+		return {ctor: '[]'};
+	} else {
+		return {
+			ctor: '::',
+			_0: _p5._0,
+			_1: {ctor: '[]'}
+		};
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$orElse = F2(
+	function (ma, mb) {
+		var _p6 = mb;
+		if (_p6.ctor === 'Nothing') {
+			return ma;
+		} else {
+			return mb;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$orElseLazy = F2(
+	function (fma, mb) {
+		var _p7 = mb;
+		if (_p7.ctor === 'Nothing') {
+			return fma(
+				{ctor: '_Tuple0'});
+		} else {
+			return mb;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$orLazy = F2(
+	function (ma, fmb) {
+		var _p8 = ma;
+		if (_p8.ctor === 'Nothing') {
+			return fmb(
+				{ctor: '_Tuple0'});
+		} else {
+			return ma;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$or = F2(
+	function (ma, mb) {
+		var _p9 = ma;
+		if (_p9.ctor === 'Nothing') {
+			return mb;
+		} else {
+			return ma;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$prev = _elm_lang$core$Maybe$map2(_elm_lang$core$Basics$always);
+var _elm_community$maybe_extra$Maybe_Extra$next = _elm_lang$core$Maybe$map2(
+	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
+var _elm_community$maybe_extra$Maybe_Extra$andMap = _elm_lang$core$Maybe$map2(
+	F2(
+		function (x, y) {
+			return y(x);
+		}));
+var _elm_community$maybe_extra$Maybe_Extra$unpack = F3(
+	function (d, f, m) {
+		var _p10 = m;
+		if (_p10.ctor === 'Nothing') {
+			return d(
+				{ctor: '_Tuple0'});
+		} else {
+			return f(_p10._0);
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$unwrap = F3(
+	function (d, f, m) {
+		var _p11 = m;
+		if (_p11.ctor === 'Nothing') {
+			return d;
+		} else {
+			return f(_p11._0);
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$isJust = function (m) {
+	var _p12 = m;
+	if (_p12.ctor === 'Nothing') {
+		return false;
+	} else {
+		return true;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$isNothing = function (m) {
+	var _p13 = m;
+	if (_p13.ctor === 'Nothing') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$join = function (mx) {
+	var _p14 = mx;
+	if (_p14.ctor === 'Just') {
+		return _p14._0;
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra_ops = _elm_community$maybe_extra$Maybe_Extra_ops || {};
+_elm_community$maybe_extra$Maybe_Extra_ops['?'] = F2(
+	function (mx, x) {
+		return A2(_elm_lang$core$Maybe$withDefault, x, mx);
+	});
 
 var _elm_lang$core$Native_Bitwise = function() {
 
@@ -21386,24 +21595,16 @@ var _pablohirafuji$elm_qrcode$QRCode_View$rectView = function (_p1) {
 					_elm_lang$core$Basics$toString(_p2.row * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$rx('0'),
+					_0: _elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$ry('0'),
+						_0: _elm_lang$svg$Svg_Attributes$height(
+							_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$width(
-								_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$height(
-									_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$fill('black'),
-									_1: {ctor: '[]'}
-								}
-							}
+							_0: _elm_lang$svg$Svg_Attributes$fill('black'),
+							_1: {ctor: '[]'}
 						}
 					}
 				}
@@ -26555,6 +26756,23 @@ var _tripokey$elm_fuzzy$Fuzzy$Match = F4(
 	});
 var _tripokey$elm_fuzzy$Fuzzy$distance = F3(
 	function (config, needle, hay) {
+		var accumulateInsertPenalty = F2(
+			function (elem, result) {
+				var _p7 = result;
+				if (_p7._0.ctor === 'Just') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Maybe$Just(elem),
+						_1: ((elem - 1) - _p7._0._0) + _p7._1
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Maybe$Just(elem),
+						_1: _p7._1
+					};
+				}
+			});
 		var accumulate = F2(
 			function (c, indexList) {
 				var indexes = A2(
@@ -26568,14 +26786,14 @@ var _tripokey$elm_fuzzy$Fuzzy$distance = F3(
 							return !A2(_elm_lang$core$List$member, e, indexList);
 						},
 						indexes));
-				var _p7 = hayIndex;
-				if (_p7.ctor === 'Just') {
+				var _p8 = hayIndex;
+				if (_p8.ctor === 'Just') {
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						indexList,
 						{
 							ctor: '::',
-							_0: _p7._0,
+							_0: _p8._0,
 							_1: {ctor: '[]'}
 						});
 				} else {
@@ -26585,11 +26803,17 @@ var _tripokey$elm_fuzzy$Fuzzy$distance = F3(
 		var accumulated = A3(_elm_lang$core$String$foldl, accumulate, _tripokey$elm_fuzzy$Fuzzy$initialModel, needle);
 		var sorted = _tripokey$elm_fuzzy$Fuzzy$quickSort(accumulated);
 		var mPenalty = _elm_lang$core$Tuple$first(sorted) * config.movePenalty;
+		var iPenalty = _elm_lang$core$Tuple$second(
+			A3(
+				_elm_lang$core$List$foldl,
+				accumulateInsertPenalty,
+				{ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: 0},
+				_elm_lang$core$Tuple$second(sorted))) * config.insertPenalty;
 		var hPenalty = (_elm_lang$core$String$length(hay) - _elm_lang$core$List$length(accumulated)) * config.addPenalty;
 		var nPenalty = (_elm_lang$core$String$length(needle) - _elm_lang$core$List$length(accumulated)) * config.removePenalty;
 		return A4(
 			_tripokey$elm_fuzzy$Fuzzy$Match,
-			(mPenalty + hPenalty) + nPenalty,
+			((mPenalty + hPenalty) + nPenalty) + iPenalty,
 			0,
 			_elm_lang$core$String$length(hay),
 			_elm_lang$core$Tuple$second(sorted));
@@ -26598,11 +26822,11 @@ var _tripokey$elm_fuzzy$Fuzzy$Result = F2(
 	function (a, b) {
 		return {score: a, matches: b};
 	});
-var _tripokey$elm_fuzzy$Fuzzy$ConfigModel = F3(
-	function (a, b, c) {
-		return {addPenalty: a, movePenalty: b, removePenalty: c};
+var _tripokey$elm_fuzzy$Fuzzy$ConfigModel = F4(
+	function (a, b, c, d) {
+		return {addPenalty: a, movePenalty: b, removePenalty: c, insertPenalty: d};
 	});
-var _tripokey$elm_fuzzy$Fuzzy$defaultConfig = A3(_tripokey$elm_fuzzy$Fuzzy$ConfigModel, 1, 100, 1000);
+var _tripokey$elm_fuzzy$Fuzzy$defaultConfig = A4(_tripokey$elm_fuzzy$Fuzzy$ConfigModel, 10, 1000, 10000, 1);
 var _tripokey$elm_fuzzy$Fuzzy$match = F4(
 	function (configs, separators, needle, hay) {
 		var initialResult = A2(
@@ -26671,80 +26895,84 @@ var _tripokey$elm_fuzzy$Fuzzy$match = F4(
 			});
 		var accumulateConfig = F2(
 			function (c, sum) {
-				var _p8 = c;
-				switch (_p8.ctor) {
+				var _p9 = c;
+				switch (_p9.ctor) {
 					case 'AddPenalty':
 						return _elm_lang$core$Native_Utils.update(
 							sum,
-							{addPenalty: _p8._0});
+							{addPenalty: _p9._0});
 					case 'RemovePenalty':
 						return _elm_lang$core$Native_Utils.update(
 							sum,
-							{removePenalty: _p8._0});
+							{removePenalty: _p9._0});
+					case 'MovePenalty':
+						return _elm_lang$core$Native_Utils.update(
+							sum,
+							{movePenalty: _p9._0});
 					default:
 						return _elm_lang$core$Native_Utils.update(
 							sum,
-							{movePenalty: _p8._0});
+							{insertPenalty: _p9._0});
 				}
 			});
 		var config = A3(_elm_lang$core$List$foldl, accumulateConfig, _tripokey$elm_fuzzy$Fuzzy$defaultConfig, configs);
 		var minScore = F2(
-			function (n, _p9) {
-				var _p10 = _p9;
-				var _p15 = _p10._0;
+			function (n, _p10) {
+				var _p11 = _p10;
+				var _p16 = _p11._0;
 				var accumulateMatch = F2(
-					function (e, _p11) {
-						var _p12 = _p11;
-						var _p14 = _p12._1;
-						var _p13 = _p12._0;
-						var newOffset = _p14 + _elm_lang$core$String$length(e);
+					function (e, _p12) {
+						var _p13 = _p12;
+						var _p15 = _p13._1;
+						var _p14 = _p13._0;
+						var newOffset = _p15 + _elm_lang$core$String$length(e);
 						var eDistance = A3(_tripokey$elm_fuzzy$Fuzzy$distance, config, n, e);
-						var newMatch = (_elm_lang$core$Native_Utils.cmp(eDistance.score, _p13.score) < 0) ? _elm_lang$core$Native_Utils.update(
+						var newMatch = (_elm_lang$core$Native_Utils.cmp(eDistance.score, _p14.score) < 0) ? _elm_lang$core$Native_Utils.update(
 							eDistance,
-							{offset: _p14}) : _p13;
+							{offset: _p15}) : _p14;
 						return {ctor: '_Tuple2', _0: newMatch, _1: newOffset};
 					});
-				var initialPenalty = ((_elm_lang$core$String$length(n) * config.removePenalty) + (_elm_lang$core$String$length(n) * config.movePenalty)) + (_elm_lang$core$String$length(hay) * config.addPenalty);
+				var initialPenalty = (((_elm_lang$core$String$length(n) * config.removePenalty) + (_elm_lang$core$String$length(n) * config.movePenalty)) + (_elm_lang$core$String$length(hay) * config.addPenalty)) + ((_elm_lang$core$String$length(hay) * _elm_lang$core$String$length(n)) * config.insertPenalty);
 				var initialMatch = A4(
 					_tripokey$elm_fuzzy$Fuzzy$Match,
 					initialPenalty,
-					_p15,
+					_p16,
 					0,
 					{ctor: '[]'});
 				return _elm_lang$core$Tuple$first(
 					A3(
 						_elm_lang$core$List$foldl,
 						accumulateMatch,
-						{ctor: '_Tuple2', _0: initialMatch, _1: _p15},
-						_p10._1));
+						{ctor: '_Tuple2', _0: initialMatch, _1: _p16},
+						_p11._1));
 			});
 		var accumulateResult = F2(
-			function (n, _p16) {
-				var _p17 = _p16;
-				var _p19 = _p17._0;
-				var _p18 = _p17._1;
+			function (n, _p17) {
+				var _p18 = _p17;
+				var _p20 = _p18._0;
+				var _p19 = _p18._1;
 				var matchResult = A2(
 					minScore,
 					n,
 					A3(
 						reduceHays,
 						_elm_lang$core$List$length(needles),
-						_p18,
+						_p19,
 						hays));
 				var newResult = _elm_lang$core$Native_Utils.update(
-					_p19,
+					_p20,
 					{
-						score: matchResult.score + _p19.score,
+						score: matchResult.score + _p20.score,
 						matches: A2(
 							_elm_lang$core$Basics_ops['++'],
-							_p19.matches,
+							_p20.matches,
 							{
 								ctor: '::',
 								_0: matchResult,
 								_1: {ctor: '[]'}
 							})
 					});
-				return {ctor: '_Tuple2', _0: newResult, _1: _p18 + 1};
+				return {ctor: '_Tuple2', _0: newResult, _1: _p19 + 1};
 			});
 		return _elm_lang$core$Tuple$first(
 			A3(
@@ -26753,6 +26981,12 @@ var _tripokey$elm_fuzzy$Fuzzy$match = F4(
 				{ctor: '_Tuple2', _0: initialResult, _1: 0},
 				needles));
 	});
+var _tripokey$elm_fuzzy$Fuzzy$InsertPenalty = function (a) {
+	return {ctor: 'InsertPenalty', _0: a};
+};
+var _tripokey$elm_fuzzy$Fuzzy$insertPenalty = function (penalty) {
+	return _tripokey$elm_fuzzy$Fuzzy$InsertPenalty(penalty);
+};
 var _tripokey$elm_fuzzy$Fuzzy$MovePenalty = function (a) {
 	return {ctor: 'MovePenalty', _0: a};
 };
@@ -30066,8 +30300,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1344, column: 17},
-							end: {line: 1349, column: 56}
+							start: {line: 1393, column: 17},
+							end: {line: 1398, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -30259,8 +30493,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 1024, column: 5},
-				end: {line: 1029, column: 59}
+				start: {line: 1073, column: 5},
+				end: {line: 1078, column: 59}
 			},
 			_p12)('Referenced field must be boolean');
 	}
@@ -30545,8 +30779,8 @@ var _user$project$Config$languageSelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 533, column: 21},
-							end: {line: 538, column: 60}
+							start: {line: 534, column: 21},
+							end: {line: 539, column: 60}
 						},
 						_p18)('Shouldn\'t be here');
 				}
@@ -30587,8 +30821,8 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 487, column: 21},
-							end: {line: 492, column: 60}
+							start: {line: 488, column: 21},
+							end: {line: 493, column: 60}
 						},
 						_p21)('Shouldn\'t be here');
 				}
@@ -30845,8 +31079,8 @@ var _user$project$Config$fieldHolderToList = function (fieldHolder) {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Config',
 					{
-						start: {line: 153, column: 13},
-						end: {line: 161, column: 50}
+						start: {line: 154, column: 13},
+						end: {line: 162, column: 50}
 					},
 					_p29)('Not a list type');
 		}
@@ -31125,8 +31359,8 @@ var _user$project$Config$selectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 619, column: 13},
-							end: {line: 669, column: 56}
+							start: {line: 620, column: 13},
+							end: {line: 670, column: 56}
 						},
 						_p37)('Not a Selectize field');
 			}
@@ -31528,6 +31762,154 @@ var _user$project$Config$tableView = function (model) {
 			}
 		});
 };
+var _user$project$Config$complianceTableView = function (model) {
+	var header = A2(
+		_elm_lang$html$Html$tr,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$th,
+				{ctor: '[]'},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$th,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Active'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$th,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Threshold'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+	var emptyCell = A2(
+		_elm_lang$html$Html$td,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('--'),
+			_1: {ctor: '[]'}
+		});
+	var cryptoScoped = function (fieldInstance) {
+		return _elm_lang$core$Native_Utils.eq(fieldInstance.fieldLocator.fieldScope.crypto, model.crypto);
+	};
+	var instances = A2(_elm_lang$core$List$filter, cryptoScoped, model.fieldCollection.fieldInstances);
+	var pickField = function (code) {
+		return A3(
+			_user$project$Config$pickFieldInstance,
+			code,
+			{crypto: _user$project$ConfigTypes$GlobalCrypto, machine: _user$project$ConfigTypes$GlobalMachine},
+			instances);
+	};
+	var fieldCodeCellView = function (code) {
+		return A3(
+			_elm_community$maybe_extra$Maybe_Extra$unwrap,
+			emptyCell,
+			_user$project$Config$cellView(model),
+			pickField(code));
+	};
+	var row = F3(
+		function (label, activeFieldCode, thresholdFieldCode) {
+			return A2(
+				_elm_lang$html$Html$tr,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{
+							ctor: '::',
+							_0: _user$project$Css_Admin$class(
+								{
+									ctor: '::',
+									_0: _user$project$Css_Classes$ShortCell,
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(label),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: fieldCodeCellView(activeFieldCode),
+						_1: {
+							ctor: '::',
+							_0: fieldCodeCellView(thresholdFieldCode),
+							_1: {ctor: '[]'}
+						}
+					}
+				});
+		});
+	return A2(
+		_elm_lang$html$Html$table,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{
+					ctor: '::',
+					_0: _user$project$Css_Classes$ConfigTable,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$tbody,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: header,
+					_1: {
+						ctor: '::',
+						_0: A3(row, 'SMS', 'smsVerificationActive', 'smsVerificationThreshold'),
+						_1: {
+							ctor: '::',
+							_0: A3(row, 'ID Card Data', 'idCardDataVerificationActive', 'idCardDataVerificationThreshold'),
+							_1: {
+								ctor: '::',
+								_0: A3(row, 'ID Card Photo', 'idCardPhotoVerificationActive', 'idCardPhotoVerificationThreshold'),
+								_1: {
+									ctor: '::',
+									_0: A3(row, 'Front Facing Camera', 'frontCameraVerificationActive', 'frontCameraVerificationThreshold'),
+									_1: {
+										ctor: '::',
+										_0: A3(row, 'Sanctions', 'sanctionsVerificationActive', 'sanctionsVerificationThreshold'),
+										_1: {
+											ctor: '::',
+											_0: A3(row, 'Cross Reference', 'crossRefVerificationActive', 'crossRefVerificationThreshold'),
+											_1: {
+												ctor: '::',
+												_0: A3(row, 'Hard Limit', 'hardLimitVerificationActive', 'hardLimitVerificationThreshold'),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$Config$Submit = {ctor: 'Submit'};
 var _user$project$Config$view = function (model) {
 	var _p43 = model.webConfigGroup;
@@ -31567,6 +31949,7 @@ var _user$project$Config$view = function (model) {
 				}
 			}();
 			var cryptos = A3(_user$project$ConfigTypes$allCryptos, _p45.data.cryptoCurrencies, _p45.schema.cryptoScope, _p45.selectedCryptos);
+			var getView = _elm_lang$core$Native_Utils.eq(_p45.schema.code, 'compliance') ? _user$project$Config$complianceTableView : _user$project$Config$tableView;
 			var resolvedModel = A2(_user$project$Config$toResolvedModel, model, _p45);
 			var configGroupView = A2(
 				_elm_lang$html$Html$div,
@@ -31582,7 +31965,7 @@ var _user$project$Config$view = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _user$project$Config$tableView(resolvedModel),
+					_0: getView(resolvedModel),
 					_1: {ctor: '[]'}
 				});
 			var machines = _user$project$ConfigTypes$listMachines(resolvedModel.configGroup);
@@ -33226,11 +33609,7 @@ var _user$project$NavBar$determineConfigCategory = function (configCode) {
 						_1: {
 							ctor: '::',
 							_0: 'balanceAlerts',
-							_1: {
-								ctor: '::',
-								_0: 'compliance',
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						}
 					}
 				}
@@ -33244,7 +33623,11 @@ var _user$project$NavBar$determineConfigCategory = function (configCode) {
 			_1: {
 				ctor: '::',
 				_0: 'notifications',
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: 'compliance',
+					_1: {ctor: '[]'}
+				}
 			}
 		}) ? _elm_lang$core$Maybe$Just(_user$project$CoreTypes$GlobalSettingsCat) : _elm_lang$core$Maybe$Nothing);
 };
@@ -33615,11 +33998,7 @@ var _user$project$NavBar$view = F2(
 											_1: {
 												ctor: '::',
 												_0: A2(configLink, 'balanceAlerts', 'Balance Alerts'),
-												_1: {
-													ctor: '::',
-													_0: A2(configLink, 'compliance', 'Compliance'),
-													_1: {ctor: '[]'}
-												}
+												_1: {ctor: '[]'}
 											}
 										}
 									}
@@ -33642,7 +34021,11 @@ var _user$project$NavBar$view = F2(
 									_1: {
 										ctor: '::',
 										_0: A2(configLink, 'notifications', 'Notifications'),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: A2(configLink, 'compliance', 'Compliance'),
+											_1: {ctor: '[]'}
+										}
 									}
 								}),
 							_1: {
