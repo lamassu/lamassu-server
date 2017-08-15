@@ -1,5 +1,5 @@
 var db = require('./db')
-var anonymous = require('../lib/constants').anonymous_customer
+var anonymous = require('../lib/constants').anonymousCustomer
 
 exports.up = function(next) {
   const sql =
