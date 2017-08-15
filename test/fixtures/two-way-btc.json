@@ -99,7 +99,7 @@
         "crypto": "global",
         "machine": "global"
       },
-      "code": "smsVerificationEnabled",
+      "code": "smsVerificationActive",
       "fieldType": "onOff",
       "fieldClass": null
     },
