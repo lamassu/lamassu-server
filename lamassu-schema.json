@@ -120,7 +120,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "hardLimitVerificationThreshold",
@@ -144,7 +145,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "crossRefVerificationThreshold",
@@ -168,7 +170,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "sanctionsVerificationThreshold",
@@ -192,7 +195,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "frontCameraVerificationThreshold",
@@ -216,7 +220,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "idCardPhotoVerificationThreshold",
@@ -240,7 +245,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "idCardDataVerificationThreshold",
@@ -264,7 +270,8 @@
         {
           "code": "required"
         }
-      ]
+      ],
+      "default": false
     },
     {
       "code": "smsVerificationThreshold",
