@@ -204,6 +204,12 @@ p {
     background-color: #ffffff;
 }
 
+.lamassuAdminTxTable  a {
+    text-decoration: none;
+    color: #5f5f56;
+    border-bottom: 1px solid #37e8d7;
+}
+
 .lamassuAdminTxTable  .lamassuAdminNumberColumn {
     text-align: right;
     width: 10em;
@@ -213,6 +219,10 @@ p {
     text-align: left;
     font-weight: bold;
     font-size: 90%;
+}
+
+.lamassuAdminTxTable  .lamassuAdminTxCancelled {
+    background-color: #efd1d2;
 }
 
 .lamassuAdminTxTable  tbody {
