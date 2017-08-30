@@ -1,10 +1,9 @@
 var db = require('./db')
 var anonymous = require('../lib/constants').anonymousCustomer
 
-exports.up = function(next) {
+exports.up = function (next) {
   const sql =
-    [
-    `create table customers ( 
+    [`create table customers (
     id uuid PRIMARY KEY,
     phone text unique,
     phone_at timestamptz,
@@ -23,12 +22,12 @@ exports.up = function(next) {
     created timestamptz NOT NULL DEFAULT now() )`,
     `insert into customers (id, name) VALUES ( '${anonymous.uuid}','${anonymous.name}' )`,
     `alter table cash_in_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`,
-    `alter table cash_out_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`,
+    `alter table cash_out_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`
   ]
 
   db.multi(sql, next)
-};
+}
 
-exports.down = function(next) {
-  next();
-};
+exports.down = function (next) {
+  next()
+}
