@@ -30999,7 +30999,7 @@ var _user$project$Config$checkEnabled = F2(
 			var enabledIfAll = _elm_lang$core$List$isEmpty(fieldMeta.fieldEnabledIfAll) || A2(_elm_lang$core$List$all, _user$project$Config$isField, enabledIfAllInstances);
 			var enabledIfAnyInstances = A3(_user$project$Config$referenceFields, fieldMeta.fieldLocator.fieldScope, fields, fieldMeta.fieldEnabledIfAny);
 			var enabledIfAny = _elm_lang$core$List$isEmpty(fieldMeta.fieldEnabledIfAny) || A2(_elm_lang$core$List$any, _user$project$Config$isField, enabledIfAnyInstances);
-			return A2(_elm_lang$core$Debug$log, 'DEBUG101', enabledIfAny) && A2(_elm_lang$core$Debug$log, 'DEBUG102', enabledIfAll);
+			return enabledIfAny && enabledIfAll;
 		}
 	});
 var _user$project$Config$validateFieldInstance = F2(
@@ -34500,7 +34500,7 @@ var _user$project$StatusDecoder$statusDecoder = A3(
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 
 var _user$project$MaintenanceMachines_Rest$encodeAction = function (action) {
-	var _p0 = A2(_elm_lang$core$Debug$log, 'DEBUG101', action);
+	var _p0 = action;
 	switch (_p0.ctor) {
 		case 'ResetCashOutBills':
 			var _p1 = _p0._0;
@@ -34720,8 +34720,7 @@ var _user$project$MaintenanceMachines_State$update = F2(
 			case 'Submit':
 				return A2(
 					_krisajenkins$remotedata$RemoteData$update,
-					_user$project$MaintenanceMachines_State$updateAction(
-						A2(_elm_lang$core$Debug$log, 'DEBUG102', _p4._0)),
+					_user$project$MaintenanceMachines_State$updateAction(_p4._0),
 					model);
 			default:
 				return A2(
@@ -35625,10 +35624,8 @@ var _user$project$Transaction_View$cashOutTxView = function (tx) {
 		});
 };
 var _user$project$Transaction_View$cashInTxView = function (tx) {
-	var cancelButtonDiv = (tx.operatorCompleted || tx.sendConfirmed) ? A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'}) : A2(
+	var cancellable = !(tx.operatorCompleted || (tx.sendConfirmed || tx.expired));
+	var cancelButtonDiv = cancellable ? A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
@@ -35647,7 +35644,10 @@ var _user$project$Transaction_View$cashInTxView = function (tx) {
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
-		});
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{ctor: '[]'});
 	var cancelStatus = tx.operatorCompleted ? 'Cancelled' : (tx.sendConfirmed ? 'Sent' : (tx.expired ? 'Expired' : 'Pending'));
 	return A2(
 		_elm_lang$html$Html$div,
@@ -36076,19 +36076,18 @@ var _user$project$Main$urlUpdate = F2(
 			_elm_lang$core$Maybe$withDefault,
 			_user$project$CoreTypes$NotFoundRoute,
 			A2(_evancz$url_parser$UrlParser$parseHash, _user$project$Main$parseRoute, location));
-		var _p5 = A2(_elm_lang$core$Debug$log, 'DEBUG101', route);
-		var _p6 = route;
-		switch (_p6.ctor) {
+		var _p5 = route;
+		switch (_p5.ctor) {
 			case 'PairRoute':
-				var _p7 = model.status;
-				if (_p7.ctor === 'Just') {
+				var _p6 = model.status;
+				if (_p6.ctor === 'Just') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
 								location: location,
-								pair: _user$project$Pair$init(_p7._0.server.up)
+								pair: _user$project$Pair$init(_p6._0.server.up)
 							}),
 						{ctor: '[]'});
 				} else {
@@ -36103,9 +36102,9 @@ var _user$project$Main$urlUpdate = F2(
 						{ctor: '[]'});
 				}
 			case 'AccountRoute':
-				var _p8 = _user$project$Account$load(_p6._0);
-				var accountModel = _p8._0;
-				var cmd = _p8._1;
+				var _p7 = _user$project$Account$load(_p5._0);
+				var accountModel = _p7._0;
+				var cmd = _p7._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36117,9 +36116,9 @@ var _user$project$Main$urlUpdate = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'ConfigRoute':
-				var _p9 = A3(_user$project$Config$load, model.config, _p6._0, _p6._1);
-				var configModel = _p9._0;
-				var cmd = _p9._1;
+				var _p8 = A3(_user$project$Config$load, model.config, _p5._0, _p5._1);
+				var configModel = _p8._0;
+				var cmd = _p8._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36131,9 +36130,9 @@ var _user$project$Main$urlUpdate = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'MaintenanceMachinesRoute':
-				var _p10 = _user$project$MaintenanceMachines_State$load;
-				var maintenanceMachines = _p10._0;
-				var cmd = _p10._1;
+				var _p9 = _user$project$MaintenanceMachines_State$load;
+				var maintenanceMachines = _p9._0;
+				var cmd = _p9._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36145,9 +36144,9 @@ var _user$project$Main$urlUpdate = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'MaintenanceFundingRoute':
-				var _p11 = _user$project$MaintenanceFunding_State$load(_p6._0);
-				var maintenanceFunding = _p11._0;
-				var cmd = _p11._1;
+				var _p10 = _user$project$MaintenanceFunding_State$load(_p5._0);
+				var maintenanceFunding = _p10._0;
+				var cmd = _p10._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36159,9 +36158,9 @@ var _user$project$Main$urlUpdate = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionsRoute':
-				var _p12 = _user$project$Transactions$load;
-				var transactionsModel = _p12._0;
-				var cmd = _p12._1;
+				var _p11 = _user$project$Transactions$load;
+				var transactionsModel = _p11._0;
+				var cmd = _p11._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36173,9 +36172,9 @@ var _user$project$Main$urlUpdate = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionRoute':
-				var _p13 = _user$project$Transaction_State$load(_p6._0);
-				var transaction = _p13._0;
-				var cmd = _p13._1;
+				var _p12 = _user$project$Transaction_State$load(_p5._0);
+				var transaction = _p12._0;
+				var cmd = _p12._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36209,9 +36208,9 @@ var _user$project$Main$init = function (location) {
 		status: _elm_lang$core$Maybe$Nothing,
 		err: _elm_lang$core$Maybe$Nothing
 	};
-	var _p14 = A2(_user$project$Main$urlUpdate, location, model);
-	var newModel = _p14._0;
-	var newCmd = _p14._1;
+	var _p13 = A2(_user$project$Main$urlUpdate, location, model);
+	var newModel = _p13._0;
+	var newCmd = _p13._1;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		newModel,
@@ -36231,12 +36230,12 @@ var _user$project$Main$init = function (location) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p15 = msg;
-		switch (_p15.ctor) {
+		var _p14 = msg;
+		switch (_p14.ctor) {
 			case 'PairMsg':
-				var _p16 = A2(_user$project$Pair$update, _p15._0, model.pair);
-				var pairModel = _p16._0;
-				var cmd = _p16._1;
+				var _p15 = A2(_user$project$Pair$update, _p14._0, model.pair);
+				var pairModel = _p15._0;
+				var cmd = _p15._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36248,9 +36247,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'AccountMsg':
-				var _p17 = A2(_user$project$Account$update, _p15._0, model.account);
-				var accountModel = _p17._0;
-				var cmd = _p17._1;
+				var _p16 = A2(_user$project$Account$update, _p14._0, model.account);
+				var accountModel = _p16._0;
+				var cmd = _p16._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36262,8 +36261,8 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'ConfigMsg':
-				var _p19 = _p15._0;
-				var loaded = _user$project$Config$loaded(_p19);
+				var _p18 = _p14._0;
+				var loaded = _user$project$Config$loaded(_p18);
 				var extraCmds = loaded ? {
 					ctor: '::',
 					_0: _user$project$Main$getAccounts,
@@ -36273,9 +36272,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					}
 				} : {ctor: '[]'};
-				var _p18 = A2(_user$project$Config$update, _p19, model.config);
-				var configModel = _p18._0;
-				var cmd = _p18._1;
+				var _p17 = A2(_user$project$Config$update, _p18, model.config);
+				var configModel = _p17._0;
+				var cmd = _p17._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36290,9 +36289,9 @@ var _user$project$Main$update = F2(
 						},
 						extraCmds));
 			case 'MaintenanceMachinesMsg':
-				var _p20 = A2(_user$project$MaintenanceMachines_State$update, _p15._0, model.maintenanceMachines);
-				var maintenanceMachines = _p20._0;
-				var cmd = _p20._1;
+				var _p19 = A2(_user$project$MaintenanceMachines_State$update, _p14._0, model.maintenanceMachines);
+				var maintenanceMachines = _p19._0;
+				var cmd = _p19._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36304,9 +36303,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'MaintenanceFundingMsg':
-				var _p21 = A2(_user$project$MaintenanceFunding_State$update, _p15._0, model.maintenanceFunding);
-				var maintenanceFunding = _p21._0;
-				var cmd = _p21._1;
+				var _p20 = A2(_user$project$MaintenanceFunding_State$update, _p14._0, model.maintenanceFunding);
+				var maintenanceFunding = _p20._0;
+				var cmd = _p20._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36318,9 +36317,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionsMsg':
-				var _p22 = A2(_user$project$Transactions$update, _p15._0, model.transactions);
-				var transactionsModel = _p22._0;
-				var cmd = _p22._1;
+				var _p21 = A2(_user$project$Transactions$update, _p14._0, model.transactions);
+				var transactionsModel = _p21._0;
+				var cmd = _p21._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36332,12 +36331,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionMsg':
-				var _p23 = A2(
-					_user$project$Transaction_State$update,
-					A2(_elm_lang$core$Debug$log, 'DEBUG100', _p15._0),
-					model.transaction);
-				var transaction = _p23._0;
-				var cmd = _p23._1;
+				var _p22 = A2(_user$project$Transaction_State$update, _p14._0, model.transaction);
+				var transaction = _p22._0;
+				var cmd = _p22._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36353,7 +36349,7 @@ var _user$project$Main$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{accounts: _p15._0}),
+						{accounts: _p14._0}),
 					{ctor: '[]'});
 			case 'LoadStatus':
 				var newStatus = _elm_lang$core$List$head(
@@ -36362,7 +36358,7 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Basics$identity,
 						{
 							ctor: '::',
-							_0: _krisajenkins$remotedata$RemoteData$toMaybe(_p15._0),
+							_0: _krisajenkins$remotedata$RemoteData$toMaybe(_p14._0),
 							_1: {
 								ctor: '::',
 								_0: model.status,
@@ -36396,9 +36392,9 @@ var _user$project$Main$update = F2(
 						{status: newStatus, pair: newPair, config: newConfig}),
 					{ctor: '[]'});
 			case 'NewUrl':
-				var _p24 = _user$project$Config$submitNoLoad(model.config);
-				var configModel = _p24._0;
-				var configCmd = _p24._1;
+				var _p23 = _user$project$Config$submitNoLoad(model.config);
+				var configModel = _p23._0;
+				var configCmd = _p23._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36406,7 +36402,7 @@ var _user$project$Main$update = F2(
 						{config: configModel}),
 					{
 						ctor: '::',
-						_0: _elm_lang$navigation$Navigation$newUrl(_p15._0),
+						_0: _elm_lang$navigation$Navigation$newUrl(_p14._0),
 						_1: {
 							ctor: '::',
 							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$ConfigMsg, configCmd),
@@ -36414,7 +36410,7 @@ var _user$project$Main$update = F2(
 						}
 					});
 			case 'UrlChange':
-				return A2(_user$project$Main$urlUpdate, _p15._0, model);
+				return A2(_user$project$Main$urlUpdate, _p14._0, model);
 			case 'Interval':
 				var route = A2(
 					_elm_lang$core$Maybe$withDefault,
