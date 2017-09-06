@@ -600,30 +600,6 @@
       "default": 0
     },
     {
-      "code": "cashInTransactionLimit",
-      "displayTop": "Tx limits",
-      "displayBottom": "Cash-in",
-      "displayTopCount": 2,
-      "fieldType": "integer",
-      "fieldClass": "fiat",
-      "fieldValidation": [
-        {
-          "code": "required"
-        }
-      ]
-    },
-    {
-      "code": "cashOutTransactionLimit",
-      "displayBottom": "Cash-out",
-      "displayTopCount": 0,
-      "fieldType": "integer",
-      "fieldClass": null,
-      "enabledIfAny": [
-        "cashOutEnabled"
-      ],
-      "fieldValidation": [{"code": "required"}]
-    },
-    {
       "code": "smsVerificationEnabled",
       "displayTop": "Verifications enabled",
       "displayBottom": "SMS",
