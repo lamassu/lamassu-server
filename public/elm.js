@@ -31964,12 +31964,12 @@ var _user$project$Common_Customer_Decoder$customerDecoder = A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 		'phone',
 		_elm_lang$core$Json_Decode$string,
-		'--',
+		'',
 		A4(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 			'name',
 			_elm_lang$core$Json_Decode$string,
-			'--',
+			'',
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 				'id',
