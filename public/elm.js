@@ -37867,6 +37867,10 @@ var _user$project$Customers_Types$Load = function (a) {
 	return {ctor: 'Load', _0: a};
 };
 
+var _user$project$Customer_Types$Load = function (a) {
+	return {ctor: 'Load', _0: a};
+};
+
 var _user$project$CoreTypes$MaintenanceCat = {ctor: 'MaintenanceCat'};
 var _user$project$CoreTypes$GlobalSettingsCat = {ctor: 'GlobalSettingsCat'};
 var _user$project$CoreTypes$MachineSettingsCat = {ctor: 'MachineSettingsCat'};
@@ -37876,10 +37880,13 @@ var _user$project$CoreTypes$MaintenanceFundingRoute = function (a) {
 	return {ctor: 'MaintenanceFundingRoute', _0: a};
 };
 var _user$project$CoreTypes$MaintenanceMachinesRoute = {ctor: 'MaintenanceMachinesRoute'};
+var _user$project$CoreTypes$CustomerRoute = function (a) {
+	return {ctor: 'CustomerRoute', _0: a};
+};
+var _user$project$CoreTypes$CustomersRoute = {ctor: 'CustomersRoute'};
 var _user$project$CoreTypes$TransactionRoute = function (a) {
 	return {ctor: 'TransactionRoute', _0: a};
 };
-var _user$project$CoreTypes$CustomersRoute = {ctor: 'CustomersRoute'};
 var _user$project$CoreTypes$TransactionsRoute = {ctor: 'TransactionsRoute'};
 var _user$project$CoreTypes$ConfigRoute = F2(
 	function (a, b) {
@@ -37905,11 +37912,14 @@ var _user$project$CoreTypes$LoadStatus = function (a) {
 var _user$project$CoreTypes$LoadAccounts = function (a) {
 	return {ctor: 'LoadAccounts', _0: a};
 };
-var _user$project$CoreTypes$TransactionMsg = function (a) {
-	return {ctor: 'TransactionMsg', _0: a};
+var _user$project$CoreTypes$CustomerMsg = function (a) {
+	return {ctor: 'CustomerMsg', _0: a};
 };
 var _user$project$CoreTypes$CustomersMsg = function (a) {
 	return {ctor: 'CustomersMsg', _0: a};
+};
+var _user$project$CoreTypes$TransactionMsg = function (a) {
+	return {ctor: 'TransactionMsg', _0: a};
 };
 var _user$project$CoreTypes$TransactionsMsg = function (a) {
 	return {ctor: 'TransactionsMsg', _0: a};
@@ -37928,6 +37938,104 @@ var _user$project$CoreTypes$PairMsg = function (a) {
 };
 var _user$project$CoreTypes$AccountMsg = function (a) {
 	return {ctor: 'AccountMsg', _0: a};
+};
+
+var _user$project$Customer_Rest$getCustomer = function (id) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_user$project$Customer_Types$Load,
+		A2(
+			_lukewestby$elm_http_builder$HttpBuilder$send,
+			_krisajenkins$remotedata$RemoteData$fromResult,
+			A2(
+				_lukewestby$elm_http_builder$HttpBuilder$withExpect,
+				_elm_lang$http$Http$expectJson(_user$project$Common_Customer_Decoder$customerDecoder),
+				_lukewestby$elm_http_builder$HttpBuilder$get(
+					A2(_elm_lang$core$Basics_ops['++'], '/api/customer/', id)))));
+};
+
+var _user$project$Customer_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_p0._0,
+			{ctor: '[]'});
+	});
+var _user$project$Customer_State$load = function (id) {
+	return {
+		ctor: '_Tuple2',
+		_0: _krisajenkins$remotedata$RemoteData$Loading,
+		_1: _user$project$Customer_Rest$getCustomer(id)
+	};
+};
+var _user$project$Customer_State$init = _krisajenkins$remotedata$RemoteData$NotAsked;
+
+var _user$project$Customer_View$customerView = function (customer) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Showing customer: '),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(customer.id),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Customer_View$view = function (model) {
+	var _p0 = model;
+	switch (_p0.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p0._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Customer_View$customerView(_p0._0),
+					_1: {ctor: '[]'}
+				});
+	}
 };
 
 var _user$project$Customers_Rest$getCustomers = A2(
@@ -38244,6 +38352,8 @@ var _user$project$NavBar$determineCategory = function (route) {
 			return _elm_lang$core$Maybe$Nothing;
 		case 'CustomersRoute':
 			return _elm_lang$core$Maybe$Nothing;
+		case 'CustomerRoute':
+			return _elm_lang$core$Maybe$Nothing;
 		default:
 			return _elm_lang$core$Maybe$Nothing;
 	}
@@ -38291,16 +38401,18 @@ var _user$project$NavBar$routeToUrl = function (route) {
 				});
 		case 'TransactionsRoute':
 			return '/#transactions/';
-		case 'CustomersRoute':
-			return '/#customers/';
 		case 'TransactionRoute':
 			return A2(_elm_lang$core$Basics_ops['++'], '/#transaction/', _p1._0);
+		case 'CustomersRoute':
+			return '/#customers/';
+		case 'CustomerRoute':
+			return A2(_elm_lang$core$Basics_ops['++'], '/#customer/', _p1._0);
 		default:
 			return _elm_lang$core$Native_Utils.crashCase(
 				'NavBar',
 				{
 					start: {line: 29, column: 5},
-					end: {line: 55, column: 45}
+					end: {line: 58, column: 45}
 				},
 				_p1)('Need unknown route');
 	}
@@ -40102,16 +40214,21 @@ var _user$project$Main$content = F2(
 					_elm_lang$html$Html$map,
 					_user$project$CoreTypes$TransactionsMsg,
 					_user$project$Transactions$view(model.transactions));
-			case 'CustomersRoute':
-				return A2(
-					_elm_lang$html$Html$map,
-					_user$project$CoreTypes$CustomersMsg,
-					_user$project$Customers_View$view(model.customers));
 			case 'TransactionRoute':
 				return A2(
 					_elm_lang$html$Html$map,
 					_user$project$CoreTypes$TransactionMsg,
 					_user$project$Transaction_View$view(model.transaction));
+			case 'CustomersRoute':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$CoreTypes$CustomersMsg,
+					_user$project$Customers_View$view(model.customers));
+			case 'CustomerRoute':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$CoreTypes$CustomerMsg,
+					_user$project$Customer_View$view(model.customer));
 			default:
 				return A2(
 					_elm_lang$html$Html$div,
@@ -40223,24 +40340,34 @@ var _user$project$Main$parseRoute = _evancz$url_parser$UrlParser$oneOf(
 										ctor: '::',
 										_0: A2(
 											_evancz$url_parser$UrlParser$map,
-											_user$project$CoreTypes$CustomersRoute,
-											_evancz$url_parser$UrlParser$s('customers')),
+											_user$project$CoreTypes$TransactionRoute,
+											A2(
+												_evancz$url_parser$UrlParser_ops['</>'],
+												_evancz$url_parser$UrlParser$s('transaction'),
+												_evancz$url_parser$UrlParser$string)),
 										_1: {
 											ctor: '::',
 											_0: A2(
 												_evancz$url_parser$UrlParser$map,
-												_user$project$CoreTypes$TransactionRoute,
-												A2(
-													_evancz$url_parser$UrlParser_ops['</>'],
-													_evancz$url_parser$UrlParser$s('transaction'),
-													_evancz$url_parser$UrlParser$string)),
+												_user$project$CoreTypes$CustomersRoute,
+												_evancz$url_parser$UrlParser$s('customers')),
 											_1: {
 												ctor: '::',
 												_0: A2(
 													_evancz$url_parser$UrlParser$map,
-													A2(_user$project$CoreTypes$ConfigRoute, 'setup', _elm_lang$core$Maybe$Nothing),
-													_evancz$url_parser$UrlParser$top),
-												_1: {ctor: '[]'}
+													_user$project$CoreTypes$CustomerRoute,
+													A2(
+														_evancz$url_parser$UrlParser_ops['</>'],
+														_evancz$url_parser$UrlParser$s('customer'),
+														_evancz$url_parser$UrlParser$string)),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_evancz$url_parser$UrlParser$map,
+														A2(_user$project$CoreTypes$ConfigRoute, 'setup', _elm_lang$core$Maybe$Nothing),
+														_evancz$url_parser$UrlParser$top),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -40424,10 +40551,24 @@ var _user$project$Main$urlUpdate = F2(
 						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomersMsg, cmd),
 						_1: {ctor: '[]'}
 					});
-			case 'TransactionRoute':
-				var _p13 = _user$project$Transaction_State$load(_p5._0);
-				var transaction = _p13._0;
+			case 'CustomerRoute':
+				var _p13 = _user$project$Customer_State$load(_p5._0);
+				var customerModel = _p13._0;
 				var cmd = _p13._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{location: location, customer: customerModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomerMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'TransactionRoute':
+				var _p14 = _user$project$Transaction_State$load(_p5._0);
+				var transaction = _p14._0;
+				var cmd = _p14._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40456,15 +40597,16 @@ var _user$project$Main$init = function (location) {
 		maintenanceMachines: _user$project$MaintenanceMachines_State$init,
 		maintenanceFunding: _user$project$MaintenanceFunding_State$init,
 		transactions: _user$project$Transactions$init,
-		customers: _user$project$Customers_State$init,
 		transaction: _user$project$Transaction_State$init,
+		customers: _user$project$Customers_State$init,
+		customer: _user$project$Customer_State$init,
 		accounts: {ctor: '[]'},
 		status: _elm_lang$core$Maybe$Nothing,
 		err: _elm_lang$core$Maybe$Nothing
 	};
-	var _p14 = A2(_user$project$Main$urlUpdate, location, model);
-	var newModel = _p14._0;
-	var newCmd = _p14._1;
+	var _p15 = A2(_user$project$Main$urlUpdate, location, model);
+	var newModel = _p15._0;
+	var newCmd = _p15._1;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		newModel,
@@ -40484,12 +40626,12 @@ var _user$project$Main$init = function (location) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p15 = msg;
-		switch (_p15.ctor) {
+		var _p16 = msg;
+		switch (_p16.ctor) {
 			case 'PairMsg':
-				var _p16 = A2(_user$project$Pair$update, _p15._0, model.pair);
-				var pairModel = _p16._0;
-				var cmd = _p16._1;
+				var _p17 = A2(_user$project$Pair$update, _p16._0, model.pair);
+				var pairModel = _p17._0;
+				var cmd = _p17._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40501,9 +40643,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'AccountMsg':
-				var _p17 = A2(_user$project$Account$update, _p15._0, model.account);
-				var accountModel = _p17._0;
-				var cmd = _p17._1;
+				var _p18 = A2(_user$project$Account$update, _p16._0, model.account);
+				var accountModel = _p18._0;
+				var cmd = _p18._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40515,8 +40657,8 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'ConfigMsg':
-				var _p19 = _p15._0;
-				var loaded = _user$project$Config$loaded(_p19);
+				var _p20 = _p16._0;
+				var loaded = _user$project$Config$loaded(_p20);
 				var extraCmds = loaded ? {
 					ctor: '::',
 					_0: _user$project$Main$getAccounts,
@@ -40526,9 +40668,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					}
 				} : {ctor: '[]'};
-				var _p18 = A2(_user$project$Config$update, _p19, model.config);
-				var configModel = _p18._0;
-				var cmd = _p18._1;
+				var _p19 = A2(_user$project$Config$update, _p20, model.config);
+				var configModel = _p19._0;
+				var cmd = _p19._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40543,9 +40685,9 @@ var _user$project$Main$update = F2(
 						},
 						extraCmds));
 			case 'MaintenanceMachinesMsg':
-				var _p20 = A2(_user$project$MaintenanceMachines_State$update, _p15._0, model.maintenanceMachines);
-				var maintenanceMachines = _p20._0;
-				var cmd = _p20._1;
+				var _p21 = A2(_user$project$MaintenanceMachines_State$update, _p16._0, model.maintenanceMachines);
+				var maintenanceMachines = _p21._0;
+				var cmd = _p21._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40557,9 +40699,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'MaintenanceFundingMsg':
-				var _p21 = A2(_user$project$MaintenanceFunding_State$update, _p15._0, model.maintenanceFunding);
-				var maintenanceFunding = _p21._0;
-				var cmd = _p21._1;
+				var _p22 = A2(_user$project$MaintenanceFunding_State$update, _p16._0, model.maintenanceFunding);
+				var maintenanceFunding = _p22._0;
+				var cmd = _p22._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40571,9 +40713,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionsMsg':
-				var _p22 = A2(_user$project$Transactions$update, _p15._0, model.transactions);
-				var transactionsModel = _p22._0;
-				var cmd = _p22._1;
+				var _p23 = A2(_user$project$Transactions$update, _p16._0, model.transactions);
+				var transactionsModel = _p23._0;
+				var cmd = _p23._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40584,22 +40726,8 @@ var _user$project$Main$update = F2(
 						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$TransactionsMsg, cmd),
 						_1: {ctor: '[]'}
 					});
-			case 'CustomersMsg':
-				var _p23 = A2(_user$project$Customers_State$update, _p15._0, model.customers);
-				var customersModel = _p23._0;
-				var cmd = _p23._1;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{customers: customersModel}),
-					{
-						ctor: '::',
-						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomersMsg, cmd),
-						_1: {ctor: '[]'}
-					});
 			case 'TransactionMsg':
-				var _p24 = A2(_user$project$Transaction_State$update, _p15._0, model.transaction);
+				var _p24 = A2(_user$project$Transaction_State$update, _p16._0, model.transaction);
 				var transaction = _p24._0;
 				var cmd = _p24._1;
 				return A2(
@@ -40612,12 +40740,40 @@ var _user$project$Main$update = F2(
 						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$TransactionMsg, cmd),
 						_1: {ctor: '[]'}
 					});
+			case 'CustomersMsg':
+				var _p25 = A2(_user$project$Customers_State$update, _p16._0, model.customers);
+				var customersModel = _p25._0;
+				var cmd = _p25._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{customers: customersModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomersMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'CustomerMsg':
+				var _p26 = A2(_user$project$Customer_State$update, _p16._0, model.customer);
+				var customerModel = _p26._0;
+				var cmd = _p26._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{customer: customerModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomerMsg, cmd),
+						_1: {ctor: '[]'}
+					});
 			case 'LoadAccounts':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{accounts: _p15._0}),
+						{accounts: _p16._0}),
 					{ctor: '[]'});
 			case 'LoadStatus':
 				var newStatus = _elm_lang$core$List$head(
@@ -40626,7 +40782,7 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Basics$identity,
 						{
 							ctor: '::',
-							_0: _krisajenkins$remotedata$RemoteData$toMaybe(_p15._0),
+							_0: _krisajenkins$remotedata$RemoteData$toMaybe(_p16._0),
 							_1: {
 								ctor: '::',
 								_0: model.status,
@@ -40660,9 +40816,9 @@ var _user$project$Main$update = F2(
 						{status: newStatus, pair: newPair, config: newConfig}),
 					{ctor: '[]'});
 			case 'NewUrl':
-				var _p25 = _user$project$Config$submitNoLoad(model.config);
-				var configModel = _p25._0;
-				var configCmd = _p25._1;
+				var _p27 = _user$project$Config$submitNoLoad(model.config);
+				var configModel = _p27._0;
+				var configCmd = _p27._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -40670,7 +40826,7 @@ var _user$project$Main$update = F2(
 						{config: configModel}),
 					{
 						ctor: '::',
-						_0: _elm_lang$navigation$Navigation$newUrl(_p15._0),
+						_0: _elm_lang$navigation$Navigation$newUrl(_p16._0),
 						_1: {
 							ctor: '::',
 							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$ConfigMsg, configCmd),
@@ -40678,7 +40834,7 @@ var _user$project$Main$update = F2(
 						}
 					});
 			case 'UrlChange':
-				return A2(_user$project$Main$urlUpdate, _p15._0, model);
+				return A2(_user$project$Main$urlUpdate, _p16._0, model);
 			case 'Interval':
 				var route = A2(
 					_elm_lang$core$Maybe$withDefault,
@@ -40723,7 +40879,9 @@ var _user$project$Main$Model = function (a) {
 									return function (j) {
 										return function (k) {
 											return function (l) {
-												return {location: a, pair: b, account: c, config: d, maintenanceMachines: e, maintenanceFunding: f, transactions: g, customers: h, transaction: i, accounts: j, status: k, err: l};
+												return function (m) {
+													return {location: a, pair: b, account: c, config: d, maintenanceMachines: e, maintenanceFunding: f, transactions: g, transaction: h, customers: i, customer: j, accounts: k, status: l, err: m};
+												};
 											};
 										};
 									};
@@ -40740,7 +40898,7 @@ var _user$project$Main$Model = function (a) {
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"BasicTypes.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"FieldSet.Types.Msg":{"args":[],"tags":{"Input":["String","String"]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldDecimalType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Customers.Types.Msg":{"args":[],"tags":{"Load":["Customers.Types.Model"]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Types.Msg"],"Submit":[],"HideSaveIndication":[]}},"MaintenanceFunding.Types.Msg":{"args":[],"tags":{"Load":["MaintenanceFunding.Types.Model"],"CryptoSwitch":["String"]}},"Common.TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["Common.TransactionTypes.CashInTxRec"],"CashOutTx":["Common.TransactionTypes.CashOutTxRec"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Transaction.Types.Msg":{"args":[],"tags":{"Load":["Transaction.Types.Model"],"HideSaveIndication":[],"Cancel":["String"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"MaintenanceMachines.Types.Msg":{"args":[],"tags":{"Action":[],"Load":["MaintenanceMachines.Types.Model"],"InputCassette":["MaintenanceMachines.Types.Machine","MaintenanceMachines.Types.Position","String"],"Submit":["MaintenanceMachines.Types.MachineAction"],"HideSaveIndication":[]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"CoreTypes.Msg":{"args":[],"tags":{"WebSocketMsg":["String"],"ConfigMsg":["Config.Msg"],"CustomersMsg":["Customers.Types.Msg"],"TransactionsMsg":["Transactions.Msg"],"LoadAccounts":["List ( String, String )"],"NewUrl":["String"],"Interval":[],"MaintenanceMachinesMsg":["MaintenanceMachines.Types.Msg"],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Types.Msg"],"MaintenanceFundingMsg":["MaintenanceFunding.Types.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"FieldSet.Types.FieldValue":{"args":[],"tags":{"FieldInteger":["Int"],"FieldString":["String"],"FieldPassword":["FieldSet.Types.FieldPasswordType"]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"Transactions.Msg":{"args":[],"tags":{"Load":["Transactions.Model"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"MaintenanceMachines.Types.MachineAction":{"args":[],"tags":{"RebootMachine":["MaintenanceMachines.Types.Machine"],"ResetCashOutBills":["MaintenanceMachines.Types.Machine"],"UnpairMachine":["MaintenanceMachines.Types.Machine"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldDecimalValue":["Float"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}},"FieldSet.Types.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}},"MaintenanceMachines.Types.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSet.Types.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"Common.TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , status : String , dispense : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MaintenanceMachines.Types.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool , cashOut : Bool }"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Transaction.Types.Model":{"args":[],"type":"RemoteData.WebData Transaction.Types.SubModel"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"MaintenanceFunding.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceFunding.Types.SubModel"},"Common.Customer.Types.Customers":{"args":[],"type":"List Common.Customer.Types.Customer"},"MaintenanceFunding.Types.CryptoDisplay":{"args":[],"type":"{ cryptoCode : String, display : String }"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"FieldSet.Types.Field":{"args":[],"type":"{ code : String , display : String , placeholder : String , required : Bool , value : FieldSet.Types.FieldValue , loadedValue : FieldSet.Types.FieldValue }"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Transaction.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus, tx : Common.TransactionTypes.Tx }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"MaintenanceFunding.Types.SubModel":{"args":[],"type":"{ cryptoCode : String , cryptoDisplays : List MaintenanceFunding.Types.CryptoDisplay , fundingAddress : String , fundingAddressUrl : String , confirmedBalance : String , pending : String , fiatConfirmedBalance : String , fiatPending : String , fiatCode : String }"},"Common.TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , operatorCompleted : Bool , send : Bool , sendConfirmed : Bool , expired : Bool , created : Date.Date }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"MaintenanceMachines.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceMachines.Types.SubModel"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , inScope : Bool }"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"Common.Customer.Types.Customer":{"args":[],"type":"{ id : String, name : String, phone : String, created : Date.Date }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String , wasConfigured : Bool }"},"MaintenanceMachines.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus , machines : MaintenanceMachines.Types.Machines }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"Customers.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customers"},"Transactions.Txs":{"args":[],"type":"List Common.TransactionTypes.Tx"},"MaintenanceMachines.Types.Machines":{"args":[],"type":"List MaintenanceMachines.Types.Machine"},"Transactions.Model":{"args":[],"type":"RemoteData.WebData Transactions.Txs"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , readOnly : Bool }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"BasicTypes.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"FieldSet.Types.Msg":{"args":[],"tags":{"Input":["String","String"]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldDecimalType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Customers.Types.Msg":{"args":[],"tags":{"Load":["Customers.Types.Model"]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Customer.Types.Msg":{"args":[],"tags":{"Load":["Customer.Types.Model"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Types.Msg"],"Submit":[],"HideSaveIndication":[]}},"MaintenanceFunding.Types.Msg":{"args":[],"tags":{"Load":["MaintenanceFunding.Types.Model"],"CryptoSwitch":["String"]}},"Common.TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["Common.TransactionTypes.CashInTxRec"],"CashOutTx":["Common.TransactionTypes.CashOutTxRec"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Transaction.Types.Msg":{"args":[],"tags":{"Load":["Transaction.Types.Model"],"HideSaveIndication":[],"Cancel":["String"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"MaintenanceMachines.Types.Msg":{"args":[],"tags":{"Action":[],"Load":["MaintenanceMachines.Types.Model"],"InputCassette":["MaintenanceMachines.Types.Machine","MaintenanceMachines.Types.Position","String"],"Submit":["MaintenanceMachines.Types.MachineAction"],"HideSaveIndication":[]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"CoreTypes.Msg":{"args":[],"tags":{"WebSocketMsg":["String"],"ConfigMsg":["Config.Msg"],"CustomersMsg":["Customers.Types.Msg"],"TransactionsMsg":["Transactions.Msg"],"LoadAccounts":["List ( String, String )"],"NewUrl":["String"],"Interval":[],"MaintenanceMachinesMsg":["MaintenanceMachines.Types.Msg"],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Types.Msg"],"MaintenanceFundingMsg":["MaintenanceFunding.Types.Msg"],"CustomerMsg":["Customer.Types.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"FieldSet.Types.FieldValue":{"args":[],"tags":{"FieldInteger":["Int"],"FieldString":["String"],"FieldPassword":["FieldSet.Types.FieldPasswordType"]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"Transactions.Msg":{"args":[],"tags":{"Load":["Transactions.Model"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"MaintenanceMachines.Types.MachineAction":{"args":[],"tags":{"RebootMachine":["MaintenanceMachines.Types.Machine"],"ResetCashOutBills":["MaintenanceMachines.Types.Machine"],"UnpairMachine":["MaintenanceMachines.Types.Machine"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldDecimalValue":["Float"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}},"FieldSet.Types.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}},"MaintenanceMachines.Types.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSet.Types.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"Common.TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , status : String , dispense : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MaintenanceMachines.Types.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool , cashOut : Bool }"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Transaction.Types.Model":{"args":[],"type":"RemoteData.WebData Transaction.Types.SubModel"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"Customer.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customer"},"MaintenanceFunding.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceFunding.Types.SubModel"},"Common.Customer.Types.Customers":{"args":[],"type":"List Common.Customer.Types.Customer"},"MaintenanceFunding.Types.CryptoDisplay":{"args":[],"type":"{ cryptoCode : String, display : String }"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"FieldSet.Types.Field":{"args":[],"type":"{ code : String , display : String , placeholder : String , required : Bool , value : FieldSet.Types.FieldValue , loadedValue : FieldSet.Types.FieldValue }"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Transaction.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus, tx : Common.TransactionTypes.Tx }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"MaintenanceFunding.Types.SubModel":{"args":[],"type":"{ cryptoCode : String , cryptoDisplays : List MaintenanceFunding.Types.CryptoDisplay , fundingAddress : String , fundingAddressUrl : String , confirmedBalance : String , pending : String , fiatConfirmedBalance : String , fiatPending : String , fiatCode : String }"},"Common.TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , operatorCompleted : Bool , send : Bool , sendConfirmed : Bool , expired : Bool , created : Date.Date }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"MaintenanceMachines.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceMachines.Types.SubModel"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , inScope : Bool }"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"Common.Customer.Types.Customer":{"args":[],"type":"{ id : String, name : String, phone : String, created : Date.Date }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String , wasConfigured : Bool }"},"MaintenanceMachines.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus , machines : MaintenanceMachines.Types.Machines }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"Customers.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customers"},"Transactions.Txs":{"args":[],"type":"List Common.TransactionTypes.Tx"},"MaintenanceMachines.Types.Machines":{"args":[],"type":"List MaintenanceMachines.Types.Machine"},"Transactions.Model":{"args":[],"type":"RemoteData.WebData Transactions.Txs"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , readOnly : Bool }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
