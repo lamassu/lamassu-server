@@ -14,7 +14,7 @@ exports.up = function (next) {
      */
     `create type compliance_type as enum 
     ('authorized', 'sms', 'id_card_data', 'id_card_photo', 'sanctions', 'cross_ref', 'front_camera', 'hard_limit')`,
-    'alter table compliance_authorizations alter column compliance_type type compliance_type using compliance_type::compliance_type',
+    'alter table compliance_authorizations alter column compliance_type set data type compliance_type using compliance_type::text::compliance_type',
     'drop type compliance_types',
 
     "create type verification_type as enum ('verified', 'blocked', 'automatic')",
