@@ -21,11 +21,17 @@ exports.up = function (next) {
 
     'alter table customers drop column manually_verified ',
     "alter table customers add column sms_override verification_type not null default 'automatic'",
+    'alter table customers add column sms_override_by references user_tokens (token)',
     "alter table customers add column id_card_data_override verification_type not null default 'automatic'",
+    'alter table customers add column id_card_data_override_by references user_tokens (token)',
     "alter table customers add column id_card_photo_override verification_type not null default 'automatic'",
+    'alter table customers add column id_card_photo_override_by references user_tokens (token)',
     "alter table customers add column front_facing_cam_override verification_type not null default 'automatic'",
+    'alter table customers add column front_facing_cam_override_by references user_tokens (token)',
     "alter table customers add column sanctions_check_override verification_type not null default 'automatic'",
+    'alter table customers add column sanctions_check_override_by references user_tokens (token)',
     "alter table customers add column authorized_override verification_type not null default 'automatic'",
+    'alter table customers add column authorized_override_by references user_tokens (token)',
     'alter table customers add column authorized_at timestamptz',
     'alter table customers add column sanctions_check_at timestamptz',
 
