@@ -38298,12 +38298,12 @@ var _user$project$Customer_View$customerActions = F2(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', 'automatic')),
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', 'blocked')),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('Unblock'),
+						_0: _elm_lang$html$Html$text('Block'),
 						_1: {ctor: '[]'}
 					});
 		}
