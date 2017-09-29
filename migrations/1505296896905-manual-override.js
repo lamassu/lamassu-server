@@ -13,7 +13,7 @@ exports.up = function (next) {
      * @see {@link http://blog.yo1.dog/updating-enum-values-in-postgresql-the-safe-and-easy-way/}
      */
     `create type compliance_type as enum 
-    ('authorized', 'sms', 'id_card_data', 'id_card_photo', 'sanctions', 'cross_ref', 'front_camera', 'hard_limit')`,
+    ('authorized', 'sms', 'id_card_data', 'id_card_photo', 'sanctions_check', 'front_facing_cam', 'hard_limit')`,
     'alter table compliance_authorizations alter column compliance_type set data type compliance_type using compliance_type::text::compliance_type',
     'drop type compliance_types',
 
@@ -21,17 +21,23 @@ exports.up = function (next) {
 
     'alter table customers drop column manually_verified ',
     "alter table customers add column sms_override verification_type not null default 'automatic'",
-    'alter table customers add column sms_override_by references user_tokens (token)',
+    'alter table customers add column sms_override_by text references  user_tokens (token)',
+    'alter table customers add column sms_override_at timestamptz',
     "alter table customers add column id_card_data_override verification_type not null default 'automatic'",
-    'alter table customers add column id_card_data_override_by references user_tokens (token)',
+    'alter table customers add column id_card_data_override_by text references  user_tokens (token)',
+    'alter table customers add column id_card_data_override_at timestamptz',
     "alter table customers add column id_card_photo_override verification_type not null default 'automatic'",
-    'alter table customers add column id_card_photo_override_by references user_tokens (token)',
+    'alter table customers add column id_card_photo_override_by text references  user_tokens (token)',
+    'alter table customers add column id_card_photo_override_at timestamptz',
     "alter table customers add column front_facing_cam_override verification_type not null default 'automatic'",
-    'alter table customers add column front_facing_cam_override_by references user_tokens (token)',
+    'alter table customers add column front_facing_cam_override_by text references  user_tokens (token)',
+    'alter table customers add column front_facing_cam_override_at timestamptz',
     "alter table customers add column sanctions_check_override verification_type not null default 'automatic'",
-    'alter table customers add column sanctions_check_override_by references user_tokens (token)',
+    'alter table customers add column sanctions_check_override_by text references  user_tokens (token)',
+    'alter table customers add column sanctions_check_override_at timestamptz',
     "alter table customers add column authorized_override verification_type not null default 'automatic'",
-    'alter table customers add column authorized_override_by references user_tokens (token)',
+    'alter table customers add column authorized_override_by text references  user_tokens (token)',
+    'alter table customers add column authorized_override_at timestamptz',
     'alter table customers add column authorized_at timestamptz',
     'alter table customers add column sanctions_check_at timestamptz',
 
