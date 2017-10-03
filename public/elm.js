@@ -31951,6 +31951,17 @@ var _user$project$BasicTypes$Editing = {ctor: 'Editing'};
 var _user$project$BasicTypes$Saved = {ctor: 'Saved'};
 var _user$project$BasicTypes$Saving = {ctor: 'Saving'};
 
+var _user$project$Common_Customer_Types$authorizedToString = function (model) {
+	var _p0 = model;
+	switch (_p0.ctor) {
+		case 'Verified':
+			return 'verified';
+		case 'Blocked':
+			return 'blocked';
+		default:
+			return 'automatic';
+	}
+};
 var _user$project$Common_Customer_Types$Customer = function (a) {
 	return function (b) {
 		return function (c) {
@@ -31972,7 +31983,31 @@ var _user$project$Common_Customer_Types$Customer = function (a) {
 																		return function (s) {
 																			return function (t) {
 																				return function (u) {
-																					return {id: a, name: b, phone: c, phoneAt: d, smsOverride: e, created: f, status: g, authorizedOverride: h, authorizedAt: i, idCardData: j, idCardDataOverride: k, idCardAt: l, idCardImagePath: m, idCardPhotoOverride: n, idCardImageAt: o, sanctionsCheck: p, sanctionsCheckOverride: q, sanctionsCheckAt: r, frontFacingCamPath: s, frontFacingCamOverride: t, frontFacingCamAt: u};
+																					return function (v) {
+																						return function (w) {
+																							return function (x) {
+																								return function (y) {
+																									return function (z) {
+																										return function (_1) {
+																											return function (_2) {
+																												return function (_3) {
+																													return function (_4) {
+																														return function (_5) {
+																															return function (_6) {
+																																return function (_7) {
+																																	return {id: a, name: b, phone: c, phoneAt: d, smsOverride: e, smsOverrideByName: f, smsOverrideAt: g, created: h, status: i, authorizedOverride: j, authorizedOverrideByName: k, authorizedOverrideAt: l, authorizedAt: m, idCardData: n, idCardDataOverride: o, idCardDataOverrideByName: p, idCardDataOverrideAt: q, idCardAt: r, idCardImagePath: s, idCardPhotoOverride: t, idCardPhotoOverrideByName: u, idCardPhotoOverrideAt: v, idCardImageAt: w, sanctionsCheck: x, sanctionsCheckOverride: y, sanctionsCheckOverrideByName: z, sanctionsCheckOverrideAt: _1, sanctionsCheckAt: _2, frontFacingCamPath: _3, frontFacingCamOverride: _4, frontFacingCamOverrideByName: _5, frontFacingCamOverrideAt: _6, frontFacingCamAt: _7};
+																																};
+																															};
+																														};
+																													};
+																												};
+																											};
+																										};
+																									};
+																								};
+																							};
+																						};
+																					};
 																				};
 																			};
 																		};
@@ -32019,85 +32054,133 @@ var _user$project$Common_Customer_Decoder$customerDecoder = A3(
 	_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'frontFacingCamOverride',
-		_user$project$Common_Customer_Decoder$authorizedDecoder,
+		'frontFacingCamOverrideAt',
+		_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'frontFacingCamPath',
+			'frontFacingCamOverrideByName',
 			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'sanctionsCheckAt',
-				_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+				'frontFacingCamOverride',
+				_user$project$Common_Customer_Decoder$authorizedDecoder,
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'sanctionsCheckOverride',
-					_user$project$Common_Customer_Decoder$authorizedDecoder,
+					'frontFacingCamPath',
+					_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 					A3(
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-						'sanctionsCheck',
-						_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+						'sanctionsCheckAt',
+						_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 						A3(
 							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-							'idCardImageAt',
+							'sanctionsCheckOverrideAt',
 							_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 							A3(
 								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-								'idCardPhotoOverride',
-								_user$project$Common_Customer_Decoder$authorizedDecoder,
+								'sanctionsCheckOverrideByName',
+								_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 								A3(
 									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-									'idCardImagePath',
-									_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+									'sanctionsCheckOverride',
+									_user$project$Common_Customer_Decoder$authorizedDecoder,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'idCardAt',
-										_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+										'sanctionsCheck',
+										_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'idCardDataOverride',
-											_user$project$Common_Customer_Decoder$authorizedDecoder,
+											'idCardImageAt',
+											_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 											A3(
 												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'idCardData',
-												_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+												'idCardPhotoOverrideAt',
+												_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 												A3(
 													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-													'authorizedAt',
-													_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+													'idCardPhotoOverrideByName',
+													_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 													A3(
 														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-														'authorizedOverride',
+														'idCardPhotoOverride',
 														_user$project$Common_Customer_Decoder$authorizedDecoder,
 														A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-															'status',
+															'idCardImagePath',
 															_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 															A3(
 																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																'created',
-																_elm_community$json_extra$Json_Decode_Extra$date,
+																'idCardAt',
+																_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 																A3(
 																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																	'smsOverride',
-																	_user$project$Common_Customer_Decoder$authorizedDecoder,
+																	'idCardDataOverrideAt',
+																	_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 																	A3(
 																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																		'phoneAt',
-																		_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																		'idCardDataOverrideByName',
+																		_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 																		A3(
 																			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																			'phone',
-																			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																			'idCardDataOverride',
+																			_user$project$Common_Customer_Decoder$authorizedDecoder,
 																			A3(
 																				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																				'name',
+																				'idCardData',
 																				_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 																				A3(
 																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																					'id',
-																					_elm_lang$core$Json_Decode$string,
-																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Customer_Types$Customer))))))))))))))))))))));
+																					'authorizedAt',
+																					_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																					A3(
+																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																						'authorizedOverrideAt',
+																						_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																						A3(
+																							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																							'authorizedOverrideByName',
+																							_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																							A3(
+																								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																								'authorizedOverride',
+																								_user$project$Common_Customer_Decoder$authorizedDecoder,
+																								A3(
+																									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																									'status',
+																									_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																									A3(
+																										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																										'created',
+																										_elm_community$json_extra$Json_Decode_Extra$date,
+																										A3(
+																											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																											'smsOverrideAt',
+																											_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																											A3(
+																												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																												'smsOverrideByName',
+																												_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																												A3(
+																													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																													'smsOverride',
+																													_user$project$Common_Customer_Decoder$authorizedDecoder,
+																													A3(
+																														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																														'phoneAt',
+																														_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																														A3(
+																															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																															'phone',
+																															_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																															A3(
+																																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																																'name',
+																																_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																																A3(
+																																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																																	'id',
+																																	_elm_lang$core$Json_Decode$string,
+																																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Customer_Types$Customer))))))))))))))))))))))))))))))))));
 var _user$project$Common_Customer_Decoder$customersDecoder = A2(
 	_elm_lang$core$Json_Decode$field,
 	'customers',
@@ -38104,7 +38187,10 @@ var _user$project$Customer_Rest$patchCustomer = F3(
 									A2(
 										_elm_lang$core$Basics_ops['++'],
 										field,
-										A2(_elm_lang$core$Basics_ops['++'], '=', value)))))))));
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'=',
+											_user$project$Common_Customer_Types$authorizedToString(value))))))))));
 	});
 
 var _user$project$Customer_State$update = F2(
@@ -38135,17 +38221,6 @@ var _user$project$Customer_State$load = function (id) {
 };
 var _user$project$Customer_State$init = _krisajenkins$remotedata$RemoteData$NotAsked;
 
-var _user$project$Customer_View$authorizedToString = function (model) {
-	var _p0 = model;
-	switch (_p0.ctor) {
-		case 'Verified':
-			return 'verified';
-		case 'Blocked':
-			return 'blocked';
-		default:
-			return 'automatic';
-	}
-};
 var _user$project$Customer_View$verifyStatus = F2(
 	function (complianceType, fieldOverride) {
 		return (_elm_lang$core$Native_Utils.eq(fieldOverride, _user$project$Common_Customer_Types$Verified) || ((!_elm_lang$core$Native_Utils.eq(complianceType, _elm_lang$core$Maybe$Nothing)) && _elm_lang$core$Native_Utils.eq(fieldOverride, _user$project$Common_Customer_Types$Automatic))) ? _elm_lang$html$Html$text('Verified') : _elm_lang$html$Html$text('Unverified');
@@ -38171,9 +38246,7 @@ var _user$project$Customer_View$radio = F4(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$checked(
-							_elm_lang$core$Native_Utils.eq(
-								_user$project$Customer_View$authorizedToString(checkedValue),
-								value)),
+							_elm_lang$core$Native_Utils.eq(checkedValue, value)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$type_('radio'),
@@ -38191,7 +38264,8 @@ var _user$project$Customer_View$radio = F4(
 					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(value),
+					_0: _elm_lang$html$Html$text(
+						_user$project$Common_Customer_Types$authorizedToString(value)),
 					_1: {ctor: '[]'}
 				}
 			});
@@ -38212,36 +38286,24 @@ var _user$project$Customer_View$actions = F3(
 							_user$project$Customer_View$radio,
 							fieldKey,
 							checkedValue,
-							'automatic',
-							A3(
-								_user$project$Customer_Types$PatchCustomer,
-								id,
-								fieldKey,
-								_user$project$Customer_View$authorizedToString(_user$project$Common_Customer_Types$Automatic))),
+							_user$project$Common_Customer_Types$Automatic,
+							A3(_user$project$Customer_Types$PatchCustomer, id, fieldKey, _user$project$Common_Customer_Types$Automatic)),
 						_1: {
 							ctor: '::',
 							_0: A4(
 								_user$project$Customer_View$radio,
 								fieldKey,
 								checkedValue,
-								'blocked',
-								A3(
-									_user$project$Customer_Types$PatchCustomer,
-									id,
-									fieldKey,
-									_user$project$Customer_View$authorizedToString(_user$project$Common_Customer_Types$Blocked))),
+								_user$project$Common_Customer_Types$Blocked,
+								A3(_user$project$Customer_Types$PatchCustomer, id, fieldKey, _user$project$Common_Customer_Types$Blocked)),
 							_1: {
 								ctor: '::',
 								_0: A4(
 									_user$project$Customer_View$radio,
 									fieldKey,
 									checkedValue,
-									'verified',
-									A3(
-										_user$project$Customer_Types$PatchCustomer,
-										id,
-										fieldKey,
-										_user$project$Customer_View$authorizedToString(_user$project$Common_Customer_Types$Verified))),
+									_user$project$Common_Customer_Types$Verified,
+									A3(_user$project$Customer_Types$PatchCustomer, id, fieldKey, _user$project$Common_Customer_Types$Verified)),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -38250,27 +38312,28 @@ var _user$project$Customer_View$actions = F3(
 			});
 	});
 var _user$project$Customer_View$maybeText = function (maybeString) {
-	return A2(_elm_lang$core$Maybe$withDefault, '', maybeString);
+	return _elm_lang$html$Html$text(
+		A2(_elm_lang$core$Maybe$withDefault, '', maybeString));
 };
 var _user$project$Customer_View$formatDate = function (date) {
-	var _p1 = date;
-	if (_p1.ctor === 'Just') {
-		return A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p1._0);
+	var _p0 = date;
+	if (_p0.ctor === 'Just') {
+		return A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p0._0);
 	} else {
 		return '';
 	}
 };
 var _user$project$Customer_View$customerActions = F2(
 	function (id, authorizedOverride) {
-		var _p2 = authorizedOverride;
-		switch (_p2.ctor) {
+		var _p1 = authorizedOverride;
+		switch (_p1.ctor) {
 			case 'Blocked':
 				return A2(
 					_elm_lang$html$Html$button,
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', 'verified')),
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', _user$project$Common_Customer_Types$Verified)),
 						_1: {ctor: '[]'}
 					},
 					{
@@ -38284,7 +38347,7 @@ var _user$project$Customer_View$customerActions = F2(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', 'blocked')),
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', _user$project$Common_Customer_Types$Blocked)),
 						_1: {ctor: '[]'}
 					},
 					{
@@ -38298,7 +38361,7 @@ var _user$project$Customer_View$customerActions = F2(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html_Events$onClick(
-							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', 'blocked')),
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', _user$project$Common_Customer_Types$Blocked)),
 						_1: {ctor: '[]'}
 					},
 					{
@@ -38391,8 +38454,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 													{ctor: '[]'},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text(
-															_user$project$Customer_View$maybeText(customer.name)),
+														_0: _user$project$Customer_View$maybeText(customer.name),
 														_1: {ctor: '[]'}
 													}),
 												_1: {ctor: '[]'}
@@ -38420,8 +38482,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text(
-																_user$project$Customer_View$maybeText(customer.phone)),
+															_0: _user$project$Customer_View$maybeText(customer.phone),
 															_1: {ctor: '[]'}
 														}),
 													_1: {ctor: '[]'}
@@ -38633,10 +38694,21 @@ var _user$project$Customer_View$customerView = function (customer) {
 																	{ctor: '[]'},
 																	{
 																		ctor: '::',
-																		_0: _elm_lang$html$Html$text('Actions'),
+																		_0: _elm_lang$html$Html$text('User who overrode'),
 																		_1: {ctor: '[]'}
 																	}),
-																_1: {ctor: '[]'}
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('Actions'),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
 															}
 														}
 													}
@@ -38693,7 +38765,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 																	{
 																		ctor: '::',
 																		_0: _elm_lang$html$Html$text(
-																			_user$project$Customer_View$authorizedToString(customer.smsOverride)),
+																			_user$project$Common_Customer_Types$authorizedToString(customer.smsOverride)),
 																		_1: {ctor: '[]'}
 																	}),
 																_1: {
@@ -38703,10 +38775,21 @@ var _user$project$Customer_View$customerView = function (customer) {
 																		{ctor: '[]'},
 																		{
 																			ctor: '::',
-																			_0: A3(_user$project$Customer_View$actions, customer.id, 'smsOverride', customer.smsOverride),
+																			_0: _user$project$Customer_View$maybeText(customer.smsOverrideByName),
 																			_1: {ctor: '[]'}
 																		}),
-																	_1: {ctor: '[]'}
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: A3(_user$project$Customer_View$actions, customer.id, 'smsOverride', customer.smsOverride),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}
 																}
 															}
 														}
@@ -38756,7 +38839,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 																		{
 																			ctor: '::',
 																			_0: _elm_lang$html$Html$text(
-																				_user$project$Customer_View$authorizedToString(customer.idCardDataOverride)),
+																				_user$project$Common_Customer_Types$authorizedToString(customer.idCardDataOverride)),
 																			_1: {ctor: '[]'}
 																		}),
 																	_1: {
@@ -38766,10 +38849,21 @@ var _user$project$Customer_View$customerView = function (customer) {
 																			{ctor: '[]'},
 																			{
 																				ctor: '::',
-																				_0: A3(_user$project$Customer_View$actions, customer.id, 'idCardDataOverride', customer.idCardDataOverride),
+																				_0: _user$project$Customer_View$maybeText(customer.idCardDataOverrideByName),
 																				_1: {ctor: '[]'}
 																			}),
-																		_1: {ctor: '[]'}
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$td,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: A3(_user$project$Customer_View$actions, customer.id, 'idCardDataOverride', customer.idCardDataOverride),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {ctor: '[]'}
+																		}
 																	}
 																}
 															}
@@ -38819,7 +38913,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 																			{
 																				ctor: '::',
 																				_0: _elm_lang$html$Html$text(
-																					_user$project$Customer_View$authorizedToString(customer.idCardPhotoOverride)),
+																					_user$project$Common_Customer_Types$authorizedToString(customer.idCardPhotoOverride)),
 																				_1: {ctor: '[]'}
 																			}),
 																		_1: {
@@ -38829,10 +38923,21 @@ var _user$project$Customer_View$customerView = function (customer) {
 																				{ctor: '[]'},
 																				{
 																					ctor: '::',
-																					_0: A3(_user$project$Customer_View$actions, customer.id, 'idCardPhotoOverride', customer.idCardPhotoOverride),
+																					_0: _user$project$Customer_View$maybeText(customer.idCardPhotoOverrideByName),
 																					_1: {ctor: '[]'}
 																				}),
-																			_1: {ctor: '[]'}
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_lang$html$Html$td,
+																					{ctor: '[]'},
+																					{
+																						ctor: '::',
+																						_0: A3(_user$project$Customer_View$actions, customer.id, 'idCardPhotoOverride', customer.idCardPhotoOverride),
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {ctor: '[]'}
+																			}
 																		}
 																	}
 																}
@@ -38882,7 +38987,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 																				{
 																					ctor: '::',
 																					_0: _elm_lang$html$Html$text(
-																						_user$project$Customer_View$authorizedToString(customer.frontFacingCamOverride)),
+																						_user$project$Common_Customer_Types$authorizedToString(customer.frontFacingCamOverride)),
 																					_1: {ctor: '[]'}
 																				}),
 																			_1: {
@@ -38892,10 +38997,21 @@ var _user$project$Customer_View$customerView = function (customer) {
 																					{ctor: '[]'},
 																					{
 																						ctor: '::',
-																						_0: A3(_user$project$Customer_View$actions, customer.id, 'frontFacingCamOverride', customer.frontFacingCamOverride),
+																						_0: _user$project$Customer_View$maybeText(customer.frontFacingCamOverrideByName),
 																						_1: {ctor: '[]'}
 																					}),
-																				_1: {ctor: '[]'}
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_elm_lang$html$Html$td,
+																						{ctor: '[]'},
+																						{
+																							ctor: '::',
+																							_0: A3(_user$project$Customer_View$actions, customer.id, 'frontFacingCamOverride', customer.frontFacingCamOverride),
+																							_1: {ctor: '[]'}
+																						}),
+																					_1: {ctor: '[]'}
+																				}
 																			}
 																		}
 																	}
@@ -38945,7 +39061,7 @@ var _user$project$Customer_View$customerView = function (customer) {
 																					{
 																						ctor: '::',
 																						_0: _elm_lang$html$Html$text(
-																							_user$project$Customer_View$authorizedToString(customer.sanctionsCheckOverride)),
+																							_user$project$Common_Customer_Types$authorizedToString(customer.sanctionsCheckOverride)),
 																						_1: {ctor: '[]'}
 																					}),
 																				_1: {
@@ -38955,10 +39071,21 @@ var _user$project$Customer_View$customerView = function (customer) {
 																						{ctor: '[]'},
 																						{
 																							ctor: '::',
-																							_0: A3(_user$project$Customer_View$actions, customer.id, 'sanctionsCheckOverride', customer.sanctionsCheckOverride),
+																							_0: _user$project$Customer_View$maybeText(customer.sanctionsCheckOverrideByName),
 																							_1: {ctor: '[]'}
 																						}),
-																					_1: {ctor: '[]'}
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_elm_lang$html$Html$td,
+																							{ctor: '[]'},
+																							{
+																								ctor: '::',
+																								_0: A3(_user$project$Customer_View$actions, customer.id, 'sanctionsCheckOverride', customer.sanctionsCheckOverride),
+																								_1: {ctor: '[]'}
+																							}),
+																						_1: {ctor: '[]'}
+																					}
 																				}
 																			}
 																		}
@@ -38980,8 +39107,8 @@ var _user$project$Customer_View$customerView = function (customer) {
 		});
 };
 var _user$project$Customer_View$view = function (model) {
-	var _p3 = model;
-	switch (_p3.ctor) {
+	var _p2 = model;
+	switch (_p2.ctor) {
 		case 'NotAsked':
 			return A2(
 				_elm_lang$html$Html$div,
@@ -39003,7 +39130,7 @@ var _user$project$Customer_View$view = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p3._0)),
+						_elm_lang$core$Basics$toString(_p2._0)),
 					_1: {ctor: '[]'}
 				});
 		default:
@@ -39012,7 +39139,7 @@ var _user$project$Customer_View$view = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _user$project$Customer_View$customerView(_p3._0),
+					_0: _user$project$Customer_View$customerView(_p2._0),
 					_1: {ctor: '[]'}
 				});
 	}
@@ -41906,7 +42033,7 @@ var _user$project$Main$Model = function (a) {
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"BasicTypes.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"FieldSet.Types.Msg":{"args":[],"tags":{"Input":["String","String"]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldDecimalType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Customers.Types.Msg":{"args":[],"tags":{"Load":["Customers.Types.Model"]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Common.Customer.Types.Authorized":{"args":[],"tags":{"Automatic":[],"Verified":[],"Blocked":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Customer.Types.Msg":{"args":[],"tags":{"PatchCustomer":["String","String","String"],"Load":["Customer.Types.Model"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Types.Msg"],"Submit":[],"HideSaveIndication":[]}},"MaintenanceFunding.Types.Msg":{"args":[],"tags":{"Load":["MaintenanceFunding.Types.Model"],"CryptoSwitch":["String"]}},"Common.TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["Common.TransactionTypes.CashInTxRec"],"CashOutTx":["Common.TransactionTypes.CashOutTxRec"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Transaction.Types.Msg":{"args":[],"tags":{"Load":["Transaction.Types.Model"],"HideSaveIndication":[],"Cancel":["String"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"MaintenanceMachines.Types.Msg":{"args":[],"tags":{"Action":[],"Load":["MaintenanceMachines.Types.Model"],"InputCassette":["MaintenanceMachines.Types.Machine","MaintenanceMachines.Types.Position","String"],"Submit":["MaintenanceMachines.Types.MachineAction"],"HideSaveIndication":[]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"CoreTypes.Msg":{"args":[],"tags":{"WebSocketMsg":["String"],"ConfigMsg":["Config.Msg"],"CustomersMsg":["Customers.Types.Msg"],"TransactionsMsg":["Transactions.Msg"],"LoadAccounts":["List ( String, String )"],"NewUrl":["String"],"Interval":[],"MaintenanceMachinesMsg":["MaintenanceMachines.Types.Msg"],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Types.Msg"],"MaintenanceFundingMsg":["MaintenanceFunding.Types.Msg"],"CustomerMsg":["Customer.Types.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"FieldSet.Types.FieldValue":{"args":[],"tags":{"FieldInteger":["Int"],"FieldString":["String"],"FieldPassword":["FieldSet.Types.FieldPasswordType"]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"Transactions.Msg":{"args":[],"tags":{"Load":["Transactions.Model"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"MaintenanceMachines.Types.MachineAction":{"args":[],"tags":{"RebootMachine":["MaintenanceMachines.Types.Machine"],"ResetCashOutBills":["MaintenanceMachines.Types.Machine"],"UnpairMachine":["MaintenanceMachines.Types.Machine"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldDecimalValue":["Float"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}},"FieldSet.Types.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}},"MaintenanceMachines.Types.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSet.Types.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"Common.TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , status : String , dispense : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MaintenanceMachines.Types.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool , cashOut : Bool }"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Transaction.Types.Model":{"args":[],"type":"RemoteData.WebData Transaction.Types.SubModel"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"Customer.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customer"},"MaintenanceFunding.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceFunding.Types.SubModel"},"Common.Customer.Types.Customers":{"args":[],"type":"List Common.Customer.Types.Customer"},"MaintenanceFunding.Types.CryptoDisplay":{"args":[],"type":"{ cryptoCode : String, display : String }"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"FieldSet.Types.Field":{"args":[],"type":"{ code : String , display : String , placeholder : String , required : Bool , value : FieldSet.Types.FieldValue , loadedValue : FieldSet.Types.FieldValue }"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Transaction.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus, tx : Common.TransactionTypes.Tx }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"MaintenanceFunding.Types.SubModel":{"args":[],"type":"{ cryptoCode : String , cryptoDisplays : List MaintenanceFunding.Types.CryptoDisplay , fundingAddress : String , fundingAddressUrl : String , confirmedBalance : String , pending : String , fiatConfirmedBalance : String , fiatPending : String , fiatCode : String }"},"Common.TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , operatorCompleted : Bool , send : Bool , sendConfirmed : Bool , expired : Bool , created : Date.Date }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"MaintenanceMachines.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceMachines.Types.SubModel"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , inScope : Bool }"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"Common.Customer.Types.Customer":{"args":[],"type":"{ id : String , name : Maybe.Maybe String , phone : Maybe.Maybe String , phoneAt : Maybe.Maybe Date.Date , smsOverride : Common.Customer.Types.Authorized , created : Date.Date , status : Maybe.Maybe String , authorizedOverride : Common.Customer.Types.Authorized , authorizedAt : Maybe.Maybe Date.Date , idCardData : Maybe.Maybe String , idCardDataOverride : Common.Customer.Types.Authorized , idCardAt : Maybe.Maybe Date.Date , idCardImagePath : Maybe.Maybe String , idCardPhotoOverride : Common.Customer.Types.Authorized , idCardImageAt : Maybe.Maybe Date.Date , sanctionsCheck : Maybe.Maybe String , sanctionsCheckOverride : Common.Customer.Types.Authorized , sanctionsCheckAt : Maybe.Maybe Date.Date , frontFacingCamPath : Maybe.Maybe String , frontFacingCamOverride : Common.Customer.Types.Authorized , frontFacingCamAt : Maybe.Maybe Date.Date }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String , wasConfigured : Bool }"},"MaintenanceMachines.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus , machines : MaintenanceMachines.Types.Machines }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"Customers.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customers"},"Transactions.Txs":{"args":[],"type":"List Common.TransactionTypes.Tx"},"MaintenanceMachines.Types.Machines":{"args":[],"type":"List MaintenanceMachines.Types.Machine"},"Transactions.Model":{"args":[],"type":"RemoteData.WebData Transactions.Txs"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , readOnly : Bool }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selectize.Status":{"args":[],"tags":{"Editing":[],"Idle":[],"Blurred":[],"Cleared":[],"Initial":[]}},"BasicTypes.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Account.SavingStatus":{"args":[],"tags":{"Saving":[],"Editing":[],"NotSaving":[],"Saved":[]}},"ConfigTypes.ConfigScope":{"args":[],"tags":{"Specific":[],"Both":[],"Global":[]}},"FieldSet.Types.Msg":{"args":[],"tags":{"Input":["String","String"]}},"ConfigTypes.FieldType":{"args":[],"tags":{"FieldOnOffType":[],"FieldPercentageType":[],"FieldLanguageType":[],"FieldCryptoCurrencyType":[],"FieldDecimalType":[],"FieldIntegerType":[],"FieldFiatCurrencyType":[],"FieldStringType":[],"FieldCountryType":[],"FieldAccountType":[]}},"Customers.Types.Msg":{"args":[],"tags":{"Load":["Customers.Types.Model"]}},"Pair.Msg":{"args":[],"tags":{"SubmitName":[],"Load":["RemoteData.WebData String"],"InputName":["String"]}},"Common.Customer.Types.Authorized":{"args":[],"tags":{"Automatic":[],"Verified":[],"Blocked":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"ConfigTypes.DisplayTop":{"args":[],"tags":{"DisplayTopSolo":["String"],"DisplayTopLeader":["Int","String"],"DisplayTopNone":[]}},"Customer.Types.Msg":{"args":[],"tags":{"PatchCustomer":["String","String","Common.Customer.Types.Authorized"],"Load":["Customer.Types.Model"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Account.Msg":{"args":[],"tags":{"Load":["Account.Model"],"FieldSetMsg":["FieldSet.Types.Msg"],"Submit":[],"HideSaveIndication":[]}},"MaintenanceFunding.Types.Msg":{"args":[],"tags":{"Load":["MaintenanceFunding.Types.Model"],"CryptoSwitch":["String"]}},"Common.TransactionTypes.Tx":{"args":[],"tags":{"CashInTx":["Common.TransactionTypes.CashInTxRec"],"CashOutTx":["Common.TransactionTypes.CashOutTxRec"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Transaction.Types.Msg":{"args":[],"tags":{"Load":["Transaction.Types.Model"],"HideSaveIndication":[],"Cancel":["String"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"MaintenanceMachines.Types.Msg":{"args":[],"tags":{"Action":[],"Load":["MaintenanceMachines.Types.Model"],"InputCassette":["MaintenanceMachines.Types.Machine","MaintenanceMachines.Types.Position","String"],"Submit":["MaintenanceMachines.Types.MachineAction"],"HideSaveIndication":[]}},"ConfigTypes.Crypto":{"args":[],"tags":{"GlobalCrypto":[],"CryptoCode":["String"]}},"CoreTypes.Msg":{"args":[],"tags":{"WebSocketMsg":["String"],"ConfigMsg":["Config.Msg"],"CustomersMsg":["Customers.Types.Msg"],"TransactionsMsg":["Transactions.Msg"],"LoadAccounts":["List ( String, String )"],"NewUrl":["String"],"Interval":[],"MaintenanceMachinesMsg":["MaintenanceMachines.Types.Msg"],"LoadStatus":["StatusTypes.WebStatus"],"UrlChange":["Navigation.Location"],"TransactionMsg":["Transaction.Types.Msg"],"MaintenanceFundingMsg":["MaintenanceFunding.Types.Msg"],"CustomerMsg":["Customer.Types.Msg"],"AccountMsg":["Account.Msg"],"PairMsg":["Pair.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"FieldSet.Types.FieldValue":{"args":[],"tags":{"FieldInteger":["Int"],"FieldString":["String"],"FieldPassword":["FieldSet.Types.FieldPasswordType"]}},"ConfigTypes.Machine":{"args":[],"tags":{"MachineId":["String"],"GlobalMachine":[]}},"Config.Msg":{"args":[],"tags":{"Focus":["ConfigTypes.FieldLocator"],"BlurSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"Remove":["ConfigTypes.FieldLocator","Selectize.State"],"Load":["Config.WebConfigGroup"],"Input":["ConfigTypes.FieldLocator","String"],"Blur":["ConfigTypes.FieldLocator"],"Add":["ConfigTypes.FieldLocator","String","Selectize.State"],"Submit":[],"SelectizeMsg":["ConfigTypes.FieldLocator","Selectize.State"],"FocusSelectize":["ConfigTypes.FieldLocator","Selectize.State"],"HideSaveIndication":[],"NoOp":[],"CryptoSwitch":["ConfigTypes.Crypto"]}},"Transactions.Msg":{"args":[],"tags":{"Load":["Transactions.Model"]}},"ConfigTypes.FieldValidator":{"args":[],"tags":{"FieldRequired":[],"FieldMin":["Int"],"FieldMax":["Int"]}},"MaintenanceMachines.Types.MachineAction":{"args":[],"tags":{"RebootMachine":["MaintenanceMachines.Types.Machine"],"ResetCashOutBills":["MaintenanceMachines.Types.Machine"],"UnpairMachine":["MaintenanceMachines.Types.Machine"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"ConfigTypes.FieldValue":{"args":[],"tags":{"FieldIntegerValue":["Int"],"FieldDecimalValue":["Float"],"FieldCryptoCurrencyValue":["List String"],"FieldCountryValue":["String"],"FieldFiatCurrencyValue":["String"],"FieldStringValue":["String"],"FieldOnOffValue":["Bool"],"FieldAccountValue":["String"],"FieldLanguageValue":["List String"],"FieldPercentageValue":["Float"]}},"FieldSet.Types.FieldPasswordType":{"args":[],"tags":{"PasswordEmpty":[],"PasswordHidden":[],"Password":["String"]}},"MaintenanceMachines.Types.Position":{"args":[],"tags":{"Bottom":[],"Top":[]}}},"aliases":{"ConfigTypes.ConfigSchema":{"args":[],"type":"{ code : String , display : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , entries : List ConfigTypes.FieldDescriptor }"},"Selectize.State":{"args":[],"type":"{ boxPosition : Int, status : Selectize.Status, string : String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"ConfigTypes.FieldLocator":{"args":[],"type":"{ fieldScope : ConfigTypes.FieldScope , code : String , fieldType : ConfigTypes.FieldType , fieldClass : Maybe.Maybe String }"},"AccountTypes.Account":{"args":[],"type":"{ code : String , display : String , fields : List FieldSet.Types.Field }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"StatusTypes.WebStatus":{"args":[],"type":"RemoteData.WebData StatusTypes.StatusRec"},"Common.TransactionTypes.CashOutTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , status : String , dispense : Bool , notified : Bool , redeemed : Bool , phone : Maybe.Maybe String , error : Maybe.Maybe String , created : Date.Date , confirmed : Bool }"},"MaintenanceMachines.Types.Machine":{"args":[],"type":"{ deviceId : String , name : String , cashbox : Int , cassette1 : Int , cassette2 : Int , paired : Bool , cashOut : Bool }"},"ConfigTypes.ConfigData":{"args":[],"type":"{ cryptoCurrencies : List ConfigTypes.CryptoDisplay , currencies : List ConfigTypes.DisplayRec , languages : List ConfigTypes.DisplayRec , countries : List ConfigTypes.DisplayRec , accounts : List ConfigTypes.AccountRec , machines : List ConfigTypes.MachineDisplay }"},"Transaction.Types.Model":{"args":[],"type":"RemoteData.WebData Transaction.Types.SubModel"},"Account.Model":{"args":[],"type":"RemoteData.WebData Account.SubModel"},"Customer.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customer"},"MaintenanceFunding.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceFunding.Types.SubModel"},"Common.Customer.Types.Customers":{"args":[],"type":"List Common.Customer.Types.Customer"},"MaintenanceFunding.Types.CryptoDisplay":{"args":[],"type":"{ cryptoCode : String, display : String }"},"ConfigTypes.CryptoDisplay":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, display : String }"},"Config.WebConfigGroup":{"args":[],"type":"RemoteData.WebData ConfigTypes.ConfigGroup"},"FieldSet.Types.Field":{"args":[],"type":"{ code : String , display : String , placeholder : String , required : Bool , value : FieldSet.Types.FieldValue , loadedValue : FieldSet.Types.FieldValue }"},"ConfigTypes.DisplayRec":{"args":[],"type":"{ code : String, display : String }"},"Transaction.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus, tx : Common.TransactionTypes.Tx }"},"Account.SubModel":{"args":[],"type":"{ status : Account.SavingStatus, account : AccountTypes.Account }"},"MaintenanceFunding.Types.SubModel":{"args":[],"type":"{ cryptoCode : String , cryptoDisplays : List MaintenanceFunding.Types.CryptoDisplay , fundingAddress : String , fundingAddressUrl : String , confirmedBalance : String , pending : String , fiatConfirmedBalance : String , fiatPending : String , fiatCode : String }"},"Common.TransactionTypes.CashInTxRec":{"args":[],"type":"{ id : String , machineName : String , toAddress : String , cryptoAtoms : Int , cryptoCode : String , fiat : Float , fiatCode : String , txHash : Maybe.Maybe String , phone : Maybe.Maybe String , error : Maybe.Maybe String , operatorCompleted : Bool , send : Bool , sendConfirmed : Bool , expired : Bool , created : Date.Date }"},"ConfigTypes.FieldScope":{"args":[],"type":"{ crypto : ConfigTypes.Crypto, machine : ConfigTypes.Machine }"},"MaintenanceMachines.Types.Model":{"args":[],"type":"RemoteData.WebData MaintenanceMachines.Types.SubModel"},"ConfigTypes.ConfigGroup":{"args":[],"type":"{ schema : ConfigTypes.ConfigSchema , values : List ConfigTypes.Field , selectedCryptos : List String , data : ConfigTypes.ConfigData }"},"ConfigTypes.AccountRec":{"args":[],"type":"{ code : String , display : String , class : String , cryptos : Maybe.Maybe (List ConfigTypes.Crypto) }"},"ConfigTypes.Field":{"args":[],"type":"{ fieldLocator : ConfigTypes.FieldLocator , fieldValue : ConfigTypes.FieldValue , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , inScope : Bool }"},"ConfigTypes.MachineDisplay":{"args":[],"type":"{ machine : ConfigTypes.Machine, display : String }"},"Common.Customer.Types.Customer":{"args":[],"type":"{ id : String , name : Maybe.Maybe String , phone : Maybe.Maybe String , phoneAt : Maybe.Maybe Date.Date , smsOverride : Common.Customer.Types.Authorized , smsOverrideByName : Maybe.Maybe String , smsOverrideAt : Maybe.Maybe Date.Date , created : Date.Date , status : Maybe.Maybe String , authorizedOverride : Common.Customer.Types.Authorized , authorizedOverrideByName : Maybe.Maybe String , authorizedOverrideAt : Maybe.Maybe Date.Date , authorizedAt : Maybe.Maybe Date.Date , idCardData : Maybe.Maybe String , idCardDataOverride : Common.Customer.Types.Authorized , idCardDataOverrideByName : Maybe.Maybe String , idCardDataOverrideAt : Maybe.Maybe Date.Date , idCardAt : Maybe.Maybe Date.Date , idCardImagePath : Maybe.Maybe String , idCardPhotoOverride : Common.Customer.Types.Authorized , idCardPhotoOverrideByName : Maybe.Maybe String , idCardPhotoOverrideAt : Maybe.Maybe Date.Date , idCardImageAt : Maybe.Maybe Date.Date , sanctionsCheck : Maybe.Maybe String , sanctionsCheckOverride : Common.Customer.Types.Authorized , sanctionsCheckOverrideByName : Maybe.Maybe String , sanctionsCheckOverrideAt : Maybe.Maybe Date.Date , sanctionsCheckAt : Maybe.Maybe Date.Date , frontFacingCamPath : Maybe.Maybe String , frontFacingCamOverride : Common.Customer.Types.Authorized , frontFacingCamOverrideByName : Maybe.Maybe String , frontFacingCamOverrideAt : Maybe.Maybe Date.Date , frontFacingCamAt : Maybe.Maybe Date.Date }"},"StatusTypes.ServerRec":{"args":[],"type":"{ up : Bool , lastPing : Maybe.Maybe String , rates : List StatusTypes.Rate , machineStatus : String , wasConfigured : Bool }"},"MaintenanceMachines.Types.SubModel":{"args":[],"type":"{ status : BasicTypes.SavingStatus , machines : MaintenanceMachines.Types.Machines }"},"StatusTypes.Rate":{"args":[],"type":"{ crypto : String, bid : Float, ask : Float }"},"Customers.Types.Model":{"args":[],"type":"RemoteData.WebData Common.Customer.Types.Customers"},"Transactions.Txs":{"args":[],"type":"List Common.TransactionTypes.Tx"},"MaintenanceMachines.Types.Machines":{"args":[],"type":"List MaintenanceMachines.Types.Machine"},"Transactions.Model":{"args":[],"type":"RemoteData.WebData Transactions.Txs"},"ConfigTypes.FieldDescriptor":{"args":[],"type":"{ code : String , cryptoScope : ConfigTypes.ConfigScope , machineScope : ConfigTypes.ConfigScope , displayTop : ConfigTypes.DisplayTop , displayBottom : String , displayCount : Maybe.Maybe Int , fieldType : ConfigTypes.FieldType , fieldValidation : List ConfigTypes.FieldValidator , fieldClass : Maybe.Maybe String , fieldEnabledIfAny : List String , fieldEnabledIfAll : List String , readOnly : Bool }"},"StatusTypes.StatusRec":{"args":[],"type":"{ server : StatusTypes.ServerRec, invalidConfigGroups : List String }"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"CoreTypes.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
