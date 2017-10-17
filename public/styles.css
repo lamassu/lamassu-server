@@ -24,6 +24,18 @@ p {
     height: 100%;
 }
 
+.lamassuAdminPaneWrapper {
+    display: flex;
+}
+
+.lamassuAdminLeftPane {
+    min-width: 270px;
+}
+
+.lamassuAdminContentPane {
+    max-height: 100%;
+}
+
 .lamassuAdminStatusBar {
     position: fixed;
     bottom: 0;
