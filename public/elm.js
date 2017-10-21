@@ -33176,7 +33176,7 @@ var _user$project$Transaction_Decoder$cashInTxDecoder = A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec))))))))))))))));
 var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'confirmationTime',
+	'confirmedAt',
 	_user$project$Transaction_Decoder$confirmedDecoder,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
