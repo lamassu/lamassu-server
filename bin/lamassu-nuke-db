@@ -18,6 +18,7 @@ EOF
       CURRENT_DIR=`dirname "$(readlink -f "$0")"`
       rm -f "$CURRENT_DIR/../migrations/.migrate"
       lamassu-migrate
+      lamassu-apply-defaults
       echo "Done."
     ;;
     * )
