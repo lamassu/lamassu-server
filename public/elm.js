@@ -34135,9 +34135,9 @@ var _user$project$Logs_Types$Machine = F2(
 	function (a, b) {
 		return {deviceId: a, name: b};
 	});
-var _user$project$Logs_Types$Log = F5(
-	function (a, b, c, d, e) {
-		return {id: a, deviceId: b, timestamp: c, logLevel: d, message: e};
+var _user$project$Logs_Types$Log = F4(
+	function (a, b, c, d) {
+		return {id: a, timestamp: b, logLevel: c, message: d};
 	});
 var _user$project$Logs_Types$Logs = F2(
 	function (a, b) {
@@ -35547,13 +35547,9 @@ var _user$project$Logs_Decoder$logDecoder = A3(
 			_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'deviceId',
-				_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
-				A3(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'id',
-					_elm_lang$core$Json_Decode$string,
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Logs_Types$Log))))));
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Logs_Types$Log)))));
 var _user$project$Logs_Decoder$logsDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'currentMachine',
@@ -35696,45 +35692,45 @@ var _user$project$Logs_View$logsView = function (logs) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$h2,
-				{ctor: '[]'},
+				_elm_lang$html$Html$table,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Logs'),
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$TxTable,
+							_1: {ctor: '[]'}
+						}),
 					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$table,
-					{
-						ctor: '::',
-						_0: _user$project$Css_Admin$class(
-							{
-								ctor: '::',
-								_0: _user$project$Css_Classes$TxTable,
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$thead,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$tr,
-									{ctor: '[]'},
-									{
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$thead,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$tr,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$td,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Date'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
 										ctor: '::',
 										_0: A2(
 											_elm_lang$html$Html$td,
 											{ctor: '[]'},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('Date'),
+												_0: _elm_lang$html$Html$text('Level'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
@@ -35744,36 +35740,25 @@ var _user$project$Logs_View$logsView = function (logs) {
 												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('Level'),
+													_0: _elm_lang$html$Html$text('Message'),
 													_1: {ctor: '[]'}
 												}),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$td,
-													{ctor: '[]'},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('Message'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											}
+											_1: {ctor: '[]'}
 										}
-									}),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$tbody,
-								{ctor: '[]'},
-								A2(_elm_lang$core$List$map, _user$project$Logs_View$rowView, logs.logs)),
+									}
+								}),
 							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$tbody,
+							{ctor: '[]'},
+							A2(_elm_lang$core$List$map, _user$project$Logs_View$rowView, logs.logs)),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Logs_View$logs = function (model) {
@@ -35786,7 +35771,7 @@ var _user$project$Logs_View$logs = function (model) {
 				{ctor: '[]'});
 		case 'Loading':
 			return A2(
-				_elm_lang$html$Html$h2,
+				_elm_lang$html$Html$div,
 				{ctor: '[]'},
 				{
 					ctor: '::',
@@ -35884,37 +35869,26 @@ var _user$project$Logs_View$machinesView = function (machines) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$h2,
-				{ctor: '[]'},
+				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Machines'),
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$TxTable,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$ul,
+						{ctor: '[]'},
+						A2(_elm_lang$core$List$map, _user$project$Logs_View$machineItemView, machines)),
 					_1: {ctor: '[]'}
 				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _user$project$Css_Admin$class(
-							{
-								ctor: '::',
-								_0: _user$project$Css_Classes$TxTable,
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$ul,
-							{ctor: '[]'},
-							A2(_elm_lang$core$List$map, _user$project$Logs_View$machineItemView, machines)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Logs_View$machines = function (model) {
@@ -35927,7 +35901,7 @@ var _user$project$Logs_View$machines = function (model) {
 				{ctor: '[]'});
 		case 'Loading':
 			return A2(
-				_elm_lang$html$Html$h2,
+				_elm_lang$html$Html$div,
 				{ctor: '[]'},
 				{
 					ctor: '::',
@@ -35999,8 +35973,19 @@ var _user$project$Logs_View$view = function (model) {
 							},
 							{
 								ctor: '::',
-								_0: _user$project$Logs_View$machines(model),
-								_1: {ctor: '[]'}
+								_0: A2(
+									_elm_lang$html$Html$h2,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Machines'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Logs_View$machines(model),
+									_1: {ctor: '[]'}
+								}
 							}),
 						_1: {
 							ctor: '::',
@@ -36018,8 +36003,19 @@ var _user$project$Logs_View$view = function (model) {
 								},
 								{
 									ctor: '::',
-									_0: _user$project$Logs_View$logs(model),
-									_1: {ctor: '[]'}
+									_0: A2(
+										_elm_lang$html$Html$h2,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Logs'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _user$project$Logs_View$logs(model),
+										_1: {ctor: '[]'}
+									}
 								}),
 							_1: {ctor: '[]'}
 						}
