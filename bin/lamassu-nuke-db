@@ -15,8 +15,7 @@ case ${answer:0:1} in
         createdb lamassu
 EOF
 
-      CURRENT_DIR=`dirname "$(readlink -f "$0")"`
-      rm -f "$CURRENT_DIR/../migrations/.migrate"
+      rm -f "/etc/lamassu/.migrate"
       lamassu-migrate
       lamassu-apply-defaults
       echo "Done."
