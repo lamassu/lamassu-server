@@ -16,4 +16,5 @@ zcash-fetch-params >> $LOG_FILE 2>&1
 mkdir ~/.zcash >> $LOG_FILE 2>&1
 mv /tmp/zcash.conf ~/.zcash
 mv /tmp/supervisor-zcash.conf /etc/supervisor/conf.d/zcash.conf >> $LOG_FILE 2>&1
+sed -i '2s/$/ -disabledeprecation=1.0.12/' /etc/supervisor/conf.d/zcash.conf >> $LOG_FILE 2>&1
 service supervisor restart >> $LOG_FILE 2>&1
