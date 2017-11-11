@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+const path = require('path')
+const crypto = require('crypto')
+const fs = require('fs')
+
+const options = require('../../lib/options')
+
+const blockchainDir = options.blockchainDir
+const confPath = path.resolve(blockchainDir, 'bitcoincash.conf')
+const password = crypto.randomBytes(32).toString('hex')
+
+const conf = `rpcuser=username
+rpcpassword=${password}
+server=1
+connections=40
+keypool=10000
+prune=4000
+daemon=0
+`
+
+fs.writeFileSync(confPath, conf)
