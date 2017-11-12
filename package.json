@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "5.5.27",
+  "version": "5.5.28",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
@@ -50,7 +50,9 @@
     "uuid": "^3.1.0",
     "web3": "^0.19.1",
     "winston": "^2.3.0",
-    "ws": "^3.1.0"
+    "ws": "^3.1.0",
+    "bitcore-lib": "^0.15.0",
+    "bitcore-lib-cash": "git+https://github.com/bitpay/bitcore-lib.git#cash"
   },
   "repository": {
     "type": "git",
