@@ -17,6 +17,7 @@ connections=40
 keypool=10000
 prune=4000
 daemon=0
+listen=8335
 `
 
 fs.writeFileSync(confPath, conf)
