@@ -29,6 +29,14 @@ module "bitcoin" {
   blockchain_conf = "bitcoin.conf"
   ssh_key = "${digitalocean_ssh_key.default.id}"
 }
+  
+module "bitcoincash" {
+  source = "./blockchain"
+  name = "bitcoincash"
+  blockchain_cmd = "bitcoincashd"
+  blockchain_conf = "bitcoincash.conf"
+  ssh_key = "${digitalocean_ssh_key.default.id}"
+}
 
 resource "digitalocean_ssh_key" "default" {
   name       = "Lamassu Server"
