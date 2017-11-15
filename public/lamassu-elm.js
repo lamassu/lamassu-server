@@ -12768,8 +12768,7 @@ var _user$project$SupportLogs_View$logs = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p1._0)),
+					_0: _elm_lang$html$Html$text('No logs yet.'),
 					_1: {ctor: '[]'}
 				});
 		default:

@@ -33496,7 +33496,7 @@ var _user$project$Transaction_Decoder$cashInTxDecoder = A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec))))))))))))))));
 var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'confirmedAt',
+	'confirmationTime',
 	_user$project$Transaction_Decoder$confirmedDecoder,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -36399,8 +36399,7 @@ var _user$project$SupportLogs_View$logs = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p1._0)),
+					_0: _elm_lang$html$Html$text('No logs yet.'),
 					_1: {ctor: '[]'}
 				});
 		default:
