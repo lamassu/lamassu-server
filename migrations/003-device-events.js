@@ -1,6 +1,6 @@
 'use strict';
 
-var db = require('./db');
+var db = require('../lib/migrate-db');
 
 exports.up = function(next) {
   db.query('CREATE TABLE IF NOT EXISTS machine_events ( ' +
