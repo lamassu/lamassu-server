@@ -13986,21 +13986,14 @@ var _krisajenkins$remotedata$RemoteData$mapError = F2(
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 		}
 	});
-var _krisajenkins$remotedata$RemoteData$mapBoth = F3(
-	function (successFn, errorFn, data) {
-		var _p12 = data;
-		switch (_p12.ctor) {
-			case 'Success':
-				return _krisajenkins$remotedata$RemoteData$Success(
-					successFn(_p12._0));
-			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(
-					errorFn(_p12._0));
-			case 'Loading':
-				return _krisajenkins$remotedata$RemoteData$Loading;
-			default:
-				return _krisajenkins$remotedata$RemoteData$NotAsked;
-		}
+var _krisajenkins$remotedata$RemoteData$mapBoth = F2(
+	function (successFn, errorFn) {
+		return function (_p12) {
+			return A2(
+				_krisajenkins$remotedata$RemoteData$mapError,
+				errorFn,
+				A2(_krisajenkins$remotedata$RemoteData$map, successFn, _p12));
+		};
 	});
 var _krisajenkins$remotedata$RemoteData$andThen = F2(
 	function (f, data) {
@@ -21595,24 +21588,16 @@ var _pablohirafuji$elm_qrcode$QRCode_View$rectView = function (_p1) {
 					_elm_lang$core$Basics$toString(_p2.row * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$rx('0'),
+					_0: _elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$ry('0'),
+						_0: _elm_lang$svg$Svg_Attributes$height(
+							_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$width(
-								_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$height(
-									_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$fill('black'),
-									_1: {ctor: '[]'}
-								}
-							}
+							_0: _elm_lang$svg$Svg_Attributes$fill('black'),
+							_1: {ctor: '[]'}
 						}
 					}
 				}
@@ -27540,6 +27525,9 @@ var _user$project$Css_Classes$NavBarItemActive = {ctor: 'NavBarItemActive'};
 var _user$project$Css_Classes$MainRight = {ctor: 'MainRight'};
 var _user$project$Css_Classes$MainLeft = {ctor: 'MainLeft'};
 var _user$project$Css_Classes$NavBar = {ctor: 'NavBar'};
+var _user$project$Css_Classes$ContentPane = {ctor: 'ContentPane'};
+var _user$project$Css_Classes$LeftPane = {ctor: 'LeftPane'};
+var _user$project$Css_Classes$PaneWrapper = {ctor: 'PaneWrapper'};
 var _user$project$Css_Classes$Main = {ctor: 'Main'};
 var _user$project$Css_Classes$Layout = {ctor: 'Layout'};
 
@@ -28006,6 +27994,338 @@ var _user$project$BasicTypes$NotSaving = {ctor: 'NotSaving'};
 var _user$project$BasicTypes$Editing = {ctor: 'Editing'};
 var _user$project$BasicTypes$Saved = {ctor: 'Saved'};
 var _user$project$BasicTypes$Saving = {ctor: 'Saving'};
+
+var _user$project$Common_Customer_Types$authorizedToString = function (model) {
+	var _p0 = model;
+	switch (_p0.ctor) {
+		case 'Verified':
+			return 'verified';
+		case 'Blocked':
+			return 'blocked';
+		default:
+			return 'automatic';
+	}
+};
+var _user$project$Common_Customer_Types$Customer = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return function (q) {
+																	return function (r) {
+																		return function (s) {
+																			return function (t) {
+																				return function (u) {
+																					return function (v) {
+																						return function (w) {
+																							return function (x) {
+																								return function (y) {
+																									return function (z) {
+																										return function (_1) {
+																											return function (_2) {
+																												return function (_3) {
+																													return function (_4) {
+																														return function (_5) {
+																															return function (_6) {
+																																return function (_7) {
+																																	return function (_8) {
+																																		return {id: a, name: b, phone: c, phoneAt: d, smsOverride: e, smsOverrideByName: f, smsOverrideAt: g, created: h, status: i, authorizedOverride: j, authorizedOverrideByName: k, authorizedOverrideAt: l, authorizedAt: m, idCardData: n, idCardDataOverride: o, idCardDataOverrideByName: p, idCardDataOverrideAt: q, idCardDataAt: r, idCardPhotoPath: s, idCardPhotoOverride: t, idCardPhotoOverrideByName: u, idCardPhotoOverrideAt: v, idCardPhotoAt: w, sanctions: x, sanctionsOverride: y, sanctionsOverrideByName: z, sanctionsOverrideAt: _1, sanctionsAt: _2, frontCameraPath: _3, frontCameraOverride: _4, frontCameraOverrideByName: _5, frontCameraOverrideAt: _6, frontCameraAt: _7, dailyVolume: _8};
+																																	};
+																																};
+																															};
+																														};
+																													};
+																												};
+																											};
+																										};
+																									};
+																								};
+																							};
+																						};
+																					};
+																				};
+																			};
+																		};
+																	};
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$Common_Customer_Types$Verified = {ctor: 'Verified'};
+var _user$project$Common_Customer_Types$Blocked = {ctor: 'Blocked'};
+var _user$project$Common_Customer_Types$Automatic = {ctor: 'Automatic'};
+
+var _user$project$Common_Customer_Decoder$mapAuthorizedTypes = function (s) {
+	var _p0 = s;
+	switch (_p0) {
+		case 'blocked':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_Customer_Types$Blocked);
+		case 'verified':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_Customer_Types$Verified);
+		case 'automatic':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_Customer_Types$Automatic);
+		default:
+			return _elm_lang$core$Json_Decode$fail(
+				A2(_elm_lang$core$Basics_ops['++'], 'No such type ', s));
+	}
+};
+var _user$project$Common_Customer_Decoder$authorizedDecoder = A2(_elm_lang$core$Json_Decode$andThen, _user$project$Common_Customer_Decoder$mapAuthorizedTypes, _elm_lang$core$Json_Decode$string);
+var _user$project$Common_Customer_Decoder$customerDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'dailyVolume',
+	_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'frontCameraAt',
+		_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'frontCameraOverrideAt',
+			_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'frontCameraOverrideByName',
+				_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'frontCameraOverride',
+					_user$project$Common_Customer_Decoder$authorizedDecoder,
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'frontCameraPath',
+						_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+						A3(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+							'sanctionsAt',
+							_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+							A3(
+								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+								'sanctionsOverrideAt',
+								_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+								A3(
+									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+									'sanctionsOverrideByName',
+									_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+									A3(
+										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+										'sanctionsOverride',
+										_user$project$Common_Customer_Decoder$authorizedDecoder,
+										A3(
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+											'sanctions',
+											_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+											A3(
+												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+												'idCardPhotoAt',
+												_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+												A3(
+													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+													'idCardPhotoOverrideAt',
+													_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+													A3(
+														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+														'idCardPhotoOverrideByName',
+														_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+														A3(
+															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+															'idCardPhotoOverride',
+															_user$project$Common_Customer_Decoder$authorizedDecoder,
+															A3(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																'idCardPhotoPath',
+																_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																A3(
+																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																	'idCardDataAt',
+																	_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																	A3(
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																		'idCardDataOverrideAt',
+																		_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																		A3(
+																			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																			'idCardDataOverrideByName',
+																			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																			A3(
+																				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																				'idCardDataOverride',
+																				_user$project$Common_Customer_Decoder$authorizedDecoder,
+																				A3(
+																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																					'idCardData',
+																					_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																					A3(
+																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																						'authorizedAt',
+																						_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																						A3(
+																							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																							'authorizedOverrideAt',
+																							_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																							A3(
+																								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																								'authorizedOverrideByName',
+																								_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																								A3(
+																									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																									'authorizedOverride',
+																									_user$project$Common_Customer_Decoder$authorizedDecoder,
+																									A3(
+																										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																										'status',
+																										_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																										A3(
+																											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																											'created',
+																											_elm_community$json_extra$Json_Decode_Extra$date,
+																											A3(
+																												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																												'smsOverrideAt',
+																												_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																												A3(
+																													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																													'smsOverrideByName',
+																													_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																													A3(
+																														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																														'smsOverride',
+																														_user$project$Common_Customer_Decoder$authorizedDecoder,
+																														A3(
+																															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																															'phoneAt',
+																															_elm_lang$core$Json_Decode$nullable(_elm_community$json_extra$Json_Decode_Extra$date),
+																															A3(
+																																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																																'phone',
+																																_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																																A3(
+																																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																																	'name',
+																																	_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																																	A3(
+																																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																																		'id',
+																																		_elm_lang$core$Json_Decode$string,
+																																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Customer_Types$Customer)))))))))))))))))))))))))))))))))));
+var _user$project$Common_Customer_Decoder$customersDecoder = A2(
+	_elm_lang$core$Json_Decode$field,
+	'customers',
+	_elm_lang$core$Json_Decode$list(_user$project$Common_Customer_Decoder$customerDecoder));
+
+var _user$project$Common_Logs_Types$Machine = F2(
+	function (a, b) {
+		return {deviceId: a, name: b};
+	});
+var _user$project$Common_Logs_Types$Log = F4(
+	function (a, b, c, d) {
+		return {id: a, timestamp: b, logLevel: c, message: d};
+	});
+var _user$project$Common_Logs_Types$SupportLogSnapshot = F2(
+	function (a, b) {
+		return {deviceId: a, timestamp: b};
+	});
+var _user$project$Common_Logs_Types$SupportLog = F4(
+	function (a, b, c, d) {
+		return {id: a, deviceId: b, timestamp: c, name: d};
+	});
+var _user$project$Common_Logs_Types$Logs = F2(
+	function (a, b) {
+		return {logs: a, currentMachine: b};
+	});
+
+var _user$project$Common_Logs_Decoder$machineDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'name',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'deviceId',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Logs_Types$Machine)));
+var _user$project$Common_Logs_Decoder$machinesDecoder = A2(
+	_elm_lang$core$Json_Decode$field,
+	'machines',
+	_elm_lang$core$Json_Decode$list(_user$project$Common_Logs_Decoder$machineDecoder));
+var _user$project$Common_Logs_Decoder$supportLogDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'name',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'timestamp',
+		_elm_community$json_extra$Json_Decode_Extra$date,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'deviceId',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Logs_Types$SupportLog)))));
+var _user$project$Common_Logs_Decoder$latestLogSnapshotDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'timestamp',
+	_elm_community$json_extra$Json_Decode_Extra$date,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'deviceId',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Logs_Types$SupportLogSnapshot)));
+var _user$project$Common_Logs_Decoder$supportLogsDecoder = A2(
+	_elm_lang$core$Json_Decode$field,
+	'supportLogs',
+	_elm_lang$core$Json_Decode$list(_user$project$Common_Logs_Decoder$supportLogDecoder));
+var _user$project$Common_Logs_Decoder$logDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'message',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'logLevel',
+		_elm_lang$core$Json_Decode$string,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'timestamp',
+			_elm_community$json_extra$Json_Decode_Extra$date,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Logs_Types$Log)))));
+var _user$project$Common_Logs_Decoder$logsDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'currentMachine',
+	_user$project$Common_Logs_Decoder$machineDecoder,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'logs',
+		_elm_lang$core$Json_Decode$list(_user$project$Common_Logs_Decoder$logDecoder),
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Logs_Types$Logs)));
 
 var _user$project$Common_TransactionTypes$CashInTxRec = function (a) {
 	return function (b) {
@@ -33176,7 +33496,7 @@ var _user$project$Transaction_Decoder$cashInTxDecoder = A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec))))))))))))))));
 var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'confirmedAt',
+	'confirmationTime',
 	_user$project$Transaction_Decoder$confirmedDecoder,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -33890,6 +34210,46 @@ var _user$project$Transactions$getTransactions = A2(
 var _user$project$Transactions$loadCmd = _user$project$Transactions$getTransactions;
 var _user$project$Transactions$load = {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$Loading, _1: _user$project$Transactions$loadCmd};
 
+var _user$project$Customers_Types$Load = function (a) {
+	return {ctor: 'Load', _0: a};
+};
+
+var _user$project$Customer_Types$PatchCustomer = F3(
+	function (a, b, c) {
+		return {ctor: 'PatchCustomer', _0: a, _1: b, _2: c};
+	});
+var _user$project$Customer_Types$Load = function (a) {
+	return {ctor: 'Load', _0: a};
+};
+
+var _user$project$Logs_Types$Model = F3(
+	function (a, b, c) {
+		return {logs: a, machines: b, latestLogSnapshot: c};
+	});
+var _user$project$Logs_Types$LoadSupportLog = function (a) {
+	return {ctor: 'LoadSupportLog', _0: a};
+};
+var _user$project$Logs_Types$ShareLogs = function (a) {
+	return {ctor: 'ShareLogs', _0: a};
+};
+var _user$project$Logs_Types$LoadMachines = function (a) {
+	return {ctor: 'LoadMachines', _0: a};
+};
+var _user$project$Logs_Types$LoadLogs = function (a) {
+	return {ctor: 'LoadLogs', _0: a};
+};
+
+var _user$project$SupportLogs_Types$Model = F2(
+	function (a, b) {
+		return {logs: a, supportLogs: b};
+	});
+var _user$project$SupportLogs_Types$LoadSupportLogs = function (a) {
+	return {ctor: 'LoadSupportLogs', _0: a};
+};
+var _user$project$SupportLogs_Types$LoadLogs = function (a) {
+	return {ctor: 'LoadLogs', _0: a};
+};
+
 var _user$project$CoreTypes$MaintenanceCat = {ctor: 'MaintenanceCat'};
 var _user$project$CoreTypes$GlobalSettingsCat = {ctor: 'GlobalSettingsCat'};
 var _user$project$CoreTypes$MachineSettingsCat = {ctor: 'MachineSettingsCat'};
@@ -33899,6 +34259,16 @@ var _user$project$CoreTypes$MaintenanceFundingRoute = function (a) {
 	return {ctor: 'MaintenanceFundingRoute', _0: a};
 };
 var _user$project$CoreTypes$MaintenanceMachinesRoute = {ctor: 'MaintenanceMachinesRoute'};
+var _user$project$CoreTypes$SupportLogsRoute = function (a) {
+	return {ctor: 'SupportLogsRoute', _0: a};
+};
+var _user$project$CoreTypes$LogsRoute = function (a) {
+	return {ctor: 'LogsRoute', _0: a};
+};
+var _user$project$CoreTypes$CustomerRoute = function (a) {
+	return {ctor: 'CustomerRoute', _0: a};
+};
+var _user$project$CoreTypes$CustomersRoute = {ctor: 'CustomersRoute'};
 var _user$project$CoreTypes$TransactionRoute = function (a) {
 	return {ctor: 'TransactionRoute', _0: a};
 };
@@ -33927,6 +34297,18 @@ var _user$project$CoreTypes$LoadStatus = function (a) {
 var _user$project$CoreTypes$LoadAccounts = function (a) {
 	return {ctor: 'LoadAccounts', _0: a};
 };
+var _user$project$CoreTypes$SupportLogsMsg = function (a) {
+	return {ctor: 'SupportLogsMsg', _0: a};
+};
+var _user$project$CoreTypes$LogsMsg = function (a) {
+	return {ctor: 'LogsMsg', _0: a};
+};
+var _user$project$CoreTypes$CustomerMsg = function (a) {
+	return {ctor: 'CustomerMsg', _0: a};
+};
+var _user$project$CoreTypes$CustomersMsg = function (a) {
+	return {ctor: 'CustomersMsg', _0: a};
+};
 var _user$project$CoreTypes$TransactionMsg = function (a) {
 	return {ctor: 'TransactionMsg', _0: a};
 };
@@ -33947,6 +34329,2282 @@ var _user$project$CoreTypes$PairMsg = function (a) {
 };
 var _user$project$CoreTypes$AccountMsg = function (a) {
 	return {ctor: 'AccountMsg', _0: a};
+};
+
+var _user$project$Customer_Rest$getCustomer = function (id) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_user$project$Customer_Types$Load,
+		A2(
+			_lukewestby$elm_http_builder$HttpBuilder$send,
+			_krisajenkins$remotedata$RemoteData$fromResult,
+			A2(
+				_lukewestby$elm_http_builder$HttpBuilder$withExpect,
+				_elm_lang$http$Http$expectJson(_user$project$Common_Customer_Decoder$customerDecoder),
+				_lukewestby$elm_http_builder$HttpBuilder$get(
+					A2(_elm_lang$core$Basics_ops['++'], '/api/customer/', id)))));
+};
+var _user$project$Customer_Rest$patchCustomer = F3(
+	function (id, field, value) {
+		return A2(
+			_elm_lang$core$Platform_Cmd$map,
+			_user$project$Customer_Types$Load,
+			A2(
+				_lukewestby$elm_http_builder$HttpBuilder$send,
+				_krisajenkins$remotedata$RemoteData$fromResult,
+				A2(
+					_lukewestby$elm_http_builder$HttpBuilder$withExpect,
+					_elm_lang$http$Http$expectJson(_user$project$Common_Customer_Decoder$customerDecoder),
+					_lukewestby$elm_http_builder$HttpBuilder$patch(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'/api/customer/',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								id,
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'?',
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										field,
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'=',
+											_user$project$Common_Customer_Types$authorizedToString(value))))))))));
+	});
+
+var _user$project$Customer_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'Load') {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_p0._0,
+				{ctor: '[]'});
+		} else {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				model,
+				{
+					ctor: '::',
+					_0: A3(_user$project$Customer_Rest$patchCustomer, _p0._0, _p0._1, _p0._2),
+					_1: {ctor: '[]'}
+				});
+		}
+	});
+var _user$project$Customer_State$load = function (id) {
+	return {
+		ctor: '_Tuple2',
+		_0: _krisajenkins$remotedata$RemoteData$Loading,
+		_1: _user$project$Customer_Rest$getCustomer(id)
+	};
+};
+var _user$project$Customer_State$init = _krisajenkins$remotedata$RemoteData$NotAsked;
+
+var _user$project$Customer_View$verifyStatus = F2(
+	function (complianceType, fieldOverride) {
+		return (_elm_lang$core$Native_Utils.eq(fieldOverride, _user$project$Common_Customer_Types$Verified) || ((!_elm_lang$core$Native_Utils.eq(complianceType, _elm_lang$core$Maybe$Nothing)) && _elm_lang$core$Native_Utils.eq(fieldOverride, _user$project$Common_Customer_Types$Automatic))) ? _elm_lang$html$Html$text('Verified') : _elm_lang$html$Html$text('Unverified');
+	});
+var _user$project$Customer_View$radio = F4(
+	function (inputName, checkedValue, value, msg) {
+		return A2(
+			_elm_lang$html$Html$label,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'padding', _1: '5px'},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$checked(
+							_elm_lang$core$Native_Utils.eq(checkedValue, value)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$type_('radio'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$name(inputName),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(msg),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_user$project$Common_Customer_Types$authorizedToString(value)),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Customer_View$actions = F3(
+	function (id, fieldKey, checkedValue) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A4(
+							_user$project$Customer_View$radio,
+							fieldKey,
+							checkedValue,
+							_user$project$Common_Customer_Types$Automatic,
+							A3(_user$project$Customer_Types$PatchCustomer, id, fieldKey, _user$project$Common_Customer_Types$Automatic)),
+						_1: {
+							ctor: '::',
+							_0: A4(
+								_user$project$Customer_View$radio,
+								fieldKey,
+								checkedValue,
+								_user$project$Common_Customer_Types$Blocked,
+								A3(_user$project$Customer_Types$PatchCustomer, id, fieldKey, _user$project$Common_Customer_Types$Blocked)),
+							_1: {
+								ctor: '::',
+								_0: A4(
+									_user$project$Customer_View$radio,
+									fieldKey,
+									checkedValue,
+									_user$project$Common_Customer_Types$Verified,
+									A3(_user$project$Customer_Types$PatchCustomer, id, fieldKey, _user$project$Common_Customer_Types$Verified)),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Customer_View$maybeText = function (maybeString) {
+	return _elm_lang$html$Html$text(
+		A2(_elm_lang$core$Maybe$withDefault, '', maybeString));
+};
+var _user$project$Customer_View$formatDate = function (date) {
+	var _p0 = date;
+	if (_p0.ctor === 'Just') {
+		return A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', _p0._0);
+	} else {
+		return '';
+	}
+};
+var _user$project$Customer_View$customerActions = F2(
+	function (id, authorizedOverride) {
+		var _p1 = authorizedOverride;
+		switch (_p1.ctor) {
+			case 'Blocked':
+				return A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', _user$project$Common_Customer_Types$Verified)),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Unblock'),
+						_1: {ctor: '[]'}
+					});
+			case 'Verified':
+				return A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', _user$project$Common_Customer_Types$Blocked)),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Block'),
+						_1: {ctor: '[]'}
+					});
+			default:
+				return A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							A3(_user$project$Customer_Types$PatchCustomer, id, 'authorizedOverride', _user$project$Common_Customer_Types$Blocked)),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Block'),
+						_1: {ctor: '[]'}
+					});
+		}
+	});
+var _user$project$Customer_View$customerView = function (customer) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Customer Details'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$table,
+					{
+						ctor: '::',
+						_0: _user$project$Css_Admin$class(
+							{
+								ctor: '::',
+								_0: _user$project$Css_Classes$TxTable,
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$tbody,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$tr,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$td,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Customer ID'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(customer.id),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$tr,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Name'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _user$project$Customer_View$maybeText(customer.name),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$tr,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Phone'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _user$project$Customer_View$maybeText(customer.phone),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$tr,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Completed phone at'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(
+																	_user$project$Customer_View$formatDate(customer.phoneAt)),
+																_1: {ctor: '[]'}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$tr,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('Created'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(
+																		A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', customer.created)),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$tr,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('Block Customer'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: A2(_user$project$Customer_View$customerActions, customer.id, customer.authorizedOverride),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$tr,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('Authorized at '),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text(
+																				_user$project$Customer_View$formatDate(customer.authorizedAt)),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$tr,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('Daily Volume '),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: _user$project$Customer_View$maybeText(customer.dailyVolume),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}
+																}),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h2,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Compliance types'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$table,
+							{
+								ctor: '::',
+								_0: _user$project$Css_Admin$class(
+									{
+										ctor: '::',
+										_0: _user$project$Css_Classes$TxTable,
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$thead,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$tr,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Name'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Date'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('Verify Status'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('Override Status'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('User who overrode'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('Actions'),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$tbody,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$tr,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('SMS'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(
+																	_user$project$Customer_View$formatDate(customer.phoneAt)),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: A2(_user$project$Customer_View$verifyStatus, customer.phone, customer.smsOverride),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text(
+																			_user$project$Common_Customer_Types$authorizedToString(customer.smsOverride)),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _user$project$Customer_View$maybeText(customer.smsOverrideByName),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: A3(_user$project$Customer_View$actions, customer.id, 'smsOverride', customer.smsOverride),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}
+														}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$tr,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('ID Card Data'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(
+																		_user$project$Customer_View$formatDate(customer.idCardDataAt)),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: A2(_user$project$Customer_View$verifyStatus, customer.idCardData, customer.idCardDataOverride),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text(
+																				_user$project$Common_Customer_Types$authorizedToString(customer.idCardDataOverride)),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: _user$project$Customer_View$maybeText(customer.idCardDataOverrideByName),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$td,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: A3(_user$project$Customer_View$actions, customer.id, 'idCardDataOverride', customer.idCardDataOverride),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}
+														}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$tr,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('ID Card Photo'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text(
+																			_user$project$Customer_View$formatDate(customer.idCardPhotoAt)),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: A2(_user$project$Customer_View$verifyStatus, customer.idCardPhotoPath, customer.idCardPhotoOverride),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text(
+																					_user$project$Common_Customer_Types$authorizedToString(customer.idCardPhotoOverride)),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$td,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: _user$project$Customer_View$maybeText(customer.idCardPhotoOverrideByName),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_lang$html$Html$td,
+																					{ctor: '[]'},
+																					{
+																						ctor: '::',
+																						_0: A3(_user$project$Customer_View$actions, customer.id, 'idCardPhotoOverride', customer.idCardPhotoOverride),
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {ctor: '[]'}
+																			}
+																		}
+																	}
+																}
+															}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$tr,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('Front Facing Camera'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text(
+																				_user$project$Customer_View$formatDate(customer.frontCameraAt)),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: A2(_user$project$Customer_View$verifyStatus, customer.frontCameraPath, customer.frontCameraOverride),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$td,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: _elm_lang$html$Html$text(
+																						_user$project$Common_Customer_Types$authorizedToString(customer.frontCameraOverride)),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_lang$html$Html$td,
+																					{ctor: '[]'},
+																					{
+																						ctor: '::',
+																						_0: _user$project$Customer_View$maybeText(customer.frontCameraOverrideByName),
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_elm_lang$html$Html$td,
+																						{ctor: '[]'},
+																						{
+																							ctor: '::',
+																							_0: A3(_user$project$Customer_View$actions, customer.id, 'frontCameraOverride', customer.frontCameraOverride),
+																							_1: {ctor: '[]'}
+																						}),
+																					_1: {ctor: '[]'}
+																				}
+																			}
+																		}
+																	}
+																}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$tr,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('Sanctions Check'),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$td,
+																			{ctor: '[]'},
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text(
+																					_user$project$Customer_View$formatDate(customer.sanctionsAt)),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_lang$html$Html$td,
+																				{ctor: '[]'},
+																				{
+																					ctor: '::',
+																					_0: A2(_user$project$Customer_View$verifyStatus, customer.sanctions, customer.sanctionsOverride),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_lang$html$Html$td,
+																					{ctor: '[]'},
+																					{
+																						ctor: '::',
+																						_0: _elm_lang$html$Html$text(
+																							_user$project$Common_Customer_Types$authorizedToString(customer.sanctionsOverride)),
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_elm_lang$html$Html$td,
+																						{ctor: '[]'},
+																						{
+																							ctor: '::',
+																							_0: _user$project$Customer_View$maybeText(customer.sanctionsOverrideByName),
+																							_1: {ctor: '[]'}
+																						}),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_elm_lang$html$Html$td,
+																							{ctor: '[]'},
+																							{
+																								ctor: '::',
+																								_0: A3(_user$project$Customer_View$actions, customer.id, 'sanctionsOverride', customer.sanctionsOverride),
+																								_1: {ctor: '[]'}
+																							}),
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Customer_View$view = function (model) {
+	var _p2 = model;
+	switch (_p2.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p2._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Customer_View$customerView(_p2._0),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+
+var _user$project$Customers_Rest$getCustomers = A2(
+	_elm_lang$core$Platform_Cmd$map,
+	_user$project$Customers_Types$Load,
+	A2(
+		_lukewestby$elm_http_builder$HttpBuilder$send,
+		_krisajenkins$remotedata$RemoteData$fromResult,
+		A2(
+			_lukewestby$elm_http_builder$HttpBuilder$withExpect,
+			_elm_lang$http$Http$expectJson(_user$project$Common_Customer_Decoder$customersDecoder),
+			_lukewestby$elm_http_builder$HttpBuilder$get('/api/customers'))));
+
+var _user$project$Customers_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_p0._0,
+			{ctor: '[]'});
+	});
+var _user$project$Customers_State$loadCmd = _user$project$Customers_Rest$getCustomers;
+var _user$project$Customers_State$load = {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$Loading, _1: _user$project$Customers_State$loadCmd};
+var _user$project$Customers_State$init = _krisajenkins$remotedata$RemoteData$NotAsked;
+
+var _user$project$Customers_View$maybeText = function (maybeString) {
+	return _elm_lang$html$Html$text(
+		A2(_elm_lang$core$Maybe$withDefault, '', maybeString));
+};
+var _user$project$Customers_View$customerLink = function (id) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$href(
+				A2(_elm_lang$core$Basics_ops['++'], '/#customer/', id)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(_elm_lang$core$String$left, 8, id)),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Customers_View$rowView = function (customer) {
+	return A2(
+		_elm_lang$html$Html$tr,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Customers_View$customerLink(customer.id),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', customer.created)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _user$project$Customers_View$maybeText(customer.phone),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$td,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _user$project$Customers_View$maybeText(customer.name),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$td,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _user$project$Customers_View$maybeText(customer.status),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$Customers_View$tableView = function (customers) {
+	return _elm_lang$core$List$isEmpty(customers) ? A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('No customers yet.'),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Customers'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$table,
+					{
+						ctor: '::',
+						_0: _user$project$Css_Admin$class(
+							{
+								ctor: '::',
+								_0: _user$project$Css_Classes$TxTable,
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$thead,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$tr,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$td,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Id'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Created'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Phone'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Name'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('Status'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$tbody,
+								{ctor: '[]'},
+								A2(_elm_lang$core$List$map, _user$project$Customers_View$rowView, customers)),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Customers_View$view = function (model) {
+	var _p0 = model;
+	switch (_p0.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p0._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Customers_View$tableView(_p0._0),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+
+var _user$project$Logs_Rest$shareLogs = function (id) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_user$project$Logs_Types$LoadSupportLog,
+		A2(
+			_lukewestby$elm_http_builder$HttpBuilder$send,
+			_krisajenkins$remotedata$RemoteData$fromResult,
+			A2(
+				_lukewestby$elm_http_builder$HttpBuilder$withExpect,
+				_elm_lang$http$Http$expectJson(_user$project$Common_Logs_Decoder$latestLogSnapshotDecoder),
+				_lukewestby$elm_http_builder$HttpBuilder$post(
+					A2(_elm_lang$core$Basics_ops['++'], '/api/support_logs?deviceId=', id)))));
+};
+var _user$project$Logs_Rest$getMachines = A2(
+	_elm_lang$core$Platform_Cmd$map,
+	_user$project$Logs_Types$LoadMachines,
+	_krisajenkins$remotedata$RemoteData$sendRequest(
+		A2(_elm_lang$http$Http$get, '/api/machines/', _user$project$Common_Logs_Decoder$machinesDecoder)));
+var _user$project$Logs_Rest$getLogs = function (maybeId) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_user$project$Logs_Types$LoadLogs,
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			A2(
+				_elm_lang$http$Http$get,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'/api/logs/',
+					A2(_elm_lang$core$Maybe$withDefault, '', maybeId)),
+				_user$project$Common_Logs_Decoder$logsDecoder)));
+};
+
+var _user$project$Logs_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'LoadLogs':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{logs: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'LoadMachines':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{machines: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ShareLogs':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{
+						ctor: '::',
+						_0: _user$project$Logs_Rest$shareLogs(_p0._0.deviceId),
+						_1: {ctor: '[]'}
+					});
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{latestLogSnapshot: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Logs_State$getData = function (maybeId) {
+	return _elm_lang$core$Platform_Cmd$batch(
+		{
+			ctor: '::',
+			_0: _user$project$Logs_Rest$getLogs(maybeId),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Logs_Rest$getMachines,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Logs_State$load = function (maybeId) {
+	return {
+		ctor: '_Tuple2',
+		_0: {logs: _krisajenkins$remotedata$RemoteData$Loading, machines: _krisajenkins$remotedata$RemoteData$Loading, latestLogSnapshot: _krisajenkins$remotedata$RemoteData$NotAsked},
+		_1: _user$project$Logs_State$getData(maybeId)
+	};
+};
+var _user$project$Logs_State$init = {logs: _krisajenkins$remotedata$RemoteData$NotAsked, machines: _krisajenkins$remotedata$RemoteData$NotAsked, latestLogSnapshot: _krisajenkins$remotedata$RemoteData$NotAsked};
+
+var _user$project$Logs_View$latestLogSnapshot = function (model) {
+	var _p0 = model.latestLogSnapshot;
+	switch (_p0.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p0._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('✓ Saved latest snapshot'),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+var _user$project$Logs_View$formatDate = function (date) {
+	return A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', date);
+};
+var _user$project$Logs_View$rowView = function (log) {
+	return A2(
+		_elm_lang$html$Html$tr,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_user$project$Logs_View$formatDate(log.timestamp)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(log.logLevel),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(log.message),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$Logs_View$logsActions = function (logs) {
+	return A2(
+		_elm_lang$html$Html$button,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Events$onClick(
+				_user$project$Logs_Types$ShareLogs(logs.currentMachine)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Share log snapshot'),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Logs_View$logsView = function (logs) {
+	return _elm_lang$core$List$isEmpty(logs.logs) ? A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('No logs yet.'),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Logs_View$logsActions(logs),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$table,
+					{
+						ctor: '::',
+						_0: _user$project$Css_Admin$class(
+							{
+								ctor: '::',
+								_0: _user$project$Css_Classes$TxTable,
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$thead,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$tr,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$td,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Date'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Level'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Message'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$tbody,
+								{ctor: '[]'},
+								A2(_elm_lang$core$List$map, _user$project$Logs_View$rowView, logs.logs)),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Logs_View$logs = function (model) {
+	var _p1 = model.logs;
+	switch (_p1.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading logs...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p1._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Logs_View$logsView(_p1._0),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+var _user$project$Logs_View$machineLink = function (machine) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$href(
+				A2(_elm_lang$core$Basics_ops['++'], '/#logs/', machine.deviceId)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(machine.name),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Logs_View$machineRowView = function (machine) {
+	return A2(
+		_elm_lang$html$Html$tr,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Logs_View$machineLink(machine),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Logs_View$machineItemView = function (machine) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Logs_View$machineLink(machine),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Logs_View$machinesView = function (machines) {
+	return _elm_lang$core$List$isEmpty(machines) ? A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{
+					ctor: '::',
+					_0: _user$project$Css_Classes$EmptyTable,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('No paired machines.'),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$TxTable,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$ul,
+						{ctor: '[]'},
+						A2(_elm_lang$core$List$map, _user$project$Logs_View$machineItemView, machines)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Logs_View$machines = function (model) {
+	var _p2 = model.machines;
+	switch (_p2.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading machines ...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p2._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Logs_View$machinesView(_p2._0),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+var _user$project$Logs_View$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Latest Logs'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _user$project$Css_Admin$class(
+							{
+								ctor: '::',
+								_0: _user$project$Css_Classes$PaneWrapper,
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _user$project$Css_Admin$class(
+									{
+										ctor: '::',
+										_0: _user$project$Css_Classes$LeftPane,
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$h2,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Machines'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Logs_View$machines(model),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _user$project$Css_Admin$class(
+										{
+											ctor: '::',
+											_0: _user$project$Css_Classes$ContentPane,
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$h2,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Logs'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _user$project$Logs_View$latestLogSnapshot(model),
+										_1: {
+											ctor: '::',
+											_0: _user$project$Logs_View$logs(model),
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+
+var _user$project$SupportLogs_Rest$getSupportLogs = A2(
+	_elm_lang$core$Platform_Cmd$map,
+	_user$project$SupportLogs_Types$LoadSupportLogs,
+	_krisajenkins$remotedata$RemoteData$sendRequest(
+		A2(_elm_lang$http$Http$get, '/api/support_logs/', _user$project$Common_Logs_Decoder$supportLogsDecoder)));
+var _user$project$SupportLogs_Rest$getAllLogs = function (maybeId) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_user$project$SupportLogs_Types$LoadLogs,
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			A2(
+				_elm_lang$http$Http$get,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'/api/support_logs/logs?supportLogId=',
+					A2(_elm_lang$core$Maybe$withDefault, '', maybeId)),
+				_user$project$Common_Logs_Decoder$logsDecoder)));
+};
+
+var _user$project$SupportLogs_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'LoadLogs') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{logs: _p0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{supportLogs: _p0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+var _user$project$SupportLogs_State$getSupportData = function (maybeId) {
+	return _elm_lang$core$Platform_Cmd$batch(
+		{
+			ctor: '::',
+			_0: _user$project$SupportLogs_Rest$getAllLogs(maybeId),
+			_1: {
+				ctor: '::',
+				_0: _user$project$SupportLogs_Rest$getSupportLogs,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$SupportLogs_State$load = function (maybeId) {
+	return {
+		ctor: '_Tuple2',
+		_0: {logs: _krisajenkins$remotedata$RemoteData$Loading, supportLogs: _krisajenkins$remotedata$RemoteData$Loading},
+		_1: _user$project$SupportLogs_State$getSupportData(maybeId)
+	};
+};
+var _user$project$SupportLogs_State$init = {logs: _krisajenkins$remotedata$RemoteData$NotAsked, supportLogs: _krisajenkins$remotedata$RemoteData$NotAsked};
+
+var _user$project$SupportLogs_View$formatDate = function (date) {
+	return A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', date);
+};
+var _user$project$SupportLogs_View$rowView = function (log) {
+	return A2(
+		_elm_lang$html$Html$tr,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_user$project$SupportLogs_View$formatDate(log.timestamp)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(log.logLevel),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(log.message),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$SupportLogs_View$logsView = function (logs) {
+	return _elm_lang$core$List$isEmpty(logs.logs) ? A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('No logs yet.'),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$table,
+				{
+					ctor: '::',
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$TxTable,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$thead,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$tr,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$td,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Date'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$td,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Level'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Message'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$tbody,
+							{ctor: '[]'},
+							A2(_elm_lang$core$List$map, _user$project$SupportLogs_View$rowView, logs.logs)),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$SupportLogs_View$logs = function (model) {
+	var _p0 = model.logs;
+	switch (_p0.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading logs...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('No logs yet.'),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$SupportLogs_View$logsView(_p0._0),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+var _user$project$SupportLogs_View$supportLogText = function (supportLog) {
+	return _elm_lang$html$Html$text(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			supportLog.name,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				' ',
+				A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-MM-dd HH:mm', supportLog.timestamp))));
+};
+var _user$project$SupportLogs_View$supportLogLink = function (supportLog) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$href(
+				A2(_elm_lang$core$Basics_ops['++'], '/#support_logs/', supportLog.id)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _user$project$SupportLogs_View$supportLogText(supportLog),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$SupportLogs_View$supportLogItemView = function (supportLog) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$SupportLogs_View$supportLogLink(supportLog),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$SupportLogs_View$supportLogsView = function (supportLogs) {
+	return _elm_lang$core$List$isEmpty(supportLogs) ? A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{
+					ctor: '::',
+					_0: _user$project$Css_Classes$EmptyTable,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('No shared logs'),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _user$project$Css_Admin$class(
+						{
+							ctor: '::',
+							_0: _user$project$Css_Classes$TxTable,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$ul,
+						{ctor: '[]'},
+						A2(_elm_lang$core$List$map, _user$project$SupportLogs_View$supportLogItemView, supportLogs)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$SupportLogs_View$supportLogs = function (model) {
+	var _p1 = model.supportLogs;
+	switch (_p1.ctor) {
+		case 'NotAsked':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		case 'Loading':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Loading snapshots ...'),
+					_1: {ctor: '[]'}
+				});
+		case 'Failure':
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p1._0)),
+					_1: {ctor: '[]'}
+				});
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$SupportLogs_View$supportLogsView(_p1._0),
+					_1: {ctor: '[]'}
+				});
+	}
+};
+var _user$project$SupportLogs_View$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Lamassu support logs'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _user$project$Css_Admin$class(
+							{
+								ctor: '::',
+								_0: _user$project$Css_Classes$PaneWrapper,
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _user$project$Css_Admin$class(
+									{
+										ctor: '::',
+										_0: _user$project$Css_Classes$LeftPane,
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$h2,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Shared snapshots'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _user$project$SupportLogs_View$supportLogs(model),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _user$project$Css_Admin$class(
+										{
+											ctor: '::',
+											_0: _user$project$Css_Classes$ContentPane,
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$h2,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Logs'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _user$project$SupportLogs_View$logs(model),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
 };
 
 var _user$project$NavBar$determineConfigCategory = function (configCode) {
@@ -34018,6 +36676,14 @@ var _user$project$NavBar$determineCategory = function (route) {
 			return _elm_lang$core$Maybe$Nothing;
 		case 'TransactionRoute':
 			return _elm_lang$core$Maybe$Nothing;
+		case 'CustomersRoute':
+			return _elm_lang$core$Maybe$Nothing;
+		case 'CustomerRoute':
+			return _elm_lang$core$Maybe$Nothing;
+		case 'LogsRoute':
+			return _elm_lang$core$Maybe$Nothing;
+		case 'SupportLogsRoute':
+			return _elm_lang$core$Maybe$Nothing;
 		default:
 			return _elm_lang$core$Maybe$Nothing;
 	}
@@ -34067,12 +36733,26 @@ var _user$project$NavBar$routeToUrl = function (route) {
 			return '/#transactions/';
 		case 'TransactionRoute':
 			return A2(_elm_lang$core$Basics_ops['++'], '/#transaction/', _p1._0);
+		case 'CustomersRoute':
+			return '/#customers/';
+		case 'CustomerRoute':
+			return A2(_elm_lang$core$Basics_ops['++'], '/#customer/', _p1._0);
+		case 'LogsRoute':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'/#logs/',
+				A2(_elm_lang$core$Maybe$withDefault, '', _p1._0));
+		case 'SupportLogsRoute':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'/#support_logs/',
+				A2(_elm_lang$core$Maybe$withDefault, '', _p1._0));
 		default:
 			return _elm_lang$core$Native_Utils.crashCase(
 				'NavBar',
 				{
 					start: {line: 29, column: 5},
-					end: {line: 52, column: 45}
+					end: {line: 64, column: 45}
 				},
 				_p1)('Need unknown route');
 	}
@@ -34326,13 +37006,17 @@ var _user$project$NavBar$view = F2(
 							_0: {ctor: '_Tuple3', _0: 'Machines', _1: _user$project$CoreTypes$MaintenanceMachinesRoute, _2: true},
 							_1: {
 								ctor: '::',
-								_0: {
-									ctor: '_Tuple3',
-									_0: 'Funding',
-									_1: _user$project$CoreTypes$MaintenanceFundingRoute(_elm_lang$core$Maybe$Nothing),
-									_2: true
-								},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple3', _0: 'Customers', _1: _user$project$CoreTypes$CustomersRoute, _2: true},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple3',
+										_0: 'Funding',
+										_1: _user$project$CoreTypes$MaintenanceFundingRoute(_elm_lang$core$Maybe$Nothing),
+										_2: true
+									},
+									_1: {ctor: '[]'}
+								}
 							}
 						}),
 					_1: {
@@ -35624,8 +38308,10 @@ var _user$project$Transaction_View$cashOutTxView = function (tx) {
 		});
 };
 var _user$project$Transaction_View$cashInTxView = function (tx) {
-	var cancellable = !(tx.operatorCompleted || (tx.sendConfirmed || tx.expired));
-	var cancelButtonDiv = cancellable ? A2(
+	var cancelButtonDiv = (tx.operatorCompleted || tx.sendConfirmed) ? A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{ctor: '[]'}) : A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
@@ -35644,10 +38330,7 @@ var _user$project$Transaction_View$cashInTxView = function (tx) {
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
-		}) : A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'});
+		});
 	var cancelStatus = tx.operatorCompleted ? 'Cancelled' : (tx.sendConfirmed ? 'Sent' : (tx.expired ? 'Expired' : 'Pending'));
 	return A2(
 		_elm_lang$html$Html$div,
@@ -35880,6 +38563,26 @@ var _user$project$Main$content = F2(
 					_elm_lang$html$Html$map,
 					_user$project$CoreTypes$TransactionMsg,
 					_user$project$Transaction_View$view(model.transaction));
+			case 'CustomersRoute':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$CoreTypes$CustomersMsg,
+					_user$project$Customers_View$view(model.customers));
+			case 'CustomerRoute':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$CoreTypes$CustomerMsg,
+					_user$project$Customer_View$view(model.customer));
+			case 'LogsRoute':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$CoreTypes$LogsMsg,
+					_user$project$Logs_View$view(model.logs));
+			case 'SupportLogsRoute':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$CoreTypes$SupportLogsMsg,
+					_user$project$SupportLogs_View$view(model.supportLogs));
 			default:
 				return A2(
 					_elm_lang$html$Html$div,
@@ -36000,9 +38703,66 @@ var _user$project$Main$parseRoute = _evancz$url_parser$UrlParser$oneOf(
 											ctor: '::',
 											_0: A2(
 												_evancz$url_parser$UrlParser$map,
-												A2(_user$project$CoreTypes$ConfigRoute, 'setup', _elm_lang$core$Maybe$Nothing),
-												_evancz$url_parser$UrlParser$top),
-											_1: {ctor: '[]'}
+												_user$project$CoreTypes$CustomersRoute,
+												_evancz$url_parser$UrlParser$s('customers')),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_evancz$url_parser$UrlParser$map,
+													_user$project$CoreTypes$CustomerRoute,
+													A2(
+														_evancz$url_parser$UrlParser_ops['</>'],
+														_evancz$url_parser$UrlParser$s('customer'),
+														_evancz$url_parser$UrlParser$string)),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_evancz$url_parser$UrlParser$map,
+														function (id) {
+															return _user$project$CoreTypes$LogsRoute(
+																_elm_lang$core$Maybe$Just(id));
+														},
+														A2(
+															_evancz$url_parser$UrlParser_ops['</>'],
+															_evancz$url_parser$UrlParser$s('logs'),
+															_evancz$url_parser$UrlParser$string)),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_evancz$url_parser$UrlParser$map,
+															_user$project$CoreTypes$LogsRoute(_elm_lang$core$Maybe$Nothing),
+															_evancz$url_parser$UrlParser$s('logs')),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_evancz$url_parser$UrlParser$map,
+																function (id) {
+																	return _user$project$CoreTypes$SupportLogsRoute(
+																		_elm_lang$core$Maybe$Just(id));
+																},
+																A2(
+																	_evancz$url_parser$UrlParser_ops['</>'],
+																	_evancz$url_parser$UrlParser$s('support_logs'),
+																	_evancz$url_parser$UrlParser$string)),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_evancz$url_parser$UrlParser$map,
+																	_user$project$CoreTypes$SupportLogsRoute(_elm_lang$core$Maybe$Nothing),
+																	_evancz$url_parser$UrlParser$s('support_logs')),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_evancz$url_parser$UrlParser$map,
+																		A2(_user$project$CoreTypes$ConfigRoute, 'setup', _elm_lang$core$Maybe$Nothing),
+																		_evancz$url_parser$UrlParser$top),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
 										}
 									}
 								}
@@ -36171,10 +38931,66 @@ var _user$project$Main$urlUpdate = F2(
 						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$TransactionsMsg, cmd),
 						_1: {ctor: '[]'}
 					});
-			case 'TransactionRoute':
-				var _p12 = _user$project$Transaction_State$load(_p5._0);
-				var transaction = _p12._0;
+			case 'CustomersRoute':
+				var _p12 = _user$project$Customers_State$load;
+				var customersModel = _p12._0;
 				var cmd = _p12._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{location: location, customers: customersModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomersMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'CustomerRoute':
+				var _p13 = _user$project$Customer_State$load(_p5._0);
+				var customerModel = _p13._0;
+				var cmd = _p13._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{location: location, customer: customerModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomerMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'LogsRoute':
+				var _p14 = _user$project$Logs_State$load(_p5._0);
+				var logsModel = _p14._0;
+				var cmd = _p14._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{location: location, logs: logsModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$LogsMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'SupportLogsRoute':
+				var _p15 = _user$project$SupportLogs_State$load(_p5._0);
+				var supportLogsModel = _p15._0;
+				var cmd = _p15._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{location: location, supportLogs: supportLogsModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$SupportLogsMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'TransactionRoute':
+				var _p16 = _user$project$Transaction_State$load(_p5._0);
+				var transaction = _p16._0;
+				var cmd = _p16._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36204,13 +39020,17 @@ var _user$project$Main$init = function (location) {
 		maintenanceFunding: _user$project$MaintenanceFunding_State$init,
 		transactions: _user$project$Transactions$init,
 		transaction: _user$project$Transaction_State$init,
+		customers: _user$project$Customers_State$init,
+		customer: _user$project$Customer_State$init,
+		logs: _user$project$Logs_State$init,
+		supportLogs: _user$project$SupportLogs_State$init,
 		accounts: {ctor: '[]'},
 		status: _elm_lang$core$Maybe$Nothing,
 		err: _elm_lang$core$Maybe$Nothing
 	};
-	var _p13 = A2(_user$project$Main$urlUpdate, location, model);
-	var newModel = _p13._0;
-	var newCmd = _p13._1;
+	var _p17 = A2(_user$project$Main$urlUpdate, location, model);
+	var newModel = _p17._0;
+	var newCmd = _p17._1;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		newModel,
@@ -36230,12 +39050,12 @@ var _user$project$Main$init = function (location) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p14 = msg;
-		switch (_p14.ctor) {
+		var _p18 = msg;
+		switch (_p18.ctor) {
 			case 'PairMsg':
-				var _p15 = A2(_user$project$Pair$update, _p14._0, model.pair);
-				var pairModel = _p15._0;
-				var cmd = _p15._1;
+				var _p19 = A2(_user$project$Pair$update, _p18._0, model.pair);
+				var pairModel = _p19._0;
+				var cmd = _p19._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36247,9 +39067,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'AccountMsg':
-				var _p16 = A2(_user$project$Account$update, _p14._0, model.account);
-				var accountModel = _p16._0;
-				var cmd = _p16._1;
+				var _p20 = A2(_user$project$Account$update, _p18._0, model.account);
+				var accountModel = _p20._0;
+				var cmd = _p20._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36261,8 +39081,8 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'ConfigMsg':
-				var _p18 = _p14._0;
-				var loaded = _user$project$Config$loaded(_p18);
+				var _p22 = _p18._0;
+				var loaded = _user$project$Config$loaded(_p22);
 				var extraCmds = loaded ? {
 					ctor: '::',
 					_0: _user$project$Main$getAccounts,
@@ -36272,9 +39092,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					}
 				} : {ctor: '[]'};
-				var _p17 = A2(_user$project$Config$update, _p18, model.config);
-				var configModel = _p17._0;
-				var cmd = _p17._1;
+				var _p21 = A2(_user$project$Config$update, _p22, model.config);
+				var configModel = _p21._0;
+				var cmd = _p21._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36289,9 +39109,9 @@ var _user$project$Main$update = F2(
 						},
 						extraCmds));
 			case 'MaintenanceMachinesMsg':
-				var _p19 = A2(_user$project$MaintenanceMachines_State$update, _p14._0, model.maintenanceMachines);
-				var maintenanceMachines = _p19._0;
-				var cmd = _p19._1;
+				var _p23 = A2(_user$project$MaintenanceMachines_State$update, _p18._0, model.maintenanceMachines);
+				var maintenanceMachines = _p23._0;
+				var cmd = _p23._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36303,9 +39123,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'MaintenanceFundingMsg':
-				var _p20 = A2(_user$project$MaintenanceFunding_State$update, _p14._0, model.maintenanceFunding);
-				var maintenanceFunding = _p20._0;
-				var cmd = _p20._1;
+				var _p24 = A2(_user$project$MaintenanceFunding_State$update, _p18._0, model.maintenanceFunding);
+				var maintenanceFunding = _p24._0;
+				var cmd = _p24._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36317,9 +39137,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionsMsg':
-				var _p21 = A2(_user$project$Transactions$update, _p14._0, model.transactions);
-				var transactionsModel = _p21._0;
-				var cmd = _p21._1;
+				var _p25 = A2(_user$project$Transactions$update, _p18._0, model.transactions);
+				var transactionsModel = _p25._0;
+				var cmd = _p25._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36331,9 +39151,9 @@ var _user$project$Main$update = F2(
 						_1: {ctor: '[]'}
 					});
 			case 'TransactionMsg':
-				var _p22 = A2(_user$project$Transaction_State$update, _p14._0, model.transaction);
-				var transaction = _p22._0;
-				var cmd = _p22._1;
+				var _p26 = A2(_user$project$Transaction_State$update, _p18._0, model.transaction);
+				var transaction = _p26._0;
+				var cmd = _p26._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36344,12 +39164,68 @@ var _user$project$Main$update = F2(
 						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$TransactionMsg, cmd),
 						_1: {ctor: '[]'}
 					});
+			case 'CustomersMsg':
+				var _p27 = A2(_user$project$Customers_State$update, _p18._0, model.customers);
+				var customersModel = _p27._0;
+				var cmd = _p27._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{customers: customersModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomersMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'CustomerMsg':
+				var _p28 = A2(_user$project$Customer_State$update, _p18._0, model.customer);
+				var customerModel = _p28._0;
+				var cmd = _p28._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{customer: customerModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$CustomerMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'LogsMsg':
+				var _p29 = A2(_user$project$Logs_State$update, _p18._0, model.logs);
+				var logsModel = _p29._0;
+				var cmd = _p29._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{logs: logsModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$LogsMsg, cmd),
+						_1: {ctor: '[]'}
+					});
+			case 'SupportLogsMsg':
+				var _p30 = A2(_user$project$SupportLogs_State$update, _p18._0, model.supportLogs);
+				var supportLogsModel = _p30._0;
+				var cmd = _p30._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{supportLogs: supportLogsModel}),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$SupportLogsMsg, cmd),
+						_1: {ctor: '[]'}
+					});
 			case 'LoadAccounts':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{accounts: _p14._0}),
+						{accounts: _p18._0}),
 					{ctor: '[]'});
 			case 'LoadStatus':
 				var newStatus = _elm_lang$core$List$head(
@@ -36358,7 +39234,7 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Basics$identity,
 						{
 							ctor: '::',
-							_0: _krisajenkins$remotedata$RemoteData$toMaybe(_p14._0),
+							_0: _krisajenkins$remotedata$RemoteData$toMaybe(_p18._0),
 							_1: {
 								ctor: '::',
 								_0: model.status,
@@ -36392,9 +39268,9 @@ var _user$project$Main$update = F2(
 						{status: newStatus, pair: newPair, config: newConfig}),
 					{ctor: '[]'});
 			case 'NewUrl':
-				var _p23 = _user$project$Config$submitNoLoad(model.config);
-				var configModel = _p23._0;
-				var configCmd = _p23._1;
+				var _p31 = _user$project$Config$submitNoLoad(model.config);
+				var configModel = _p31._0;
+				var configCmd = _p31._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -36402,7 +39278,7 @@ var _user$project$Main$update = F2(
 						{config: configModel}),
 					{
 						ctor: '::',
-						_0: _elm_lang$navigation$Navigation$newUrl(_p14._0),
+						_0: _elm_lang$navigation$Navigation$newUrl(_p18._0),
 						_1: {
 							ctor: '::',
 							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$CoreTypes$ConfigMsg, configCmd),
@@ -36410,7 +39286,7 @@ var _user$project$Main$update = F2(
 						}
 					});
 			case 'UrlChange':
-				return A2(_user$project$Main$urlUpdate, _p14._0, model);
+				return A2(_user$project$Main$urlUpdate, _p18._0, model);
 			case 'Interval':
 				var route = A2(
 					_elm_lang$core$Maybe$withDefault,
@@ -36454,7 +39330,15 @@ var _user$project$Main$Model = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return {location: a, pair: b, account: c, config: d, maintenanceMachines: e, maintenanceFunding: f, transactions: g, transaction: h, accounts: i, status: j, err: k};
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return {location: a, pair: b, account: c, config: d, maintenanceMachines: e, maintenanceFunding: f, transactions: g, transaction: h, customers: i, customer: j, logs: k, supportLogs: l, accounts: m, status: n, err: o};
+														};
+													};
+												};
+											};
 										};
 									};
 								};
