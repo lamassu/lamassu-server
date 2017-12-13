@@ -13986,14 +13986,21 @@ var _krisajenkins$remotedata$RemoteData$mapError = F2(
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 		}
 	});
-var _krisajenkins$remotedata$RemoteData$mapBoth = F2(
-	function (successFn, errorFn) {
-		return function (_p12) {
-			return A2(
-				_krisajenkins$remotedata$RemoteData$mapError,
-				errorFn,
-				A2(_krisajenkins$remotedata$RemoteData$map, successFn, _p12));
-		};
+var _krisajenkins$remotedata$RemoteData$mapBoth = F3(
+	function (successFn, errorFn, data) {
+		var _p12 = data;
+		switch (_p12.ctor) {
+			case 'Success':
+				return _krisajenkins$remotedata$RemoteData$Success(
+					successFn(_p12._0));
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(
+					errorFn(_p12._0));
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			default:
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+		}
 	});
 var _krisajenkins$remotedata$RemoteData$andThen = F2(
 	function (f, data) {
@@ -21588,16 +21595,24 @@ var _pablohirafuji$elm_qrcode$QRCode_View$rectView = function (_p1) {
 					_elm_lang$core$Basics$toString(_p2.row * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$width(
-						_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+					_0: _elm_lang$svg$Svg_Attributes$rx('0'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$height(
-							_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+						_0: _elm_lang$svg$Svg_Attributes$ry('0'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$fill('black'),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$svg$Svg_Attributes$width(
+								_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$height(
+									_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$fill('black'),
+									_1: {ctor: '[]'}
+								}
+							}
 						}
 					}
 				}
@@ -33496,7 +33511,7 @@ var _user$project$Transaction_Decoder$cashInTxDecoder = A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec))))))))))))))));
 var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'confirmationTime',
+	'confirmedAt',
 	_user$project$Transaction_Decoder$confirmedDecoder,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -36677,11 +36692,11 @@ var _user$project$NavBar$determineCategory = function (route) {
 		case 'TransactionRoute':
 			return _elm_lang$core$Maybe$Nothing;
 		case 'CustomersRoute':
-			return _elm_lang$core$Maybe$Nothing;
+			return _elm_lang$core$Maybe$Just(_user$project$CoreTypes$MaintenanceCat);
 		case 'CustomerRoute':
-			return _elm_lang$core$Maybe$Nothing;
+			return _elm_lang$core$Maybe$Just(_user$project$CoreTypes$MaintenanceCat);
 		case 'LogsRoute':
-			return _elm_lang$core$Maybe$Nothing;
+			return _elm_lang$core$Maybe$Just(_user$project$CoreTypes$MaintenanceCat);
 		case 'SupportLogsRoute':
 			return _elm_lang$core$Maybe$Nothing;
 		default:
@@ -36774,6 +36789,10 @@ var _user$project$NavBar$linkClasses = F3(
 					return _elm_lang$core$Native_Utils.eq(
 						linkRoute,
 						_user$project$CoreTypes$MaintenanceFundingRoute(_elm_lang$core$Maybe$Nothing));
+				case 'LogsRoute':
+					return _elm_lang$core$Native_Utils.eq(
+						linkRoute,
+						_user$project$CoreTypes$LogsRoute(_elm_lang$core$Maybe$Nothing));
 				default:
 					return _elm_lang$core$Native_Utils.eq(linkRoute, route);
 			}
@@ -37006,16 +37025,25 @@ var _user$project$NavBar$view = F2(
 							_0: {ctor: '_Tuple3', _0: 'Machines', _1: _user$project$CoreTypes$MaintenanceMachinesRoute, _2: true},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple3', _0: 'Customers', _1: _user$project$CoreTypes$CustomersRoute, _2: true},
+								_0: {
+									ctor: '_Tuple3',
+									_0: 'Funding',
+									_1: _user$project$CoreTypes$MaintenanceFundingRoute(_elm_lang$core$Maybe$Nothing),
+									_2: true
+								},
 								_1: {
 									ctor: '::',
-									_0: {
-										ctor: '_Tuple3',
-										_0: 'Funding',
-										_1: _user$project$CoreTypes$MaintenanceFundingRoute(_elm_lang$core$Maybe$Nothing),
-										_2: true
-									},
-									_1: {ctor: '[]'}
+									_0: {ctor: '_Tuple3', _0: 'Customers', _1: _user$project$CoreTypes$CustomersRoute, _2: true},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple3',
+											_0: 'Logs',
+											_1: _user$project$CoreTypes$LogsRoute(_elm_lang$core$Maybe$Nothing),
+											_2: true
+										},
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}),
@@ -38308,10 +38336,8 @@ var _user$project$Transaction_View$cashOutTxView = function (tx) {
 		});
 };
 var _user$project$Transaction_View$cashInTxView = function (tx) {
-	var cancelButtonDiv = (tx.operatorCompleted || tx.sendConfirmed) ? A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'}) : A2(
+	var cancellable = !(tx.operatorCompleted || (tx.sendConfirmed || tx.expired));
+	var cancelButtonDiv = cancellable ? A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
@@ -38330,7 +38356,10 @@ var _user$project$Transaction_View$cashInTxView = function (tx) {
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
-		});
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{ctor: '[]'});
 	var cancelStatus = tx.operatorCompleted ? 'Cancelled' : (tx.sendConfirmed ? 'Sent' : (tx.expired ? 'Expired' : 'Pending'));
 	return A2(
 		_elm_lang$html$Html$div,
