@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+supervisorctl stop lamassu-server
+supervisorctl stop lamassu-admin-server
+npm -g install lamassu/lamassu-server#v5
+lamassu-migrate
+supervisorctl start lamassu-server
+supervisorctl start lamassu-admin-server
+
