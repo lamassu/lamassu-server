@@ -12,6 +12,14 @@ exports.up = function (next) {
 
     return db.multi(sql, next)
   })
+  .catch(() => {
+    const sql = [
+      'alter table devices add column name text',
+      'alter table devices alter column name set not null'
+    ]
+
+    return db.multi(sql, next)
+  })
 }
 
 exports.down = function (next) {
