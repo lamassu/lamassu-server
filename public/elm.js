@@ -33803,6 +33803,7 @@ var _user$project$Transactions$rowView = function (tx) {
 			});
 	} else {
 		var _p3 = _p1._0;
+		var status = _elm_community$maybe_extra$Maybe_Extra$isJust(_p3.error) ? 'Error' : 'Success';
 		return A2(
 			_elm_lang$html$Html$tr,
 			{
@@ -33832,7 +33833,7 @@ var _user$project$Transactions$rowView = function (tx) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Cash out'),
+							_0: _elm_lang$html$Html$text(status),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -38326,16 +38327,69 @@ var _user$project$Transaction_State$load = function (txId) {
 var _user$project$Transaction_State$init = _krisajenkins$remotedata$RemoteData$NotAsked;
 
 var _user$project$Transaction_View$cashOutTxView = function (tx) {
+	var error = function () {
+		var _p0 = tx.error;
+		if (_p0.ctor === 'Nothing') {
+			return 'No errors';
+		} else {
+			return A2(_elm_lang$core$Basics_ops['++'], 'Error: ', _p0._0);
+		}
+	}();
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text(tx.id),
-			_1: {ctor: '[]'}
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(tx.id),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('This is a cash-out transaction'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'Fiat: ',
+									A2(_ggb$numeral_elm$Numeral$format, '0,0.00', tx.fiat))),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(error),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
 		});
 };
 var _user$project$Transaction_View$cashInTxView = function (tx) {
+	var error = A2(_elm_lang$core$Maybe$withDefault, 'Successfull', tx.error);
 	var cancellable = !(tx.operatorCompleted || (tx.sendConfirmed || tx.expired));
 	var cancelButtonDiv = cancellable ? A2(
 		_elm_lang$html$Html$div,
@@ -38411,8 +38465,19 @@ var _user$project$Transaction_View$cashInTxView = function (tx) {
 							}),
 						_1: {
 							ctor: '::',
-							_0: cancelButtonDiv,
-							_1: {ctor: '[]'}
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(error),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: cancelButtonDiv,
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}
@@ -38420,16 +38485,16 @@ var _user$project$Transaction_View$cashInTxView = function (tx) {
 		});
 };
 var _user$project$Transaction_View$txView = function (subModel) {
-	var _p0 = subModel.tx;
-	if (_p0.ctor === 'CashInTx') {
-		return _user$project$Transaction_View$cashInTxView(_p0._0);
+	var _p1 = subModel.tx;
+	if (_p1.ctor === 'CashInTx') {
+		return _user$project$Transaction_View$cashInTxView(_p1._0);
 	} else {
-		return _user$project$Transaction_View$cashOutTxView(_p0._0);
+		return _user$project$Transaction_View$cashOutTxView(_p1._0);
 	}
 };
 var _user$project$Transaction_View$view = function (model) {
-	var _p1 = model;
-	switch (_p1.ctor) {
+	var _p2 = model;
+	switch (_p2.ctor) {
 		case 'NotAsked':
 			return A2(
 				_elm_lang$html$Html$div,
@@ -38451,11 +38516,11 @@ var _user$project$Transaction_View$view = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p1._0)),
+						_elm_lang$core$Basics$toString(_p2._0)),
 					_1: {ctor: '[]'}
 				});
 		default:
-			return _user$project$Transaction_View$txView(_p1._0);
+			return _user$project$Transaction_View$txView(_p2._0);
 	}
 };
 
