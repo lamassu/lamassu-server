@@ -12,6 +12,8 @@
     "bignumber.js": "^4.0.2",
     "bip39": "^2.3.1",
     "bitcoind-rpc": "^0.7.0",
+    "bitcore-lib": "^0.15.0",
+    "bitcore-lib-cash": "git+https://github.com/bitpay/bitcore-lib.git#cash",
     "bitgo": "3.4.11",
     "body-parser": "^1.15.1",
     "coinbase": "^2.0.6",
@@ -27,6 +29,7 @@
     "helmet": "^3.8.1",
     "inquirer": "^3.2.1",
     "kraken-api": "github:DeX3/npm-kraken-api",
+    "lnd-async": "^1.0.1",
     "lodash": "^4.17.2",
     "make-dir": "^1.0.0",
     "mem": "^1.1.0",
@@ -50,9 +53,7 @@
     "uuid": "^3.1.0",
     "web3": "^0.19.1",
     "winston": "^2.3.0",
-    "ws": "^3.1.0",
-    "bitcore-lib": "^0.15.0",
-    "bitcore-lib-cash": "git+https://github.com/bitpay/bitcore-lib.git#cash"
+    "ws": "^3.1.0"
   },
   "repository": {
     "type": "git",
