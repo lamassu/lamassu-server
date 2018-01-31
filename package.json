@@ -12,6 +12,8 @@
     "bignumber.js": "^4.0.2",
     "bip39": "^2.3.1",
     "bitcoind-rpc": "^0.7.0",
+    "bitcore-lib": "^0.15.0",
+    "bitcore-lib-cash": "git+https://github.com/bitpay/bitcore-lib.git#cash",
     "bitgo": "3.4.11",
     "body-parser": "^1.15.1",
     "coinbase": "^2.0.6",
@@ -37,8 +39,8 @@
     "node-hkdf-sync": "^1.0.0",
     "node-mailjet": "^3.2.1",
     "numeral": "^2.0.3",
-    "pg-native": "^2.0.1",
-    "pg-promise": "^6.3.7",
+    "pg-native": "^2.2.0",
+    "pg-promise": "^7.4.1",
     "pify": "^3.0.0",
     "pretty-ms": "^2.1.0",
     "promise-sequential": "^1.1.1",
@@ -50,9 +52,7 @@
     "uuid": "^3.1.0",
     "web3": "^0.19.1",
     "winston": "^2.3.0",
-    "ws": "^3.1.0",
-    "bitcore-lib": "^0.15.0",
-    "bitcore-lib-cash": "git+https://github.com/bitpay/bitcore-lib.git#cash"
+    "ws": "^3.1.0"
   },
   "repository": {
     "type": "git",

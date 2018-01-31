@@ -1,7 +1,7 @@
 const settingsLoader = require('../lib/settings-loader')
 
 const fields = [
-  settingsLoader.configDeleteField({crypto: 'ETH', machine: 'global'}, 'exchange')
+  settingsLoader.configDeleteField({crypto: 'BTC', machine: 'global'}, 'wallet')
 ]
 
 settingsLoader.modifyConfig(fields)
