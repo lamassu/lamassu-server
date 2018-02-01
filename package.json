@@ -40,6 +40,7 @@
     "node-hkdf-sync": "^1.0.0",
     "node-mailjet": "^3.2.1",
     "numeral": "^2.0.3",
+    "p-each-series": "^1.0.0",
     "pg-native": "^2.2.0",
     "pg-promise": "^7.4.1",
     "pify": "^3.0.0",
