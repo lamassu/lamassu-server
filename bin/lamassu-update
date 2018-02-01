@@ -3,7 +3,7 @@ set -e
 
 supervisorctl stop lamassu-server
 supervisorctl stop lamassu-admin-server
-npm -g install lamassu/lamassu-server#v5 --allow-root
+npm -g install lamassu/lamassu-server#v5 --unsafe-perm
 lamassu-migrate
 supervisorctl start lamassu-server
 supervisorctl start lamassu-admin-server
