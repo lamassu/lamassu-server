@@ -31,6 +31,7 @@
     "kraken-api": "github:DeX3/npm-kraken-api",
     "lnd-async": "^1.0.1",
     "lodash": "^4.17.2",
+    "longjohn": "^0.2.12",
     "make-dir": "^1.0.0",
     "mem": "^1.1.0",
     "migrate": "^0.2.2",
