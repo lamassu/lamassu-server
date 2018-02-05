@@ -4,11 +4,13 @@ set -e
 
 DOMAIN=localhost
 
+CONFIG_DIR=$HOME/.lamassu
 LOG_FILE=/tmp/cert-gen.log
 CERT_DIR=$PWD/certs
 KEY_DIR=$PWD/certs
-
-CONFIG_DIR=$HOME/.lamassu
+LAMASSU_CA_PATH=$PWD/Lamassu_CA.pem
+MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
+POSTGRES_PASS=postgres123
 
 mkdir -p $CERT_DIR
 mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
@@ -49,11 +51,7 @@ openssl genrsa \
 openssl req -new \
   -key $SERVER_KEY_PATH \
   -out /tmp/Lamassu_OP.csr.pem \
-  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=$IP" \
-  -reqexts SAN \
-  -sha256 \
-  -config <(cat /etc/ssl/openssl.cnf \
-      <(printf "[SAN]\nsubjectAltName=IP.1:$IP")) \
+  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=$DOMAIN" \
   >> $LOG_FILE 2>&1
 
 openssl x509 \
@@ -62,22 +60,22 @@ openssl x509 \
   -CAkey $CA_KEY_PATH \
   -CAcreateserial \
   -out $SERVER_CERT_PATH \
-  -extfile <(cat /etc/ssl/openssl.cnf \
-      <(printf "[SAN]\nsubjectAltName=IP.1:$IP")) \
-  -extensions SAN \
   -days 3650 >> $LOG_FILE 2>&1
 
 rm /tmp/Lamassu_OP.csr.pem
 
 cat <<EOF > $CONFIG_DIR/lamassu.json
 {
-  "postgresql": "psql://lamassu:lamassu@localhost/lamassu",
+  "postgresql": "psql://postgres:$POSTGRES_PASS@localhost/lamassu",
   "seedPath": "$SEED_FILE",
   "caPath": "$CA_PATH",
   "certPath": "$SERVER_CERT_PATH",
   "keyPath": "$SERVER_KEY_PATH",
   "hostname": "$DOMAIN",
-  "logLevel": "debug"
+  "logLevel": "debug",
+  "lamassuCaPath": "$LAMASSU_CA_PATH",
+  "lamassuServerPath": "$PWD",
+  "migrateStatePath": "$MIGRATE_STATE_PATH"
 }
 EOF
 
