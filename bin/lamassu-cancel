@@ -2,7 +2,7 @@
 
 const uuid = require('@fczbkk/uuid4')
 
-const tx = require('../lib/cash-out-tx')
+const tx = require('../lib/cash-out/cash-out-tx.js')
 
 const argv = process.argv.slice(2)
 
