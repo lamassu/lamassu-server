@@ -11,6 +11,7 @@ KEY_DIR=$PWD/certs
 LAMASSU_CA_PATH=$PWD/Lamassu_CA.pem
 MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
 POSTGRES_PASS=postgres123
+OFAC_DATA_DIR=$CONFIG_DIR/ofac
 
 mkdir -p $CERT_DIR
 mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
@@ -64,6 +65,8 @@ openssl x509 \
 
 rm /tmp/Lamassu_OP.csr.pem
 
+mkdir -p $OFAC_DATA_DIR
+
 cat <<EOF > $CONFIG_DIR/lamassu.json
 {
   "postgresql": "psql://postgres:$POSTGRES_PASS@localhost/lamassu",
@@ -75,7 +78,8 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "logLevel": "debug",
   "lamassuCaPath": "$LAMASSU_CA_PATH",
   "lamassuServerPath": "$PWD",
-  "migrateStatePath": "$MIGRATE_STATE_PATH"
+  "migrateStatePath": "$MIGRATE_STATE_PATH",
+  "ofacDataDir": "$OFAC_DATA_DIR"
 }
 EOF
 

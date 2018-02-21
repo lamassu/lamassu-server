@@ -16,6 +16,7 @@ SEEDS_DIR=$HOME/seeds
 SEED_FILE=$SEEDS_DIR/seed.txt
 BACKUP_DIR=/var/backups/postgresql
 BLOCKCHAIN_DIR=/mnt/blockchains
+OFAC_DATA_DIR=/var/lamassu/ofac
 
 # Look into http://unix.stackexchange.com/questions/140734/configure-localtime-dpkg-reconfigure-tzdata
 
@@ -145,6 +146,8 @@ openssl x509 \
 
 rm /tmp/Lamassu_OP.csr.pem
 
+mkdir -p $OFAC_DATA_DIR
+
 cat <<EOF > $CONFIG_DIR/lamassu.json
 {
   "postgresql": "postgres://lamassu_pg:$POSTGRES_PW@localhost/lamassu",
@@ -156,7 +159,8 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "logLevel": "info",
   "lamassuServerPath": "$NODE_MODULES/lamassu-server",
   "migrateStatePath": "$MIGRATE_STATE_PATH",
-  "blockchainDir": "$BLOCKCHAIN_DIR"
+  "blockchainDir": "$BLOCKCHAIN_DIR",
+  "ofacDataDir": "$OFAC_DATA_DIR"
 }
 EOF
 
