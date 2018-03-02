@@ -78,7 +78,7 @@
   },
   "scripts": {
     "start": "node bin/lamassu-server",
-    "test": "mocha $(find . -path ./node_modules -prune -o -name '*_tests.js')"
+    "test": "mocha --recursive tests"
   },
   "devDependencies": {
     "ava": "^0.19.1",
