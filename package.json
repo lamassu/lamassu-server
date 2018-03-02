@@ -78,9 +78,10 @@
   },
   "scripts": {
     "start": "node bin/lamassu-server",
-    "test": "ava"
+    "test": "mocha $(find . -path ./node_modules -prune -o -name '*_tests.js')"
   },
   "devDependencies": {
-    "ava": "^0.19.1"
+    "ava": "^0.19.1",
+    "mocha": "^5.0.1"
   }
 }
