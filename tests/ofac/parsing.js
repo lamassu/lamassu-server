@@ -33,78 +33,106 @@ const partIds = new Map([
 const getId = part => partIds.get(part.partName)
 
 const makePart = part => '' +
-  '\n\t\t\t\t\t<DocumentedNamePart>' +
-  `\n\t\t\t\t\t\t<NamePartValue NamePartGroupID="${getId(part)}">` +
-    part.value +
-    '</NamePartValue>' +
-  '\n\t\t\t\t\t</DocumentedNamePart>'
+`					<DocumentedNamePart>
+						<NamePartValue NamePartGroupID="${getId(part)}">${part.value}</NamePartValue>
+					</DocumentedNamePart>`
 
 const makeAlias = alias => '' +
-  '\n\t\t\t<Alias AliasTypeID="1403">' +
-  `\n\t\t\t\t<DocumentedName ID="${alias.id}" DocNameStatusID="1">` +
-  _.map(makePart, alias.parts) +
-  '\n\t\t\t\t</DocumentedName>' +
-  '\n\t\t\t</Alias>'
+`			<Alias AliasTypeID="1403">
+				<DocumentedName ID="${alias.id}" DocNameStatusID="1">
+${_.map(makePart, alias.parts)}
+				</DocumentedName>
+			</Alias>`
 
 const makePartGroup = part => '' +
-    '\n\t\t\t\t<MasterNamePartGroup>' +
-    '\n\t\t\t\t\t<NamePartGroup ' +
-      `ID="${getId(part)}" ` +
-      `NamePartTypeID="${getId(part)}"/>` +
-    '\n\t\t\t\t</MasterNamePartGroup>'
+`				<MasterNamePartGroup>
+					<NamePartGroup
+						ID="${getId(part)}"
+						NamePartTypeID="${getId(part)}"/>
+				</MasterNamePartGroup>`
 
 const makePartGroups = alias => mapLines(makePartGroup, alias.parts)
 
 const makeBirthDate = birthDate => '' +
-  '\n\t\t<Feature FeatureTypeID="8">' +
-  '\n\t\t\t<FeatureVersion>' +
-  '\n\t\t\t\t<DatePeriod>' +
-  '\n\t\t\t\t\t<Start>' +
-  '\n\t\t\t\t\t\t<From>' +
-  `\n\t\t\t\t\t\t\t<Year>${birthDate.start.year}</Year>` +
-  `\n\t\t\t\t\t\t\t<Month>${birthDate.start.month}</Month>` +
-  `\n\t\t\t\t\t\t\t<Day>${birthDate.start.day}</Day>` +
-  '\n\t\t\t\t\t\t</From>' +
-  '\n\t\t\t\t\t\t<To>' +
-  `\n\t\t\t\t\t\t\t<Year>${birthDate.start.year}</Year>` +
-  `\n\t\t\t\t\t\t\t<Month>${birthDate.start.month}</Month>` +
-  `\n\t\t\t\t\t\t\t<Day>${birthDate.start.day}</Day>` +
-  '\n\t\t\t\t\t\t</To>' +
-  '\n\t\t\t\t\t</Start>' +
-  '\n\t\t\t\t\t<End>' +
-  '\n\t\t\t\t\t\t<From>' +
-  `\n\t\t\t\t\t\t\t<Year>${birthDate.end.year}</Year>` +
-  `\n\t\t\t\t\t\t\t<Month>${birthDate.end.month}</Month>` +
-  `\n\t\t\t\t\t\t\t<Day>${birthDate.end.day}</Day>` +
-  '\n\t\t\t\t\t\t</From>' +
-  '\n\t\t\t\t\t\t<To>' +
-  `\n\t\t\t\t\t\t\t<Year>${birthDate.end.year}</Year>` +
-  `\n\t\t\t\t\t\t\t<Month>${birthDate.end.month}</Month>` +
-  `\n\t\t\t\t\t\t\t<Day>${birthDate.end.day}</Day>` +
-  '\n\t\t\t\t\t\t</To>' +
-  '\n\t\t\t\t\t</End>' +
-  '\n\t\t\t\t</DatePeriod>' +
-  '\n\t\t\t</FeatureVersion>' +
-  '\n\t\t</Feature>'
+`		<Feature FeatureTypeID="8">
+			<FeatureVersion>
+				<DatePeriod>
+					<Start>
+						<From>
+							<Year>${birthDate.start.year}</Year>
+							<Month>${birthDate.start.month}</Month>
+							<Day>${birthDate.start.day}</Day>
+						</From>
+						<To>
+							<Year>${birthDate.start.year}</Year>
+							<Month>${birthDate.start.month}</Month>
+							<Day>${birthDate.start.day}</Day>
+						</To>
+					</Start>
+					<End>
+						<From>
+							<Year>${birthDate.end.year}</Year>
+							<Month>${birthDate.end.month}</Month>
+							<Day>${birthDate.end.day}</Day>
+						</From>
+						<To>
+							<Year>${birthDate.end.year}</Year>
+							<Month>${birthDate.end.month}</Month>
+							<Day>${birthDate.end.day}</Day>
+						</To>
+					</End>
+				</DatePeriod>
+			</FeatureVersion>
+		</Feature>`
 
 const makeProfile = profile => {
-  console.log(profile.birthDates)
+  console.log(profile.birthDatePeriods)
   return '' +
-    `\n\t<Profile ID="${profile.id}" PartySubTypeID="4">` +
-    '\n\t\t<Identity>' +
-    mapLines(makeAlias, profile.aliases) +
-    '\n\t\t\t<NamePartGroups>' +
-    mapLines(makePartGroups, profile.aliases) +
-    '\n\t\t\t</NamePartGroups>' +
-    '\n\t\t</Identity>' +
-    mapLines(makeBirthDate, profile.birthDates) +
-    '\n\t</Profile>'
+` <Profile ID="${profile.id}" PartySubTypeID="4">
+		<Identity>
+${mapLines(makeAlias, profile.aliases)}
+			<NamePartGroups>
+${mapLines(makePartGroups, profile.aliases)}
+			</NamePartGroups>
+		</Identity>
+${mapLines(makeBirthDate, profile.birthDatePeriods)}
+	</Profile>`
 }
 
-const makeXml = profiles => '<?xml version="1.0" encoding="utf-8"?>' +
-  '\n<doc>' +
-  mapLines(makeProfile, profiles) +
-  '\n</doc>'
+const makeXml = profiles => '' +
+`<?xml version="1.0" encoding="utf-8"?>
+<doc>
+${mapLines(makeProfile, profiles)}
+</doc>`
+
+
+const individualA = {id: '9', aliases: [{id: '5',
+  parts: [
+    {partName: 'firstName', value: 'john'},
+    {partName: 'lastName', value: 'doe'}],
+  fullName: 'john doe',
+  words: [
+    {value: 'john', phonetics: ['JN', 'AN']},
+    {value: 'doe', phonetics: ['T']}]}],
+  birthDatePeriods: [{
+    start: {year: 1955, month: 10, day: 5, date: new Date(1955, 9, 5)},
+    end: {year: 1955, month: 10, day: 5, date: new Date(1955, 9, 5)}}]
+}
+
+const individualB = {id: '11', aliases: [{id: '15',
+  parts: [
+    {partName: 'firstName', value: 'john'},
+    {partName: 'middleName', value: 'de'},
+    {partName: 'lastName', value: 'gaul'}],
+  fullName: 'john de gaul',
+  words: [
+    {value: 'john', phonetics: ['JN', 'AN']},
+    {value: 'de', phonetics: ['T']},
+    {value: 'gaul', phonetics: ['KL']}]}],
+  birthDatePeriods: [{
+    start: {year: 1965, month: 11, day: 20, date: new Date(1965, 10, 20)},
+    end: {year: 1965, month: 11, day: 20, date: new Date(1965, 10, 20)}}]
+}
 
 
 describe('OFAC', function () {
@@ -124,45 +152,142 @@ describe('OFAC', function () {
     })
 
     it('should return the expected structs', function () {
-      const xml = makeXml([{
-        id: '1', aliases: [{
-          id: '1',
-          parts: [
-            {partName: 'firstName', value: 'John'},
-            {partName: 'lastName', value: 'Doe'}]
-        }],
-        birthDates: [{
-          start: {year: 1955, month: 10, day: 5},
-          end: {year: 1955, month: 10, day: 5}
-        }]
-      }])
+      const xml = makeXml([individualA])
+
       return makeDataFiles([xml]).then(parser.parse)
       .then(structs => {
         const {individuals} = structs
         assert.ok(Array.isArray(individuals))
         assert.equal(individuals.length, 1)
+        assert.deepEqual(individuals[0], individualA)
 
         const {individualsMap} = structs
         assert.ok(individualsMap instanceof Map)
         assert.equal(individualsMap.size, 1)
+        assert.ok(individualsMap.has('9'))
+        assert.deepEqual(individualsMap.get('9'), individualA)
 
         const {aliasToIndividual} = structs
         assert.ok(aliasToIndividual instanceof Map)
         assert.equal(aliasToIndividual.size, 1)
+        assert.ok(aliasToIndividual.has('5'))
+        assert.strictEqual(aliasToIndividual.get('5'), '9')
 
         const {phoneticMap} = structs
         assert.ok(phoneticMap instanceof Map)
         assert.equal(phoneticMap.size, 3)
+        assert.ok(phoneticMap.has('JN'))
+        assert.deepEqual(phoneticMap.get('JN'), [{value: 'john', aliasId: '5'}])
+        assert.ok(phoneticMap.has('AN'))
+        assert.deepEqual(phoneticMap.get('AN'), [{value: 'john', aliasId: '5'}])
+        assert.ok(phoneticMap.has('T'))
+        assert.deepEqual(phoneticMap.get('T'), [{value: 'doe', aliasId: '5'}])
 
         const {wordList} = structs
         assert.ok(Array.isArray(wordList))
         assert.equal(wordList.length, 2)
+        assert.deepEqual(wordList[0], {value: 'john', aliasIds: ['5']})
+        assert.deepEqual(wordList[1], {value: 'doe', aliasIds: ['5']})
       })
     })
 
-    it('should be able to parse multiple sources')
+    it('should be able to combine multiple sources', function () {
+      const xmlA = makeXml([individualA])
+      const xmlB = makeXml([individualB])
 
-    it('should remove duplicates from multiple sources')
+      return makeDataFiles([xmlA, xmlB]).then(parser.parse)
+      .then(structs => {
+        const {individuals} = structs
+        assert.ok(Array.isArray(individuals))
+        assert.equal(individuals.length, 2)
+        assert.deepEqual(individuals[0], individualA)
+        assert.deepEqual(individuals[1], individualB)
+
+        const {individualsMap} = structs
+        assert.ok(individualsMap instanceof Map)
+        assert.equal(individualsMap.size, 2)
+        assert.ok(individualsMap.has('9'))
+        assert.deepEqual(individualsMap.get('9'), individualA)
+        assert.ok(individualsMap.has('11'))
+        assert.deepEqual(individualsMap.get('11'), individualB)
+
+        const {aliasToIndividual} = structs
+        assert.ok(aliasToIndividual instanceof Map)
+        assert.equal(aliasToIndividual.size, 2)
+        assert.ok(aliasToIndividual.has('5'))
+        assert.strictEqual(aliasToIndividual.get('5'), '9')
+        assert.ok(aliasToIndividual.has('15'))
+        assert.strictEqual(aliasToIndividual.get('15'), '11')
+
+        const {phoneticMap} = structs
+        assert.ok(phoneticMap instanceof Map)
+        assert.equal(phoneticMap.size, 4)
+        assert.ok(phoneticMap.has('JN'))
+        assert.deepEqual(phoneticMap.get('JN'), [
+          {value: 'john', aliasId: '5'},
+          {value: 'john', aliasId: '15'}
+        ])
+        assert.ok(phoneticMap.has('AN'))
+        assert.deepEqual(phoneticMap.get('AN'), [
+          {value: 'john', aliasId: '5'},
+          {value: 'john', aliasId: '15'}
+        ])
+        assert.ok(phoneticMap.has('T'))
+        assert.deepEqual(phoneticMap.get('T'), [
+          {value: 'doe', aliasId: '5'},
+          {value: 'de', aliasId: '15'}
+        ])
+
+        const {wordList} = structs
+        assert.ok(Array.isArray(wordList))
+        assert.equal(wordList.length, 4)
+        assert.deepEqual(wordList[0], {value: 'john', aliasIds: ['5', '15']})
+        assert.deepEqual(wordList[1], {value: 'doe', aliasIds: ['5']})
+        assert.deepEqual(wordList[2], {value: 'de', aliasIds: ['15']})
+        assert.deepEqual(wordList[3], {value: 'gaul', aliasIds: ['15']})
+      })
+    })
+
+    it('should remove duplicates from multiple sources', function () {
+      const xmlA1 = makeXml([individualA, individualA])
+      const xmlA2 = makeXml([individualA])
+
+      return makeDataFiles([xmlA1, xmlA2]).then(parser.parse)
+      .then(structs => {
+        const {individuals} = structs
+        assert.ok(Array.isArray(individuals))
+        assert.equal(individuals.length, 1)
+        assert.deepEqual(individuals[0], individualA)
+
+        const {individualsMap} = structs
+        assert.ok(individualsMap instanceof Map)
+        assert.equal(individualsMap.size, 1)
+        assert.ok(individualsMap.has('9'))
+        assert.deepEqual(individualsMap.get('9'), individualA)
+
+        const {aliasToIndividual} = structs
+        assert.ok(aliasToIndividual instanceof Map)
+        assert.equal(aliasToIndividual.size, 1)
+        assert.ok(aliasToIndividual.has('5'))
+        assert.strictEqual(aliasToIndividual.get('5'), '9')
+
+        const {phoneticMap} = structs
+        assert.ok(phoneticMap instanceof Map)
+        assert.equal(phoneticMap.size, 3)
+        assert.ok(phoneticMap.has('JN'))
+        assert.deepEqual(phoneticMap.get('JN'), [{value: 'john', aliasId: '5'}])
+        assert.ok(phoneticMap.has('AN'))
+        assert.deepEqual(phoneticMap.get('AN'), [{value: 'john', aliasId: '5'}])
+        assert.ok(phoneticMap.has('T'))
+        assert.deepEqual(phoneticMap.get('T'), [{value: 'doe', aliasId: '5'}])
+
+        const {wordList} = structs
+        assert.ok(Array.isArray(wordList))
+        assert.equal(wordList.length, 2)
+        assert.deepEqual(wordList[0], {value: 'john', aliasIds: ['5']})
+        assert.deepEqual(wordList[1], {value: 'doe', aliasIds: ['5']})
+      })
+    })
 
   })
 })
