@@ -86,7 +86,6 @@ const makeBirthDate = birthDate => '' +
 		</Feature>`
 
 const makeProfile = profile => {
-  console.log(profile.birthDatePeriods)
   return '' +
 ` <Profile ID="${profile.id}" PartySubTypeID="4">
 		<Identity>
