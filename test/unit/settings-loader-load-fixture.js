@@ -40,10 +40,10 @@ test('bigger merge', t => {
   )
 
   const expected = [
-      {fieldLocator: fieldLocator1, fieldValue: fieldValue4},
-      {fieldLocator: fieldLocator4, fieldValue: fieldValue5},
-      {fieldLocator: fieldLocator2, fieldValue: fieldValue2},
-      {fieldLocator: fieldLocator3, fieldValue: fieldValue3}
+    {fieldLocator: fieldLocator1, fieldValue: fieldValue4},
+    {fieldLocator: fieldLocator4, fieldValue: fieldValue5},
+    {fieldLocator: fieldLocator2, fieldValue: fieldValue2},
+    {fieldLocator: fieldLocator3, fieldValue: fieldValue3}
   ]
 
   t.deepEqual(merged, expected)

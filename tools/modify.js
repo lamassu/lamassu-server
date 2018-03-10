@@ -5,7 +5,7 @@ const fields = [
 ]
 
 settingsLoader.modifyConfig(fields)
-.then(() => {
-  console.log('success.')
-  process.exit(0)
-})
+  .then(() => {
+    console.log('success.')
+    process.exit(0)
+  })

@@ -4,9 +4,9 @@ function singleQuotify (item) { return '\'' + item + '\'' }
 
 exports.up = function (next) {
   var actions = ['published', 'authorized', 'instant', 'confirmed', 'rejected',
-  'insufficientFunds', 'dispenseRequested', 'dispensed', 'notified',
-  'addedPhone', 'redeem']
-  .map(singleQuotify).join(',')
+    'insufficientFunds', 'dispenseRequested', 'dispensed', 'notified',
+    'addedPhone', 'redeem']
+    .map(singleQuotify).join(',')
 
   var sql = [
     `create table cash_in_txs (

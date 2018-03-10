@@ -11,15 +11,15 @@ function dbFetchConfig () {
     'select data from user_config where type=$1 order by id desc limit 1',
     ['config']
   )
-  .then(row => row && row.data)
+    .then(row => row && row.data)
 }
 
 dbFetchConfig()
-.then(config => {
-  pp(config)
-  process.exit(0)
-})
-.catch(e => {
-  console.log(e)
-  process.exit(1)
-})
+  .then(config => {
+    pp(config)
+    process.exit(0)
+  })
+  .catch(e => {
+    console.log(e)
+    process.exit(1)
+  })

@@ -23,7 +23,7 @@ exports.up = function (next) {
     `insert into customers (id, name) VALUES ( '${anonymous.uuid}','${anonymous.name}' )`,
     `alter table cash_in_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`,
     `alter table cash_out_txs add column customer_id uuid references customers (id) DEFAULT '${anonymous.uuid}'`
-  ]
+    ]
 
   db.multi(sql, next)
 }

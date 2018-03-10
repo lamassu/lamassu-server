@@ -7,17 +7,17 @@ function multi (sqls, cb) {
   const doQuery = s => {
     return () => {
       return db.none(s)
-      .catch(err => {
-        console.log(err.stack)
-        throw err
-      })
+        .catch(err => {
+          console.log(err.stack)
+          throw err
+        })
     }
   }
 
   return sequential(sqls.map(doQuery))
-  .then(() => cb())
-  .catch(err => {
-    console.log(err.stack)
-    cb(err)
-  })
+    .then(() => cb())
+    .catch(err => {
+      console.log(err.stack)
+      cb(err)
+    })
 }
