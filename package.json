@@ -47,7 +47,6 @@
     "pify": "^3.0.0",
     "pretty-ms": "^2.1.0",
     "promise-sequential": "^1.1.1",
-    "ramda": "^0.22.1",
     "serve-static": "^1.12.4",
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
