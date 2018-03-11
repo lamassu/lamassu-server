@@ -129,7 +129,7 @@ describe('OFAC', function () {
 
       for (const fullName of fullNames) {
         const matches = ofac.match({firstName: fullName}, null, 1)
-        assert.ok(matches.length > 0)
+        assert.ok(!_.isEmpty(matches))
       }
     })
 
@@ -144,7 +144,7 @@ describe('OFAC', function () {
         )(fullName)
 
         const matches = ofac.match({firstName: reversed}, null, 1)
-        assert.ok(matches.length > 0)
+        assert.ok(!_.isEmpty(matches))
       }
     })
 
@@ -181,16 +181,30 @@ describe('OFAC', function () {
           continue
         }
 
-        console.log(fullName, '|', transcribed)
-
         const matches = ofac.match({firstName: transcribed}, null, 1)
-        assert.ok(matches.length > 0)
+        assert.ok(!_.isEmpty(matches))
       }
     })
 
-    it('should match names that are only a single word')
+    it('should discard matches with inapropriate birthdates', function () {
+      this.timeout(0)
 
-    it('should discard matches with inapropriate birthdates')
+      const date = new Date()
+      const YYYY = _.padCharsStart('0', 4, date.getFullYear())
+      const MM = _.padCharsStart('0', 2, date.getMonth() + 1)
+      const DD = _.padCharsStart('0', 2, date.getDate())
+      const dateString = `${YYYY}${MM}${DD}`
+
+      const noMatchesWithBirthDates = _.every(_.flow(
+        _.get('birthDatePeriods'),
+        _.every(_.isEmpty)
+      ))
+
+      for (const fullName of fullNames) {
+        const matches = ofac.match({firstName: fullName}, dateString, 1)
+        assert.ok(noMatchesWithBirthDates(matches))
+      }
+    })
 
   })
 })
