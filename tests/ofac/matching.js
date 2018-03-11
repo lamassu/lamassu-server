@@ -50,6 +50,64 @@ const misspellRandomly = word => {
   return _.flow(..._.times(() => misspell, num))(word)
 }
 
+
+const shiftVowel = word => {
+  const vowels = 'aeiou'
+
+  const indexedVowels = _.flow(
+    _.get('length'),
+    _.range(0),
+    _.zip(_.split('', word)),
+    _.map(_.zipObject(['letter', 'index'])),
+    _.map(indexedLetter => {
+      const vowelIndex = _.indexOf(indexedLetter.letter, vowels)
+      return {...indexedLetter, vowelIndex}
+    }),
+    _.reject(_.flow(
+      _.get('vowelIndex'),
+      _.eq(-1)
+    ))
+  )(word)
+
+  if (_.isEmpty(indexedVowels)) return false
+
+  const indexedVowel = _.sample(indexedVowels)
+  const options = indexedVowel.vowelIndex === 0 ? [ +1 ]
+                : indexedVowel.vowelIndex === 4 ? [ -1 ]
+                : [ -1, +1 ]
+  const offset = _.sample(options)
+  const replacement = vowels[indexedVowel.vowelIndex + offset]
+
+  const index = indexedVowel.index
+  return _.join('', [word.slice(0, index), replacement, word.slice(index + 1)])
+}
+
+const makeReplacer = (a, b) => word => {
+  const replaced = word.replace(a, b)
+  return (replaced !== word) && replaced
+}
+
+const makeReplacerPair = (a, b) => [
+  makeReplacer(a, b),
+  makeReplacer(b, a),
+]
+
+const equivalences = [
+  shiftVowel,
+  ...makeReplacerPair('v', 'f'),
+  ...makeReplacerPair('ph', 'f'),
+  ...makeReplacerPair('ck', 'k'),
+  ...makeReplacerPair('q', 'k')
+]
+
+const transcribe = word => {
+  const ops = _.shuffle(equivalences)
+  for (const op of ops) {
+    const transcribed = op(word)
+    if (transcribed) return transcribed
+  }
+}
+
 describe('OFAC', function () {
   describe('Matching', function () {
 
@@ -103,12 +161,10 @@ describe('OFAC', function () {
           _.join(' ')
         )(fullName)
 
-        console.log(fullName, '|', lightlyMisspelled, '|', heavilyMisspelled)
-
-        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, 0.95)
+        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, 0.90)
         assert.ok(matchesA.length > 0)
 
-        const matchesB = ofac.match({firstName: heavilyMisspelled}, null, 0.85)
+        const matchesB = ofac.match({firstName: heavilyMisspelled}, null, 0.80)
         assert.ok(matchesB.length > 0)
       }
     })
@@ -118,18 +174,17 @@ describe('OFAC', function () {
       this.retries(4)
 
       for (const fullName of fullNames) {
-        const lightlyMisspelled = misspell(fullName)
+        const transcribed = transcribe(fullName)
 
-        const heavilyMisspelled = _.flow(
-          _.split(' '),
-          _.map(misspell),
-          _.join(' ')
-        )(fullName)
+        if (!transcribed) {
+          console.warn(`Couldn't find an appropriate phonetic alteration for '${fullName}'`)
+          continue
+        }
 
-        console.log(fullName, '|', lightlyMisspelled, '|', heavilyMisspelled)
+        console.log(fullName, '|', transcribed)
 
-        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, 1)
-        assert.ok(matchesA.length > 0)
+        const matches = ofac.match({firstName: transcribed}, null, 1)
+        assert.ok(matches.length > 0)
       }
     })
 
