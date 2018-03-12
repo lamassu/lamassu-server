@@ -1,5 +1,7 @@
 const assert = require('assert')
 const ofac = require('../../lib/ofac')
+const fs = require('fs')
+const path = require('path')
 const _ = require('lodash/fp')
 
 let structs
@@ -203,6 +205,38 @@ describe('OFAC', function () {
       for (const fullName of fullNames) {
         const matches = ofac.match({firstName: fullName}, dateString, 1)
         assert.ok(noMatchesWithBirthDates(matches))
+      }
+    })
+
+    it('should not match against common names', function () {
+      this.timeout(0)
+
+      const getNamesFromFile = _.flow(
+        name => path.resolve(__dirname, name),
+        file => fs.readFileSync(file, 'utf-8'),
+        _.split('\n'),
+        _.map( _.flow(
+          _.split(' '),
+          _.first
+        ))
+      )
+
+      const lastNames = getNamesFromFile('dist.all.last.txt')
+      const firstNamesMale = getNamesFromFile('dist.male.first.txt')
+      const firstNamesFemale = getNamesFromFile('dist.female.first.txt')
+
+      for (const lastName of lastNames.slice(0, 100)) {
+        for (firstName of firstNamesMale.slice(0, 100)) {
+          const matches = ofac.match({firstName, lastName}, null, 0.8)
+          console.log({firstName, lastName})
+          assert.ok(_.isEmpty(matches))
+        }
+
+        for (firstName of firstNamesFemale.slice(0, 100)) {
+          const matches = ofac.match({firstName, lastName}, null, 0.8)
+          console.log({firstName, lastName})
+          assert.ok(_.isEmpty(matches))
+        }
       }
     })
 
