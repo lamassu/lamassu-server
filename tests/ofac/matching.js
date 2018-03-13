@@ -152,7 +152,6 @@ describe('OFAC', function () {
 
     it('should match despite some misspellings', function () {
       this.timeout(0)
-      this.retries(4)
 
       for (const fullName of fullNames) {
         const lightlyMisspelled = misspell(fullName)
@@ -163,17 +162,18 @@ describe('OFAC', function () {
           _.join(' ')
         )(fullName)
 
-        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, 0.90)
+        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, 0.85)
+        if (matchesA.length === 0) { console.log(1, fullName, '|', lightlyMisspelled) }
         assert.ok(matchesA.length > 0)
 
-        const matchesB = ofac.match({firstName: heavilyMisspelled}, null, 0.80)
+        const matchesB = ofac.match({firstName: heavilyMisspelled}, null, 0.75)
+        if (matchesB.length === 0) { console.log(2, fullName, '|', heavilyMisspelled) }
         assert.ok(matchesB.length > 0)
       }
     })
 
     it('should match phonetically similar words', function () {
       this.timeout(0)
-      this.retries(4)
 
       for (const fullName of fullNames) {
         const transcribed = transcribe(fullName)
@@ -183,7 +183,8 @@ describe('OFAC', function () {
           continue
         }
 
-        const matches = ofac.match({firstName: transcribed}, null, 1)
+        const matches = ofac.match({firstName: transcribed}, null, 0.85)
+        if (matches.length === 0) { console.log(fullName, '|', transcribed) }
         assert.ok(!_.isEmpty(matches))
       }
     })
@@ -227,14 +228,12 @@ describe('OFAC', function () {
 
       for (const lastName of lastNames.slice(0, 100)) {
         for (firstName of firstNamesMale.slice(0, 100)) {
-          const matches = ofac.match({firstName, lastName}, null, 0.8)
-          console.log({firstName, lastName})
+          const matches = ofac.match({firstName, lastName}, null, 0.85)
           assert.ok(_.isEmpty(matches))
         }
 
         for (firstName of firstNamesFemale.slice(0, 100)) {
-          const matches = ofac.match({firstName, lastName}, null, 0.8)
-          console.log({firstName, lastName})
+          const matches = ofac.match({firstName, lastName}, null, 0.85)
           assert.ok(_.isEmpty(matches))
         }
       }

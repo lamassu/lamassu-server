@@ -176,11 +176,11 @@ describe('OFAC', function () {
         assert.ok(phoneticMap instanceof Map)
         assert.equal(phoneticMap.size, 3)
         assert.ok(phoneticMap.has('JN'))
-        assert.deepEqual(phoneticMap.get('JN'), [{value: 'john', aliasId: '5'}])
+        assert.deepEqual(phoneticMap.get('JN'), ['5'])
         assert.ok(phoneticMap.has('AN'))
-        assert.deepEqual(phoneticMap.get('AN'), [{value: 'john', aliasId: '5'}])
+        assert.deepEqual(phoneticMap.get('AN'), ['5'])
         assert.ok(phoneticMap.has('T'))
-        assert.deepEqual(phoneticMap.get('T'), [{value: 'doe', aliasId: '5'}])
+        assert.deepEqual(phoneticMap.get('T'), ['5'])
 
         const {wordList} = structs
         assert.ok(Array.isArray(wordList))
@@ -222,20 +222,11 @@ describe('OFAC', function () {
         assert.ok(phoneticMap instanceof Map)
         assert.equal(phoneticMap.size, 4)
         assert.ok(phoneticMap.has('JN'))
-        assert.deepEqual(phoneticMap.get('JN'), [
-          {value: 'john', aliasId: '5'},
-          {value: 'john', aliasId: '15'}
-        ])
+        assert.deepEqual(phoneticMap.get('JN'), ['5', '15'])
         assert.ok(phoneticMap.has('AN'))
-        assert.deepEqual(phoneticMap.get('AN'), [
-          {value: 'john', aliasId: '5'},
-          {value: 'john', aliasId: '15'}
-        ])
+        assert.deepEqual(phoneticMap.get('AN'), ['5', '15'])
         assert.ok(phoneticMap.has('T'))
-        assert.deepEqual(phoneticMap.get('T'), [
-          {value: 'doe', aliasId: '5'},
-          {value: 'de', aliasId: '15'}
-        ])
+        assert.deepEqual(phoneticMap.get('T'), ['5', '15'])
 
         const {wordList} = structs
         assert.ok(Array.isArray(wordList))
@@ -274,11 +265,11 @@ describe('OFAC', function () {
         assert.ok(phoneticMap instanceof Map)
         assert.equal(phoneticMap.size, 3)
         assert.ok(phoneticMap.has('JN'))
-        assert.deepEqual(phoneticMap.get('JN'), [{value: 'john', aliasId: '5'}])
+        assert.deepEqual(phoneticMap.get('JN'), ['5'])
         assert.ok(phoneticMap.has('AN'))
-        assert.deepEqual(phoneticMap.get('AN'), [{value: 'john', aliasId: '5'}])
+        assert.deepEqual(phoneticMap.get('AN'), ['5'])
         assert.ok(phoneticMap.has('T'))
-        assert.deepEqual(phoneticMap.get('T'), [{value: 'doe', aliasId: '5'}])
+        assert.deepEqual(phoneticMap.get('T'), ['5'])
 
         const {wordList} = structs
         assert.ok(Array.isArray(wordList))
