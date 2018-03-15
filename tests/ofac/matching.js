@@ -9,6 +9,10 @@ let fullNames
 
 const rand = N => _.random(0, N - 1)
 
+const letters = _.range('a'.charCodeAt(0), 'z'.charCodeAt(0))
+const vowels = _.map(c => c.charCodeAt(0), ['a', 'e', 'i', 'o', 'u'])
+const consonants = _.difference(letters, vowels)
+
 const duplicate = (word, index) => {
   const c = word[index]
   return _.join('', [word.slice(0, index), c, c, word.slice(index + 1)])
@@ -25,10 +29,10 @@ const transpose = (word, index) => {
 }
 
 const alter = (word, index) => {
-  const c = word.charCodeAt(index)
-  const o = c - 'a'.charCodeAt(0)
-  const oo = (o + _.random(1, 26)) % 26
-  const cc = String.fromCharCode(oo + 'a'.charCodeAt(0))
+  const o = word.charCodeAt(index)
+  const collection = _.includes(o, vowels) ? vowels : consonants
+  const oo = _.sample(collection)
+  const cc = String.fromCharCode(oo)
   return _.join('', [word.slice(0, index), cc, word.slice(index + 1)])
 }
 
@@ -54,15 +58,14 @@ const misspellRandomly = word => {
 
 
 const shiftVowel = word => {
-  const vowels = 'aeiou'
-
   const indexedVowels = _.flow(
     _.get('length'),
     _.range(0),
     _.zip(_.split('', word)),
     _.map(_.zipObject(['letter', 'index'])),
     _.map(indexedLetter => {
-      const vowelIndex = _.indexOf(indexedLetter.letter, vowels)
+      const ord = indexedLetter.letter.charCodeAt(0)
+      const vowelIndex = _.indexOf(ord, vowels)
       return {...indexedLetter, vowelIndex}
     }),
     _.reject(_.flow(
@@ -78,7 +81,8 @@ const shiftVowel = word => {
                 : indexedVowel.vowelIndex === 4 ? [ -1 ]
                 : [ -1, +1 ]
   const offset = _.sample(options)
-  const replacement = vowels[indexedVowel.vowelIndex + offset]
+  const replacementOrd = vowels[indexedVowel.vowelIndex + offset]
+  const replacement = String.fromCharCode(replacementOrd)
 
   const index = indexedVowel.index
   return _.join('', [word.slice(0, index), replacement, word.slice(index + 1)])
@@ -110,6 +114,8 @@ const transcribe = word => {
   }
 }
 
+const threshold = 0.85
+
 describe('OFAC', function () {
   describe('Matching', function () {
 
@@ -130,7 +136,9 @@ describe('OFAC', function () {
       this.timeout(0)
 
       for (const fullName of fullNames) {
-        const matches = ofac.match({firstName: fullName}, null, 1)
+        const matches = ofac.match({firstName: fullName}, null, {
+          threshold,//: 1
+        })
         assert.ok(!_.isEmpty(matches))
       }
     })
@@ -145,7 +153,9 @@ describe('OFAC', function () {
           _.join(' ')
         )(fullName)
 
-        const matches = ofac.match({firstName: reversed}, null, 1)
+        const matches = ofac.match({firstName: reversed}, null, {
+          threshold,//: 1
+        })
         assert.ok(!_.isEmpty(matches))
       }
     })
@@ -162,13 +172,29 @@ describe('OFAC', function () {
           _.join(' ')
         )(fullName)
 
-        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, 0.85)
-        if (matchesA.length === 0) { console.log(1, fullName, '|', lightlyMisspelled) }
-        assert.ok(matchesA.length > 0)
+        const matchesA = ofac.match({firstName: lightlyMisspelled}, null, {
+          threshold,//: 0.875
+        })
+        if (_.isEmpty(matchesA)) {
+          console.log(fullName)
+          ofac.match({firstName: lightlyMisspelled}, null, {
+            threshold,//: 0.875,
+            debug: true
+          })
+        }
+        assert.ok(!_.isEmpty(matchesA))
 
-        const matchesB = ofac.match({firstName: heavilyMisspelled}, null, 0.75)
-        if (matchesB.length === 0) { console.log(2, fullName, '|', heavilyMisspelled) }
-        assert.ok(matchesB.length > 0)
+        const matchesB = ofac.match({firstName: heavilyMisspelled}, null, {
+          threshold: threshold - 0.1,//: 0.75
+        })
+        if (_.isEmpty(matchesB)) {
+          console.log(fullName)
+          ofac.match({firstName: heavilyMisspelled}, null, {
+            threshold: threshold - 0.1,//: 0.75,
+            debug: true
+          })
+        }
+        assert.ok(!_.isEmpty(matchesB))
       }
     })
 
@@ -183,8 +209,16 @@ describe('OFAC', function () {
           continue
         }
 
-        const matches = ofac.match({firstName: transcribed}, null, 0.85)
-        if (matches.length === 0) { console.log(fullName, '|', transcribed) }
+        const matches = ofac.match({firstName: transcribed}, null, {
+          threshold,//: 0.85
+        })
+        if (_.isEmpty(matches)) {
+          console.log(fullName)
+          ofac.match({firstName: transcribed}, null, {
+            threshold,//: 0.85,
+            debug: true
+          })
+        }
         assert.ok(!_.isEmpty(matches))
       }
     })
@@ -204,7 +238,9 @@ describe('OFAC', function () {
       ))
 
       for (const fullName of fullNames) {
-        const matches = ofac.match({firstName: fullName}, dateString, 1)
+        const matches = ofac.match({firstName: fullName}, dateString, {
+          threshold,//: 1
+        })
         assert.ok(noMatchesWithBirthDates(matches))
       }
     })
@@ -228,15 +264,41 @@ describe('OFAC', function () {
 
       for (const lastName of lastNames.slice(0, 100)) {
         for (firstName of firstNamesMale.slice(0, 100)) {
-          const matches = ofac.match({firstName, lastName}, null, 0.85)
+          const matches = ofac.match({firstName, lastName}, null, {
+            threshold,//: 0.875
+          })
+          if (!_.isEmpty(matches)) {
+            ofac.match({firstName, lastName}, null, {
+              threshold,//: 0.875,
+              debug: true
+            })
+          }
           assert.ok(_.isEmpty(matches))
         }
 
         for (firstName of firstNamesFemale.slice(0, 100)) {
-          const matches = ofac.match({firstName, lastName}, null, 0.85)
+          const matches = ofac.match({firstName, lastName}, null, {
+            threshold,//: 0.875
+          })
+          if (!_.isEmpty(matches)) {
+            ofac.match({firstName, lastName}, null, {
+              threshold,//: 0.875,
+              debug: true
+            })
+          }
           assert.ok(_.isEmpty(matches))
         }
       }
+    })
+
+
+    it.skip('test', function () {
+      const firstName = 'hian chariapaporn'
+      ofac.match({firstName}, null, {
+        threshold,//: 0.875,
+        debug: true,
+        verboseFor: ['hiran', 'chariapaporn']
+      })
     })
 
   })

@@ -134,148 +134,53 @@ const individualB = {id: '11', aliases: [{id: '15',
 }
 
 
+const parseIndividuals = source => {
+  const individuals = []
+
+  return new Promise((resolve, reject) => {
+    parser.parse(source, (err, profile) => {
+      if (err) {
+        reject(err)
+        return
+      }
+
+      if (!profile) {
+        resolve(individuals)
+        return
+      }
+
+      individuals.push(profile)
+    })
+  })
+}
+
+
 describe('OFAC', function () {
   describe('Parsing', function () {
 
     // To detect botched downloads
     it('should fail on malformed XML', function () {
       const xml = '<a><b></a>'
-      return makeDataFiles([xml]).then(parser.parse)
+      return makeDataFiles([xml])
+      .then(files => Promise.all(_.map(parseIndividuals, files)))
       .catch(error => {
         assert.ok(error instanceof Error)
-        return true
+        return 'failed'
       })
       .then(ret => {
-        assert.equal(ret, true)
+        assert.equal(ret, 'failed')
       })
     })
 
-    it('should return the expected structs', function () {
-      const xml = makeXml([individualA])
+    it('should return the expected individuals', function () {
+      const xml = makeXml([individualA, individualB])
 
-      return makeDataFiles([xml]).then(parser.parse)
-      .then(structs => {
-        const {individuals} = structs
-        assert.ok(Array.isArray(individuals))
-        assert.equal(individuals.length, 1)
-        assert.deepEqual(individuals[0], individualA)
-
-        const {individualsMap} = structs
-        assert.ok(individualsMap instanceof Map)
-        assert.equal(individualsMap.size, 1)
-        assert.ok(individualsMap.has('9'))
-        assert.deepEqual(individualsMap.get('9'), individualA)
-
-        const {aliasToIndividual} = structs
-        assert.ok(aliasToIndividual instanceof Map)
-        assert.equal(aliasToIndividual.size, 1)
-        assert.ok(aliasToIndividual.has('5'))
-        assert.strictEqual(aliasToIndividual.get('5'), '9')
-
-        const {phoneticMap} = structs
-        assert.ok(phoneticMap instanceof Map)
-        assert.equal(phoneticMap.size, 3)
-        assert.ok(phoneticMap.has('JN'))
-        assert.deepEqual(phoneticMap.get('JN'), ['5'])
-        assert.ok(phoneticMap.has('AN'))
-        assert.deepEqual(phoneticMap.get('AN'), ['5'])
-        assert.ok(phoneticMap.has('T'))
-        assert.deepEqual(phoneticMap.get('T'), ['5'])
-
-        const {wordList} = structs
-        assert.ok(Array.isArray(wordList))
-        assert.equal(wordList.length, 2)
-        assert.deepEqual(wordList[0], {value: 'john', aliasIds: ['5']})
-        assert.deepEqual(wordList[1], {value: 'doe', aliasIds: ['5']})
-      })
-    })
-
-    it('should be able to combine multiple sources', function () {
-      const xmlA = makeXml([individualA])
-      const xmlB = makeXml([individualB])
-
-      return makeDataFiles([xmlA, xmlB]).then(parser.parse)
-      .then(structs => {
-        const {individuals} = structs
+      return makeDataFiles([xml])
+      .then(files => Promise.all(_.map(parseIndividuals, files)))
+      .then(([individuals]) => {
         assert.ok(Array.isArray(individuals))
         assert.equal(individuals.length, 2)
-        assert.deepEqual(individuals[0], individualA)
-        assert.deepEqual(individuals[1], individualB)
-
-        const {individualsMap} = structs
-        assert.ok(individualsMap instanceof Map)
-        assert.equal(individualsMap.size, 2)
-        assert.ok(individualsMap.has('9'))
-        assert.deepEqual(individualsMap.get('9'), individualA)
-        assert.ok(individualsMap.has('11'))
-        assert.deepEqual(individualsMap.get('11'), individualB)
-
-        const {aliasToIndividual} = structs
-        assert.ok(aliasToIndividual instanceof Map)
-        assert.equal(aliasToIndividual.size, 2)
-        assert.ok(aliasToIndividual.has('5'))
-        assert.strictEqual(aliasToIndividual.get('5'), '9')
-        assert.ok(aliasToIndividual.has('15'))
-        assert.strictEqual(aliasToIndividual.get('15'), '11')
-
-        const {phoneticMap} = structs
-        assert.ok(phoneticMap instanceof Map)
-        assert.equal(phoneticMap.size, 4)
-        assert.ok(phoneticMap.has('JN'))
-        assert.deepEqual(phoneticMap.get('JN'), ['5', '15'])
-        assert.ok(phoneticMap.has('AN'))
-        assert.deepEqual(phoneticMap.get('AN'), ['5', '15'])
-        assert.ok(phoneticMap.has('T'))
-        assert.deepEqual(phoneticMap.get('T'), ['5', '15'])
-
-        const {wordList} = structs
-        assert.ok(Array.isArray(wordList))
-        assert.equal(wordList.length, 4)
-        assert.deepEqual(wordList[0], {value: 'john', aliasIds: ['5', '15']})
-        assert.deepEqual(wordList[1], {value: 'doe', aliasIds: ['5']})
-        assert.deepEqual(wordList[2], {value: 'de', aliasIds: ['15']})
-        assert.deepEqual(wordList[3], {value: 'gaul', aliasIds: ['15']})
-      })
-    })
-
-    it('should remove duplicates from multiple sources', function () {
-      const xmlA1 = makeXml([individualA, individualA])
-      const xmlA2 = makeXml([individualA])
-
-      return makeDataFiles([xmlA1, xmlA2]).then(parser.parse)
-      .then(structs => {
-        const {individuals} = structs
-        assert.ok(Array.isArray(individuals))
-        assert.equal(individuals.length, 1)
-        assert.deepEqual(individuals[0], individualA)
-
-        const {individualsMap} = structs
-        assert.ok(individualsMap instanceof Map)
-        assert.equal(individualsMap.size, 1)
-        assert.ok(individualsMap.has('9'))
-        assert.deepEqual(individualsMap.get('9'), individualA)
-
-        const {aliasToIndividual} = structs
-        assert.ok(aliasToIndividual instanceof Map)
-        assert.equal(aliasToIndividual.size, 1)
-        assert.ok(aliasToIndividual.has('5'))
-        assert.strictEqual(aliasToIndividual.get('5'), '9')
-
-        const {phoneticMap} = structs
-        assert.ok(phoneticMap instanceof Map)
-        assert.equal(phoneticMap.size, 3)
-        assert.ok(phoneticMap.has('JN'))
-        assert.deepEqual(phoneticMap.get('JN'), ['5'])
-        assert.ok(phoneticMap.has('AN'))
-        assert.deepEqual(phoneticMap.get('AN'), ['5'])
-        assert.ok(phoneticMap.has('T'))
-        assert.deepEqual(phoneticMap.get('T'), ['5'])
-
-        const {wordList} = structs
-        assert.ok(Array.isArray(wordList))
-        assert.equal(wordList.length, 2)
-        assert.deepEqual(wordList[0], {value: 'john', aliasIds: ['5']})
-        assert.deepEqual(wordList[1], {value: 'doe', aliasIds: ['5']})
+        assert.deepEqual(individuals, [individualA, individualB])
       })
     })
 

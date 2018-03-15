@@ -65,7 +65,8 @@ openssl x509 \
 
 rm /tmp/Lamassu_OP.csr.pem
 
-mkdir -p $OFAC_DATA_DIR
+mkdir -p $OFAC_DATA_DIR/sources
+touch $OFAC_DATA_DIR/etags.json
 
 cat <<EOF > $CONFIG_DIR/lamassu.json
 {
