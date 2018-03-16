@@ -80,7 +80,17 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "lamassuCaPath": "$LAMASSU_CA_PATH",
   "lamassuServerPath": "$PWD",
   "migrateStatePath": "$MIGRATE_STATE_PATH",
-  "ofacDataDir": "$OFAC_DATA_DIR"
+  "ofacDataDir": "$OFAC_DATA_DIR",
+  "ofacSources": [
+    {
+      "name": "sdn_advanced",
+      "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml"
+    },
+    {
+      "name": "cons_advanced",
+      "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml"
+    }
+  ]
 }
 EOF
 
