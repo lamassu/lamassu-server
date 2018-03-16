@@ -114,8 +114,8 @@ const individualA = {id: '9', aliases: [{id: '5',
     {value: 'john', phonetics: ['JN', 'AN']},
     {value: 'doe', phonetics: ['T']}]}],
   birthDatePeriods: [{
-    start: {year: 1955, month: 10, day: 5, date: new Date(1955, 9, 5)},
-    end: {year: 1955, month: 10, day: 5, date: new Date(1955, 9, 5)}}]
+    start: {year: 1955, month: 10, day: 5},
+    end: {year: 1955, month: 10, day: 5}}]
 }
 
 const individualB = {id: '11', aliases: [{id: '15',
@@ -129,8 +129,8 @@ const individualB = {id: '11', aliases: [{id: '15',
     {value: 'de', phonetics: ['T']},
     {value: 'gaul', phonetics: ['KL']}]}],
   birthDatePeriods: [{
-    start: {year: 1965, month: 11, day: 20, date: new Date(1965, 10, 20)},
-    end: {year: 1965, month: 11, day: 20, date: new Date(1965, 10, 20)}}]
+    start: {year: 1965, month: 11, day: 20},
+    end: {year: 1965, month: 11, day: 20}}]
 }
 
 
@@ -180,6 +180,8 @@ describe('OFAC', function () {
       .then(([individuals]) => {
         assert.ok(Array.isArray(individuals))
         assert.equal(individuals.length, 2)
+        console.log(JSON.stringify(individuals[0]))
+        console.log(JSON.stringify(individualA))
         assert.deepEqual(individuals, [individualA, individualB])
       })
     })
