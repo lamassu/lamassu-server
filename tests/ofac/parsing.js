@@ -180,8 +180,6 @@ describe('OFAC', function () {
       .then(([individuals]) => {
         assert.ok(Array.isArray(individuals))
         assert.equal(individuals.length, 2)
-        console.log(JSON.stringify(individuals[0]))
-        console.log(JSON.stringify(individualA))
         assert.deepEqual(individuals, [individualA, individualB])
       })
     })
