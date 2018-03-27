@@ -33803,7 +33803,7 @@ var _user$project$Transactions$rowView = function (tx) {
 			});
 	} else {
 		var _p3 = _p1._0;
-		var status = _elm_community$maybe_extra$Maybe_Extra$isJust(_p3.error) ? 'Error' : 'Success';
+		var status = _elm_community$maybe_extra$Maybe_Extra$isJust(_p3.error) ? 'Error' : (_p3.dispense ? 'Success' : 'Pending');
 		return A2(
 			_elm_lang$html$Html$tr,
 			{
