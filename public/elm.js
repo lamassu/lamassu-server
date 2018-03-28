@@ -28021,6 +28021,9 @@ var _user$project$Common_Customer_Types$authorizedToString = function (model) {
 			return 'automatic';
 	}
 };
+var _user$project$Common_Customer_Types$IdCardData = function (a) {
+	return {uid: a};
+};
 var _user$project$Common_Customer_Types$Customer = function (a) {
 	return function (b) {
 		return function (c) {
@@ -28094,6 +28097,11 @@ var _user$project$Common_Customer_Types$Verified = {ctor: 'Verified'};
 var _user$project$Common_Customer_Types$Blocked = {ctor: 'Blocked'};
 var _user$project$Common_Customer_Types$Automatic = {ctor: 'Automatic'};
 
+var _user$project$Common_Customer_Decoder$idCardDataDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'uid',
+	_elm_lang$core$Json_Decode$string,
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_Customer_Types$IdCardData));
 var _user$project$Common_Customer_Decoder$mapAuthorizedTypes = function (s) {
 	var _p0 = s;
 	switch (_p0) {
@@ -28192,7 +28200,7 @@ var _user$project$Common_Customer_Decoder$customerDecoder = A3(
 																				A3(
 																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 																					'idCardData',
-																					_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+																					_elm_lang$core$Json_Decode$nullable(_user$project$Common_Customer_Decoder$idCardDataDecoder),
 																					A3(
 																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 																						'authorizedAt',
