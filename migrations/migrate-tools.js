@@ -10,7 +10,7 @@ function migrateNames () {
   const cs = new pgp.helpers.ColumnSet(['device_id', 'name'], {table: 'devices'})
 
   return settingsLoader.loadLatest()
-  .then(r => machineLoader.getMachineNames(r.config))
-  .then(_.map(r => ({device_id: r.deviceId, name: r.name})))
-  .then(data => pgp.helpers.update(data, cs))
+    .then(r => machineLoader.getMachineNames(r.config))
+    .then(_.map(r => ({device_id: r.deviceId, name: r.name})))
+    .then(data => pgp.helpers.update(data, cs))
 }

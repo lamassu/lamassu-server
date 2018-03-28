@@ -6,7 +6,7 @@ exports.up = function (next) {
     id uuid PRIMARY KEY,
     device_id text,
     timestamp timestamptz not null default now() )`,
-      'alter table logs add column server_timestamp timestamptz not null default now() '
+    'alter table logs add column server_timestamp timestamptz not null default now() '
     ]
 
   db.multi(sql, next)

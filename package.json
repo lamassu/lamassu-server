@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "5.7.6",
+  "version": "5.8.3",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
@@ -31,6 +31,7 @@
     "kraken-api": "github:DeX3/npm-kraken-api",
     "lnd-async": "^1.0.1",
     "lodash": "^4.17.2",
+    "longjohn": "^0.2.12",
     "make-dir": "^1.0.0",
     "mem": "^1.1.0",
     "migrate": "^0.2.2",
@@ -40,12 +41,12 @@
     "node-hkdf-sync": "^1.0.0",
     "node-mailjet": "^3.2.1",
     "numeral": "^2.0.3",
-    "pg-native": "^2.0.1",
-    "pg-promise": "^6.3.7",
+    "p-each-series": "^1.0.0",
+    "pg-native": "^2.2.0",
+    "pg-promise": "^7.4.1",
     "pify": "^3.0.0",
     "pretty-ms": "^2.1.0",
     "promise-sequential": "^1.1.1",
-    "ramda": "^0.22.1",
     "serve-static": "^1.12.4",
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
@@ -70,7 +71,8 @@
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
     "lamassu-cancel": "./bin/lamassu-cancel",
     "lamassu-nuke-db": "./bin/lamassu-nuke-db",
-    "lamassu-coins": "./bin/lamassu-coins"
+    "lamassu-coins": "./bin/lamassu-coins",
+    "lamassu-update": "./bin/lamassu-update"
   },
   "scripts": {
     "start": "node bin/lamassu-server",

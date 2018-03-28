@@ -5,7 +5,7 @@ function singleQuotify (item) { return '\'' + item + '\'' }
 exports.up = function (next) {
   var statuses = ['notSeen', 'published', 'authorized', 'instant',
     'confirmed', 'rejected', 'insufficientFunds']
-  .map(singleQuotify).join(',')
+    .map(singleQuotify).join(',')
 
   var sql = [
     'create type status_stage AS enum (' + statuses + ')',

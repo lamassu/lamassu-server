@@ -13,7 +13,7 @@ const headers = {
 
 const body = JSON.stringify({tx: tx})
 got('http://localhost:3000/dispense', {body: body, json: true, headers: headers})
-.then(res => {
-  console.log(res.body)
-})
-.catch(console.log)
+  .then(res => {
+    console.log(res.body)
+  })
+  .catch(console.log)

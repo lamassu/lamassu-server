@@ -17,13 +17,13 @@ var rec = {
 
 var db = config.connection
 config.loadConfig(db)
-.then(function (config) {
-  plugins.configure(config)
-  plugins.sendMessage(rec)
-  .then(function () {
-    console.log('Success.')
+  .then(function (config) {
+    plugins.configure(config)
+    plugins.sendMessage(rec)
+      .then(function () {
+        console.log('Success.')
+      })
+      .catch(function (err) {
+        console.log(err.stack)
+      })
   })
-  .catch(function (err) {
-    console.log(err.stack)
-  })
-})
