@@ -75,7 +75,8 @@
     "lamassu-cancel": "./bin/lamassu-cancel",
     "lamassu-nuke-db": "./bin/lamassu-nuke-db",
     "lamassu-coins": "./bin/lamassu-coins",
-    "lamassu-update": "./bin/lamassu-update"
+    "lamassu-update": "./bin/lamassu-update",
+    "lamassu-ofac-update": "./bin/lamassu-ofac-update"
   },
   "scripts": {
     "start": "node bin/lamassu-server",

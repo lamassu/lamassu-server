@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const ofac = require('../lib/ofac/update')
+
+console.log('Updating OFAC databases.')
+
+ofac.update()
+  .then(() => console.log('Success.'))
+  .catch(console.log)
