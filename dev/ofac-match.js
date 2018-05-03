@@ -11,7 +11,6 @@ const config = {
   sanctionsVerificationActive: true
 }
 
-console.log('DEBUG100')
 ofac.load()
   .then(() => compliance.validateCustomer(config, customer))
   .then(() => console.log('SUCCESS!'))
