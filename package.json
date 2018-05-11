@@ -9,7 +9,7 @@
     "@fczbkk/uuid4": "^3.0.0",
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
-    "bignumber.js": "^4.0.2",
+    "bignumber.js": "^4.1.0",
     "bip39": "^2.3.1",
     "bitcoind-rpc": "^0.7.0",
     "bitcore-lib": "^0.15.0",

@@ -83,6 +83,16 @@
       ]
     },
     {
+      "code": "coinAtmRadar",
+      "display": "Coin ATM Radar",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+         "coinAtmRadarActive",
+         "coinAtmRadarShowRates"
+      ]
+    },
+    {
       "code": "walletSettings",
       "display": "Wallet Settings",
       "cryptoScope": "specific",
@@ -756,6 +766,27 @@
         "notificationsEmailEnabled"
       ],
       "fieldValidation": [{"code": "required"}]
+    },
+    {
+      "code": "coinAtmRadarActive",
+      "displayBottom": "Active",
+      "displayTopCount": 0,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [{"code": "required"}],
+      "default": false
+    },
+    {
+      "code": "coinAtmRadarShowRates",
+      "displayBottom": "Show Rates",
+      "displayTopCount": 0,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "coinAtmRadarActive"
+      ],
+      "fieldValidation": [{"code": "required"}],
+      "default": true
     }
   ]
 }

@@ -36714,7 +36714,11 @@ var _user$project$NavBar$determineConfigCategory = function (configCode) {
 				_1: {
 					ctor: '::',
 					_0: 'compliance',
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: 'coinAtmRadar',
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		}) ? _elm_lang$core$Maybe$Just(_user$project$CoreTypes$GlobalSettingsCat) : _elm_lang$core$Maybe$Nothing);
@@ -37155,7 +37159,11 @@ var _user$project$NavBar$view = F2(
 										_1: {
 											ctor: '::',
 											_0: A2(configLink, 'compliance', 'Compliance'),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: A2(configLink, 'coinAtmRadar', 'Coin ATM Radar'),
+												_1: {ctor: '[]'}
+											}
 										}
 									}
 								}),
