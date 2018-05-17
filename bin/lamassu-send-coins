@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+
+const settingsLoader = require('../lib/settings-loader')
+const configManager = require('../lib/config-manager')
+const wallet = require('../lib/wallet')
+const coinUtils = require('../lib/coin-utils')
+const BN = require('../lib/bn')
+const inquirer = require('inquirer')
+const ticker = require('../lib/ticker')
+
+const [toAddress, cryptoValue, cryptoCode] = process.argv.slice(2)
+
+function computeCrypto (cryptoCode, value) {
+  try {
+    const cryptoRec = coinUtils.getCryptoCurrency(cryptoCode)
+    const unitScale = cryptoRec.unitScale
+
+    return BN(value).shift(unitScale)
+  } catch (err) {
+    return null
+  }
+}
+
+if (!toAddress || !cryptoValue || !cryptoCode) {
+  console.log('Usage: lamassu-send-coins <address> <amount> <coin>')
+  console.log('Example: lamassu-send-coins 3FUv7vKaP11idnsUKyQ2pxdWxCDMyr5HKJ 0.009 BTC')
+  process.exit(1)
+}
+
+const cryptoAtoms = computeCrypto(cryptoCode, cryptoValue)
+
+if (!cryptoAtoms) {
+  console.log(`Unsupported coin: ${cryptoCode}.\n`)
+  console.log('Usage: lamassu-send-coins <address> <amount> <coin>')
+  console.log('Example: lamassu-send-coins 3FUv7vKaP11idnsUKyQ2pxdWxCDMyr5HKJ 0.009 BTC')
+  process.exit(2)
+}
+
+console.log('Loading ticker...')
+
+settingsLoader.loadLatest()
+  .then(settings => {
+    const config = configManager.unscoped(settings.config)
+    const fiatCode = config.fiatCurrency
+
+    return wallet.isStrictAddress(settings, cryptoCode, toAddress)
+      .then(isValid => {
+        if (!isValid) {
+          console.log(`Invalid ${cryptoCode} address: ${toAddress}.`)
+          console.log('Please check your command.\n')
+          console.log('Usage: lamassu-send-coins <address> <amount> <coin>')
+          console.log('Example: lamassu-send-coins 3FUv7vKaP11idnsUKyQ2pxdWxCDMyr5HKJ 0.009 BTC')
+          process.exit(3)
+        }
+      })
+      .then(() => ticker.getRates(settings, fiatCode, cryptoCode))
+      .then(rates => {
+        const fiatAmount = rates.rates.ask.times(cryptoValue).toFixed(2)
+
+        const questions = [
+          {
+            type: 'confirm',
+            name: 'confirm',
+            message: `Are you sure you want to send ${cryptoValue} ${cryptoCode} (${fiatAmount} ${fiatCode}) to the address ${toAddress}?`,
+            default: false
+          }
+        ]
+
+        console.log('\nPlease look over this transaction carefully!')
+
+        return inquirer.prompt(questions)
+          .then(answers => {
+            if (!answers.confirm) {
+              console.log('Transaction cancelled.')
+              process.exit(0)
+            }
+
+            console.log('Sending...')
+            return wallet.sendCoins(settings, toAddress, cryptoAtoms, cryptoCode)
+              .then(() => {
+                console.log('Success.')
+                process.exit(0)
+              })
+              .catch(console.log)
+          })
+          .catch(console.log)
+      })
+      .catch(console.log)
+  })
