@@ -1,4 +1,4 @@
-# Installation on Ubuntu 16.04
+# Preliminaries for Ubuntu 16.04
 
 Installation for other distros may be slightly different. This assumes nodejs 8 and npm are already installed. All of this is done in the lamassu-server directory.
 
@@ -22,6 +22,16 @@ In ``psql``, run the following and set password to ``postgres123``:
 \password postgres
 ctrl-d
 ```
+
+# Preliminaries for MacOS
+
+## Postgres
+
+Use Postgres.app: https://postgresapp.com/
+
+**psql** is automatically installed. You won't need to set up users.
+
+# Installation
 
 ## Install node modules
 Ignore any warnings.
