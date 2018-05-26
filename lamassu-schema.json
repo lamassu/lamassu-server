@@ -117,6 +117,18 @@
         "sms",
         "email"
       ]
+    },
+    {
+      "code": "terms",
+      "display": "Terms and Conditions",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "termsScreenActive",
+        "termsScreenActive",
+        "termsScreenTitle",
+        "termsScreenText"
+      ]
     }
   ],
   "fields": [
@@ -800,6 +812,40 @@
       ],
       "fieldValidation": [{"code": "required"}],
       "default": true
+    },
+    {
+      "code": "termsScreenActive",
+      "displayBottom": "Terms and Conditions Screen enabled",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
+    {
+      "code": "termsScreenTitle",
+      "displayBottom": "Title",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "termsScreenText",
+      "displayBottom": "Text",
+      "displayTopCount": 0,
+      "fieldType": "textarea",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
     }
   ]
 }
