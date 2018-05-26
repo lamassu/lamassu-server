@@ -100,6 +100,7 @@
       "fields": [
         "ticker",
         "wallet",
+        "layer2",
         "exchange",
         "zeroConf"
       ]
@@ -498,6 +499,18 @@
           "code": "required"
         }
       ]
+    },
+    {
+      "code": "layer2",
+      "displayBottom": "Layer 2",
+      "fieldType": "account",
+      "fieldClass": "layer2",
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": "no-layer2"
     },
     {
       "code": "exchange",

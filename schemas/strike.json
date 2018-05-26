@@ -1,0 +1,14 @@
+{
+  "code": "strike",
+  "display": "Strike",
+  "fields": [
+    {
+      "code": "token",
+      "display": "API Token",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    }
+  ]
+}
