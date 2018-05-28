@@ -125,9 +125,10 @@
       "machineScope": "global",
       "fields": [
         "termsScreenActive",
-        "termsScreenActive",
         "termsScreenTitle",
-        "termsScreenText"
+        "termsScreenText",
+        "termsAcceptButtonText",
+        "termsCancelButtonText"
       ]
     }
   ],
@@ -831,6 +832,7 @@
       "displayTopCount": 0,
       "fieldType": "string",
       "fieldClass": null,
+      "default": "Terms and Conditions",
       "enabledIfAny": [
         "termsScreenActive"
       ],
@@ -842,6 +844,30 @@
       "displayTopCount": 0,
       "fieldType": "textarea",
       "fieldClass": null,
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "termsAcceptButtonText",
+      "displayBottom": "Accept button text",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "default": "Accept",
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "termsCancelButtonText",
+      "displayBottom": "Cancel button text",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "default": "Cancel",
       "enabledIfAny": [
         "termsScreenActive"
       ],
