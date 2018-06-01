@@ -842,7 +842,7 @@
       "code": "termsScreenText",
       "displayBottom": "Text",
       "displayTopCount": 0,
-      "fieldType": "textarea",
+      "fieldType": "markdown",
       "fieldClass": null,
       "enabledIfAny": [
         "termsScreenActive"

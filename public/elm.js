@@ -29480,6 +29480,8 @@ var _user$project$ConfigTypes$fieldValueToString = function (fieldValue) {
 			return A2(_elm_lang$core$String$join, ',', _p8._0);
 		case 'FieldCountryValue':
 			return _p8._0;
+		case 'FieldTextAreaValue':
+			return _p8._0;
 		default:
 			return _p8._0;
 	}
@@ -29626,6 +29628,7 @@ var _user$project$ConfigTypes$SelectizeComponent = function (a) {
 };
 var _user$project$ConfigTypes$TextAreaComponent = {ctor: 'TextAreaComponent'};
 var _user$project$ConfigTypes$InputBoxComponent = {ctor: 'InputBoxComponent'};
+var _user$project$ConfigTypes$FieldMarkdownType = {ctor: 'FieldMarkdownType'};
 var _user$project$ConfigTypes$FieldTextAreaType = {ctor: 'FieldTextAreaType'};
 var _user$project$ConfigTypes$FieldCountryType = {ctor: 'FieldCountryType'};
 var _user$project$ConfigTypes$FieldLanguageType = {ctor: 'FieldLanguageType'};
@@ -29637,6 +29640,9 @@ var _user$project$ConfigTypes$FieldDecimalType = {ctor: 'FieldDecimalType'};
 var _user$project$ConfigTypes$FieldIntegerType = {ctor: 'FieldIntegerType'};
 var _user$project$ConfigTypes$FieldPercentageType = {ctor: 'FieldPercentageType'};
 var _user$project$ConfigTypes$FieldStringType = {ctor: 'FieldStringType'};
+var _user$project$ConfigTypes$FieldMarkdownValue = function (a) {
+	return {ctor: 'FieldMarkdownValue', _0: a};
+};
 var _user$project$ConfigTypes$FieldTextAreaValue = function (a) {
 	return {ctor: 'FieldTextAreaValue', _0: a};
 };
@@ -29736,9 +29742,12 @@ var _user$project$ConfigTypes$stringToFieldHolder = F2(
 				case 'FieldCountryType':
 					return _user$project$ConfigTypes$FieldOk(
 						_user$project$ConfigTypes$FieldCountryValue(s));
-				default:
+				case 'FieldTextAreaType':
 					return _user$project$ConfigTypes$FieldOk(
 						_user$project$ConfigTypes$FieldTextAreaValue(s));
+				default:
+					return _user$project$ConfigTypes$FieldOk(
+						_user$project$ConfigTypes$FieldMarkdownValue(s));
 			}
 		}
 	});
@@ -29908,6 +29917,8 @@ var _user$project$ConfigDecoder$basicFieldTypeDecoder = function (s) {
 			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldCountryType);
 		case 'textarea':
 			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldTextAreaType);
+		case 'markdown':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldMarkdownType);
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'No such FieldType ', s));
@@ -30164,6 +30175,11 @@ var _user$project$ConfigDecoder$fieldValueTypeDecoder = function (fieldType) {
 				_elm_lang$core$Json_Decode$map,
 				_user$project$ConfigTypes$FieldTextAreaValue,
 				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
+		case 'markdown':
+			return A2(
+				_elm_lang$core$Json_Decode$map,
+				_user$project$ConfigTypes$FieldMarkdownValue,
+				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'Unsupported field type: ', fieldType));
@@ -30232,8 +30248,10 @@ var _user$project$ConfigEncoder$fieldTypeEncoder = function (fieldType) {
 			return _elm_lang$core$Json_Encode$string('language');
 		case 'FieldCountryType':
 			return _elm_lang$core$Json_Encode$string('country');
-		default:
+		case 'FieldTextAreaType':
 			return _elm_lang$core$Json_Encode$string('textarea');
+		default:
+			return _elm_lang$core$Json_Encode$string('markdown');
 	}
 };
 var _user$project$ConfigEncoder$encodeMachine = function (machine) {
@@ -30380,10 +30398,15 @@ var _user$project$ConfigEncoder$encodeFieldValue = function (fieldValue) {
 				_user$project$ConfigEncoder$encodeFieldValueObject,
 				'country',
 				_elm_lang$core$Json_Encode$string(_p4._0));
-		default:
+		case 'FieldTextAreaValue':
 			return A2(
 				_user$project$ConfigEncoder$encodeFieldValueObject,
 				'textarea',
+				_elm_lang$core$Json_Encode$string(_p4._0));
+		default:
+			return A2(
+				_user$project$ConfigEncoder$encodeFieldValueObject,
+				'markdown',
 				_elm_lang$core$Json_Encode$string(_p4._0));
 	}
 };
@@ -31079,8 +31102,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1548, column: 17},
-							end: {line: 1553, column: 56}
+							start: {line: 1551, column: 17},
+							end: {line: 1556, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -31177,8 +31200,6 @@ var _user$project$Config$buildFieldComponent = F4(
 		switch (_p9.ctor) {
 			case 'FieldStringType':
 				return _user$project$ConfigTypes$InputBoxComponent;
-			case 'FieldTextAreaType':
-				return _user$project$ConfigTypes$TextAreaComponent;
 			case 'FieldPercentageType':
 				return _user$project$ConfigTypes$InputBoxComponent;
 			case 'FieldIntegerType':
@@ -31195,8 +31216,12 @@ var _user$project$Config$buildFieldComponent = F4(
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
 			case 'FieldLanguageType':
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
-			default:
+			case 'FieldCountryType':
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
+			case 'FieldTextAreaType':
+				return _user$project$ConfigTypes$TextAreaComponent;
+			default:
+				return _user$project$ConfigTypes$TextAreaComponent;
 		}
 	});
 var _user$project$Config$initFieldInstance = F3(
