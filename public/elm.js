@@ -6446,6 +6446,48 @@ var _elm_lang$core$Set$partition = F2(
 		};
 	});
 
+var _elm_community$json_extra$Json_Decode_Extra$when = F3(
+	function (checkDecoder, check, passDecoder) {
+		return A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (checkVal) {
+				return check(checkVal) ? passDecoder : _elm_lang$core$Json_Decode$fail(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Check failed with input `',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(checkVal),
+							'`')));
+			},
+			checkDecoder);
+	});
+var _elm_community$json_extra$Json_Decode_Extra$combine = A2(
+	_elm_lang$core$List$foldr,
+	_elm_lang$core$Json_Decode$map2(
+		F2(
+			function (x, y) {
+				return {ctor: '::', _0: x, _1: y};
+			})),
+	_elm_lang$core$Json_Decode$succeed(
+		{ctor: '[]'}));
+var _elm_community$json_extra$Json_Decode_Extra$collection = function (decoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (length) {
+			return _elm_community$json_extra$Json_Decode_Extra$combine(
+				A2(
+					_elm_lang$core$List$map,
+					function (index) {
+						return A2(
+							_elm_lang$core$Json_Decode$field,
+							_elm_lang$core$Basics$toString(index),
+							decoder);
+					},
+					A2(_elm_lang$core$List$range, 0, length - 1)));
+		},
+		A2(_elm_lang$core$Json_Decode$field, 'length', _elm_lang$core$Json_Decode$int));
+};
 var _elm_community$json_extra$Json_Decode_Extra$fromResult = function (result) {
 	var _p0 = result;
 	if (_p0.ctor === 'Ok') {
@@ -6477,6 +6519,19 @@ var _elm_community$json_extra$Json_Decode_Extra$doubleEncoded = function (decode
 		},
 		_elm_lang$core$Json_Decode$string);
 };
+var _elm_community$json_extra$Json_Decode_Extra$keys = A2(
+	_elm_lang$core$Json_Decode$map,
+	A2(
+		_elm_lang$core$List$foldl,
+		F2(
+			function (_p4, acc) {
+				var _p5 = _p4;
+				return {ctor: '::', _0: _p5._0, _1: acc};
+			}),
+		{ctor: '[]'}),
+	_elm_lang$core$Json_Decode$keyValuePairs(
+		_elm_lang$core$Json_Decode$succeed(
+			{ctor: '_Tuple0'})));
 var _elm_community$json_extra$Json_Decode_Extra$sequenceHelp = F2(
 	function (decoders, jsonValues) {
 		return (!_elm_lang$core$Native_Utils.eq(
@@ -6517,11 +6572,11 @@ var _elm_community$json_extra$Json_Decode_Extra$indexedList = function (indexedD
 var _elm_community$json_extra$Json_Decode_Extra$optionalField = F2(
 	function (fieldName, decoder) {
 		var finishDecoding = function (json) {
-			var _p4 = A2(
+			var _p6 = A2(
 				_elm_lang$core$Json_Decode$decodeValue,
 				A2(_elm_lang$core$Json_Decode$field, fieldName, _elm_lang$core$Json_Decode$value),
 				json);
-			if (_p4.ctor === 'Ok') {
+			if (_p6.ctor === 'Ok') {
 				return A2(
 					_elm_lang$core$Json_Decode$map,
 					_elm_lang$core$Maybe$Just,
@@ -6541,21 +6596,21 @@ var _elm_community$json_extra$Json_Decode_Extra$withDefault = F2(
 	});
 var _elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples = F2(
 	function (keyDecoder, tuples) {
-		var _p5 = tuples;
-		if (_p5.ctor === '[]') {
+		var _p7 = tuples;
+		if (_p7.ctor === '[]') {
 			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty);
 		} else {
-			var _p6 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p5._0._0);
-			if (_p6.ctor === 'Ok') {
+			var _p8 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p7._0._0);
+			if (_p8.ctor === 'Ok') {
 				return A2(
 					_elm_lang$core$Json_Decode$andThen,
-					function (_p7) {
+					function (_p9) {
 						return _elm_lang$core$Json_Decode$succeed(
-							A3(_elm_lang$core$Dict$insert, _p6._0, _p5._0._1, _p7));
+							A3(_elm_lang$core$Dict$insert, _p8._0, _p7._0._1, _p9));
 					},
-					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p5._1));
+					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p7._1));
 			} else {
-				return _elm_lang$core$Json_Decode$fail(_p6._0);
+				return _elm_lang$core$Json_Decode$fail(_p8._0);
 			}
 		}
 	});
@@ -6574,9 +6629,9 @@ var _elm_community$json_extra$Json_Decode_Extra$set = function (decoder) {
 };
 var _elm_community$json_extra$Json_Decode_Extra$date = A2(
 	_elm_lang$core$Json_Decode$andThen,
-	function (_p8) {
+	function (_p10) {
 		return _elm_community$json_extra$Json_Decode_Extra$fromResult(
-			_elm_lang$core$Date$fromString(_p8));
+			_elm_lang$core$Date$fromString(_p10));
 	},
 	_elm_lang$core$Json_Decode$string);
 var _elm_community$json_extra$Json_Decode_Extra$andMap = _elm_lang$core$Json_Decode$map2(
@@ -12394,42 +12449,6 @@ var _justinmimbs$elm_date_extra$Date_Extra_Facts$daysBeforeStartOfMonth = F2(
 		}
 	});
 
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$toUnixTime = function (rd) {
-	return (rd - 719163) * _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerDay;
-};
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekdayNumber = function (rd) {
-	var _p0 = A2(_elm_lang$core$Basics_ops['%'], rd, 7);
-	if (_p0 === 0) {
-		return 7;
-	} else {
-		return _p0;
-	}
-};
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$leapYearsInCommonEra = function (y) {
-	return (((y / 4) | 0) - ((y / 100) | 0)) + ((y / 400) | 0);
-};
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$rataDieBeforeStartOfYear = function (y) {
-	return (365 * (y - 1)) + _justinmimbs$elm_date_extra$Date_Internal_RataDie$leapYearsInCommonEra(y - 1);
-};
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$fromOrdinalDate = F2(
-	function (y, d) {
-		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$rataDieBeforeStartOfYear(y) + d;
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$week1Day1OfWeekYear = function (y) {
-	var jan4RD = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromOrdinalDate, y, 4);
-	return (jan4RD - _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekdayNumber(jan4RD)) + 1;
-};
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$fromWeekDate = F3(
-	function (y, w, d) {
-		var week1Day0RD = _justinmimbs$elm_date_extra$Date_Internal_RataDie$week1Day1OfWeekYear(y) - 1;
-		return (week1Day0RD + ((w - 1) * 7)) + d;
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate = F3(
-	function (y, m, d) {
-		var md = A2(_justinmimbs$elm_date_extra$Date_Extra_Facts$daysBeforeStartOfMonth, y, m);
-		var yd = _justinmimbs$elm_date_extra$Date_Internal_RataDie$rataDieBeforeStartOfYear(y);
-		return (yd + md) + d;
-	});
 var _justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt = F2(
 	function (a, b) {
 		return {
@@ -12439,77 +12458,86 @@ var _justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt = F2(
 		};
 	});
 var _justinmimbs$elm_date_extra$Date_Internal_RataDie$year = function (rd) {
-	var _p1 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, rd, 146097);
-	var q400 = _p1._0;
-	var r400 = _p1._1;
-	var _p2 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, r400, 36524);
-	var q100 = _p2._0;
-	var r100 = _p2._1;
-	var _p3 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, r100, 1461);
-	var q4 = _p3._0;
-	var r4 = _p3._1;
-	var _p4 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, r4, 365);
-	var q1 = _p4._0;
-	var r1 = _p4._1;
+	var _p0 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, rd, 146097);
+	var n400 = _p0._0;
+	var r400 = _p0._1;
+	var _p1 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, r400, 36524);
+	var n100 = _p1._0;
+	var r100 = _p1._1;
+	var _p2 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, r100, 1461);
+	var n4 = _p2._0;
+	var r4 = _p2._1;
+	var _p3 = A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$divideInt, r4, 365);
+	var n1 = _p3._0;
+	var r1 = _p3._1;
 	var n = _elm_lang$core$Native_Utils.eq(r1, 0) ? 0 : 1;
-	return ((((q400 * 400) + (q100 * 100)) + (q4 * 4)) + q1) + n;
+	return ((((n400 * 400) + (n100 * 100)) + (n4 * 4)) + n1) + n;
 };
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$ordinalDay = function (rd) {
-	return rd - _justinmimbs$elm_date_extra$Date_Internal_RataDie$rataDieBeforeStartOfYear(
-		_justinmimbs$elm_date_extra$Date_Internal_RataDie$year(rd));
+var _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekdayNumber = function (rd) {
+	var _p4 = A2(_elm_lang$core$Basics_ops['%'], rd, 7);
+	if (_p4 === 0) {
+		return 7;
+	} else {
+		return _p4;
+	}
+};
+var _justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeYear = function (y1) {
+	var y = y1 - 1;
+	var leapYears = (((y / 4) | 0) - ((y / 100) | 0)) + ((y / 400) | 0);
+	return (365 * y) + leapYears;
+};
+var _justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeWeekYear = function (y) {
+	var jan4 = _justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeYear(y) + 4;
+	return jan4 - _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekdayNumber(jan4);
 };
 var _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekYear = function (rd) {
-	var daysToThursday = 4 - _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekdayNumber(rd);
-	return _justinmimbs$elm_date_extra$Date_Internal_RataDie$year(rd + daysToThursday);
+	return _justinmimbs$elm_date_extra$Date_Internal_RataDie$year(
+		rd + (4 - _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekdayNumber(rd)));
 };
 var _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekNumber = function (rd) {
-	var week1Day1RD = _justinmimbs$elm_date_extra$Date_Internal_RataDie$week1Day1OfWeekYear(
-		_justinmimbs$elm_date_extra$Date_Internal_RataDie$weekYear(rd));
-	return (((rd - week1Day1RD) / 7) | 0) + 1;
+	var week1Day1 = _justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeWeekYear(
+		_justinmimbs$elm_date_extra$Date_Internal_RataDie$weekYear(rd)) + 1;
+	return (((rd - week1Day1) / 7) | 0) + 1;
 };
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$find = F2(
-	function (pred, list) {
-		find:
-		while (true) {
-			var _p5 = list;
-			if (_p5.ctor === '[]') {
-				return _elm_lang$core$Maybe$Nothing;
-			} else {
-				var _p6 = _p5._0;
-				if (pred(_p6)) {
-					return _elm_lang$core$Maybe$Just(_p6);
-				} else {
-					var _v2 = pred,
-						_v3 = _p5._1;
-					pred = _v2;
-					list = _v3;
-					continue find;
-				}
-			}
-		}
+var _justinmimbs$elm_date_extra$Date_Internal_RataDie$fromWeekDate = F3(
+	function (wy, wn, wdn) {
+		return (_justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeWeekYear(wy) + ((wn - 1) * 7)) + wdn;
 	});
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$month = function (rd) {
-	var od = _justinmimbs$elm_date_extra$Date_Internal_RataDie$ordinalDay(rd);
-	var y = _justinmimbs$elm_date_extra$Date_Internal_RataDie$year(rd);
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		_elm_lang$core$Date$Jan,
-		A2(
-			_justinmimbs$elm_date_extra$Date_Internal_RataDie$find,
-			function (m) {
-				return _elm_lang$core$Native_Utils.cmp(
-					A2(_justinmimbs$elm_date_extra$Date_Extra_Facts$daysBeforeStartOfMonth, y, m),
-					od) < 0;
-			},
-			_elm_lang$core$List$reverse(_justinmimbs$elm_date_extra$Date_Extra_Facts$months)));
-};
-var _justinmimbs$elm_date_extra$Date_Internal_RataDie$day = function (rd) {
-	var od = _justinmimbs$elm_date_extra$Date_Internal_RataDie$ordinalDay(rd);
-	var m = _justinmimbs$elm_date_extra$Date_Internal_RataDie$month(rd);
-	var y = _justinmimbs$elm_date_extra$Date_Internal_RataDie$year(rd);
-	return od - A2(_justinmimbs$elm_date_extra$Date_Extra_Facts$daysBeforeStartOfMonth, y, m);
-};
+var _justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate = F3(
+	function (y, m, d) {
+		return (_justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeYear(y) + A2(_justinmimbs$elm_date_extra$Date_Extra_Facts$daysBeforeStartOfMonth, y, m)) + d;
+	});
+var _justinmimbs$elm_date_extra$Date_Internal_RataDie$fromOrdinalDate = F2(
+	function (y, od) {
+		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$daysBeforeYear(y) + od;
+	});
 
+var _justinmimbs$elm_date_extra$Date_Internal_Core$msFromTimeParts = F4(
+	function (hh, mm, ss, ms) {
+		return (((_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerHour * hh) + (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * mm)) + (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerSecond * ss)) + ms;
+	});
+var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromRataDie = function (rd) {
+	return (rd - 719163) * _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerDay;
+};
+var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromOrdinalDate = F2(
+	function (y, d) {
+		return _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromRataDie(
+			A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromOrdinalDate, y, d));
+	});
+var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromCalendarDate = F3(
+	function (y, m, d) {
+		return _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromRataDie(
+			A3(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate, y, m, d));
+	});
+var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromParts = F7(
+	function (y, m, d, hh, mm, ss, ms) {
+		return A3(_justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromCalendarDate, y, m, d) + A4(_justinmimbs$elm_date_extra$Date_Internal_Core$msFromTimeParts, hh, mm, ss, ms);
+	});
+var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromWeekDate = F3(
+	function (y, w, d) {
+		return _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromRataDie(
+			A3(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromWeekDate, y, w, d));
+	});
 var _justinmimbs$elm_date_extra$Date_Internal_Core$weekNumberFromCalendarDate = F3(
 	function (y, m, d) {
 		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekNumber(
@@ -12519,30 +12547,6 @@ var _justinmimbs$elm_date_extra$Date_Internal_Core$weekYearFromCalendarDate = F3
 	function (y, m, d) {
 		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$weekYear(
 			A3(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate, y, m, d));
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromOrdinalDate = F2(
-	function (y, d) {
-		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$toUnixTime(
-			A2(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromOrdinalDate, y, d));
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromWeekDate = F3(
-	function (y, w, d) {
-		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$toUnixTime(
-			A3(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromWeekDate, y, w, d));
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromCalendarDate = F3(
-	function (y, m, d) {
-		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$toUnixTime(
-			A3(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate, y, m, d));
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_Core$msFromTimeParts = F4(
-	function (hh, mm, ss, ms) {
-		return ((ms + (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerSecond * ss)) + (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute * mm)) + (_justinmimbs$elm_date_extra$Date_Extra_Facts$msPerHour * hh);
-	});
-var _justinmimbs$elm_date_extra$Date_Internal_Core$unixTimeFromParts = F7(
-	function (y, m, d, hh, mm, ss, ms) {
-		return _justinmimbs$elm_date_extra$Date_Internal_RataDie$toUnixTime(
-			A3(_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate, y, m, d)) + A4(_justinmimbs$elm_date_extra$Date_Internal_Core$msFromTimeParts, hh, mm, ss, ms);
 	});
 
 var _justinmimbs$elm_date_extra$Date_Internal_Extract$msOffsetFromUtc = function (date) {
@@ -13392,6 +13396,13 @@ var _justinmimbs$elm_date_extra$Date_Internal_Parse$offsetTimeFromIsoString = fu
 					s))));
 };
 
+var _justinmimbs$elm_date_extra$Date_Extra$toRataDie = function (date) {
+	return A3(
+		_justinmimbs$elm_date_extra$Date_Internal_RataDie$fromCalendarDate,
+		_elm_lang$core$Date$year(date),
+		_elm_lang$core$Date$month(date),
+		_elm_lang$core$Date$day(date));
+};
 var _justinmimbs$elm_date_extra$Date_Extra$toParts = function (date) {
 	return {
 		ctor: '_Tuple7',
@@ -13578,25 +13589,25 @@ var _justinmimbs$elm_date_extra$Date_Extra$add = F3(
 		}
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$rangeHelp = F5(
-	function (result, interval, step, start, date) {
+	function (interval, step, end, revList, date) {
 		rangeHelp:
 		while (true) {
 			if (_elm_lang$core$Native_Utils.cmp(
 				_elm_lang$core$Date$toTime(date),
-				_elm_lang$core$Date$toTime(start)) < 0) {
-				return result;
-			} else {
-				var _v4 = {ctor: '::', _0: date, _1: result},
-					_v5 = interval,
-					_v6 = step,
-					_v7 = start,
+				_elm_lang$core$Date$toTime(end)) < 0) {
+				var _v4 = interval,
+					_v5 = step,
+					_v6 = end,
+					_v7 = {ctor: '::', _0: date, _1: revList},
 					_v8 = A3(_justinmimbs$elm_date_extra$Date_Extra$add, interval, step, date);
-				result = _v4;
-				interval = _v5;
-				step = _v6;
-				start = _v7;
+				interval = _v4;
+				step = _v5;
+				end = _v6;
+				revList = _v7;
 				date = _v8;
 				continue rangeHelp;
+			} else {
+				return _elm_lang$core$List$reverse(revList);
 			}
 		}
 	});
@@ -13700,18 +13711,16 @@ var _justinmimbs$elm_date_extra$Date_Extra$ceiling = F2(
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$range = F4(
 	function (interval, step, start, end) {
-		var stepBack = _elm_lang$core$Basics$negate(
-			A2(_elm_lang$core$Basics$max, 1, step));
-		return A5(
+		var first = A2(_justinmimbs$elm_date_extra$Date_Extra$ceiling, interval, start);
+		return (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$Date$toTime(first),
+			_elm_lang$core$Date$toTime(end)) < 0) ? A5(
 			_justinmimbs$elm_date_extra$Date_Extra$rangeHelp,
-			{ctor: '[]'},
 			interval,
-			stepBack,
-			start,
-			A2(
-				_justinmimbs$elm_date_extra$Date_Extra$ceiling,
-				interval,
-				A3(_justinmimbs$elm_date_extra$Date_Extra$add, interval, stepBack, end)));
+			A2(_elm_lang$core$Basics$max, 1, step),
+			end,
+			{ctor: '[]'},
+			first) : {ctor: '[]'};
 	});
 var _justinmimbs$elm_date_extra$Date_Extra$fromIsoString = function (_p11) {
 	return A2(
@@ -13809,6 +13818,13 @@ var _justinmimbs$elm_date_extra$Date_Extra$diff = F3(
 					A2(_justinmimbs$elm_date_extra$Date_Extra$floor, _p19, date2)) / 7) | 0;
 		}
 	});
+var _justinmimbs$elm_date_extra$Date_Extra$fromRataDie = function (rd) {
+	return A3(
+		_justinmimbs$elm_date_extra$Date_Extra$add,
+		_justinmimbs$elm_date_extra$Date_Extra$Day,
+		rd - 719163,
+		A3(_justinmimbs$elm_date_extra$Date_Extra$fromCalendarDate, 1970, _elm_lang$core$Date$Jan, 1));
+};
 var _justinmimbs$elm_date_extra$Date_Extra$Hour = {ctor: 'Hour'};
 var _justinmimbs$elm_date_extra$Date_Extra$Minute = {ctor: 'Minute'};
 var _justinmimbs$elm_date_extra$Date_Extra$equalBy = F3(
@@ -13929,87 +13945,89 @@ var _krisajenkins$remotedata$RemoteData$prism = {
 var _krisajenkins$remotedata$RemoteData$Failure = function (a) {
 	return {ctor: 'Failure', _0: a};
 };
+var _krisajenkins$remotedata$RemoteData$fromMaybe = F2(
+	function (error, maybe) {
+		var _p6 = maybe;
+		if (_p6.ctor === 'Nothing') {
+			return _krisajenkins$remotedata$RemoteData$Failure(error);
+		} else {
+			return _krisajenkins$remotedata$RemoteData$Success(_p6._0);
+		}
+	});
 var _krisajenkins$remotedata$RemoteData$fromResult = function (result) {
-	var _p6 = result;
-	if (_p6.ctor === 'Err') {
-		return _krisajenkins$remotedata$RemoteData$Failure(_p6._0);
+	var _p7 = result;
+	if (_p7.ctor === 'Err') {
+		return _krisajenkins$remotedata$RemoteData$Failure(_p7._0);
 	} else {
-		return _krisajenkins$remotedata$RemoteData$Success(_p6._0);
+		return _krisajenkins$remotedata$RemoteData$Success(_p7._0);
 	}
 };
 var _krisajenkins$remotedata$RemoteData$asCmd = _elm_lang$core$Task$attempt(_krisajenkins$remotedata$RemoteData$fromResult);
 var _krisajenkins$remotedata$RemoteData$sendRequest = _elm_lang$http$Http$send(_krisajenkins$remotedata$RemoteData$fromResult);
-var _krisajenkins$remotedata$RemoteData$fromTask = function (_p7) {
+var _krisajenkins$remotedata$RemoteData$fromTask = function (_p8) {
 	return A2(
 		_elm_lang$core$Task$onError,
-		function (_p8) {
+		function (_p9) {
 			return _elm_lang$core$Task$succeed(
-				_krisajenkins$remotedata$RemoteData$Failure(_p8));
+				_krisajenkins$remotedata$RemoteData$Failure(_p9));
 		},
-		A2(_elm_lang$core$Task$map, _krisajenkins$remotedata$RemoteData$Success, _p7));
+		A2(_elm_lang$core$Task$map, _krisajenkins$remotedata$RemoteData$Success, _p8));
 };
 var _krisajenkins$remotedata$RemoteData$Loading = {ctor: 'Loading'};
 var _krisajenkins$remotedata$RemoteData$NotAsked = {ctor: 'NotAsked'};
 var _krisajenkins$remotedata$RemoteData$map = F2(
 	function (f, data) {
-		var _p9 = data;
-		switch (_p9.ctor) {
+		var _p10 = data;
+		switch (_p10.ctor) {
 			case 'Success':
 				return _krisajenkins$remotedata$RemoteData$Success(
-					f(_p9._0));
+					f(_p10._0));
 			case 'Loading':
 				return _krisajenkins$remotedata$RemoteData$Loading;
 			case 'NotAsked':
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 			default:
-				return _krisajenkins$remotedata$RemoteData$Failure(_p9._0);
+				return _krisajenkins$remotedata$RemoteData$Failure(_p10._0);
 		}
 	});
-var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p10) {
+var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p11) {
 	return A2(
 		_krisajenkins$remotedata$RemoteData$withDefault,
 		_elm_lang$core$Maybe$Nothing,
-		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p10));
+		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p11));
 };
 var _krisajenkins$remotedata$RemoteData$mapError = F2(
 	function (f, data) {
-		var _p11 = data;
-		switch (_p11.ctor) {
-			case 'Success':
-				return _krisajenkins$remotedata$RemoteData$Success(_p11._0);
-			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(
-					f(_p11._0));
-			case 'Loading':
-				return _krisajenkins$remotedata$RemoteData$Loading;
-			default:
-				return _krisajenkins$remotedata$RemoteData$NotAsked;
-		}
-	});
-var _krisajenkins$remotedata$RemoteData$mapBoth = F3(
-	function (successFn, errorFn, data) {
 		var _p12 = data;
 		switch (_p12.ctor) {
 			case 'Success':
-				return _krisajenkins$remotedata$RemoteData$Success(
-					successFn(_p12._0));
+				return _krisajenkins$remotedata$RemoteData$Success(_p12._0);
 			case 'Failure':
 				return _krisajenkins$remotedata$RemoteData$Failure(
-					errorFn(_p12._0));
+					f(_p12._0));
 			case 'Loading':
 				return _krisajenkins$remotedata$RemoteData$Loading;
 			default:
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 		}
 	});
+var _krisajenkins$remotedata$RemoteData$mapBoth = F2(
+	function (successFn, errorFn) {
+		return function (_p13) {
+			return A2(
+				_krisajenkins$remotedata$RemoteData$mapError,
+				errorFn,
+				A2(_krisajenkins$remotedata$RemoteData$map, successFn, _p13));
+		};
+	});
 var _krisajenkins$remotedata$RemoteData$andThen = F2(
 	function (f, data) {
-		var _p13 = data;
-		switch (_p13.ctor) {
+		var _p14 = data;
+		switch (_p14.ctor) {
 			case 'Success':
-				return f(_p13._0);
+				return f(_p14._0);
 			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(_p13._0);
+				return _krisajenkins$remotedata$RemoteData$Failure(_p14._0);
 			case 'NotAsked':
 				return _krisajenkins$remotedata$RemoteData$NotAsked;
 			default:
@@ -14018,17 +14036,61 @@ var _krisajenkins$remotedata$RemoteData$andThen = F2(
 	});
 var _krisajenkins$remotedata$RemoteData$andMap = F2(
 	function (wrappedValue, wrappedFunction) {
-		var _p14 = wrappedFunction;
-		switch (_p14.ctor) {
-			case 'Success':
-				return A2(_krisajenkins$remotedata$RemoteData$map, _p14._0, wrappedValue);
-			case 'Failure':
-				return _krisajenkins$remotedata$RemoteData$Failure(_p14._0);
-			case 'Loading':
+		var _p15 = {ctor: '_Tuple2', _0: wrappedFunction, _1: wrappedValue};
+		_v11_5:
+		do {
+			_v11_4:
+			do {
+				_v11_3:
+				do {
+					_v11_2:
+					do {
+						switch (_p15._0.ctor) {
+							case 'Success':
+								switch (_p15._1.ctor) {
+									case 'Success':
+										return _krisajenkins$remotedata$RemoteData$Success(
+											_p15._0._0(_p15._1._0));
+									case 'Failure':
+										break _v11_2;
+									case 'Loading':
+										break _v11_4;
+									default:
+										return _krisajenkins$remotedata$RemoteData$NotAsked;
+								}
+							case 'Failure':
+								return _krisajenkins$remotedata$RemoteData$Failure(_p15._0._0);
+							case 'Loading':
+								switch (_p15._1.ctor) {
+									case 'Failure':
+										break _v11_2;
+									case 'Loading':
+										break _v11_3;
+									case 'NotAsked':
+										break _v11_3;
+									default:
+										break _v11_3;
+								}
+							default:
+								switch (_p15._1.ctor) {
+									case 'Failure':
+										break _v11_2;
+									case 'Loading':
+										break _v11_4;
+									case 'NotAsked':
+										break _v11_5;
+									default:
+										break _v11_5;
+								}
+						}
+					} while(false);
+					return _krisajenkins$remotedata$RemoteData$Failure(_p15._1._0);
+				} while(false);
 				return _krisajenkins$remotedata$RemoteData$Loading;
-			default:
-				return _krisajenkins$remotedata$RemoteData$NotAsked;
-		}
+			} while(false);
+			return _krisajenkins$remotedata$RemoteData$Loading;
+		} while(false);
+		return _krisajenkins$remotedata$RemoteData$NotAsked;
 	});
 var _krisajenkins$remotedata$RemoteData$map2 = F3(
 	function (f, a, b) {
@@ -14037,6 +14099,15 @@ var _krisajenkins$remotedata$RemoteData$map2 = F3(
 			b,
 			A2(_krisajenkins$remotedata$RemoteData$map, f, a));
 	});
+var _krisajenkins$remotedata$RemoteData$fromList = A2(
+	_elm_lang$core$List$foldr,
+	_krisajenkins$remotedata$RemoteData$map2(
+		F2(
+			function (x, y) {
+				return {ctor: '::', _0: x, _1: y};
+			})),
+	_krisajenkins$remotedata$RemoteData$Success(
+		{ctor: '[]'}));
 var _krisajenkins$remotedata$RemoteData$map3 = F4(
 	function (f, a, b, c) {
 		return A2(
@@ -14062,12 +14133,12 @@ var _krisajenkins$remotedata$RemoteData$append = F2(
 	});
 var _krisajenkins$remotedata$RemoteData$update = F2(
 	function (f, remoteData) {
-		var _p15 = remoteData;
-		switch (_p15.ctor) {
+		var _p16 = remoteData;
+		switch (_p16.ctor) {
 			case 'Success':
-				var _p16 = f(_p15._0);
-				var first = _p16._0;
-				var second = _p16._1;
+				var _p17 = f(_p16._0);
+				var first = _p17._0;
+				var second = _p17._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _krisajenkins$remotedata$RemoteData$Success(first),
@@ -14080,7 +14151,7 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 			default:
 				return {
 					ctor: '_Tuple2',
-					_0: _krisajenkins$remotedata$RemoteData$Failure(_p15._0),
+					_0: _krisajenkins$remotedata$RemoteData$Failure(_p16._0),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -14181,6 +14252,19 @@ var _lukewestby$elm_http_builder$HttpBuilder$send = F2(
 			tagger,
 			_lukewestby$elm_http_builder$HttpBuilder$toTask(builder));
 	});
+var _lukewestby$elm_http_builder$HttpBuilder$withExpectString = function (builder) {
+	return _elm_lang$core$Native_Utils.update(
+		builder,
+		{expect: _elm_lang$http$Http$expectString});
+};
+var _lukewestby$elm_http_builder$HttpBuilder$withExpectJson = F2(
+	function (decoder, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				expect: _elm_lang$http$Http$expectJson(decoder)
+			});
+	});
 var _lukewestby$elm_http_builder$HttpBuilder$withExpect = F2(
 	function (expect, builder) {
 		return _elm_lang$core$Native_Utils.update(
@@ -14229,6 +14313,21 @@ var _lukewestby$elm_http_builder$HttpBuilder$withMultipartStringBody = function 
 				_elm_lang$core$Basics$uncurry(_elm_lang$http$Http$stringPart),
 				partPairs)));
 };
+var _lukewestby$elm_http_builder$HttpBuilder$withBearerToken = F2(
+	function (value, builder) {
+		return _elm_lang$core$Native_Utils.update(
+			builder,
+			{
+				headers: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$http$Http$header,
+						'Authorization',
+						A2(_elm_lang$core$Basics_ops['++'], 'Bearer ', value)),
+					_1: builder.headers
+				}
+			});
+	});
 var _lukewestby$elm_http_builder$HttpBuilder$withHeaders = F2(
 	function (headerPairs, builder) {
 		return _elm_lang$core$Native_Utils.update(
@@ -21595,24 +21694,16 @@ var _pablohirafuji$elm_qrcode$QRCode_View$rectView = function (_p1) {
 					_elm_lang$core$Basics$toString(_p2.row * _pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$rx('0'),
+					_0: _elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$ry('0'),
+						_0: _elm_lang$svg$Svg_Attributes$height(
+							_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$width(
-								_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$height(
-									_elm_lang$core$Basics$toString(_pablohirafuji$elm_qrcode$QRCode_View$moduleSize)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$fill('black'),
-									_1: {ctor: '[]'}
-								}
-							}
+							_0: _elm_lang$svg$Svg_Attributes$fill('black'),
+							_1: {ctor: '[]'}
 						}
 					}
 				}
@@ -29387,6 +29478,10 @@ var _user$project$ConfigTypes$fieldValueToString = function (fieldValue) {
 			return A2(_elm_lang$core$String$join, ',', _p8._0);
 		case 'FieldLanguageValue':
 			return A2(_elm_lang$core$String$join, ',', _p8._0);
+		case 'FieldCountryValue':
+			return _p8._0;
+		case 'FieldTextAreaValue':
+			return _p8._0;
 		default:
 			return _p8._0;
 	}
@@ -29531,7 +29626,10 @@ var _user$project$ConfigTypes$resultToFieldHolder = function (result) {
 var _user$project$ConfigTypes$SelectizeComponent = function (a) {
 	return {ctor: 'SelectizeComponent', _0: a};
 };
+var _user$project$ConfigTypes$TextAreaComponent = {ctor: 'TextAreaComponent'};
 var _user$project$ConfigTypes$InputBoxComponent = {ctor: 'InputBoxComponent'};
+var _user$project$ConfigTypes$FieldMarkdownType = {ctor: 'FieldMarkdownType'};
+var _user$project$ConfigTypes$FieldTextAreaType = {ctor: 'FieldTextAreaType'};
 var _user$project$ConfigTypes$FieldCountryType = {ctor: 'FieldCountryType'};
 var _user$project$ConfigTypes$FieldLanguageType = {ctor: 'FieldLanguageType'};
 var _user$project$ConfigTypes$FieldCryptoCurrencyType = {ctor: 'FieldCryptoCurrencyType'};
@@ -29542,6 +29640,12 @@ var _user$project$ConfigTypes$FieldDecimalType = {ctor: 'FieldDecimalType'};
 var _user$project$ConfigTypes$FieldIntegerType = {ctor: 'FieldIntegerType'};
 var _user$project$ConfigTypes$FieldPercentageType = {ctor: 'FieldPercentageType'};
 var _user$project$ConfigTypes$FieldStringType = {ctor: 'FieldStringType'};
+var _user$project$ConfigTypes$FieldMarkdownValue = function (a) {
+	return {ctor: 'FieldMarkdownValue', _0: a};
+};
+var _user$project$ConfigTypes$FieldTextAreaValue = function (a) {
+	return {ctor: 'FieldTextAreaValue', _0: a};
+};
 var _user$project$ConfigTypes$FieldCountryValue = function (a) {
 	return {ctor: 'FieldCountryValue', _0: a};
 };
@@ -29635,9 +29739,15 @@ var _user$project$ConfigTypes$stringToFieldHolder = F2(
 								_0: s,
 								_1: {ctor: '[]'}
 							}));
-				default:
+				case 'FieldCountryType':
 					return _user$project$ConfigTypes$FieldOk(
 						_user$project$ConfigTypes$FieldCountryValue(s));
+				case 'FieldTextAreaType':
+					return _user$project$ConfigTypes$FieldOk(
+						_user$project$ConfigTypes$FieldTextAreaValue(s));
+				default:
+					return _user$project$ConfigTypes$FieldOk(
+						_user$project$ConfigTypes$FieldMarkdownValue(s));
 			}
 		}
 	});
@@ -29805,6 +29915,10 @@ var _user$project$ConfigDecoder$basicFieldTypeDecoder = function (s) {
 			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldLanguageType);
 		case 'country':
 			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldCountryType);
+		case 'textarea':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldTextAreaType);
+		case 'markdown':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldMarkdownType);
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'No such FieldType ', s));
@@ -30056,6 +30170,16 @@ var _user$project$ConfigDecoder$fieldValueTypeDecoder = function (fieldType) {
 				_elm_lang$core$Json_Decode$map,
 				_user$project$ConfigTypes$FieldCountryValue,
 				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
+		case 'textarea':
+			return A2(
+				_elm_lang$core$Json_Decode$map,
+				_user$project$ConfigTypes$FieldTextAreaValue,
+				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
+		case 'markdown':
+			return A2(
+				_elm_lang$core$Json_Decode$map,
+				_user$project$ConfigTypes$FieldMarkdownValue,
+				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'Unsupported field type: ', fieldType));
@@ -30122,8 +30246,12 @@ var _user$project$ConfigEncoder$fieldTypeEncoder = function (fieldType) {
 			return _elm_lang$core$Json_Encode$string('cryptoCurrency');
 		case 'FieldLanguageType':
 			return _elm_lang$core$Json_Encode$string('language');
-		default:
+		case 'FieldCountryType':
 			return _elm_lang$core$Json_Encode$string('country');
+		case 'FieldTextAreaType':
+			return _elm_lang$core$Json_Encode$string('textarea');
+		default:
+			return _elm_lang$core$Json_Encode$string('markdown');
 	}
 };
 var _user$project$ConfigEncoder$encodeMachine = function (machine) {
@@ -30265,10 +30393,20 @@ var _user$project$ConfigEncoder$encodeFieldValue = function (fieldValue) {
 				'language',
 				_elm_lang$core$Json_Encode$list(
 					A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, _p4._0)));
-		default:
+		case 'FieldCountryValue':
 			return A2(
 				_user$project$ConfigEncoder$encodeFieldValueObject,
 				'country',
+				_elm_lang$core$Json_Encode$string(_p4._0));
+		case 'FieldTextAreaValue':
+			return A2(
+				_user$project$ConfigEncoder$encodeFieldValueObject,
+				'textarea',
+				_elm_lang$core$Json_Encode$string(_p4._0));
+		default:
+			return A2(
+				_user$project$ConfigEncoder$encodeFieldValueObject,
+				'markdown',
 				_elm_lang$core$Json_Encode$string(_p4._0));
 	}
 };
@@ -30964,8 +31102,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1393, column: 17},
-							end: {line: 1398, column: 56}
+							start: {line: 1551, column: 17},
+							end: {line: 1556, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -31078,8 +31216,12 @@ var _user$project$Config$buildFieldComponent = F4(
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
 			case 'FieldLanguageType':
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
-			default:
+			case 'FieldCountryType':
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
+			case 'FieldTextAreaType':
+				return _user$project$ConfigTypes$TextAreaComponent;
+			default:
+				return _user$project$ConfigTypes$TextAreaComponent;
 		}
 	});
 var _user$project$Config$initFieldInstance = F3(
@@ -31157,8 +31299,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 1073, column: 5},
-				end: {line: 1078, column: 59}
+				start: {line: 1225, column: 5},
+				end: {line: 1230, column: 59}
 			},
 			_p12)('Referenced field must be boolean');
 	}
@@ -31443,8 +31585,8 @@ var _user$project$Config$languageSelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 534, column: 21},
-							end: {line: 539, column: 60}
+							start: {line: 590, column: 21},
+							end: {line: 595, column: 60}
 						},
 						_p18)('Shouldn\'t be here');
 				}
@@ -31485,8 +31627,8 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 488, column: 21},
-							end: {line: 493, column: 60}
+							start: {line: 544, column: 21},
+							end: {line: 549, column: 60}
 						},
 						_p21)('Shouldn\'t be here');
 				}
@@ -32023,8 +32165,8 @@ var _user$project$Config$selectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 620, column: 13},
-							end: {line: 670, column: 56}
+							start: {line: 676, column: 13},
+							end: {line: 726, column: 56}
 						},
 						_p37)('Not a Selectize field');
 			}
@@ -32193,6 +32335,90 @@ var _user$project$Config$textInput = F5(
 				}
 			});
 	});
+var _user$project$Config$textareaInput = F5(
+	function (fiat, fieldInstance, maybeFieldValue, maybeFallbackFieldValue, enabled) {
+		var isReadOnly = fieldInstance.readOnly || (!enabled);
+		var parentClasses = isReadOnly ? {
+			ctor: '::',
+			_0: _user$project$Css_Classes$InputContainer,
+			_1: {
+				ctor: '::',
+				_0: _user$project$Css_Classes$ReadOnly,
+				_1: {ctor: '[]'}
+			}
+		} : {
+			ctor: '::',
+			_0: _user$project$Css_Classes$InputContainer,
+			_1: {ctor: '[]'}
+		};
+		var fieldValid = _user$project$Config$validateFieldInstance;
+		var fieldClasses = _user$project$Config$fieldInstanceClasses(fieldInstance);
+		var maybeFallbackString = A2(_elm_lang$core$Maybe$map, _user$project$ConfigTypes$fieldValueToString, maybeFallbackFieldValue);
+		var fallbackString = A2(_elm_lang$core$Maybe$withDefault, '', maybeFallbackString);
+		var maybeSpecificString = A2(_elm_lang$core$Maybe$map, _user$project$ConfigTypes$fieldValueToString, maybeFieldValue);
+		var defaultString = A2(_elm_lang$core$Maybe$withDefault, '', maybeSpecificString);
+		var fieldLocator = fieldInstance.fieldLocator;
+		var inputType = _user$project$Config$fieldTypeToInputType(fieldLocator.fieldType);
+		var inputComponent = isReadOnly ? A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _user$project$Css_Admin$class(
+					{
+						ctor: '::',
+						_0: _user$project$Css_Classes$BasicInputReadOnly,
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(fallbackString),
+				_1: {ctor: '[]'}
+			}) : A2(
+			_elm_lang$html$Html$textarea,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onInput(
+					_user$project$Config$Input(fieldLocator)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onFocus(
+						_user$project$Config$Focus(fieldLocator)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onBlur(
+							_user$project$Config$Blur(fieldLocator)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$defaultValue(defaultString),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$placeholder(fallbackString),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _user$project$Css_Admin$class(parentClasses),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: inputComponent,
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Config$unitDisplay, fiat, fieldInstance),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
 var _user$project$Config$fieldInput = F5(
 	function (model, fieldInstance, maybeFieldValue, maybeFallbackFieldValue, enabled) {
 		if ((!enabled) && (!_user$project$Config$isJust(maybeFallbackFieldValue))) {
@@ -32211,10 +32437,13 @@ var _user$project$Config$fieldInput = F5(
 				{ctor: '[]'});
 		} else {
 			var _p40 = fieldInstance.component;
-			if (_p40.ctor === 'InputBoxComponent') {
-				return A5(_user$project$Config$textInput, model.fiat, fieldInstance, maybeFieldValue, maybeFallbackFieldValue, enabled);
-			} else {
-				return A6(_user$project$Config$selectizeView, model, fieldInstance, _p40._0, maybeFieldValue, maybeFallbackFieldValue, enabled);
+			switch (_p40.ctor) {
+				case 'InputBoxComponent':
+					return A5(_user$project$Config$textInput, model.fiat, fieldInstance, maybeFieldValue, maybeFallbackFieldValue, enabled);
+				case 'TextAreaComponent':
+					return A5(_user$project$Config$textareaInput, model.fiat, fieldInstance, maybeFieldValue, maybeFallbackFieldValue, enabled);
+				default:
+					return A6(_user$project$Config$selectizeView, model, fieldInstance, _p40._0, maybeFieldValue, maybeFallbackFieldValue, enabled);
 			}
 		}
 	});
@@ -32574,10 +32803,170 @@ var _user$project$Config$complianceTableView = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$Config$termsTableView = function (model) {
+	var emptyCell = A2(
+		_elm_lang$html$Html$td,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('--'),
+			_1: {ctor: '[]'}
+		});
+	var cryptoScoped = function (fieldInstance) {
+		return _elm_lang$core$Native_Utils.eq(fieldInstance.fieldLocator.fieldScope.crypto, model.crypto);
+	};
+	var instances = A2(_elm_lang$core$List$filter, cryptoScoped, model.fieldCollection.fieldInstances);
+	var pickField = function (code) {
+		return A3(
+			_user$project$Config$pickFieldInstance,
+			code,
+			{crypto: _user$project$ConfigTypes$GlobalCrypto, machine: _user$project$ConfigTypes$GlobalMachine},
+			instances);
+	};
+	var fieldCodeCellView = function (code) {
+		return A3(
+			_elm_community$maybe_extra$Maybe_Extra$unwrap,
+			emptyCell,
+			_user$project$Config$cellView(model),
+			pickField(code));
+	};
+	var row = F2(
+		function (label, activeFieldCode) {
+			return A2(
+				_elm_lang$html$Html$tr,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{
+							ctor: '::',
+							_0: _user$project$Css_Admin$class(
+								{
+									ctor: '::',
+									_0: _user$project$Css_Classes$ShortCell,
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(label),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: fieldCodeCellView(activeFieldCode),
+						_1: {ctor: '[]'}
+					}
+				});
+		});
+	return A2(
+		_elm_lang$html$Html$table,
+		{
+			ctor: '::',
+			_0: _user$project$Css_Admin$class(
+				{
+					ctor: '::',
+					_0: _user$project$Css_Classes$ConfigTable,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$tbody,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A2(row, 'Show on screen', 'termsScreenActive'),
+					_1: {
+						ctor: '::',
+						_0: A2(row, 'Screen title', 'termsScreenTitle'),
+						_1: {
+							ctor: '::',
+							_0: A2(row, 'Text content', 'termsScreenText'),
+							_1: {
+								ctor: '::',
+								_0: A2(row, 'Accept button text', 'termsAcceptButtonText'),
+								_1: {
+									ctor: '::',
+									_0: A2(row, 'Cancel button text', 'termsCancelButtonText'),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Config$textareaComponent = F2(
+	function (model, fieldInstance) {
+		var fieldLengthClasses = A2(
+			_elm_lang$core$List$map,
+			function ($class) {
+				return {ctor: '_Tuple2', _0: $class, _1: true};
+			},
+			_user$project$Config$fieldInstanceClasses(fieldInstance));
+		var fieldValid = A2(_user$project$Config$validateFieldInstance, model.fieldCollection, fieldInstance);
+		var allFields = _user$project$Config$buildAllFields(model.fieldCollection);
+		var enabled = A2(
+			_user$project$Config$checkEnabled,
+			allFields,
+			_user$project$Config$fieldInstanceToFieldMeta(fieldInstance));
+		var maybeSpecific = function () {
+			var _p43 = fieldInstance.fieldHolder;
+			if (_p43.ctor === 'FieldOk') {
+				return _elm_lang$core$Maybe$Just(_p43._0);
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		}();
+		var fieldInstances = model.fieldCollection.fieldInstances;
+		var fieldLocator = fieldInstance.fieldLocator;
+		var fieldScope = fieldLocator.fieldScope;
+		var fieldCode = fieldLocator.code;
+		var maybeFallbackFieldValue = A3(_user$project$Config$fallbackValue, fieldScope, allFields, fieldCode);
+		var fieldClass = fieldLocator.fieldClass;
+		var fieldType = fieldLocator.fieldType;
+		var focused = _elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$Maybe$Just(fieldLocator),
+			model.focused);
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _user$project$Css_Admin$classList(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$Component, _1: true},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$FocusedComponent, _1: focused},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: _user$project$Css_Classes$InvalidComponent, _1: !fieldValid},
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						fieldLengthClasses)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A5(_user$project$Config$fieldInput, model, fieldInstance, maybeSpecific, maybeFallbackFieldValue, enabled),
+				_1: {ctor: '[]'}
+			});
+	});
 var _user$project$Config$Submit = {ctor: 'Submit'};
 var _user$project$Config$view = function (model) {
-	var _p43 = model.webConfigGroup;
-	switch (_p43.ctor) {
+	var _p44 = model.webConfigGroup;
+	switch (_p44.ctor) {
 		case 'NotAsked':
 			return A2(
 				_elm_lang$html$Html$div,
@@ -32599,22 +32988,22 @@ var _user$project$Config$view = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p43._0)),
+						_elm_lang$core$Basics$toString(_p44._0)),
 					_1: {ctor: '[]'}
 				});
 		default:
-			var _p45 = _p43._0;
+			var _p46 = _p44._0;
 			var statusString = function () {
-				var _p44 = model.status;
-				if (_p44.ctor === 'Saved') {
+				var _p45 = model.status;
+				if (_p45.ctor === 'Saved') {
 					return 'Saved';
 				} else {
 					return '';
 				}
 			}();
-			var cryptos = A3(_user$project$ConfigTypes$allCryptos, _p45.data.cryptoCurrencies, _p45.schema.cryptoScope, _p45.selectedCryptos);
-			var getView = _elm_lang$core$Native_Utils.eq(_p45.schema.code, 'compliance') ? _user$project$Config$complianceTableView : _user$project$Config$tableView;
-			var resolvedModel = A2(_user$project$Config$toResolvedModel, model, _p45);
+			var cryptos = A3(_user$project$ConfigTypes$allCryptos, _p46.data.cryptoCurrencies, _p46.schema.cryptoScope, _p46.selectedCryptos);
+			var getView = _elm_lang$core$Native_Utils.eq(_p46.schema.code, 'compliance') ? _user$project$Config$complianceTableView : (_elm_lang$core$Native_Utils.eq(_p46.schema.code, 'terms') ? _user$project$Config$termsTableView : _user$project$Config$tableView);
+			var resolvedModel = A2(_user$project$Config$toResolvedModel, model, _p46);
 			var configGroupView = A2(
 				_elm_lang$html$Html$div,
 				{
@@ -32746,7 +33135,7 @@ var _user$project$Config$view = function (model) {
 						_1: {ctor: '[]'}
 					}
 				});
-			return _elm_lang$core$Native_Utils.eq(_p45.schema.cryptoScope, _user$project$ConfigTypes$Global) ? A2(
+			return _elm_lang$core$Native_Utils.eq(_p46.schema.cryptoScope, _user$project$ConfigTypes$Global) ? A2(
 				_elm_lang$html$Html$div,
 				{ctor: '[]'},
 				{
@@ -32765,7 +33154,7 @@ var _user$project$Config$view = function (model) {
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p45.schema.display),
+							_0: _elm_lang$html$Html$text(_p46.schema.display),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -32792,7 +33181,7 @@ var _user$project$Config$view = function (model) {
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p45.schema.display),
+							_0: _elm_lang$html$Html$text(_p46.schema.display),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -32826,7 +33215,7 @@ var _user$project$Config$view = function (model) {
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p45.schema.display),
+							_0: _elm_lang$html$Html$text(_p46.schema.display),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -32878,8 +33267,8 @@ var _user$project$Config$load = F3(
 var _user$project$Config$postForm = F2(
 	function (configGroupCode, fieldInstances) {
 		var maybeResults = A2(_user$project$ConfigEncoder$encodeResults, configGroupCode, fieldInstances);
-		var _p46 = maybeResults;
-		if (_p46.ctor === 'Nothing') {
+		var _p47 = maybeResults;
+		if (_p47.ctor === 'Nothing') {
 			return _elm_lang$core$Platform_Cmd$none;
 		} else {
 			return A2(
@@ -32893,7 +33282,7 @@ var _user$project$Config$postForm = F2(
 						_elm_lang$http$Http$expectJson(_user$project$ConfigDecoder$configGroupDecoder),
 						A2(
 							_lukewestby$elm_http_builder$HttpBuilder$withJsonBody,
-							_p46._0,
+							_p47._0,
 							_lukewestby$elm_http_builder$HttpBuilder$post('/api/config')))));
 		}
 	});
@@ -32901,20 +33290,20 @@ var _user$project$Config$postFormNoLoad = F2(
 	function (configGroupCode, fieldInstances) {
 		return A2(
 			_elm_lang$core$Platform_Cmd$map,
-			function (_p47) {
+			function (_p48) {
 				return _user$project$Config$NoOp;
 			},
 			A2(_user$project$Config$postForm, configGroupCode, fieldInstances));
 	});
 var _user$project$Config$submitNoLoad = function (model) {
-	var _p48 = model.webConfigGroup;
-	if (_p48.ctor === 'Success') {
+	var _p49 = model.webConfigGroup;
+	if (_p49.ctor === 'Success') {
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			model,
 			{
 				ctor: '::',
-				_0: A2(_user$project$Config$postFormNoLoad, _p48._0.schema.code, model.fieldCollection.fieldInstances),
+				_0: A2(_user$project$Config$postFormNoLoad, _p49._0.schema.code, model.fieldCollection.fieldInstances),
 				_1: {ctor: '[]'}
 			});
 	} else {
@@ -32925,8 +33314,8 @@ var _user$project$Config$submitNoLoad = function (model) {
 	}
 };
 var _user$project$Config$submit = function (model) {
-	var _p49 = model.webConfigGroup;
-	if (_p49.ctor === 'Success') {
+	var _p50 = model.webConfigGroup;
+	if (_p50.ctor === 'Success') {
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			_elm_lang$core$Native_Utils.update(
@@ -32934,7 +33323,7 @@ var _user$project$Config$submit = function (model) {
 				{status: _user$project$Config$Saving}),
 			{
 				ctor: '::',
-				_0: A2(_user$project$Config$postForm, _p49._0.schema.code, model.fieldCollection.fieldInstances),
+				_0: A2(_user$project$Config$postForm, _p50._0.schema.code, model.fieldCollection.fieldInstances),
 				_1: {ctor: '[]'}
 			});
 	} else {
@@ -32946,45 +33335,45 @@ var _user$project$Config$submit = function (model) {
 };
 var _user$project$Config$update = F2(
 	function (msg, model) {
-		var _p50 = msg;
-		switch (_p50.ctor) {
+		var _p51 = msg;
+		switch (_p51.ctor) {
 			case 'Load':
-				var _p57 = _p50._0;
+				var _p58 = _p51._0;
 				var defaultCrypto = function () {
-					var _p51 = _p57;
-					if (_p51.ctor === 'Success') {
-						var _p52 = _p51._0;
+					var _p52 = _p58;
+					if (_p52.ctor === 'Success') {
+						var _p53 = _p52._0;
 						return A2(
 							_elm_lang$core$Maybe$map,
 							function (_) {
 								return _.crypto;
 							},
 							_elm_lang$core$List$head(
-								A3(_user$project$ConfigTypes$allCryptos, _p52.data.cryptoCurrencies, _p52.schema.cryptoScope, _p52.selectedCryptos)));
+								A3(_user$project$ConfigTypes$allCryptos, _p53.data.cryptoCurrencies, _p53.schema.cryptoScope, _p53.selectedCryptos)));
 					} else {
 						return _elm_lang$core$Maybe$Nothing;
 					}
 				}();
 				var crypto = function () {
-					var _p53 = model.crypto;
-					if (_p53.ctor === 'Nothing') {
+					var _p54 = model.crypto;
+					if (_p54.ctor === 'Nothing') {
 						return defaultCrypto;
 					} else {
-						return _elm_lang$core$Maybe$Just(_p53._0);
+						return _elm_lang$core$Maybe$Just(_p54._0);
 					}
 				}();
 				var fiat = function () {
-					var _p54 = _p57;
-					if (_p54.ctor === 'Success') {
-						return _user$project$Config$pickFiat(_p54._0.values);
+					var _p55 = _p58;
+					if (_p55.ctor === 'Success') {
+						return _user$project$Config$pickFiat(_p55._0.values);
 					} else {
 						return _elm_lang$core$Maybe$Nothing;
 					}
 				}();
 				var fieldCollection = function () {
-					var _p55 = _p57;
-					if (_p55.ctor === 'Success') {
-						return _user$project$Config$buildFieldCollection(_p55._0);
+					var _p56 = _p58;
+					if (_p56.ctor === 'Success') {
+						return _user$project$Config$buildFieldCollection(_p56._0);
 					} else {
 						return _user$project$ConfigTypes$initFieldCollection;
 					}
@@ -32992,7 +33381,7 @@ var _user$project$Config$update = F2(
 				var status = _elm_lang$core$Native_Utils.eq(model.status, _user$project$Config$Saving) ? _user$project$Config$Saved : model.status;
 				var cmd = _elm_lang$core$Native_Utils.eq(status, _user$project$Config$Saved) ? A2(
 					_elm_lang$core$Task$perform,
-					function (_p56) {
+					function (_p57) {
 						return _user$project$Config$HideSaveIndication;
 					},
 					_elm_lang$core$Process$sleep(2 * _elm_lang$core$Time$second)) : _elm_lang$core$Platform_Cmd$none;
@@ -33000,7 +33389,7 @@ var _user$project$Config$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{webConfigGroup: _p57, fieldCollection: fieldCollection, status: status, crypto: crypto, fiat: fiat}),
+						{webConfigGroup: _p58, fieldCollection: fieldCollection, status: status, crypto: crypto, fiat: fiat}),
 					_1: cmd
 				};
 			case 'Submit':
@@ -33010,21 +33399,21 @@ var _user$project$Config$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateInput,
-						_p50._0,
-						_elm_lang$core$Maybe$Just(_p50._1),
+						_p51._0,
+						_elm_lang$core$Maybe$Just(_p51._1),
 						model),
 					{ctor: '[]'});
 			case 'CryptoSwitch':
-				var _p59 = _p50._0;
-				var _p58 = model.webConfigGroup;
-				if (_p58.ctor === 'Success') {
-					var cryptoCode = _user$project$ConfigTypes$cryptoToString(_p59);
+				var _p60 = _p51._0;
+				var _p59 = model.webConfigGroup;
+				if (_p59.ctor === 'Success') {
+					var cryptoCode = _user$project$ConfigTypes$cryptoToString(_p60);
 					var path = A2(
 						_elm_lang$core$Basics_ops['++'],
 						'#config/',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_p58._0.schema.code,
+							_p59._0.schema.code,
 							A2(_elm_lang$core$Basics_ops['++'], '/', cryptoCode)));
 					var command = _elm_lang$navigation$Navigation$newUrl(path);
 					return A2(
@@ -33032,7 +33421,7 @@ var _user$project$Config$update = F2(
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								crypto: _elm_lang$core$Maybe$Just(_p59)
+								crypto: _elm_lang$core$Maybe$Just(_p60)
 							}),
 						{
 							ctor: '::',
@@ -33048,57 +33437,57 @@ var _user$project$Config$update = F2(
 			case 'Focus':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(_user$project$Config$updateFocus, _p50._0, true, model),
+					A3(_user$project$Config$updateFocus, _p51._0, true, model),
 					{ctor: '[]'});
 			case 'Blur':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(_user$project$Config$updateFocus, _p50._0, false, model),
+					A3(_user$project$Config$updateFocus, _p51._0, false, model),
 					{ctor: '[]'});
 			case 'SelectizeMsg':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(_user$project$Config$updateSelectize, _p50._0, _p50._1, model),
+					A3(_user$project$Config$updateSelectize, _p51._0, _p51._1, model),
 					{ctor: '[]'});
 			case 'BlurSelectize':
-				var _p60 = _p50._0;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					A3(
-						_user$project$Config$updateFocus,
-						_p60,
-						false,
-						A3(_user$project$Config$updateSelectize, _p60, _p50._1, model)),
-					{ctor: '[]'});
-			case 'FocusSelectize':
-				var _p61 = _p50._0;
+				var _p61 = _p51._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateFocus,
 						_p61,
-						true,
-						A3(_user$project$Config$updateSelectize, _p61, _p50._1, model)),
+						false,
+						A3(_user$project$Config$updateSelectize, _p61, _p51._1, model)),
 					{ctor: '[]'});
-			case 'Add':
-				var _p62 = _p50._0;
+			case 'FocusSelectize':
+				var _p62 = _p51._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
-						_user$project$Config$updateInput,
+						_user$project$Config$updateFocus,
 						_p62,
-						_elm_lang$core$Maybe$Just(_p50._1),
-						A3(_user$project$Config$updateSelectize, _p62, _p50._2, model)),
+						true,
+						A3(_user$project$Config$updateSelectize, _p62, _p51._1, model)),
 					{ctor: '[]'});
-			case 'Remove':
-				var _p63 = _p50._0;
+			case 'Add':
+				var _p63 = _p51._0;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					A3(
 						_user$project$Config$updateInput,
 						_p63,
+						_elm_lang$core$Maybe$Just(_p51._1),
+						A3(_user$project$Config$updateSelectize, _p63, _p51._2, model)),
+					{ctor: '[]'});
+			case 'Remove':
+				var _p64 = _p51._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					A3(
+						_user$project$Config$updateInput,
+						_p64,
 						_elm_lang$core$Maybe$Nothing,
-						A3(_user$project$Config$updateSelectize, _p63, _p50._1, model)),
+						A3(_user$project$Config$updateSelectize, _p64, _p51._1, model)),
 					{ctor: '[]'});
 			case 'HideSaveIndication':
 				return A2(
@@ -36717,7 +37106,11 @@ var _user$project$NavBar$determineConfigCategory = function (configCode) {
 					_1: {
 						ctor: '::',
 						_0: 'coinAtmRadar',
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: 'terms',
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
@@ -37147,7 +37540,7 @@ var _user$project$NavBar$view = F2(
 									ctor: '_Tuple4',
 									_0: 'Global Settings',
 									_1: _user$project$CoreTypes$GlobalSettingsCat,
-									_2: A2(_user$project$CoreTypes$ConfigRoute, 'walletSettings ', _elm_lang$core$Maybe$Nothing),
+									_2: A2(_user$project$CoreTypes$ConfigRoute, 'walletSettings', _elm_lang$core$Maybe$Nothing),
 									_3: allClearGlobal
 								},
 								{
@@ -37162,7 +37555,11 @@ var _user$project$NavBar$view = F2(
 											_1: {
 												ctor: '::',
 												_0: A2(configLink, 'coinAtmRadar', 'Coin ATM Radar'),
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: A2(configLink, 'terms', 'Terms and Conditions'),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}

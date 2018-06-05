@@ -39,6 +39,7 @@
     "minimist": "^1.2.0",
     "moment": "^2.17.0",
     "morgan": "^1.8.2",
+    "nano-markdown": "^1.2.0",
     "ndjson": "^1.5.0",
     "node-hkdf-sync": "^1.0.0",
     "node-mailjet": "^3.2.1",

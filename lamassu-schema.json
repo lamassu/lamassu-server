@@ -117,6 +117,19 @@
         "sms",
         "email"
       ]
+    },
+    {
+      "code": "terms",
+      "display": "Terms and Conditions",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "termsScreenActive",
+        "termsScreenTitle",
+        "termsScreenText",
+        "termsAcceptButtonText",
+        "termsCancelButtonText"
+      ]
     }
   ],
   "fields": [
@@ -800,6 +813,65 @@
       ],
       "fieldValidation": [{"code": "required"}],
       "default": true
+    },
+    {
+      "code": "termsScreenActive",
+      "displayBottom": "Terms and Conditions Screen enabled",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
+    {
+      "code": "termsScreenTitle",
+      "displayBottom": "Title",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "default": "Terms and Conditions",
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "termsScreenText",
+      "displayBottom": "Text",
+      "displayTopCount": 0,
+      "fieldType": "markdown",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "termsAcceptButtonText",
+      "displayBottom": "Accept button text",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "default": "Accept",
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "termsCancelButtonText",
+      "displayBottom": "Cancel button text",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "default": "Cancel",
+      "enabledIfAny": [
+        "termsScreenActive"
+      ],
+      "fieldValidation": []
     }
   ]
 }
