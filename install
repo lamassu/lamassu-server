@@ -160,7 +160,13 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "lamassuServerPath": "$NODE_MODULES/lamassu-server",
   "migrateStatePath": "$MIGRATE_STATE_PATH",
   "blockchainDir": "$BLOCKCHAIN_DIR",
-  "ofacDataDir": "$OFAC_DATA_DIR"
+  "ofacDataDir": "$OFAC_DATA_DIR",
+  "strike": {
+    "baseUrl": "https://api.strike.acinq.co/api/"
+  },
+  "coinAtmRadar": {
+    "url": "https://coinatmradar.info/api/lamassu/"
+  }
 }
 EOF
 
