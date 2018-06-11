@@ -12539,6 +12539,7 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$Textarea = {ctor: 'Textarea'};
 var _user$project$Css_Classes$BalanceSection = {ctor: 'BalanceSection'};
 var _user$project$Css_Classes$CryptoAddress = {ctor: 'CryptoAddress'};
 var _user$project$Css_Classes$ReadOnly = {ctor: 'ReadOnly'};
