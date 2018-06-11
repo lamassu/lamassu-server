@@ -18,15 +18,14 @@
     },
     {
       "code": "fromNumber",
-      "display": "From number",
+      "display": "Twilio number (international format)",
       "fieldType": "string",
       "required": true,
-      "placeholder": "+14155552671",
       "value": ""
     },
     {
       "code": "toNumber",
-      "display": "To number",
+      "display": "Notifications number (international format)",
       "fieldType": "string",
       "required": true,
       "value": ""
