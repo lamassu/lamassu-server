@@ -31,7 +31,7 @@
     "inquirer": "^5.2.0",
     "kraken-api": "github:DeX3/npm-kraken-api",
     "lnd-async": "^1.2.0",
-    "lodash": "^4.17.2",
+    "lodash": "^4.17.10",
     "longjohn": "^0.2.12",
     "make-dir": "^1.0.0",
     "mem": "^1.1.0",
