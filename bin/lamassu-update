@@ -3,8 +3,17 @@ set -e
 
 supervisorctl stop lamassu-server
 supervisorctl stop lamassu-admin-server
+
+# update node
+sudo npm install n -g
+sudo n stable
+
+# update l-u
 npm -g install lamassu/lamassu-server#v5 --unsafe-perm
+
+# run migration
 lamassu-migrate
+lamassu-migrate-config
+
 supervisorctl start lamassu-server
 supervisorctl start lamassu-admin-server
-
