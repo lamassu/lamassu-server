@@ -1,10 +1,50 @@
 #!/usr/bin/env bash
 set -e
 
-supervisorctl stop lamassu-server
-supervisorctl stop lamassu-admin-server
-npm -g install lamassu/lamassu-server#v5 --unsafe-perm
-lamassu-migrate
-supervisorctl start lamassu-server
-supervisorctl start lamassu-admin-server
+export LOG_FILE=/tmp/update.$(date +"%Y%m%d").log
 
+rm -f ${LOG_FILE}
+
+decho () {
+  echo `date +"%H:%M:%S"` $1
+  echo `date +"%H:%M:%S"` $1 >> ${LOG_FILE}
+}
+
+cat <<'FIG'
+ _
+| | __ _ _ __ ___   __ _ ___ ___ _   _       ___  ___ _ ____   _____ _ __
+| |/ _` | '_ ` _ \ / _` / __/ __| | | |_____/ __|/ _ \ '__\ \ / / _ \ '__|
+| | (_| | | | | | | (_| \__ \__ \ |_| |_____\__ \  __/ |   \ V /  __/ |
+|_|\__,_|_| |_| |_|\__,_|___/___/\__,_|     |___/\___|_|    \_/ \___|_|
+FIG
+
+echo -e "\nStarting \033[1mlamassu-server\033[0m update. This will take a few minutes...\n"
+
+if [ "$(whoami)" != "root" ]; then
+  echo -e "This script has to be run as \033[1mroot\033[0m user"
+  exit 3
+fi
+
+decho "stopping lamassu-server"
+supervisorctl stop lamassu-server >> ${LOG_FILE} 2>&1
+supervisorctl stop lamassu-admin-server >> ${LOG_FILE} 2>&1
+
+decho "updating node"
+npm install n -g >> ${LOG_FILE} 2>&1
+n lts >> ${LOG_FILE} 2>&1
+node -v
+
+decho "updating lamassu-server"
+npm -g install lamassu/lamassu-server#v5 --unsafe-perm >> ${LOG_FILE} 2>&1
+
+decho "rebuilding npm deps"
+cd /usr/local/lib/node_modules/lamassu-server/ >> ${LOG_FILE} 2>&1
+npm rebuild >> ${LOG_FILE} 2>&1
+
+decho "running migration"
+lamassu-migrate >> ${LOG_FILE} 2>&1
+lamassu-migrate-config >> ${LOG_FILE} 2>&1
+
+decho "starting lamassu-server"
+supervisorctl start lamassu-server >> ${LOG_FILE} 2>&1
+supervisorctl start lamassu-admin-server >> ${LOG_FILE} 2>&1
