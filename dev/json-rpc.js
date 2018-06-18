@@ -8,7 +8,7 @@ const account = {
 const method = {}
 
 const params = {
-  url: 'https://httpstat.us/500'
+  // url: 'https://httpstat.us/500'
   // url: 'https://httpstat.us/400'
   // url: 'https://httpstat.us/200'
 }
