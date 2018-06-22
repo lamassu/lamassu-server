@@ -2,7 +2,8 @@ const rpc = require('../lib/plugins/common/json-rpc')
 
 const account = {
   username: 'test',
-  password: 'test'
+  password: 'test',
+  port: 8080
 }
 
 const method = {}
