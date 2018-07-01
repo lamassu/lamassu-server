@@ -68,6 +68,7 @@
   "bin": {
     "lamassu-server": "./bin/lamassu-server",
     "lamassu-migrate": "./bin/lamassu-migrate",
+    "lamassu-migrate-config": "./bin/lamassu-migrate-config",
     "lamassu-register": "./bin/lamassu-register",
     "lamassu-admin-server": "./bin/lamassu-admin-server",
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
