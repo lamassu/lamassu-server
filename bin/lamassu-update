@@ -50,8 +50,6 @@ export NPM_BIN=$(npm -g bin)
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
 
-decho "starting lamassu-server"
+decho "updating lamassu-server"
 supervisorctl update lamassu-server >> ${LOG_FILE} 2>&1
-supervisorctl start  lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl update lamassu-admin-server >> ${LOG_FILE} 2>&1
-supervisorctl start  lamassu-admin-server >> ${LOG_FILE} 2>&1
