@@ -32,7 +32,7 @@ supervisorctl stop lamassu-admin-server >> ${LOG_FILE} 2>&1
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
 n lts >> ${LOG_FILE} 2>&1
-node -v
+decho "version installed $(node -v)"
 
 decho "updating lamassu-server"
 npm -g install lamassu/lamassu-server#v5 --unsafe-perm >> ${LOG_FILE} 2>&1
@@ -45,6 +45,13 @@ decho "running migration"
 lamassu-migrate >> ${LOG_FILE} 2>&1
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
 
+decho "updating supervisor conf"
+export NPM_BIN=$(npm -g bin)
+perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
+perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
+
 decho "starting lamassu-server"
-supervisorctl start lamassu-server >> ${LOG_FILE} 2>&1
-supervisorctl start lamassu-admin-server >> ${LOG_FILE} 2>&1
+supervisorctl update lamassu-server >> ${LOG_FILE} 2>&1
+supervisorctl start  lamassu-server >> ${LOG_FILE} 2>&1
+supervisorctl update lamassu-admin-server >> ${LOG_FILE} 2>&1
+supervisorctl start  lamassu-admin-server >> ${LOG_FILE} 2>&1
