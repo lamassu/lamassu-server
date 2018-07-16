@@ -1,19 +1,19 @@
 const rpc = require('../lib/plugins/common/json-rpc')
 
+const method = ''
+
+// const url = null
+// const url = 'https://httpstat.us/500'
+// const url = 'https://httpstat.us/400'
+const url = 'https://httpstat.us/200'
+
 const account = {
   username: 'test',
   password: 'test',
-  port: 8080
+  port: 8080,
+  url
 }
 
-const method = {}
-
-const params = {
-  // url: 'https://httpstat.us/500'
-  // url: 'https://httpstat.us/400'
-  // url: 'https://httpstat.us/200'
-}
-
-rpc.fetch(account, method, params)
+rpc.fetch(account, method)
   .then(res => console.log('got result', res))
   .catch(err => console.error('gor error', err))
