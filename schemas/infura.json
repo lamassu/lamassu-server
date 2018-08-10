@@ -9,6 +9,22 @@
       "secret": true,
       "required": true,
       "value": ""
+    },
+    {
+      "code": "apiSecret",
+      "display": "API secret",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "endpoint",
+      "display": "Endpoint",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
     }
   ]
 }
