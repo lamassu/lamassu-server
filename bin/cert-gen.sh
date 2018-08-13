@@ -78,7 +78,6 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "hostname": "$DOMAIN",
   "logLevel": "debug",
   "lamassuCaPath": "$LAMASSU_CA_PATH",
-  "lamassuServerPath": "$PWD",
   "migrateStatePath": "$MIGRATE_STATE_PATH",
   "ofacDataDir": "$OFAC_DATA_DIR",
   "ofacSources": [
