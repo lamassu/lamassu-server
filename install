@@ -158,7 +158,6 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "keyPath": "$SERVER_KEY_PATH",
   "hostname": "$IP",
   "logLevel": "info",
-  "lamassuServerPath": "$NODE_MODULES/lamassu-server",
   "migrateStatePath": "$MIGRATE_STATE_PATH",
   "blockchainDir": "$BLOCKCHAIN_DIR",
   "ofacDataDir": "$OFAC_DATA_DIR",
