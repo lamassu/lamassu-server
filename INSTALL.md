@@ -31,10 +31,18 @@ Use Postgres.app: https://postgresapp.com/
 
 **psql** is automatically installed. You won't need to set up users.
 
+## NodeJS
+
+```
+curl -L https://git.io/n-install | bash -s -- -y lts
+. ~/.bash_profile
+```
+
 # Installation
 
 ## Install node modules
-Ignore any warnings.
+
+Make sure you're running the LTS version of NodeJS. Ignore any warnings.
 
 ```
 npm install
@@ -77,7 +85,7 @@ node bin/lamassu-admin-server --dev
 
 Paste the URL from lamassu-register exactly as output, into a browser (chrome or firefox).
 
-**Important**: the host must be localhost. Tell your browser to trust the certificate even though it's not signed by a CA.
+**Important**: the host must be localhost. Tell your browser to trust the certificate even though it's not signed by a recognized CA.
 
 Go to all the required, unconfigured red fields and choose some values. Choose mock services whenever available.
 
