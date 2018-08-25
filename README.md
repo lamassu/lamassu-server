@@ -4,7 +4,7 @@ Lamassu remote server.
 
 ## Installation
 
-See INSTALL.md
+See [INSTALL.md](INSTALL.md).
 
 ## Running
 ```bash
