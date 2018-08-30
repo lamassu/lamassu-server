@@ -21,7 +21,7 @@ p {
 
 .lamassuAdminMain {
     display: flex;
-    height: 100%;
+    margin-bottom: 40px;
 }
 
 .lamassuAdminPaneWrapper {
