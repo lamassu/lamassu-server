@@ -1,6 +1,6 @@
 # Preliminaries for Ubuntu 16.04
 
-Installation for other distros may be slightly different. This assumes nodejs 8 and npm are already installed. All of this is done in the lamassu-server directory.
+Installation for other distros may be slightly different. This assumes NodeJS 8.3 or higher and npm 5.6 are already installed. All of this is done in the lamassu-server directory.
 
 ## Packages
 
@@ -42,7 +42,7 @@ curl -L https://git.io/n-install | bash -s -- -y lts
 
 ## Install node modules
 
-Make sure you're running the LTS version of NodeJS. Ignore any warnings.
+Make sure you're running NodeJS 8.3 or higher. Ignore any warnings.
 
 ```
 npm install
@@ -54,8 +54,10 @@ npm install
 bash bin/cert-gen.sh
 ```
 
-Note: This will create a ``.lamassu`` directory in your home directory.
-
+Notes: 
+  - This will create a ``.lamassu`` directory in your home directory.
+  - The script uses the current openssl LTS version (1.0.2g) and will not work on v1.1.
+  
 ## Set up database
 
 Important: lamassu-migrate currently gripes about a QueryResultError. Ignore this, it works anyway. Also, ignore Debug lines from lamassu-apply-defaults.
