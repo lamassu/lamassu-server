@@ -90,7 +90,7 @@ npm -g --unsafe-perm install yarn  >> $LOG_FILE 2>&1
 
 decho "Installing lamassu-server..."
 retry 3 yarn global add pm2 >> $LOG_FILE 2>&1
-retry 3 yarn global add lamassu/lamassu-server#v5 >> $LOG_FILE 2>&1
+retry 3 yarn global add lamassu/lamassu-server#stable >> $LOG_FILE 2>&1
 
 decho "Creating postgres user..."
 POSTGRES_PW=$(hkdf postgres-pw $SEED)
