@@ -60,9 +60,6 @@ supervisorctl update lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl update lamassu-admin-server >> ${LOG_FILE} 2>&1
 
 decho "updating backups conf"
-tempfile=$(mktemp)
-crontab -l >$tempfile
-cat $tempfile | grep -v '@daily.*lamassu-backup-pg' | crontab -
 BACKUP_CMD=${NPM_BIN}/lamassu-backup-pg
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
 ( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> $LOG_FILE 2>&1
