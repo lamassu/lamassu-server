@@ -38,7 +38,7 @@ decho "updating lamassu-server"
 npm -g install lamassu/lamassu-server#stable --unsafe-perm >> ${LOG_FILE} 2>&1
 
 decho "rebuilding npm deps"
-cd /usr/local/lib/node_modules/lamassu-server/ >> ${LOG_FILE} 2>&1
+cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
 npm rebuild >> ${LOG_FILE} 2>&1
 
 decho "running migration"
@@ -55,12 +55,9 @@ supervisorctl update lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl update lamassu-admin-server >> ${LOG_FILE} 2>&1
 
 decho "updating backups conf"
-tempfile=$(mktemp)
-crontab -l >$tempfile
-cat $tempfile | grep -v '@daily.*lamassu-backup-pg' | crontab -
 BACKUP_CMD=${NPM_BIN}/lamassu-backup-pg
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
-echo $BACKUP_CRON | crontab - >> $LOG_FILE 2>&1
+( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> $LOG_FILE 2>&1
 $BACKUP_CMD >> $LOG_FILE 2>&1
 
 decho "Update complete!"
