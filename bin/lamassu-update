@@ -34,6 +34,11 @@ npm install n -g >> ${LOG_FILE} 2>&1
 n lts >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
 
+if [ -d "/usr/lib/node_modules/lamassu-server" ]; then
+    decho "renaming old lamassu-server instance to lamassu-server-old"
+    mv "/usr/lib/node_modules/lamassu-server" "/usr/lib/node_modules/lamassu-server-old"
+fi
+
 decho "updating lamassu-server"
 npm -g install lamassu/lamassu-server#stable --unsafe-perm >> ${LOG_FILE} 2>&1
 
