@@ -5,7 +5,7 @@
     {
       "code": "apiKey",
       "display": "API key",
-      "fieldType": "password",
+      "fieldType": "string",
       "secret": true,
       "required": true,
       "value": ""
@@ -21,7 +21,7 @@
     {
       "code": "endpoint",
       "display": "Endpoint",
-      "fieldType": "password",
+      "fieldType": "string",
       "secret": true,
       "required": true,
       "value": ""
