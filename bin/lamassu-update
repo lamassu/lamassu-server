@@ -2,6 +2,7 @@
 set -e
 
 export LOG_FILE=/tmp/update.$(date +"%Y%m%d").log
+export NPM_BIN=$(npm -g bin)
 
 rm -f ${LOG_FILE}
 
@@ -29,15 +30,19 @@ decho "stopping lamassu-server"
 supervisorctl stop lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl stop lamassu-admin-server >> ${LOG_FILE} 2>&1
 
+decho "unlinking ${NPM_BIN}/lamassu* old executables"
+find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
+
+if [ -d "/usr/lib/node_modules/lamassu-server" ]; then
+    decho "renaming old lamassu-server instance to lamassu-server-old"
+    mv -v "/usr/lib/node_modules/lamassu-server" "/usr/lib/node_modules/lamassu-server-old" >> ${LOG_FILE} 2>&1
+fi
+
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
 n lts >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
-
-if [ -d "/usr/lib/node_modules/lamassu-server" ]; then
-    decho "renaming old lamassu-server instance to lamassu-server-old"
-    mv "/usr/lib/node_modules/lamassu-server" "/usr/lib/node_modules/lamassu-server-old"
-fi
+export NPM_BIN=$(npm -g bin)
 
 decho "updating lamassu-server"
 npm -g install lamassu/lamassu-server#stable --unsafe-perm >> ${LOG_FILE} 2>&1
@@ -51,7 +56,6 @@ lamassu-migrate >> ${LOG_FILE} 2>&1
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
 
 decho "updating supervisor conf"
-export NPM_BIN=$(npm -g bin)
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
 
