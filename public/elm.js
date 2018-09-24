@@ -28900,9 +28900,9 @@ var _user$project$Selectize$clean = function (s) {
 	return _elm_lang$core$String$toLower(
 		_elm_lang$core$String$trim(s));
 };
-var _user$project$Selectize$HtmlOptions = F7(
-	function (a, b, c, d, e, f, g) {
-		return {instructionsForBlank: a, noMatches: b, typeForMore: c, atMaxLength: d, noOptions: e, notAvailable: f, classes: g};
+var _user$project$Selectize$HtmlOptions = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {instructionsForBlank: a, noMatches: b, typeForMore: c, atMaxLength: d, noOptions: e, notAvailable: f, classes: g, customCssClass: h};
 	});
 var _user$project$Selectize$HtmlClasses = function (a) {
 	return function (b) {
@@ -29332,7 +29332,11 @@ var _user$project$Selectize$view = F5(
 												_0: h.classes.multiItemContainer,
 												_1: _elm_lang$core$Native_Utils.cmp(config.maxItems, 1) > 0
 											},
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: config.htmlOptions.customCssClass, _1: true},
+												_1: {ctor: '[]'}
+											}
 										}
 									}),
 								_1: {ctor: '[]'}
@@ -30494,6 +30498,8 @@ var _user$project$Css_Selectize$codeFonts = {
 		_1: {ctor: '[]'}
 	}
 };
+var _user$project$Css_Selectize$CryptoCurrency = {ctor: 'CryptoCurrency'};
+var _user$project$Css_Selectize$Language = {ctor: 'Language'};
 var _user$project$Css_Selectize$Disabled = {ctor: 'Disabled'};
 var _user$project$Css_Selectize$NoOptions = {ctor: 'NoOptions'};
 var _user$project$Css_Selectize$InfoNoMatches = {ctor: 'InfoNoMatches'};
@@ -30845,33 +30851,81 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$batch(
 																}),
 															_1: {
 																ctor: '::',
-																_0: _rtfeldman$elm_css$Css_Elements$input(
+																_0: A2(
+																	_rtfeldman$elm_css$Css$class,
+																	_user$project$Css_Selectize$Language,
 																	{
 																		ctor: '::',
-																		_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$left),
-																		_1: {
-																			ctor: '::',
-																			_0: A2(_rtfeldman$elm_css$Css$property, 'background-color', 'inherit'),
-																			_1: {
+																		_0: _rtfeldman$elm_css$Css$descendants(
+																			{
 																				ctor: '::',
 																				_0: A2(
-																					_rtfeldman$elm_css$Css$padding2,
-																					_rtfeldman$elm_css$Css$px(6),
-																					_rtfeldman$elm_css$Css$px(2)),
+																					_rtfeldman$elm_css$Css$class,
+																					_user$project$Css_Selectize$SelectBox,
+																					{
+																						ctor: '::',
+																						_0: _rtfeldman$elm_css$Css$width(
+																							_rtfeldman$elm_css$Css$px(140)),
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_rtfeldman$elm_css$Css$class,
+																		_user$project$Css_Selectize$CryptoCurrency,
+																		{
+																			ctor: '::',
+																			_0: _rtfeldman$elm_css$Css$descendants(
+																				{
+																					ctor: '::',
+																					_0: A2(
+																						_rtfeldman$elm_css$Css$class,
+																						_user$project$Css_Selectize$SelectBox,
+																						{
+																							ctor: '::',
+																							_0: _rtfeldman$elm_css$Css$width(
+																								_rtfeldman$elm_css$Css$px(150)),
+																							_1: {ctor: '[]'}
+																						}),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: _rtfeldman$elm_css$Css_Elements$input(
+																			{
+																				ctor: '::',
+																				_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$left),
 																				_1: {
 																					ctor: '::',
-																					_0: _rtfeldman$elm_css$Css$width(
-																						_rtfeldman$elm_css$Css$em(6)),
+																					_0: A2(_rtfeldman$elm_css$Css$property, 'background-color', 'inherit'),
 																					_1: {
 																						ctor: '::',
-																						_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$default),
-																						_1: {ctor: '[]'}
+																						_0: A2(
+																							_rtfeldman$elm_css$Css$padding2,
+																							_rtfeldman$elm_css$Css$px(6),
+																							_rtfeldman$elm_css$Css$px(2)),
+																						_1: {
+																							ctor: '::',
+																							_0: _rtfeldman$elm_css$Css$width(
+																								_rtfeldman$elm_css$Css$em(6)),
+																							_1: {
+																								ctor: '::',
+																								_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$default),
+																								_1: {ctor: '[]'}
+																							}
+																						}
 																					}
 																				}
-																			}
-																		}
-																	}),
-																_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}
+																}
 															}
 														}
 													}
@@ -30922,16 +30976,16 @@ var _user$project$SelectizeHelper$buildConfig = F2(
 			selectedDisplay: specificConfig.selectedDisplay,
 			optionDisplay: specificConfig.optionDisplay,
 			match: specificConfig.match,
-			htmlOptions: {instructionsForBlank: 'Start typing for options', noMatches: 'No matches', atMaxLength: 'Type backspace to edit', typeForMore: 'Type for more options', noOptions: 'No options', notAvailable: 'N/A', classes: _user$project$Css_Selectize$classes}
+			htmlOptions: {instructionsForBlank: 'Start typing for options', noMatches: 'No matches', atMaxLength: 'Type backspace to edit', typeForMore: 'Type for more options', noOptions: 'No options', notAvailable: 'N/A', classes: _user$project$Css_Selectize$classes, customCssClass: specificConfig.customCssClass}
 		};
 	});
 var _user$project$SelectizeHelper$LocalConfig = F7(
 	function (a, b, c, d, e, f, g) {
 		return {toMsg: a, onAdd: b, onRemove: c, onFocus: d, onBlur: e, toId: f, enabled: g};
 	});
-var _user$project$SelectizeHelper$SpecificConfig = F4(
-	function (a, b, c, d) {
-		return {selectedDisplay: a, optionDisplay: b, maxItems: c, match: d};
+var _user$project$SelectizeHelper$SpecificConfig = F5(
+	function (a, b, c, d, e) {
+		return {selectedDisplay: a, optionDisplay: b, maxItems: c, match: d, customCssClass: e};
 	});
 
 var _user$project$FuzzyMatch$clean = function (s) {
@@ -31103,8 +31157,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1549, column: 17},
-							end: {line: 1554, column: 56}
+							start: {line: 1555, column: 17},
+							end: {line: 1560, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -31300,8 +31354,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 1223, column: 5},
-				end: {line: 1228, column: 59}
+				start: {line: 1229, column: 5},
+				end: {line: 1234, column: 59}
 			},
 			_p12)('Referenced field must be boolean');
 	}
@@ -31537,7 +31591,8 @@ var _user$project$Config$onOffSelectizeView = F6(
 			optionDisplay: function (_) {
 				return _.display;
 			},
-			match: _user$project$FuzzyMatch$match
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Admin$className('OnOff')
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31562,7 +31617,8 @@ var _user$project$Config$countrySelectizeView = F6(
 			optionDisplay: function (_) {
 				return _.display;
 			},
-			match: _user$project$FuzzyMatch$match
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Admin$className('Country')
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31586,8 +31642,8 @@ var _user$project$Config$languageSelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 588, column: 21},
-							end: {line: 593, column: 60}
+							start: {line: 592, column: 21},
+							end: {line: 597, column: 60}
 						},
 						_p18)('Shouldn\'t be here');
 				}
@@ -31597,14 +31653,15 @@ var _user$project$Config$languageSelectizeView = F6(
 		var fallbackIds = toList(maybeFallbackFieldValue);
 		var availableItems = model.configGroup.data.languages;
 		var specificConfig = {
-			maxItems: 5,
+			maxItems: 4,
 			selectedDisplay: function (_) {
 				return _.code;
 			},
 			optionDisplay: function (_) {
 				return _.display;
 			},
-			match: _user$project$FuzzyMatch$match
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Admin$className('Language')
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31628,8 +31685,8 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 542, column: 21},
-							end: {line: 547, column: 60}
+							start: {line: 545, column: 21},
+							end: {line: 550, column: 60}
 						},
 						_p21)('Shouldn\'t be here');
 				}
@@ -31645,14 +31702,15 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 		};
 		var availableItems = A2(_elm_lang$core$List$map, toDisplay, model.configGroup.data.cryptoCurrencies);
 		var specificConfig = {
-			maxItems: 5,
+			maxItems: 6,
 			selectedDisplay: function (_) {
 				return _.code;
 			},
 			optionDisplay: function (_) {
 				return _.display;
 			},
-			match: _user$project$FuzzyMatch$match
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Admin$className('CryptoCurrency')
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31677,7 +31735,8 @@ var _user$project$Config$fiatCurrencySelectizeView = F6(
 			optionDisplay: function (_) {
 				return _.display;
 			},
-			match: _user$project$FuzzyMatch$match
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Admin$className('FiatCurrency')
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31720,7 +31779,8 @@ var _user$project$Config$accountSelectizeView = F6(
 			optionDisplay: function (_) {
 				return _.display;
 			},
-			match: _user$project$FuzzyMatch$match
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Admin$className('Account')
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -32166,8 +32226,8 @@ var _user$project$Config$selectizeView = F6(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 674, column: 13},
-							end: {line: 724, column: 56}
+							start: {line: 679, column: 13},
+							end: {line: 729, column: 56}
 						},
 						_p37)('Not a Selectize field');
 			}
@@ -37642,35 +37702,44 @@ var _user$project$NavBar$view = F2(
 													ctor: '::',
 													_0: {
 														ctor: '_Tuple3',
-														_0: 'Kraken',
-														_1: _user$project$CoreTypes$AccountRoute('kraken'),
+														_0: 'Infura',
+														_1: _user$project$CoreTypes$AccountRoute('infura'),
 														_2: true
 													},
 													_1: {
 														ctor: '::',
 														_0: {
 															ctor: '_Tuple3',
-															_0: 'Mailjet',
-															_1: _user$project$CoreTypes$AccountRoute('mailjet'),
+															_0: 'Kraken',
+															_1: _user$project$CoreTypes$AccountRoute('kraken'),
 															_2: true
 														},
 														_1: {
 															ctor: '::',
 															_0: {
 																ctor: '_Tuple3',
-																_0: 'Strike',
-																_1: _user$project$CoreTypes$AccountRoute('strike'),
+																_0: 'Mailjet',
+																_1: _user$project$CoreTypes$AccountRoute('mailjet'),
 																_2: true
 															},
 															_1: {
 																ctor: '::',
 																_0: {
 																	ctor: '_Tuple3',
-																	_0: 'Twilio',
-																	_1: _user$project$CoreTypes$AccountRoute('twilio'),
+																	_0: 'Strike',
+																	_1: _user$project$CoreTypes$AccountRoute('strike'),
 																	_2: true
 																},
-																_1: {ctor: '[]'}
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple3',
+																		_0: 'Twilio',
+																		_1: _user$project$CoreTypes$AccountRoute('twilio'),
+																		_2: true
+																	},
+																	_1: {ctor: '[]'}
+																}
 															}
 														}
 													}
@@ -38897,7 +38966,7 @@ var _user$project$Transaction_View$cashOutTxView = function (tx) {
 		});
 };
 var _user$project$Transaction_View$cashInTxView = function (tx) {
-	var error = A2(_elm_lang$core$Maybe$withDefault, 'Successfull', tx.error);
+	var error = A2(_elm_lang$core$Maybe$withDefault, 'Successful', tx.error);
 	var cancellable = !(tx.operatorCompleted || (tx.sendConfirmed || tx.expired));
 	var cancelButtonDiv = cancellable ? A2(
 		_elm_lang$html$Html$div,

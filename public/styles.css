@@ -380,6 +380,14 @@ p {
     color: #5f5f56;
 }
 
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminLanguage  .lamassuAdminSelectBox {
+    width: 140px;
+}
+
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminCryptoCurrency  .lamassuAdminSelectBox {
+    width: 150px;
+}
+
 .lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  input {
     text-align: left;
     background-color: inherit;
