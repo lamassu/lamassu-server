@@ -27565,6 +27565,12 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$SelectizeOnOff = {ctor: 'SelectizeOnOff'};
+var _user$project$Css_Classes$SelectizeCountry = {ctor: 'SelectizeCountry'};
+var _user$project$Css_Classes$SelectizeLanguage = {ctor: 'SelectizeLanguage'};
+var _user$project$Css_Classes$SelectizeCryptoCurrency = {ctor: 'SelectizeCryptoCurrency'};
+var _user$project$Css_Classes$SelectizeFiatCurrency = {ctor: 'SelectizeFiatCurrency'};
+var _user$project$Css_Classes$SelectizeAccount = {ctor: 'SelectizeAccount'};
 var _user$project$Css_Classes$Textarea = {ctor: 'Textarea'};
 var _user$project$Css_Classes$BalanceSection = {ctor: 'BalanceSection'};
 var _user$project$Css_Classes$CryptoAddress = {ctor: 'CryptoAddress'};
@@ -29334,7 +29340,11 @@ var _user$project$Selectize$view = F5(
 											},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: config.htmlOptions.customCssClass, _1: true},
+												_0: {
+													ctor: '_Tuple2',
+													_0: _user$project$Css_Admin$className(config.htmlOptions.customCssClass),
+													_1: true
+												},
 												_1: {ctor: '[]'}
 											}
 										}
@@ -30498,8 +30508,6 @@ var _user$project$Css_Selectize$codeFonts = {
 		_1: {ctor: '[]'}
 	}
 };
-var _user$project$Css_Selectize$CryptoCurrency = {ctor: 'CryptoCurrency'};
-var _user$project$Css_Selectize$Language = {ctor: 'Language'};
 var _user$project$Css_Selectize$Disabled = {ctor: 'Disabled'};
 var _user$project$Css_Selectize$NoOptions = {ctor: 'NoOptions'};
 var _user$project$Css_Selectize$InfoNoMatches = {ctor: 'InfoNoMatches'};
@@ -30853,7 +30861,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$batch(
 																ctor: '::',
 																_0: A2(
 																	_rtfeldman$elm_css$Css$class,
-																	_user$project$Css_Selectize$Language,
+																	_user$project$Css_Classes$SelectizeLanguage,
 																	{
 																		ctor: '::',
 																		_0: _rtfeldman$elm_css$Css$descendants(
@@ -30876,7 +30884,7 @@ var _user$project$Css_Selectize$component = _rtfeldman$elm_css$Css$batch(
 																	ctor: '::',
 																	_0: A2(
 																		_rtfeldman$elm_css$Css$class,
-																		_user$project$Css_Selectize$CryptoCurrency,
+																		_user$project$Css_Classes$SelectizeCryptoCurrency,
 																		{
 																			ctor: '::',
 																			_0: _rtfeldman$elm_css$Css$descendants(
@@ -31592,7 +31600,7 @@ var _user$project$Config$onOffSelectizeView = F6(
 				return _.display;
 			},
 			match: _user$project$FuzzyMatch$match,
-			customCssClass: _user$project$Css_Admin$className('OnOff')
+			customCssClass: _user$project$Css_Classes$SelectizeOnOff
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31618,7 +31626,7 @@ var _user$project$Config$countrySelectizeView = F6(
 				return _.display;
 			},
 			match: _user$project$FuzzyMatch$match,
-			customCssClass: _user$project$Css_Admin$className('Country')
+			customCssClass: _user$project$Css_Classes$SelectizeCountry
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31661,7 +31669,7 @@ var _user$project$Config$languageSelectizeView = F6(
 				return _.display;
 			},
 			match: _user$project$FuzzyMatch$match,
-			customCssClass: _user$project$Css_Admin$className('Language')
+			customCssClass: _user$project$Css_Classes$SelectizeLanguage
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31710,7 +31718,7 @@ var _user$project$Config$cryptoCurrencySelectizeView = F6(
 				return _.display;
 			},
 			match: _user$project$FuzzyMatch$match,
-			customCssClass: _user$project$Css_Admin$className('CryptoCurrency')
+			customCssClass: _user$project$Css_Classes$SelectizeCryptoCurrency
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31736,7 +31744,7 @@ var _user$project$Config$fiatCurrencySelectizeView = F6(
 				return _.display;
 			},
 			match: _user$project$FuzzyMatch$match,
-			customCssClass: _user$project$Css_Admin$className('FiatCurrency')
+			customCssClass: _user$project$Css_Classes$SelectizeFiatCurrency
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -31780,7 +31788,7 @@ var _user$project$Config$accountSelectizeView = F6(
 				return _.display;
 			},
 			match: _user$project$FuzzyMatch$match,
-			customCssClass: _user$project$Css_Admin$className('Account')
+			customCssClass: _user$project$Css_Classes$SelectizeAccount
 		};
 		return A5(
 			_user$project$Selectize$view,

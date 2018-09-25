@@ -380,11 +380,11 @@ p {
     color: #5f5f56;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminLanguage  .lamassuAdminSelectBox {
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSelectizeLanguage  .lamassuAdminSelectBox {
     width: 140px;
 }
 
-.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminCryptoCurrency  .lamassuAdminSelectBox {
+.lamassuAdminConfigTable  .lamassuAdminSelectizeContainer  .lamassuAdminSelectizeCryptoCurrency  .lamassuAdminSelectBox {
     width: 150px;
 }
 
