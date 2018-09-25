@@ -47,6 +47,9 @@ export NPM_BIN=$(npm -g bin)
 decho "updating lamassu-server"
 npm -g install lamassu/lamassu-server#stable --unsafe-perm >> ${LOG_FILE} 2>&1
 
+# reset terminal to link new executables
+hash -r
+
 decho "rebuilding npm deps"
 cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
 npm rebuild >> ${LOG_FILE} 2>&1
