@@ -47,9 +47,6 @@ export NPM_BIN=$(npm -g bin)
 decho "updating lamassu-server"
 npm -g install lamassu/lamassu-server#stable --unsafe-perm >> ${LOG_FILE} 2>&1
 
-# reset terminal to link new executables
-hash -r
-
 decho "rebuilding npm deps"
 cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
 npm rebuild >> ${LOG_FILE} 2>&1
@@ -71,5 +68,8 @@ BACKUP_CMD=${NPM_BIN}/lamassu-backup-pg
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
 ( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> $LOG_FILE 2>&1
 $BACKUP_CMD >> $LOG_FILE 2>&1
+
+# reset terminal to link new executables
+hash -r
 
 decho "Update complete!"
