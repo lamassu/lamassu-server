@@ -65,4 +65,7 @@ BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
 ( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> $LOG_FILE 2>&1
 $BACKUP_CMD >> $LOG_FILE 2>&1
 
+# reset terminal to link new executables
+hash -r
+
 decho "Update complete!"
