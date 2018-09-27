@@ -11,6 +11,12 @@
       "program": "${workspaceRoot}/bin/lamassu-server",
       "cwd": "${workspaceRoot}",
       "args": ["--mockSms"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach by Process ID",
+      "processId": "${command:PickProcess}"
     }
   ]
 }
