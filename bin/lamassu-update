@@ -71,6 +71,15 @@ BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
 ( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> $LOG_FILE 2>&1
 $BACKUP_CMD >> $LOG_FILE 2>&1
 
+decho "updating motd scripts
+set +e
+chmod -x /etc/update-motd.d/*-release-upgrade     
+chmod -x /etc/update-motd.d/*-updates-available
+chmod -x /etc/update-motd.d/*-reboot-required
+chmod -x /etc/update-motd.d/*-help-text
+chmod -x /etc/update-motd.d/*-cloudguest
+set -e
+
 # reset terminal to link new executables
 hash -r
 
