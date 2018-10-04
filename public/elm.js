@@ -37740,8 +37740,8 @@ var _user$project$NavBar$view = F2(
 															ctor: '::',
 															_0: {
 																ctor: '_Tuple3',
-																_0: 'Mailjet',
-																_1: _user$project$CoreTypes$AccountRoute('mailjet'),
+																_0: 'Mailgun',
+																_1: _user$project$CoreTypes$AccountRoute('mailgun'),
 																_2: true
 															},
 															_1: {

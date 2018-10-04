@@ -1,6 +1,6 @@
 {
-  "code": "mailjet",
-  "display": "Mailjet",
+  "code": "mailgun",
+  "display": "Mailgun",
   "fields": [
     {
       "code": "apiKey",
@@ -10,9 +10,9 @@
       "value": ""
     },
     {
-      "code": "apiSecret",
-      "display": "API secret",
-      "fieldType": "password",
+      "code": "domain",
+      "display": "Domain",
+      "fieldType": "string",
       "required": true,
       "value": ""
     },
