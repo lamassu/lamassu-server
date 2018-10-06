@@ -45,7 +45,7 @@ decho "version installed $(node -v)"
 export NPM_BIN=$(npm -g bin)
 
 decho "updating lamassu-server"
-npm -g install lamassu/lamassu-server#stable --unsafe-perm >> ${LOG_FILE} 2>&1
+npm -g install lamassu/lamassu-server#master --unsafe-perm >> ${LOG_FILE} 2>&1
 
 decho "rebuilding npm deps"
 cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
@@ -73,7 +73,7 @@ $BACKUP_CMD >> $LOG_FILE 2>&1
 
 decho "updating motd scripts"
 set +e
-chmod -x /etc/update-motd.d/*-release-upgrade     
+chmod -x /etc/update-motd.d/*-release-upgrade
 chmod -x /etc/update-motd.d/*-updates-available
 chmod -x /etc/update-motd.d/*-reboot-required
 chmod -x /etc/update-motd.d/*-help-text
