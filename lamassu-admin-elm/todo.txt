@@ -1,0 +1,37 @@
+- error page for non-existent crypto url
+- 404 page
+
+- advanced types, get all config screens working
+
+- convert l-s to work with new config from db
+- fix up pairing and login, get ready for release
+
+- transactions screen
+
+---------------------------
+
+v on page load, correctly set page and category
+v fix css
+v get pages to work again
+v run updateUrl on default page
+v fix input boxes in config (seems to be issue with cryptos)
+- set default crypto
+- registration url, save in cookie
+
+---------------------------
+
+- reload numbers on submit (low priority)
+
+---------------------------
+
+validation:
+
+- base on json-schema validator (will need a port)
+- each config screen has validation errors mapped to each field
+- each errored field is red with error message
+- if config screen has any errors, config name in navbar is red
+- if any config groups have any errored configs, config group is red in nav bar
+- same for accounts
+- ribbon on top shows that config isn't complete
+- besides individual json-schema compliance, also check that all chosen account are not in error
+

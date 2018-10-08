@@ -84,10 +84,21 @@
   },
   "scripts": {
     "start": "node bin/lamassu-server",
-    "test": "mocha --recursive tests"
+    "test": "mocha --recursive tests",
+    "build-admin:css": "cd lamassu-admin-elm && elm-css src/Stylesheets.elm",
+    "build-admin:main": "cd lamassu-admin-elm && elm-make src/Main.elm --output ../public/elm.js",
+    "build-admin:lamassu": "cd lamassu-admin-elm && elm-make src/Lamassu.elm --output ../public/lamassu-elm.js",
+    "build-admin": "npm run build-admin:css && npm run build-admin:main && npm run build-admin:lamassu"
   },
   "devDependencies": {
     "ava": "^0.19.1",
-    "mocha": "^5.0.1"
+    "mocha": "^5.0.1",
+    "standard": "^12.0.1"
+  },
+  "standard": {
+    "ignore": [
+      "/lamassu-admin-elm",
+      "/public"
+    ]
   }
 }

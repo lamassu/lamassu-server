@@ -1,0 +1,17 @@
+{
+  "name": "gridism",
+  "version": "0.2.1",
+  "author": "Coby Chapple",
+  "homepage": "http://cobyism.com/gridism",
+  "main": "./gridism.css",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cobyism/gridism.git"
+  },
+  "ignore": [
+      "shapeshifter/",
+      "**/*.yml",
+      "**/*.html"
+    ],
+  "license": "MIT"
+}

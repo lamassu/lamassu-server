@@ -1,0 +1,8 @@
+node_modules
+elm-stuff
+
+build/styles.css
+build/elm.js
+
+.vscode
+.idea
