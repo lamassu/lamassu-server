@@ -44,8 +44,8 @@ n lts >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
 export NPM_BIN=$(npm -g bin)
 
-decho "updating lamassu-server"
-npm -g install lamassu/lamassu-server#master --unsafe-perm >> ${LOG_FILE} 2>&1
+decho "updating lamassu-server#dev"
+npm -g install lamassu/lamassu-server#dev --unsafe-perm >> ${LOG_FILE} 2>&1
 
 decho "rebuilding npm deps"
 cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
