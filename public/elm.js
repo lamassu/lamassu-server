@@ -27579,6 +27579,7 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$SelectizeDisplayUnits = {ctor: 'SelectizeDisplayUnits'};
 var _user$project$Css_Classes$SelectizeOnOff = {ctor: 'SelectizeOnOff'};
 var _user$project$Css_Classes$SelectizeCountry = {ctor: 'SelectizeCountry'};
 var _user$project$Css_Classes$SelectizeLanguage = {ctor: 'SelectizeLanguage'};
@@ -29511,6 +29512,8 @@ var _user$project$ConfigTypes$fieldValueToString = function (fieldValue) {
 			return _p8._0;
 		case 'FieldTextAreaValue':
 			return _p8._0;
+		case 'FieldMarkdownValue':
+			return _p8._0;
 		default:
 			return _p8._0;
 	}
@@ -29599,9 +29602,9 @@ var _user$project$ConfigTypes$AccountRec = F4(
 	function (a, b, c, d) {
 		return {code: a, display: b, $class: c, cryptos: d};
 	});
-var _user$project$ConfigTypes$ConfigData = F6(
-	function (a, b, c, d, e, f) {
-		return {cryptoCurrencies: a, currencies: b, languages: c, countries: d, accounts: e, machines: f};
+var _user$project$ConfigTypes$ConfigData = F7(
+	function (a, b, c, d, e, f, g) {
+		return {cryptoCurrencies: a, currencies: b, languages: c, countries: d, accounts: e, machines: f, displayUnits: g};
 	});
 var _user$project$ConfigTypes$FieldCollection = F2(
 	function (a, b) {
@@ -29657,6 +29660,7 @@ var _user$project$ConfigTypes$SelectizeComponent = function (a) {
 };
 var _user$project$ConfigTypes$TextAreaComponent = {ctor: 'TextAreaComponent'};
 var _user$project$ConfigTypes$InputBoxComponent = {ctor: 'InputBoxComponent'};
+var _user$project$ConfigTypes$FieldDisplayUnitType = {ctor: 'FieldDisplayUnitType'};
 var _user$project$ConfigTypes$FieldMarkdownType = {ctor: 'FieldMarkdownType'};
 var _user$project$ConfigTypes$FieldTextAreaType = {ctor: 'FieldTextAreaType'};
 var _user$project$ConfigTypes$FieldCountryType = {ctor: 'FieldCountryType'};
@@ -29669,6 +29673,9 @@ var _user$project$ConfigTypes$FieldDecimalType = {ctor: 'FieldDecimalType'};
 var _user$project$ConfigTypes$FieldIntegerType = {ctor: 'FieldIntegerType'};
 var _user$project$ConfigTypes$FieldPercentageType = {ctor: 'FieldPercentageType'};
 var _user$project$ConfigTypes$FieldStringType = {ctor: 'FieldStringType'};
+var _user$project$ConfigTypes$FieldDisplayUnitsValue = function (a) {
+	return {ctor: 'FieldDisplayUnitsValue', _0: a};
+};
 var _user$project$ConfigTypes$FieldMarkdownValue = function (a) {
 	return {ctor: 'FieldMarkdownValue', _0: a};
 };
@@ -29774,9 +29781,12 @@ var _user$project$ConfigTypes$stringToFieldHolder = F2(
 				case 'FieldTextAreaType':
 					return _user$project$ConfigTypes$FieldOk(
 						_user$project$ConfigTypes$FieldTextAreaValue(s));
-				default:
+				case 'FieldMarkdownType':
 					return _user$project$ConfigTypes$FieldOk(
 						_user$project$ConfigTypes$FieldMarkdownValue(s));
+				default:
+					return _user$project$ConfigTypes$FieldOk(
+						_user$project$ConfigTypes$FieldDisplayUnitsValue(s));
 			}
 		}
 	});
@@ -29948,6 +29958,8 @@ var _user$project$ConfigDecoder$basicFieldTypeDecoder = function (s) {
 			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldTextAreaType);
 		case 'markdown':
 			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldMarkdownType);
+		case 'displayUnits':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$ConfigTypes$FieldDisplayUnitType);
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'No such FieldType ', s));
@@ -30083,8 +30095,8 @@ var _user$project$ConfigDecoder$machineDisplayDecoder = A3(
 	_user$project$ConfigTypes$MachineDisplay,
 	A2(_elm_lang$core$Json_Decode$field, 'machine', _user$project$ConfigDecoder$machineDecoder),
 	A2(_elm_lang$core$Json_Decode$field, 'display', _elm_lang$core$Json_Decode$string));
-var _user$project$ConfigDecoder$configDataDecoder = A7(
-	_elm_lang$core$Json_Decode$map6,
+var _user$project$ConfigDecoder$configDataDecoder = A8(
+	_elm_lang$core$Json_Decode$map7,
 	_user$project$ConfigTypes$ConfigData,
 	A2(
 		_elm_lang$core$Json_Decode$field,
@@ -30109,7 +30121,11 @@ var _user$project$ConfigDecoder$configDataDecoder = A7(
 	A2(
 		_elm_lang$core$Json_Decode$field,
 		'machines',
-		_elm_lang$core$Json_Decode$list(_user$project$ConfigDecoder$machineDisplayDecoder)));
+		_elm_lang$core$Json_Decode$list(_user$project$ConfigDecoder$machineDisplayDecoder)),
+	A2(
+		_elm_lang$core$Json_Decode$field,
+		'displayUnits',
+		_elm_lang$core$Json_Decode$list(_user$project$ConfigDecoder$displayRecDecoder)));
 var _user$project$ConfigDecoder$nullOr = function (decoder) {
 	return _elm_lang$core$Json_Decode$oneOf(
 		{
@@ -30209,6 +30225,11 @@ var _user$project$ConfigDecoder$fieldValueTypeDecoder = function (fieldType) {
 				_elm_lang$core$Json_Decode$map,
 				_user$project$ConfigTypes$FieldMarkdownValue,
 				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
+		case 'displayUnits':
+			return A2(
+				_elm_lang$core$Json_Decode$map,
+				_user$project$ConfigTypes$FieldDisplayUnitsValue,
+				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string));
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'Unsupported field type: ', fieldType));
@@ -30279,8 +30300,10 @@ var _user$project$ConfigEncoder$fieldTypeEncoder = function (fieldType) {
 			return _elm_lang$core$Json_Encode$string('country');
 		case 'FieldTextAreaType':
 			return _elm_lang$core$Json_Encode$string('textarea');
-		default:
+		case 'FieldMarkdownType':
 			return _elm_lang$core$Json_Encode$string('markdown');
+		default:
+			return _elm_lang$core$Json_Encode$string('displayUnits');
 	}
 };
 var _user$project$ConfigEncoder$encodeMachine = function (machine) {
@@ -30432,10 +30455,15 @@ var _user$project$ConfigEncoder$encodeFieldValue = function (fieldValue) {
 				_user$project$ConfigEncoder$encodeFieldValueObject,
 				'textarea',
 				_elm_lang$core$Json_Encode$string(_p4._0));
-		default:
+		case 'FieldMarkdownValue':
 			return A2(
 				_user$project$ConfigEncoder$encodeFieldValueObject,
 				'markdown',
+				_elm_lang$core$Json_Encode$string(_p4._0));
+		default:
+			return A2(
+				_user$project$ConfigEncoder$encodeFieldValueObject,
+				'displayUnits',
 				_elm_lang$core$Json_Encode$string(_p4._0));
 	}
 };
@@ -31179,8 +31207,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1555, column: 17},
-							end: {line: 1560, column: 56}
+							start: {line: 1601, column: 17},
+							end: {line: 1606, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -31297,8 +31325,10 @@ var _user$project$Config$buildFieldComponent = F4(
 				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
 			case 'FieldTextAreaType':
 				return _user$project$ConfigTypes$TextAreaComponent;
-			default:
+			case 'FieldMarkdownType':
 				return _user$project$ConfigTypes$TextAreaComponent;
+			default:
+				return _user$project$ConfigTypes$SelectizeComponent(_user$project$Selectize$initialSelectize);
 		}
 	});
 var _user$project$Config$initFieldInstance = F3(
@@ -31376,8 +31406,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 1229, column: 5},
-				end: {line: 1234, column: 59}
+				start: {line: 1272, column: 5},
+				end: {line: 1277, column: 59}
 			},
 			_p12)('Referenced field must be boolean');
 	}
@@ -31615,6 +31645,32 @@ var _user$project$Config$onOffSelectizeView = F6(
 			},
 			match: _user$project$FuzzyMatch$match,
 			customCssClass: _user$project$Css_Classes$SelectizeOnOff
+		};
+		return A5(
+			_user$project$Selectize$view,
+			A2(_user$project$SelectizeHelper$buildConfig, localConfig, specificConfig),
+			selectedIds,
+			availableItems,
+			fallbackIds,
+			selectizeState);
+	});
+var _user$project$Config$displayUnitsSelectizeView = F6(
+	function (model, localConfig, fieldInstance, selectizeState, maybeFieldValue, maybeFallbackFieldValue) {
+		var fallbackIds = _user$project$Config$maybeToList(
+			A2(_elm_lang$core$Maybe$map, _user$project$ConfigTypes$fieldValueToString, maybeFallbackFieldValue));
+		var selectedIds = _user$project$Config$maybeToList(
+			A2(_elm_lang$core$Maybe$map, _user$project$ConfigTypes$fieldValueToString, maybeFieldValue));
+		var availableItems = model.configGroup.data.displayUnits;
+		var specificConfig = {
+			maxItems: 1,
+			selectedDisplay: function (_) {
+				return _.code;
+			},
+			optionDisplay: function (_) {
+				return _.display;
+			},
+			match: _user$project$FuzzyMatch$match,
+			customCssClass: _user$project$Css_Classes$SelectizeDisplayUnits
 		};
 		return A5(
 			_user$project$Selectize$view,
@@ -32244,12 +32300,14 @@ var _user$project$Config$selectizeView = F6(
 					return A6(_user$project$Config$countrySelectizeView, model, localConfig, fieldInstance, selectizeState, maybeFieldValue, maybeFallbackFieldValue);
 				case 'FieldOnOffType':
 					return A6(_user$project$Config$onOffSelectizeView, model, localConfig, fieldInstance, selectizeState, maybeFieldValue, maybeFallbackFieldValue);
+				case 'FieldDisplayUnitType':
+					return A6(_user$project$Config$displayUnitsSelectizeView, model, localConfig, fieldInstance, selectizeState, maybeFieldValue, maybeFallbackFieldValue);
 				default:
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 679, column: 13},
-							end: {line: 729, column: 56}
+							start: {line: 713, column: 13},
+							end: {line: 772, column: 56}
 						},
 						_p37)('Not a Selectize field');
 			}

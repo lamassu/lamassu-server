@@ -103,6 +103,7 @@ type FieldType
     | FieldCountryType
     | FieldTextAreaType
     | FieldMarkdownType
+    | FieldDisplayUnitType
 
 
 type FieldValue
@@ -118,6 +119,7 @@ type FieldValue
     | FieldCountryValue String
     | FieldTextAreaValue String
     | FieldMarkdownValue String
+    | FieldDisplayUnitsValue String
 
 
 type FieldValidator
@@ -187,6 +189,7 @@ type alias ConfigData =
     , countries : List DisplayRec
     , accounts : List AccountRec
     , machines : List MachineDisplay
+    , displayUnits: List DisplayRec
     }
 
 
@@ -272,6 +275,8 @@ fieldValueToString fieldValue =
         FieldMarkdownValue v ->
             v
 
+        FieldDisplayUnitsValue v ->
+            v 
 
 machineToString : Machine -> String
 machineToString machine =
@@ -458,6 +463,8 @@ stringToFieldHolder fieldType s =
             FieldMarkdownType ->
                 FieldOk (FieldMarkdownValue s)
 
+            FieldDisplayUnitType ->
+                FieldOk (FieldDisplayUnitsValue s)
 
 groupMember : ConfigGroup -> String -> Bool
 groupMember configGroup fieldCode =

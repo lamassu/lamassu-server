@@ -81,3 +81,4 @@ type CssClasses
     | SelectizeLanguage
     | SelectizeCountry
     | SelectizeOnOff
+    | SelectizeDisplayUnits

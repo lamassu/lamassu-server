@@ -50,6 +50,9 @@ encodeFieldValue fieldValue =
         FieldMarkdownValue value ->
             encodeFieldValueObject "markdown" (string value)
 
+        FieldDisplayUnitsValue value ->
+            encodeFieldValueObject "displayUnits" (string value)        
+
 
 encodeCrypto : Crypto -> Value
 encodeCrypto crypto =
@@ -118,6 +121,8 @@ fieldTypeEncoder fieldType =
         FieldMarkdownType ->
             string "markdown"
 
+        FieldDisplayUnitType ->
+            string "displayUnits"
 
 maybeString : Maybe String -> Value
 maybeString maybeString =

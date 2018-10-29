@@ -12553,6 +12553,7 @@ var _user$project$Css_Admin$className = function ($class) {
 	return A2(_rtfeldman$elm_css_util$Css_Helpers$identifierToString, _user$project$Css_Admin$name, $class);
 };
 
+var _user$project$Css_Classes$SelectizeDisplayUnits = {ctor: 'SelectizeDisplayUnits'};
 var _user$project$Css_Classes$SelectizeOnOff = {ctor: 'SelectizeOnOff'};
 var _user$project$Css_Classes$SelectizeCountry = {ctor: 'SelectizeCountry'};
 var _user$project$Css_Classes$SelectizeLanguage = {ctor: 'SelectizeLanguage'};

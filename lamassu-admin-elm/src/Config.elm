@@ -644,6 +644,40 @@ countrySelectizeView model localConfig fieldInstance selectizeState maybeFieldVa
             fallbackIds
             selectizeState
 
+displayUnitsSelectizeView :
+    ResolvedModel
+    -> LocalConfig
+    -> FieldInstance
+    -> Selectize.State
+    -> Maybe FieldValue
+    -> Maybe FieldValue
+    -> Html Msg
+displayUnitsSelectizeView model localConfig fieldInstance selectizeState maybeFieldValue maybeFallbackFieldValue =
+    let
+        specificConfig =
+            { maxItems = 1
+            , selectedDisplay = .code
+            , optionDisplay = .display
+            , match = FuzzyMatch.match
+            , customCssClass = C.SelectizeDisplayUnits
+            }
+
+        availableItems =
+            model.configGroup.data.displayUnits
+
+        selectedIds =
+            Maybe.map fieldValueToString maybeFieldValue
+                |> maybeToList
+
+        fallbackIds =
+            Maybe.map fieldValueToString maybeFallbackFieldValue
+                |> maybeToList
+    in
+        Selectize.view (buildConfig localConfig specificConfig)
+            selectedIds
+            availableItems
+            fallbackIds
+            selectizeState
 
 selectizeView :
     ResolvedModel
@@ -724,6 +758,15 @@ selectizeView model fieldInstance selectizeState maybeFieldValue maybeFallbackFi
                         selectizeState
                         maybeFieldValue
                         maybeFallbackFieldValue
+
+                FieldDisplayUnitType ->
+                    displayUnitsSelectizeView model
+                        localConfig
+                        fieldInstance
+                        selectizeState
+                        maybeFieldValue
+                        maybeFallbackFieldValue
+
 
                 _ ->
                     Debug.crash "Not a Selectize field"
@@ -1298,6 +1341,9 @@ buildFieldComponent configGroup fieldType fieldScope fieldValue =
 
         FieldMarkdownType ->
             TextAreaComponent
+
+        FieldDisplayUnitType ->
+            SelectizeComponent Selectize.initialSelectize
 
 
 isInScope : ConfigScope -> ConfigScope -> FieldScope -> Bool

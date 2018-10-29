@@ -45,6 +45,8 @@ fieldValueTypeDecoder fieldType =
         "markdown" ->
             map FieldMarkdownValue (field "value" string)
 
+        "displayUnits" ->
+            map FieldDisplayUnitsValue (field "value" string)
         _ ->
             fail ("Unsupported field type: " ++ fieldType)
 
@@ -182,6 +184,9 @@ basicFieldTypeDecoder s =
         "markdown" ->
             succeed FieldMarkdownType
 
+        "displayUnits" ->
+            succeed FieldDisplayUnitType
+
         _ ->
             fail ("No such FieldType " ++ s)
 
@@ -296,10 +301,11 @@ accountRecDecoder =
 
 configDataDecoder : Decoder ConfigData
 configDataDecoder =
-    map6 ConfigData
+    map7 ConfigData
         (field "cryptoCurrencies" (list cryptoDisplayDecoder))
         (field "currencies" (list displayRecDecoder))
         (field "languages" (list displayRecDecoder))
         (field "countries" (list displayRecDecoder))
         (field "accounts" (list accountRecDecoder))
         (field "machines" (list machineDisplayDecoder))
+        (field "displayUnits" (list displayRecDecoder))
