@@ -2,8 +2,8 @@ var db = require('./db')
 
 exports.up = function (next) {
   const sql = [
-    'alter table cash_out_txs add column published_at timestamptz',
-    'alter table cash_out_txs rename column confirmation_time to confirmed_at'
+    db.addColumn('cash_out_txs', 'published_at', 'timestamptz'),
+    db.renameColumn('cash_out_txs', 'confirmation_time', 'confirmed_at')
   ]
 
   db.multi(sql, next)

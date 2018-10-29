@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    `create table machine_pings (
+    `create table if not existsmachine_pings (
     id uuid PRIMARY KEY,
     device_id text not null,
     serial_number integer not null,
@@ -18,8 +18,8 @@ exports.up = function (next) {
     lag_max_ms integer not null,
     lag_median_ms integer not null,
     day date not null)`,
-    'alter table machine_events drop column device_time',
-    'alter table machine_events add column device_time timestamptz'
+    db.dropColumn('machine_events', 'device_time'),
+    db.addColumn('machine_events', 'device_time', 'timestamptz')
   ]
   db.multi(sql, next)
 }

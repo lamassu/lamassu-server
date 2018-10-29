@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    `create table cash_out_refills (
+    `create table if not exists cash_out_refills (
     id uuid PRIMARY KEY,
     device_id text not null,
     user_id integer not null,

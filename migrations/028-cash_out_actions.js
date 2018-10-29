@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    `create table cash_out_actions (
+    `create table if not exists cash_out_actions (
       id serial primary key,
       tx_id uuid not null,
       action text not null,
@@ -22,16 +22,16 @@ exports.up = function (next) {
       device_time bigint,
       created timestamptz not null default now()
     )`,
-    'alter table cash_out_txs drop column dispensed_1',
-    'alter table cash_out_txs drop column dispensed_2',
-    'alter table cash_out_txs drop column rejected_1',
-    'alter table cash_out_txs drop column rejected_2',
-    'alter table cash_out_txs drop column denomination_1',
-    'alter table cash_out_txs drop column denomination_2',
-    'alter table cash_out_txs drop column dispense_error',
-    'alter table cash_out_txs drop column dispense_time',
-    'alter table cash_out_txs add column dispense_confirmed boolean default false',
-    'alter table cash_out_txs rename column dispensed to dispense'
+    db.dropColumn('cash_out_txs', 'dispensed_1'),
+    db.dropColumn('cash_out_txs', 'dispensed_2'),
+    db.dropColumn('cash_out_txs', 'rejected_1'),
+    db.dropColumn('cash_out_txs', 'rejected_2'),
+    db.dropColumn('cash_out_txs', 'denomination_1'),
+    db.dropColumn('cash_out_txs', 'denomination_2'),
+    db.dropColumn('cash_out_txs', 'dispense_error'),
+    db.dropColumn('cash_out_txs', 'dispense_time'),
+    db.addColumn('cash_out_txs', 'dispense_confirmed', 'boolean default false'),
+    db.renameColumn('cash_out_txs', 'dispensed', 'dispense')
   ]
   db.multi(sql, next)
 }

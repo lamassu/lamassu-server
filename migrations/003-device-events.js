@@ -7,7 +7,8 @@ exports.up = function (next) {
     'event_type text NOT NULL, ' +
     'note text, ' +
     'device_time bigint NOT NULL, ' +
-    'created timestamp NOT NULL DEFAULT now() )'], next)
+    'created timestamp NOT NULL DEFAULT now() ' +
+  ')'], next)
 }
 
 exports.down = function (next) {
