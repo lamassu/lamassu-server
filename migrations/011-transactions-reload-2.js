@@ -44,10 +44,11 @@ exports.up = function (next) {
     db.defineEnum('cash_out_action_types', actions),
     `CREATE TABLE IF NOT EXISTS cash_out_actions (
       id serial PRIMARY KEY,
-      session_id uuid REFERENCES cash_out_txs(session_id),
+      session_id uuid,
       action cash_out_action_types NOT NULL,
       created timestamptz NOT NULL default now()
     )`,
+    db.addConstraint('cash_out_actions', 'cash_out_actions_session_id_fkey', 'FOREIGN KEY (session_id) REFERENCES cash_out_txs(session_id)', 'cash_out_txs', 'session_id'),
     db.addColumn('dispenses', 'session_id', 'uuid'),
     db.dropConstraint('dispenses', 'dispenses_transaction_id_fkey')
   ]

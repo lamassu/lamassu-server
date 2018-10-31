@@ -14,7 +14,8 @@ module.exports = {
   dropConstraint,
   addConstraint,
   addSequence,
-  alterSequence
+  alterSequence,
+  ifColumn
 }
 
 function multi (sqls, cb) {
@@ -36,117 +37,138 @@ function multi (sqls, cb) {
     })
 }
 
-function defineEnum (name, values) {
-  return `DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_type WHERE typname = '${name}'
-  ) THEN
-    CREATE TYPE '${name}' AS ENUM (${values});
-  END IF;
-END
+function beginEnd (statement) {
+  return `
+  DO $$
+  BEGIN
+    ${statement};
+  END $$
 `
+}
+
+function defineEnum (name, values) {
+  return beginEnd(`
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_type WHERE typname = '${name}'
+    ) THEN
+      CREATE TYPE ${name} AS ENUM (${values});
+    END IF
+  `)
 }
 
 function dropEnum (name) {
-  return `DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM pg_type WHERE typname = '${name}'
-  ) THEN
-    DROP TYPE '${name}';
-  END IF;
-END
-`
+  return beginEnd(`
+    IF EXISTS (
+      SELECT 1 FROM pg_type WHERE typname = '${name}'
+    ) THEN
+      DROP TYPE ${name};
+    END IF
+  `)
 }
 
 function renameEnum (name, newName) {
-  return `DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM pg_type WHERE typname = '${name}'
-  ) THEN
-    ALTER TYPE '${name}' RENAME TO '${newName}';
-  END IF;
-END
-`
+  return beginEnd(`
+    IF EXISTS (
+      SELECT 1 FROM pg_type WHERE typname = '${name}'
+    ) THEN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = '${newName}'
+      ) THEN
+        ALTER TYPE ${name} RENAME TO ${newName};
+      END IF;
+    END IF
+  `)
 }
 
-function ifColumn (table, column, statement, not) {
-  return `DO $$
-BEGIN
-  IF ${not ? 'NOT' : ''} EXISTS (
-    SELECT NULL
-    FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE table_name = '${table}'
-      AND column_name = '${column}'
-  ) THEN
-    ${statement};
-  END IF;
-END
-`
+function ifColumn (table, column, statement, not, skipBeginEnd) {
+  statement = `
+    IF EXISTS (
+      SELECT NULL
+      FROM INFORMATION_SCHEMA.TABLEs
+      WHERE table_name = '${table}'
+    ) THEN
+      IF ${not ? 'NOT' : ''} EXISTS (
+        SELECT NULL
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE table_name = '${table}'
+          AND column_name = '${column}'
+      ) THEN
+        ${statement};
+      END IF;
+    END IF
+  `
+  return skipBeginEnd ? statement : beginEnd(statement)
 }
 
 function alterColumn (table, column, change) {
   return ifColumn(table, column, `
-  ALTER TABLE '${table}' 
-    ALTER '${column}' ${change}`)
+  ALTER TABLE ${table} 
+    ALTER ${column} ${change}`)
 }
 
 function addColumn (table, column, change) {
   return ifColumn(table, column, `
-  ALTER TABLE '${table}' 
-    ADD '${column}' ${change}`, true)
+  ALTER TABLE ${table} 
+    ADD ${column} ${change}`, true)
 }
 
 function dropColumn (table, column) {
   return ifColumn(table, column, `
-  ALTER TABLE '${table}' 
-    DROP '${column}'`)
+  ALTER TABLE ${table} 
+    DROP ${column}`)
 }
 
 function renameColumn (table, column, newName) {
-  return ifColumn(table, column, `
-  ALTER TABLE '${table}' 
-    RENAME '${column}' to '${newName}'`)
+  return ifColumn(table, column,
+    ifColumn(table, column, `
+      ALTER TABLE ${table} 
+        RENAME ${column} to ${newName}`, true, true))
 }
 
 function dropConstraint (table, column) {
-  return 'IF EXISTS( ' +
-    'SELECT NULL\n' +
-    'FROM INFORMATION_SCHEMA.constraint_column_usage\n' +
-    'WHERE constraint_name = \'' + column + '\'' +
-    ') THEN\n' +
-    '  ALTER TABLE `' + table + '` drop constraint ' + column + ';\n' +
-    'END IF;'
+  return beginEnd(`
+    IF EXISTS( 
+      SELECT NULL
+        FROM INFORMATION_SCHEMA.constraint_column_usage
+        WHERE constraint_name = '${column}'
+      ) THEN
+        ALTER TABLE ${table} DROP CONSTRAINT ${column};
+    END IF
+  `)
 }
 
-function addConstraint (table, column, change) {
-  return 'IF NOT EXISTS( ' +
-    'SELECT NULL\n' +
-    'FROM INFORMATION_SCHEMA.constraint_column_usage\n' +
-    'WHERE constraint_name = \'' + column + '\'' +
-    ') THEN\n' +
-    '  ALTER TABLE `' + table + '` ADD CONSTRAINT `' + column + '` ' + change + ';\n' +
-    'END IF;'
+function addConstraint (table, column, change, refTable, refColumn) {
+  return ifColumn(refTable, refColumn, `
+    IF NOT EXISTS(
+      SELECT NULL
+        FROM INFORMATION_SCHEMA.constraint_column_usage
+        WHERE constraint_name = '${column}'
+      ) THEN
+        ALTER TABLE ${table} ADD CONSTRAINT ${column} ${change};
+    END IF
+  `, false)
 }
 
 function addSequence (name, change) {
-  return 'IF NOT EXISTS( ' +
-    'SELECT NULL\n' +
-    'FROM INFORMATION_SCHEMA.sequences\n' +
-    'WHERE sequence_name = \'' + name + '\'' +
-    ') THEN\n' +
-    '  create sequence `' + name + '` ' + change + ';\n' +
-    'END IF;'
+  return beginEnd(`
+    IF NOT EXISTS(
+      SELECT NULL
+        FROM INFORMATION_SCHEMA.sequences
+        WHERE sequence_name = '${name}'
+      ) THEN
+        CREATE SEQUENCE ${name} ${change};
+    END IF
+  `)
 }
 
 function alterSequence (name, change) {
-  return 'IF EXISTS( ' +
-    'SELECT NULL\n' +
-    'FROM INFORMATION_SCHEMA.sequences\n' +
-    'WHERE sequence_name = \'' + name + '\'' +
-    ') THEN\n' +
-    '  alter sequence `' + name + '` ' + change + ';\n' +
-    'END IF;'
+  return beginEnd(`
+    IF EXISTS(
+        SELECT NULL
+          FROM INFORMATION_SCHEMA.sequences
+          WHERE sequence_name = '${name}'
+      ) THEN
+        ALTER SEQUENCE ${name} ${change};
+    END IF
+  `)
 }

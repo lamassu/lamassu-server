@@ -16,7 +16,7 @@ exports.up = function (next) {
     db.alterColumn('compliance_authorizations', 'compliance_type', 'set data type compliance_type using compliance_type::text::compliance_type'),
     db.dropEnum('compliance_types'),
 
-    db.defineEnum('verification_type', "('verified', 'blocked', 'automatic')"),
+    db.defineEnum('verification_type', "'verified', 'blocked', 'automatic'"),
 
     db.dropColumn('customers', 'manually_verified'),
     db.addColumn('customers', 'sms_override', 'verification_type not null default \'automatic\''),

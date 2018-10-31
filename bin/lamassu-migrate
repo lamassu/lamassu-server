@@ -3,11 +3,11 @@
 const migrate = require('../lib/migrate')
 
 migrate.run()
-.then(() => {
-  console.log('DB Migration succeeded.')
-  process.exit(0)
-})
-.catch(err => {
-  console.error('DB Migration failed: %s', err)
-  process.exit(1)
-})
+  .then(() => {
+    console.log('DB Migration succeeded.')
+    process.exit(0)
+  })
+  .catch(err => {
+    console.error('DB Migration failed: %s', err)
+    process.exit(1)
+  })

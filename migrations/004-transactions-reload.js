@@ -58,7 +58,7 @@ exports.up = function (next) {
       'error text, ' +
       'created timestamp NOT NULL DEFAULT now() ' +
     ')',
-    'CREATE INDEX ON dispenses (device_fingerprint)'
+    db.ifColumn('dispenses', 'device_fingerprint', 'CREATE INDEX ON dispenses (device_fingerprint)')
   ]
 
   db.multi(sqls, next)
