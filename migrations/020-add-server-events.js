@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    `create table server_events (
+    `create table if not exists server_events (
       id serial PRIMARY KEY,
       event_type text NOT NULL,
       created timestamptz NOT NULL default now()

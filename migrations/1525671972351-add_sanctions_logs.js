@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   const sql =
-    [`create table sanctions_logs (
+    [`create table if not exists sanctions_logs (
     id uuid PRIMARY KEY,
     device_id text not null,
     sanctioned_id text not null,

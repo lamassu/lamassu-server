@@ -8,12 +8,12 @@ exports.up = function (next) {
     .map(singleQuotify).join(',')
 
   var sql = [
-    'create type status_stage AS enum (' + statuses + ')',
-    'alter table transactions add dispensed boolean NOT NULL DEFAULT false',
-    'alter table transactions add notified boolean NOT NULL DEFAULT false',
-    'alter table transactions add redeem boolean NOT NULL DEFAULT false',
-    'alter table transactions add confirmation_time timestamptz',
-    'alter table transactions add status status_stage NOT NULL DEFAULT \'notSeen\''
+    db.defineEnum('status_stage', statuses),
+    db.addColumn('transactions', 'dispensed', 'boolean NOT NULL DEFAULT false'),
+    db.addColumn('transactions', 'notified', 'boolean NOT NULL DEFAULT false'),
+    db.addColumn('transactions', 'redeem', 'boolean NOT NULL DEFAULT false'),
+    db.addColumn('transactions', 'confirmation_time', 'timestamptz'),
+    db.addColumn('transactions', 'status', 'status_stage NOT NULL DEFAULT \'notSeen\'')
   ]
   db.multi(sql, next)
 }

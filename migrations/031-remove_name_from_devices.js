@@ -2,7 +2,7 @@ const db = require('./db')
 
 exports.up = function (next) {
   const sql = [
-    'alter table devices drop column name'
+    db.dropColumn('devices', 'name')
   ]
   db.multi(sql, next)
 }

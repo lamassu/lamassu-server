@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    'alter table transactions add phone text',
+    db.addColumn('transactions', 'phone', 'text'),
     'create index on transactions (phone)'
   ]
   db.multi(sql, next)
