@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const bip39 = require('bip39')
+
+const seed = process.argv[2]
+
+const words = bip39.entropyToMnemonic(seed).split(' ')
+
+for (let i = 0; i < words.length; i += 6) {
+  console.log(words.slice(i, i + 6).join(' '))
+}

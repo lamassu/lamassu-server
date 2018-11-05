@@ -1,5 +1,6 @@
 {
   "seedPath": "/etc/lamassu/seeds/seed.txt",
+  "mnemonicPath": "/etc/lamassu/mnemonics/mnemonic.txt",
   "caPath": "/etc/ssl/certs/Lamassu_OP_Root_CA.pem",
   "certPath": "/etc/ssl/certs/Lamassu_OP.pem",
   "keyPath": "/etc/ssl/private/Lamassu_OP.key",

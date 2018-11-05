@@ -16,12 +16,13 @@ OFAC_DATA_DIR=$CONFIG_DIR/ofac
 mkdir -p $CERT_DIR
 mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
 
-echo "Generating seed..."
-SEEDS_DIR=seeds
-SEED_FILE=$SEEDS_DIR/seed.txt
-mkdir -p $SEEDS_DIR >> $LOG_FILE 2>&1
-SEED=$(openssl rand -hex 32)
-echo $SEED > $SEED_FILE
+echo "Generating mnemonic..."
+MNEMONIC_DIR=mnemonics
+MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt
+mkdir -p $MNEMONIC_DIR >> $LOG_FILE 2>&1
+SEED=$(openssl-1.0 rand -hex 32)
+MNEMONIC=$($PWD/bin/bip39 $SEED)
+echo "$MNEMONIC" > $MNEMONIC_FILE
 
 echo "Generating SSL certificates..."
 
@@ -71,7 +72,7 @@ touch $OFAC_DATA_DIR/etags.json
 cat <<EOF > $CONFIG_DIR/lamassu.json
 {
   "postgresql": "psql://postgres:$POSTGRES_PASS@localhost/lamassu",
-  "seedPath": "$SEED_FILE",
+  "mnemonicPath": "$MNEMONIC_FILE",
   "caPath": "$CA_PATH",
   "certPath": "$SERVER_CERT_PATH",
   "keyPath": "$SERVER_KEY_PATH",
