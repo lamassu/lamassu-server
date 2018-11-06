@@ -2,12 +2,8 @@
 
 'use strict'
 
-const bip39 = require('bip39')
+const mnemonicHelpers = require('../lib/mnemonic-helpers')
 
 const seed = process.argv[2]
 
-const words = bip39.entropyToMnemonic(seed).split(' ')
-
-for (let i = 0; i < words.length; i += 6) {
-  console.log(words.slice(i, i + 6).join(' '))
-}
+console.log(mnemonicHelpers.fromSeed(seed))

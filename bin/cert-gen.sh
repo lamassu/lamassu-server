@@ -17,7 +17,7 @@ mkdir -p $CERT_DIR
 mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
 
 echo "Generating mnemonic..."
-MNEMONIC_DIR=mnemonics
+MNEMONIC_DIR=$CONFIG_DIR/mnemonics
 MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt
 mkdir -p $MNEMONIC_DIR >> $LOG_FILE 2>&1
 SEED=$(openssl-1.0 rand -hex 32)

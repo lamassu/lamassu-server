@@ -4,8 +4,8 @@
 
 const fs = require('fs')
 const path = require('path')
-const bip39 = require('bip39')
 const os = require('os')
+const mnemonicHelpers = require('../lib/mnemonic-helpers')
 const options = require('../lib/options-loader')()
 
 const mkdirSync = (dirPath) => {
@@ -19,14 +19,9 @@ const mkdirSync = (dirPath) => {
 
 if (!options.opts.mnemonicPath && options.opts.seedPath) {
   const seed = fs.readFileSync(options.opts.seedPath, 'utf8').trim()
-  const words = bip39.entropyToMnemonic(seed).split(' ')
+  const mnemonic = mnemonicHelpers.fromSeed(seed)
 
-  let mnemonic = ''
-  for (let i = 0; i < words.length; i += 6) {
-    mnemonic += words.slice(i, i + 6).join(' ') + os.EOL
-  }
-
-  options.opts.mnemonicPath = path.resolve(os.homedir(), 'mnemonic', 'mnemonic.txt')
+  options.opts.mnemonicPath = path.resolve(os.homedir(), 'mnemonics', 'mnemonic.txt')
 
   mkdirSync(path.dirname(options.opts.mnemonicPath))
   fs.writeFileSync(options.opts.mnemonicPath, mnemonic, 'utf8')
