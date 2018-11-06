@@ -114,6 +114,9 @@
         "notificationsEnabled",
         "notificationsEmailEnabled",
         "notificationsSMSEnabled",
+        "transactionNotificationsEnabled",
+        "transactionNotificationsEmailEnabled",
+        "transactionNotificationsSMSEnabled",
         "sms",
         "email"
       ]
@@ -761,6 +764,52 @@
       "fieldClass": null,
       "enabledIfAny": [
         "notificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
+    {
+      "code": "transactionNotificationsEnabled",
+      "displayTop": "Transaction Notifications enabled",
+      "displayBottom": "General",
+      "displayTopCount": 3,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
+    {
+      "code": "transactionNotificationsEmailEnabled",
+      "displayBottom": "Email",
+      "displayTopCount": 0,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "transactionNotificationsEnabled"
+      ],
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
+    {
+      "code": "transactionNotificationsSMSEnabled",
+      "displayBottom": "SMS",
+      "displayTopCount": 0,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "transactionNotificationsEnabled"
       ],
       "fieldValidation": [
         {
