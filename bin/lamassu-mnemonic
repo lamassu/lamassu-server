@@ -1,14 +1,8 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
-const bip39 = require('bip39')
 
 const options = require('../lib/options')
 
-const seed = fs.readFileSync(options.seedPath, 'utf8').trim()
-
-const words = bip39.entropyToMnemonic(seed).split(' ')
-
-for (let i = 0; i < words.length; i += 6) {
-  console.log(words.slice(i, i + 6).join(' '))
-}
+const mnemonic = fs.readFileSync(options.mnemonicPath, 'utf8').trim()
+console.log(mnemonic)

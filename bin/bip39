@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const mnemonicHelpers = require('../lib/mnemonic-helpers')
+
+const seed = process.argv[2]
+
+console.log(mnemonicHelpers.fromSeed(seed))

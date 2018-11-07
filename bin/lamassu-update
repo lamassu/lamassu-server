@@ -4,6 +4,8 @@ set -e
 export LOG_FILE=/tmp/update.$(date +"%Y%m%d").log
 export NPM_BIN=$(npm -g bin)
 
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+
 rm -f ${LOG_FILE}
 
 decho () {
@@ -54,6 +56,9 @@ npm rebuild >> ${LOG_FILE} 2>&1
 decho "running migration"
 lamassu-migrate >> ${LOG_FILE} 2>&1
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
+
+decho "update to mnemonic"
+$SCRIPTPATH/bin/lamassu-update-to-mnemonic --prod
 
 decho "updating supervisor conf"
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
