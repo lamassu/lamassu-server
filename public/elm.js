@@ -37732,43 +37732,52 @@ var _user$project$NavBar$view = F2(
 														ctor: '::',
 														_0: {
 															ctor: '_Tuple3',
-															_0: 'Kraken',
-															_1: _user$project$CoreTypes$AccountRoute('kraken'),
+															_0: 'itBit',
+															_1: _user$project$CoreTypes$AccountRoute('itbit'),
 															_2: true
 														},
 														_1: {
 															ctor: '::',
 															_0: {
 																ctor: '_Tuple3',
-																_0: 'Mailgun',
-																_1: _user$project$CoreTypes$AccountRoute('mailgun'),
+																_0: 'Kraken',
+																_1: _user$project$CoreTypes$AccountRoute('kraken'),
 																_2: true
 															},
 															_1: {
 																ctor: '::',
 																_0: {
 																	ctor: '_Tuple3',
-																	_0: 'QuadrigaCX',
-																	_1: _user$project$CoreTypes$AccountRoute('quadrigacx'),
+																	_0: 'Mailgun',
+																	_1: _user$project$CoreTypes$AccountRoute('mailgun'),
 																	_2: true
 																},
 																_1: {
 																	ctor: '::',
 																	_0: {
 																		ctor: '_Tuple3',
-																		_0: 'Strike',
-																		_1: _user$project$CoreTypes$AccountRoute('strike'),
+																		_0: 'QuadrigaCX',
+																		_1: _user$project$CoreTypes$AccountRoute('quadrigacx'),
 																		_2: true
 																	},
 																	_1: {
 																		ctor: '::',
 																		_0: {
 																			ctor: '_Tuple3',
-																			_0: 'Twilio',
-																			_1: _user$project$CoreTypes$AccountRoute('twilio'),
+																			_0: 'Strike',
+																			_1: _user$project$CoreTypes$AccountRoute('strike'),
 																			_2: true
 																		},
-																		_1: {ctor: '[]'}
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple3',
+																				_0: 'Twilio',
+																				_1: _user$project$CoreTypes$AccountRoute('twilio'),
+																				_2: true
+																			},
+																			_1: {ctor: '[]'}
+																		}
 																	}
 																}
 															}
