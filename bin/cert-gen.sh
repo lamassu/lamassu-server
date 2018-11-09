@@ -20,7 +20,7 @@ echo "Generating mnemonic..."
 MNEMONIC_DIR=$CONFIG_DIR/mnemonics
 MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt
 mkdir -p $MNEMONIC_DIR >> $LOG_FILE 2>&1
-SEED=$(openssl-1.0 rand -hex 32)
+SEED=$(openssl rand -hex 32)
 MNEMONIC=$($PWD/bin/bip39 $SEED)
 echo "$MNEMONIC" > $MNEMONIC_FILE
 
