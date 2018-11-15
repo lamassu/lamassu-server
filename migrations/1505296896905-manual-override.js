@@ -40,7 +40,7 @@ exports.up = function (next) {
     db.addColumn('customers', 'authorized_at', 'timestamptz'),
     db.addColumn('customers', 'sanctions_check_at', 'timestamptz'),
 
-    db.renameColumn('compliance_authorizations', 'name', 'compliance_overrides'),
+    'alter table compliance_authorizations rename to compliance_overrides',
     db.addColumn('compliance_overrides', 'verification', 'verification_type not null'),
     db.renameColumn('compliance_overrides', 'authorized_at', 'override_at'),
     db.renameColumn('compliance_overrides', 'authorized_by', 'override_by')

@@ -120,7 +120,7 @@ function dropColumn (table, column) {
 
 function renameColumn (table, column, newName) {
   return ifColumn(table, column,
-    ifColumn(table, column, `
+    ifColumn(table, newName, `
       ALTER TABLE ${table} 
         RENAME ${column} to ${newName}`, true, true))
 }
