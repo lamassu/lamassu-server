@@ -1,0 +1,257 @@
+#!/usr/bin/env bash
+set -e
+
+export LOG_FILE=/tmp/install.log
+
+CERT_DIR=/etc/ssl/certs
+KEY_DIR=/etc/ssl/private
+CONFIG_DIR=/etc/lamassu
+MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
+LAMASSU_CA_PATH=$CERT_DIR/Lamassu_CA.pem
+CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
+CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
+SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
+SERVER_CERT_PATH=$CERT_DIR/Lamassu_OP.pem
+SEEDS_DIR=$HOME/seeds
+SEED_FILE=$SEEDS_DIR/seed.txt
+BACKUP_DIR=/var/backups/postgresql
+BLOCKCHAIN_DIR=/mnt/blockchains
+OFAC_DATA_DIR=/var/lamassu/ofac
+
+# Look into http://unix.stackexchange.com/questions/140734/configure-localtime-dpkg-reconfigure-tzdata
+
+decho () {
+  echo `date +"%H:%M:%S"` $1
+  echo `date +"%H:%M:%S"` $1 >> $LOG_FILE
+}
+
+retry() {
+  local -r -i max_attempts="$1"; shift
+  local -r cmd="$@"
+  local -i attempt_num=1
+
+  until $cmd
+  do
+    if (( attempt_num == max_attempts ))
+    then
+        echo
+        echo "****************************************************************"
+        echo "Attempt $attempt_num failed and there are no more attempts left! ($cmd)"
+        return 1
+    else
+        echo
+        echo "****************************************************************"
+        echo "Attempt $attempt_num failed! Trying again in $attempt_num seconds..."
+        sleep $(( attempt_num++ ))
+    fi
+  done
+}
+
+rm -f $LOG_FILE
+
+cat <<'FIG'
+ _
+| | __ _ _ __ ___   __ _ ___ ___ _   _       ___  ___ _ ____   _____ _ __
+| |/ _` | '_ ` _ \ / _` / __/ __| | | |_____/ __|/ _ \ '__\ \ / / _ \ '__|
+| | (_| | | | | | | (_| \__ \__ \ |_| |_____\__ \  __/ |   \ V /  __/ |
+|_|\__,_|_| |_| |_|\__,_|___/___/\__,_|     |___/\___|_|    \_/ \___|_|
+FIG
+
+echo -e "\nStarting \033[1mlamassu-server\033[0m install. This will take a few minutes...\n"
+
+if [ "$(whoami)" != "root" ]; then
+  echo -e "This script has to be run as \033[1mroot\033[0m user"
+  exit 3
+fi
+
+release=$(lsb_release -rs)
+processor=$(uname -i)
+if [ "$release" != "16.04" ] || [ "$processor" != "x86_64" ]; then
+    echo "You're attempting to install on an unsupported Linux distribution or release."
+    uname -a
+    echo "Please return to DigitalOcean and create a droplet running Ubuntu 16.04 x64 instead."
+    exit 1
+fi
+
+# So we don't run out of memory
+decho "Enabling swap file for install only..."
+fallocate -l 1G /swapfile >> $LOG_FILE 2>&1
+chmod 600 /swapfile >> $LOG_FILE 2>&1
+mkswap /swapfile >> $LOG_FILE 2>&1
+swapon /swapfile >> $LOG_FILE 2>&1
+
+IP=$(ifconfig eth0 | grep "inet" | grep -v "inet6" | awk -F: '{print $2}' | awk '{print $1}')
+
+decho "Updating system..."
+sleep 10
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - >> $LOG_FILE 2>&1
+apt update >> $LOG_FILE 2>&1
+
+decho "Installing necessary packages..."
+apt install nodejs python-minimal build-essential supervisor postgresql libpq-dev -y -q >> $LOG_FILE 2>&1
+
+decho "Generating seed..."
+mkdir -p $SEEDS_DIR >> $LOG_FILE 2>&1
+SEED=$(openssl rand -hex 32)
+echo $SEED > $SEED_FILE
+
+decho "Installing latest npm package manager for node..."
+retry 3 npm -g --unsafe-perm install npm@5  >> $LOG_FILE 2>&1
+NODE_MODULES=$(npm -g root)
+NPM_BIN=$(npm -g bin)
+
+decho "Installing lamassu-server..."
+retry 3 npm -g --unsafe-perm install lamassu/lamassu-server#master >> $LOG_FILE 2>&1
+
+decho "Creating postgres user..."
+POSTGRES_PW=$(hkdf postgres-pw $SEED)
+su -l postgres >> $LOG_FILE 2>&1 <<EOF
+  psql -c "CREATE ROLE lamassu_pg WITH LOGIN SUPERUSER PASSWORD '$POSTGRES_PW';"
+  createdb lamassu
+EOF
+
+mkdir -p $CERT_DIR >> $LOG_FILE 2>&1
+mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
+
+decho "Generating SSL certificates..."
+
+openssl genrsa \
+  -out $CA_KEY_PATH \
+  4096 >> $LOG_FILE 2>&1
+
+openssl req \
+  -x509 \
+  -sha256 \
+  -new \
+  -nodes \
+  -key $CA_KEY_PATH \
+  -days 3560 \
+  -out $CA_PATH \
+  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator CA/CN=lamassu-operator.is" \
+  >> $LOG_FILE 2>&1
+
+openssl genrsa \
+  -out $SERVER_KEY_PATH \
+  4096 >> $LOG_FILE 2>&1
+
+openssl req -new \
+  -key $SERVER_KEY_PATH \
+  -out /tmp/Lamassu_OP.csr.pem \
+  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator/CN=$IP" \
+  -reqexts SAN \
+  -sha256 \
+  -config <(cat /etc/ssl/openssl.cnf \
+      <(printf "[SAN]\nsubjectAltName=IP.1:$IP")) \
+  >> $LOG_FILE 2>&1
+
+openssl x509 \
+  -req -in /tmp/Lamassu_OP.csr.pem \
+  -CA $CA_PATH \
+  -CAkey $CA_KEY_PATH \
+  -CAcreateserial \
+  -out $SERVER_CERT_PATH \
+  -extfile <(cat /etc/ssl/openssl.cnf \
+      <(printf "[SAN]\nsubjectAltName=IP.1:$IP")) \
+  -extensions SAN \
+  -days 3650 >> $LOG_FILE 2>&1
+
+rm /tmp/Lamassu_OP.csr.pem
+
+decho "Copying Lamassu certificate authority..."
+LAMASSU_CA_FILE=$NODE_MODULES/lamassu-server/Lamassu_CA.pem
+cp $LAMASSU_CA_FILE $LAMASSU_CA_PATH
+
+mkdir -p $OFAC_DATA_DIR
+
+cat <<EOF > $CONFIG_DIR/lamassu.json
+{
+  "postgresql": "postgres://lamassu_pg:$POSTGRES_PW@localhost/lamassu",
+  "seedPath": "$SEED_FILE",
+  "lamassuCaPath": "$LAMASSU_CA_PATH",
+  "caPath": "$CA_PATH",
+  "certPath": "$SERVER_CERT_PATH",
+  "keyPath": "$SERVER_KEY_PATH",
+  "hostname": "$IP",
+  "logLevel": "info",
+  "migrateStatePath": "$MIGRATE_STATE_PATH",
+  "blockchainDir": "$BLOCKCHAIN_DIR",
+  "ofacDataDir": "$OFAC_DATA_DIR",
+  "strike": {
+    "baseUrl": "https://api.strike.acinq.co/api/"
+  },
+  "coinAtmRadar": {
+    "url": "https://coinatmradar.info/api/lamassu/"
+  }
+}
+EOF
+
+decho "Setting up database tables..."
+lamassu-migrate >> $LOG_FILE 2>&1
+
+decho "Setting up lamassu-admin..."
+ADMIN_REGISTRATION_URL=`lamassu-register admin 2>> $LOG_FILE`
+lamassu-apply-defaults >> $LOG_FILE 2>&1
+
+decho "Setting up backups..."
+BIN=$(npm -g bin)
+BACKUP_CMD=$BIN/lamassu-backup-pg
+mkdir -p $BACKUP_DIR
+BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
+(crontab -l 2>/dev/null || echo -n ""; echo "$BACKUP_CRON") | crontab - >> $LOG_FILE 2>&1
+$BACKUP_CMD >> $LOG_FILE 2>&1
+
+decho "Setting up firewall..."
+ufw allow ssh >> $LOG_FILE 2>&1
+ufw allow 443/tcp >> $LOG_FILE 2>&1   # Admin
+ufw allow 3000/tcp >> $LOG_FILE 2>&1  # Server
+ufw allow 8071/tcp >> $LOG_FILE 2>&1  # Lamassu support
+ufw -f enable >> $LOG_FILE 2>&1
+
+decho "Setting up supervisor..."
+cat <<EOF > /etc/supervisor/conf.d/lamassu-server.conf
+[program:lamassu-server]
+command=${NPM_BIN}/lamassu-server
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/supervisor/lamassu-server.err.log
+stdout_logfile=/var/log/supervisor/lamassu-server.out.log
+environment=HOME="/root"
+EOF
+
+cat <<EOF > /etc/supervisor/conf.d/lamassu-admin-server.conf
+[program:lamassu-admin-server]
+command=${NPM_BIN}/lamassu-admin-server
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/supervisor/lamassu-admin-server.err.log
+stdout_logfile=/var/log/supervisor/lamassu-admin-server.out.log
+environment=HOME="/root"
+EOF
+
+service supervisor restart >> $LOG_FILE 2>&1
+
+decho "Disabling swap file..."
+swapoff /swapfile >> $LOG_FILE 2>&1
+
+# disable exitting on error in case DO changes motd scripts
+set +e
+chmod -x /etc/update-motd.d/*-release-upgrade
+chmod -x /etc/update-motd.d/*-updates-available
+chmod -x /etc/update-motd.d/*-reboot-required
+chmod -x /etc/update-motd.d/*-help-text
+chmod -x /etc/update-motd.d/*-cloudguest
+set -e
+
+echo
+decho "Done! Now it's time to configure Lamassu stack."
+echo
+echo -e "\n*** IMPORTANT ***"
+echo "In a private space, run lamassu-mnemonic, write down the words"
+echo "and keep them in a safe place."
+echo
+echo "This secret will allow you to retrieve system passwords, including "
+echo "the keys to some of your crypto accounts."
+echo
+echo
+echo "Activation URL for lamassu-admin:"
+echo $ADMIN_REGISTRATION_URL
