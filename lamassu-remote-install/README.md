@@ -1,4 +1,4 @@
-lamassu-install
+lamassu-remote-install
 ===============
 
 This will install your Lamassu Bitcoin Machine remote server.
