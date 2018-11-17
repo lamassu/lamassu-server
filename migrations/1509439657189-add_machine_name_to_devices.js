@@ -5,17 +5,17 @@ exports.up = function (next) {
   return migrateTools.migrateNames()
     .then(updateSql => {
       const sql = [
-        db.addColumn('devices', 'name', 'text'),
+        'alter table devices add column name text',
         updateSql,
-        db.alterColumn('devices', 'name', 'set not null')
+        'alter table devices alter column name set not null'
       ]
 
       return db.multi(sql, next)
     })
     .catch(() => {
       const sql = [
-        db.addColumn('devices', 'name', 'text'),
-        db.alterColumn('devices', 'name', 'set not null')
+        'alter table devices add column name text',
+        'alter table devices alter column name set not null'
       ]
 
       return db.multi(sql, next)
@@ -23,8 +23,6 @@ exports.up = function (next) {
 }
 
 exports.down = function (next) {
-  const sql = [
-    db.dropColumn('devices', 'name')
-  ]
+  const sql = ['alter table devices drop column name']
   db.multi(sql, next)
 }
