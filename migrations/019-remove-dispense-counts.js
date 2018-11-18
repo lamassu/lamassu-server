@@ -2,9 +2,9 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    db.dropColumn('dispenses', 'count1'),
-    db.dropColumn('dispenses', 'count2'),
-    db.dropColumn('dispenses', 'refill')
+    'alter table dispenses drop column count1',
+    'alter table dispenses drop column count2',
+    'alter table dispenses drop column refill'
   ]
   db.multi(sql, next)
 }

@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    db.addColumn('cash_out_txs', 'error_code', 'text')
+    'alter table cash_out_txs add column error_code text'
   ]
   db.multi(sql, next)
 }
