@@ -2,7 +2,7 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    `CREATE TABLE IF NOT EXISTS cash_out_hds (
+    `create table cash_out_hds (
       session_id uuid PRIMARY KEY,
       crypto_code text NOT NULL,
       hd_serial integer NOT NULL,
