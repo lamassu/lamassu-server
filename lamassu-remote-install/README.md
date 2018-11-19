@@ -14,10 +14,10 @@ Instructions
     ssh root@<your-new-ip-address>
     ```
 
-3. Paste the following command once you're logged in:
+3. Run the following command once you're logged in (default branch name is master):
 
     ```
-    curl -sS https://raw.githubusercontent.com/lamassu/lamassu-server/master/lamassu-remote-install/install | bash
+    curl -sS https://raw.githubusercontent.com/lamassu/lamassu-server/master/lamassu-remote-install/install | bash -s -- <branch-name>
     ```
 
 4. You should be set. Just follow the instructions on the screen to open your dashboard.
