@@ -40,7 +40,7 @@ fi
 
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
-n lts >> ${LOG_FILE} 2>&1
+n 8 >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
 export NPM_BIN=$(npm -g bin)
 
