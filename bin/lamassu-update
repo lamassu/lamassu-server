@@ -36,7 +36,11 @@ NPM_BIN=$(npm -g bin)
 decho "unlinking old ${NPM_BIN}/lamassu* executables"
 find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
 
+set +e
+# this can return exit code 1 if command was not found
 OLD_LS=$(which lamassu-server)
+set -e
+
 if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]; then
     decho "archiving old lamassu-server installation under ${OLD_LS}"
 
