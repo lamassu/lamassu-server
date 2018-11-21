@@ -3,7 +3,7 @@ var db = require('./db')
 exports.up = function (next) {
   var sql = [
     'drop table if exists cached_responses',
-    `create table if not exists idempotents (
+    `create table idempotents (
       request_id text PRIMARY KEY,
       device_id text NOT NULL,
       body json NOT NULL,

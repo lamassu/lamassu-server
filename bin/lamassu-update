@@ -28,6 +28,13 @@ if [ "$(whoami)" != "root" ]; then
   exit 3
 fi
 
+# Use a lock file so failed scripts cannot be imediately retried
+# If not the backup created on this script would be replaced
+if ! mkdir /var/lock/lamassu-update; then
+  echo "Script is locked because of a failure." >&2
+  exit 1
+fi
+
 decho "stopping lamassu-server"
 supervisorctl stop lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl stop lamassu-admin-server >> ${LOG_FILE} 2>&1
@@ -53,8 +60,11 @@ decho "rebuilding npm deps"
 cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
 npm rebuild >> ${LOG_FILE} 2>&1
 
+{
 decho "running migration"
-lamassu-migrate >> ${LOG_FILE} 2>&1
+  lamassu-migrate >> ${LOG_FILE} 2>&1
+} || { echo "Failure running migrations" ; exit 1 ; }
+
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
 
 decho "update to mnemonic"
@@ -87,5 +97,7 @@ set -e
 
 # reset terminal to link new executables
 hash -r
+
+rm -r /var/lock/lamassu-update
 
 decho "Update complete!"

@@ -37,7 +37,7 @@
     "mailgun-js": "^0.21.0",
     "make-dir": "^1.0.0",
     "mem": "^1.1.0",
-    "migrate": "^0.2.2",
+    "migrate": "^1.6.2",
     "minimist": "^1.2.0",
     "moment": "^2.17.0",
     "morgan": "^1.8.2",
@@ -80,7 +80,8 @@
     "lamassu-coins": "./bin/lamassu-coins",
     "lamassu-update": "./bin/lamassu-update",
     "lamassu-ofac-update": "./bin/lamassu-ofac-update",
-    "lamassu-send-coins": "./bin/lamassu-send-coins"
+    "lamassu-send-coins": "./bin/lamassu-send-coins",
+    "lamassu-update-to-mnemonic": "./bin/lamassu-update-to-mnemonic"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
