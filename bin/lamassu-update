@@ -46,8 +46,10 @@ if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" 
 
     BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
     tar czf ${BACKUP_NAME} ${OLD_LS}/ >> ${LOG_FILE} 2>&1
-    rm -Rfv ${OLD_LS} >> ${LOG_FILE} 2>&1
     decho "backup copy stored in ${BACKUP_NAME}"
+
+    decho "removing old installation path ${OLD_LS}"
+    rm -Rf ${OLD_LS} >> ${LOG_FILE} 2>&1
 fi
 
 NPM_BIN=$(npm -g bin)
