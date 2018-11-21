@@ -32,10 +32,6 @@ decho "stopping lamassu-server"
 supervisorctl stop lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl stop lamassu-admin-server >> ${LOG_FILE} 2>&1
 
-NPM_BIN=$(npm -g bin)
-decho "unlinking old ${NPM_BIN}/lamassu* executables"
-find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
-
 set +e
 # this can return exit code 1 if command was not found
 OLD_LS=$(which lamassu-server)
@@ -49,6 +45,10 @@ if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" 
     decho "backup copy stored in ${BACKUP_NAME}"
     rm -Rfv ${OLD_LS} >> ${LOG_FILE} 2>&1
 fi
+
+NPM_BIN=$(npm -g bin)
+decho "unlinking old ${NPM_BIN}/lamassu* executables"
+find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
 
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
