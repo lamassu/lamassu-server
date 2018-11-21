@@ -3,20 +3,22 @@ set -e
 
 export LOG_FILE=/tmp/install.log
 
+INSTALL_DIR=/opt/lamassu-server
 CERT_DIR=/etc/ssl/certs
 KEY_DIR=/etc/ssl/private
 CONFIG_DIR=/etc/lamassu
+BACKUP_DIR=/var/backups/postgresql
+BLOCKCHAIN_DIR=/mnt/blockchains
+OFAC_DATA_DIR=/var/lamassu/ofac
+SEEDS_DIR=$HOME/seeds
+
 MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
 LAMASSU_CA_PATH=$CERT_DIR/Lamassu_CA.pem
 CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
 CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
 SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
 SERVER_CERT_PATH=$CERT_DIR/Lamassu_OP.pem
-SEEDS_DIR=$HOME/seeds
 SEED_FILE=$SEEDS_DIR/seed.txt
-BACKUP_DIR=/var/backups/postgresql
-BLOCKCHAIN_DIR=/mnt/blockchains
-OFAC_DATA_DIR=/var/lamassu/ofac
 
 # Look into http://unix.stackexchange.com/questions/140734/configure-localtime-dpkg-reconfigure-tzdata
 
@@ -97,11 +99,18 @@ echo $SEED > $SEED_FILE
 
 decho "Installing latest npm package manager for node..."
 retry 3 npm -g --unsafe-perm install npm@5  >> $LOG_FILE 2>&1
-NODE_MODULES=$(npm -g root)
-NPM_BIN=$(npm -g bin)
 
 decho "Installing lamassu-server..."
-retry 3 npm -g --unsafe-perm install lamassu/lamassu-server#${1-master} >> $LOG_FILE 2>&1
+mkdir -vp ${INSTALL_DIR} >> $LOG_FILE 2>&1
+cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
+retry 3 npm --unsafe-perm install --production lamassu/lamassu-server#${1-master} >> $LOG_FILE 2>&1
+shopt -s dotglob >> $LOG_FILE 2>&1
+mv -fv ${INSTALL_DIR}/node_modules/lamassu-server/* ${INSTALL_DIR}/ >> $LOG_FILE 2>&1
+rm -Rfv ${INSTALL_DIR}/node_modules/lamassu-server/ >> $LOG_FILE 2>&1
+
+decho "Adding ${INSTALL_DIR}/bin to PATH"
+export PATH=${PATH}:${INSTALL_DIR}/bin
+perl -i -pe 's/PATH=.*/PATH=$ENV{PATH}/g' /etc/environment >> ${LOG_FILE} 2>&1
 
 decho "Creating postgres user..."
 POSTGRES_PW=$(hkdf postgres-pw $SEED)
@@ -158,10 +167,10 @@ openssl x509 \
 rm /tmp/Lamassu_OP.csr.pem
 
 decho "Copying Lamassu certificate authority..."
-LAMASSU_CA_FILE=$NODE_MODULES/lamassu-server/Lamassu_CA.pem
-cp $LAMASSU_CA_FILE $LAMASSU_CA_PATH
+LAMASSU_CA_FILE=${INSTALL_DIR}/Lamassu_CA.pem
+cp -v $LAMASSU_CA_FILE $LAMASSU_CA_PATH >> $LOG_FILE 2>&1
 
-mkdir -p $OFAC_DATA_DIR
+mkdir -p $OFAC_DATA_DIR >> $LOG_FILE 2>&1
 
 cat <<EOF > $CONFIG_DIR/lamassu.json
 {
@@ -193,8 +202,7 @@ ADMIN_REGISTRATION_URL=`lamassu-register admin 2>> $LOG_FILE`
 lamassu-apply-defaults >> $LOG_FILE 2>&1
 
 decho "Setting up backups..."
-BIN=$(npm -g bin)
-BACKUP_CMD=$BIN/lamassu-backup-pg
+BACKUP_CMD=${INSTALL_DIR}/bin/lamassu-backup-pg
 mkdir -p $BACKUP_DIR
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
 (crontab -l 2>/dev/null || echo -n ""; echo "$BACKUP_CRON") | crontab - >> $LOG_FILE 2>&1
@@ -210,7 +218,7 @@ ufw -f enable >> $LOG_FILE 2>&1
 decho "Setting up supervisor..."
 cat <<EOF > /etc/supervisor/conf.d/lamassu-server.conf
 [program:lamassu-server]
-command=${NPM_BIN}/lamassu-server
+command=${INSTALL_DIR}/bin/lamassu-server
 autostart=true
 autorestart=true
 stderr_logfile=/var/log/supervisor/lamassu-server.err.log
@@ -220,7 +228,7 @@ EOF
 
 cat <<EOF > /etc/supervisor/conf.d/lamassu-admin-server.conf
 [program:lamassu-admin-server]
-command=${NPM_BIN}/lamassu-admin-server
+command=${INSTALL_DIR}/bin/lamassu-admin-server
 autostart=true
 autorestart=true
 stderr_logfile=/var/log/supervisor/lamassu-admin-server.err.log
