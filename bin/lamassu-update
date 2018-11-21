@@ -45,7 +45,7 @@ if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" 
     decho "archiving old lamassu-server installation located in ${OLD_LS}"
 
     BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
-    tar czf ${BACKUP_NAME} ${OLD_LS}/ --exclude node_modules >> ${LOG_FILE} 2>&1
+    tar czf ${BACKUP_NAME} ${OLD_LS}/ >> ${LOG_FILE} 2>&1
     rm -Rfv ${OLD_LS} >> ${LOG_FILE} 2>&1
     decho "backup copy stored in ${BACKUP_NAME}"
 fi
@@ -88,11 +88,17 @@ supervisorctl update lamassu-admin-server >> ${LOG_FILE} 2>&1
 supervisorctl start lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl start lamassu-admin-server >> ${LOG_FILE} 2>&1
 
-decho "updating backups conf"
+decho "updating crontab (before)"
+crontab -l >> ${LOG_FILE} 2>&1
+
+decho "updating backup cronjob"
 BACKUP_CMD=${INSTALL_DIR}/bin/lamassu-backup-pg
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
-( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> ${LOG_FILE} 2>&1
+( (crontab -l 2>/dev/null || echo -n "") | grep -v "@daily.*lamassu-backup-pg"; echo $BACKUP_CRON ) | crontab - >> ${LOG_FILE} 2>&1
 $BACKUP_CMD >> ${LOG_FILE} 2>&1
+
+decho "updating crontab (after)"
+crontab -l >> ${LOG_FILE} 2>&1
 
 decho "updating motd scripts"
 set +e
