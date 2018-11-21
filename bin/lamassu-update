@@ -89,6 +89,7 @@ supervisorctl start lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl start lamassu-admin-server >> ${LOG_FILE} 2>&1
 
 decho "updating crontab (before)"
+crontab -l
 crontab -l >> ${LOG_FILE} 2>&1
 
 decho "updating backup cronjob"
@@ -98,6 +99,7 @@ BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
 $BACKUP_CMD >> ${LOG_FILE} 2>&1
 
 decho "updating crontab (after)"
+crontab -l
 crontab -l >> ${LOG_FILE} 2>&1
 
 decho "updating motd scripts"
