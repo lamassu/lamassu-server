@@ -60,6 +60,10 @@ mkdir -vp ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
 cd ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
 npm --unsafe-perm install --production lamassu/lamassu-server#master >> ${LOG_FILE} 2>&1
 
+decho "Adding ${INSTALL_DIR}/bin to PATH"
+export PATH=${PATH}:${INSTALL_DIR}/bin
+perl -i -pe 's/PATH=.*/PATH=$ENV{PATH}/g' /etc/environment >> ${LOG_FILE} 2>&1
+
 decho "rebuilding npm deps"
 npm rebuild >> ${LOG_FILE} 2>&1
 
