@@ -116,4 +116,9 @@ set -e
 # reset terminal to link new executables
 hash -r
 
+# refresh env var
+set -a;
+source /etc/environment;
+set +a;
+
 decho "Update complete!"
