@@ -56,6 +56,7 @@ n lts >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
 
 decho "updating lamassu-server#master"
+mkdir -vp ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
 cd ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
 npm --unsafe-perm install --production lamassu/lamassu-server#master >> ${LOG_FILE} 2>&1
 
