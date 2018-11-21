@@ -39,8 +39,9 @@ set -e
 
 if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]; then
     # workout the base installation path
+    OLD_LS=$(realpath ${OLD_LS})
     OLD_LS=$(dirname ${OLD_LS})
-    OLD_LS=$(realpath ${OLD_LS}/..)
+    OLD_LS=$(dirname ${OLD_LS})
     decho "archiving old lamassu-server installation located in ${OLD_LS}"
 
     BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
