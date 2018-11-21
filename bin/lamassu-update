@@ -65,7 +65,7 @@ cd ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
 npm --unsafe-perm install --production lamassu/lamassu-server#master >> ${LOG_FILE} 2>&1
 
 decho "Adding ${INSTALL_DIR}/bin to PATH"
-if [ ! -f "${INSTALL_DIR}/bin" ]; then
+if [ ! -e "${INSTALL_DIR}/bin" ]; then
     ln -s ${INSTALL_DIR}/node_modules/lamassu-server/bin ${INSTALL_DIR}/bin >> $LOG_FILE 2>&1
 fi
 export PATH=${PATH}:${INSTALL_DIR}/bin
@@ -88,18 +88,18 @@ supervisorctl update lamassu-admin-server >> ${LOG_FILE} 2>&1
 supervisorctl start lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl start lamassu-admin-server >> ${LOG_FILE} 2>&1
 
-decho "updating crontab (before)"
-crontab -l
+echo `date +"%H:%M:%S"` "crontab before the update" >> ${LOG_FILE}
 crontab -l >> ${LOG_FILE} 2>&1
 
 decho "updating backup cronjob"
 BACKUP_CMD=${INSTALL_DIR}/bin/lamassu-backup-pg
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
+set +e
 ( (crontab -l 2>/dev/null || echo -n "") | grep -v "@daily.*lamassu-backup-pg"; echo $BACKUP_CRON ) | crontab - >> ${LOG_FILE} 2>&1
+set -e
 $BACKUP_CMD >> ${LOG_FILE} 2>&1
 
-decho "updating crontab (after)"
-crontab -l
+echo `date +"%H:%M:%S"` "crontab after the update" >> ${LOG_FILE}
 crontab -l >> ${LOG_FILE} 2>&1
 
 decho "updating motd scripts"
