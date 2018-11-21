@@ -104,9 +104,7 @@ decho "Installing lamassu-server..."
 mkdir -vp ${INSTALL_DIR} >> $LOG_FILE 2>&1
 cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
 retry 3 npm --unsafe-perm install --production lamassu/lamassu-server#${1-master} >> $LOG_FILE 2>&1
-shopt -s dotglob >> $LOG_FILE 2>&1
-mv -fv ${INSTALL_DIR}/node_modules/lamassu-server/* ${INSTALL_DIR}/ >> $LOG_FILE 2>&1
-rm -Rfv ${INSTALL_DIR}/node_modules/lamassu-server/ >> $LOG_FILE 2>&1
+ln -s ${INSTALL_DIR}/node_modules/lamassu-server/bin ${INSTALL_DIR}/bin >> $LOG_FILE 2>&1
 
 decho "Adding ${INSTALL_DIR}/bin to PATH"
 export PATH=${PATH}:${INSTALL_DIR}/bin
@@ -167,7 +165,7 @@ openssl x509 \
 rm /tmp/Lamassu_OP.csr.pem
 
 decho "Copying Lamassu certificate authority..."
-LAMASSU_CA_FILE=${INSTALL_DIR}/Lamassu_CA.pem
+LAMASSU_CA_FILE=${INSTALL_DIR}/node_modules/lamassu-server/Lamassu_CA.pem
 cp -v $LAMASSU_CA_FILE $LAMASSU_CA_PATH >> $LOG_FILE 2>&1
 
 mkdir -p $OFAC_DATA_DIR >> $LOG_FILE 2>&1
