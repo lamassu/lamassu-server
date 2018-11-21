@@ -38,14 +38,15 @@ OLD_LS=$(which lamassu-server)
 set -e
 
 if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]; then
+    # workout the base installation path
     OLD_LS=$(dirname ${OLD_LS})
     OLD_LS=$(realpath ${OLD_LS}/..)
-    decho "archiving old lamassu-server installation under ${OLD_LS}"
+    decho "archiving old lamassu-server installation located in ${OLD_LS}"
 
     BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
     tar czf ${BACKUP_NAME} ${OLD_LS}/ --exclude node_modules >> ${LOG_FILE} 2>&1
-    decho "backup copy stored in ${BACKUP_NAME}"
     rm -Rfv ${OLD_LS} >> ${LOG_FILE} 2>&1
+    decho "backup copy stored in ${BACKUP_NAME}"
 fi
 
 NPM_BIN=$(npm -g bin)
