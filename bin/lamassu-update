@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+export INSTALL_DIR=/opt/lamassu-server
+export BACKUP_DIR=/opt
+
 export LOG_FILE=/tmp/update.$(date +"%Y%m%d").log
-export NPM_BIN=$(npm -g bin)
 
 rm -f ${LOG_FILE}
 
@@ -30,25 +32,30 @@ decho "stopping lamassu-server"
 supervisorctl stop lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl stop lamassu-admin-server >> ${LOG_FILE} 2>&1
 
-decho "unlinking ${NPM_BIN}/lamassu* old executables"
+NPM_BIN=$(npm -g bin)
+decho "unlinking old ${NPM_BIN}/lamassu* executables"
 find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
 
-if [ -d "/usr/lib/node_modules/lamassu-server" ]; then
-    decho "renaming old lamassu-server instance to lamassu-server-old"
-    mv -v "/usr/lib/node_modules/lamassu-server" "/usr/lib/node_modules/lamassu-server-old" >> ${LOG_FILE} 2>&1
+OLD_LS=$(which lamassu-server)
+if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]; then
+    decho "archiving old lamassu-server installation under ${OLD_LS}"
+
+    BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
+    tar czf ${BACKUP_NAME} ${OLD_LS}/ --exclude node_modules >> ${LOG_FILE} 2>&1
+    decho "backup copy stored in ${BACKUP_NAME}"
+    rm -Rfv ${OLD_LS} >> ${LOG_FILE} 2>&1
 fi
 
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
 n lts >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
-export NPM_BIN=$(npm -g bin)
 
 decho "updating lamassu-server#master"
-npm -g install lamassu/lamassu-server#master --unsafe-perm >> ${LOG_FILE} 2>&1
+cd ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
+npm --unsafe-perm install --production lamassu/lamassu-server#master >> ${LOG_FILE} 2>&1
 
 decho "rebuilding npm deps"
-cd $(npm root -g)/lamassu-server/ >> ${LOG_FILE} 2>&1
 npm rebuild >> ${LOG_FILE} 2>&1
 
 decho "running migration"
@@ -56,8 +63,8 @@ lamassu-migrate >> ${LOG_FILE} 2>&1
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
 
 decho "updating supervisor conf"
-perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
-perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
+perl -i -pe 's/command=.*/command=$ENV{INSTALL_DIR}\/bin\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
+perl -i -pe 's/command=.*/command=$ENV{INSTALL_DIR}\/bin\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
 
 decho "updating lamassu-server"
 supervisorctl update lamassu-server >> ${LOG_FILE} 2>&1
@@ -66,10 +73,10 @@ supervisorctl start lamassu-server >> ${LOG_FILE} 2>&1
 supervisorctl start lamassu-admin-server >> ${LOG_FILE} 2>&1
 
 decho "updating backups conf"
-BACKUP_CMD=${NPM_BIN}/lamassu-backup-pg
+BACKUP_CMD=${INSTALL_DIR}/bin/lamassu-backup-pg
 BACKUP_CRON="@daily $BACKUP_CMD > /dev/null"
-( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> $LOG_FILE 2>&1
-$BACKUP_CMD >> $LOG_FILE 2>&1
+( (crontab -l 2>/dev/null || echo -n "") | grep -v '@daily.*lamassu-backup-pg'; echo $BACKUP_CRON ) | crontab - >> ${LOG_FILE} 2>&1
+$BACKUP_CMD >> ${LOG_FILE} 2>&1
 
 decho "updating motd scripts"
 set +e
