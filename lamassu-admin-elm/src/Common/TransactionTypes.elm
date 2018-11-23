@@ -18,6 +18,7 @@ type alias CashInTxRec =
     , cryptoAtoms : Int
     , cryptoCode : CryptoCode
     , fiat : Float
+    , commissionPercentage : Maybe Float
     , fiatCode : String
     , txHash : Maybe String
     , phone : Maybe String
@@ -37,6 +38,7 @@ type alias CashOutTxRec =
     , cryptoAtoms : Int
     , cryptoCode : CryptoCode
     , fiat : Float
+    , commissionPercentage : Maybe Float
     , fiatCode : String
     , status : String
     , dispense : Bool
