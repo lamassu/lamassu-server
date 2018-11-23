@@ -28477,7 +28477,9 @@ var _user$project$Common_TransactionTypes$CashInTxRec = function (a) {
 												return function (m) {
 													return function (n) {
 														return function (o) {
-															return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, txHash: h, phone: i, error: j, operatorCompleted: k, send: l, sendConfirmed: m, expired: n, created: o};
+															return function (p) {
+																return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, commissionPercentage: g, fiatCode: h, txHash: i, phone: j, error: k, operatorCompleted: l, send: m, sendConfirmed: n, expired: o, created: p};
+															};
 														};
 													};
 												};
@@ -28508,7 +28510,9 @@ var _user$project$Common_TransactionTypes$CashOutTxRec = function (a) {
 												return function (m) {
 													return function (n) {
 														return function (o) {
-															return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, fiatCode: g, status: h, dispense: i, notified: j, redeemed: k, phone: l, error: m, created: n, confirmed: o};
+															return function (p) {
+																return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, commissionPercentage: g, fiatCode: h, status: i, dispense: j, notified: k, redeemed: l, phone: m, error: n, created: o, confirmed: p};
+															};
 														};
 													};
 												};
@@ -33986,29 +33990,33 @@ var _user$project$Transaction_Decoder$cashInTxDecoder = A3(
 									_elm_lang$core$Json_Decode$string,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'fiat',
-										_user$project$Transaction_Decoder$floatString,
+										'commissionPercentage',
+										_elm_lang$core$Json_Decode$nullable(_user$project$Transaction_Decoder$floatString),
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'cryptoCode',
-											_user$project$Transaction_Decoder$cryptoCodeDecoder,
+											'fiat',
+											_user$project$Transaction_Decoder$floatString,
 											A3(
 												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'cryptoAtoms',
-												_user$project$Transaction_Decoder$intString,
+												'cryptoCode',
+												_user$project$Transaction_Decoder$cryptoCodeDecoder,
 												A3(
 													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-													'toAddress',
-													_elm_lang$core$Json_Decode$string,
+													'cryptoAtoms',
+													_user$project$Transaction_Decoder$intString,
 													A3(
 														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-														'machineName',
+														'toAddress',
 														_elm_lang$core$Json_Decode$string,
 														A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-															'id',
+															'machineName',
 															_elm_lang$core$Json_Decode$string,
-															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec))))))))))))))));
+															A3(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																'id',
+																_elm_lang$core$Json_Decode$string,
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec)))))))))))))))));
 var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'confirmedAt',
@@ -34047,29 +34055,33 @@ var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 									_elm_lang$core$Json_Decode$string,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'fiat',
-										_user$project$Transaction_Decoder$floatString,
+										'commissionPercentage',
+										_elm_lang$core$Json_Decode$nullable(_user$project$Transaction_Decoder$floatString),
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'cryptoCode',
-											_user$project$Transaction_Decoder$cryptoCodeDecoder,
+											'fiat',
+											_user$project$Transaction_Decoder$floatString,
 											A3(
 												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'cryptoAtoms',
-												_user$project$Transaction_Decoder$intString,
+												'cryptoCode',
+												_user$project$Transaction_Decoder$cryptoCodeDecoder,
 												A3(
 													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-													'toAddress',
-													_elm_lang$core$Json_Decode$string,
+													'cryptoAtoms',
+													_user$project$Transaction_Decoder$intString,
 													A3(
 														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-														'machineName',
+														'toAddress',
 														_elm_lang$core$Json_Decode$string,
 														A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-															'id',
+															'machineName',
 															_elm_lang$core$Json_Decode$string,
-															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashOutTxRec))))))))))))))));
+															A3(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																'id',
+																_elm_lang$core$Json_Decode$string,
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashOutTxRec)))))))))))))))));
 var _user$project$Transaction_Decoder$txDecode = function (txClass) {
 	var _p4 = txClass;
 	switch (_p4) {
@@ -34289,7 +34301,10 @@ var _user$project$Transactions$rowView = function (tx) {
 												{
 													ctor: '::',
 													_0: _elm_lang$html$Html$text(
-														A2(_elm_lang$core$Maybe$withDefault, '', _p3.phone)),
+														A2(
+															_ggb$numeral_elm$Numeral$format,
+															'0,0.00',
+															A2(_elm_lang$core$Maybe$withDefault, 0.0, _p3.commissionPercentage))),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
@@ -34301,17 +34316,38 @@ var _user$project$Transactions$rowView = function (tx) {
 														_0: _user$project$Css_Admin$class(
 															{
 																ctor: '::',
-																_0: _user$project$Css_Classes$TxAddress,
+																_0: _user$project$Css_Classes$NumberColumn,
 																_1: {ctor: '[]'}
 															}),
 														_1: {ctor: '[]'}
 													},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text(_p3.toAddress),
+														_0: _elm_lang$html$Html$text(
+															A2(_elm_lang$core$Maybe$withDefault, '', _p3.phone)),
 														_1: {ctor: '[]'}
 													}),
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{
+															ctor: '::',
+															_0: _user$project$Css_Admin$class(
+																{
+																	ctor: '::',
+																	_0: _user$project$Css_Classes$TxAddress,
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(_p3.toAddress),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -34460,7 +34496,10 @@ var _user$project$Transactions$rowView = function (tx) {
 												{
 													ctor: '::',
 													_0: _elm_lang$html$Html$text(
-														A2(_elm_lang$core$Maybe$withDefault, '', _p4.phone)),
+														A2(
+															_ggb$numeral_elm$Numeral$format,
+															'0,0.00',
+															A2(_elm_lang$core$Maybe$withDefault, 0.0, _p4.commissionPercentage))),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
@@ -34472,17 +34511,38 @@ var _user$project$Transactions$rowView = function (tx) {
 														_0: _user$project$Css_Admin$class(
 															{
 																ctor: '::',
-																_0: _user$project$Css_Classes$TxAddress,
+																_0: _user$project$Css_Classes$NumberColumn,
 																_1: {ctor: '[]'}
 															}),
 														_1: {ctor: '[]'}
 													},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text(_p4.toAddress),
+														_0: _elm_lang$html$Html$text(
+															A2(_elm_lang$core$Maybe$withDefault, '', _p4.phone)),
 														_1: {ctor: '[]'}
 													}),
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{
+															ctor: '::',
+															_0: _user$project$Css_Admin$class(
+																{
+																	ctor: '::',
+																	_0: _user$project$Css_Classes$TxAddress,
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(_p4.toAddress),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -34633,14 +34693,14 @@ var _user$project$Transactions$tableView = function (txs) {
 															_0: _user$project$Css_Admin$class(
 																{
 																	ctor: '::',
-																	_0: _user$project$Css_Classes$TxPhone,
+																	_0: _user$project$Css_Classes$TxAmount,
 																	_1: {ctor: '[]'}
 																}),
 															_1: {ctor: '[]'}
 														},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text('Phone'),
+															_0: _elm_lang$html$Html$text('Commission'),
 															_1: {ctor: '[]'}
 														}),
 													_1: {
@@ -34652,17 +34712,37 @@ var _user$project$Transactions$tableView = function (txs) {
 																_0: _user$project$Css_Admin$class(
 																	{
 																		ctor: '::',
-																		_0: _user$project$Css_Classes$TxAddress,
+																		_0: _user$project$Css_Classes$TxPhone,
 																		_1: {ctor: '[]'}
 																	}),
 																_1: {ctor: '[]'}
 															},
 															{
 																ctor: '::',
-																_0: _elm_lang$html$Html$text('To address'),
+																_0: _elm_lang$html$Html$text('Phone'),
 																_1: {ctor: '[]'}
 															}),
-														_1: {ctor: '[]'}
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$td,
+																{
+																	ctor: '::',
+																	_0: _user$project$Css_Admin$class(
+																		{
+																			ctor: '::',
+																			_0: _user$project$Css_Classes$TxAddress,
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('To address'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														}
 													}
 												}
 											}
