@@ -66,6 +66,7 @@ cashInTxDecoder =
         |> required "cryptoCode" cryptoCodeDecoder
         |> required "fiat" floatString
         |> required "commissionPercentage" (nullable floatString)
+        |> required "rawTickerPrice" (nullable floatString)
         |> required "fiatCode" string
         |> required "txHash" (nullable string)
         |> required "phone" (nullable string)
@@ -93,6 +94,7 @@ cashOutTxDecoder =
         |> required "cryptoCode" cryptoCodeDecoder
         |> required "fiat" floatString
         |> required "commissionPercentage" (nullable floatString)
+        |> required "rawTickerPrice" (nullable floatString)
         |> required "fiatCode" string
         |> required "status" string
         |> required "dispense" bool
