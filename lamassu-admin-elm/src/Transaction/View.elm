@@ -43,6 +43,7 @@ cashInTxView tx =
             [ div [] [ text tx.id ]
             , div [] [ text "This is a cash-in transaction" ]
             , div [] [ text ("Fiat: " ++ (format "0,0.00" tx.fiat)) ]
+            , div [] [ text ("Raw ticker price: " ++ (format "0,0.00" (Maybe.withDefault 0.0 tx.rawTickerPrice))) ]
             , div [] [ text ("Status: " ++ cancelStatus) ]
             , div [] [ text error ]
             , cancelButtonDiv
@@ -64,6 +65,7 @@ cashOutTxView tx =
             [ div [] [ text tx.id ]
             , div [] [ text "This is a cash-out transaction" ]
             , div [] [ text ("Fiat: " ++ (format "0,0.00" tx.fiat)) ]
+            , div [] [ text ("Raw ticker price: " ++ (format "0,0.00" (Maybe.withDefault 0.0 tx.rawTickerPrice))) ]
             , div [] [ text error ]
             ]
 
