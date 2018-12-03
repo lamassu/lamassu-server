@@ -97,6 +97,9 @@ else
     decho "pull the latest changes from lamassu-server#$(git branch)"
     git pull origin --ff-only >> ${LOG_FILE} 2>&1
 
+    decho "current commit from lamassu-server#$(git branch)"
+    git log -1 >> ${LOG_FILE} 2>&1
+    git log -1
 fi
 
 decho "rebuilding npm deps"
