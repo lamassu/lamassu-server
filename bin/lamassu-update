@@ -39,7 +39,7 @@ set -e
 
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
-n lts >> ${LOG_FILE} 2>&1
+n 8 >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
 
 # if needed, migrate to the new install path
@@ -67,7 +67,7 @@ fi
 
 if [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]]; then
     # fresh new install under /opt
-    decho "updating lamassu-server (path=${INSTALL_DIR})..."
+    decho "installing lamassu-server (path=${INSTALL_DIR})"
     git clone https://github.com/lamassu/lamassu-server.git --branch ${1-master} ${INSTALL_DIR} >> $LOG_FILE 2>&1
     cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
     npm --unsafe-perm install --production >> $LOG_FILE 2>&1
@@ -76,10 +76,10 @@ if [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]]; then
     export PATH=${PATH}:${INSTALL_DIR}/bin
     perl -i -pe 's/PATH=.*/PATH=$ENV{PATH}/g' /etc/environment >> ${LOG_FILE} 2>&1
 
-# if install path is unknown
-# else
-# if [ "${OLD_LS}" == "${INSTALL_DIR}/bin/lamassu-server" ]; then
-#    # backup the current install if needed
+else
+    # if there are any changes in /opt/lamassu-server
+    # backup the current installation
+    cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
 fi
 
 decho "rebuilding npm deps"
