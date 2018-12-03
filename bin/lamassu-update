@@ -37,13 +37,18 @@ set +e
 OLD_LS=$(which lamassu-server)
 set -e
 
+decho "updating node"
+npm install n -g >> ${LOG_FILE} 2>&1
+n lts >> ${LOG_FILE} 2>&1
+decho "version installed $(node -v)"
+
 # if needed, migrate to the new install path
 if [[ ! -z "${OLD_LS}" ]] && [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]]; then
     # workout the base installation path
     OLD_LS=$(realpath ${OLD_LS})
     OLD_LS=$(dirname ${OLD_LS})
     OLD_LS=$(dirname ${OLD_LS})
-    decho "archiving old lamassu-server installation located in ${OLD_LS}"
+    decho "archiving old lamassu-server (path=${OLD_LS})"
 
     # archive the old version
     BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
@@ -51,7 +56,7 @@ if [[ ! -z "${OLD_LS}" ]] && [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-serve
     decho "backup copy stored in ${BACKUP_NAME}"
 
     # remove it
-    decho "removing old installation path ${OLD_LS}"
+    decho "removing old lamassu-server (path=${OLD_LS})"
     rm -Rf ${OLD_LS} >> ${LOG_FILE} 2>&1
 
     # unlink package.json binaries
@@ -60,15 +65,9 @@ if [[ ! -z "${OLD_LS}" ]] && [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-serve
     find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
 fi
 
-decho "updating node"
-npm install n -g >> ${LOG_FILE} 2>&1
-n lts >> ${LOG_FILE} 2>&1
-decho "version installed $(node -v)"
-
-# if install path is unknown
-if [[ -z "${OLD_LS}" ]]; then
+if [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]]; then
     # fresh new install under /opt
-    decho "updating lamassu-server (moved to ${INSTALL_DIR})..."
+    decho "updating lamassu-server (path=${INSTALL_DIR})..."
     git clone https://github.com/lamassu/lamassu-server.git --branch ${1-master} ${INSTALL_DIR} >> $LOG_FILE 2>&1
     cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
     npm --unsafe-perm install --production >> $LOG_FILE 2>&1
@@ -77,6 +76,7 @@ if [[ -z "${OLD_LS}" ]]; then
     export PATH=${PATH}:${INSTALL_DIR}/bin
     perl -i -pe 's/PATH=.*/PATH=$ENV{PATH}/g' /etc/environment >> ${LOG_FILE} 2>&1
 
+# if install path is unknown
 # else
 # if [ "${OLD_LS}" == "${INSTALL_DIR}/bin/lamassu-server" ]; then
 #    # backup the current install if needed
