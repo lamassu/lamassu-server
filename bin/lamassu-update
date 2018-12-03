@@ -94,10 +94,11 @@ else
         git clean -fd
     fi
 
-    decho "pull the latest changes from lamassu-server#$(git branch)"
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    decho "pull the latest changes from lamassu-server#${BRANCH}"
     git pull origin --ff-only >> ${LOG_FILE} 2>&1
 
-    decho "current commit from lamassu-server#$(git branch)"
+    decho "current commit from lamassu-server ${BRANCH}"
     git log -1 >> ${LOG_FILE} 2>&1
     git log -1
 fi
