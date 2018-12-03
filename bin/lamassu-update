@@ -80,6 +80,23 @@ else
     # if there are any changes in /opt/lamassu-server
     # backup the current installation
     cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
+
+    if [ "$(git status -s | wc -l)" -ne "0" ]; then
+        decho "detected changes in ${INSTALL_DIR}"
+        git status -s >> ${LOG_FILE} 2>&1
+
+        # archive the old version
+        BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
+        tar czf ${BACKUP_NAME} ${INSTALL_DIR}/ >> ${LOG_FILE} 2>&1
+        decho "backup copy stored in ${BACKUP_NAME}"
+
+        # reset the repository
+        git clean -fd
+    fi
+
+    decho "pull the latest changes from lamassu-server#$(git branch)"
+    git pull origin --ff-only >> ${LOG_FILE} 2>&1
+
 fi
 
 decho "rebuilding npm deps"
