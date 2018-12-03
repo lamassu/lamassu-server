@@ -37,43 +37,53 @@ set +e
 OLD_LS=$(which lamassu-server)
 set -e
 
-if [ ! -z "${OLD_LS}" ] && [ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]; then
+# if needed, migrate to the new install path
+if [[ ! -z "${OLD_LS}" ]] && [[ "${OLD_LS}" != "${INSTALL_DIR}/bin/lamassu-server" ]]; then
     # workout the base installation path
     OLD_LS=$(realpath ${OLD_LS})
     OLD_LS=$(dirname ${OLD_LS})
     OLD_LS=$(dirname ${OLD_LS})
     decho "archiving old lamassu-server installation located in ${OLD_LS}"
 
+    # archive the old version
     BACKUP_NAME=${BACKUP_DIR}/lamassu-server-$(date +%s).tar.gz
     tar czf ${BACKUP_NAME} ${OLD_LS}/ >> ${LOG_FILE} 2>&1
     decho "backup copy stored in ${BACKUP_NAME}"
 
+    # remove it
     decho "removing old installation path ${OLD_LS}"
     rm -Rf ${OLD_LS} >> ${LOG_FILE} 2>&1
-fi
 
-NPM_BIN=$(npm -g bin)
-decho "unlinking old ${NPM_BIN}/lamassu* executables"
-find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
+    # unlink package.json binaries
+    NPM_BIN=$(npm -g bin)
+    decho "unlinking old ${NPM_BIN}/lamassu* executables"
+    find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
+fi
 
 decho "updating node"
 npm install n -g >> ${LOG_FILE} 2>&1
 n lts >> ${LOG_FILE} 2>&1
 decho "version installed $(node -v)"
 
-decho "updating lamassu-server#master"
-mkdir -vp ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
-cd ${INSTALL_DIR} >> ${LOG_FILE} 2>&1
-npm --unsafe-perm install --production lamassu/lamassu-server#master >> ${LOG_FILE} 2>&1
+# if install path is unknown
+if [[ -z "${OLD_LS}" ]]; then
+    # fresh new install under /opt
+    decho "updating lamassu-server (moved to ${INSTALL_DIR})..."
+    git clone https://github.com/lamassu/lamassu-server.git --branch ${1-master} ${INSTALL_DIR} >> $LOG_FILE 2>&1
+    cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
+    npm --unsafe-perm install --production >> $LOG_FILE 2>&1
 
-decho "Adding ${INSTALL_DIR}/bin to PATH"
-if [ ! -e "${INSTALL_DIR}/bin" ]; then
-    ln -s ${INSTALL_DIR}/node_modules/lamassu-server/bin ${INSTALL_DIR}/bin >> $LOG_FILE 2>&1
+    decho "Adding ${INSTALL_DIR}/bin to PATH"
+    export PATH=${PATH}:${INSTALL_DIR}/bin
+    perl -i -pe 's/PATH=.*/PATH=$ENV{PATH}/g' /etc/environment >> ${LOG_FILE} 2>&1
+
+# else
+# if [ "${OLD_LS}" == "${INSTALL_DIR}/bin/lamassu-server" ]; then
+#    # backup the current install if needed
 fi
-export PATH=${PATH}:${INSTALL_DIR}/bin
-perl -i -pe 's/PATH=.*/PATH=$ENV{PATH}/g' /etc/environment >> ${LOG_FILE} 2>&1
 
 decho "rebuilding npm deps"
+cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
 npm rebuild >> ${LOG_FILE} 2>&1
 
 decho "running migration"
