@@ -4,6 +4,7 @@
   "certPath": "/etc/ssl/certs/Lamassu_OP.pem",
   "keyPath": "/etc/ssl/private/Lamassu_OP.key",
   "logLevel": "info",
+  "manufacturingMode": false,
   "migrateStatePath": "/etc/lamassu/.migrate",
   "blockchainDir": "/mnt/blockchains",
   "ofacDataDir": "/opt/lamassu-server/sanctions",
