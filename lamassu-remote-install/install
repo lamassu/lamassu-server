@@ -90,7 +90,7 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - >> $LOG_FILE 2>&1
 apt update >> $LOG_FILE 2>&1
 
 decho "Installing necessary packages..."
-apt install nodejs python-minimal build-essential supervisor postgresql libpq-dev -y -q >> $LOG_FILE 2>&1
+apt install nodejs python-minimal build-essential supervisor postgresql libpq-dev git -y -q >> $LOG_FILE 2>&1
 
 decho "Generating seed..."
 mkdir -p $SEEDS_DIR >> $LOG_FILE 2>&1
@@ -101,10 +101,9 @@ decho "Installing latest npm package manager for node..."
 retry 3 npm -g --unsafe-perm install npm@5  >> $LOG_FILE 2>&1
 
 decho "Installing lamassu-server..."
-mkdir -vp ${INSTALL_DIR} >> $LOG_FILE 2>&1
+git clone https://github.com/lamassu/lamassu-server.git --branch ${1-master} ${INSTALL_DIR} >> $LOG_FILE 2>&1
 cd ${INSTALL_DIR} >> $LOG_FILE 2>&1
-retry 3 npm --unsafe-perm install --production lamassu/lamassu-server#${1-master} >> $LOG_FILE 2>&1
-ln -s ${INSTALL_DIR}/node_modules/lamassu-server/bin ${INSTALL_DIR}/bin >> $LOG_FILE 2>&1
+retry 3 npm --unsafe-perm install --production >> $LOG_FILE 2>&1
 
 decho "Adding ${INSTALL_DIR}/bin to PATH"
 export PATH=${PATH}:${INSTALL_DIR}/bin
@@ -165,7 +164,7 @@ openssl x509 \
 rm /tmp/Lamassu_OP.csr.pem
 
 decho "Copying Lamassu certificate authority..."
-LAMASSU_CA_FILE=${INSTALL_DIR}/node_modules/lamassu-server/Lamassu_CA.pem
+LAMASSU_CA_FILE=${INSTALL_DIR}/Lamassu_CA.pem
 cp -v $LAMASSU_CA_FILE $LAMASSU_CA_PATH >> $LOG_FILE 2>&1
 
 mkdir -p $OFAC_DATA_DIR >> $LOG_FILE 2>&1
