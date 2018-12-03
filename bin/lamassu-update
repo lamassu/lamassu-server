@@ -91,7 +91,8 @@ else
         decho "backup copy stored in ${BACKUP_NAME}"
 
         # reset the repository
-        git clean -fd
+        git clean -fd >> ${LOG_FILE} 2>&1
+        git reset --hard >> ${LOG_FILE} 2>&1
     fi
 
     BRANCH=$(git rev-parse --abbrev-ref HEAD)
