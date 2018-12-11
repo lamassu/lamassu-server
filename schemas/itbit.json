@@ -1,0 +1,34 @@
+{
+  "code": "itbit",
+  "display": "itBit",
+  "fields": [
+    {
+      "code": "userId",
+      "display": "User ID",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "walletId",
+      "display": "Wallet ID",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "clientKey",
+      "display": "Client key",
+      "fieldType": "string",
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "clientSecret",
+      "display": "Client secret",
+      "fieldType": "password",
+      "required": true,
+      "value": ""
+    }
+  ]
+}

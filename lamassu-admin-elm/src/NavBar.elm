@@ -258,6 +258,7 @@ view route invalidGroups =
                 , ( "Bitstamp", AccountRoute "bitstamp", True )
                 , ( "Blockcypher", AccountRoute "blockcypher", True )
                 , ( "Infura", AccountRoute "infura", True )
+                , ( "itBit", AccountRoute "itbit", True )
                 , ( "Kraken", AccountRoute "kraken", True )
                 , ( "Mailgun", AccountRoute "mailgun", True )
                 , ( "QuadrigaCX", AccountRoute "quadrigacx", True )
