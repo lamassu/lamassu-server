@@ -94,6 +94,7 @@
   "devDependencies": {
     "ava": "^0.19.1",
     "mocha": "^5.0.1",
+    "rewire": "^4.0.1",
     "standard": "^12.0.1"
   },
   "standard": {
