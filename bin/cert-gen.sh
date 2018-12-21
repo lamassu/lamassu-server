@@ -3,6 +3,7 @@
 set -e
 
 DOMAIN=localhost
+[ ! -z "$1" ] && DOMAIN=$1
 
 CONFIG_DIR=$HOME/.lamassu
 LOG_FILE=/tmp/cert-gen.log
