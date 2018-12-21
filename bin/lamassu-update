@@ -55,6 +55,9 @@ decho "running migration"
 lamassu-migrate >> ${LOG_FILE} 2>&1
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
 
+decho "update ofac sources"
+$SCRIPTPATH/bin/lamassu-ofac-update-sources
+
 decho "updating supervisor conf"
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
