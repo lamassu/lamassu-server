@@ -80,7 +80,8 @@
     "lamassu-coins": "./bin/lamassu-coins",
     "lamassu-update": "./bin/lamassu-update",
     "lamassu-ofac-update": "./bin/lamassu-ofac-update",
-    "lamassu-send-coins": "./bin/lamassu-send-coins"
+    "lamassu-send-coins": "./bin/lamassu-send-coins",
+    "lamassu-ofac-update-sources": "./bin/lamassu-ofac-update-sources"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
