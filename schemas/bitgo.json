@@ -11,16 +11,64 @@
       "value": ""
     },
     {
-      "code": "walletId",
-      "display": "Wallet ID",
+      "code": "BTCWalletId",
+      "display": "BTC Wallet ID",
       "fieldType": "string",
       "secret": false,
       "required": true,
       "value": ""
     },
     {
-      "code": "walletPassphrase",
-      "display": "Wallet passphrase",
+      "code": "BTCWalletPassphrase",
+      "display": "BTC Wallet passphrase",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "LTCWalletId",
+      "display": "LTC Wallet ID",
+      "fieldType": "string",
+      "secret": false,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "LTCWalletPassphrase",
+      "display": "LTC Wallet passphrase",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "ZECWalletId",
+      "display": "ZEC Wallet ID",
+      "fieldType": "string",
+      "secret": false,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "ZECWalletPassphrase",
+      "display": "ZEC Wallet passphrase",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "BCHWalletId",
+      "display": "BCH Wallet ID",
+      "fieldType": "string",
+      "secret": false,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "BCHWalletPassphrase",
+      "display": "BCH Wallet passphrase",
       "fieldType": "password",
       "secret": true,
       "required": true,
