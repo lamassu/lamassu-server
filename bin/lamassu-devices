@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+su - postgres -c "psql \"lamassu\" -Atc \"select device_id, name from devices\""
