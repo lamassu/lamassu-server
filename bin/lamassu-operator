@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+SEED="$cat ~/seeds/seed.txt"
+
+echo
+echo "Your Operator ID for use with CoinATMRadar is:" 
+echo
+/usr/bin/hkdf operator-id '$SEED' | cut -c -32
+echo
