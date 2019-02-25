@@ -133,6 +133,18 @@
         "termsAcceptButtonText",
         "termsCancelButtonText"
       ]
+    },
+    {
+      "code": "operatorInfo",
+      "display": "Operator Info",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "operatorInfoActive",
+        "operatorInfoEmail",
+        "operatorInfoName",
+        "operatorInfoPhone"
+      ]
     }
   ],
   "fields": [
@@ -919,6 +931,48 @@
       "default": "Cancel",
       "enabledIfAny": [
         "termsScreenActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "operatorInfoActive",
+      "displayBottom": "Info card enabled",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [],
+      "default": false
+    },
+    {
+      "code": "operatorInfoName",
+      "displayBottom": "Name",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "default": "",
+      "enabledIfAny": [
+        "operatorInfoActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "operatorInfoEmail",
+      "displayBottom": "Email",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": "email",
+      "enabledIfAny": [
+        "operatorInfoActive"
+      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "operatorInfoPhone",
+      "displayBottom": "Phone",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "enabledIfAny": [
+        "operatorInfoActive"
       ],
       "fieldValidation": []
     }
