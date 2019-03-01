@@ -75,6 +75,22 @@
       "value": ""
     },
     {
+      "code": "DASHWalletId",
+      "display": "DASH Wallet ID",
+      "fieldType": "string",
+      "secret": false,
+      "required": true,
+      "value": ""
+    },
+    {
+      "code": "DASHWalletPassphrase",
+      "display": "DASH Wallet passphrase",
+      "fieldType": "password",
+      "secret": true,
+      "required": true,
+      "value": ""
+    },
+    {
       "code": "environment",
       "display": "Environment (prod or test)",
       "fieldType": "string",
