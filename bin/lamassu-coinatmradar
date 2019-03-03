@@ -5,7 +5,7 @@ SEED="$(cat ~/seeds/seed.txt)"
 echo
 echo "Here is the 'External ID' of your paired machine(s), for use under the 'ATM / Teller details' of your CoinATMRadar listing:"
 echo
-paste <(su - postgres -c "psql \"lamassu\" -Atc \"select device_id from devices\"" | cut -c -32) <(su - postgres -c "psql \"lamassu\" -Atc \"select name from devices\"") | column -s $'\t' -t
+su - postgres -c "psql \"lamassu\" -Atc \"select regexp_replace(left(device_id,32), '$', ' '),regexp_replace(name, '^', ' ') from devices\""
 echo
 echo "If communicating with CoinATMRadar, it may be helpful to relay your 'Operator ID':"
 echo
