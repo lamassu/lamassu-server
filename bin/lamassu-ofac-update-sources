@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const fs = require('fs')
+
+const ofacSources = [
+  {
+    name: 'sdn_advanced',
+    url: 'https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml'
+  },
+  {
+    name: 'cons_advanced',
+    url: 'https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml'
+  }
+]
+
+const options = require('../lib/options-loader')()
+
+if (!options.opts.ofacSources) {
+  options.opts.ofacSources = ofacSources
+  fs.writeFileSync(options.path, JSON.stringify(options.opts, null, '  '), 'utf8')
+}

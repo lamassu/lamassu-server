@@ -70,6 +70,9 @@ lamassu-migrate-config >> ${LOG_FILE} 2>&1
 decho "update to mnemonic"
 $SCRIPTPATH/bin/lamassu-update-to-mnemonic --prod
 
+decho "update ofac sources"
+lamassu-ofac-update-sources >> ${LOG_FILE} 2>&1
+
 decho "updating supervisor conf"
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-server/g' /etc/supervisor/conf.d/lamassu-server.conf >> ${LOG_FILE} 2>&1
 perl -i -pe 's/command=.*/command=$ENV{NPM_BIN}\/lamassu-admin-server/g' /etc/supervisor/conf.d/lamassu-admin-server.conf >> ${LOG_FILE} 2>&1
