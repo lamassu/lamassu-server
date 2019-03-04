@@ -68,7 +68,7 @@ decho "running migration"
 lamassu-migrate-config >> ${LOG_FILE} 2>&1
 
 decho "update to mnemonic"
-$SCRIPTPATH/bin/lamassu-update-to-mnemonic --prod
+lamassu-update-to-mnemonic --prod >> ${LOG_FILE} 2>&1
 
 decho "update ofac sources"
 lamassu-ofac-update-sources >> ${LOG_FILE} 2>&1
