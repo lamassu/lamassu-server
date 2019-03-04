@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+SEED="$(cat ~/seeds/seed.txt)"
+
+echo
+echo "Here is the 'External ID' of your paired machine(s), for use under the 'ATM / Teller details' of your CoinATMRadar listing:"
+echo
+su - postgres -c "psql \"lamassu\" -Atc \"select regexp_replace(left(device_id,32), '$', ' '),regexp_replace(name, '^', ' ') from devices\""
+echo
+echo "If communicating with CoinATMRadar, it may be helpful to relay your 'Operator ID':"
+echo
+/usr/bin/hkdf operator-id "$SEED" | cut -c -32
+echo
