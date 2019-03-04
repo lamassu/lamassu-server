@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo
+echo "Your list of paired machines and their Device IDs and names:"
+echo
+su - postgres -c "psql \"lamassu\" -Atc \"select device_id, name from devices\""
+echo
