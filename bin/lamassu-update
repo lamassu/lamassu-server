@@ -43,8 +43,9 @@ decho "unlinking ${NPM_BIN}/lamassu* old executables"
 find ${NPM_BIN} -type l \( -name "lamassu-*" -or -name "hkdf" \) -exec rm -fv {} \; >> ${LOG_FILE} 2>&1
 
 if [ -d "/usr/lib/node_modules/lamassu-server" ]; then
-    decho "renaming old lamassu-server instance to lamassu-server-old"
-    mv -v "/usr/lib/node_modules/lamassu-server" "/usr/lib/node_modules/lamassu-server-old" >> ${LOG_FILE} 2>&1
+    BKP_NAME = lamassu-server-$(date +%s)
+    decho "renaming old lamassu-server instance to ${BKP_NAME}"
+    mv -v "/usr/lib/node_modules/lamassu-server" "/usr/lib/node_modules/${BKP_NAME}" >> ${LOG_FILE} 2>&1
 fi
 
 decho "updating node"
