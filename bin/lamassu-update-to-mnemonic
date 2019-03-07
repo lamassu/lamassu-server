@@ -13,7 +13,7 @@ if (!options.opts.mnemonicPath && options.opts.seedPath) {
   const mnemonic = mnemonicHelpers.fromSeed(seed)
 
   if (process.argv[2] === '--prod') {
-    options.opts.mnemonicPath = path.resolve('etc', 'lamassu', 'mnemonics', 'mnemonic.txt')
+    options.opts.mnemonicPath = path.resolve('/etc', 'lamassu', 'mnemonics', 'mnemonic.txt')
   } else {
     options.opts.mnemonicPath = path.resolve(os.homedir(), '.lamassu', 'mnemonics', 'mnemonic.txt')
   }
