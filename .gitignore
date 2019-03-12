@@ -36,3 +36,5 @@ lamassu.json
 
 terraform.*
 .terraform
+
+db.json
