@@ -74,6 +74,7 @@
     "lamassu-admin-server": "./bin/lamassu-admin-server",
     "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
     "hkdf": "./bin/hkdf",
+    "bip39": "./bin/bip39",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
     "lamassu-cancel": "./bin/lamassu-cancel",
