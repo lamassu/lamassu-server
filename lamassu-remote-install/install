@@ -92,12 +92,6 @@ apt update >> $LOG_FILE 2>&1
 decho "Installing necessary packages..."
 apt install nodejs python-minimal build-essential supervisor postgresql libpq-dev -y -q >> $LOG_FILE 2>&1
 
-decho "Generating mnemonic..."
-mkdir -p $MNEMONIC_DIR >> $LOG_FILE 2>&1
-SEED=$(openssl rand -hex 32)
-MNEMONIC=$(bip39 $SEED)
-echo "$MNEMONIC" > $MNEMONIC_FILE
-
 decho "Installing latest npm package manager for node..."
 retry 3 npm -g --unsafe-perm install npm@5  >> $LOG_FILE 2>&1
 NODE_MODULES=$(npm -g root)
@@ -105,6 +99,12 @@ NPM_BIN=$(npm -g bin)
 
 decho "Installing lamassu-server..."
 retry 3 npm -g --unsafe-perm install lamassu/lamassu-server#${1-master} >> $LOG_FILE 2>&1
+
+decho "Generating mnemonic..."
+mkdir -p $MNEMONIC_DIR >> $LOG_FILE 2>&1
+SEED=$(openssl rand -hex 32)
+MNEMONIC=$(bip39 $SEED)
+echo "$MNEMONIC" > $MNEMONIC_FILE
 
 decho "Creating postgres user..."
 POSTGRES_PW=$(hkdf postgres-pw $SEED)
