@@ -17,6 +17,7 @@ MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt
 BACKUP_DIR=/var/backups/postgresql
 BLOCKCHAIN_DIR=/mnt/blockchains
 OFAC_DATA_DIR=/var/lamassu/ofac
+ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
 
 # Look into http://unix.stackexchange.com/questions/140734/configure-localtime-dpkg-reconfigure-tzdata
 
@@ -179,6 +180,7 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "migrateStatePath": "$MIGRATE_STATE_PATH",
   "blockchainDir": "$BLOCKCHAIN_DIR",
   "ofacDataDir": "$OFAC_DATA_DIR",
+  "idPhotoCardDir": "$ID_PHOTO_CARD_DIR",
   "strike": {
     "baseUrl": "https://api.strike.acinq.co/api/"
   },
