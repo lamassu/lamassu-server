@@ -254,8 +254,10 @@ echo -e "\n*** IMPORTANT ***"
 echo "In a private space, run lamassu-mnemonic, write down the words"
 echo "and keep them in a safe place."
 echo
-echo "This secret will allow you to retrieve system passwords, including "
-echo "the keys to some of your crypto accounts."
+echo "This secret will allow you to retrieve system passwords, such "
+echo "as the keys to your Ethereum account. However, you must still "
+echo "backup your wallets separately. Visit support.lamassu.is for "
+echo "details on regularly backing up your wallets and coins."
 echo
 echo
 echo "Activation URL for lamassu-admin:"
