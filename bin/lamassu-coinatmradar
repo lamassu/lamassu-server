@@ -9,5 +9,5 @@ su - postgres -c "psql \"lamassu\" -Atc \"select regexp_replace(device_id, '$', 
 echo
 echo "If speaking with CoinATMRadar directly, it may be helpful to let them know your 'Operator ID':"
 echo
-/usr/bin/hkdf operator-id "$SEED"
+/usr/bin/hkdf operator-id "$SEED" | cut -c -32
 echo
