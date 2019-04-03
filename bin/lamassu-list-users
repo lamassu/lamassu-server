@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$(whoami)" != "root" ]; then
+  echo -e "This script has to be run as \033[1mroot\033[0m user"
+  exit 3
+fi
+
+su - postgres -c "psql \"lamassu\" -Atc \"select * from user_tokens\""
