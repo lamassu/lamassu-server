@@ -88,6 +88,8 @@
     "lamassu-devices": "./bin/lamassu-devices",
     "lamassu-operator": "./bin/lamassu-operator",
     "lamassu-coinatmradar": "./bin/lamassu-coinatmradar"
+    "lamassu-users": "./bin/lamassu-users",
+    "lamassu-revoke": "./bin/lamassu-revoke"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
