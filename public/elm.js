@@ -34172,7 +34172,7 @@ var _user$project$Transactions$rowView = function (tx) {
 	var _p2 = tx;
 	if (_p2.ctor === 'CashInTx') {
 		var _p3 = _p2._0;
-		var status = _elm_community$maybe_extra$Maybe_Extra$isJust(_p3.error) ? 'Error' : (_p3.operatorCompleted ? 'Cancelled' : (_p3.sendConfirmed ? 'Sent' : (_p3.expired ? 'Expired' : 'Pending')));
+		var status = _p3.operatorCompleted ? 'Cancelled' : (_elm_community$maybe_extra$Maybe_Extra$isJust(_p3.error) ? 'Error' : (_p3.sendConfirmed ? 'Sent' : (_p3.expired ? 'Expired' : 'Pending')));
 		var rowClasses = _p3.operatorCompleted ? {
 			ctor: '::',
 			_0: _user$project$Css_Classes$CashIn,
