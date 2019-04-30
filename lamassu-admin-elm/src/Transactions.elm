@@ -111,10 +111,10 @@ rowView tx =
                         [ C.CashIn ]
 
                 status =
-                    if isJust cashIn.error then
-                        "Error"
-                    else if cashIn.operatorCompleted then
+                    if cashIn.operatorCompleted then
                         "Cancelled"
+                    else if isJust cashIn.error then
+                        "Error"
                     else if cashIn.sendConfirmed then
                         "Sent"
                     else if cashIn.expired then
