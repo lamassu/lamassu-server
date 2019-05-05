@@ -129,7 +129,7 @@ openssl req \
   -new \
   -nodes \
   -key $CA_KEY_PATH \
-  -days 3560 \
+  -days 3650 \
   -out $CA_PATH \
   -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator CA/CN=lamassu-operator.is" \
   >> $LOG_FILE 2>&1
@@ -186,7 +186,17 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   },
   "coinAtmRadar": {
     "url": "https://coinatmradar.info/api/lamassu/"
-  }
+  },
+  "ofacSources": [
+    {
+      "name": "sdn_advanced",
+      "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml"
+    },
+    {
+      "name": "cons_advanced",
+      "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml"
+    }
+  ]
 }
 EOF
 
