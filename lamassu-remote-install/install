@@ -257,6 +257,9 @@ chmod -x /etc/update-motd.d/*-help-text
 chmod -x /etc/update-motd.d/*-cloudguest
 set -e
 
+# reset terminal to link new executables
+hash -r
+
 echo
 decho "Done! Now it's time to configure Lamassu stack."
 echo
