@@ -143,7 +143,9 @@
         "operatorInfoActive",
         "operatorInfoEmail",
         "operatorInfoName",
-        "operatorInfoPhone"
+        "operatorInfoPhone",
+        "operatorInfoWebsite",
+        "operatorInfoCompanyNumber"
       ]
     }
   ],
@@ -949,9 +951,6 @@
       "fieldType": "string",
       "fieldClass": null,
       "default": "",
-      "enabledIfAny": [
-        "operatorInfoActive"
-      ],
       "fieldValidation": []
     },
     {
@@ -960,9 +959,6 @@
       "displayTopCount": 0,
       "fieldType": "string",
       "fieldClass": "email",
-      "enabledIfAny": [
-        "operatorInfoActive"
-      ],
       "fieldValidation": []
     },
     {
@@ -971,9 +967,22 @@
       "displayTopCount": 0,
       "fieldType": "string",
       "fieldClass": null,
-      "enabledIfAny": [
-        "operatorInfoActive"
-      ],
+      "fieldValidation": []
+    },
+    {
+      "code": "operatorInfoWebsite",
+      "displayBottom": "Website",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
+      "fieldValidation": []
+    },
+    {
+      "code": "operatorInfoCompanyNumber",
+      "displayBottom": "Company Number",
+      "displayTopCount": 0,
+      "fieldType": "string",
+      "fieldClass": null,
       "fieldValidation": []
     }
   ]
