@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+const os = require('os')
+const readline = require('readline')
+
+const coinUtils = require('../lib/coin-utils')
+const db = require('../lib/db')
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
+
+const sql = `select regexp_replace(crypto_code, '$', ' ') as code,regexp_replace(address, '^', ' ') as address from blacklist`
+const insertSql = `insert into blacklist(crypto_code, address) values ($1, $2)`
+
+db.query(sql)
+  .then(many => {
+    console.log('')
+    console.log('Here is your current list of prohibited addresses:')
+    console.log('')
+    console.log(many.map(it => `${it.code} | ${it.address}`).join(os.EOL))
+    console.log('')
+    console.log('What address would you like to add to the list?')
+    console.log('')
+    console.log('\x1b[2m%s\x1b[0m', 'Example:', 'bc1q8pu2zlfxg8jf4cyuf844rl3uxmmw8sj9yaa393')
+    console.log('')
+
+    rl.question('Address: ', (address) => {
+      var aphaNumericRegex = /^([0-9]|[a-z])+([0-9a-z]+)$/i
+      if (!address.match(aphaNumericRegex)) {
+        return errorHandler(new Error('Invalid address'))
+      }
+
+      console.log('')
+      console.log('What is the ticker symbol of the coin that this address belongs to?')
+      console.log('')
+      console.log('\x1b[2m%s\x1b[0m', 'Example:', 'BTC')
+      console.log('')
+
+      rl.question('Ticker symbol: ', (cryptoCode) => {
+        try {
+          coinUtils.getCryptoCurrency(cryptoCode)
+        } catch (err) {
+          errorHandler(err)
+        }
+
+        console.log('')
+
+        db.none(insertSql, [cryptoCode, address])
+          .then(() => db.query(sql))
+          .then(many2 => {
+            console.log(`Address added. Here's the new list of prohibited addresses:`)
+            console.log('')
+            console.log(many2.map(it => `${it.code} | ${it.address}`).join(os.EOL))
+            rl.close()
+            process.exit(0)
+          })
+          .catch(errorHandler)
+      })
+    })
+  }).catch(errorHandler)
+
+function errorHandler (err) {
+  rl.close()
+  console.log(err)
+  process.exit(1)
+}
