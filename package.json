@@ -89,6 +89,7 @@
     "lamassu-operator": "./bin/lamassu-operator",
     "lamassu-coinatmradar": "./bin/lamassu-coinatmradar",
     "lamassu-users": "./bin/lamassu-users",
+    "lamassu-blacklist": "./bin/lamassu-blacklist",
     "lamassu-revoke": "./bin/lamassu-revoke"
   },
   "scripts": {
