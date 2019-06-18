@@ -35981,7 +35981,52 @@ var _user$project$Customer_View$customerView = function (customer) {
 											});
 									}
 								}(),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$h2,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Front Facing Camera Photo'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: function () {
+											var _p3 = customer.frontCameraPath;
+											if (_p3.ctor === 'Nothing') {
+												return _elm_lang$html$Html$text('N/A');
+											} else {
+												return A2(
+													_elm_lang$html$Html$div,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$img,
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$src(
+																	A2(_elm_lang$core$Basics_ops['++'], '/front-camera-photo/', _p3._0)),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$height(200),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Attributes$alt('N/A'),
+																		_1: {ctor: '[]'}
+																	}
+																}
+															},
+															{ctor: '[]'}),
+														_1: {ctor: '[]'}
+													});
+											}
+										}(),
+										_1: {ctor: '[]'}
+									}
+								}
 							}
 						}
 					}
@@ -35990,8 +36035,8 @@ var _user$project$Customer_View$customerView = function (customer) {
 		});
 };
 var _user$project$Customer_View$view = function (model) {
-	var _p3 = model;
-	switch (_p3.ctor) {
+	var _p4 = model;
+	switch (_p4.ctor) {
 		case 'NotAsked':
 			return A2(
 				_elm_lang$html$Html$div,
@@ -36013,7 +36058,7 @@ var _user$project$Customer_View$view = function (model) {
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(_p3._0)),
+						_elm_lang$core$Basics$toString(_p4._0)),
 					_1: {ctor: '[]'}
 				});
 		default:
@@ -36022,7 +36067,7 @@ var _user$project$Customer_View$view = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _user$project$Customer_View$customerView(_p3._0),
+					_0: _user$project$Customer_View$customerView(_p4._0),
 					_1: {ctor: '[]'}
 				});
 	}

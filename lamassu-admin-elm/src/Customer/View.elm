@@ -178,6 +178,19 @@ customerView customer =
                           , alt "N/A"
                           ] []
                       ]
+        , h2 [] [ text "Front Facing Camera Photo" ]
+        , case customer.frontCameraPath of
+              Nothing ->
+                  text "N/A"
+
+              Just frontCameraPath ->
+                  div []
+                      [ img
+                          [ src ("/front-camera-photo/" ++ frontCameraPath)
+                          , height 200
+                          , alt "N/A"
+                          ] []
+                      ]
         ]
 
 

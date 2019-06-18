@@ -13,5 +13,6 @@
   "strike": {
     "baseUrl": "https://api.strike.acinq.co/api/"
   },
-  "idPhotoCardDir": "/opt/lamassu-server/idphotocard"
+  "idPhotoCardDir": "/opt/lamassu-server/idphotocard",
+  "frontCameraDir": "/opt/lamassu-server/frontcamera"
 }
