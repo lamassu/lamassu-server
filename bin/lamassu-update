@@ -71,6 +71,9 @@ lamassu-migrate-config >> ${LOG_FILE} 2>&1
 decho "update to mnemonic"
 lamassu-update-to-mnemonic --prod >> ${LOG_FILE} 2>&1
 
+decho "update configure frontcamera"
+lamassu-configure-frontcamera >> ${LOG_FILE} 2>&1
+
 decho "update ofac sources"
 lamassu-ofac-update-sources >> ${LOG_FILE} 2>&1
 
