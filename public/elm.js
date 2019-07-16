@@ -33858,6 +33858,9 @@ var _user$project$MaintenanceMachines_Types$Machine = F7(
 	function (a, b, c, d, e, f, g) {
 		return {deviceId: a, name: b, cashbox: c, cassette1: d, cassette2: e, paired: f, cashOut: g};
 	});
+var _user$project$MaintenanceMachines_Types$RestartServices = function (a) {
+	return {ctor: 'RestartServices', _0: a};
+};
 var _user$project$MaintenanceMachines_Types$RebootMachine = function (a) {
 	return {ctor: 'RebootMachine', _0: a};
 };
@@ -38033,7 +38036,7 @@ var _user$project$MaintenanceMachines_Rest$encodeAction = function (action) {
 						_1: {ctor: '[]'}
 					}
 				});
-		default:
+		case 'RebootMachine':
 			return _elm_lang$core$Json_Encode$object(
 				{
 					ctor: '::',
@@ -38041,6 +38044,25 @@ var _user$project$MaintenanceMachines_Rest$encodeAction = function (action) {
 						ctor: '_Tuple2',
 						_0: 'action',
 						_1: _elm_lang$core$Json_Encode$string('reboot')
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'deviceId',
+							_1: _elm_lang$core$Json_Encode$string(_p0._0.deviceId)
+						},
+						_1: {ctor: '[]'}
+					}
+				});
+		default:
+			return _elm_lang$core$Json_Encode$object(
+				{
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'action',
+						_1: _elm_lang$core$Json_Encode$string('restartServices')
 					},
 					_1: {
 						ctor: '::',
@@ -38428,15 +38450,48 @@ var _user$project$MaintenanceMachines_View$rowView = function (machine) {
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Reboot'),
+							_0: _elm_lang$html$Html$text('Reboot OS'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
-				_0: resetBills,
-				_1: {ctor: '[]'}
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _user$project$Css_Admin$class(
+									{
+										ctor: '::',
+										_0: _user$project$Css_Classes$TableButton,
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(
+										_user$project$MaintenanceMachines_Types$Submit(
+											_user$project$MaintenanceMachines_Types$RestartServices(machine))),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Restart Services'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: resetBills,
+					_1: {ctor: '[]'}
+				}
 			}
 		}
 	};

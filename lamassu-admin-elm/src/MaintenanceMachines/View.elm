@@ -36,7 +36,9 @@ rowView machine =
             [ td []
                 [ button [ class [ C.TableButton ], onClick (Submit (UnpairMachine machine)) ] [ text "Unpair" ] ]
             , td []
-                [ button [ class [ C.TableButton ], onClick (Submit (RebootMachine machine)) ] [ text "Reboot" ] ]
+                [ button [ class [ C.TableButton ], onClick (Submit (RebootMachine machine)) ] [ text "Reboot OS" ] ]
+            , td []
+                [ button [ class [ C.TableButton ], onClick (Submit (RestartServices machine)) ] [ text "Restart Services" ] ]
             , resetBills
             ]
 
