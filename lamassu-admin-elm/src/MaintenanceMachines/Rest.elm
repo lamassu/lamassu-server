@@ -71,3 +71,9 @@ encodeAction action =
                 [ ( "action", E.string "reboot" )
                 , ( "deviceId", E.string machine.deviceId )
                 ]
+
+        RestartServices machine ->
+            E.object
+                [ ( "action", E.string "restartServices" )
+                , ( "deviceId", E.string machine.deviceId )
+                ]

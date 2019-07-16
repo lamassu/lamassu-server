@@ -33,6 +33,7 @@ type MachineAction
     = ResetCashOutBills Machine
     | UnpairMachine Machine
     | RebootMachine Machine
+    | RestartServices Machine
 
 
 type Msg
