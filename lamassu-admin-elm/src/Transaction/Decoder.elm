@@ -104,3 +104,4 @@ cashOutTxDecoder =
         |> required "error" (nullable string)
         |> required "created" date
         |> required "confirmedAt" confirmedDecoder
+        |> required "expired" bool

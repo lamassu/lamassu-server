@@ -146,6 +146,8 @@ rowView tx =
                         "Error"
                     else if cashOut.dispense then
                         "Success"
+                    else if cashOut.expired then
+                        "Expired"
                     else
                         "Pending"
             in

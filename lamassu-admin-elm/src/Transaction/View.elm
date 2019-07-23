@@ -6,6 +6,7 @@ import RemoteData exposing (..)
 import Common.TransactionTypes exposing (..)
 import Transaction.Types exposing (..)
 import Numeral exposing (format)
+import Maybe.Extra exposing (isJust)
 
 
 -- import Css.Admin exposing (..)
@@ -53,6 +54,15 @@ cashInTxView tx =
 cashOutTxView : CashOutTxRec -> Html Msg
 cashOutTxView tx =
     let
+        cancelStatus =
+            if isJust tx.error then
+                "Error"
+            else if tx.dispense then
+                "Success"
+            else if tx.expired then
+                "Expired"
+            else
+                "Pending"
         error =
             case tx.error of
                 Nothing ->
@@ -66,6 +76,7 @@ cashOutTxView tx =
             , div [] [ text "This is a cash-out transaction" ]
             , div [] [ text ("Fiat: " ++ (format "0,0.00" tx.fiat)) ]
             , div [] [ text ("Raw ticker price: " ++ (format "0,0.00" (Maybe.withDefault 0.0 tx.rawTickerPrice))) ]
+            , div [] [ text ("Status: " ++ cancelStatus) ]
             , div [] [ text error ]
             ]
 
