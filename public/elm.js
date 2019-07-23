@@ -28514,7 +28514,9 @@ var _user$project$Common_TransactionTypes$CashOutTxRec = function (a) {
 														return function (o) {
 															return function (p) {
 																return function (q) {
-																	return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, commissionPercentage: g, rawTickerPrice: h, fiatCode: i, status: j, dispense: k, notified: l, redeemed: m, phone: n, error: o, created: p, confirmed: q};
+																	return function (r) {
+																		return {id: a, machineName: b, toAddress: c, cryptoAtoms: d, cryptoCode: e, fiat: f, commissionPercentage: g, rawTickerPrice: h, fiatCode: i, status: j, dispense: k, notified: l, redeemed: m, phone: n, error: o, created: p, confirmed: q, expired: r};
+																	};
 																};
 															};
 														};
@@ -34027,73 +34029,77 @@ var _user$project$Transaction_Decoder$cashInTxDecoder = A3(
 																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashInTxRec))))))))))))))))));
 var _user$project$Transaction_Decoder$cashOutTxDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'confirmedAt',
-	_user$project$Transaction_Decoder$confirmedDecoder,
+	'expired',
+	_elm_lang$core$Json_Decode$bool,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'created',
-		_elm_community$json_extra$Json_Decode_Extra$date,
+		'confirmedAt',
+		_user$project$Transaction_Decoder$confirmedDecoder,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'error',
-			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+			'created',
+			_elm_community$json_extra$Json_Decode_Extra$date,
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'phone',
+				'error',
 				_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'redeem',
-					_elm_lang$core$Json_Decode$bool,
+					'phone',
+					_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 					A3(
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-						'notified',
+						'redeem',
 						_elm_lang$core$Json_Decode$bool,
 						A3(
 							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-							'dispense',
+							'notified',
 							_elm_lang$core$Json_Decode$bool,
 							A3(
 								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-								'status',
-								_elm_lang$core$Json_Decode$string,
+								'dispense',
+								_elm_lang$core$Json_Decode$bool,
 								A3(
 									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-									'fiatCode',
+									'status',
 									_elm_lang$core$Json_Decode$string,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'rawTickerPrice',
-										_elm_lang$core$Json_Decode$nullable(_user$project$Transaction_Decoder$floatString),
+										'fiatCode',
+										_elm_lang$core$Json_Decode$string,
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'commissionPercentage',
+											'rawTickerPrice',
 											_elm_lang$core$Json_Decode$nullable(_user$project$Transaction_Decoder$floatString),
 											A3(
 												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'fiat',
-												_user$project$Transaction_Decoder$floatString,
+												'commissionPercentage',
+												_elm_lang$core$Json_Decode$nullable(_user$project$Transaction_Decoder$floatString),
 												A3(
 													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-													'cryptoCode',
-													_user$project$Transaction_Decoder$cryptoCodeDecoder,
+													'fiat',
+													_user$project$Transaction_Decoder$floatString,
 													A3(
 														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-														'cryptoAtoms',
-														_user$project$Transaction_Decoder$intString,
+														'cryptoCode',
+														_user$project$Transaction_Decoder$cryptoCodeDecoder,
 														A3(
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-															'toAddress',
-															_elm_lang$core$Json_Decode$string,
+															'cryptoAtoms',
+															_user$project$Transaction_Decoder$intString,
 															A3(
 																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																'machineName',
+																'toAddress',
 																_elm_lang$core$Json_Decode$string,
 																A3(
 																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																	'id',
+																	'machineName',
 																	_elm_lang$core$Json_Decode$string,
-																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashOutTxRec))))))))))))))))));
+																	A3(
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																		'id',
+																		_elm_lang$core$Json_Decode$string,
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Common_TransactionTypes$CashOutTxRec)))))))))))))))))));
 var _user$project$Transaction_Decoder$txDecode = function (txClass) {
 	var _p4 = txClass;
 	switch (_p4) {
@@ -34371,7 +34377,7 @@ var _user$project$Transactions$rowView = function (tx) {
 			});
 	} else {
 		var _p4 = _p2._0;
-		var status = _elm_community$maybe_extra$Maybe_Extra$isJust(_p4.error) ? 'Error' : (_p4.dispense ? 'Success' : 'Pending');
+		var status = _elm_community$maybe_extra$Maybe_Extra$isJust(_p4.error) ? 'Error' : (_p4.dispense ? 'Success' : (_p4.expired ? 'Expired' : 'Pending'));
 		return A2(
 			_elm_lang$html$Html$tr,
 			{
@@ -39097,6 +39103,7 @@ var _user$project$Transaction_View$cashOutTxView = function (tx) {
 			return A2(_elm_lang$core$Basics_ops['++'], 'Error: ', _p0._0);
 		}
 	}();
+	var cancelStatus = _elm_community$maybe_extra$Maybe_Extra$isJust(tx.error) ? 'Error' : (tx.dispense ? 'Success' : (tx.expired ? 'Expired' : 'Pending'));
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -39158,10 +39165,22 @@ var _user$project$Transaction_View$cashOutTxView = function (tx) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(error),
+									_0: _elm_lang$html$Html$text(
+										A2(_elm_lang$core$Basics_ops['++'], 'Status: ', cancelStatus)),
 									_1: {ctor: '[]'}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(error),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}

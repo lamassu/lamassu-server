@@ -50,6 +50,7 @@ type alias CashOutTxRec =
     , error : Maybe String
     , created : Date
     , confirmed : Bool
+    , expired : Bool
     }
 
 
