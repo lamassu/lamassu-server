@@ -1148,6 +1148,7 @@ complianceTableView model =
                 , row "Front Facing Camera" "frontCameraVerificationActive" "frontCameraVerificationThreshold"
                 , row "Sanctions" "sanctionsVerificationActive" "sanctionsVerificationThreshold"
                 , row "Hard Limit" "hardLimitVerificationActive" "hardLimitVerificationThreshold"
+                , row "Receipt Printing" "receiptPrintingActive" ""
                 ]
             ]
 

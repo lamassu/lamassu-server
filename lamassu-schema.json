@@ -77,7 +77,8 @@
          "frontCameraVerificationActive",
          "frontCameraVerificationThreshold",
          "hardLimitVerificationActive",
-         "hardLimitVerificationThreshold"
+         "hardLimitVerificationThreshold",
+         "receiptPrintingActive"
       ]
     },
     {
@@ -148,6 +149,20 @@
     }
   ],
   "fields": [
+    {
+      "code": "receiptPrintingActive",
+      "displayTop": "Receipt Printing",
+      "displayBottom": "Receipt Priting",
+      "displayTopCount": 2,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
     {
       "code": "hardLimitVerificationActive",
       "displayTop": "Hard Limit",
