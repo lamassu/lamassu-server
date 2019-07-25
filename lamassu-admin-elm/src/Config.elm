@@ -1147,7 +1147,6 @@ complianceTableView model =
                 , row "ID Card Photo" "idCardPhotoVerificationActive" "idCardPhotoVerificationThreshold"
                 , row "Front Facing Camera" "frontCameraVerificationActive" "frontCameraVerificationThreshold"
                 , row "Sanctions" "sanctionsVerificationActive" "sanctionsVerificationThreshold"
-                , row "Cross Reference" "crossRefVerificationActive" "crossRefVerificationThreshold"
                 , row "Hard Limit" "hardLimitVerificationActive" "hardLimitVerificationThreshold"
                 ]
             ]

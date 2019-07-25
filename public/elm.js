@@ -31187,8 +31187,8 @@ var _user$project$Config$updateSelectize = F3(
 					return _elm_lang$core$Native_Utils.crashCase(
 						'Config',
 						{
-							start: {line: 1555, column: 17},
-							end: {line: 1560, column: 56}
+							start: {line: 1554, column: 17},
+							end: {line: 1559, column: 56}
 						},
 						_p4)('Shouldn\'t be here');
 				}
@@ -31384,8 +31384,8 @@ var _user$project$Config$isField = function (fieldValue) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Config',
 			{
-				start: {line: 1229, column: 5},
-				end: {line: 1234, column: 59}
+				start: {line: 1228, column: 5},
+				end: {line: 1233, column: 59}
 			},
 			_p12)('Referenced field must be boolean');
 	}
@@ -32871,12 +32871,8 @@ var _user$project$Config$complianceTableView = function (model) {
 										_0: A3(row, 'Sanctions', 'sanctionsVerificationActive', 'sanctionsVerificationThreshold'),
 										_1: {
 											ctor: '::',
-											_0: A3(row, 'Cross Reference', 'crossRefVerificationActive', 'crossRefVerificationThreshold'),
-											_1: {
-												ctor: '::',
-												_0: A3(row, 'Hard Limit', 'hardLimitVerificationActive', 'hardLimitVerificationThreshold'),
-												_1: {ctor: '[]'}
-											}
+											_0: A3(row, 'Hard Limit', 'hardLimitVerificationActive', 'hardLimitVerificationThreshold'),
+											_1: {ctor: '[]'}
 										}
 									}
 								}
