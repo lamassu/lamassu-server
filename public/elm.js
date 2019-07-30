@@ -32873,10 +32873,10 @@ var _user$project$Config$complianceTableView = function (model) {
 										_0: A3(row, 'Sanctions', 'sanctionsVerificationActive', 'sanctionsVerificationThreshold'),
 										_1: {
 											ctor: '::',
-											_0: A3(row, 'Cross Reference', 'crossRefVerificationActive', 'crossRefVerificationThreshold'),
+											_0: A3(row, 'Hard Limit', 'hardLimitVerificationActive', 'hardLimitVerificationThreshold'),
 											_1: {
 												ctor: '::',
-												_0: A3(row, 'Hard Limit', 'hardLimitVerificationActive', 'hardLimitVerificationThreshold'),
+												_0: A3(row, 'Receipt Printing', 'receiptPrintingActive', ''),
 												_1: {ctor: '[]'}
 											}
 										}
