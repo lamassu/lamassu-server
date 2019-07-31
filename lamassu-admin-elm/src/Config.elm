@@ -1149,6 +1149,7 @@ complianceTableView model =
                 , row "Sanctions" "sanctionsVerificationActive" "sanctionsVerificationThreshold"
                 , row "Hard Limit" "hardLimitVerificationActive" "hardLimitVerificationThreshold"
                 , row "Receipt Printing" "receiptPrintingActive" ""
+                , row "Reject Address Reuse" "rejectAddressReuseActive" ""
                 ]
             ]
 
