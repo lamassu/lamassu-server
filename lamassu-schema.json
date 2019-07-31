@@ -78,7 +78,8 @@
          "frontCameraVerificationThreshold",
          "hardLimitVerificationActive",
          "hardLimitVerificationThreshold",
-         "receiptPrintingActive"
+         "receiptPrintingActive",
+         "rejectAddressReuseActive"
       ]
     },
     {
@@ -153,6 +154,20 @@
       "code": "receiptPrintingActive",
       "displayTop": "Receipt Printing",
       "displayBottom": "Receipt Priting",
+      "displayTopCount": 2,
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [
+        {
+          "code": "required"
+        }
+      ],
+      "default": false
+    },
+    {
+      "code": "rejectAddressReuseActive",
+      "displayTop": "Reject Address Reuse",
+      "displayBottom": "Reject Address Reuse",
       "displayTopCount": 2,
       "fieldType": "onOff",
       "fieldClass": null,

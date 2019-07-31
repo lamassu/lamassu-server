@@ -12,14 +12,14 @@ const rl = readline.createInterface({
 })
 
 const sql = `select regexp_replace(crypto_code, '$', ' ') as code,regexp_replace(address, '^', ' ') as address from blacklist`
-const insertSql = `insert into blacklist(crypto_code, address, created_by_operator) values ($1, $2, 't')`
+const deleteSql = `delete from blacklist where crypto_code = $1 and address = $2`
 const makeDimAndReset = '\x1b[2m%s\x1b[0m'
 
 db.query(sql)
   .then(many => {
     console.log(os.EOL, 'Here is your current list of prohibited addresses:', os.EOL)
     console.log(many.map(it => `${it.code} | ${it.address}`).join(os.EOL), os.EOL)
-    console.log('What address would you like to add to the list?', os.EOL)
+    console.log('What address would you like to remove from the list?', os.EOL)
     console.log(makeDimAndReset, 'Example:', 'bc1q8pu2zlfxg8jf4cyuf844rl3uxmmw8sj9yaa393', os.EOL)
 
     rl.question('Address: ', (address) => {
@@ -38,10 +38,10 @@ db.query(sql)
           errorHandler(err)
         }
 
-        db.none(insertSql, [cryptoCode, address])
+        db.none(deleteSql, [cryptoCode, address])
           .then(() => db.query(sql))
           .then(many2 => {
-            console.log(os.EOL, `Address added. Here's the new list of prohibited addresses:`, os.EOL)
+            console.log(os.EOL, `Address removed. Here's the new list of prohibited addresses:`, os.EOL)
             console.log(many2.map(it => `${it.code} | ${it.address}`).join(os.EOL))
             rl.close()
             process.exit(0)
