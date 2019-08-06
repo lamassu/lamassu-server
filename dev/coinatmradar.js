@@ -6,9 +6,9 @@ require('../lib/settings-loader').loadLatest()
     const pi = plugins(settings)
     const config = settings.config
 
-    return pi.getRates()
+    return pi.getRawRates()
       .then(rates => {
-        return car.update({rates, config})
+        return car.update({rates, config}, settings)
           .then(require('../lib/pp')('DEBUG100'))
           .catch(console.log)
           .then(() => process.exit())
