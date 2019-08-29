@@ -8,7 +8,7 @@ const data = {
   accounts: [
     {code: 'mock-ticker', display: 'Mock ticker', class: 'ticker', cryptos: ALL_CRYPTOS},
     {code: 'bitcoind', display: 'bitcoind', class: 'wallet', cryptos: ['BTC']},
-    {code: 'quadrigacx', display: 'QuadrigaCX', class: 'exchange', cryptos: ['BTC', 'ETH', 'LTC', 'BCH']},
+    {code: 'kraken', display: 'Kraken', class: 'exchange', cryptos: ['BTC', 'ZEC', 'ETH', 'LTC', 'BCH', 'DASH']},
     {code: 'mock-wallet', display: 'Mock (Caution!)', class: 'wallet', cryptos: ALL_CRYPTOS}
   ]
 }
