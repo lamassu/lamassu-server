@@ -31,7 +31,6 @@
     "got": "^7.1.0",
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
-    "js-sha256": "^0.9.0",
     "kraken-api": "github:DeX3/npm-kraken-api",
     "lnd-async": "^1.2.0",
     "lodash": "^4.17.10",
