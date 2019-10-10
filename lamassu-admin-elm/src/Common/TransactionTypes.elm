@@ -9,6 +9,7 @@ type CryptoCode
     | ZEC
     | DASH
     | LTC
+    | ADA
 
 
 type alias CashInTxRec =
