@@ -1,25 +1,28 @@
 import React, { useState } from 'react'
 import FileSaver from 'file-saver'
-import { concat, uniq } from 'lodash/fp'
+import classnames from 'classnames'
+import { concat, uniq, toInteger } from 'lodash/fp'
 import moment from 'moment'
 import useAxios from '@use-hooks/axios'
+import { makeStyles } from '@material-ui/core'
 
 import Title from '../components/Title'
 import { Info3 } from '../components/typography'
-import { FeatureButton, SimpleButton } from '../components/buttons'
+import { FeatureButton, SimpleButton, Link } from '../components/buttons'
 import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '../components/table'
-import { Select } from '../components/inputs'
+import { Select, RadioGroup } from '../components/inputs'
 import Uptime from '../components/Uptime'
+import DateRangePicker from '../components/date-range-picker/DateRangePicker'
+import Popover from '../components/Popover'
 import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
 
-import { makeStyles } from '@material-ui/core'
-import { regularLabel } from '../components/typography/styles'
-
-import { comet } from '../styling/variables'
+import { primaryColor, comet } from '../styling/variables'
 import styles from './Logs.styles'
 import logPageHeaderStyles from './LogPageHeader.styles'
 
+import typographyStyles from '../components/typography/styles'
+const { regularLabel, h4 } = typographyStyles
 const { tableWrapper } = styles
 const { titleAndButtonsContainer, buttonsWrapper } = logPageHeaderStyles
 
@@ -54,6 +57,40 @@ styles.uptimeContainer = {
 styles.titleAndButtonsContainer = titleAndButtonsContainer
 styles.buttonsWrapper = buttonsWrapper
 
+styles.popoverContent = {
+  minWidth: 315
+}
+
+styles.popoverHeader = {
+  extend: h4,
+  padding: [[20, 15, 0, 15]]
+}
+
+styles.radioButtonsContainer = {
+  padding: [[10, 15, 10, 15]]
+}
+
+styles.radioButtons = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexDirection: 'row',
+  color: primaryColor
+}
+
+styles.dateRangePickerShowing = {
+  display: 'block',
+  height: '100%'
+}
+
+styles.dateRangePickerHidden = {
+  display: 'none',
+  height: 0
+}
+
+styles.download = {
+  padding: [[30, 15, 30, 15]]
+}
+
 const useStyles = makeStyles(styles)
 
 const SHOW_ALL = 'Show all'
@@ -67,6 +104,9 @@ const Logs = () => {
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
   const [version, setVersion] = useState(null)
   const [processStates, setProcessStates] = useState(null)
+  const [radioButtons, setRadioButtons] = useState(0)
+  const [range, setRange] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
 
   const classes = useStyles()
 
@@ -115,11 +155,33 @@ const Logs = () => {
     }
   })
 
-  const handleLogLevelChange = (item) => setLogLevel(item)
-
   const formatDateFile = date => {
     return moment(date).format('YYYY-MM-DD_HH-mm')
   }
+
+  const dateRangePickerClasses = {
+    [classes.dateRangePickerShowing]: radioButtons === 1,
+    [classes.dateRangePickerHidden]: radioButtons === 0
+  }
+
+  const handleOpenRangePicker = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCloseRangePicker = () => {
+    setAnchorEl(null)
+  }
+
+  const handleRadioButtons = (event) => {
+    setRadioButtons(toInteger(event.target.value))
+  }
+
+  const handleRangeChange = (from, to) => {
+    setRange({ from, to })
+  }
+
+  const open = Boolean(anchorEl)
+  const id = open ? 'date-range-popover' : undefined
 
   return (
     <>
@@ -131,14 +193,67 @@ const Logs = () => {
               <FeatureButton
                 Icon={Download}
                 InverseIcon={DownloadActive}
-                onClick={() => {
-                  const text = logsResponse.data.logs.map(it => JSON.stringify(it)).join('\n')
-                  const blob = new window.Blob([text], {
-                    type: 'text/plain;charset=utf-8'
-                  })
-                  FileSaver.saveAs(blob, `${formatDateFile(new Date())}_server`)
-                }}
+                aria-describedby={id}
+                variant='contained'
+                onClick={handleOpenRangePicker}
               />
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleCloseRangePicker}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center'
+                }}
+              >
+                <div className={classes.popoverContent}>
+                  <div className={classes.popoverHeader}>
+                    Download logs
+                  </div>
+                  <div className={classes.radioButtonsContainer}>
+                    <RadioGroup
+                      name='logs-select'
+                      value={radioButtons}
+                      labels={['All logs', 'Date range']}
+                      ariaLabel='logs-select'
+                      onChange={handleRadioButtons}
+                      className={classes.radioButtons}
+                    />
+                  </div>
+                  <DateRangePicker
+                    maxDate={moment()}
+                    handleChange={handleRangeChange}
+                    className={classnames(dateRangePickerClasses)}
+                  />
+                  <div className={classes.download}>
+                    <Link
+                      color='primary'
+                      onClick={() => {
+                        if (radioButtons === 0) {
+                          const text = logsResponse.data.logs.map(it => JSON.stringify(it)).join('\n')
+                          const blob = new window.Blob([text], {
+                            type: 'text/plain;charset=utf-8'
+                          })
+                          FileSaver.saveAs(blob, `${formatDateFile(new Date())}_server`)
+                        } else if (radioButtons === 1 && range.from && range.to) {
+                          const text = logsResponse.data.logs.filter((log) => moment(log.timestamp).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
+                          const blob = new window.Blob([text], {
+                            type: 'text/plain;charset=utf-8'
+                          })
+                          FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_server`)
+                        }
+                      }}
+                    >
+                      Download
+                    </Link>
+                  </div>
+                </div>
+              </Popover>
               <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
                 Share with Lamassu
               </SimpleButton>
@@ -155,7 +270,7 @@ const Logs = () => {
       <div className={classes.headerLine2}>
         {logsResponse && (
           <Select
-            onSelectedItemChange={handleLogLevelChange}
+            onSelectedItemChange={setLogLevel}
             label='Level'
             items={concat([SHOW_ALL], uniq(logsResponse.data.logs.map(log => log.logLevel)))}
             default={SHOW_ALL}

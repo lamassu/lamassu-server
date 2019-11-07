@@ -3,7 +3,7 @@ import { useSelect } from 'downshift'
 import { startCase } from 'lodash/fp'
 import classnames from 'classnames'
 
-import { ReactComponent as Arrowdown } from '../../styling/icons/action/arrow/regular.svg'
+import { ReactComponent as Arrowdown } from '../../../styling/icons/action/arrow/regular.svg'
 
 import styles from './Select.styles'
 import { makeStyles } from '@material-ui/core/styles'
