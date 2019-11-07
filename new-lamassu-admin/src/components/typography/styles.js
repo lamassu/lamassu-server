@@ -119,6 +119,11 @@ export default {
     fontWeight: 500,
     color: fontColor
   },
+  label3: {
+    fontSize: fontSize5,
+    fontFamily: fontSecondary,
+    fontWeight: 700
+  },
   select: {
     fontSize: fontSize3,
     fontFamily: fontSecondary,
