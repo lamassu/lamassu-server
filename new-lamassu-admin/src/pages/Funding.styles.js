@@ -1,4 +1,4 @@
-import { spacer, subheaderColor, placeholderColor, fontColor } from '../styling/variables'
+import { disabledColor2, spacer, subheaderColor, placeholderColor, fontColor } from '../styling/variables'
 
 import typographyStyles from '../components/typography/styles'
 
@@ -18,19 +18,16 @@ export default {
     margin: `0 ${spacer * 8}px 0 ${spacer * 6}px`
   },
   secondSide: {
-    marginTop: -49
+    marginTop: -29
   },
   coinTotal: {
     margin: `${spacer * 1.5}px 0`
-  },
-  noMargin: {
-    margin: 0
   },
   leftSpacer: {
     marginLeft: spacer
   },
   topSpacer: {
-    marginTop: `${spacer * 5}px`
+    marginTop: spacer * 5
   },
   addressWrapper: {
     display: 'flex',
@@ -58,11 +55,21 @@ export default {
     marginRight: 24
   },
   totalPending: {
-    color: fontColor,
     marginTop: 2
   },
   totalTitle: {
     color: placeholderColor,
     marginBottom: 2
+  },
+  table: {
+    marginTop: spacer,
+    marginLeft: spacer * 6
+  },
+  tableLabel: {
+    justifyContent: 'end',
+    marginTop: -38
+  },
+  pending: {
+    backgroundColor: disabledColor2
   }
 }

@@ -1,18 +1,26 @@
 import React, { useState } from 'react'
-import classnames from 'classnames'
+import moment from 'moment'
 import QRCode from 'qrcode.react'
 import BigNumber from 'bignumber.js'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { H3, Info1, Info2, Info3, Mono, Label1, Label3, TL2 } from '../components/typography'
+import { Tr, Td, THead, TBody, Table } from '../components/fake-table/Table'
+import { H3, Info1, Info2, Info3, Mono, Label1, Label3 } from '../components/typography'
 import Title from '../components/Title'
+import TableLabel from '../components/TableLabel'
 import Sidebar from '../components/Sidebar'
 import { primaryColor } from '../styling/variables'
 
 import styles from './Funding.styles'
+import classnames from 'classnames'
 
 const useStyles = makeStyles(styles)
+const sizes = {
+  big: 165,
+  time: 140,
+  date: 130
+}
 
 const formatAddress = (address = '') => {
   return address.replace(/(.{4})/g, '$1 ')
@@ -39,7 +47,32 @@ const getPendingTotal = list => {
 const Funding = () => {
   const [data, setData] = useState(null)
   const [selected, setSelected] = useState(null)
+  const [viewHistory, setViewHistory] = useState(false)
   const classes = useStyles()
+  const fundingHistory = [
+    {
+      cryptoAmount: 2.00,
+      balance: 10.23,
+      fiatValue: 1000.00,
+      date: new Date(),
+      performedBy: null,
+      pending: true
+    },
+    {
+      cryptoAmount: 10.00,
+      balance: 12.23,
+      fiatValue: 12000.00,
+      date: new Date(),
+      performedBy: null
+    },
+    {
+      cryptoAmount: 5.00,
+      balance: 5.00,
+      fiatValue: 50000.00,
+      date: new Date(),
+      performedBy: null
+    }
+  ]
 
   const isSelected = it => {
     return selected && selected.cryptoCode === it.cryptoCode
@@ -70,7 +103,10 @@ const Funding = () => {
 
   return (
     <>
-      <Title>Funding</Title>
+      <div>
+        <Title>Funding</Title>
+        {/* <button onClick={it => setViewHistory(!viewHistory)}>hehe</button> */}
+      </div>
       <div className={classes.wrapper}>
         <Sidebar
           data={data}
@@ -82,14 +118,14 @@ const Funding = () => {
           {data && data.length && (
             <div className={classes.total}>
               <Label1 className={classes.totalTitle}>Total Crypto Balance</Label1>
-              <Info1 className={classes.noMargin}>
+              <Info1 noMargin>
                 {getConfirmedTotal(data)} {data[0].fiatCode}
               </Info1>
               <Label1 className={classes.totalPending}>(+{getPendingTotal(data)} pending)</Label1>
             </div>
           )}
         </Sidebar>
-        {selected && (
+        {selected && !viewHistory && (
           <div className={classes.main}>
             <div className={classes.firstSide}>
               <H3>Balance ({selected.display})</H3>
@@ -123,6 +159,33 @@ const Funding = () => {
               <Label1>Scan to send {selected.display}</Label1>
               <QRCode size={240} fgColor={primaryColor} value={selected.fundingAddressUrl} />
             </div>
+          </div>
+        )}
+        {selected && viewHistory && (
+          <div>
+            <TableLabel className={classes.tableLabel} label='Pending' color='#cacaca' />
+            <Table className={classes.table}>
+              <THead>
+                <Td header size={sizes.big}>Amount Entered</Td>
+                <Td header size={sizes.big}>Balance After</Td>
+                <Td header size={sizes.big}>Cash Value</Td>
+                <Td header size={sizes.date}>Date</Td>
+                <Td header size={sizes.time}>Time (h:m:s)</Td>
+                <Td header size={sizes.big}>Performed By</Td>
+              </THead>
+              <TBody>
+                {fundingHistory.map((it, idx) => (
+                  <Tr key={idx} className={classnames({ [classes.pending]: it.pending })}>
+                    <Td size={sizes.big}>{it.cryptoAmount} {selected.cryptoCode}</Td>
+                    <Td size={sizes.big}>{it.balance} {selected.cryptoCode}</Td>
+                    <Td size={sizes.big}>{it.fiatValue} {selected.fiatCode}</Td>
+                    <Td size={sizes.date}>{moment(it.date).format('YYYY-MM-DD')}</Td>
+                    <Td size={sizes.time}>{moment(it.date).format('hh:mm:ss')}</Td>
+                    <Td size={sizes.big}>add</Td>
+                  </Tr>
+                ))}
+              </TBody>
+            </Table>
           </div>
         )}
       </div>

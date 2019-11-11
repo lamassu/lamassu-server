@@ -104,12 +104,14 @@ export default {
   label1: {
     fontSize: fontSize5,
     fontFamily: fontSecondary,
-    fontWeight: 500
+    fontWeight: 500,
+    color: fontColor
   },
   label2: {
     fontSize: fontSize5,
     fontFamily: fontSecondary,
-    fontWeight: 700
+    fontWeight: 700,
+    color: fontColor
   },
   label3: {
     fontSize: fontSize4,
