@@ -60,10 +60,11 @@ const AutocompleteMultiple = memo(
         }) => (
           <div className={classes.container}>
             {renderInput({
+              id: name,
               fullWidth: true,
               classes,
-              onBlur,
-              error: touched[name] && errors[name],
+              error: (touched[`${name}-input`] || touched[name]) && errors[name],
+              success: (touched[`${name}-input`] || touched[name] || value) && !errors[name],
               InputProps: getInputProps({
                 startAdornment: (value || []).map(item => (
                   <Chip
@@ -72,6 +73,7 @@ const AutocompleteMultiple = memo(
                     label={item.code}
                   />
                 )),
+                onBlur,
                 onChange: it => setInputValue(it.target.value),
                 onClick: () => toggleMenu(),
                 onKeyDown: handleKeyDown,

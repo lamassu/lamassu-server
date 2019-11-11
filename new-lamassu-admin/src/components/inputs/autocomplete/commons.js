@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import { fontColor, inputFontSize, inputFontWeight } from '../../../styling/variables'
 
 function renderInput (inputProps) {
-  const { InputProps, classes, ref, ...other } = inputProps
+  const { onBlur, success, InputProps, classes, ref, ...other } = inputProps
 
   return (
     <TextField
@@ -14,7 +14,8 @@ function renderInput (inputProps) {
         inputRef: ref,
         classes: {
           root: classes.inputRoot,
-          input: classes.inputInput
+          input: classes.inputInput,
+          underline: success ? classes.success : ''
         },
         ...InputProps
       }}
@@ -87,6 +88,11 @@ const styles = theme => ({
   },
   inputInput: {
     flex: 1
+  },
+  success: {
+    '&:after': {
+      transform: 'scaleX(1)'
+    }
   },
   divider: {
     height: theme.spacing(2)

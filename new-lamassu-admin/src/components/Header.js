@@ -62,7 +62,9 @@ const Header = memo(({ tree }) => {
                     className={classnames(classes.link, classes.whiteLink)}
                     activeClassName={classes.activeLink}
                   >
-                    {it.label}
+                    <span className={classes.forceSize} forcesize={it.label}>
+                      {it.label}
+                    </span>
                   </NavLink>
                 </li>
               ))}

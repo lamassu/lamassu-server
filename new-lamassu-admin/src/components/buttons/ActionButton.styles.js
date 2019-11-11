@@ -9,7 +9,7 @@ import {
 
 import typographyStyles from '../typography/styles'
 
-const { label } = typographyStyles
+const { p } = typographyStyles
 
 const colors = (color1, color2, color3) => {
   return {
@@ -25,7 +25,7 @@ const colors = (color1, color2, color3) => {
 
 export default {
   actionButton: {
-    extend: label,
+    extend: p,
     cursor: 'pointer',
     border: 'none',
     height: 24,

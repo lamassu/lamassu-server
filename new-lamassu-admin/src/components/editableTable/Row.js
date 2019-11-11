@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { identity } from 'lodash/fp'
-import { FastField } from 'formik'
+import React, { useState, memo } from 'react'
+import { identity, isEmpty } from 'lodash/fp'
+import { Form, Formik, FastField, useFormikContext } from 'formik'
 
 import {
   Td,
@@ -13,18 +13,24 @@ const getField = (name, component, props = {}) => (
   <FastField name={name} component={component} {...props} />
 )
 
-const ERow = ({ elements, cancel, save, value }) => {
+const ERow = memo(({ elements }) => {
+  const { values, submitForm, resetForm, errors } = useFormikContext()
   const [editing, setEditing] = useState(false)
+
+  const innerSave = () => {
+    submitForm()
+  }
+
   const innerCancel = () => {
     setEditing(false)
-    cancel()
+    resetForm()
   }
 
   return (
-    <Tr>
-      {elements.map(({ name, input, size, view = identity, inputProps }, idx) => (
-        <Td key={idx} size={size}>
-          {editing ? getField(name, input, inputProps) : view(value[name])}
+    <Tr error={!isEmpty(errors)} errorMessage={errors && errors.toString()}>
+      {elements.map(({ name, input, size, textAlign, view = identity, inputProps }, idx) => (
+        <Td key={idx} size={size} textAlign={textAlign}>
+          {editing ? getField(name, input, inputProps) : view(values[name])}
         </Td>
       ))}
       <Td size={175}>
@@ -33,7 +39,7 @@ const ERow = ({ elements, cancel, save, value }) => {
             <Link style={{ marginRight: '20px' }} color='secondary' onClick={innerCancel}>
               Cancel
             </Link>
-            <Link color='primary' onClick={save}>
+            <Link color='primary' onClick={innerSave}>
               Save
             </Link>
           </>
@@ -45,6 +51,21 @@ const ERow = ({ elements, cancel, save, value }) => {
       </Td>
     </Tr>
   )
-}
+})
 
-export default ERow
+const ERowWithFormik = memo(({ value, validationSchema, save, elements }) => {
+  return (
+    <Formik
+      enableReinitialize
+      initialValues={value}
+      validationSchema={validationSchema}
+      onSubmit={save}
+    >
+      <Form>
+        <ERow elements={elements} />
+      </Form>
+    </Formik>
+  )
+})
+
+export default ERowWithFormik

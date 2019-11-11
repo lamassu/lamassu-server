@@ -70,6 +70,12 @@ export default {
     fontFamily: fontSecondary,
     fontWeight: 700
   },
+  info3: {
+    extend: base,
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 500
+  },
   mono: {
     extend: base,
     fontSize: fontSize4,
@@ -95,7 +101,7 @@ export default {
     fontWeight: 500,
     lineHeight: '110%'
   },
-  label: {
+  label1: {
     fontSize: fontSize5,
     fontFamily: fontSecondary,
     fontWeight: 500
@@ -105,6 +111,12 @@ export default {
     fontFamily: fontSecondary,
     fontWeight: 700
   },
+  label3: {
+    fontSize: fontSize4,
+    fontFamily: fontSecondary,
+    fontWeight: 500,
+    color: fontColor
+  },
   select: {
     fontSize: fontSize3,
     fontFamily: fontSecondary,
@@ -112,5 +124,8 @@ export default {
   },
   inline: {
     display: 'inline'
+  },
+  noMarginP: {
+    margin: 0
   }
 }

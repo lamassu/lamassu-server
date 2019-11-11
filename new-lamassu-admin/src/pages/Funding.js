@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { H3, Info1, Info3, Info4, Mono } from '../components/typography'
+import { H3, Info1, Info2, Info3, Mono, Label1, Label3, TL2 } from '../components/typography'
 import Title from '../components/Title'
 import Sidebar from '../components/Sidebar'
 import { primaryColor } from '../styling/variables'
@@ -58,6 +58,16 @@ const Funding = () => {
     }
   })
 
+  const itemRender = (it) => {
+    return (
+      <div className={classes.itemWrapper}>
+        <div className={classes.firstItem}>{it.display}</div>
+        <div className={classes.item}>{it.fiatConfirmedBalance} {it.fiatCode}</div>
+        <div className={classes.item}>{it.confirmedBalance} {it.cryptoCode}</div>
+      </div>
+    )
+  }
+
   return (
     <>
       <Title>Funding</Title>
@@ -67,14 +77,15 @@ const Funding = () => {
           isSelected={isSelected}
           onClick={setSelected}
           displayName={it => it.display}
+          itemRender={itemRender}
         >
           {data && data.length && (
             <div className={classes.total}>
-              <Info3 className={classes.totalTitle}>Total Crypto Balance</Info3>
+              <Label1 className={classes.totalTitle}>Total Crypto Balance</Label1>
               <Info1 className={classes.noMargin}>
                 {getConfirmedTotal(data)} {data[0].fiatCode}
               </Info1>
-              <Info4>(+{getPendingTotal(data)} pending)</Info4>
+              <Label1 className={classes.totalPending}>(+{getPendingTotal(data)} pending)</Label1>
             </div>
           )}
         </Sidebar>
@@ -83,21 +94,21 @@ const Funding = () => {
             <div className={classes.firstSide}>
               <H3>Balance ({selected.display})</H3>
               <div className={classes.coinTotal}>
-                <span className='info1'>
+                <Info1 inline noMargin>
                   {`${selected.confirmedBalance} ${selected.cryptoCode}`}
-                </span>
-                <span className={classnames('tl2', classes.leftSpacer)}>
-                  {` (+ ${selected.pending} pending)`}
-                </span>
+                </Info1>
+                <Info2 inline noMargin className={classes.leftSpacer}>
+                  {`(+ ${selected.pending} pending)`}
+                </Info2>
               </div>
 
               <div className={classes.coinTotal}>
-                <span className={classnames('info3', classes.noMarginTop)}>
+                <Info3 inline noMargin>
                   {`= ${formatNumber(selected.fiatConfirmedBalance)} ${selected.fiatCode}`}
-                </span>
-                <span className={classnames('info4', classes.leftSpacer)}>
+                </Info3>
+                <Label3 inline noMargin className={classes.leftSpacer}>
                   {`(+${formatNumber(selected.fiatPending)} pending)`}
-                </span>
+                </Label3>
               </div>
 
               <H3 className={classes.topSpacer}>Address</H3>
@@ -109,7 +120,7 @@ const Funding = () => {
             </div>
 
             <div className={classes.secondSide}>
-              <Info3>Scan to send {selected.display}</Info3>
+              <Label1>Scan to send {selected.display}</Label1>
               <QRCode size={240} fgColor={primaryColor} value={selected.fundingAddressUrl} />
             </div>
           </div>

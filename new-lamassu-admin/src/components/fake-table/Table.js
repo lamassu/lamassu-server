@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -10,20 +10,21 @@ import { Link } from '../../components/buttons'
 import {
   tableHeaderColor,
   tableHeaderHeight,
+  tableErrorColor,
   spacer,
   white
 } from '../../styling/variables'
 
 import typographyStyles from '../typography/styles'
 
-const { label2, p } = typographyStyles
+const { tl2, p } = typographyStyles
 
 const useStyles = makeStyles({
   body: {
     borderSpacing: '0 4px'
   },
   header: {
-    extend: label2,
+    extend: tl2,
     backgroundColor: tableHeaderColor,
     height: tableHeaderHeight,
     textAlign: 'left',
@@ -39,39 +40,31 @@ const useStyles = makeStyles({
     display: 'table-cell',
     padding: `0 ${spacer * 3}px`
   },
-  summary: {
-    cursor: 'auto'
+  trError: {
+    backgroundColor: tableErrorColor
+  },
+  mainContent: {
+    display: 'flex',
+    alignItems: 'center',
+    minHeight: 54
   },
   // mui-overrides
-  panelRoot: {
+  cardContentRoot: {
+    // display: 'flex',
+    margin: 0,
+    padding: 0,
+    '&:last-child': {
+      padding: 0
+    }
+  },
+  card: {
     extend: p,
-    display: 'table-row',
     '&:before': {
       height: 0
     },
     margin: '4px 0',
+    width: 'min-content',
     boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
-  },
-  panelExpanded: {
-    '&:first-child': {
-      marginTop: '4px !important'
-    }
-  },
-  summaryRoot: {
-    userSelect: 'auto',
-    '&:hover:not(.Mui-disabled)': {
-      cursor: 'auto'
-    },
-    cursor: 'auto',
-    padding: 0
-  },
-  summaryContent: {
-    margin: 0,
-    height: 54,
-    alignItems: 'center'
-  },
-  summaryFocused: {
-    backgroundColor: 'inherit !important'
   }
 })
 
@@ -99,7 +92,7 @@ const TBody = ({ children, className }) => {
   )
 }
 
-const Td = ({ children, header, className, size = 100 }) => {
+const Td = ({ children, header, className, size = 100, textAlign }) => {
   const classes = useStyles()
   const classNames = {
     [classes.td]: true,
@@ -107,23 +100,28 @@ const Td = ({ children, header, className, size = 100 }) => {
   }
 
   return (
-    <div className={classnames(className, classNames)} style={{ width: size }}>
+    <div className={classnames(className, classNames)} style={{ width: size, textAlign }}>
       {children}
     </div>
   )
 }
 
-const Tr = ({ children }) => {
+const Tr = ({ error, errorMessage, children }) => {
   const classes = useStyles()
-  const epClasses = { root: classes.panelRoot, expanded: classes.panelExpanded }
-  const summaryClasses = { root: classes.summaryRoot, content: classes.summaryContent, focused: classes.summaryFocused }
+  const cardClasses = { root: classes.cardContentRoot }
+  const classNames = {
+    [classes.trError]: error
+  }
 
   return (
-    <ExpansionPanel expanded={false} classes={epClasses} square>
-      <ExpansionPanelSummary tabIndex={null} classes={summaryClasses} className={classes.summary}>
-        {children}
-      </ExpansionPanelSummary>
-    </ExpansionPanel>
+    <>
+      <Card className={classnames(classNames, classes.card)}>
+        <CardContent classes={cardClasses}>
+          <div className={classes.mainContent}>{children}</div>
+          {error && <div className={classes.errorContent}>{errorMessage}</div>}
+        </CardContent>
+      </Card>
+    </>
   )
 }
 

@@ -35,13 +35,15 @@ const Autocomplete = memo(({ suggestions, classes, placeholder, label, itemToStr
       }) => (
         <div className={classes.container}>
           {renderInput({
+            id: name,
             fullWidth: true,
             classes,
-            onBlur,
-            error: touched[name] && errors[name],
+            error: (touched[`${name}-input`] || touched[name]) && errors[name],
+            success: (touched[`${name}-input`] || touched[name] || value) && !errors[name],
             InputProps: getInputProps({
               value: inputValue2 || '',
               placeholder,
+              onBlur,
               onClick: () => toggleMenu(),
               onChange: it => {
                 if (it.target.value === '') {

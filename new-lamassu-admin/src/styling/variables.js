@@ -1,4 +1,4 @@
-const version = 8
+const version = 9
 
 // Primary
 const zodiac = '#1b2559'
@@ -8,8 +8,8 @@ const spring = '#48f694'
 const comet = '#5f668a'
 const comet2 = '#72799d'
 const spring2 = '#44e188'
-const spring4 = '#3fd07e'
 const spring3 = '#ecfbef'
+const spring4 = '#3fd07e'
 const zircon = '#ebefff'
 const zircon2 = '#dbdfed'
 
@@ -75,7 +75,7 @@ if (version === 8) {
   fontSize5 = 14
 }
 
-const smallestFontSize = fontSize5 - 1
+const smallestFontSize = fontSize5
 const inputFontSize = fontSize4
 const inputFontSizeLg = fontSize1
 const inputFontWeight = 500

@@ -1,4 +1,8 @@
-import { spacer, subheaderColor, placeholderColor } from '../styling/variables'
+import { spacer, subheaderColor, placeholderColor, fontColor } from '../styling/variables'
+
+import typographyStyles from '../components/typography/styles'
+
+const { label1 } = typographyStyles
 
 export default {
   wrapper: {
@@ -38,12 +42,27 @@ export default {
     width: 375,
     margin: `${spacer * 1.5}px ${spacer * 3}px`
   },
+  itemWrapper: {
+    textAlign: 'end'
+  },
+  item: {
+    extend: label1,
+    margin: 2
+  },
+  firstItem: {
+    margin: 2
+  },
   total: {
     marginTop: 'auto',
     textAlign: 'right',
-    marginRight: 20
+    marginRight: 24
+  },
+  totalPending: {
+    color: fontColor,
+    marginTop: 2
   },
   totalTitle: {
-    color: placeholderColor
+    color: placeholderColor,
+    marginBottom: 2
   }
 }

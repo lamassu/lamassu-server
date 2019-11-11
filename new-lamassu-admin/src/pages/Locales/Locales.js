@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react'
-import { withFormik } from 'formik'
 import * as Yup from 'yup'
 import useAxios from '@use-hooks/axios'
 
@@ -24,7 +23,6 @@ const initialValues = {
 
 const Locales = memo(() => {
   const [locale, setLocale] = useState(initialValues)
-  const [editing, setEditing] = useState(false)
   const [data, setData] = useState(null)
 
   useAxios({
@@ -48,21 +46,16 @@ const Locales = memo(() => {
     }
   })
 
-  const MainFormFormik = withFormik({
-    mapPropsToValues: () => locale,
-    validationSchema: LocaleSchema,
-    handleSubmit: it => {
-      setEditing(false)
-      setLocale(it)
-      reFetch()
-    }
-  })(MainForm)
+  const save = (it) => {
+    setLocale(it)
+    reFetch()
+  }
 
   return (
     <>
       <Title>Locales</Title>
       <Subtitle>Default settings</Subtitle>
-      <MainFormFormik editing={editing} setEditing={setEditing} data={data} />
+      <MainForm validationSchema={LocaleSchema} value={locale} save={save} auxData={data} />
       <Subtitle extraMarginTop>Overrides</Subtitle>
     </>
   )
