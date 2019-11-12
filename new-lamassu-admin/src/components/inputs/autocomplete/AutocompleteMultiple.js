@@ -16,7 +16,7 @@ const AutocompleteMultiple = memo(
     const [popperNode, setPopperNode] = useState(null)
 
     const onDelete = item => {
-      let selectedItem = (value || []).slice()
+      const selectedItem = (value || []).slice()
       const index = selectedItem.indexOf(item)
       if (index === -1) return
 

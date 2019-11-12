@@ -1,7 +1,7 @@
-import { zircon, comet, white, fontSecondary } from '../../styling/variables'
-import typographyStyles from '../typography/styles'
+import { zircon, comet, white } from '../../../styling/variables'
+import typographyStyles from '../../typography/styles'
 
-const { select, regularLabel, label, label2 } = typographyStyles
+const { select, regularLabel } = typographyStyles
 
 const WIDTH = 152
 

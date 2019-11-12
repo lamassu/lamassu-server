@@ -2,8 +2,6 @@ import React, { memo } from 'react'
 import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { tableHeaderColor } from '../../styling/variables'
-
 const useStyles = makeStyles({
   table: {
     // backgroundColor: tableHeaderColor,

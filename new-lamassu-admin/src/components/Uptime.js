@@ -3,7 +3,7 @@ import { floor, lowerCase, startCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 
-import { spring3, spring2, mistyRose, tomato, zircon, comet, white, fontSecondary } from '../styling/variables'
+import { spring3, spring2, mistyRose, tomato, comet } from '../styling/variables'
 import typographyStyles from './typography/styles'
 const { label } = typographyStyles
 

@@ -3,7 +3,7 @@ export default {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   wrapper: {
     display: 'flex',
@@ -28,10 +28,10 @@ export default {
     }
   },
   dateColumn: {
-    minWidth: 160,
+    minWidth: 160
   },
   levelColumn: {
-    minWidth: 100,
+    minWidth: 100
   },
   fillColumn: {
     width: '100%'

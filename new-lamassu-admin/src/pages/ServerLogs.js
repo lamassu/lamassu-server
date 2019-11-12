@@ -14,13 +14,12 @@ import { ReactComponent as Download } from '../styling/icons/button/download/zod
 import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
 
 import { makeStyles } from '@material-ui/core'
-import typographyStyles from '../components/typography/styles'
+import { regularLabel } from '../components/typography/styles'
 
 import { comet } from '../styling/variables'
 import styles from './Logs.styles'
 import logPageHeaderStyles from './LogPageHeader.styles'
 
-const { regularLabel } = typographyStyles
 const { tableWrapper } = styles
 const { titleAndButtonsContainer, buttonsWrapper } = logPageHeaderStyles
 
