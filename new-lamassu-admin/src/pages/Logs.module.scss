@@ -1,0 +1,52 @@
+.titleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.tableWrapper {
+  flex: 1;
+  margin-left: 40px;
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 78%;
+  max-height: 70vh;
+}
+
+.table {
+  white-space: nowrap;
+  display: block;
+  & th {
+    position: sticky;
+    top: 0;
+  }
+}
+
+.dateColumn {
+  min-width: 160px;
+}
+
+.levelColumn {
+  min-width: 100px;
+}
+
+.fillColumn {
+  width: 100%;
+}
+
+.button {
+  margin: 8px;
+}
+
+.buttonsWrapper {
+  display: flex;
+  align-items: center;
+}

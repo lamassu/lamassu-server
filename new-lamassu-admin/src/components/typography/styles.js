@@ -105,6 +105,11 @@ export default {
     fontFamily: fontSecondary,
     fontWeight: 700
   },
+  select: {
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 500
+  },
   inline: {
     display: 'inline'
   }

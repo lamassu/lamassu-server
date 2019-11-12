@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="8px" viewBox="0 0 13 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>icon/action/arrow/regular</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M5.3501239,7.53208616 L0.473798314,2.73082122 C-0.158421727,2.1051411 -0.158421727,1.0952488 0.476737158,0.466675069 C1.11220338,-0.155816755 2.1378971,-0.155816755 2.77494316,0.468226909 L6.49990857,4.13723769 L10.2264532,0.466675069 C10.8619195,-0.155816755 11.8876132,-0.155816755 12.5260183,0.469568675 C13.1582383,1.0952488 13.1582383,2.1051411 12.5245507,2.73226987 L7.64673876,7.53497972 C7.33802629,7.83583835 6.92590837,8 6.49990828,8 C6.0739082,8 5.66179027,7.83583835 5.3501239,7.53208616 Z" id="path-1"></path>
+    </defs>
+    <g id="Styleguide" stroke="none" stroke-width="1" fill-rule="evenodd">
+        <g id="icon/action/arrow/regular">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill-rule="nonzero" xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,60 @@
+$spacer: 8;
+$subheader-color: white;
+$placeholder-color: white;
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+}
+
+.firstSide {
+  margin: 0 ($spacer * 8px) 0 ($spacer * 6px);
+}
+
+.secondSide {
+  margin-top: -49px;
+}
+
+.coinTotal {
+  margin: ($spacer * 1.5px) 0;
+}
+
+.noMargin {
+  margin: 0px;
+}
+
+.leftSpacer {
+  margin-left: $spacer * 1px;
+}
+
+.topSpacer {
+  margin-top: $spacer * 5px;
+}
+
+.addressWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: $subheader-color;
+}
+
+.address {
+  width: 375px;
+  margin: ($spacer * 1.5px) ($spacer * 3px);
+}
+
+.total {
+  margin-top: auto;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.totalTitle {
+  color: $placeholder-color;
+}

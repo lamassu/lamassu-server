@@ -2,6 +2,14 @@ const db = require('./db')
 
 exports.up = function (next) {
   var sqls = [
+    'create table server_logs ( ' +
+    'id uuid PRIMARY KEY, ' +
+    'device_id text, ' +
+    'log_level text, ' +
+    'timestamp timestamptz DEFAULT now(), ' +
+    'message text, ' +
+    'meta json)',
+
     'CREATE TABLE IF NOT EXISTS user_config ( ' +
     'id serial PRIMARY KEY, ' +
     'type text NOT NULL, ' +

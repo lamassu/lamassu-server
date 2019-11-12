@@ -21,7 +21,7 @@ const ActionButton = memo(({ className, Icon, InverseIcon, color, children, ...p
         <div className={classnames(classes.actionButtonIcon, classes.actionButtonIconActive)}>
           <InverseIcon />
         </div>}
-      <div>{children}</div>
+      {children && <div>{children}</div>}
     </button>
   )
 })
