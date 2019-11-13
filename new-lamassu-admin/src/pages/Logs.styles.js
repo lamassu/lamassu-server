@@ -39,8 +39,14 @@ export default {
   button: {
     margin: 8
   },
+  titleAndButtonsContainer: {
+    display: 'flex'
+  },
   buttonsWrapper: {
     display: 'flex',
-    alignItems: 'center'
+    marginLeft: 10,
+    '& > *': {
+      margin: 'auto 10px'
+    }
   }
 }
