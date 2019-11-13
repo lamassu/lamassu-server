@@ -19,7 +19,7 @@ const colors = (color1, color2, color3) => {
   }
 }
 
-const buttonHeight = 45
+const buttonHeight = 32
 
 export default {
   baseButton: {

@@ -6,8 +6,6 @@ import baseButtonStyles from './BaseButton.styles'
 
 const { baseButton, primary } = baseButtonStyles
 
-const svgSize = 25
-
 const styles = {
   featureButton: {
     extend: baseButton,
@@ -17,11 +15,7 @@ const styles = {
   },
   primary,
   buttonIcon: {
-    margin: 'auto',
-    '& svg': {
-      width: svgSize,
-      height: svgSize
-    }
+    margin: 'auto'
   },
   buttonIconActive: {} // required to extend primary
 }

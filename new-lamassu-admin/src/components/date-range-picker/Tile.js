@@ -2,36 +2,33 @@ import React from 'react'
 import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { primaryColor, spring2, spring3, fontSecondary, disabledColor } from '../../styling/variables'
+import { primaryColor, spring2, spring3, disabledColor } from '../../styling/variables'
+import typographyStyles from '../typography/styles'
+
+const { label1 } = typographyStyles
 
 const styles = {
   wrapper: {
-    width: 45,
+
     height: 26,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative'
+    position: 'relative',
+    overflow: 'hidden'
   },
   button: {
+    extend: label1,
     border: 'none',
-    width: '100%',
-    height: '100%',
     cursor: 'pointer',
-    padding: 0,
     backgroundColor: 'transparent',
     color: primaryColor,
-    zIndex: 2,
-    fontFamily: fontSecondary,
-    fontSize: 14,
-    fontWeight: 500
+    zIndex: 2
   },
   lowerBound: {
-    width: [['50%', '!important']],
     left: '50%'
   },
   upperBound: {
-    width: [['50%', '!important']],
     right: '50%'
   },
   selected: {

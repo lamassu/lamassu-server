@@ -3,32 +3,35 @@ import { floor, lowerCase, startCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 
-import { spring3, spring2, mistyRose, tomato, comet } from '../styling/variables'
+import { secondaryColorLighter, secondaryColorDarker, offErrorColor, errorColor, offColor } from '../styling/variables'
 import typographyStyles from './typography/styles'
-const { label } = typographyStyles
+const { label1 } = typographyStyles
 
 const styles = {
   uptimeContainer: {
     display: 'inline-block',
-    minWidth: 120,
-    margin: '0 20px 0 20px'
+    minWidth: 104,
+    margin: [[0, 20]]
   },
   name: {
-    paddingLeft: 8,
-    color: comet
+    extend: label1,
+    paddingLeft: 4,
+    color: offColor
   },
   uptime: {
-    extend: label,
-    textAlign: 'center',
-    padding: 4
+    extend: label1,
+    height: 24,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   running: {
-    backgroundColor: spring3,
-    color: spring2
+    backgroundColor: secondaryColorLighter,
+    color: secondaryColorDarker
   },
   notRunning: {
-    backgroundColor: mistyRose,
-    color: tomato
+    backgroundColor: offErrorColor,
+    color: errorColor
   }
 }
 

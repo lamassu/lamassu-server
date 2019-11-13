@@ -17,14 +17,14 @@ const { h4 } = typographyStyles
 
 const styles = {
   popoverContent: {
-    minWidth: 315
+    width: 272
   },
   popoverHeader: {
     extend: h4,
-    padding: [[20, 15, 0, 15]]
+    padding: [[15, 15, 0, 15]]
   },
   radioButtonsContainer: {
-    padding: [[10, 15, 10, 15]]
+    padding: [[5, 15, 5, 15]]
   },
   radioButtons: {
     display: 'flex',
@@ -41,7 +41,7 @@ const styles = {
     height: 0
   },
   download: {
-    padding: [[30, 15, 30, 15]]
+    padding: [[10, 15]]
   }
 }
 

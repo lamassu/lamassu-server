@@ -8,11 +8,12 @@ import { ReactComponent as Arrow } from '../../styling/icons/arrow/download_logs
 import { primaryColor, offColor, zircon } from '../../styling/variables'
 import typographyStyles from '../typography/styles'
 
-const { info1, label, label3 } = typographyStyles
+const { info1, label1, label2 } = typographyStyles
 
 const dateContainerStyles = {
   wrapper: {
-    minWidth: 118
+    height: 46,
+    width: 99
   },
   container: {
     display: 'flex'
@@ -22,20 +23,23 @@ const dateContainerStyles = {
     flexDirection: 'column'
   },
   label: {
-    extend: label,
+    extend: label1,
+    lineHeight: 1.33,
     color: primaryColor
   },
   bigNumber: {
     extend: info1,
+    lineHeight: 1,
     marginRight: 7
   },
   monthYear: {
-    extend: label3,
+    extend: label2,
+    lineHeight: 1.17,
     color: primaryColor
   },
   weekDay: {
-    extend: label,
-    lineHeight: 1,
+    extend: label1,
+    lineHeight: 1.33,
     color: offColor
   }
 }
@@ -68,17 +72,18 @@ const styles = {
     borderRadius: 10
   },
   dateThingyContainer: {
-    height: 80,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
     backgroundColor: zircon,
-    padding: [[5, 15, 0, 15]]
+    padding: [[0, 15]],
+    minHeight: 70
   },
   arrowContainer: {
-    width: 39,
-    display: 'flex',
-    alignSelf: 'center',
-    alignItems: 'center'
+    position: 'absolute',
+    left: 116,
+    top: 26
   },
   arrow: {
     margin: 'auto'
