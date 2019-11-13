@@ -1,8 +1,12 @@
 import React from 'react'
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/styles'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { Radio as MaterialRadio, RadioGroup as MaterialRadioGroup } from '@material-ui/core'
+import {
+  Radio as MaterialRadio,
+  RadioGroup as MaterialRadioGroup,
+  FormControlLabel
+} from '@material-ui/core'
+
 import { secondaryColor } from '../../../styling/variables'
 
 const GreenRadio = withStyles({

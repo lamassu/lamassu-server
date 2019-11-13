@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+
 import { primaryColor, spring2, spring3, fontSecondary, disabledColor } from '../../styling/variables'
 
 const styles = {

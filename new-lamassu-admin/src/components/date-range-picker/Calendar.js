@@ -2,10 +2,13 @@ import React, { useState } from 'react'
 import moment from 'moment'
 import { toInteger } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
-import Tile from './Tile'
+
 import { ReactComponent as Arrow } from '../../styling/icons/arrow/month_change.svg'
 import { primaryColor, zircon, fontSecondary } from '../../styling/variables'
 import typographyStyles from '../typography/styles'
+
+import Tile from './Tile'
+
 const { label2 } = typographyStyles
 
 const styles = {
