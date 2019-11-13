@@ -13,12 +13,12 @@ import Uptime from '../components/Uptime'
 import LogsDowloaderPopover from '../components/LogsDownloaderPopover'
 import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
-import { comet } from '../styling/variables'
+import { offColor } from '../styling/variables'
 import typographyStyles from '../components/typography/styles'
 
 import logsStyles from './Logs.styles'
 
-const { regularLabel } = typographyStyles
+const { p } = typographyStyles
 const { tableWrapper } = logsStyles
 
 const localStyles = {
@@ -28,8 +28,8 @@ const localStyles = {
     marginLeft: 0
   },
   serverVersion: {
-    extend: regularLabel,
-    color: comet,
+    extend: p,
+    color: offColor,
     margin: 'auto 0 auto 0'
   },
   headerLine2: {

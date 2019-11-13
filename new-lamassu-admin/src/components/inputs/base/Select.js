@@ -40,7 +40,8 @@ function Select ({ label, items, ...props }) {
       <button
         {...getToggleButtonProps()}
       >
-        {startCase(selectedItem)} <Arrowdown />
+        <span className={classes.selectedItem}>{startCase(selectedItem)}</span>
+        <Arrowdown />
       </button>
       <ul {...getMenuProps()}>
         {isOpen &&
@@ -49,7 +50,7 @@ function Select ({ label, items, ...props }) {
               key={`${item}${index}`}
               {...getItemProps({ item, index })}
             >
-              {startCase(item)}
+              <span>{startCase(item)}</span>
             </li>
           ))}
       </ul>

@@ -35,6 +35,7 @@ const primaryColor = zodiac
 const secondaryColor = spring
 const secondaryColorDark = spring2
 const secondaryColorDarker = spring4
+const secondaryColorLighter = spring3
 
 const backgroundColor = ghost
 const subheaderColor = zircon
@@ -46,6 +47,7 @@ const offColor = comet
 const offDarkColor = comet2
 const placeholderColor = comet
 const errorColor = tomato
+const offErrorColor = mistyRose
 const inputBorderColor = primaryColor
 
 // General
@@ -121,6 +123,7 @@ export {
   secondaryColor,
   secondaryColorDark,
   secondaryColorDarker,
+  secondaryColorLighter,
   subheaderColor,
   subheaderDarkColor,
   backgroundColor,
@@ -132,6 +135,8 @@ export {
   disabledColor2,
   linkPrimaryColor,
   linkSecondaryColor,
+  errorColor,
+  offErrorColor,
 
   fontSize1,
   fontSize2,

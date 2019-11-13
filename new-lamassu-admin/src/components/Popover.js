@@ -1,6 +1,8 @@
 import React from 'react'
 import { makeStyles, Popover as MaterialPopover } from '@material-ui/core'
 
+const arrowHeight = 10
+
 const styles = {
   arrow: {
     width: 0,
@@ -8,12 +10,12 @@ const styles = {
     position: 'absolute',
     borderStyle: 'solid',
     margin: 5,
-    borderWidth: [[0, 15, 18, 15]],
+    borderWidth: [[0, 15, arrowHeight, 15]],
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderTopColor: 'transparent',
-    top: -18,
-    left: 138,
+    top: arrowHeight * -1,
+    left: 116,
     marginTop: 0,
     marginBottom: 0,
     borderColor: '#ffffff'
@@ -36,7 +38,7 @@ const Popover = ({ children, ...props }) => {
       {...props}
     >
       {children}
-      <div class={classes.arrow} />
+      <div className={classes.arrow} />
     </MaterialPopover>
   )
 }

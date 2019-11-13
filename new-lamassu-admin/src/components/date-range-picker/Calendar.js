@@ -4,18 +4,25 @@ import { toInteger } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { ReactComponent as Arrow } from '../../styling/icons/arrow/month_change.svg'
-import { primaryColor, zircon, fontSecondary } from '../../styling/variables'
+import { primaryColor, zircon } from '../../styling/variables'
 import typographyStyles from '../typography/styles'
 
 import Tile from './Tile'
 
-const { label2 } = typographyStyles
+const { p, label2 } = typographyStyles
 
 const styles = {
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
   navbar: {
+    extend: p,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
     padding: [[15, 15]],
     color: primaryColor,
     '& button': {
@@ -34,13 +41,11 @@ const styles = {
         position: 'absolute',
         left: 0
       }
-    },
-    fontFamily: fontSecondary,
-    fontSize: 16,
-    fontWeight: 500
+    }
   },
   table: {
     borderCollapse: 'collapse',
+    width: '100%',
     color: primaryColor,
     '& tr': {
       '&:first-child': {
