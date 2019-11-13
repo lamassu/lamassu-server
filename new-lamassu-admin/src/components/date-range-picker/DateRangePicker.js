@@ -3,11 +3,11 @@ import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Calendar from './Calendar'
+
 import { ReactComponent as Arrow } from '../../styling/icons/arrow/download_logs.svg'
-
 import { primaryColor, offColor, zircon } from '../../styling/variables'
-
 import typographyStyles from '../typography/styles'
+
 const { info1, label, label3 } = typographyStyles
 
 const dateContainerStyles = {

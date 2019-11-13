@@ -16,12 +16,12 @@ import DateRangePicker from '../components/date-range-picker/DateRangePicker'
 import Popover from '../components/Popover'
 import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
-
 import { primaryColor, comet } from '../styling/variables'
+import typographyStyles from '../components/typography/styles'
+
 import styles from './Logs.styles'
 import logPageHeaderStyles from './LogPageHeader.styles'
 
-import typographyStyles from '../components/typography/styles'
 const { regularLabel, h4 } = typographyStyles
 const { tableWrapper } = styles
 const { titleAndButtonsContainer, buttonsWrapper } = logPageHeaderStyles
