@@ -5,15 +5,72 @@ import { toInteger } from 'lodash/fp'
 import moment from 'moment'
 import { makeStyles } from '@material-ui/core'
 
+import { ReactComponent as Arrow } from '../styling/icons/arrow/download_logs.svg'
 import typographyStyles from '../components/typography/styles'
-import { primaryColor } from '../styling/variables'
+import { primaryColor, offColor, zircon } from '../styling/variables'
 
 import { Link } from './buttons'
 import { RadioGroup } from './inputs'
 import Popover from './Popover'
 import DateRangePicker from './date-range-picker/DateRangePicker'
 
-const { h4 } = typographyStyles
+const { info1, label1, label2, h4 } = typographyStyles
+
+const dateContainerStyles = {
+  wrapper: {
+    height: 46,
+    width: 99
+  },
+  container: {
+    display: 'flex'
+  },
+  monthWeekDayContainer: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  label: {
+    extend: label1,
+    lineHeight: 1.33,
+    color: primaryColor
+  },
+  bigNumber: {
+    extend: info1,
+    lineHeight: 1,
+    marginRight: 7
+  },
+  monthYear: {
+    extend: label2,
+    lineHeight: 1.17,
+    color: primaryColor
+  },
+  weekDay: {
+    extend: label1,
+    lineHeight: 1.33,
+    color: offColor
+  }
+}
+
+const dateContainerUseStyles = makeStyles(dateContainerStyles)
+
+const DateContainer = ({ date, children, ...props }) => {
+  const classes = dateContainerUseStyles()
+
+  return (
+    <div className={classes.wrapper}>
+      <div className={classes.label}>{children}</div>
+      {date &&
+        <>
+          <div className={classes.container}>
+            <div className={classes.bigNumber}>{date.format('D')}</div>
+            <div className={classes.monthWeekDayContainer}>
+              <span className={classes.monthYear}>{`${date.format('MMM')} ${date.format('YYYY')}`}</span>
+              <span className={classes.weekDay}>{date.format('dddd')}</span>
+            </div>
+          </div>
+        </>}
+    </div>
+  )
+}
 
 const styles = {
   popoverContent: {
@@ -42,6 +99,23 @@ const styles = {
   },
   download: {
     padding: [[10, 15]]
+  },
+  dateContainerWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+    backgroundColor: zircon,
+    padding: [[0, 15]],
+    minHeight: 70
+  },
+  arrowContainer: {
+    position: 'absolute',
+    left: 116,
+    top: 26
+  },
+  arrow: {
+    margin: 'auto'
   }
 }
 
@@ -99,11 +173,23 @@ const LogsDownloaderPopover = ({ id, open, anchorEl, onClose, logsResponse, ...p
             className={classes.radioButtons}
           />
         </div>
-        <DateRangePicker
-          maxDate={moment()}
-          handleChange={handleRangeChange}
-          className={classnames(dateRangePickerClasses)}
-        />
+        <div className={classnames(dateRangePickerClasses)}>
+          <div className={classes.dateContainerWrapper}>
+            {range && (
+              <>
+                <DateContainer date={range.from}>From</DateContainer>
+                <div className={classes.arrowContainer}>
+                  <Arrow className={classes.arrow} />
+                </div>
+                <DateContainer date={range.to}>To</DateContainer>
+              </>
+            )}
+          </div>
+          <DateRangePicker
+            maxDate={moment()}
+            onRangeChange={handleRangeChange}
+          />
+        </div>
         <div className={classes.download}>
           <Link
             color='primary'
