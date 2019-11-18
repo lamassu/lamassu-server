@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import moment from 'moment'
-import { toInteger } from 'lodash/fp'
+import { toInteger, range, map, concat } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { ReactComponent as Arrow } from '../../styling/icons/arrow/month_change.svg'
@@ -77,21 +77,16 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
   const monthLength = (month) => toInteger(moment(month).endOf('month').format('D'))
 
   const monthdays = (month) => {
-    const days = []
-
     const lastMonth = moment(month).subtract(1, 'month')
-    for (let i = firstDayOfMonth(month) - 1; i >= 0; i--) {
-      days.push(moment(lastMonth).endOf('month').subtract(i, 'days'))
-    }
-    for (let j = 0; j < monthLength(month); j++) {
-      days.push(moment(month).startOf('month').add(j, 'days'))
-    }
+    const lastMonthRange = range(firstDayOfMonth(month) - 1, -1)
+    const lastMonthDays = map(i => moment(lastMonth).endOf('month').subtract(i, 'days'))(lastMonthRange)
+    const thisMonthRange = range(0, monthLength(month))
+    const thisMonthDays = map(i => moment(month).startOf('month').add(i, 'days'))(thisMonthRange)
     const nextMonth = moment(month).add(1, 'month')
-    for (let k = 0; days.length < 42; k++) {
-      days.push(moment(nextMonth).startOf('month').add(k, 'days'))
-    }
+    const nextMonthRange = range(0, 42 - lastMonthDays.length - thisMonthDays.length)
+    const nextMonthDays = map(i => moment(nextMonth).startOf('month').add(i, 'days'))(nextMonthRange)
 
-    return days
+    return concat(concat(lastMonthDays, thisMonthDays), nextMonthDays)
   }
 
   const getRow = (month, row) => monthdays(month).slice(row * 7 - 7, row * 7)
@@ -127,7 +122,7 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
           </tr>
         </thead>
         <tbody>
-          {[1, 2, 3, 4, 5, 6, 7].map((row, key) => (
+          {range(1, 8).map((row, key) => (
             <tr key={key}>
               {getRow(currentDisplayedMonth, row).map((day, key) => (
                 <td key={key} onClick={() => handleSelect(day, minDate, maxDate)}>
