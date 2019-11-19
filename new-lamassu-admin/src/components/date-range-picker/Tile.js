@@ -9,7 +9,6 @@ const { label1 } = typographyStyles
 
 const styles = {
   wrapper: {
-
     height: 26,
     display: 'flex',
     alignItems: 'center',
