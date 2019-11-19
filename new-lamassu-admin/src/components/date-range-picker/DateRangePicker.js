@@ -25,17 +25,20 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange, ...props 
 
   const handleSelect = (day, minDate, maxDate) => {
     if ((maxDate && day.isAfter(maxDate, 'day')) || (minDate && day.isBefore(minDate, 'day'))) return
-    if (from && !to) {
-      if (day.isBefore(from, 'day')) {
-        setTo(from)
-        setFrom(day)
-      } else {
-        setTo(day)
-      }
-    } else {
+
+    if (from && !to && day.isBefore(from, 'day')) {
+      setTo(from)
       setFrom(day)
-      setTo(null)
+      return
     }
+
+    if (from && !to && day.isSameOrAfter(from, 'day')) {
+      setTo(day)
+      return
+    }
+
+    setFrom(day)
+    setTo(null)
   }
 
   return (
