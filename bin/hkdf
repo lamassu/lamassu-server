@@ -13,5 +13,5 @@ if (process.argv.length !== 4) {
   process.exit(3)
 }
 
-const masterSeed = new Buffer(masterSeedHex, 'hex')
-console.log(hkdf(masterSeed, 32, {salt: 'lamassu-server-salt', info: label}).toString('hex'))
+const masterSeed = Buffer.from(masterSeedHex, 'hex')
+console.log(hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: label }).toString('hex'))
