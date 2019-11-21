@@ -106,6 +106,12 @@ const Td = ({ children, header, className, size = 100, textAlign }) => {
   )
 }
 
+const Th = ({ children, ...props }) => {
+  return (
+    <Td header {...props}>{children}</Td>
+  )
+}
+
 const Tr = ({ error, errorMessage, children, className }) => {
   const classes = useStyles()
   const cardClasses = { root: classes.cardContentRoot }
@@ -136,4 +142,4 @@ const EditCell = ({ save, cancel }) => (
   </Td>
 )
 
-export { Table, THead, TBody, Tr, Td, EditCell }
+export { Table, THead, TBody, Tr, Td, Th, EditCell }

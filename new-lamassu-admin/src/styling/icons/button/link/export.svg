@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/button/link/export</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/button/link/export" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-12" transform="translate(5.000000, 4.000000)" stroke="#1B2559" stroke-linecap="round">
+            <line x1="0.846153846" y1="1.07692308" x2="4.07692308" y2="1.07692308" id="Path-7"></line>
+            <line x1="0.846153846" y1="2.92307692" x2="5.46153846" y2="2.92307692" id="Path-7-Copy"></line>
+            <line x1="0.846153846" y1="4.76923077" x2="5.46153846" y2="4.76923077" id="Path-7-Copy-2"></line>
+        </g>
+        <polygon id="Stroke-7" stroke="#1B2559" stroke-linecap="round" stroke-linejoin="round" points="12 11 4 11 4 0 9.33333333 1.73325476e-12 12 3.02290076"></polygon>
+        <polygon id="Path-5" stroke="#1B2559" stroke-linejoin="round" points="9 0 9 2.76923077 11.7692308 2.76923077"></polygon>
+        <circle id="Oval" stroke="#1B2559" fill="#EBEFFF" cx="3.69230769" cy="8.69230769" r="3.69230769"></circle>
+        <g id="Group-11" transform="translate(1.846154, 6.846154)" stroke="#1B2559" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1.84615385" y1="0.131868132" x2="1.84615385" y2="3.69230769" id="Line-2"></line>
+            <polyline id="Path-8" points="0 1.84615385 1.84615385 0 3.69230769 1.84615385"></polyline>
+        </g>
+    </g>
+</svg>

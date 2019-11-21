@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/button/retry/white</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/button/retry/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Group-7" stroke="#FFFFFF">
+            <path d="M7.1942452e-14,9.603 L0.002,3.598 C0.003,1.611 1.614,-5.86197757e-14 3.602,-5.86197757e-14 L8.4,-5.86197757e-14 C10.39,-5.86197757e-14 12.001,1.613 12,3.601 L11.998,7.205 C11.998,9.192 10.386,10.803 8.398,10.803 L3,10.803" id="Stroke-1"></path>
+            <polyline id="Stroke-3" points="4.2002 9.601 3.0002 10.8 4.2002 12"></polyline>
+        </g>
+    </g>
+</svg>
