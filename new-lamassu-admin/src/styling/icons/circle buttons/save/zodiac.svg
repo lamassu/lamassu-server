@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/sf-small/save/zodiac</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 21 21 21 21 0 0 0"></polygon>
+    </defs>
+    <g id="icon/sf-small/save/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <g id="Group-10">
+                <g id="Group-6">
+                    <polygon id="Stroke-1" stroke="#1B2559" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="20.5 20.5 0.5 20.5 0.5 0.5 16.75 0.5 20.5 4.25"></polygon>
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Clip-4"></g>
+                    <polygon id="Stroke-5" stroke="#1B2559" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" mask="url(#mask-2)" points="4.25 7.5 16.75 7.5 16.75 0.5 4.25 0.5"></polygon>
+                </g>
+            </g>
+            <circle id="Oval" stroke="#1B2559" stroke-width="2" cx="11" cy="14" r="3"></circle>
+        </g>
+    </g>
+</svg>
