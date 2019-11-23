@@ -9,6 +9,7 @@ import Logs from 'src/pages/Logs'
 import ServerLogs from 'src/pages/ServerLogs'
 import Transactions from 'src/pages/Transactions/Transactions'
 import AuthRegister from 'src/pages/AuthRegister'
+import MachineStatus from '../pages/maintenance/MachineStatus'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -25,6 +26,11 @@ const tree = [
         key: 'server-logs',
         label: 'Server',
         route: '/maintenance/server-logs'
+      },
+      { 
+        key: 'machine-status',
+        label: 'Machine Status',
+        route: '/maintenance/machine-status'
       }
     ]
   },
@@ -63,14 +69,15 @@ const Routes = () => (
       exact
       component={() => <Redirect to={firstChild('maintenance')} />}
     />
-    <Route path="/settings/commissions" component={Commissions} />
-    <Route path="/settings/locale" component={Locales} />
-    <Route path="/maintenance/logs" component={Logs} />
-    <Route path="/maintenance/funding" component={Funding} />
-    <Route path="/maintenance/server-logs" component={ServerLogs} />
-    <Route path="/transactions" component={Transactions} />
-    <Route path="/register" component={AuthRegister} />
-  </Switch>
+<Route path="/settings/commissions" component={Commissions} />
+  <Route path="/settings/locale" component={Locales} />
+  <Route path="/maintenance/logs" component={Logs} />
+  <Route path="/maintenance/funding" component={Funding} />
+  <Route path="/maintenance/server-logs" component={ServerLogs} />
+  <Route path="/transactions" component={Transactions} />
+  <Route path="/register" component={AuthRegister} />
+  <Route path="/maintenance/machine-status" component={MachineStatus} />
+  </Switch >
 )
 
 export { tree, Routes }
