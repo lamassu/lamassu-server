@@ -8,6 +8,7 @@ import Locales from '../pages/Locales'
 import Funding from '../pages/Funding'
 import ServerLogs from '../pages/ServerLogs'
 import Transactions from '../pages/Transactions/Transactions'
+import MachineStatus from '../pages/maintenance/MachineStatus'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -20,7 +21,8 @@ const tree = [
     children: [
       { key: 'logs', label: 'Logs', route: '/maintenance/logs' },
       { key: 'fuding', label: 'Funding', route: '/maintenance/funding' },
-      { key: 'server-logs', label: 'Server', route: '/maintenance/server-logs' }
+      { key: 'server-logs', label: 'Server', route: '/maintenance/server-logs' },
+      { key: 'machine-status', label: 'Machine Status', route: '/maintenance/machine-status' }
     ]
   },
   {
@@ -63,6 +65,7 @@ const Routes = () => (
     <Route path='/maintenance/funding' component={Funding} />
     <Route path='/maintenance/server-logs' component={ServerLogs} />
     <Route path='/transactions' component={Transactions} />
+    <Route path='/maintenance/machine-status' component={MachineStatus} />
   </Switch>
 )
 
