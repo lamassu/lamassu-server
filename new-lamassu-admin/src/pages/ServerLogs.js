@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { concat, uniq, merge } from 'lodash/fp'
 import moment from 'moment'
+import FileSaver from 'file-saver'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'
 
@@ -10,7 +11,7 @@ import { FeatureButton, SimpleButton } from '../components/buttons'
 import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '../components/table'
 import { Select } from '../components/inputs'
 import Uptime from '../components/Uptime'
-import LogsDowloaderPopover from '../components/LogsDownloaderPopover'
+import LogsDowloaderPopover from '../components/LogsDownloaderPopper'
 import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
 import { offColor } from '../styling/variables'
@@ -108,11 +109,34 @@ const Logs = () => {
   })
 
   const handleOpenRangePicker = (event) => {
-    setAnchorEl(event.currentTarget)
+    setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
-  const handleCloseRangePicker = () => {
-    setAnchorEl(null)
+  const downloadLogs = (range, logs) => {
+    if (!range) return
+
+    if (range.from && !range.to) range.to = moment()
+
+    const formatDateFile = date => {
+      return moment(date).format('YYYY-MM-DD_HH-mm')
+    }
+
+    if (!range.from && !range.to) {
+      const text = logs.map(it => JSON.stringify(it)).join('\n')
+      const blob = new window.Blob([text], {
+        type: 'text/plain;charset=utf-8'
+      })
+      FileSaver.saveAs(blob, `${formatDateFile(new Date())}_server`)
+      return
+    }
+
+    if (range.from && range.to) {
+      const text = logs.filter((log) => moment(log.timestamp).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
+      const blob = new window.Blob([text], {
+        type: 'text/plain;charset=utf-8'
+      })
+      FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_server`)
+    }
   }
 
   const open = Boolean(anchorEl)
@@ -133,11 +157,12 @@ const Logs = () => {
                 onClick={handleOpenRangePicker}
               />
               <LogsDowloaderPopover
+                title='Download logs'
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
-                logsResponse={logsResponse}
-                onClose={handleCloseRangePicker}
+                logs={logsResponse.data.logs}
+                onDownload={downloadLogs}
               />
               <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
                 Share with Lamassu

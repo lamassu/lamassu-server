@@ -28,7 +28,7 @@ const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, .
 
   const detailsRowClasses = {
     [classes.detailsRow]: true,
-    [classes.hideDetailsRow]: expanded
+    [classes.hideDetailsRow]: !expanded
   }
 
   return (
@@ -41,7 +41,8 @@ const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, .
           <button onClick={() => expandRow(id)} className={classes.expandButton}>
             {expanded && <ExpandOpenIcon />}
             {!expanded && <ExpandClosedIcon />}
-          </button></Td>
+          </button>
+        </Td>
       </Tr>
       <Tr className={classnames(detailsRowClasses)}>
         <Td size={mainWidth}>

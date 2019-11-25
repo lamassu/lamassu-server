@@ -7,6 +7,7 @@ import Logs from '../pages/Logs'
 import Locales from '../pages/Locales'
 import Funding from '../pages/Funding'
 import ServerLogs from '../pages/ServerLogs'
+import Transactions from '../pages/Transactions/Transactions'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -61,6 +62,7 @@ const Routes = () => (
     <Route path='/maintenance/logs' component={Logs} />
     <Route path='/maintenance/funding' component={Funding} />
     <Route path='/maintenance/server-logs' component={ServerLogs} />
+    <Route path='/transactions' component={Transactions} />
   </Switch>
 )
 

@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
-import FileSaver from 'file-saver'
 import classnames from 'classnames'
 import { toInteger } from 'lodash/fp'
 import moment from 'moment'
 import { makeStyles } from '@material-ui/core'
 
 import { ReactComponent as Arrow } from '../styling/icons/arrow/download_logs.svg'
-import typographyStyles from '../components/typography/styles'
+import typographyStyles from './typography/styles'
 import { primaryColor, offColor, zircon } from '../styling/variables'
 
 import { Link } from './buttons'
 import { RadioGroup } from './inputs'
-import Popover from './Popover'
+import Popper from './Popper'
 import DateRangePicker from './date-range-picker/DateRangePicker'
 
 const { info1, label1, label2, h4 } = typographyStyles
@@ -121,7 +120,7 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const LogsDownloaderPopover = ({ id, open, anchorEl, onClose, logsResponse, ...props }) => {
+const LogsDownloaderPopover = ({ id, open, anchorEl, onDownload, logs, title, ...props }) => {
   const [radioButtons, setRadioButtons] = useState(0)
   const [range, setRange] = useState(null)
 
@@ -132,12 +131,10 @@ const LogsDownloaderPopover = ({ id, open, anchorEl, onClose, logsResponse, ...p
     [classes.dateRangePickerHidden]: radioButtons === 0
   }
 
-  const formatDateFile = date => {
-    return moment(date).format('YYYY-MM-DD_HH-mm')
-  }
-
   const handleRadioButtons = (event) => {
-    setRadioButtons(toInteger(event.target.value))
+    const radio = toInteger(event.target.value)
+    setRadioButtons(radio)
+    if (radio === 0) setRange({ from: null, to: null })
   }
 
   const handleRangeChange = (from, to) => {
@@ -145,23 +142,15 @@ const LogsDownloaderPopover = ({ id, open, anchorEl, onClose, logsResponse, ...p
   }
 
   return (
-    <Popover
+    <Popper
       id={id}
       open={open}
       anchorEl={anchorEl}
-      onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center'
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center'
-      }}
+      placement='bottom'
     >
       <div className={classes.popoverContent}>
         <div className={classes.popoverHeader}>
-          Download logs
+          {title}
         </div>
         <div className={classes.radioButtonsContainer}>
           <RadioGroup
@@ -193,27 +182,13 @@ const LogsDownloaderPopover = ({ id, open, anchorEl, onClose, logsResponse, ...p
         <div className={classes.download}>
           <Link
             color='primary'
-            onClick={() => {
-              if (radioButtons === 0) {
-                const text = logsResponse.data.logs.map(it => JSON.stringify(it)).join('\n')
-                const blob = new window.Blob([text], {
-                  type: 'text/plain;charset=utf-8'
-                })
-                FileSaver.saveAs(blob, `${formatDateFile(new Date())}_server`)
-              } else if (radioButtons === 1 && range.from && range.to) {
-                const text = logsResponse.data.logs.filter((log) => moment(log.timestamp).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
-                const blob = new window.Blob([text], {
-                  type: 'text/plain;charset=utf-8'
-                })
-                FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_server`)
-              }
-            }}
+            onClick={() => onDownload(range, logs)}
           >
             Download
           </Link>
         </div>
       </div>
-    </Popover>
+    </Popper>
   )
 }
 

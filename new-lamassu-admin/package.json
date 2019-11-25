@@ -16,7 +16,8 @@
     "lodash": "4.17.15",
     "moment": "2.24.0",
     "qrcode.react": "0.9.3",
-    "react": "^16.10.2",
+    "react": "^16.12.0",
+    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.10.2",
     "react-router-dom": "5.1.2",
     "yup": "0.27.0"
