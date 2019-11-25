@@ -71,8 +71,8 @@ const Transactions = () => {
   ]
 
   const rows = txResponse && txResponse.data.map(tx => {
-    const customerName = tx.customer.name ? tx.customer.name
-      : (tx.customer.idCardData ? `${startCase(lowerCase(tx.customer.idCardData.firstName.slice(0, 1)))}. ${startCase(lowerCase(tx.customer.idCardData.lastName))}` : tx.customer.phone)
+    const customerName = tx.customerName ? tx.customerName
+      : (tx.customerIdCardData ? `${startCase(lowerCase(tx.customerIdCardData.firstName.slice(0, 1)))}. ${startCase(lowerCase(tx.customerIdCardData.lastName))}` : tx.customerPhone)
 
     return {
       id: tx.id,

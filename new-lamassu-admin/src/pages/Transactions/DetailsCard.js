@@ -38,10 +38,12 @@ const DetailsRow = ({ tx, ...props }) => {
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms)).toFormat(5)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = tx.txClass === 'cashOut' ? fiat * commissionPercentage : fiat * commissionPercentage + Number.parseFloat(tx.fee)
-  const customer = tx.customer.idCardData && {
-    name: startCase(lowerCase(`${tx.customer.idCardData.firstName} ${tx.customer.idCardData.lastName}`)),
-    age: moment().diff(moment(tx.customer.idCardData.dateOfBirth), 'years'),
-    country: tx.customer.idCardData.country
+  const customer = tx.customerIdCardData && {
+    name: startCase(lowerCase(`${tx.customerIdCardData.firstName} ${tx.customerIdCardData.lastName}`)),
+    age: moment().diff(moment(tx.customerIdCardData.dateOfBirth), 'years'),
+    country: tx.customerIdCardData.country,
+    idCardNumber: tx.customerIdCardData.documentNumber,
+    idCardExpirationDate: moment(tx.customerIdCardData.expirationDate).format('DD-MM-YYYY')
   }
 
   return (
@@ -60,25 +62,25 @@ const DetailsRow = ({ tx, ...props }) => {
               <div className={classes.availableIds}>
                 <Label>Available IDs</Label>
                 <div>
-                  {tx.phone && (
+                  {tx.customerPhone && (
                     <IDButton
                       name='phone'
                       Icon={PhoneIdIcon}
                       InverseIcon={PhoneIdInverseIcon}
                     >
-                      {tx.phone}
+                      {tx.customerPhone}
                     </IDButton>
                   )}
-                  {tx.customer.idCardPhotoPath && !tx.customer.idCardData && (
+                  {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
                     <IDButton
                       name='card'
                       Icon={CardIdIcon}
                       InverseIcon={CardIdInverseIcon}
                     >
-                      <img src={tx.customer.idCardPhotoPath} />
+                      <img src={tx.customerIdCardPhotoPath} />
                     </IDButton>
                   )}
-                  {tx.customer.idCardData && (
+                  {tx.customerIdCardData && (
                     <IDButton
                       name='card'
                       Icon={CardIdIcon}
@@ -102,7 +104,7 @@ const DetailsRow = ({ tx, ...props }) => {
                         <div>
                           <div>
                             <Label>ID number</Label>
-                            <div>{tx.customer.idCardDataNumber && tx.customer.idCardDataNumber}</div>
+                            <div>{customer.idCardNumber}</div>
                           </div>
                           <div>
                             <Label>Gender</Label>
@@ -110,19 +112,19 @@ const DetailsRow = ({ tx, ...props }) => {
                           </div>
                           <div>
                             <Label>Expiration date</Label>
-                            <div>{tx.customer.idCardDataExpiration && moment(tx.customer.idCardDataExpiration).format('DD-MM-YYYY')}</div>
+                            <div>{customer.idCardExpirationDate}</div>
                           </div>
                         </div>
                       </div>
                     </IDButton>
                   )}
-                  {tx.customer.idCameraPath && (
+                  {tx.customerIdCameraPath && (
                     <IDButton
                       name='cam'
                       Icon={CamIdIcon}
                       InverseIcon={CamIdInverseIcon}
                     >
-                      <img src={tx.customer.idCameraPath} />
+                      <img src={tx.customerIdCameraPath} />
                     </IDButton>
                   )}
                 </div>
