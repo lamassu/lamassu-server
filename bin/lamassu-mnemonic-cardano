@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+
+const options = require('../lib/options')
+
+const mnemonic = fs.readFileSync(options.cardanoMnemonicPath, 'utf8').trim()
+console.log(mnemonic)

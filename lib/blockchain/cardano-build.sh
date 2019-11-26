@@ -27,6 +27,22 @@ remove_nix () {
 }
 
 if [ ! -f $HOME/.nix-profile/etc/profile.d/nix.sh ] || [ ! -d /nix ]; then
+    # https://github.com/TerrorJack/pixie/blob/master/.circleci/debian-bootstrap.sh
+    groupadd -g 30000 --system nixbld
+
+    for i in $(seq 1 32); do
+    useradd \
+        --home-dir /var/empty \
+        --gid 30000 \
+        --groups nixbld \
+        --no-user-group \
+        --system \
+        --shell /usr/sbin/nologin \
+        --uid $((30000 + i)) \
+        --password "!" \
+        nixbld$i
+    done
+
     NIX_TMPDIR=$(mktemp -d -t nix-XXXXXXXXXX)
     if [ ! -d "$NIX_TMPDIR" ]; then
         echo "Some error occures when creating temp directory for Nix installation download"
@@ -60,7 +76,7 @@ fi
 cd $1
 
 echo "Building Cardano SL"
-nix-build -A connectScripts.testnet.wallet -o cardano-node >build-log.txt 2>&1
+nix-build -A connectScripts.mainnet.wallet -o cardano-node >build-log.txt 2>&1
 #nix-build release.nix -A nix-tools.exes.cardano-wallet.x86_64-linux -o build # this build only cardano-node without configs
 
 if [ $? -ne 0 ]; then
