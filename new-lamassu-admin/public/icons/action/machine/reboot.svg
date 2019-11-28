@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>icon/action/machine/reboot</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Styleguide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="icon/action/machine/reboot" transform="translate(1.000000, 0.000000)" stroke="#1B2559">
+            <g id="icon/">
+                <path d="M6.0355,19.6461 C4.9225,19.1811 3.8775,18.5171 2.9635,17.6531 C-0.9605,13.9431 -0.9915,7.9571 2.8945,4.2821 C3.8005,3.4261 4.8375,2.7711 5.9465,2.3171" id="Stroke-1" stroke-width="2"></path>
+                <polyline id="Stroke-3" stroke-width="2" points="6.4076 3.9644 6.3966 1.9544 4.3916 0.9994"></polyline>
+                <path d="M13.9642,2.3541 C15.0782,2.8191 16.1222,3.4831 17.0362,4.3471 C20.9602,8.0571 20.9912,14.0431 17.1052,17.7181 C16.2002,18.5741 15.1622,19.2281 14.0532,19.6831" id="Stroke-5" stroke-width="2"></path>
+                <polyline id="Stroke-7" stroke-width="2" points="13.5922 18.0357 13.6032 20.0457 15.6082 20.9997"></polyline>
+                <path d="M10.0004,13.898 L10.0004,8.138" id="Stroke-9" stroke-width="2"></path>
+            </g>
+        </g>
+    </g>
+</svg>

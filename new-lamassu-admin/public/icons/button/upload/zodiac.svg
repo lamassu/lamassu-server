@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="12px" viewBox="0 0 14 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>icon/button/upload/zodiac</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Styleguide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="icon/button/upload/zodiac" transform="translate(1.000000, -1.000000)" stroke="#1B2559">
+            <g id="icon/sf-small/wizzard" transform="translate(0.000000, 1.000000)">
+                <g id="Group" transform="translate(6.100000, 4.000000) scale(1, -1) translate(-6.100000, -4.000000) translate(3.600000, 0.000000)">
+                    <polyline id="Path-3" points="-3.64153152e-13 5.4 2.4 7.8 4.8 5.4"></polyline>
+                    <path d="M2.4,0.5 L2.4,7.4" id="Path-4"></path>
+                </g>
+                <path d="M0,9 L0,9 C0,9.9942 0.8058,10.8 1.8,10.8 L10.2,10.8 C11.1942,10.8 12,9.9942 12,9" id="Stroke-1"></path>
+            </g>
+        </g>
+    </g>
+</svg>

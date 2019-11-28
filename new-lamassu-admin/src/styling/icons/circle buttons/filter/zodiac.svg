@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/sf-small/filter/zodiac</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/sf-small/filter/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M19,2.5 C19,1.11909091 17.8809091,0 16.5,0 C15.1190909,0 14,1.11909091 14,2.5 C14,3.88090909 15.1190909,5 16.5,5 C17.8809091,5 19,3.88090909 19,2.5 Z" id="Stroke-1" stroke="#1B2559" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M5,9.5 C5,8.11909091 3.88090909,7 2.5,7 C1.11909091,7 0,8.11909091 0,9.5 C0,10.8818182 1.11909091,12 2.5,12 C3.88090909,12 5,10.8818182 5,9.5 Z" id="Stroke-7" stroke="#1B2559" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M19,17.5 C19,16.1190909 17.8809091,15 16.5,15 C15.1190909,15 14,16.1190909 14,17.5 C14,18.8809091 15.1190909,20 16.5,20 C17.8809091,20 19,18.8809091 19,17.5 Z" id="Stroke-9" stroke="#1B2559" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <line x1="14" y1="2.5" x2="0.498999482" y2="2.5" id="Line-3" stroke="#1B2559" stroke-width="2" stroke-linecap="square"></line>
+        <line x1="20" y1="9.5" x2="6.49899948" y2="9.5" id="Line-3-Copy" stroke="#1B2559" stroke-width="2" stroke-linecap="square"></line>
+        <line x1="14" y1="17.5" x2="0.498999482" y2="17.5" id="Line-3-Copy-2" stroke="#1B2559" stroke-width="2" stroke-linecap="square"></line>
+    </g>
+</svg>
