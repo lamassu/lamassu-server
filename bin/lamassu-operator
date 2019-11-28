@@ -1,9 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env node
 
-SEED="$(cat ~/seeds/seed.txt)"
+const fs = require('fs')
+const hkdf = require('futoin-hkdf')
 
-echo
-echo "Your Operator ID for use with CoinATMRadar is:" 
-echo
-/usr/bin/hkdf operator-id "$SEED" | cut -c -32
-echo
+const options = require('../lib/options')
+const mnemonicHelpers = require('../lib/mnemonic-helpers')
+
+const mnemonic = fs.readFileSync(options.mnemonicPath, 'utf8').trim()
+const masterSeed = mnemonicHelpers.toEntropyBuffer(mnemonic)
+
+console.log(hkdf(masterSeed, 16, { salt: 'lamassu-server-salt', info: 'operator-id' }).toString('hex'))

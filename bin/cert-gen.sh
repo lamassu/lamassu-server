@@ -13,6 +13,8 @@ LAMASSU_CA_PATH=$PWD/Lamassu_CA.pem
 MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
 POSTGRES_PASS=postgres123
 OFAC_DATA_DIR=$CONFIG_DIR/ofac
+IDPHOTOCARD_DIR=$CONFIG_DIR/idphotocard
+FRONTCAMERA_DIR=$CONFIG_DIR/frontcamera
 
 mkdir -p $CERT_DIR
 mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
@@ -109,7 +111,9 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
       "name": "cons_advanced",
       "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml"
     }
-  ]
+  ],
+  "idPhotoCardDir": "$IDPHOTOCARD_DIR",
+  "frontCameraDir": "$FRONTCAMERA_DIR"
 }
 EOF
 
