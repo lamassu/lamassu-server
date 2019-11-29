@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/action/edit/disabled</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="22" height="22"></rect>
+    </defs>
+    <g id="icon/action/edit/disabled" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <g id="Background"></g>
+        <path d="M1,18 L1,18 C1,19.657 2.343,21 4,21 L18,21 C19.657,21 21,19.657 21,18" id="Stroke-1" stroke="#9B9B9B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" mask="url(#mask-2)"></path>
+        <polygon id="Stroke-3" stroke="#9B9B9B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" mask="url(#mask-2)" points="6 12 17 1 21 5 10 16 6 16"></polygon>
+    </g>
+</svg>

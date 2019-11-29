@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/sf-small/clock/zodiac</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/sf-small/clock/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Group-7" stroke="#1B2559" stroke-width="2">
+            <path d="M0,10 C0,15.522 4.478,20 10,20 C15.522,20 20,15.522 20,10 C20,4.478 15.522,0 10,0 C7.749,0 5.671,0.744 4,1.999" id="Stroke-1"></path>
+            <polyline id="Stroke-3" points="13 11 10 11.063 10 7"></polyline>
+            <polyline id="Stroke-5" points="3 0 3 3 5 4"></polyline>
+        </g>
+    </g>
+</svg>

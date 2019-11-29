@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>icon/button/reboot/zodiac</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/button/reboot/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Group-3" stroke="#1B2559">
+            <g id="Group-2">
+                <path d="M3.57419317,11.1560104 C2.91506589,10.8661403 2.29620875,10.4522182 1.75493083,9.91362078 C-0.568892549,7.60089351 -0.587250991,3.86936104 1.71406849,1.57845195 C2.03057585,1.26367293 2.37407977,0.992496226 2.73740775,0.764921841" id="Stroke-1"></path>
+                <polyline id="Stroke-3" points="3.37563213 1.84831169 3.36911784 0.595324675 2.18174122 4.15223411e-14"></polyline>
+            </g>
+            <line x1="5.92223784" y1="7.57277922" x2="5.92223784" y2="3.98212987" id="Stroke-9"></line>
+            <g id="Group-2" transform="translate(9.818105, 6.000000) scale(-1, -1) translate(-9.818105, -6.000000) translate(7.636287, 0.000000)">
+                <path d="M3.57419317,11.1560104 C2.91506589,10.8661403 2.29620875,10.4522182 1.75493083,9.91362078 C-0.568892549,7.60089351 -0.587250991,3.86936104 1.71406849,1.57845195 C2.03057585,1.26367293 2.37407977,0.992496226 2.73740775,0.764921841" id="Stroke-1"></path>
+                <polyline id="Stroke-3" points="3.37563213 1.84831169 3.36911784 0.595324675 2.18174122 4.15223411e-14"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

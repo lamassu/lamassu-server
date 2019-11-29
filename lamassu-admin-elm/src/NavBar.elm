@@ -262,7 +262,6 @@ view route invalidGroups =
                 , ( "itBit", AccountRoute "itbit", True )
                 , ( "Kraken", AccountRoute "kraken", True )
                 , ( "Mailgun", AccountRoute "mailgun", True )
-                , ( "QuadrigaCX", AccountRoute "quadrigacx", True )
                 , ( "Strike", AccountRoute "strike", True )
                 , ( "Twilio", AccountRoute "twilio", True )
                 ]
