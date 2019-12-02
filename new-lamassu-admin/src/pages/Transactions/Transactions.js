@@ -182,11 +182,12 @@ const Transactions = () => {
               />
               <LogsDowloaderPopover
                 title='Download logs'
+                name='transactions'
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
                 logs={txResponse.data}
-                onDownload={downloadTxLogs}
+                getTimestamp={(tx) => tx.created}
                 onClose={handleCloseRangePicker}
               />
             </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import classnames from 'classnames'
 import { toInteger } from 'lodash/fp'
 import moment from 'moment'
+import FileSaver from 'file-saver'
 import { makeStyles } from '@material-ui/core'
 
 import { ReactComponent as Arrow } from '../styling/icons/arrow/download_logs.svg'
@@ -120,7 +121,7 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const LogsDownloaderPopover = ({ id, open, anchorEl, onDownload, logs, title, ...props }) => {
+const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, title, ...props }) => {
   const [radioButtons, setRadioButtons] = useState(0)
   const [range, setRange] = useState(null)
 
@@ -139,6 +140,33 @@ const LogsDownloaderPopover = ({ id, open, anchorEl, onDownload, logs, title, ..
 
   const handleRangeChange = (from, to) => {
     setRange({ from, to })
+  }
+
+  const downloadLogs = (range, logs) => {
+    if (!range) return
+
+    if (range.from && !range.to) range.to = moment()
+
+    const formatDateFile = date => {
+      return moment(date).format('YYYY-MM-DD_HH-mm')
+    }
+
+    if (!range.from && !range.to) {
+      const text = logs.map(it => JSON.stringify(it)).join('\n')
+      const blob = new window.Blob([text], {
+        type: 'text/plain;charset=utf-8'
+      })
+      FileSaver.saveAs(blob, `${formatDateFile(new Date())}_${name}`)
+      return
+    }
+
+    if (range.from && range.to) {
+      const text = logs.filter((log) => moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
+      const blob = new window.Blob([text], {
+        type: 'text/plain;charset=utf-8'
+      })
+      FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`)
+    }
   }
 
   return (
@@ -182,7 +210,7 @@ const LogsDownloaderPopover = ({ id, open, anchorEl, onDownload, logs, title, ..
         <div className={classes.download}>
           <Link
             color='primary'
-            onClick={() => onDownload(range, logs)}
+            onClick={() => downloadLogs(range, logs)}
           >
             Download
           </Link>

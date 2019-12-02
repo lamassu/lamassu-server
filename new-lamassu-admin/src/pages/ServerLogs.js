@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { concat, uniq, merge } from 'lodash/fp'
+import { concat, uniq, merge, find } from 'lodash/fp'
 import moment from 'moment'
-import FileSaver from 'file-saver'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'
 
@@ -112,33 +111,6 @@ const Logs = () => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
-  const downloadLogs = (range, logs) => {
-    if (!range) return
-
-    if (range.from && !range.to) range.to = moment()
-
-    const formatDateFile = date => {
-      return moment(date).format('YYYY-MM-DD_HH-mm')
-    }
-
-    if (!range.from && !range.to) {
-      const text = logs.map(it => JSON.stringify(it)).join('\n')
-      const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
-      })
-      FileSaver.saveAs(blob, `${formatDateFile(new Date())}_server`)
-      return
-    }
-
-    if (range.from && range.to) {
-      const text = logs.filter((log) => moment(log.timestamp).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
-      const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
-      })
-      FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_server`)
-    }
-  }
-
   const open = Boolean(anchorEl)
   const id = open ? 'date-range-popover' : undefined
 
@@ -158,11 +130,12 @@ const Logs = () => {
               />
               <LogsDowloaderPopover
                 title='Download logs'
+                name='server-logs'
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
                 logs={logsResponse.data.logs}
-                onDownload={downloadLogs}
+                getTimestamp={(log) => log.timestamp}
               />
               <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
                 Share with Lamassu
