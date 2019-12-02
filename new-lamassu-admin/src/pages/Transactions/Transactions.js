@@ -8,7 +8,7 @@ import useAxios from '@use-hooks/axios'
 
 import { mainStyles } from './Transactions.styles'
 import DetailsRow from './DetailsCard'
-import { toUnit } from './tx'
+import toUnit from './tx'
 
 import Title from '../../components/Title'
 import ExpTable from '../../components/expandable-table/ExpTable'
@@ -91,7 +91,7 @@ const Transactions = () => {
           textAlign: 'right'
         },
         {
-          value: `${toUnit(new BigNumber(tx.cryptoAtoms)).toFormat(5)} ${tx.cryptoCode}`,
+          value: `${toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(5)} ${tx.cryptoCode}`,
           textAlign: 'right'
         },
         {

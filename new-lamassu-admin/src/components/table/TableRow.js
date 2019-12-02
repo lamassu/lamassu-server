@@ -24,7 +24,7 @@ const useStyles = makeStyles({
     boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
   },
   lg: {
-    // extend: info2,
+    extend: info2,
     height: tableLgCellHeight
   },
   sm: {

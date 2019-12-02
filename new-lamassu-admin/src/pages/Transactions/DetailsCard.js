@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import { detailsRowStyles, labelStyles } from './Transactions.styles'
 import Address from './Address'
-import { toUnit } from './tx'
+import toUnit from './tx'
 
 import { IDButton } from '../../components/buttons'
 import { ReactComponent as TxInIcon } from '../../styling/icons/direction/cash-in.svg'
@@ -35,7 +35,7 @@ const DetailsRow = ({ tx, ...props }) => {
   const addr = tx.toAddress
   const txHash = tx.txHash
   const fiat = Number.parseFloat(tx.fiat)
-  const crypto = toUnit(new BigNumber(tx.cryptoAtoms)).toFormat(5)
+  const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(5)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = tx.txClass === 'cashOut' ? fiat * commissionPercentage : fiat * commissionPercentage + Number.parseFloat(tx.fee)
   const customer = tx.customerIdCardData && {
