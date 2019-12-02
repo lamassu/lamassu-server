@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { map, set } from 'lodash/fp'
 import classnames from 'classnames'
-import uuidv1 from 'uuid/v1'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { Table, THead, Tr, TBody, Td, Th } from '../fake-table/Table'
@@ -35,7 +34,7 @@ const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, .
     <>
       <Tr className={classnames(className)} {...props}>
         {columns.map((col, idx) => (
-          <Td key={uuidv1()} size={sizes[idx]} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
+          <Td key={idx} size={sizes[idx]} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
         ))}
         <Td size={sizes[sizes.length - 1]}>
           <button onClick={() => expandRow(id)} className={classes.expandButton}>
@@ -44,11 +43,13 @@ const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, .
           </button>
         </Td>
       </Tr>
-      <Tr className={classnames(detailsRowClasses)}>
-        <Td size={mainWidth}>
-          {details}
-        </Td>
-      </Tr>
+      {expanded && (
+        <Tr className={classes.detailsRow}>
+          <Td size={mainWidth}>
+            {details}
+          </Td>
+        </Tr>
+      )}
     </>
   )
 }
@@ -57,35 +58,32 @@ const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, .
  * rows = [{ columns = [{ value, className, textAlign }], details, className, error, errorMessage }]
  */
 const ExpTable = ({ headers = [], rows = [], sizes = [], className, ...props }) => {
-  const [rowStates, setRowStates] = useState(null)
-
-  useEffect(() => {
-    setRowStates(rows && rows.map((x) => { return { id: x.id, expanded: false } }))
-  }, [rows])
+  const [expanded, setExpanded] = useState(null)
 
   const expandRow = (id) => {
-    setRowStates(map(r => set('expanded', r.id === id ? !r.expanded : false, r)))
+    console.log(id)
+    setExpanded(id === expanded ? null : id)
   }
 
   return (
     <Table className={classnames(className)}>
       <THead>
         {headers.map((header, idx) => (
-          <Th key={uuidv1()} size={sizes[idx]} className={header.className} textAlign={header.textAlign}>{header.value}</Th>
+          <Th key={idx} size={sizes[idx]} className={header.className} textAlign={header.textAlign}>{header.value}</Th>
         ))}
       </THead>
       <TBody>
-        {rowStates && rowStates.map((r, idx) => {
+        {rows && rows.map((r, idx) => {
           const row = rows[idx]
 
           return (
             <ExpRow
-              key={uuidv1()}
-              id={r.id}
+              key={idx}
+              id={idx}
               columns={row.columns}
               details={row.details}
               sizes={sizes}
-              expanded={r.expanded}
+              expanded={idx === expanded}
               className={row.className}
               expandRow={expandRow}
               error={row.error}

@@ -14,7 +14,7 @@ const Address = ({ className, type, children, ...props }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   useEffect(() => {
-    setTimeout(() => setAnchorEl(null), 3000)
+    if (anchorEl) setTimeout(() => setAnchorEl(null), 3000)
   }, [anchorEl])
 
   const useStyles = makeStyles(addressStyles)
@@ -48,7 +48,7 @@ const Address = ({ className, type, children, ...props }) => {
             <CopyToClipboard
               text={replace(/\s/g, '')(children)}
             >
-              <button aria-describedby={id} onClick={(event) => handleClick(event, children)}><CopyIcon /></button>
+              <button aria-describedby={id} onClick={(event) => handleClick(event)}><CopyIcon /></button>
             </CopyToClipboard>
           </div>
           <Popover
