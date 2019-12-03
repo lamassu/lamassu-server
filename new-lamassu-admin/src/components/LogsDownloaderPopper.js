@@ -122,20 +122,21 @@ const styles = {
 const useStyles = makeStyles(styles)
 
 const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, title, ...props }) => {
-  const [radioButtons, setRadioButtons] = useState(0)
+  const radioButtonOptions = [{ label: 'All logs', value: 'all' }, { label: 'Date range', value: 'range' }]
+
+  const [selectedRadio, setSelectedRadio] = useState(radioButtonOptions[0].value)
   const [range, setRange] = useState(null)
 
   const classes = useStyles()
 
   const dateRangePickerClasses = {
-    [classes.dateRangePickerShowing]: radioButtons === 1,
-    [classes.dateRangePickerHidden]: radioButtons === 0
+    [classes.dateRangePickerShowing]: selectedRadio === radioButtonOptions[1].value,
+    [classes.dateRangePickerHidden]: selectedRadio === radioButtonOptions[0].value
   }
 
   const handleRadioButtons = (event) => {
-    const radio = toInteger(event.target.value)
-    setRadioButtons(radio)
-    if (radio === 0) setRange({ from: null, to: null })
+    const radio = event.target.value
+    setSelectedRadio(radio)
   }
 
   const handleRangeChange = (from, to) => {
@@ -151,7 +152,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
       return moment(date).format('YYYY-MM-DD_HH-mm')
     }
 
-    if (!range.from && !range.to) {
+    if (selectedRadio === radioButtonOptions[0].value) {
       const text = logs.map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
         type: 'text/plain;charset=utf-8'
@@ -160,7 +161,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
       return
     }
 
-    if (range.from && range.to) {
+    if (selectedRadio === radioButtonOptions[1].value) {
       const text = logs.filter((log) => moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
         type: 'text/plain;charset=utf-8'
@@ -183,8 +184,8 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
         <div className={classes.radioButtonsContainer}>
           <RadioGroup
             name='logs-select'
-            value={radioButtons}
-            labels={['All logs', 'Date range']}
+            value={selectedRadio}
+            options={radioButtonOptions}
             ariaLabel='logs-select'
             onChange={handleRadioButtons}
             className={classes.radioButtons}
