@@ -32,81 +32,75 @@ const Transactions = () => {
     trigger: []
   })
 
-  const headers = [
-    {
-      value: ''
-    },
-    {
-      value: 'Machine'
-    },
-    {
-      value: 'Customer'
-    },
-    {
-      value: 'Cash',
-      textAlign: 'right'
-    },
-    {
-      value: 'Crypto',
-      textAlign: 'right'
-    },
-    {
-      value: 'Address'
-    },
-    {
-      value: 'Date (UTC)',
-      textAlign: 'right'
-    },
-    {
-      value: 'Time (UTC)',
-      textAlign: 'right'
-    },
-    {
-      value: '', // Trade
-      textAlign: 'center'
-    },
-    {
-      value: ''
-    }
-  ]
+  const formatCustomerName = (customer) => {
+    const { firstName, lastName } = customer
+
+    return `${startCase(lowerCase(firstName.slice(0, 1)))}. ${startCase(lowerCase(lastName))}`
+  }
+
+  const getCustomerDisplayName = (tx) => {
+    if (tx.customerName) return tx.customerName
+    if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
+    return tx.customerPhone
+  }
 
   const rows = txResponse && txResponse.data.map(tx => {
-    const customerName = tx.customerName ? tx.customerName
-      : (tx.customerIdCardData ? `${startCase(lowerCase(tx.customerIdCardData.firstName.slice(0, 1)))}. ${startCase(lowerCase(tx.customerIdCardData.lastName))}` : tx.customerPhone)
+    const customerName = getCustomerDisplayName(tx)
 
     return {
       id: tx.id,
       columns: [
         {
-          value: tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />
+          name: '',
+          value: tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />,
+          size: 62
         },
         {
-          value: tx.machineName
+          name: 'Machine',
+          value: tx.machineName,
+          size: 180
         },
         {
-          value: customerName
+          name: 'Customer',
+          value: customerName,
+          size: 162
         },
         {
+          name: 'Cash',
           value: `${Number.parseFloat(tx.fiat)} ${tx.fiatCode}`,
-          textAlign: 'right'
+          textAlign: 'right',
+          size: 110
         },
         {
+          name: 'Crypto',
           value: `${toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(5)} ${tx.cryptoCode}`,
-          textAlign: 'right'
+          textAlign: 'right',
+          size: 141
         },
         {
-          value: `${tx.toAddress.slice(0, 9)}...`
+          name: 'Address',
+          value: `${tx.toAddress.slice(0, 9)}...`,
+          size: 136
         },
         {
+          name: 'Date (UTC)',
           value: moment(tx.created).format('YYYY-MM-D'),
-          textAlign: 'right'
+          textAlign: 'right',
+          size: 124
         },
         {
+          name: 'Time (UTC)',
           value: moment(tx.created).format('HH:mm:ss'),
-          textAlign: 'right'
+          textAlign: 'right',
+          size: 124
         },
         {
-          value: ''
+          name: '', // Trade
+          value: '',
+          size: 90
+        },
+        {
+          size: 71
         }
       ],
       details: (
@@ -115,52 +109,12 @@ const Transactions = () => {
     }
   })
 
-  const sizes = [
-    62, // Class
-    180, // Machine
-    162, // Customer
-    110, // Cash
-    141, // Crypto
-    136, // Address
-    124, // Date
-    124, // Time
-    90, // Trade
-    71 // Expand
-  ]
-
   const handleOpenRangePicker = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   const handleCloseRangePicker = () => {
     setAnchorEl(null)
-  }
-
-  const downloadTxLogs = (range, txs) => {
-    if (!range) return
-
-    if (range.from && !range.to) range.to = moment()
-
-    const formatDateFile = date => {
-      return moment(date).format('YYYY-MM-DD_HH-mm')
-    }
-
-    if (!range.from && !range.to) {
-      const text = txs.map(it => JSON.stringify(it)).join('\n')
-      const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
-      })
-      FileSaver.saveAs(blob, `${formatDateFile(new Date())}_transactions`)
-      return
-    }
-
-    if (range.from && range.to) {
-      const text = txs.filter((tx) => moment(tx.created).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
-      const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
-      })
-      FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_transactions`)
-    }
   }
 
   const open = Boolean(anchorEl)
@@ -198,7 +152,7 @@ const Transactions = () => {
           <div><TxInIcon /><span>Cash-in</span></div>
         </div>
       </div>
-      <ExpTable headers={headers} rows={rows} sizes={sizes} />
+      <ExpTable rows={rows} />
     </>
   )
 }

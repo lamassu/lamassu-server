@@ -6,7 +6,7 @@ import { startCase, lowerCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { detailsRowStyles, labelStyles } from './Transactions.styles'
-import Address from './Address'
+import CopyToClipboard from './CopyToClipboard'
 import toUnit from './tx'
 
 import { IDButton } from '../../components/buttons'
@@ -157,19 +157,9 @@ const DetailsRow = ({ tx, ...props }) => {
               <div>
                 <Label>BTC address</Label>
                 <div>
-                  <Address type='btc'>
-                    {addr &&
-                      `${addr.slice(0, 5)}
-                      ${addr.slice(5, 10)}
-                      ${addr.slice(10, 15)}
-                      ${addr.slice(15, 20)}
-                      ${addr.slice(20, 25)}
-                      ${addr.slice(25, 30)}
-                      ${addr.slice(30, 35)}
-                      ${addr.slice(35, 40)}
-                      ${addr.slice(40, 45)}
-                      ${addr.slice(45, 50)}`}
-                  </Address>
+                  <CopyToClipboard type='crypto'>
+                    {addr}
+                  </CopyToClipboard>
                 </div>
               </div>
             </div>
@@ -179,11 +169,9 @@ const DetailsRow = ({ tx, ...props }) => {
               <div>
                 <Label>Transaction ID</Label>
                 <div>
-                  <Address type='txId'>
-                    {txHash &&
-                      `${txHash.slice(0, 41)}
-                      ${txHash.slice(41)}`}
-                  </Address>
+                  <CopyToClipboard type='txId'>
+                    {txHash}
+                  </CopyToClipboard>
                 </div>
               </div>
             </div>
@@ -192,11 +180,9 @@ const DetailsRow = ({ tx, ...props }) => {
             <div className={classes.innerRow}>
               <div>
                 <Label>Session ID</Label>
-                <Address type='sessionId'>
-                  {tx.id &&
-                    `${tx.id.slice(0, 21)}
-                  ${tx.id.slice(21)}`}
-                </Address>
+                <CopyToClipboard type='sessionId'>
+                  {tx.id}
+                </CopyToClipboard>
               </div>
             </div>
           </div>

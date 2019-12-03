@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import { toInteger } from 'lodash/fp'
+import { get, compose } from 'lodash/fp'
 import moment from 'moment'
 import FileSaver from 'file-saver'
 import { makeStyles } from '@material-ui/core'
@@ -122,19 +122,21 @@ const styles = {
 const useStyles = makeStyles(styles)
 
 const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, title, ...props }) => {
-  const radioButtonOptions = [{ label: 'All logs', value: 'all' }, { label: 'Date range', value: 'range' }]
+  const radioButtonAll = 'all'
+  const radioButtonRange = 'range'
 
-  const [selectedRadio, setSelectedRadio] = useState(radioButtonOptions[0].value)
+  const [selectedRadio, setSelectedRadio] = useState(radioButtonAll)
   const [range, setRange] = useState(null)
 
   const classes = useStyles()
 
   const dateRangePickerClasses = {
-    [classes.dateRangePickerShowing]: selectedRadio === radioButtonOptions[1].value,
-    [classes.dateRangePickerHidden]: selectedRadio === radioButtonOptions[0].value
+    [classes.dateRangePickerShowing]: selectedRadio === radioButtonRange,
+    [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll
   }
 
   const handleRadioButtons = (event) => {
+    compose(setSelectedRadio, get('target.value'))
     const radio = event.target.value
     setSelectedRadio(radio)
   }
@@ -152,7 +154,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
       return moment(date).format('YYYY-MM-DD_HH-mm')
     }
 
-    if (selectedRadio === radioButtonOptions[0].value) {
+    if (selectedRadio === radioButtonAll) {
       const text = logs.map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
         type: 'text/plain;charset=utf-8'
@@ -161,7 +163,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
       return
     }
 
-    if (selectedRadio === radioButtonOptions[1].value) {
+    if (selectedRadio === radioButtonRange) {
       const text = logs.filter((log) => moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
         type: 'text/plain;charset=utf-8'
@@ -169,6 +171,8 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
       FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`)
     }
   }
+
+  const radioButtonOptions = [{ label: 'All logs', value: radioButtonAll }, { label: 'Date range', value: radioButtonRange }]
 
   return (
     <Popper

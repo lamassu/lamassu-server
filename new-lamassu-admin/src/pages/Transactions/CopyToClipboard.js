@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { CopyToClipboard as ReactCopyToClipboard } from 'react-copy-to-clipboard'
 import { replace } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { addressStyles } from './Transactions.styles'
+import { cpcStyles } from './Transactions.styles'
 
 import Popover from '../../components/Popper'
 import { ReactComponent as CopyIcon } from '../../styling/icons/action/copy/copy.svg'
 import { comet } from '../../styling/variables'
 
-const Address = ({ className, type, children, ...props }) => {
+const CopyToClipboard = ({ className, type, children, ...props }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   useEffect(() => {
     if (anchorEl) setTimeout(() => setAnchorEl(null), 3000)
   }, [anchorEl])
 
-  const useStyles = makeStyles(addressStyles)
+  const useStyles = makeStyles(cpcStyles)
 
   const classes = useStyles()
 
   const addrClasses = {
     [classes.address]: true,
-    [classes.btcAddr]: type === 'btc',
+    [classes.cryptoAddr]: type === 'crypto',
     [classes.txId]: type === 'txId',
     [classes.sessionId]: type === 'sessionId'
   }
@@ -36,6 +36,18 @@ const Address = ({ className, type, children, ...props }) => {
     setAnchorEl(null)
   }
 
+  const formatAddress = (address = '') => {
+    return address.replace(/(.{5})/g, '$1 ')
+  }
+
+  const formatTxId = (id = '') => {
+    return id.replace(/(.{41})/g, '$1 ')
+  }
+
+  const formatSessionId = (id = '') => {
+    return id.replace(/(.{21})/g, '$1 ')
+  }
+
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popper' : undefined
 
@@ -43,13 +55,17 @@ const Address = ({ className, type, children, ...props }) => {
     <div className={classnames(classes.wrapper, className)}>
       {children && (
         <>
-          <div className={classnames(addrClasses)}>{children}</div>
+          <div className={classnames(addrClasses)}>
+            {type === 'crypto' && formatAddress(children)}
+            {type === 'txId' && formatTxId(children)}
+            {type === 'sessionId' && formatSessionId(children)}
+          </div>
           <div className={classes.buttonWrapper}>
-            <CopyToClipboard
+            <ReactCopyToClipboard
               text={replace(/\s/g, '')(children)}
             >
               <button aria-describedby={id} onClick={(event) => handleClick(event)}><CopyIcon /></button>
-            </CopyToClipboard>
+            </ReactCopyToClipboard>
           </div>
           <Popover
             id={id}
@@ -70,4 +86,4 @@ const Address = ({ className, type, children, ...props }) => {
   )
 }
 
-export default Address
+export default CopyToClipboard

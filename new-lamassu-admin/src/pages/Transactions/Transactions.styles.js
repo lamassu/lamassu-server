@@ -6,7 +6,7 @@ import typographyStyles from '../../components/typography/styles'
 const { label1, mono, p } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
 
-const addressStyles = {
+const cpcStyles = {
   wrapper: {
     extend: mono,
     display: 'flex',
@@ -32,7 +32,7 @@ const addressStyles = {
     borderRadius: 4,
     padding: [[5, 9]]
   },
-  btcAddr: {
+  cryptoAddr: {
     width: 232
   },
   txId: {
@@ -152,4 +152,4 @@ const mainStyles = {
   }
 }
 
-export { addressStyles, detailsRowStyles, labelStyles, mainStyles }
+export { cpcStyles, detailsRowStyles, labelStyles, mainStyles }

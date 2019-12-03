@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { map, set } from 'lodash/fp'
+import React, { useState } from 'react'
 import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -22,21 +21,16 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, ...props }) => {
+const ExpRow = ({ id, columns, details, expanded, className, expandRow, ...props }) => {
   const classes = useStyles()
-
-  const detailsRowClasses = {
-    [classes.detailsRow]: true,
-    [classes.hideDetailsRow]: !expanded
-  }
 
   return (
     <>
       <Tr className={classnames(className)} {...props}>
-        {columns.map((col, idx) => (
-          <Td key={idx} size={sizes[idx]} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
+        {columns.slice(0, -1).map((col, idx) => (
+          <Td key={idx} size={col.size} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
         ))}
-        <Td size={sizes[sizes.length - 1]}>
+        <Td size={columns[columns.length - 1].size}>
           <button onClick={() => expandRow(id)} className={classes.expandButton}>
             {expanded && <ExpandOpenIcon />}
             {!expanded && <ExpandClosedIcon />}
@@ -54,22 +48,23 @@ const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, .
   )
 }
 
-/* headers = [{ value, className, textAlign }]
- * rows = [{ columns = [{ value, className, textAlign }], details, className, error, errorMessage }]
+/* rows = [{ columns = [{ name, value, className, textAlign, size }], details, className, error, errorMessage }]
+ * Don't forget to include the size of the last (expand button) column!
  */
-const ExpTable = ({ headers = [], rows = [], sizes = [], className, ...props }) => {
+const ExpTable = ({ rows = [], className, ...props }) => {
   const [expanded, setExpanded] = useState(null)
 
   const expandRow = (id) => {
-    console.log(id)
     setExpanded(id === expanded ? null : id)
   }
+
+  if (!rows) return null
 
   return (
     <Table className={classnames(className)}>
       <THead>
-        {headers.map((header, idx) => (
-          <Th key={idx} size={sizes[idx]} className={header.className} textAlign={header.textAlign}>{header.value}</Th>
+        {rows[0].columns.map((c, idx) => (
+          <Th key={idx} size={c.size} className={c.className} textAlign={c.textAlign}>{c.name}</Th>
         ))}
       </THead>
       <TBody>
@@ -82,7 +77,6 @@ const ExpTable = ({ headers = [], rows = [], sizes = [], className, ...props }) 
               id={idx}
               columns={row.columns}
               details={row.details}
-              sizes={sizes}
               expanded={idx === expanded}
               className={row.className}
               expandRow={expandRow}
