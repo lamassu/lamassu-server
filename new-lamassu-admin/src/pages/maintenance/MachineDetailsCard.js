@@ -2,6 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import moment from 'moment'
 import { makeStyles } from '@material-ui/core/styles'
+import useAxios from '@use-hooks/axios'
 
 import { detailsRowStyles, labelStyles } from '../Transactions/Transactions.styles'
 import { ReactComponent as UnpairIcon } from '../../styling/icons/button/unpair/zodiac.svg'
@@ -28,6 +29,16 @@ const MachineDetailsRow = ({ machine, ...props }) => {
   const useStyles = makeStyles(detailsRowStyles)
   const classes = useStyles()
 
+  const { loading: unpairDisabled, reFetch: unpair } = useAxios({
+    url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/unpair`,
+    method: 'POST'
+  })
+
+  const { loading: rebootDisabled, reFetch: reboot } = useAxios({
+    url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/reboot`,
+    method: 'POST'
+  })
+
   return (
     <>
       <div className={classes.wrapper}>
@@ -47,7 +58,7 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                     {/* <div className={classes.commissionWrapper}> */}
                     <Label>Lamassu Support article</Label>
                     <div>
-                      {machine.statuses.map((status, index) => <span key={index} />)}
+                      {machine.statuses.map((_status, index) => <span key={index} />)}
                     </div>
                   </div>
                 </div>
@@ -111,6 +122,8 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                         color='primary'
                         Icon={UnpairIcon}
                         InverseIcon={UnpairReversedIcon}
+                        disabled={unpairDisabled}
+                        onClick={unpair}
                       >
                         Unpair
                       </ActionButton>
@@ -119,6 +132,8 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                         color='primary'
                         Icon={RebootIcon}
                         InverseIcon={RebootReversedIcon}
+                        disabled={rebootDisabled}
+                        onClick={reboot}
                       >
                         Reboot
                       </ActionButton>
@@ -128,6 +143,7 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                         color='primary'
                         Icon={ShutdownIcon}
                         InverseIcon={ShutdownReversedIcon}
+                        onClick={reboot}
                       >
                         Shutdown
                       </ActionButton>
