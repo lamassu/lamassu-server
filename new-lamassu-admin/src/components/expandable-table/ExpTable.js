@@ -14,6 +14,9 @@ const styles = {
     backgroundColor: 'transparent',
     cursor: 'pointer',
     padding: 4
+  },
+  row: {
+    borderRadius: 0
   }
 }
 
@@ -24,7 +27,7 @@ const ExpRow = ({ id, columns, details, expanded, className, expandRow, ...props
 
   return (
     <>
-      <Tr className={classnames(className)} {...props}>
+      <Tr className={classnames(classes.row, className)} {...props}>
         {columns.slice(0, -1).map((col, idx) => (
           <Td key={idx} size={col.size} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
         ))}
