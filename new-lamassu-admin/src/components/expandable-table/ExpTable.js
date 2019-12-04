@@ -1,16 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import classnames from 'classnames'
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { Table, THead, Tr, TBody, Td, Th } from '../fake-table/Table'
 import { ReactComponent as ExpandClosedIcon } from '../../styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from '../../styling/icons/action/expand/open.svg'
-import { mainWidth } from '../../styling/variables'
+import { mainWidth, tableHeaderHeight } from '../../styling/variables'
 
 const styles = {
-  hideDetailsRow: {
-    display: 'none'
-  },
   expandButton: {
     border: 'none',
     backgroundColor: 'transparent',
@@ -60,33 +58,62 @@ const ExpTable = ({ rows = [], className, ...props }) => {
 
   if (!rows) return null
 
-  return (
-    <Table className={classnames(className)}>
-      <THead>
-        {rows[0].columns.map((c, idx) => (
-          <Th key={idx} size={c.size} className={c.className} textAlign={c.textAlign}>{c.name}</Th>
-        ))}
-      </THead>
-      <TBody>
-        {rows && rows.map((r, idx) => {
-          const row = rows[idx]
+  const cache = new CellMeasurerCache({
+    defaultHeight: 62,
+    fixedWidth: true
+  })
 
-          return (
-            <ExpRow
-              key={idx}
-              id={idx}
-              columns={row.columns}
-              details={row.details}
-              expanded={idx === expanded}
-              className={row.className}
-              expandRow={expandRow}
-              error={row.error}
-              errorMessage={row.errorMessage}
+  function rowRenderer ({ index, isScrolling, key, parent, style }) {
+    return (
+      <CellMeasurer
+        cache={cache}
+        columnIndex={0}
+        key={key}
+        parent={parent}
+        rowIndex={index}
+      >
+        <div style={style}>
+          <ExpRow
+            id={index}
+            columns={rows[index].columns}
+            details={rows[index].details}
+            expanded={index === expanded}
+            className={rows[index].className}
+            expandRow={expandRow}
+            error={rows[index].error}
+            errorMessage={rows[index].errorMessage}
+          />
+        </div>
+      </CellMeasurer>
+    )
+  }
+
+  return (
+    <>
+      <div>
+        <THead>
+          {rows[0].columns.map((c, idx) => (
+            <Th key={idx} size={c.size} className={c.className} textAlign={c.textAlign}>{c.name}</Th>
+          ))}
+        </THead>
+      </div>
+      <div style={{ flex: '1 1 auto' }}>
+        <AutoSizer disableWidth>
+          {({ height }) => (
+            <List
+              {...props}
+              height={height}
+              width={mainWidth}
+              rowCount={rows.length}
+              rowHeight={cache.rowHeight}
+              rowRenderer={rowRenderer}
+              overscanRowCount={50}
+              deferredMeasurementCache={cache}
             />
-          )
-        })}
-      </TBody>
-    </Table>
+          )}
+        </AutoSizer>
+      </div>
+    </>
   )
 }
 

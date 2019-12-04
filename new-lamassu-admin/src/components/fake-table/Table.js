@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import classnames from 'classnames'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'

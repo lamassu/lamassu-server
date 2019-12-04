@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 import BigNumber from 'bignumber.js'
-import FileSaver from 'file-saver'
 import { startCase, lowerCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 import useAxios from '@use-hooks/axios'

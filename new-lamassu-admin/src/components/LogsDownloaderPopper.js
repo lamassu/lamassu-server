@@ -195,23 +195,25 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
             className={classes.radioButtons}
           />
         </div>
-        <div className={classnames(dateRangePickerClasses)}>
-          <div className={classes.dateContainerWrapper}>
-            {range && (
-              <>
-                <DateContainer date={range.from}>From</DateContainer>
-                <div className={classes.arrowContainer}>
-                  <Arrow className={classes.arrow} />
-                </div>
-                <DateContainer date={range.to}>To</DateContainer>
-              </>
-            )}
+        {selectedRadio === radioButtonRange && (
+          <div className={classnames(dateRangePickerClasses)}>
+            <div className={classes.dateContainerWrapper}>
+              {range && (
+                <>
+                  <DateContainer date={range.from}>From</DateContainer>
+                  <div className={classes.arrowContainer}>
+                    <Arrow className={classes.arrow} />
+                  </div>
+                  <DateContainer date={range.to}>To</DateContainer>
+                </>
+              )}
+            </div>
+            <DateRangePicker
+              maxDate={moment()}
+              onRangeChange={handleRangeChange}
+            />
           </div>
-          <DateRangePicker
-            maxDate={moment()}
-            onRangeChange={handleRangeChange}
-          />
-        </div>
+        )}
         <div className={classes.download}>
           <Link
             color='primary'

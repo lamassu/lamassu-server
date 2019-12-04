@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import classnames from 'classnames'
 import moment from 'moment'
 import BigNumber from 'bignumber.js'
@@ -192,4 +192,4 @@ const DetailsRow = ({ tx, ...props }) => {
   )
 }
 
-export default DetailsRow
+export default memo(DetailsRow, (prev, next) => prev.tx.id === next.tx.id)
