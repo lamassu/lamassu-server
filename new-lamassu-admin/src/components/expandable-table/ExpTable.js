@@ -1,12 +1,12 @@
-import React, { useState, memo } from 'react'
+import React, { useState } from 'react'
 import classnames from 'classnames'
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { Table, THead, Tr, TBody, Td, Th } from '../fake-table/Table'
+import { THead, Tr, Td, Th } from '../fake-table/Table'
 import { ReactComponent as ExpandClosedIcon } from '../../styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from '../../styling/icons/action/expand/open.svg'
-import { mainWidth, tableHeaderHeight } from '../../styling/variables'
+import { mainWidth } from '../../styling/variables'
 
 const styles = {
   expandButton: {
