@@ -150,7 +150,7 @@ const mainStyles = {
       marginLeft: 6
     }
   },
-  addressTd: {
+  overflowTd: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'

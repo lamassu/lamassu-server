@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 import BigNumber from 'bignumber.js'
-import { startCase, lowerCase } from 'lodash/fp'
+import { upperCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 import useAxios from '@use-hooks/axios'
 
@@ -34,7 +34,7 @@ const Transactions = () => {
   const formatCustomerName = (customer) => {
     const { firstName, lastName } = customer
 
-    return `${startCase(lowerCase(firstName.slice(0, 1)))}. ${startCase(lowerCase(lastName))}`
+    return `${upperCase(firstName.slice(0, 1))}. ${lastName}`
   }
 
   const getCustomerDisplayName = (tx) => {
@@ -57,11 +57,13 @@ const Transactions = () => {
         {
           name: 'Machine',
           value: tx.machineName,
+          className: classes.overflowTd,
           size: 180
         },
         {
           name: 'Customer',
           value: customerName,
+          className: classes.overflowTd,
           size: 162
         },
         {
@@ -79,7 +81,7 @@ const Transactions = () => {
         {
           name: 'Address',
           value: tx.toAddress,
-          className: classes.addressTd,
+          className: classes.overflowTd,
           size: 136
         },
         {
