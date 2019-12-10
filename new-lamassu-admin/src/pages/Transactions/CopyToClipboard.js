@@ -10,7 +10,7 @@ import Popover from '../../components/Popper'
 import { ReactComponent as CopyIcon } from '../../styling/icons/action/copy/copy.svg'
 import { comet } from '../../styling/variables'
 
-const CopyToClipboard = ({ className, type, children, ...props }) => {
+const CopyToClipboard = ({ className, children, ...props }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   useEffect(() => {
@@ -21,13 +21,6 @@ const CopyToClipboard = ({ className, type, children, ...props }) => {
 
   const classes = useStyles()
 
-  const addrClasses = {
-    [classes.address]: true,
-    [classes.cryptoAddr]: type === 'crypto',
-    [classes.txId]: type === 'txId',
-    [classes.sessionId]: type === 'sessionId'
-  }
-
   const handleClick = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
@@ -36,29 +29,15 @@ const CopyToClipboard = ({ className, type, children, ...props }) => {
     setAnchorEl(null)
   }
 
-  const formatAddress = (address = '') => {
-    return address.replace(/(.{5})/g, '$1 ')
-  }
-
-  const formatTxId = (id = '') => {
-    return id.replace(/(.{41})/g, '$1 ')
-  }
-
-  const formatSessionId = (id = '') => {
-    return id.replace(/(.{21})/g, '$1 ')
-  }
-
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popper' : undefined
 
   return (
-    <div className={classnames(classes.wrapper, className)}>
+    <div className={classes.wrapper}>
       {children && (
         <>
-          <div className={classnames(addrClasses)}>
-            {type === 'crypto' && formatAddress(children)}
-            {type === 'txId' && formatTxId(children)}
-            {type === 'sessionId' && formatSessionId(children)}
+          <div className={classnames(classes.address, className)}>
+            {children}
           </div>
           <div className={classes.buttonWrapper}>
             <ReactCopyToClipboard

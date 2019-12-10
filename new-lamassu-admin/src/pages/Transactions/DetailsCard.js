@@ -46,6 +46,10 @@ const DetailsRow = ({ tx, ...props }) => {
     idCardExpirationDate: moment(tx.customerIdCardData.expirationDate).format('DD-MM-YYYY')
   }
 
+  const formatAddress = (address = '') => {
+    return address.replace(/(.{5})/g, '$1 ')
+  }
+
   return (
     <>
       <div className={classes.wrapper}>
@@ -157,8 +161,8 @@ const DetailsRow = ({ tx, ...props }) => {
               <div>
                 <Label>BTC address</Label>
                 <div>
-                  <CopyToClipboard type='crypto'>
-                    {addr}
+                  <CopyToClipboard className={classes.cryptoAddr}>
+                    {formatAddress(addr)}
                   </CopyToClipboard>
                 </div>
               </div>
@@ -169,7 +173,7 @@ const DetailsRow = ({ tx, ...props }) => {
               <div>
                 <Label>Transaction ID</Label>
                 <div>
-                  <CopyToClipboard type='txId'>
+                  <CopyToClipboard className={classes.txId}>
                     {txHash}
                   </CopyToClipboard>
                 </div>
@@ -180,7 +184,7 @@ const DetailsRow = ({ tx, ...props }) => {
             <div className={classes.innerRow}>
               <div>
                 <Label>Session ID</Label>
-                <CopyToClipboard type='sessionId'>
+                <CopyToClipboard className={classes.sessionId}>
                   {tx.id}
                 </CopyToClipboard>
               </div>

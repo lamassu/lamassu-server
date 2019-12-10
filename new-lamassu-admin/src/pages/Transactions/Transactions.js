@@ -78,18 +78,19 @@ const Transactions = () => {
         },
         {
           name: 'Address',
-          value: `${tx.toAddress.slice(0, 9)}...`,
+          value: tx.toAddress,
+          className: classes.addressTd,
           size: 136
         },
         {
           name: 'Date (UTC)',
-          value: moment(tx.created).format('YYYY-MM-D'),
+          value: moment.utc(tx.created).format('YYYY-MM-D'),
           textAlign: 'right',
           size: 124
         },
         {
           name: 'Time (UTC)',
-          value: moment(tx.created).format('HH:mm:ss'),
+          value: moment.utc(tx.created).format('HH:mm:ss'),
           textAlign: 'right',
           size: 124
         },

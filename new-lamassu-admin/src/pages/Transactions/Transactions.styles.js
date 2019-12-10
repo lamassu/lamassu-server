@@ -14,7 +14,7 @@ const cpcStyles = {
     height: 32
   },
   address: {
-    wordBreak: 'keep-all'
+    lineBreak: 'anywhere'
   },
   buttonWrapper: {
     '& button': {
@@ -31,15 +31,6 @@ const cpcStyles = {
     color: white,
     borderRadius: 4,
     padding: [[5, 9]]
-  },
-  cryptoAddr: {
-    width: 232
-  },
-  txId: {
-    width: 328
-  },
-  sessionId: {
-    width: 168
   }
 }
 
@@ -120,6 +111,15 @@ const detailsRowStyles = {
         }
       }
     }
+  },
+  cryptoAddr: {
+    width: 252
+  },
+  txId: {
+    width: 346
+  },
+  sessionId: {
+    width: 184
   }
 }
 
@@ -149,6 +149,11 @@ const mainStyles = {
       extend: label1,
       marginLeft: 6
     }
+  },
+  addressTd: {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis'
   }
 }
 
