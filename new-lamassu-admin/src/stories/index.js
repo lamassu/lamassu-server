@@ -120,7 +120,7 @@ story.add('Switch', () => (
 
 story.add('Text Input', () => (
   <Wrapper>
-    <TextInput color={select('Color', colors, 'amazonite')} />
+    <TextInput name='text-input' touched={[]} color={select('Color', colors, 'amazonite')} />
   </Wrapper>
 ))
 
