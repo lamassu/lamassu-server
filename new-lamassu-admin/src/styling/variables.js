@@ -117,6 +117,7 @@ export {
   spring2,
   spring3,
   tomato,
+  pumpkin,
   mistyRose,
   java,
   neon,

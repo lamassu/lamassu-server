@@ -58,7 +58,7 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                     {/* <div className={classes.commissionWrapper}> */}
                     <Label>Lamassu Support article</Label>
                     <div>
-                      {machine.statuses.map((_status, index) => <span key={index} />)}
+                      {machine.statuses.map((...[, index]) => <span key={index} />)}
                     </div>
                   </div>
                 </div>

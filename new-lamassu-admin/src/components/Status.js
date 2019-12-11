@@ -3,7 +3,7 @@ import React, { memo } from 'react'
 import Chip from '@material-ui/core/Chip'
 
 import { withStyles } from '@material-ui/core/styles'
-import { tomato, mistyRose, secondaryColorDarker as spring4, inputFontWeight, spring3, smallestFontSize, inputFontFamily } from '../styling/variables'
+import { tomato, mistyRose, pumpkin, secondaryColorDarker as spring4, inputFontWeight, spring3, smallestFontSize, inputFontFamily } from '../styling/variables'
 
 const green = theme => ({
   root: {
@@ -31,7 +31,7 @@ const orange = theme => ({
   },
   label: {
     fontSize: smallestFontSize,
-    color: '#ff7311',
+    color: pumpkin,
     fontWeight: inputFontWeight,
     fontFamily: inputFontFamily,
     paddingRight: 4,
@@ -67,9 +67,9 @@ const RedChip = withStyles(red)(LsChip)
 const Status = ({ status }) => {
   return (
     <>
-      {status.type === 'error' && <RedChip label={status.label}/>}
-      {status.type === 'warning' && <OrangeChip label={status.label}/>}
-      {status.type === 'success' && <GreenChip label={status.label}/>}
+      {status.type === 'error' && <RedChip label={status.label} />}
+      {status.type === 'warning' && <OrangeChip label={status.label} />}
+      {status.type === 'success' && <GreenChip label={status.label} />}
     </>
   )
 }
