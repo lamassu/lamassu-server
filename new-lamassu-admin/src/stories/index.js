@@ -12,6 +12,7 @@ import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
 import React from 'react'
 
+import ConfirmDialog from '../components/ConfirmDialog'
 import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ActionButton, Button, Link } from 'src/components/buttons'
@@ -140,6 +141,17 @@ story.add('Checkbox', () => (
     />
   </Wrapper>
 ))
+
+story.add('ConfirmDialog', () =>
+  <Wrapper>
+    <ConfirmDialog
+      open={boolean('open', true)}
+      onDissmised={() => { window.alert('dissmised') }}
+      onConfirmed={() => { window.alert('confirmed') }}
+      toBeConfirmed='there-is-no-fate'
+    />
+  </Wrapper>
+)
 
 story.add('Radio', () => <Radio label="Hehe" />)
 
