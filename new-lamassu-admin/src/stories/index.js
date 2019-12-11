@@ -12,6 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
 
+import ConfirmDialog from '../components/ConfirmDialog'
 import { ActionButton, Button, Link } from '../components/buttons'
 import { Radio, TextInput, Switch } from '../components/inputs'
 import { H1, H2, H3, TL1, TL2, P, Info1, Info2, Mono } from '../components/typography'
@@ -135,6 +136,17 @@ story.add('Checkbox', () =>
       }}
     />
 
+  </Wrapper>
+)
+
+story.add('ConfirmDialog', () =>
+  <Wrapper>
+    <ConfirmDialog
+      open={boolean('open', true)}
+      onDissmised={() => { window.alert('dissmised') }}
+      onConfirmed={() => { window.alert('confirmed') }}
+      toBeConfirmed='there-is-no-fate'
+    />
   </Wrapper>
 )
 
