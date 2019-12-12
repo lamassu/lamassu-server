@@ -15,7 +15,10 @@ const styles = {
   },
   primary,
   buttonIcon: {
-    margin: 'auto'
+    margin: 'auto',
+    '& svg': {
+      overflow: 'visible'
+    }
   },
   buttonIconActive: {} // required to extend primary
 }

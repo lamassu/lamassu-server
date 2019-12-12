@@ -28,13 +28,15 @@ const Label = withStyles({
   }
 })(props => <FormControlLabel {...props} />)
 
-const RadioGroup = ({ name, value, labels, ariaLabel, onChange, className, ...props }) => {
+/* options = [{ label, value }]
+ */
+const RadioGroup = ({ name, value, options, ariaLabel, onChange, className, ...props }) => {
   return (
     <>
-      {labels && (
+      {options && (
         <MaterialRadioGroup aria-label={ariaLabel} name={name} value={value} onChange={onChange} className={classnames(className)}>
-          {labels.map((label, idx) => (
-            <Label key={idx} value={idx} control={<GreenRadio />} label={label} />
+          {options.map((options, idx) => (
+            <Label key={idx} value={options.value} control={<GreenRadio />} label={options.label} />
           ))}
         </MaterialRadioGroup>
       )}

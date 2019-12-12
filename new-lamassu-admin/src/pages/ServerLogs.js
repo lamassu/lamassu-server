@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { concat, uniq, merge } from 'lodash/fp'
+import { concat, uniq, merge, find } from 'lodash/fp'
 import moment from 'moment'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'
@@ -10,7 +10,7 @@ import { FeatureButton, SimpleButton } from '../components/buttons'
 import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '../components/table'
 import { Select } from '../components/inputs'
 import Uptime from '../components/Uptime'
-import LogsDowloaderPopover from '../components/LogsDownloaderPopover'
+import LogsDowloaderPopover from '../components/LogsDownloaderPopper'
 import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
 import { offColor } from '../styling/variables'
@@ -108,11 +108,7 @@ const Logs = () => {
   })
 
   const handleOpenRangePicker = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleCloseRangePicker = () => {
-    setAnchorEl(null)
+    setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   const open = Boolean(anchorEl)
@@ -133,11 +129,13 @@ const Logs = () => {
                 onClick={handleOpenRangePicker}
               />
               <LogsDowloaderPopover
+                title='Download logs'
+                name='server-logs'
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
-                logsResponse={logsResponse}
-                onClose={handleCloseRangePicker}
+                logs={logsResponse.data.logs}
+                getTimestamp={(log) => log.timestamp}
               />
               <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
                 Share with Lamassu
