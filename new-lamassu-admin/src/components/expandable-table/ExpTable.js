@@ -1,99 +1,122 @@
-import React, { useState, useEffect } from 'react'
-import { map, set } from 'lodash/fp'
+import React, { useState } from 'react'
 import classnames from 'classnames'
-import uuidv1 from 'uuid/v1'
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { Table, THead, Tr, TBody, Td, Th } from '../fake-table/Table'
+import { THead, Tr, Td, Th } from '../fake-table/Table'
 import { ReactComponent as ExpandClosedIcon } from '../../styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from '../../styling/icons/action/expand/open.svg'
 import { mainWidth } from '../../styling/variables'
 
 const styles = {
-  hideDetailsRow: {
-    display: 'none'
-  },
   expandButton: {
     border: 'none',
     backgroundColor: 'transparent',
     cursor: 'pointer',
     padding: 4
+  },
+  row: {
+    borderRadius: 0
   }
 }
 
 const useStyles = makeStyles(styles)
 
-const ExpRow = ({ id, columns, details, sizes, expanded, className, expandRow, ...props }) => {
+const ExpRow = ({ id, columns, details, expanded, className, expandRow, ...props }) => {
   const classes = useStyles()
-
-  const detailsRowClasses = {
-    [classes.detailsRow]: true,
-    [classes.hideDetailsRow]: expanded
-  }
 
   return (
     <>
-      <Tr className={classnames(className)} {...props}>
-        {columns.map((col, idx) => (
-          <Td key={uuidv1()} size={sizes[idx]} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
+      <Tr className={classnames(classes.row, className)} {...props}>
+        {columns.slice(0, -1).map((col, idx) => (
+          <Td key={idx} size={col.size} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
         ))}
-        <Td size={sizes[sizes.length - 1]}>
+        <Td size={columns[columns.length - 1].size}>
           <button onClick={() => expandRow(id)} className={classes.expandButton}>
             {expanded && <ExpandOpenIcon />}
             {!expanded && <ExpandClosedIcon />}
-          </button></Td>
-      </Tr>
-      <Tr className={classnames(detailsRowClasses)}>
-        <Td size={mainWidth}>
-          {details}
+          </button>
         </Td>
       </Tr>
+      {expanded && (
+        <Tr className={classes.detailsRow}>
+          <Td size={mainWidth}>
+            {details}
+          </Td>
+        </Tr>
+      )}
     </>
   )
 }
 
-/* headers = [{ value, className, textAlign }]
- * rows = [{ columns = [{ value, className, textAlign }], details, className, error, errorMessage }]
+/* rows = [{ columns = [{ name, value, className, textAlign, size }], details, className, error, errorMessage }]
+ * Don't forget to include the size of the last (expand button) column!
  */
-const ExpTable = ({ headers = [], rows = [], sizes = [], className, ...props }) => {
-  const [rowStates, setRowStates] = useState(null)
-
-  useEffect(() => {
-    setRowStates(rows && rows.map((x) => { return { id: x.id, expanded: false } }))
-  }, [rows])
+const ExpTable = ({ rows = [], className, ...props }) => {
+  const [expanded, setExpanded] = useState(null)
 
   const expandRow = (id) => {
-    setRowStates(map(r => set('expanded', r.id === id ? !r.expanded : false, r)))
+    setExpanded(id === expanded ? null : id)
+  }
+
+  if (!rows) return null
+
+  const cache = new CellMeasurerCache({
+    defaultHeight: 62,
+    fixedWidth: true
+  })
+
+  function rowRenderer ({ index, isScrolling, key, parent, style }) {
+    return (
+      <CellMeasurer
+        cache={cache}
+        columnIndex={0}
+        key={key}
+        parent={parent}
+        rowIndex={index}
+      >
+        <div style={style}>
+          <ExpRow
+            id={index}
+            columns={rows[index].columns}
+            details={rows[index].details}
+            expanded={index === expanded}
+            className={rows[index].className}
+            expandRow={expandRow}
+            error={rows[index].error}
+            errorMessage={rows[index].errorMessage}
+          />
+        </div>
+      </CellMeasurer>
+    )
   }
 
   return (
-    <Table className={classnames(className)}>
-      <THead>
-        {headers.map((header, idx) => (
-          <Th key={uuidv1()} size={sizes[idx]} className={header.className} textAlign={header.textAlign}>{header.value}</Th>
-        ))}
-      </THead>
-      <TBody>
-        {rowStates && rowStates.map((r, idx) => {
-          const row = rows[idx]
-
-          return (
-            <ExpRow
-              key={uuidv1()}
-              id={r.id}
-              columns={row.columns}
-              details={row.details}
-              sizes={sizes}
-              expanded={r.expanded}
-              className={row.className}
-              expandRow={expandRow}
-              error={row.error}
-              errorMessage={row.errorMessage}
+    <>
+      <div>
+        <THead>
+          {rows[0].columns.map((c, idx) => (
+            <Th key={idx} size={c.size} className={c.className} textAlign={c.textAlign}>{c.name}</Th>
+          ))}
+        </THead>
+      </div>
+      <div style={{ flex: '1 1 auto' }}>
+        <AutoSizer disableWidth>
+          {({ height }) => (
+            <List
+              {...props}
+              height={height}
+              width={mainWidth}
+              rowCount={rows.length}
+              rowHeight={cache.rowHeight}
+              rowRenderer={rowRenderer}
+              overscanRowCount={50}
+              deferredMeasurementCache={cache}
             />
-          )
-        })}
-      </TBody>
-    </Table>
+          )}
+        </AutoSizer>
+      </div>
+    </>
   )
 }
 
