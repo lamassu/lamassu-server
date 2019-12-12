@@ -1,4 +1,4 @@
-import { disabledColor2, spacer, subheaderColor, placeholderColor, fontColor } from '../styling/variables'
+import { disabledColor2, spacer, subheaderColor, placeholderColor } from '../styling/variables'
 
 import typographyStyles from '../components/typography/styles'
 

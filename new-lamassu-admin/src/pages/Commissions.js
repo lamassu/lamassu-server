@@ -164,6 +164,7 @@ const Commissions = () => {
     setDataset(clonedDs)
     reFetch()
   }
+  const EditableRow = () => (<span />)
 
   return (
     <>
@@ -188,13 +189,11 @@ const Commissions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* // <EditableRow
-            //   key={idx}
-            //   data={it}
-            //   commitValues={value => commitValues(value, idx)}
-            //   EditRow={EditRow}
-            //   ViewRow={ViewRow}
-            // /> */}
+            <EditableRow
+              commitValues={value => commitValues(value)}
+              EditRow={EditRow}
+              ViewRow={ViewRow}
+            />
           </TableBody>
         </Table>
       </form>

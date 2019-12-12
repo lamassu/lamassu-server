@@ -19,7 +19,7 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange, ...props 
 
   useEffect(() => {
     onRangeChange(from, to)
-  }, [from, to])
+  }, [from, to, onRangeChange])
 
   const classes = useStyles()
 

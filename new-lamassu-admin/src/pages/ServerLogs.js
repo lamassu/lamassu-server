@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { concat, uniq, merge, find } from 'lodash/fp'
+import { concat, uniq, merge } from 'lodash/fp'
 import moment from 'moment'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'

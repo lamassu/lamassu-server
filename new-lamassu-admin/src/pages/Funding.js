@@ -47,7 +47,7 @@ const getPendingTotal = list => {
 const Funding = () => {
   const [data, setData] = useState(null)
   const [selected, setSelected] = useState(null)
-  const [viewHistory, setViewHistory] = useState(false)
+  const [viewHistory] = useState(false)
   const classes = useStyles()
   const fundingHistory = [
     {

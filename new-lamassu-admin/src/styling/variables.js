@@ -109,7 +109,7 @@ const tableSuccessColor = spring3
 
 export {
   version,
-
+  // colors
   white,
   zircon,
   zircon2,
@@ -118,7 +118,11 @@ export {
   spring3,
   tomato,
   mistyRose,
-
+  java,
+  neon,
+  pumpkin,
+  linen,
+  // named colors
   primaryColor,
   secondaryColor,
   secondaryColorDark,
@@ -137,7 +141,8 @@ export {
   linkSecondaryColor,
   errorColor,
   offErrorColor,
-
+  inputBorderColor,
+  // font sizes
   fontSize1,
   fontSize2,
   fontSize3,
@@ -146,22 +151,22 @@ export {
   fontPrimary,
   fontSecondary,
   fontMonospaced,
-
-  sm,
-  md,
-  lg,
-  xl,
-  xxl,
-
-  spacer,
-  mainWidth,
-
+  // named font sizes
   smallestFontSize,
   inputFontSize,
   inputFontSizeLg,
   inputFontFamily,
   inputFontWeight,
-
+  // screen sizes
+  sm,
+  md,
+  lg,
+  xl,
+  xxl,
+  // sizes
+  spacer,
+  mainWidth,
+  // table sizes
   tableHeaderHeight,
   tableCellHeight,
   tableSmCellHeight,

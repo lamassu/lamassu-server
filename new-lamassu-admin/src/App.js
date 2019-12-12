@@ -4,6 +4,7 @@ import { StylesProvider, jssPreset, MuiThemeProvider, makeStyles } from '@materi
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { BrowserRouter as Router } from 'react-router-dom'
 import extendJss from 'jss-plugin-extend'
+import { setAutoFreeze } from 'immer'
 
 import Header from './components/Header'
 import { tree, Routes } from './routing/routes'
@@ -12,6 +13,7 @@ import theme from './styling/theme'
 import global from './styling/global'
 import { backgroundColor, mainWidth } from './styling/variables'
 
+setAutoFreeze(false)
 const jss = create({
   plugins: [extendJss(), ...jssPreset().plugins]
 })

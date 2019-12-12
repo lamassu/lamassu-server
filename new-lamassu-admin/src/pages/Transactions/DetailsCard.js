@@ -81,7 +81,7 @@ const DetailsRow = ({ tx, ...props }) => {
                       Icon={CardIdIcon}
                       InverseIcon={CardIdInverseIcon}
                     >
-                      <img src={tx.customerIdCardPhotoPath} />
+                      <img alt='' src={tx.customerIdCardPhotoPath} />
                     </IDButton>
                   )}
                   {tx.customerIdCardData && (
@@ -128,7 +128,7 @@ const DetailsRow = ({ tx, ...props }) => {
                       Icon={CamIdIcon}
                       InverseIcon={CamIdInverseIcon}
                     >
-                      <img src={tx.customerIdCameraPath} />
+                      <img alt='' src={tx.customerIdCameraPath} />
                     </IDButton>
                   )}
                 </div>
