@@ -1,14 +1,14 @@
 import { makeStyles } from '@material-ui/core'
-import React from 'react'
 import useAxios from '@use-hooks/axios'
+import moment from 'moment'
+import React from 'react'
 import ExpTable from '../../components/expandable-table/ExpTable'
+import { MainStatus } from '../../components/Status'
 import Title from '../../components/Title'
 import { ReactComponent as WarningIcon } from '../../styling/icons/status/pumpkin.svg'
 import { ReactComponent as ErrorIcon } from '../../styling/icons/status/tomato.svg'
-import MachineDetailsRow from './MachineDetailsCard'
 import { mainStyles } from '../Transactions/Transactions.styles'
-import moment from 'moment'
-import { MainStatus } from '../../components/Status'
+import MachineDetailsRow from './MachineDetailsCard'
 
 const MachineStatus = () => {
   const useStyles = makeStyles(mainStyles)
@@ -21,36 +21,51 @@ const MachineStatus = () => {
     trigger: []
   })
 
-  const headers = [
-    { value: 'Machine Name', className: classes.dateColumn, textAlign: 'left' },
-    { value: 'Status', className: classes.dateColumn, textAlign: 'left' },
-    { value: 'Last ping', className: classes.dateColumn, textAlign: 'left' },
-    { value: 'Ping Time', className: classes.dateColumn, textAlign: 'left' },
-    { value: 'Software Version', className: classes.dateColumn, textAlign: 'left' },
-    { value: '' }
-  ]
-
   const rows = response && response.data.machines.map(m => ({
     columns: [
-      { value: m.name, className: classes.dateColumn, textAlign: 'left' },
-      { value: <MainStatus statuses={m.statuses} />, className: classes.dateColumn, textAlign: 'left' },
-      { value: moment(m.lastPing).fromNow(), className: classes.dateColumn, textAlign: 'left' },
-      { value: m.pingTime || 'unknown', className: classes.dateColumn, textAlign: 'left' },
-      { value: m.softwareVersion || 'unknown', className: classes.dateColumn, textAlign: 'left' }
+      {
+        name: 'Machine Name',
+        size: 232,
+        value: m.name,
+        className: classes.dateColumn,
+        textAlign: 'left'
+      },
+      {
+        name: 'Status',
+        size: 349,
+        value: <MainStatus statuses={m.statuses} />,
+        className: classes.dateColumn,
+        textAlign: 'left'
+      },
+      {
+        name: 'Last ping',
+        size: 192,
+        value: moment(m.lastPing).fromNow(),
+        className: classes.dateColumn,
+        textAlign: 'left'
+      },
+      {
+        name: 'Ping Time',
+        size: 155,
+        value: m.pingTime || 'unknown',
+        className: classes.dateColumn,
+        textAlign: 'left'
+      },
+      {
+        name: 'Software Version',
+        size: 201,
+        value: m.softwareVersion || 'unknown',
+        className: classes.dateColumn,
+        textAlign: 'left'
+      },
+      {
+        size: 71
+      }
     ],
     details: (
       <MachineDetailsRow machine={m} />
     )
   }))
-
-  const sizes = [
-    232, // Machine Name
-    349, // Status
-    192, // Last ping
-    155, // Ping Time
-    201, // Software Version
-    71 // Expand
-  ]
 
   return (
     <>
@@ -63,7 +78,7 @@ const MachineStatus = () => {
           <div><ErrorIcon /><span>Error</span></div>
         </div>
       </div>
-      <ExpTable headers={headers} rows={rows} sizes={sizes} className={classes.table} />
+      <ExpTable rows={rows} />
     </>
   )
 }
