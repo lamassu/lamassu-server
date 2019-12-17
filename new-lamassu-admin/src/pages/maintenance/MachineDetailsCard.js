@@ -1,22 +1,25 @@
-import React from 'react'
-import classnames from 'classnames'
-import moment from 'moment'
 import { makeStyles } from '@material-ui/core/styles'
 import useAxios from '@use-hooks/axios'
-
-import { detailsRowStyles, labelStyles } from '../Transactions/Transactions.styles'
-import { ReactComponent as UnpairIcon } from '../../styling/icons/button/unpair/zodiac.svg'
-import { ReactComponent as ShutdownIcon } from '../../styling/icons/button/shut down/zodiac.svg'
-import { ReactComponent as RebootIcon } from '../../styling/icons/button/reboot/zodiac.svg'
-import { ReactComponent as DownloadIcon } from '../../styling/icons/button/download/zodiac.svg'
-
-import { ReactComponent as UnpairReversedIcon } from '../../styling/icons/button/unpair/white.svg'
-import { ReactComponent as ShutdownReversedIcon } from '../../styling/icons/button/shut down/white.svg'
-import { ReactComponent as RebootReversedIcon } from '../../styling/icons/button/reboot/white.svg'
-import { ReactComponent as DownloadReversedIcon } from '../../styling/icons/button/download/white.svg'
-
-import { Status } from '../../components/Status'
+import classnames from 'classnames'
+import moment from 'moment'
+import React from 'react'
 import ActionButton from '../../components/buttons/ActionButton'
+import { Status } from '../../components/Status'
+import { ReactComponent as DownloadReversedIcon } from '../../styling/icons/button/download/white.svg'
+import { ReactComponent as DownloadIcon } from '../../styling/icons/button/download/zodiac.svg'
+import { ReactComponent as RebootReversedIcon } from '../../styling/icons/button/reboot/white.svg'
+import { ReactComponent as RebootIcon } from '../../styling/icons/button/reboot/zodiac.svg'
+import { ReactComponent as ShutdownReversedIcon } from '../../styling/icons/button/shut down/white.svg'
+import { ReactComponent as ShutdownIcon } from '../../styling/icons/button/shut down/zodiac.svg'
+import { ReactComponent as UnpairReversedIcon } from '../../styling/icons/button/unpair/white.svg'
+import { ReactComponent as UnpairIcon } from '../../styling/icons/button/unpair/zodiac.svg'
+import { detailsRowStyles, labelStyles } from '../Transactions/Transactions.styles'
+import { zircon } from '../../styling/variables'
+
+const colDivider = {
+  background: zircon,
+  width: '2px'
+}
 
 const Label = ({ children }) => {
   const useStyles = makeStyles(labelStyles)
@@ -26,7 +29,7 @@ const Label = ({ children }) => {
 }
 
 const MachineDetailsRow = ({ machine, ...props }) => {
-  const useStyles = makeStyles(detailsRowStyles)
+  const useStyles = makeStyles({ ...detailsRowStyles, colDivider })
   const classes = useStyles()
 
   const { loading: unpairDisabled, reFetch: unpair } = useAxios({
@@ -36,6 +39,11 @@ const MachineDetailsRow = ({ machine, ...props }) => {
 
   const { loading: rebootDisabled, reFetch: reboot } = useAxios({
     url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/reboot`,
+    method: 'POST'
+  })
+
+  const { loading: shutdownDisabled, reFetch: shutdown } = useAxios({
+    url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/shutdown`,
     method: 'POST'
   })
 
@@ -55,7 +63,6 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                     </div>
                   </div>
                   <div>
-                    {/* <div className={classes.commissionWrapper}> */}
                     <Label>Lamassu Support article</Label>
                     <div>
                       {machine.statuses.map((...[, index]) => <span key={index} />)}
@@ -65,7 +72,7 @@ const MachineDetailsRow = ({ machine, ...props }) => {
               </div>
             </div>
           </div>
-          <div className={classnames(classes.col, classes.col2)} style={{ background: '#ebefff', width: '2px' }} />
+          <div className={classnames(classes.col, classes.col2, classes.colDivider)} />
           <div className={classnames(classes.col)}>
             <div className={classnames(classes.row)}>
               <div className={classnames(classes.col, classes.col2)}>
@@ -139,11 +146,11 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                       </ActionButton>
                       &nbsp;
                       <ActionButton
-                        disabled
+                        disabled={shutdownDisabled}
                         color='primary'
                         Icon={ShutdownIcon}
                         InverseIcon={ShutdownReversedIcon}
-                        onClick={reboot}
+                        onClick={shutdown}
                       >
                         Shutdown
                       </ActionButton>
