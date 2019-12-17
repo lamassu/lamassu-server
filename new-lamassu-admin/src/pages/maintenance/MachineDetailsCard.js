@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import moment from 'moment'
 import React from 'react'
 import ActionButton from '../../components/buttons/ActionButton'
+import ConfirmDialog from '../../components/ConfirmDialog'
 import { Status } from '../../components/Status'
 import { ReactComponent as DownloadReversedIcon } from '../../styling/icons/button/download/white.svg'
 import { ReactComponent as DownloadIcon } from '../../styling/icons/button/download/zodiac.svg'
@@ -29,8 +30,13 @@ const Label = ({ children }) => {
 }
 
 const MachineDetailsRow = ({ machine, ...props }) => {
+  const [dialogOpen, setOpen] = React.useState(false)
   const useStyles = makeStyles({ ...detailsRowStyles, colDivider })
   const classes = useStyles()
+
+  const unpairDialog = () => {
+    setOpen(true)
+  }
 
   const { loading: unpairDisabled, reFetch: unpair } = useAxios({
     url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/unpair`,
@@ -130,10 +136,11 @@ const MachineDetailsRow = ({ machine, ...props }) => {
                         Icon={UnpairIcon}
                         InverseIcon={UnpairReversedIcon}
                         disabled={unpairDisabled}
-                        onClick={unpair}
+                        onClick={unpairDialog}
                       >
                         Unpair
                       </ActionButton>
+                      <ConfirmDialog open={dialogOpen} title='Unpair this machine?' subtitle={false} toBeConfirmed={machine.name} onConfirmed={unpair} onDissmised={() => { }} />
                       &nbsp;
                       <ActionButton
                         color='primary'
