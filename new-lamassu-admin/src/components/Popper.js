@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import { merge } from 'lodash/fp'
+import * as R from 'ramda'
 import { makeStyles, Popper as MaterialPopper, Paper } from '@material-ui/core'
 
 import { white } from '../styling/variables'
@@ -73,7 +73,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
     [classes.arrowLeft]: props.placement === 'left'
   }
 
-  const modifiers = merge(props.modifiers, {
+  const modifiers = R.merge(props.modifiers, {
     flip: {
       enabled: false
     },

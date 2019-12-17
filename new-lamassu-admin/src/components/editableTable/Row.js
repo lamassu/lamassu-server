@@ -1,5 +1,4 @@
 import React, { useState, memo } from 'react'
-import { identity, isEmpty } from 'lodash/fp'
 import { Form, Formik, FastField, useFormikContext } from 'formik'
 
 import {
@@ -27,10 +26,11 @@ const ERow = memo(({ elements }) => {
   }
 
   return (
-    <Tr error={!isEmpty(errors)} errorMessage={errors && errors.toString()}>
-      {elements.map(({ name, input, size, textAlign, view = identity, inputProps }, idx) => (
+    <Tr error={errors && errors.length} errorMessage={errors && errors.toString()}>
+      {elements.map(({ name, input, size, textAlign, view = () => {}, inputProps }, idx) => (
         <Td key={idx} size={size} textAlign={textAlign}>
-          {editing ? getField(name, input, inputProps) : view(values[name])}
+          {editing && getField(name, input, inputProps)}
+          {!editing && view(values[name])}
         </Td>
       ))}
       <Td size={175}>

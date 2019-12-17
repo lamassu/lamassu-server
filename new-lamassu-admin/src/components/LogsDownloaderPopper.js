@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import { get, compose } from 'lodash/fp'
+import * as R from 'ramda'
 import moment from 'moment'
 import FileSaver from 'file-saver'
 import { makeStyles } from '@material-ui/core'
@@ -135,11 +135,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
     [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll
   }
 
-  const handleRadioButtons = (event) => {
-    compose(setSelectedRadio, get('target.value'))
-    const radio = event.target.value
-    setSelectedRadio(radio)
-  }
+  const handleRadioButtons = R.o(setSelectedRadio, R.path(['target', 'value']))
 
   const handleRangeChange = (from, to) => {
     setRange({ from, to })

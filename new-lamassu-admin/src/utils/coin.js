@@ -1,4 +1,4 @@
-import { find } from 'lodash/fp'
+import * as R from 'ramda'
 
 const CRYPTO_CURRENCIES = [
   {
@@ -40,7 +40,7 @@ const CRYPTO_CURRENCIES = [
 ]
 
 function getCryptoCurrency (cryptoCode) {
-  const cryptoCurrency = find(['cryptoCode', cryptoCode], CRYPTO_CURRENCIES)
+  const cryptoCurrency = R.find(R.propEq('cryptoCode', cryptoCode))(CRYPTO_CURRENCIES)
   if (!cryptoCurrency) throw new Error(`Unsupported crypto: ${cryptoCode}`)
   return cryptoCurrency
 }
@@ -51,4 +51,4 @@ function toUnit (cryptoAtoms, cryptoCode) {
   return cryptoAtoms.shiftedBy(-unitScale)
 }
 
-export default toUnit
+export { toUnit }

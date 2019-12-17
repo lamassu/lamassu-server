@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 import BigNumber from 'bignumber.js'
-import { upperCase } from 'lodash/fp'
+import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core/styles'
 import useAxios from '@use-hooks/axios'
 
-import { mainStyles } from './Transactions.styles'
-import DetailsRow from './DetailsCard'
-import toUnit from './tx'
-
+import { toUnit } from '../../utils/coin'
 import Title from '../../components/Title'
 import ExpTable from '../../components/expandable-table/ExpTable'
 import LogsDowloaderPopover from '../../components/LogsDownloaderPopper'
@@ -17,6 +14,9 @@ import { ReactComponent as TxInIcon } from '../../styling/icons/direction/cash-i
 import { ReactComponent as TxOutIcon } from '../../styling/icons/direction/cash-out.svg'
 import { ReactComponent as Download } from '../../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as DownloadInverseIcon } from '../../styling/icons/button/download/white.svg'
+
+import { mainStyles } from './Transactions.styles'
+import DetailsRow from './DetailsCard'
 
 const Transactions = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -34,7 +34,7 @@ const Transactions = () => {
   const formatCustomerName = (customer) => {
     const { firstName, lastName } = customer
 
-    return `${upperCase(firstName.slice(0, 1))}. ${lastName}`
+    return `${R.o(R.toUpper, R.head)(firstName)}. ${lastName}`
   }
 
   const getCustomerDisplayName = (tx) => {
@@ -43,73 +43,61 @@ const Transactions = () => {
     return tx.customerPhone
   }
 
-  const rows = txResponse && txResponse.data.map(tx => {
-    const customerName = getCustomerDisplayName(tx)
-
-    return {
-      id: tx.id,
-      columns: [
-        {
-          name: '',
-          value: tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />,
-          size: 62
-        },
-        {
-          name: 'Machine',
-          value: tx.machineName,
-          className: classes.overflowTd,
-          size: 180
-        },
-        {
-          name: 'Customer',
-          value: customerName,
-          className: classes.overflowTd,
-          size: 162
-        },
-        {
-          name: 'Cash',
-          value: `${Number.parseFloat(tx.fiat)} ${tx.fiatCode}`,
-          textAlign: 'right',
-          size: 110
-        },
-        {
-          name: 'Crypto',
-          value: `${toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(5)} ${tx.cryptoCode}`,
-          textAlign: 'right',
-          size: 141
-        },
-        {
-          name: 'Address',
-          value: tx.toAddress,
-          className: classes.overflowTd,
-          size: 136
-        },
-        {
-          name: 'Date (UTC)',
-          value: moment.utc(tx.created).format('YYYY-MM-D'),
-          textAlign: 'right',
-          size: 124
-        },
-        {
-          name: 'Time (UTC)',
-          value: moment.utc(tx.created).format('HH:mm:ss'),
-          textAlign: 'right',
-          size: 124
-        },
-        {
-          name: '', // Trade
-          value: '',
-          size: 90
-        },
-        {
-          size: 71
-        }
-      ],
-      details: (
-        <DetailsRow tx={tx} />
-      )
+  const elements = [
+    {
+      header: '',
+      size: 62,
+      view: it => it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />
+    },
+    {
+      header: 'Machine',
+      name: 'machineName',
+      size: 180,
+      view: R.path(['machineName'])
+    },
+    {
+      header: 'Customer',
+      size: 162,
+      view: getCustomerDisplayName
+    },
+    {
+      header: 'Cash',
+      size: 110,
+      textAlign: 'right',
+      view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
+    },
+    {
+      header: 'Crypto',
+      size: 141,
+      textAlign: 'right',
+      view: it => `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${it.cryptoCode}`
+    },
+    {
+      header: 'Address',
+      view: R.path(['toAddress']),
+      className: classes.overflowTd,
+      size: 136
+    },
+    {
+      header: 'Date (UTC)',
+      view: it => moment.utc(it.created).format('YYYY-MM-D'),
+      textAlign: 'right',
+      size: 124
+    },
+    {
+      header: 'Time (UTC)',
+      view: it => moment.utc(it.created).format('HH:mm:ss'),
+      textAlign: 'right',
+      size: 124
+    },
+    {
+      header: '', // Trade
+      size: 90
+    },
+    {
+      size: 71
     }
-  })
+  ]
 
   const handleOpenRangePicker = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
@@ -154,7 +142,7 @@ const Transactions = () => {
           <div><TxInIcon /><span>Cash-in</span></div>
         </div>
       </div>
-      <ExpTable rows={rows} />
+      <ExpTable elements={elements} data={R.path(['data'])(txResponse)} Details={DetailsRow} />
     </>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import moment from 'moment'
-import { toInteger, range, map, concat } from 'lodash/fp'
+import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { ReactComponent as Arrow } from '../../styling/icons/arrow/month_change.svg'
@@ -73,20 +73,20 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
   const classes = useStyles()
 
   const weekdays = moment.weekdaysMin().map(day => day.slice(0, 1))
-  const firstDayOfMonth = (month) => toInteger(moment(month).startOf('month').format('d'))
-  const monthLength = (month) => toInteger(moment(month).endOf('month').format('D'))
+  const firstDayOfMonth = (month) => Number.parseInt(moment(month).startOf('month').format('d'))
+  const monthLength = (month) => Number.parseInt(moment(month).endOf('month').format('D'))
 
   const monthdays = (month) => {
     const lastMonth = moment(month).subtract(1, 'month')
-    const lastMonthRange = range(firstDayOfMonth(month) - 1, -1)
-    const lastMonthDays = map(i => moment(lastMonth).endOf('month').subtract(i, 'days'))(lastMonthRange)
-    const thisMonthRange = range(0, monthLength(month))
-    const thisMonthDays = map(i => moment(month).startOf('month').add(i, 'days'))(thisMonthRange)
+    const lastMonthRange = R.range(firstDayOfMonth(month) - 1, -1)
+    const lastMonthDays = R.map(i => moment(lastMonth).endOf('month').subtract(i, 'days'))(lastMonthRange)
+    const thisMonthRange = R.range(0, monthLength(month))
+    const thisMonthDays = R.map(i => moment(month).startOf('month').add(i, 'days'))(thisMonthRange)
     const nextMonth = moment(month).add(1, 'month')
-    const nextMonthRange = range(0, 42 - lastMonthDays.length - thisMonthDays.length)
-    const nextMonthDays = map(i => moment(nextMonth).startOf('month').add(i, 'days'))(nextMonthRange)
+    const nextMonthRange = R.range(0, 42 - lastMonthDays.length - thisMonthDays.length)
+    const nextMonthDays = R.map(i => moment(nextMonth).startOf('month').add(i, 'days'))(nextMonthRange)
 
-    return concat(concat(lastMonthDays, thisMonthDays), nextMonthDays)
+    return R.concat(R.concat(lastMonthDays, thisMonthDays), nextMonthDays)
   }
 
   const getRow = (month, row) => monthdays(month).slice(row * 7 - 7, row * 7)
@@ -122,7 +122,7 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
           </tr>
         </thead>
         <tbody>
-          {range(1, 8).map((row, key) => (
+          {R.range(1, 8).map((row, key) => (
             <tr key={key}>
               {getRow(currentDisplayedMonth, row).map((day, key) => (
                 <td key={key} onClick={() => handleSelect(day, minDate, maxDate)}>

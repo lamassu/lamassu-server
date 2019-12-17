@@ -1,6 +1,6 @@
 import React, { useState, memo } from 'react'
 import { Form, FastField } from 'formik'
-import { isEmpty } from 'lodash/fp'
+import * as R from 'ramda'
 
 import { Link } from '../../components/buttons'
 import { Autocomplete, AutocompleteMultiple, Checkbox } from '../../components/inputs'
@@ -13,7 +13,6 @@ import {
   TableBody,
   TableCell as TD
 } from '../../components/table'
-
 
 import styles from './MainForm.module.scss'
 
@@ -75,7 +74,7 @@ const Override = memo(({ values, resetForm, submitForm, errors, editing, setEdit
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow error={submitted && !isEmpty(errors)}>
+          <TableRow error={submitted && errors && errors.length}>
             {editing ? EditFields : ViewFields}
           </TableRow>
         </TableBody>

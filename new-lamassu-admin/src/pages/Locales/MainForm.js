@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { __, compose, join, map, get } from 'lodash/fp'
+import * as R from 'ramda'
 
 import { Autocomplete, AutocompleteMultiple } from '../../components/inputs'
 
@@ -19,42 +19,42 @@ const sizes = {
 
 const MainForm = memo(
   ({ value, save, auxData, validationSchema }) => {
-    const getData = get(__, auxData)
-    const displayCodeArray = compose(join(', '), map(get('code')))
+    const getData = R.path(R.__, auxData)
+    const displayCodeArray = R.compose(R.join(', '), R.map(R.path(['code'])), R.of)
 
     return (
       <EditableTable
         save={save}
         validationSchema={validationSchema}
-        data={[value]}
+        data={R.of(value)}
         elements={[
           {
             name: 'country',
             size: sizes.country,
-            view: get('display'),
+            view: R.path(['display']),
             input: Autocomplete,
-            inputProps: { suggestions: getData('countries') }
+            inputProps: { suggestions: getData(['countries']) }
           },
           {
             name: 'fiatCurrency',
             size: sizes.fiatCurrency,
-            view: get('code'),
+            view: R.path(['code']),
             input: Autocomplete,
-            inputProps: { suggestions: getData('currencies') }
+            inputProps: { suggestions: getData(['currencies']) }
           },
           {
             name: 'languages',
             size: sizes.languages,
             view: displayCodeArray,
             input: AutocompleteMultiple,
-            inputProps: { suggestions: getData('languages') }
+            inputProps: { suggestions: getData(['languages']) }
           },
           {
             name: 'cryptoCurrencies',
             size: sizes.cryptoCurrencies,
-            view: displayCodeArray,
+            view: () => {},//displayCodeArray,
             input: AutocompleteMultiple,
-            inputProps: { suggestions: getData('cryptoCurrencies') }
+            inputProps: { suggestions: getData(['cryptoCurrencies']) }
           },
           {
             name: 'showRates',

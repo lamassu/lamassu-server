@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames'
 import { CopyToClipboard as ReactCopyToClipboard } from 'react-copy-to-clipboard'
-import { replace } from 'lodash/fp'
+import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { cpcStyles } from './Transactions.styles'
@@ -31,6 +31,7 @@ const CopyToClipboard = ({ className, children, ...props }) => {
 
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popper' : undefined
+  console.log(children)
 
   return (
     <div className={classes.wrapper}>
@@ -41,7 +42,7 @@ const CopyToClipboard = ({ className, children, ...props }) => {
           </div>
           <div className={classes.buttonWrapper}>
             <ReactCopyToClipboard
-              text={replace(/\s/g, '')(children)}
+              text={R.replace(/\s/g, '')(children)}
             >
               <button aria-describedby={id} onClick={(event) => handleClick(event)}><CopyIcon /></button>
             </ReactCopyToClipboard>

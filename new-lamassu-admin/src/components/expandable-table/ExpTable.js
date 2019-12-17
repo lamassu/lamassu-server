@@ -22,16 +22,18 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const ExpRow = ({ id, columns, details, expanded, className, expandRow, ...props }) => {
+const ExpRow = ({ id, elements, data, Details, expanded, expandRow, ...props }) => {
   const classes = useStyles()
 
   return (
     <>
-      <Tr className={classnames(classes.row, className)} {...props}>
-        {columns.slice(0, -1).map((col, idx) => (
-          <Td key={idx} size={col.size} className={col.className} textAlign={col.textAlign}>{col.value}</Td>
+      <Tr className={classnames(classes.row)} error={data.error} errorMessage={data.errorMessage}>
+        {elements.slice(0, -1).map(({ header, size, className, textAlign, view = () => {} }, idx) => (
+          <Td key={idx} size={size} className={className} textAlign={textAlign}>
+            {view(data)}
+          </Td>
         ))}
-        <Td size={columns[columns.length - 1].size}>
+        <Td size={elements[elements.length - 1].size}>
           <button onClick={() => expandRow(id)} className={classes.expandButton}>
             {expanded && <ExpandOpenIcon />}
             {!expanded && <ExpandClosedIcon />}
@@ -41,7 +43,7 @@ const ExpRow = ({ id, columns, details, expanded, className, expandRow, ...props
       {expanded && (
         <Tr className={classes.detailsRow}>
           <Td size={mainWidth}>
-            {details}
+            <Details it={data} />
           </Td>
         </Tr>
       )}
@@ -52,14 +54,12 @@ const ExpRow = ({ id, columns, details, expanded, className, expandRow, ...props
 /* rows = [{ columns = [{ name, value, className, textAlign, size }], details, className, error, errorMessage }]
  * Don't forget to include the size of the last (expand button) column!
  */
-const ExpTable = ({ rows = [], className, ...props }) => {
+const ExpTable = ({ elements = [], data = [], Details, className, ...props }) => {
   const [expanded, setExpanded] = useState(null)
 
   const expandRow = (id) => {
     setExpanded(id === expanded ? null : id)
   }
-
-  if (!rows) return null
 
   const cache = new CellMeasurerCache({
     defaultHeight: 62,
@@ -78,13 +78,11 @@ const ExpTable = ({ rows = [], className, ...props }) => {
         <div style={style}>
           <ExpRow
             id={index}
-            columns={rows[index].columns}
-            details={rows[index].details}
+            elements={elements}
+            data={data[index]}
+            Details={Details}
             expanded={index === expanded}
-            className={rows[index].className}
             expandRow={expandRow}
-            error={rows[index].error}
-            errorMessage={rows[index].errorMessage}
           />
         </div>
       </CellMeasurer>
@@ -95,8 +93,8 @@ const ExpTable = ({ rows = [], className, ...props }) => {
     <>
       <div>
         <THead>
-          {rows[0].columns.map((c, idx) => (
-            <Th key={idx} size={c.size} className={c.className} textAlign={c.textAlign}>{c.name}</Th>
+          {elements.map(({ size, className, textAlign, header }, idx) => (
+            <Th key={idx} size={size} className={className} textAlign={textAlign}>{header}</Th>
           ))}
         </THead>
       </div>
@@ -107,7 +105,7 @@ const ExpTable = ({ rows = [], className, ...props }) => {
               {...props}
               height={height}
               width={mainWidth}
-              rowCount={rows.length}
+              rowCount={data.length}
               rowHeight={cache.rowHeight}
               rowRenderer={rowRenderer}
               overscanRowCount={50}

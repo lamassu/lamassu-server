@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { concat, uniq, merge } from 'lodash/fp'
+import * as R from 'ramda'
 import moment from 'moment'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'
@@ -43,7 +43,7 @@ const localStyles = {
   }
 }
 
-const styles = merge(logsStyles, localStyles)
+const styles = R.merge(logsStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
@@ -113,6 +113,7 @@ const Logs = () => {
 
   const open = Boolean(anchorEl)
   const id = open ? 'date-range-popover' : undefined
+  const getLogLevels = R.compose(R.prepend(SHOW_ALL), R.uniq, R.map(R.path(['logLevel'])), R.path(['data', 'logs']))
 
   return (
     <>
@@ -155,7 +156,7 @@ const Logs = () => {
           <Select
             onSelectedItemChange={setLogLevel}
             label='Level'
-            items={concat([SHOW_ALL], uniq(logsResponse.data.logs.map(log => log.logLevel)))}
+            items={getLogLevels(logsResponse)}
             default={SHOW_ALL}
             selectedItem={logLevel}
           />

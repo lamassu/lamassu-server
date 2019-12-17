@@ -2,13 +2,10 @@ import React, { memo } from 'react'
 import classnames from 'classnames'
 import moment from 'moment'
 import BigNumber from 'bignumber.js'
-import { startCase, lowerCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { detailsRowStyles, labelStyles } from './Transactions.styles'
-import CopyToClipboard from './CopyToClipboard'
-import toUnit from './tx'
-
+import { toUnit } from '../../utils/coin'
+import { onlyFirstToUpper } from '../../utils/string'
 import { IDButton } from '../../components/buttons'
 import { ReactComponent as TxInIcon } from '../../styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from '../../styling/icons/direction/cash-out.svg'
@@ -19,6 +16,9 @@ import { ReactComponent as CardIdInverseIcon } from '../../styling/icons/ID/card
 import { ReactComponent as PhoneIdIcon } from '../../styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as PhoneIdInverseIcon } from '../../styling/icons/ID/phone/white.svg'
 
+import { detailsRowStyles, labelStyles } from './Transactions.styles'
+import CopyToClipboard from './CopyToClipboard'
+
 const Label = ({ children }) => {
   const useStyles = makeStyles(labelStyles)
 
@@ -27,7 +27,7 @@ const Label = ({ children }) => {
   return <div className={classes.label}>{children}</div>
 }
 
-const DetailsRow = ({ tx, ...props }) => {
+const DetailsRow = ({ it: tx, ...props }) => {
   const useStyles = makeStyles(detailsRowStyles)
 
   const classes = useStyles()
@@ -39,7 +39,7 @@ const DetailsRow = ({ tx, ...props }) => {
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = tx.txClass === 'cashOut' ? fiat * commissionPercentage : fiat * commissionPercentage + Number.parseFloat(tx.fee)
   const customer = tx.customerIdCardData && {
-    name: startCase(lowerCase(`${tx.customerIdCardData.firstName} ${tx.customerIdCardData.lastName}`)),
+    name: `${onlyFirstToUpper(tx.customerIdCardData.firstName)} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
     age: moment().diff(moment(tx.customerIdCardData.dateOfBirth), 'years'),
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
@@ -196,4 +196,4 @@ const DetailsRow = ({ tx, ...props }) => {
   )
 }
 
-export default memo(DetailsRow, (prev, next) => prev.tx.id === next.tx.id)
+export default memo(DetailsRow, (prev, next) => prev.id === next.id)

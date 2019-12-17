@@ -1,5 +1,5 @@
 import React from 'react'
-import { compose, get, keyBy } from 'lodash/fp'
+import * as R from 'ramda'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
 import Commissions from '../pages/Commissions'
@@ -36,12 +36,9 @@ const tree = [
 ]
 
 const firstChild = key => {
-  const response = compose(
-    get(`${key}.children[0].route`),
-    keyBy('key')
-  )(tree)
-
-  return response
+  const getRoute = R.path(['children', 0, 'route'])
+  const withKey = R.find(R.propEq('key', key))
+  return R.compose(getRoute, withKey)(tree)
 }
 
 const Routes = () => (

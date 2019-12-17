@@ -1,5 +1,7 @@
 import React from 'react'
-import { some, deburr, take, filter, compose } from 'lodash/fp'
+import Fuse from 'fuse.js'
+import S from '../../../utils/sanctuary'
+import slugify from 'slugify'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 
@@ -45,23 +47,29 @@ function renderSuggestion ({ suggestion, index, itemProps, highlightedIndex, sel
   )
 }
 
-function filterSuggestions (suggestions, value, currentValues) {
-  const inputValue = deburr((value || '').trim()).toLowerCase()
-  const inputLength = inputValue.length
+function filterSuggestions (suggestions = [], value = '', currentValues = []) {
+  const options = {
+    shouldSort: true,
+    threshold: 0.2,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: [
+      'code',
+      'display'
+    ]
+  }
 
-  // TODO make it fuzzy and by every property
-  const filterByLabel = filter(it => {
-    return it.display.slice(0, inputLength).toLowerCase() === inputValue
-  })
-  const filterOutCurrent = filter(it => !some(({ code }) => it.code === code)(currentValues))
+  const fuse = new Fuse(suggestions, options)
+  const result = value ? fuse.search(slugify(value, ' ')) : suggestions
 
-  const onlyFive = compose(
-    take(5),
-    filterOutCurrent,
-    filterByLabel
-  )
+  const currentCodes = S.map(S.prop('code'))(currentValues)
+  const filtered = S.filter(it => !S.elem(it.code)(currentCodes))(result)
 
-  return onlyFive(suggestions)
+  const amountToTake = S.min(filtered.length)(5)
+
+  return S.compose(S.fromMaybe([]))(S.take(amountToTake))(filtered)
 }
 
 const styles = theme => ({

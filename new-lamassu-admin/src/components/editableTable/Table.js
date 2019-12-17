@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { startCase } from 'lodash/fp'
+import { startCase } from '../../utils/string'
 
 import {
   Td,

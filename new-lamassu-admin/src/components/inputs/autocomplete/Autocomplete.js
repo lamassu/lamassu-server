@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react'
-import { toArray } from 'lodash/fp'
+import * as R from 'ramda'
 import Downshift from 'downshift'
 import { withStyles } from '@material-ui/core/styles'
 import Popper from '@material-ui/core/Popper'
@@ -63,7 +63,7 @@ const Autocomplete = memo(({ suggestions, classes, placeholder, label, itemToStr
                 square
                 style={{ marginTop: 8, minWidth: popperNode ? popperNode.clientWidth : null }}
               >
-                {filterSuggestions(suggestions, inputValue2, toArray(value)).map((suggestion, index) =>
+                {filterSuggestions(suggestions, inputValue2, value ? R.of(value) : []).map((suggestion, index) =>
                   renderSuggestion({
                     suggestion,
                     index,

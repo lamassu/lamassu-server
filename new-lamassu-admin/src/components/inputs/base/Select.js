@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelect } from 'downshift'
-import { startCase } from 'lodash/fp'
 import classnames from 'classnames'
 
 import { ReactComponent as Arrowdown } from '../../../styling/icons/action/arrow/regular.svg'
+import { startCase } from '../../../utils/string'
 
 import styles from './Select.styles'
 import { makeStyles } from '@material-ui/core/styles'

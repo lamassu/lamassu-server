@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import _ from 'lodash/fp'
+import * as R from 'ramda'
 import moment from 'moment'
 import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core/styles'
@@ -37,13 +37,13 @@ const Logs = () => {
       if (err) return
       if (res) {
         setMachines(res.data.machines)
-        setSelected(_.get('data.machines[0]')(res))
+        setSelected(R.path(['data', 'machines', 0])(res))
       }
     }
   })
 
   const { response: logsResponse } = useAxios({
-    url: `http://localhost:8070/api/logs/${_.get('deviceId', selected)}`,
+    url: `http://localhost:8070/api/logs/${R.path(['deviceId'])(selected)}`,
     method: 'GET',
     trigger: selected,
     forceDispatchEffect: () => !!selected,
@@ -53,7 +53,7 @@ const Logs = () => {
   })
 
   const { loading, reFetch: sendSnapshot } = useAxios({
-    url: `http://localhost:8070/api/support_logs?deviceId=${_.get('deviceId')(selected)}`,
+    url: `http://localhost:8070/api/support_logs?deviceId=${R.path(['deviceId'])(selected)}`,
     method: 'POST',
     customHandler: (err, res) => {
       if (err) {
@@ -65,7 +65,7 @@ const Logs = () => {
   })
 
   const isSelected = it => {
-    return _.get('deviceId')(selected) === it.deviceId
+    return R.path(['deviceId'])(selected) === it.deviceId
   }
 
   return (
