@@ -96,7 +96,7 @@ let tableCellHeight = spacer * 6
 
 if (version === 8) {
   tableHeaderHeight = spacer * 5
-  tableCellHeight = (spacer * 7) - 2
+  tableCellHeight = spacer * 7 - 2
 }
 
 const tableSmCellHeight = 30
@@ -174,5 +174,5 @@ export {
   tableHeaderColor,
   tableCellColor,
   tableErrorColor,
-  tableSuccessColor
+  tableSuccessColor,
 }

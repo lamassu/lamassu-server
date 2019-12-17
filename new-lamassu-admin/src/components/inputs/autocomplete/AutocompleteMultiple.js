@@ -1,11 +1,17 @@
-import React, { useState, memo } from 'react'
-import Downshift from 'downshift'
-import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
+import { withStyles } from '@material-ui/core/styles'
+import Downshift from 'downshift'
+import React, { useState, memo } from 'react'
 
-import Chip from '../../Chip'
-import { renderInput, renderSuggestion, filterSuggestions, styles } from './commons'
+import Chip from 'src/components/Chip'
+
+import {
+  renderInput,
+  renderSuggestion,
+  filterSuggestions,
+  styles,
+} from './commons'
 
 const AutocompleteMultiple = memo(
   ({ suggestions, classes, placeholder, label, ...props }) => {
@@ -46,8 +52,7 @@ const AutocompleteMultiple = memo(
 
           setFieldValue(name, selectedItem)
         }}
-        selectedItem={value}
-      >
+        selectedItem={value}>
         {({
           getInputProps,
           getItemProps,
@@ -56,49 +61,54 @@ const AutocompleteMultiple = memo(
           inputValue: inputValue2,
           selectedItem: selectedItem2,
           highlightedIndex,
-          toggleMenu
+          toggleMenu,
         }) => (
           <div className={classes.container}>
             {renderInput({
               id: name,
               fullWidth: true,
               classes,
-              error: (touched[`${name}-input`] || touched[name]) && errors[name],
-              success: (touched[`${name}-input`] || touched[name] || value) && !errors[name],
+              error:
+                (touched[`${name}-input`] || touched[name]) && errors[name],
+              success:
+                (touched[`${name}-input`] || touched[name] || value) &&
+                !errors[name],
               InputProps: getInputProps({
                 startAdornment: (value || []).map(item => (
-                  <Chip
-                    key={item.code}
-                    tabIndex={-1}
-                    label={item.code}
-                  />
+                  <Chip key={item.code} tabIndex={-1} label={item.code} />
                 )),
                 onBlur,
                 onChange: it => setInputValue(it.target.value),
                 onClick: () => toggleMenu(),
                 onKeyDown: handleKeyDown,
-                placeholder
+                placeholder,
               }),
               ref: node => {
                 setPopperNode(node)
               },
-              label
+              label,
             })}
             <Popper open={isOpen} anchorEl={popperNode}>
-              <div {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}>
+              <div
+                {...(isOpen
+                  ? getMenuProps({}, { suppressRefError: true })
+                  : {})}>
                 <Paper
                   className={classes.paper}
                   square
-                  style={{ marginTop: 8, minWidth: popperNode ? popperNode.clientWidth : null }}
-                >
-                  {filterSuggestions(suggestions, inputValue2, value).map((suggestion, index) =>
-                    renderSuggestion({
-                      suggestion,
-                      index,
-                      itemProps: getItemProps({ item: suggestion }),
-                      highlightedIndex,
-                      selectedItem: selectedItem2
-                    })
+                  style={{
+                    marginTop: 8,
+                    minWidth: popperNode ? popperNode.clientWidth : null,
+                  }}>
+                  {filterSuggestions(suggestions, inputValue2, value).map(
+                    (suggestion, index) =>
+                      renderSuggestion({
+                        suggestion,
+                        index,
+                        itemProps: getItemProps({ item: suggestion }),
+                        highlightedIndex,
+                        selectedItem: selectedItem2,
+                      }),
                   )}
                 </Paper>
               </div>
@@ -107,7 +117,7 @@ const AutocompleteMultiple = memo(
         )}
       </Downshift>
     )
-  }
+  },
 )
 
 export default withStyles(styles)(AutocompleteMultiple)

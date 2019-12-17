@@ -1,15 +1,22 @@
-import React, { useState } from 'react'
-import * as R from 'ramda'
-import moment from 'moment'
-import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core/styles'
+import useAxios from '@use-hooks/axios'
 import FileSaver from 'file-saver'
+import moment from 'moment'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 
-import { Info3 } from '../components/typography'
-import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '../components/table'
-import { SimpleButton } from '../components/buttons'
-import Sidebar from '../components/Sidebar'
-import Title from '../components/Title'
+import Sidebar from 'src/components/Sidebar'
+import Title from 'src/components/Title'
+import { SimpleButton } from 'src/components/buttons'
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableBody,
+  TableCell,
+} from 'src/components/table'
+import { Info3 } from 'src/components/typography'
 
 import styles from './Logs.styles.js'
 
@@ -39,7 +46,7 @@ const Logs = () => {
         setMachines(res.data.machines)
         setSelected(R.path(['data', 'machines', 0])(res))
       }
-    }
+    },
   })
 
   const { response: logsResponse } = useAxios({
@@ -49,11 +56,13 @@ const Logs = () => {
     forceDispatchEffect: () => !!selected,
     customHandler: () => {
       setSaveMessage('')
-    }
+    },
   })
 
   const { loading, reFetch: sendSnapshot } = useAxios({
-    url: `http://localhost:8070/api/support_logs?deviceId=${R.path(['deviceId'])(selected)}`,
+    url: `http://localhost:8070/api/support_logs?deviceId=${R.path([
+      'deviceId',
+    ])(selected)}`,
     method: 'POST',
     customHandler: (err, res) => {
       if (err) {
@@ -61,7 +70,7 @@ const Logs = () => {
         throw err
       }
       setSaveMessage('✓ Saved latest snapshot')
-    }
+    },
   })
 
   const isSelected = it => {
@@ -78,16 +87,23 @@ const Logs = () => {
             <SimpleButton
               className={classes.button}
               onClick={() => {
-                const text = logsResponse.data.logs.map(it => JSON.stringify(it)).join('\n')
+                const text = logsResponse.data.logs
+                  .map(it => JSON.stringify(it))
+                  .join('\n')
                 const blob = new window.Blob([text], {
-                  type: 'text/plain;charset=utf-8'
+                  type: 'text/plain;charset=utf-8',
                 })
-                FileSaver.saveAs(blob, `${formatDateFile(new Date())}_${selected.name}`)
-              }}
-            >
+                FileSaver.saveAs(
+                  blob,
+                  `${formatDateFile(new Date())}_${selected.name}`,
+                )
+              }}>
               DL
             </SimpleButton>
-            <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
+            <SimpleButton
+              className={classes.button}
+              disabled={loading}
+              onClick={sendSnapshot}>
               Share with Lamassu
             </SimpleButton>
           </div>
@@ -112,7 +128,7 @@ const Logs = () => {
             <TableBody>
               {logsResponse &&
                 logsResponse.data.logs.map((log, idx) => (
-                  <TableRow key={idx} size='sm'>
+                  <TableRow key={idx} size="sm">
                     <TableCell>{formatDate(log.timestamp)}</TableCell>
                     <TableCell>{log.logLevel}</TableCell>
                     <TableCell>{log.message}</TableCell>

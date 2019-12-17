@@ -1,21 +1,32 @@
-import React from 'react'
-import { create } from 'jss'
-import { StylesProvider, jssPreset, MuiThemeProvider, makeStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { BrowserRouter as Router } from 'react-router-dom'
-import extendJss from 'jss-plugin-extend'
+import {
+  StylesProvider,
+  jssPreset,
+  MuiThemeProvider,
+  makeStyles,
+} from '@material-ui/core/styles'
 import { setAutoFreeze } from 'immer'
+import { create } from 'jss'
+import extendJss from 'jss-plugin-extend'
+import React from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import Header from './components/Header'
 import { tree, Routes } from './routing/routes'
-
-import theme from './styling/theme'
 import global from './styling/global'
+import theme from './styling/theme'
 import { backgroundColor, mainWidth } from './styling/variables'
 
+if (process.env.NODE_ENV !== 'production') {
+  // const whyDidYouRender = require('@welldone-software/why-did-you-render')
+  // whyDidYouRender(React, { include: [/Table/] })
+}
+
+// disable immer autofreeze for performance
 setAutoFreeze(false)
+
 const jss = create({
-  plugins: [extendJss(), ...jssPreset().plugins]
+  plugins: [extendJss(), ...jssPreset().plugins],
 })
 
 const fill = '100%'
@@ -28,7 +39,7 @@ const useStyles = makeStyles({
     width: fill,
     minHeight: fill,
     display: 'flex',
-    flexDirection
+    flexDirection,
   },
   wrapper: {
     width: mainWidth,
@@ -36,8 +47,8 @@ const useStyles = makeStyles({
     margin: '0 auto',
     flex: 1,
     display: 'flex',
-    flexDirection
-  }
+    flexDirection,
+  },
 })
 
 const App = () => {

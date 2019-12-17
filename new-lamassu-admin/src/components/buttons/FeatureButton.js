@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React, { memo } from 'react'
 
 import baseButtonStyles from './BaseButton.styles'
 
@@ -11,16 +11,16 @@ const styles = {
     extend: baseButton,
     width: baseButton.height,
     borderRadius: baseButton.height / 2,
-    display: 'flex'
+    display: 'flex',
   },
   primary,
   buttonIcon: {
     margin: 'auto',
     '& svg': {
-      overflow: 'visible'
-    }
+      overflow: 'visible',
+    },
   },
-  buttonIconActive: {} // required to extend primary
+  buttonIconActive: {}, // required to extend primary
 }
 
 const useStyles = makeStyles(styles)
@@ -30,16 +30,22 @@ const FeatureButton = memo(({ className, Icon, InverseIcon, ...props }) => {
 
   const classNames = {
     [classes.featureButton]: true,
-    [classes.primary]: true
+    [classes.primary]: true,
   }
 
   return (
     <button className={classnames(classNames, className)} {...props}>
-      {Icon && <div className={classes.buttonIcon}><Icon /></div>}
-      {InverseIcon &&
-        <div className={classnames(classes.buttonIcon, classes.buttonIconActive)}>
+      {Icon && (
+        <div className={classes.buttonIcon}>
+          <Icon />
+        </div>
+      )}
+      {InverseIcon && (
+        <div
+          className={classnames(classes.buttonIcon, classes.buttonIconActive)}>
           <InverseIcon />
-        </div>}
+        </div>
+      )}
     </button>
   )
 })

@@ -1,13 +1,14 @@
 import React, { memo } from 'react'
-import { TableCell as Td } from '../../components/table'
-import { Link } from '../../components/buttons'
+
+import { Link } from 'src/components/buttons'
+import { TableCell as Td } from 'src/components/table'
 
 const EditCell = memo(({ save, cancel }) => (
   <Td>
-    <Link style={{ marginRight: '20px' }} color='secondary' onClick={cancel}>
+    <Link style={{ marginRight: '20px' }} color="secondary" onClick={cancel}>
       Cancel
     </Link>
-    <Link color='primary' onClick={save}>
+    <Link color="primary" onClick={save}>
       Save
     </Link>
   </Td>

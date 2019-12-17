@@ -4,14 +4,13 @@ import {
   secondaryColor,
   secondaryColorDark,
   secondaryColorDarker,
-  spacer
-} from '../../styling/variables'
-
-import typographyStyles from '../typography/styles'
+  spacer,
+} from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
 
 const { h3 } = typographyStyles
 
-const pickSize = (size) => {
+const pickSize = size => {
   switch (size) {
     case 'sm':
       return spacer * 4
@@ -39,11 +38,11 @@ export default {
         boxShadow: 'none',
         '&:hover': {
           backgroundColor: disabledColor,
-          boxShadow: 'none'
+          boxShadow: 'none',
         },
         '&:active': {
-          marginTop: 0
-        }
+          marginTop: 0,
+        },
       },
       shadowSize,
       height,
@@ -52,13 +51,13 @@ export default {
       boxShadow: `0 ${shadowSize}px ${secondaryColorDark}`,
       '&:hover': {
         backgroundColor: secondaryColorDark,
-        boxShadow: `0 ${shadowSize}px ${secondaryColorDarker}`
+        boxShadow: `0 ${shadowSize}px ${secondaryColorDarker}`,
       },
       '&:active': {
         marginTop: shadowSize / 2,
         backgroundColor: secondaryColorDark,
-        boxShadow: `0 ${shadowSize / 2}px ${secondaryColorDarker}`
-      }
+        boxShadow: `0 ${shadowSize / 2}px ${secondaryColorDarker}`,
+      },
     }
-  }
+  },
 }

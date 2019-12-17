@@ -4,18 +4,18 @@ import {
   subheaderColor,
   subheaderDarkColor,
   offColor,
-  offDarkColor
-} from '../../styling/variables'
+  offDarkColor,
+} from 'src/styling/variables'
 
 const colors = (color1, color2, color3) => {
   return {
     backgroundColor: color1,
     '&:hover': {
-      backgroundColor: color2
+      backgroundColor: color2,
     },
     '&:active': {
-      backgroundColor: color3
-    }
+      backgroundColor: color3,
+    },
   }
 }
 
@@ -30,23 +30,23 @@ export default {
     height: buttonHeight,
     color: fontColor,
     '&:active': {
-      color: white
-    }
+      color: white,
+    },
   },
   primary: {
     extend: colors(subheaderColor, subheaderDarkColor, offColor),
     '&:active': {
       color: white,
       '& $buttonIcon': {
-        display: 'none'
+        display: 'none',
       },
       '& $buttonIconActive': {
-        display: 'block'
-      }
+        display: 'block',
+      },
     },
     '& $buttonIconActive': {
-      display: 'none'
-    }
+      display: 'none',
+    },
   },
   secondary: {
     extend: colors(offColor, offDarkColor, white),
@@ -54,17 +54,17 @@ export default {
     '&:active': {
       color: fontColor,
       '& $buttonIcon': {
-        display: 'flex'
+        display: 'flex',
       },
       '& $buttonIconActive': {
-        display: 'none'
-      }
+        display: 'none',
+      },
     },
     '& $buttonIcon': {
-      display: 'none'
+      display: 'none',
     },
     '& $buttonIconActive': {
-      display: 'flex'
-    }
-  }
+      display: 'flex',
+    },
+  },
 }

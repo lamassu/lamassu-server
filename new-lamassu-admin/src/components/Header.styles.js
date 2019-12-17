@@ -6,8 +6,8 @@ import {
   primaryColor,
   placeholderColor,
   subheaderColor,
-  fontColor
-} from '../styling/variables'
+  fontColor,
+} from 'src/styling/variables'
 
 import typographyStyles from './typography/styles'
 
@@ -26,29 +26,29 @@ export default {
     backgroundColor: primaryColor,
     color: white,
     height: headerHeight,
-    display: 'flex'
+    display: 'flex',
   },
   content: {
     maxWidth: mainWidth,
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    margin: '0 auto'
+    margin: '0 auto',
   },
   nav: {
-    flex: 1
+    flex: 1,
   },
   ul: {
     display: 'flex',
     marginBottom: spacer * 1,
-    paddingInlineStart: spacer * 4.5
+    paddingInlineStart: spacer * 4.5,
   },
   li: {
     extend: tl2,
     height: spacer * 3,
     listStyle: 'none',
     color: white,
-    padding: `0 ${spacer * 2.5}px`
+    padding: `0 ${spacer * 2.5}px`,
   },
   link: {
     extend: p,
@@ -58,11 +58,11 @@ export default {
     backgroundColor: 'transparent',
     '&:hover': {
       extend: tl2,
-      color: white
+      color: white,
     },
     '&:hover::after': {
       width: '50%',
-      marginLeft: '-25%'
+      marginLeft: '-25%',
     },
     position: 'relative',
     '&:after': {
@@ -76,8 +76,8 @@ export default {
       bottom: -8,
       position: 'absolute',
       borderRadius: 1000,
-      transition: 'all 0.2s cubic-bezier(0.95, 0.1, 0.45, 0.94)'
-    }
+      transition: 'all 0.2s cubic-bezier(0.95, 0.1, 0.45, 0.94)',
+    },
   },
   forceSize: {
     display: 'inline-block',
@@ -88,29 +88,29 @@ export default {
       fontWeight: 700,
       height: 0,
       overflow: 'hidden',
-      visibility: 'hidden'
-    }
+      visibility: 'hidden',
+    },
   },
   activeLink: {
     extend: tl2,
     color: white,
     '&::after': {
       width: '50%',
-      marginLeft: '-25%'
-    }
+      marginLeft: '-25%',
+    },
   },
   addMachine: {
-    marginLeft: 'auto'
+    marginLeft: 'auto',
   },
   subheader: {
     backgroundColor: subheaderColor,
     color: white,
     height: subheaderHeight,
-    display: 'flex'
+    display: 'flex',
   },
   subheaderUl: {
     display: 'flex',
-    paddingInlineStart: spacer * 4.5
+    paddingInlineStart: spacer * 4.5,
   },
   subheaderLi: {
     extend: tl2,
@@ -118,18 +118,18 @@ export default {
     alignItems: 'center',
     height: spacer * 3,
     listStyle: 'none',
-    padding: `0 ${spacer * 2.5}px`
+    padding: `0 ${spacer * 2.5}px`,
   },
   subheaderLink: {
     extend: tl2,
     textDecoration: 'none',
     border: 'none',
-    color: placeholderColor
+    color: placeholderColor,
   },
   activeSubheaderLink: {
-    color: fontColor
+    color: fontColor,
   },
   white: {
-    color: white
-  }
+    color: white,
+  },
 }

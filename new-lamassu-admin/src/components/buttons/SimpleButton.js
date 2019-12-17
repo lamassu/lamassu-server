@@ -1,8 +1,8 @@
-import React, { memo } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import React, { memo } from 'react'
 
 import baseButtonStyles from './BaseButton.styles'
-import { makeStyles } from '@material-ui/core/styles'
 
 const { baseButton } = baseButtonStyles
 
@@ -11,8 +11,8 @@ const styles = {
     extend: baseButton,
     borderRadius: baseButton.height / 2,
     outline: 0,
-    padding: '0 20px'
-  }
+    padding: '0 20px',
+  },
 }
 
 const useStyles = makeStyles(styles)

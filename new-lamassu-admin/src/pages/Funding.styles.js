@@ -1,75 +1,80 @@
-import { disabledColor2, spacer, subheaderColor, placeholderColor } from '../styling/variables'
-
-import typographyStyles from '../components/typography/styles'
+import typographyStyles from 'src/components/typography/styles'
+import {
+  disabledColor2,
+  spacer,
+  subheaderColor,
+  placeholderColor,
+} from 'src/styling/variables'
 
 const { label1 } = typographyStyles
 
 export default {
   wrapper: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'row',
-    height: '100%'
+    height: '100%',
   },
   main: {
     display: 'flex',
-    flex: 1
+    flex: 1,
   },
   firstSide: {
-    margin: `0 ${spacer * 8}px 0 ${spacer * 6}px`
+    margin: `0 ${spacer * 8}px 0 ${spacer * 6}px`,
   },
   secondSide: {
-    marginTop: -29
+    marginTop: -29,
   },
   coinTotal: {
-    margin: `${spacer * 1.5}px 0`
+    margin: `${spacer * 1.5}px 0`,
   },
   leftSpacer: {
-    marginLeft: spacer
+    marginLeft: spacer,
   },
   topSpacer: {
-    marginTop: spacer * 5
+    marginTop: spacer * 5,
   },
   addressWrapper: {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: subheaderColor
+    backgroundColor: subheaderColor,
   },
   address: {
     width: 375,
-    margin: `${spacer * 1.5}px ${spacer * 3}px`
+    margin: `${spacer * 1.5}px ${spacer * 3}px`,
   },
   itemWrapper: {
-    textAlign: 'end'
+    textAlign: 'end',
   },
   item: {
     extend: label1,
-    margin: 2
+    margin: 2,
   },
   firstItem: {
-    margin: 2
+    margin: 2,
   },
   total: {
     marginTop: 'auto',
     textAlign: 'right',
-    marginRight: 24
+    marginRight: 24,
   },
   totalPending: {
-    marginTop: 2
+    marginTop: 2,
   },
   totalTitle: {
     color: placeholderColor,
-    marginBottom: 2
+    marginBottom: 2,
   },
   table: {
     marginTop: spacer,
-    marginLeft: spacer * 6
+    marginLeft: spacer * 6,
   },
   tableLabel: {
     justifyContent: 'end',
-    marginTop: -38
+    marginTop: -38,
   },
   pending: {
-    backgroundColor: disabledColor2
-  }
+    backgroundColor: disabledColor2,
+  },
 }

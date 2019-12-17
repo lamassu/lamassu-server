@@ -1,13 +1,18 @@
-import React from 'react'
-import Fuse from 'fuse.js'
-import S from '../../../utils/sanctuary'
-import slugify from 'slugify'
-import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import TextField from '@material-ui/core/TextField'
+import Fuse from 'fuse.js'
+import * as R from 'ramda'
+import React from 'react'
+import slugify from 'slugify'
 
-import { fontColor, inputFontSize, inputFontWeight } from '../../../styling/variables'
+import {
+  fontColor,
+  inputFontSize,
+  inputFontWeight,
+} from 'src/styling/variables'
+import S from 'src/utils/sanctuary'
 
-function renderInput (inputProps) {
+function renderInput(inputProps) {
   const { onBlur, success, InputProps, classes, ref, ...other } = inputProps
 
   return (
@@ -17,37 +22,43 @@ function renderInput (inputProps) {
         classes: {
           root: classes.inputRoot,
           input: classes.inputInput,
-          underline: success ? classes.success : ''
+          underline: success ? classes.success : '',
         },
-        ...InputProps
+        ...InputProps,
       }}
       {...other}
     />
   )
 }
 
-function renderSuggestion ({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
+function renderSuggestion({
+  suggestion,
+  index,
+  itemProps,
+  highlightedIndex,
+  selectedItem,
+}) {
   const isHighlighted = highlightedIndex === index
 
-  const isSelected = ((selectedItem && selectedItem.display) || '').indexOf(suggestion.display) > -1
+  const item = R.o(R.defaultTo(''), R.path(['display']))(selectedItem)
+  const isSelected = R.indexOf(suggestion.display)(item) > -1
 
   return (
     <MenuItem
       {...itemProps}
       key={suggestion.code}
       selected={isHighlighted}
-      component='div'
+      component="div"
       style={{
         fontSize: 14,
-        fontWeight: isSelected ? 500 : 400
-      }}
-    >
+        fontWeight: isSelected ? 500 : 400,
+      }}>
       {suggestion.display}
     </MenuItem>
   )
 }
 
-function filterSuggestions (suggestions = [], value = '', currentValues = []) {
+function filterSuggestions(suggestions = [], value = '', currentValues = []) {
   const options = {
     shouldSort: true,
     threshold: 0.2,
@@ -55,10 +66,7 @@ function filterSuggestions (suggestions = [], value = '', currentValues = []) {
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    keys: [
-      'code',
-      'display'
-    ]
+    keys: ['code', 'display'],
   }
 
   const fuse = new Fuse(suggestions, options)
@@ -75,36 +83,36 @@ function filterSuggestions (suggestions = [], value = '', currentValues = []) {
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 250
+    height: 250,
   },
   container: {
     flexGrow: 1,
-    position: 'relative'
+    position: 'relative',
   },
   paper: {
     // position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing(1),
     left: 0,
-    right: 0
+    right: 0,
   },
   inputRoot: {
     fontSize: inputFontSize,
     color: fontColor,
     fontWeight: inputFontWeight,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   inputInput: {
-    flex: 1
+    flex: 1,
   },
   success: {
     '&:after': {
-      transform: 'scaleX(1)'
-    }
+      transform: 'scaleX(1)',
+    },
   },
   divider: {
-    height: theme.spacing(2)
-  }
+    height: theme.spacing(2),
+  },
 })
 
 export { renderInput, renderSuggestion, filterSuggestions, styles }

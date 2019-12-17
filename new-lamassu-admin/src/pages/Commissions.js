@@ -1,19 +1,19 @@
-import React, { useState } from 'react'
 import useAxios from '@use-hooks/axios'
+import React, { useState } from 'react'
 
 // import styles from './Commissions.module.scss'
 
-import { H1, H3, Info1, TL2 } from '../components/typography'
-import { Link } from '../components/buttons'
-import { TextInput } from '../components/inputs'
+import { Link } from 'src/components/buttons'
+import { TextInput } from 'src/components/inputs'
 import {
   Table,
   TableHead,
   TableRow,
   TableHeader,
   TableBody,
-  TableCell
-} from '../components/table'
+  TableCell,
+} from 'src/components/table'
+import { H1, H3, Info1, TL2 } from 'src/components/typography'
 
 const styles = {}
 const EditRow = ({ data = {}, commitValues, setEditing }) => {
@@ -32,7 +32,7 @@ const EditRow = ({ data = {}, commitValues, setEditing }) => {
           className={styles.numberSmallInput}
           value={values.cashInCommission || ''}
           onChange={handleChange('cashInCommission')}
-          suffix='%'
+          suffix="%"
         />
       </TableCell>
       <TableCell>
@@ -41,7 +41,7 @@ const EditRow = ({ data = {}, commitValues, setEditing }) => {
           className={styles.numberSmallInput}
           value={values.cashOutCommission || ''}
           onChange={handleChange('cashOutCommission')}
-          suffix='%'
+          suffix="%"
         />
       </TableCell>
       <TableCell>
@@ -49,7 +49,7 @@ const EditRow = ({ data = {}, commitValues, setEditing }) => {
           large
           value={values.cashInFee || ''}
           onChange={handleChange('cashInFee')}
-          suffix='EUR'
+          suffix="EUR"
         />
       </TableCell>
       <TableCell>
@@ -57,27 +57,25 @@ const EditRow = ({ data = {}, commitValues, setEditing }) => {
           large
           value={values.minimumTx || ''}
           onChange={handleChange('minimumTx')}
-          suffix='EUR'
+          suffix="EUR"
         />
       </TableCell>
       <TableCell>
         <Link
-          color='secondary'
+          color="secondary"
           className={styles.firstLink}
           onClick={() => {
             setEditing(false)
-          }}
-        >
+          }}>
           Cancel
         </Link>
         <Link
-          color='primary'
+          color="primary"
           submit
           onClick={() => {
             commitValues(values)
             setEditing(false)
-          }}
-        >
+          }}>
           Save
         </Link>
       </TableCell>
@@ -128,7 +126,7 @@ const ViewRow = ({ data, setEditing }) => (
       )}
     </TableCell>
     <TableCell className={styles.centerAlign}>
-      <Link color='primary' onClick={() => setEditing(true)}>
+      <Link color="primary" onClick={() => setEditing(true)}>
         Edit
       </Link>
     </TableCell>
@@ -147,15 +145,15 @@ const Commissions = () => {
       if (res) {
         setDataset([res.data])
       }
-    }
+    },
   })
 
   const { reFetch } = useAxios({
     url: 'http://localhost:8070/api/config',
     method: 'POST',
     options: {
-      data: dataset[0]
-    }
+      data: dataset[0],
+    },
   })
 
   const commitValues = (values, idx) => {
@@ -164,7 +162,8 @@ const Commissions = () => {
     setDataset(clonedDs)
     reFetch()
   }
-  const EditableRow = () => (<span />)
+
+  const EditableRow = () => <td />
 
   return (
     <>
@@ -174,12 +173,12 @@ const Commissions = () => {
         <Table>
           <TableHead>
             <TableRow header>
-              <TableHeader rowSpan='2'>Cash-in</TableHeader>
-              <TableHeader rowSpan='2'>Cash-out</TableHeader>
-              <TableHeader colSpan='2' className={styles.multiRowHeader}>
+              <TableHeader rowSpan="2">Cash-in</TableHeader>
+              <TableHeader rowSpan="2">Cash-out</TableHeader>
+              <TableHeader colSpan="2" className={styles.multiRowHeader}>
                 Cash-in only
               </TableHeader>
-              <TableHeader className={styles.centerAlign} rowSpan='2'>
+              <TableHeader className={styles.centerAlign} rowSpan="2">
                 Edit
               </TableHeader>
             </TableRow>

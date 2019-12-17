@@ -1,10 +1,14 @@
-import React, { useState, memo } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React, { useState, memo } from 'react'
 
-import Popover from '../Popper'
-import { subheaderColor, subheaderDarkColor, offColor } from '../../styling/variables'
-import typographyStyles from '../typography/styles'
+import {
+  subheaderColor,
+  subheaderDarkColor,
+  offColor,
+} from 'src/styling/variables'
+import Popover from 'src/components/Popper'
+import typographyStyles from 'src/components/typography/styles'
 
 const { info2 } = typographyStyles
 
@@ -12,11 +16,11 @@ const colors = (color1, color2, color3) => {
   return {
     backgroundColor: color1,
     '&:hover': {
-      backgroundColor: color2
+      backgroundColor: color2,
     },
     '&:active': {
-      backgroundColor: color3
-    }
+      backgroundColor: color3,
+    },
   }
 }
 
@@ -28,20 +32,20 @@ const styles = {
     borderRadius: 4,
     padding: 0,
     border: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   buttonIcon: {
     margin: 'auto',
     lineHeight: 1,
     '& svg': {
-      overflow: 'visible'
-    }
+      overflow: 'visible',
+    },
   },
   closed: {
-    extend: colors(subheaderColor, subheaderDarkColor, offColor)
+    extend: colors(subheaderColor, subheaderDarkColor, offColor),
   },
   open: {
-    extend: colors(offColor, offColor, offColor)
+    extend: colors(offColor, offColor, offColor),
   },
   popoverContent: {
     extend: info2,
@@ -51,63 +55,81 @@ const styles = {
     alignItems: 'center',
     borderRadius: 4,
     '& img': {
-      maxHeight: 145
-    }
-  }
+      maxHeight: 145,
+    },
+  },
 }
 
 const useStyles = makeStyles(styles)
 
-const IDButton = memo(({ name, className, Icon, InverseIcon, popoverWidth = 152, children, ...props }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
+const IDButton = memo(
+  ({
+    name,
+    className,
+    Icon,
+    InverseIcon,
+    popoverWidth = 152,
+    children,
+    ...props
+  }) => {
+    const [anchorEl, setAnchorEl] = useState(null)
 
-  const classes = useStyles()
+    const classes = useStyles()
 
-  const open = Boolean(anchorEl)
-  const id = open ? `simple-popper-${name}` : undefined
+    const open = Boolean(anchorEl)
+    const id = open ? `simple-popper-${name}` : undefined
 
-  const classNames = {
-    [classes.idButton]: true,
-    [classes.primary]: true,
-    [classes.open]: open,
-    [classes.closed]: !open
-  }
+    const classNames = {
+      [classes.idButton]: true,
+      [classes.primary]: true,
+      [classes.open]: open,
+      [classes.closed]: !open,
+    }
 
-  const iconClassNames = {
-    [classes.buttonIcon]: true
-  }
+    const iconClassNames = {
+      [classes.buttonIcon]: true,
+    }
 
-  const handleClick = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget)
-  }
+    const handleClick = event => {
+      setAnchorEl(anchorEl ? null : event.currentTarget)
+    }
 
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+    const handleClose = () => {
+      setAnchorEl(null)
+    }
 
-  return (
-    <>
-      <button aria-describedby={id} onClick={handleClick} className={classnames(classNames, className)} {...props}>
-        {Icon && !open && <div className={classnames(iconClassNames)}><Icon /></div>}
-        {InverseIcon && open &&
-          <div className={classnames(iconClassNames)}>
-            <InverseIcon />
-          </div>}
-      </button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        arrowSize={3}
-        placement='top'
-      >
-        <div className={classes.popoverContent}>
-          <div>{children}</div>
-        </div>
-      </Popover>
-    </>
-  )
-})
+    return (
+      <>
+        <button
+          aria-describedby={id}
+          onClick={handleClick}
+          className={classnames(classNames, className)}
+          {...props}>
+          {Icon && !open && (
+            <div className={classnames(iconClassNames)}>
+              <Icon />
+            </div>
+          )}
+          {InverseIcon && open && (
+            <div className={classnames(iconClassNames)}>
+              <InverseIcon />
+            </div>
+          )}
+        </button>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          arrowSize={3}
+          placement="top">
+          <div className={classes.popoverContent}>
+            <div>{children}</div>
+          </div>
+        </Popover>
+      </>
+    )
+  },
+)
 
 export default IDButton

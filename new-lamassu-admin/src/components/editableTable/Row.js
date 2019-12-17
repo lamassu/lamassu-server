@@ -1,12 +1,8 @@
-import React, { useState, memo } from 'react'
 import { Form, Formik, FastField, useFormikContext } from 'formik'
+import React, { useState, memo } from 'react'
 
-import {
-  Td,
-  Tr
-} from '../fake-table/Table'
-
-import { Link } from '../buttons'
+import { Link } from 'src/components/buttons'
+import { Td, Tr } from 'src/components/fake-table/Table'
 
 const getField = (name, component, props = {}) => (
   <FastField name={name} component={component} {...props} />
@@ -26,25 +22,35 @@ const ERow = memo(({ elements }) => {
   }
 
   return (
-    <Tr error={errors && errors.length} errorMessage={errors && errors.toString()}>
-      {elements.map(({ name, input, size, textAlign, view = () => {}, inputProps }, idx) => (
-        <Td key={idx} size={size} textAlign={textAlign}>
-          {editing && getField(name, input, inputProps)}
-          {!editing && view(values[name])}
-        </Td>
-      ))}
+    <Tr
+      error={errors && errors.length}
+      errorMessage={errors && errors.toString()}>
+      {elements.map(
+        (
+          { name, input, size, textAlign, view = () => {}, inputProps },
+          idx,
+        ) => (
+          <Td key={idx} size={size} textAlign={textAlign}>
+            {editing && getField(name, input, inputProps)}
+            {!editing && view(values[name])}
+          </Td>
+        ),
+      )}
       <Td size={175}>
         {editing ? (
           <>
-            <Link style={{ marginRight: '20px' }} color='secondary' onClick={innerCancel}>
+            <Link
+              style={{ marginRight: '20px' }}
+              color="secondary"
+              onClick={innerCancel}>
               Cancel
             </Link>
-            <Link color='primary' onClick={innerSave}>
+            <Link color="primary" onClick={innerSave}>
               Save
             </Link>
           </>
         ) : (
-          <Link color='primary' onClick={() => setEditing(true)}>
+          <Link color="primary" onClick={() => setEditing(true)}>
             Edit
           </Link>
         )}
@@ -59,8 +65,7 @@ const ERowWithFormik = memo(({ value, validationSchema, save, elements }) => {
       enableReinitialize
       initialValues={value}
       validationSchema={validationSchema}
-      onSubmit={save}
-    >
+      onSubmit={save}>
       <Form>
         <ERow elements={elements} />
       </Form>

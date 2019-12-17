@@ -1,20 +1,27 @@
-import React, { useState } from 'react'
-import * as R from 'ramda'
-import moment from 'moment'
-import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'
+import useAxios from '@use-hooks/axios'
+import moment from 'moment'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 
-import Title from '../components/Title'
-import { Info3 } from '../components/typography'
-import { FeatureButton, SimpleButton } from '../components/buttons'
-import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '../components/table'
-import { Select } from '../components/inputs'
-import Uptime from '../components/Uptime'
-import LogsDowloaderPopover from '../components/LogsDownloaderPopper'
-import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
-import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
-import { offColor } from '../styling/variables'
-import typographyStyles from '../components/typography/styles'
+import typographyStyles from 'src/components/typography/styles'
+import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
+import Title from 'src/components/Title'
+import Uptime from 'src/components/Uptime'
+import { FeatureButton, SimpleButton } from 'src/components/buttons'
+import { Select } from 'src/components/inputs'
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableBody,
+  TableCell,
+} from 'src/components/table'
+import { Info3 } from 'src/components/typography'
+import { ReactComponent as DownloadActive } from 'src/styling/icons/button/download/white.svg'
+import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
+import { offColor } from 'src/styling/variables'
 
 import logsStyles from './Logs.styles'
 
@@ -25,22 +32,22 @@ const localStyles = {
   serverTableWrapper: {
     extend: tableWrapper,
     maxWidth: '100%',
-    marginLeft: 0
+    marginLeft: 0,
   },
   serverVersion: {
     extend: p,
     color: offColor,
-    margin: 'auto 0 auto 0'
+    margin: 'auto 0 auto 0',
   },
   headerLine2: {
     height: 60,
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: 24
+    marginBottom: 24,
   },
   uptimeContainer: {
-    margin: 'auto 0 auto 0'
-  }
+    margin: 'auto 0 auto 0',
+  },
 }
 
 const styles = R.merge(logsStyles, localStyles)
@@ -71,7 +78,7 @@ const Logs = () => {
       if (res) {
         setVersion(res.data)
       }
-    }
+    },
   })
 
   useAxios({
@@ -83,7 +90,7 @@ const Logs = () => {
       if (res) {
         setProcessStates(res.data)
       }
-    }
+    },
   })
 
   const { response: logsResponse } = useAxios({
@@ -92,7 +99,7 @@ const Logs = () => {
     trigger: [],
     customHandler: () => {
       setSaveMessage('')
-    }
+    },
   })
 
   const { loading, reFetch: sendSnapshot } = useAxios({
@@ -104,16 +111,21 @@ const Logs = () => {
         throw err
       }
       setSaveMessage('✓ Saved latest snapshot')
-    }
+    },
   })
 
-  const handleOpenRangePicker = (event) => {
+  const handleOpenRangePicker = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   const open = Boolean(anchorEl)
   const id = open ? 'date-range-popover' : undefined
-  const getLogLevels = R.compose(R.prepend(SHOW_ALL), R.uniq, R.map(R.path(['logLevel'])), R.path(['data', 'logs']))
+  const getLogLevels = R.compose(
+    R.prepend(SHOW_ALL),
+    R.uniq,
+    R.map(R.path(['logLevel'])),
+    R.path(['data', 'logs']),
+  )
 
   return (
     <>
@@ -126,19 +138,22 @@ const Logs = () => {
                 Icon={Download}
                 InverseIcon={DownloadActive}
                 aria-describedby={id}
-                variant='contained'
+                variant="contained"
                 onClick={handleOpenRangePicker}
               />
               <LogsDowloaderPopover
-                title='Download logs'
-                name='server-logs'
+                title="Download logs"
+                name="server-logs"
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
                 logs={logsResponse.data.logs}
-                getTimestamp={(log) => log.timestamp}
+                getTimestamp={log => log.timestamp}
               />
-              <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
+              <SimpleButton
+                className={classes.button}
+                disabled={loading}
+                onClick={sendSnapshot}>
                 Share with Lamassu
               </SimpleButton>
               <Info3>{saveMessage}</Info3>
@@ -146,16 +161,14 @@ const Logs = () => {
           )}
         </div>
         <div className={classes.serverVersion}>
-          {version && (
-            <span>Server version: v{version}</span>
-          )}
+          {version && <span>Server version: v{version}</span>}
         </div>
       </div>
       <div className={classes.headerLine2}>
         {logsResponse && (
           <Select
             onSelectedItemChange={setLogLevel}
-            label='Level'
+            label="Level"
             items={getLogLevels(logsResponse)}
             default={SHOW_ALL}
             selectedItem={logLevel}
@@ -180,13 +193,17 @@ const Logs = () => {
             </TableHead>
             <TableBody>
               {logsResponse &&
-                logsResponse.data.logs.filter(log => logLevel === SHOW_ALL || log.logLevel === logLevel).map((log, idx) => (
-                  <TableRow key={idx} size='sm'>
-                    <TableCell>{formatDate(log.timestamp)}</TableCell>
-                    <TableCell>{log.logLevel}</TableCell>
-                    <TableCell>{log.message}</TableCell>
-                  </TableRow>
-                ))}
+                logsResponse.data.logs
+                  .filter(
+                    log => logLevel === SHOW_ALL || log.logLevel === logLevel,
+                  )
+                  .map((log, idx) => (
+                    <TableRow key={idx} size="sm">
+                      <TableCell>{formatDate(log.timestamp)}</TableCell>
+                      <TableCell>{log.logLevel}</TableCell>
+                      <TableCell>{log.message}</TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </div>

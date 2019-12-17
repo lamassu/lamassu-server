@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import classnames from 'classnames'
-import { CopyToClipboard as ReactCopyToClipboard } from 'react-copy-to-clipboard'
-import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import * as R from 'ramda'
+import React, { useState, useEffect } from 'react'
+import { CopyToClipboard as ReactCopyToClipboard } from 'react-copy-to-clipboard'
+
+import Popover from 'src/components/Popper'
+import { ReactComponent as CopyIcon } from 'src/styling/icons/action/copy/copy.svg'
+import { comet } from 'src/styling/variables'
 
 import { cpcStyles } from './Transactions.styles'
-
-import Popover from '../../components/Popper'
-import { ReactComponent as CopyIcon } from '../../styling/icons/action/copy/copy.svg'
-import { comet } from '../../styling/variables'
 
 const CopyToClipboard = ({ className, children, ...props }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -31,7 +31,6 @@ const CopyToClipboard = ({ className, children, ...props }) => {
 
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popper' : undefined
-  console.log(children)
 
   return (
     <div className={classes.wrapper}>
@@ -41,10 +40,12 @@ const CopyToClipboard = ({ className, children, ...props }) => {
             {children}
           </div>
           <div className={classes.buttonWrapper}>
-            <ReactCopyToClipboard
-              text={R.replace(/\s/g, '')(children)}
-            >
-              <button aria-describedby={id} onClick={(event) => handleClick(event)}><CopyIcon /></button>
+            <ReactCopyToClipboard text={R.replace(/\s/g, '')(children)}>
+              <button
+                aria-describedby={id}
+                onClick={event => handleClick(event)}>
+                <CopyIcon />
+              </button>
             </ReactCopyToClipboard>
           </div>
           <Popover
@@ -54,8 +55,7 @@ const CopyToClipboard = ({ className, children, ...props }) => {
             onClose={handleClose}
             arrowSize={3}
             bgColor={comet}
-            placement='top'
-          >
+            placement="top">
             <div className={classes.popoverContent}>
               <div>Copied to clipboard!</div>
             </div>

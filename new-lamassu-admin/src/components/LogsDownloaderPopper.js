@@ -1,53 +1,53 @@
-import React, { useState } from 'react'
-import classnames from 'classnames'
-import * as R from 'ramda'
-import moment from 'moment'
-import FileSaver from 'file-saver'
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
+import FileSaver from 'file-saver'
+import moment from 'moment'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 
-import { ReactComponent as Arrow } from '../styling/icons/arrow/download_logs.svg'
-import typographyStyles from './typography/styles'
-import { primaryColor, offColor, zircon } from '../styling/variables'
+import { ReactComponent as Arrow } from 'src/styling/icons/arrow/download_logs.svg'
+import { primaryColor, offColor, zircon } from 'src/styling/variables'
 
-import { Link } from './buttons'
-import { RadioGroup } from './inputs'
 import Popper from './Popper'
+import { Link } from './buttons'
 import DateRangePicker from './date-range-picker/DateRangePicker'
+import { RadioGroup } from './inputs'
+import typographyStyles from './typography/styles'
 
 const { info1, label1, label2, h4 } = typographyStyles
 
 const dateContainerStyles = {
   wrapper: {
     height: 46,
-    width: 99
+    width: 99,
   },
   container: {
-    display: 'flex'
+    display: 'flex',
   },
   monthWeekDayContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   label: {
     extend: label1,
     lineHeight: 1.33,
-    color: primaryColor
+    color: primaryColor,
   },
   bigNumber: {
     extend: info1,
     lineHeight: 1,
-    marginRight: 7
+    marginRight: 7,
   },
   monthYear: {
     extend: label2,
     lineHeight: 1.17,
-    color: primaryColor
+    color: primaryColor,
   },
   weekDay: {
     extend: label1,
     lineHeight: 1.33,
-    color: offColor
-  }
+    color: offColor,
+  },
 }
 
 const dateContainerUseStyles = makeStyles(dateContainerStyles)
@@ -58,47 +58,50 @@ const DateContainer = ({ date, children, ...props }) => {
   return (
     <div className={classes.wrapper}>
       <div className={classes.label}>{children}</div>
-      {date &&
+      {date && (
         <>
           <div className={classes.container}>
             <div className={classes.bigNumber}>{date.format('D')}</div>
             <div className={classes.monthWeekDayContainer}>
-              <span className={classes.monthYear}>{`${date.format('MMM')} ${date.format('YYYY')}`}</span>
+              <span className={classes.monthYear}>{`${date.format(
+                'MMM',
+              )} ${date.format('YYYY')}`}</span>
               <span className={classes.weekDay}>{date.format('dddd')}</span>
             </div>
           </div>
-        </>}
+        </>
+      )}
     </div>
   )
 }
 
 const styles = {
   popoverContent: {
-    width: 272
+    width: 272,
   },
   popoverHeader: {
     extend: h4,
-    padding: [[15, 15, 0, 15]]
+    padding: [[15, 15, 0, 15]],
   },
   radioButtonsContainer: {
-    padding: [[5, 15, 5, 15]]
+    padding: [[5, 15, 5, 15]],
   },
   radioButtons: {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    color: primaryColor
+    color: primaryColor,
   },
   dateRangePickerShowing: {
     display: 'block',
-    height: '100%'
+    height: '100%',
   },
   dateRangePickerHidden: {
     display: 'none',
-    height: 0
+    height: 0,
   },
   download: {
-    padding: [[10, 15]]
+    padding: [[10, 15]],
   },
   dateContainerWrapper: {
     display: 'flex',
@@ -107,21 +110,30 @@ const styles = {
     position: 'relative',
     backgroundColor: zircon,
     padding: [[0, 15]],
-    minHeight: 70
+    minHeight: 70,
   },
   arrowContainer: {
     position: 'absolute',
     left: 116,
-    top: 26
+    top: 26,
   },
   arrow: {
-    margin: 'auto'
-  }
+    margin: 'auto',
+  },
 }
 
 const useStyles = makeStyles(styles)
 
-const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, title, ...props }) => {
+const LogsDownloaderPopover = ({
+  id,
+  name,
+  open,
+  anchorEl,
+  getTimestamp,
+  logs,
+  title,
+  ...props
+}) => {
   const radioButtonAll = 'all'
   const radioButtonRange = 'range'
 
@@ -132,7 +144,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
 
   const dateRangePickerClasses = {
     [classes.dateRangePickerShowing]: selectedRadio === radioButtonRange,
-    [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll
+    [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll,
   }
 
   const handleRadioButtons = R.o(setSelectedRadio, R.path(['target', 'value']))
@@ -153,40 +165,49 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
     if (selectedRadio === radioButtonAll) {
       const text = logs.map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
+        type: 'text/plain;charset=utf-8',
       })
       FileSaver.saveAs(blob, `${formatDateFile(new Date())}_${name}`)
       return
     }
 
     if (selectedRadio === radioButtonRange) {
-      const text = logs.filter((log) => moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')).map(it => JSON.stringify(it)).join('\n')
+      const text = logs
+        .filter(log =>
+          moment(getTimestamp(log)).isBetween(
+            range.from,
+            range.to,
+            'day',
+            '[]',
+          ),
+        )
+        .map(it => JSON.stringify(it))
+        .join('\n')
       const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
+        type: 'text/plain;charset=utf-8',
       })
-      FileSaver.saveAs(blob, `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`)
+      FileSaver.saveAs(
+        blob,
+        `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`,
+      )
     }
   }
 
-  const radioButtonOptions = [{ label: 'All logs', value: radioButtonAll }, { label: 'Date range', value: radioButtonRange }]
+  const radioButtonOptions = [
+    { label: 'All logs', value: radioButtonAll },
+    { label: 'Date range', value: radioButtonRange },
+  ]
 
   return (
-    <Popper
-      id={id}
-      open={open}
-      anchorEl={anchorEl}
-      placement='bottom'
-    >
+    <Popper id={id} open={open} anchorEl={anchorEl} placement="bottom">
       <div className={classes.popoverContent}>
-        <div className={classes.popoverHeader}>
-          {title}
-        </div>
+        <div className={classes.popoverHeader}>{title}</div>
         <div className={classes.radioButtonsContainer}>
           <RadioGroup
-            name='logs-select'
+            name="logs-select"
             value={selectedRadio}
             options={radioButtonOptions}
-            ariaLabel='logs-select'
+            ariaLabel="logs-select"
             onChange={handleRadioButtons}
             className={classes.radioButtons}
           />
@@ -211,10 +232,7 @@ const LogsDownloaderPopover = ({ id, name, open, anchorEl, getTimestamp, logs, t
           </div>
         )}
         <div className={classes.download}>
-          <Link
-            color='primary'
-            onClick={() => downloadLogs(range, logs)}
-          >
+          <Link color="primary" onClick={() => downloadLogs(range, logs)}>
             Download
           </Link>
         </div>

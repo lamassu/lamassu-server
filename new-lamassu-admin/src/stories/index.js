@@ -1,31 +1,42 @@
-import React from 'react'
-
-import { storiesOf } from '@storybook/react'
-import { withKnobs, text, boolean, select } from '@storybook/addon-knobs'
-import { ReactComponent as AuthorizeIcon } from '../../public/icons/button/authorize/zodiac.svg'
-import { ReactComponent as AuthorizeIconReversed } from '../../public/icons/button/authorize/white.svg'
-
-import { MuiThemeProvider, createMuiTheme, StylesProvider, jssPreset } from '@material-ui/core/styles'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  StylesProvider,
+  jssPreset,
+} from '@material-ui/core/styles'
+import { withKnobs, text, boolean, select } from '@storybook/addon-knobs'
+import { storiesOf } from '@storybook/react'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
+import React from 'react'
 
-import { ActionButton, Button, Link } from '../components/buttons'
-import { Radio, TextInput, Switch } from '../components/inputs'
-import { H1, H2, H3, TL1, TL2, P, Info1, Info2, Mono } from '../components/typography'
+import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
+import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
+import { ActionButton, Button, Link } from 'src/components/buttons'
+import { Radio, TextInput, Switch } from 'src/components/inputs'
+
+import {
+  H1,
+  H2,
+  H3,
+  TL1,
+  TL2,
+  P,
+  Info1,
+  Info2,
+  Mono,
+} from '../components/typography'
 import { inputFontFamily, secondaryColor } from '../styling/variables'
 
 const jss = create({
-  plugins: [extendJss(), ...jssPreset().plugins]
+  plugins: [extendJss(), ...jssPreset().plugins],
 })
 
 const Wrapper = ({ children }) => (
   <StylesProvider jss={jss}>
-    <MuiThemeProvider theme={theme}>
-      {children}
-    </MuiThemeProvider>
+    <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>
   </StylesProvider>
 )
 
@@ -34,47 +45,46 @@ story.addDecorator(withKnobs)
 
 const colors = {
   Primary: 'primary',
-  Secondary: 'secondary'
+  Secondary: 'secondary',
 }
 
 const linkColors = {
   Primary: 'primary',
   Secondary: 'secondary',
-  'No Color': 'no-color'
+  'No Color': 'no-color',
 }
 
 const sizes = {
   Large: 'lg',
-  Small: 'sm'
+  Small: 'sm',
 }
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: inputFontFamily
+    fontFamily: inputFontFamily,
   },
   MuiButtonBase: {
-    disableRipple: true
+    disableRipple: true,
   },
   palette: {
     primary: {
       light: secondaryColor,
       dark: secondaryColor,
-      main: secondaryColor
+      main: secondaryColor,
     },
     secondary: {
       light: secondaryColor,
       dark: secondaryColor,
-      main: secondaryColor
-    }
-  }
+      main: secondaryColor,
+    },
+  },
 })
 
 story.add('Button', () => (
   <Wrapper>
     <Button
       disabled={boolean('Disabled', false)}
-      size={select('Size', sizes, 'lg')}
-    >
+      size={select('Size', sizes, 'lg')}>
       {text('Label', 'Button')}
     </Button>
   </Wrapper>
@@ -86,8 +96,7 @@ story.add('Action Button', () => (
       disabled={boolean('Disabled', false)}
       color={select('Color', linkColors, 'primary')}
       Icon={AuthorizeIcon}
-      InverseIcon={AuthorizeIconReversed}
-    >
+      InverseIcon={AuthorizeIconReversed}>
       {text('Label', 'Button')}
     </ActionButton>
   </Wrapper>
@@ -95,21 +104,16 @@ story.add('Action Button', () => (
 
 story.add('Text Button', () => (
   <Wrapper>
-    <Link color={select('Color', linkColors, 'primary')}>{text('Label', 'Text Button')}</Link>
+    <Link color={select('Color', linkColors, 'primary')}>
+      {text('Label', 'Text Button')}
+    </Link>
   </Wrapper>
 ))
 
 story.add('Switch', () => (
   <Wrapper>
-    <FormControlLabel
-      control={
-        <Switch
-          value='checkedB'
-        />
-      }
-      label='iOS style'
-    />
-    <Switch label='hehe' disabled />
+    <FormControlLabel control={<Switch value="checkedB" />} label="iOS style" />
+    <Switch label="hehe" disabled />
   </Wrapper>
 ))
 
@@ -119,26 +123,25 @@ story.add('Text Input', () => (
   </Wrapper>
 ))
 
-story.add('Checkbox', () =>
+story.add('Checkbox', () => (
   <Wrapper>
     <Checkbox
-      value='checkedC'
+      value="checkedC"
       inputProps={{
-        'aria-label': 'uncontrolled-checkbox'
+        'aria-label': 'uncontrolled-checkbox',
       }}
     />
 
     <Checkbox
-      value='checkedB'
+      value="checkedB"
       inputProps={{
-        'aria-label': 'uncontrolled-checkbox'
+        'aria-label': 'uncontrolled-checkbox',
       }}
     />
-
   </Wrapper>
-)
+))
 
-story.add('Radio', () => <Radio label='Hehe' />)
+story.add('Radio', () => <Radio label="Hehe" />)
 
 const typographyStory = storiesOf('Typography', module)
 typographyStory.add('H1', () => <H1>Hehehe</H1>)

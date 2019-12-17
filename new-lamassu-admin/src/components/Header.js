@@ -1,12 +1,11 @@
-import React, { memo, useState } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
-
-import { H4 } from './typography'
-import { Link } from './buttons'
-
+import classnames from 'classnames'
+import React, { memo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
+
 import styles from './Header.styles'
+import { Link } from './buttons'
+import { H4 } from './typography'
 
 const useStyles = makeStyles(styles)
 
@@ -23,8 +22,7 @@ const renderSubheader = (item, classes) => {
                 <NavLink
                   to={it.route}
                   className={classes.subheaderLink}
-                  activeClassName={classes.activeSubheaderLink}
-                >
+                  activeClassName={classes.activeSubheaderLink}>
                   {it.label}
                 </NavLink>
               </li>
@@ -32,7 +30,7 @@ const renderSubheader = (item, classes) => {
           </ul>
         </nav>
         <div className={classes.addMachine}>
-          <Link color='primary'>Add Machine</Link>
+          <Link color="primary">Add Machine</Link>
         </div>
       </div>
     </div>
@@ -60,8 +58,7 @@ const Header = memo(({ tree }) => {
                       return true
                     }}
                     className={classnames(classes.link, classes.whiteLink)}
-                    activeClassName={classes.activeLink}
-                  >
+                    activeClassName={classes.activeLink}>
                     <span className={classes.forceSize} forcesize={it.label}>
                       {it.label}
                     </span>
