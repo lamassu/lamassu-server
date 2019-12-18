@@ -20,8 +20,6 @@ ctrl-d
 
 shell.nix script provided, all you need to do to setup the environment is to run `nix-shell` on the folder. 
 
-*Note*: nix-shell depends on the nix channel version, to force it to 19.03 (if you're on a different one) use `nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-19.03.tar.gz`
-
 # Installation
 
 ## Install node modules
