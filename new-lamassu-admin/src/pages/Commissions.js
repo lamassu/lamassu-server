@@ -137,8 +137,11 @@ const Commissions = () => {
   const [dataset, setDataset] = useState([{}])
 
   useAxios({
-    url: 'http://localhost:8070/api/config',
+    url: 'https://localhost:8070/api/config',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return
@@ -149,9 +152,10 @@ const Commissions = () => {
   })
 
   const { reFetch } = useAxios({
-    url: 'http://localhost:8070/api/config',
+    url: 'https://localhost:8070/api/config',
     method: 'POST',
     options: {
+      withCredentials: true,
       data: dataset[0],
     },
   })

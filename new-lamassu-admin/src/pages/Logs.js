@@ -37,8 +37,11 @@ const Logs = () => {
   const classes = useStyles()
 
   useAxios({
-    url: 'http://localhost:8070/api/machines',
+    url: 'https://localhost:8070/api/machines',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return
@@ -50,8 +53,11 @@ const Logs = () => {
   })
 
   const { response: logsResponse } = useAxios({
-    url: `http://localhost:8070/api/logs/${R.path(['deviceId'])(selected)}`,
+    url: `https://localhost:8070/api/logs/${R.path(['deviceId'])(selected)}`,
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: selected,
     forceDispatchEffect: () => !!selected,
     customHandler: () => {
@@ -60,10 +66,13 @@ const Logs = () => {
   })
 
   const { loading, reFetch: sendSnapshot } = useAxios({
-    url: `http://localhost:8070/api/support_logs?deviceId=${R.path([
+    url: `https://localhost:8070/api/support_logs?deviceId=${R.path([
       'deviceId',
     ])(selected)}`,
     method: 'POST',
+    options: {
+      withCredentials: true,
+    },
     customHandler: (err, res) => {
       if (err) {
         setSaveMessage('Failure saving snapshot')

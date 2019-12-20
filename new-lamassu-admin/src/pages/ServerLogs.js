@@ -70,8 +70,11 @@ const Logs = () => {
   const classes = useStyles()
 
   useAxios({
-    url: 'http://localhost:8070/api/version',
+    url: 'https://localhost:8070/api/version',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return
@@ -82,8 +85,11 @@ const Logs = () => {
   })
 
   useAxios({
-    url: 'http://localhost:8070/api/uptimes',
+    url: 'https://localhost:8070/api/uptimes',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return
@@ -94,8 +100,11 @@ const Logs = () => {
   })
 
   const { response: logsResponse } = useAxios({
-    url: 'http://localhost:8070/api/server_logs/',
+    url: 'https://localhost:8070/api/server_logs/',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: () => {
       setSaveMessage('')
@@ -103,8 +112,11 @@ const Logs = () => {
   })
 
   const { loading, reFetch: sendSnapshot } = useAxios({
-    url: 'http://localhost:8070/api/server_support_logs',
+    url: 'https://localhost:8070/api/server_support_logs',
     method: 'POST',
+    options: {
+      withCredentials: true,
+    },
     customHandler: (err, res) => {
       if (err) {
         setSaveMessage('Failure saving snapshot')

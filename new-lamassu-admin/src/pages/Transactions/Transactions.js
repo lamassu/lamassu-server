@@ -26,8 +26,11 @@ const Transactions = () => {
   const classes = useStyles()
 
   const { response: txResponse } = useAxios({
-    url: 'http://localhost:8070/api/txs/',
+    url: 'https://localhost:8070/api/txs/',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
   })
 

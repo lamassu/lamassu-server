@@ -91,8 +91,11 @@ const Funding = () => {
   }
 
   useAxios({
-    url: 'http://localhost:8070/api/funding',
+    url: 'https://localhost:8070/api/funding',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return

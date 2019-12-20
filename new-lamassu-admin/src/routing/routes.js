@@ -8,6 +8,7 @@ import Locales from 'src/pages/Locales'
 import Logs from 'src/pages/Logs'
 import ServerLogs from 'src/pages/ServerLogs'
 import Transactions from 'src/pages/Transactions/Transactions'
+import AuthRegister from 'src/pages/AuthRegister'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -68,6 +69,7 @@ const Routes = () => (
     <Route path="/maintenance/funding" component={Funding} />
     <Route path="/maintenance/server-logs" component={ServerLogs} />
     <Route path="/transactions" component={Transactions} />
+    <Route path="/register" component={AuthRegister} />
   </Switch>
 )
 

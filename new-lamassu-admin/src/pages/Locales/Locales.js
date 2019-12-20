@@ -28,8 +28,11 @@ const Locales = memo(() => {
   const [data, setData] = useState(null)
 
   useAxios({
-    url: 'http://localhost:8070/api/config',
+    url: 'https://localhost:8070/api/config',
     method: 'GET',
+    options: {
+      withCredentials: true,
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return
@@ -41,9 +44,12 @@ const Locales = memo(() => {
   })
 
   const { reFetch } = useAxios({
-    url: 'http://localhost:8070/api/config',
+    url: 'https://localhost:8070/api/config',
     method: 'POST',
-    options: { data: locale },
+    options: {
+      withCredentials: true,
+      data: locale,
+    },
   })
 
   const save = it => {
