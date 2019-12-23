@@ -16,11 +16,7 @@ const sizes = {
 
 const MainForm = memo(({ value, save, auxData, validationSchema }) => {
   const getData = R.path(R.__, auxData)
-  const displayCodeArray = R.compose(
-    R.join(', '),
-    R.map(R.path(['code'])),
-    R.of,
-  )
+  const displayCodeArray = R.compose(R.join(', '), R.map(R.path(['code'])))
 
   return (
     <EditableTable

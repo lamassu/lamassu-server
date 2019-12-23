@@ -1,7 +1,4 @@
-import useAxios from '@use-hooks/axios'
 import React, { useState } from 'react'
-
-// import styles from './Commissions.module.scss'
 
 import { Link } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs'
@@ -136,35 +133,10 @@ const ViewRow = ({ data, setEditing }) => (
 const Commissions = () => {
   const [dataset, setDataset] = useState([{}])
 
-  useAxios({
-    url: 'https://localhost:8070/api/config',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setDataset([res.data])
-      }
-    },
-  })
-
-  const { reFetch } = useAxios({
-    url: 'https://localhost:8070/api/config',
-    method: 'POST',
-    options: {
-      withCredentials: true,
-      data: dataset[0],
-    },
-  })
-
   const commitValues = (values, idx) => {
     const clonedDs = dataset.slice()
     clonedDs[idx] = Object.assign({}, clonedDs[idx], values)
     setDataset(clonedDs)
-    reFetch()
   }
 
   const EditableRow = () => <td />

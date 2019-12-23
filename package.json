@@ -7,6 +7,7 @@
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "@fczbkk/uuid4": "^3.0.0",
+    "apollo-server-express": "^2.9.14",
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
     "bchaddrjs": "^0.3.0",
@@ -30,6 +31,8 @@
     "express-ws": "^3.0.0",
     "futoin-hkdf": "^1.0.2",
     "got": "^7.1.0",
+    "graphql-iso-date": "^3.6.1",
+    "graphql-type-json": "^0.3.1",
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
     "kraken-api": "github:DeX3/npm-kraken-api",

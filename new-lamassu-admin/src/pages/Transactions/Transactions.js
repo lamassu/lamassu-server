@@ -1,9 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles'
-import useAxios from '@use-hooks/axios'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import { useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
@@ -18,6 +19,33 @@ import { toUnit } from 'src/utils/coin'
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
 
+// TODO customerIdCardData
+const GET_TRANSACTIONS = gql`
+  {
+    transactions {
+      id
+      txClass
+      txHash
+      toAddress
+      commissionPercentage
+      machineName
+      deviceId
+      fiat
+      fee
+      fiatCode
+      cryptoAtoms
+      cryptoCode
+      toAddress
+      created
+      customerName
+      customerIdCardData
+      customerIdCardPhotoPath
+      customerFrontCameraPath
+      customerPhone
+    }
+  }
+`
+
 const Transactions = () => {
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -25,14 +53,7 @@ const Transactions = () => {
 
   const classes = useStyles()
 
-  const { response: txResponse } = useAxios({
-    url: 'https://localhost:8070/api/txs/',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-  })
+  const { data: txResponse } = useQuery(GET_TRANSACTIONS)
 
   const formatCustomerName = customer => {
     const { firstName, lastName } = customer
@@ -136,7 +157,7 @@ const Transactions = () => {
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
-                logs={txResponse.data}
+                logs={txResponse.transactions}
                 getTimestamp={tx => tx.created}
                 onClose={handleCloseRangePicker}
               />
@@ -156,7 +177,7 @@ const Transactions = () => {
       </div>
       <ExpTable
         elements={elements}
-        data={R.path(['data'])(txResponse)}
+        data={R.path(['transactions'])(txResponse)}
         Details={DetailsRow}
       />
     </>

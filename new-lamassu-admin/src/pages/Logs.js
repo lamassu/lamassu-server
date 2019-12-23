@@ -1,9 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles'
-import useAxios from '@use-hooks/axios'
 import FileSaver from 'file-saver'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
 import Sidebar from 'src/components/Sidebar'
 import Title from 'src/components/Title'
@@ -22,6 +23,34 @@ import styles from './Logs.styles.js'
 
 const useStyles = makeStyles(styles)
 
+const GET_MACHINES = gql`
+  {
+    machines {
+      name
+      deviceId
+    }
+  }
+`
+
+const GET_MACHINE_LOGS = gql`
+  query MachineLogs($deviceId: ID!) {
+    machineLogs(deviceId: $deviceId) {
+      logLevel
+      id
+      timestamp
+      message
+    }
+  }
+`
+
+const SUPPORT_LOGS = gql`
+  mutation SupportLogs($deviceId: ID!) {
+    machineSupportLogs(deviceId: $deviceId) {
+      id
+    }
+  }
+`
+
 const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
@@ -31,56 +60,30 @@ const formatDateFile = date => {
 }
 
 const Logs = () => {
-  const [machines, setMachines] = useState(null)
-  const [selected, setSelected] = useState(null)
-  const [saveMessage, setSaveMessage] = useState(null)
   const classes = useStyles()
 
-  useAxios({
-    url: 'https://localhost:8070/api/machines',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setMachines(res.data.machines)
-        setSelected(R.path(['data', 'machines', 0])(res))
-      }
-    },
+  const [selected, setSelected] = useState(null)
+  const [saveMessage, setSaveMessage] = useState(null)
+  const deviceId = selected?.deviceId
+
+  const { data: machineResponse } = useQuery(GET_MACHINES)
+
+  const [saveSupportLogs, { loading }] = useMutation(SUPPORT_LOGS, {
+    variables: { deviceId },
+    onError: () => setSaveMessage('Failure saving snapshot'),
+    onCompleted: () => setSaveMessage('✓ Saved latest snapshot'),
   })
 
-  const { response: logsResponse } = useAxios({
-    url: `https://localhost:8070/api/logs/${R.path(['deviceId'])(selected)}`,
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: selected,
-    forceDispatchEffect: () => !!selected,
-    customHandler: () => {
-      setSaveMessage('')
-    },
+  const { data: logsResponse } = useQuery(GET_MACHINE_LOGS, {
+    variables: { deviceId },
+    fetchPolicy: 'no-cache',
+    skip: !selected,
+    onCompleted: () => setSaveMessage(''),
   })
 
-  const { loading, reFetch: sendSnapshot } = useAxios({
-    url: `https://localhost:8070/api/support_logs?deviceId=${R.path([
-      'deviceId',
-    ])(selected)}`,
-    method: 'POST',
-    options: {
-      withCredentials: true,
-    },
-    customHandler: (err, res) => {
-      if (err) {
-        setSaveMessage('Failure saving snapshot')
-        throw err
-      }
-      setSaveMessage('✓ Saved latest snapshot')
-    },
-  })
+  if (machineResponse?.machines?.length && !selected) {
+    setSelected(machineResponse?.machines[0])
+  }
 
   const isSelected = it => {
     return R.path(['deviceId'])(selected) === it.deviceId
@@ -112,7 +115,7 @@ const Logs = () => {
             <SimpleButton
               className={classes.button}
               disabled={loading}
-              onClick={sendSnapshot}>
+              onClick={saveSupportLogs}>
               Share with Lamassu
             </SimpleButton>
           </div>
@@ -121,7 +124,7 @@ const Logs = () => {
       <div className={classes.wrapper}>
         <Sidebar
           displayName={it => it.name}
-          data={machines}
+          data={machineResponse?.machines || []}
           isSelected={isSelected}
           onClick={setSelected}
         />
@@ -136,7 +139,7 @@ const Logs = () => {
             </TableHead>
             <TableBody>
               {logsResponse &&
-                logsResponse.data.logs.map((log, idx) => (
+                logsResponse.machineLogs.map((log, idx) => (
                   <TableRow key={idx} size="sm">
                     <TableCell>{formatDate(log.timestamp)}</TableCell>
                     <TableCell>{log.logLevel}</TableCell>

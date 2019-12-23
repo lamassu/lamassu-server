@@ -133,12 +133,12 @@ const DetailsRow = ({ it: tx, ...props }) => {
                       </div>
                     </IDButton>
                   )}
-                  {tx.customerIdCameraPath && (
+                  {tx.customerFrontCameraPath && (
                     <IDButton
                       name="cam"
                       Icon={CamIdIcon}
                       InverseIcon={CamIdInverseIcon}>
-                      <img alt="" src={tx.customerIdCameraPath} />
+                      <img alt="" src={tx.customerFrontCameraPath} />
                     </IDButton>
                   )}
                 </div>

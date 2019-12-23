@@ -1,10 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles'
-import useAxios from '@use-hooks/axios'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
+import { useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
 import Sidebar from 'src/components/Sidebar'
 import TableLabel from 'src/components/TableLabel'
@@ -30,15 +31,26 @@ const sizes = {
   date: 130,
 }
 
-const formatAddress = (address = '') => {
-  return address.replace(/(.{4})/g, '$1 ')
-}
+const GET_FUNDING = gql`
+  {
+    funding {
+      cryptoCode
+      fundingAddress
+      fundingAddressUrl
+      confirmedBalance
+      pending
+      fiatConfirmedBalance
+      fiatPending
+      fiatCode
+      display
+      unitScale
+    }
+  }
+`
 
+const formatAddress = (address = '') => address.replace(/(.{4})/g, '$1 ')
 const sumReducer = (acc, value) => acc.plus(value)
-
-const formatNumber = it => {
-  return new BigNumber(it).toFormat(2)
-}
+const formatNumber = it => new BigNumber(it).toFormat(2)
 
 const getConfirmedTotal = list => {
   return formatNumber(
@@ -57,7 +69,6 @@ const getPendingTotal = list => {
 }
 
 const Funding = () => {
-  const [data, setData] = useState(null)
   const [selected, setSelected] = useState(null)
   const [viewHistory] = useState(false)
   const classes = useStyles()
@@ -90,21 +101,11 @@ const Funding = () => {
     return selected && selected.cryptoCode === it.cryptoCode
   }
 
-  useAxios({
-    url: 'https://localhost:8070/api/funding',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setData(res.data)
-        setSelected(res.data && res.data[0])
-      }
-    },
-  })
+  const { data: fundingResponse } = useQuery(GET_FUNDING)
+
+  if (fundingResponse?.funding?.length && !selected) {
+    setSelected(fundingResponse?.funding[0])
+  }
 
   const itemRender = it => {
     return (
@@ -124,25 +125,26 @@ const Funding = () => {
     <>
       <div>
         <Title>Funding</Title>
-        {/* <button onClick={it => setViewHistory(!viewHistory)}>hehe</button> */}
+        {/* <button onClick={it => setViewHistory(!viewHistory)}>history</button> */}
       </div>
       <div className={classes.wrapper}>
         <Sidebar
-          data={data}
+          data={fundingResponse?.funding}
           isSelected={isSelected}
           onClick={setSelected}
           displayName={it => it.display}
           itemRender={itemRender}>
-          {data && data.length && (
+          {fundingResponse?.funding && fundingResponse?.funding?.length && (
             <div className={classes.total}>
               <Label1 className={classes.totalTitle}>
                 Total Crypto Balance
               </Label1>
               <Info1 noMargin>
-                {getConfirmedTotal(data)} {data[0].fiatCode}
+                {getConfirmedTotal(fundingResponse.funding)}
+                {fundingResponse.funding[0].fiatCode}
               </Info1>
               <Label1 className={classes.totalPending}>
-                (+{getPendingTotal(data)} pending)
+                (+{getPendingTotal(fundingResponse.funding)} pending)
               </Label1>
             </div>
           )}

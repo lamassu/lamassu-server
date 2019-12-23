@@ -1,7 +1,7 @@
-// import useAxios from '@use-hooks/axios'
-import React, { memo, useState } from 'react'
-import useAxios from '@use-hooks/axios'
+import React, { memo } from 'react'
 import * as Yup from 'yup'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
 import Subtitle from 'src/components/Subtitle'
 import Title from 'src/components/Title'
@@ -12,7 +12,7 @@ const LocaleSchema = Yup.object().shape({
   country: Yup.object().required('Required'),
   fiatCurrency: Yup.object().required('Required'),
   languages: Yup.array().required('Required'),
-  cryptoCurrencies: Yup?.array()?.required('Required'),
+  cryptoCurrencies: Yup.array().required('Required'),
 })
 
 const initialValues = {
@@ -23,39 +23,48 @@ const initialValues = {
   showRates: false,
 }
 
-const Locales = memo(() => {
-  const [locale, setLocale] = useState(initialValues)
-  const [data, setData] = useState(null)
-
-  useAxios({
-    url: 'https://localhost:8070/api/config',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setLocale(res.data.state)
-        setData(res.data.data)
-      }
-    },
-  })
-
-  const { reFetch } = useAxios({
-    url: 'https://localhost:8070/api/config',
-    method: 'POST',
-    options: {
-      withCredentials: true,
-      data: locale,
-    },
-  })
-
-  const save = it => {
-    setLocale(it)
-    reFetch()
+const GET_AUX_DATA = gql`
+  {
+    currencies {
+      code
+      display
+    }
+    countries {
+      code
+      display
+    }
+    cryptoCurrencies {
+      code
+      display
+    }
+    languages {
+      code
+      display
+    }
   }
+`
+
+const GET_CONFIG = gql`
+  {
+    config
+  }
+`
+
+const SAVE_CONFIG = gql`
+  mutation Save($config: JSONObject) {
+    saveConfig(config: $config)
+  }
+`
+
+const Locales = memo(() => {
+  const { data } = useQuery(GET_AUX_DATA)
+
+  const [saveConfig] = useMutation(SAVE_CONFIG)
+  const { data: configResponse } = useQuery(GET_CONFIG)
+
+  const locale = configResponse?.config ?? initialValues
+
+  const save = it => saveConfig({ variables: { config: it } })
 
   return (
     <>

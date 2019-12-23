@@ -6,7 +6,7 @@ import styles from './Sidebar.styles'
 
 const useStyles = makeStyles(styles)
 
-const Logs = ({
+const Sidebar = ({
   data,
   displayName,
   isSelected,
@@ -37,4 +37,4 @@ const Logs = ({
   )
 }
 
-export default Logs
+export default Sidebar

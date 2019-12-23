@@ -1,8 +1,9 @@
 import { makeStyles } from '@material-ui/core'
-import useAxios from '@use-hooks/axios'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
 import typographyStyles from 'src/components/typography/styles'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
@@ -60,70 +61,62 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
 
-const Logs = () => {
-  const [saveMessage, setSaveMessage] = useState(null)
-  const [logLevel, setLogLevel] = useState(SHOW_ALL)
-  const [version, setVersion] = useState(null)
-  const [processStates, setProcessStates] = useState(null)
-  const [anchorEl, setAnchorEl] = useState(null)
+const GET_VERSION = gql`
+  query {
+    serverVersion
+  }
+`
 
+const GET_UPTIME = gql`
+  {
+    uptime {
+      name
+      state
+      uptime
+    }
+  }
+`
+
+const GET_SERVER_LOGS = gql`
+  {
+    serverLogs {
+      logLevel
+      id
+      timestamp
+      message
+    }
+  }
+`
+
+const SUPPORT_LOGS = gql`
+  mutation ServerSupportLogs {
+    serverSupportLogs {
+      id
+    }
+  }
+`
+
+const Logs = () => {
   const classes = useStyles()
 
-  useAxios({
-    url: 'https://localhost:8070/api/version',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setVersion(res.data)
-      }
-    },
+  const [saveMessage, setSaveMessage] = useState(null)
+  const [logLevel, setLogLevel] = useState(SHOW_ALL)
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const { data: version } = useQuery(GET_VERSION)
+  const serverVersion = version?.serverVersion
+
+  const { data: uptimeResponse } = useQuery(GET_UPTIME)
+  const processStates = uptimeResponse?.uptime ?? []
+
+  const { data: logsResponse } = useQuery(GET_SERVER_LOGS, {
+    fetchPolicy: 'no-cache',
+    onCompleted: () => setSaveMessage(''),
   })
 
-  useAxios({
-    url: 'https://localhost:8070/api/uptimes',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setProcessStates(res.data)
-      }
-    },
-  })
-
-  const { response: logsResponse } = useAxios({
-    url: 'https://localhost:8070/api/server_logs/',
-    method: 'GET',
-    options: {
-      withCredentials: true,
-    },
-    trigger: [],
-    customHandler: () => {
-      setSaveMessage('')
-    },
-  })
-
-  const { loading, reFetch: sendSnapshot } = useAxios({
-    url: 'https://localhost:8070/api/server_support_logs',
-    method: 'POST',
-    options: {
-      withCredentials: true,
-    },
-    customHandler: (err, res) => {
-      if (err) {
-        setSaveMessage('Failure saving snapshot')
-        throw err
-      }
-      setSaveMessage('✓ Saved latest snapshot')
-    },
+  const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
+    onError: () => setSaveMessage('Failure saving snapshot'),
+    onCompleted: () => setSaveMessage('✓ Saved latest snapshot'),
   })
 
   const handleOpenRangePicker = event => {
@@ -136,7 +129,7 @@ const Logs = () => {
     R.prepend(SHOW_ALL),
     R.uniq,
     R.map(R.path(['logLevel'])),
-    R.path(['data', 'logs']),
+    R.path(['serverLogs']),
   )
 
   return (
@@ -159,7 +152,7 @@ const Logs = () => {
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
-                logs={logsResponse.data.logs}
+                logs={logsResponse.serverLogs}
                 getTimestamp={log => log.timestamp}
               />
               <SimpleButton
@@ -173,7 +166,7 @@ const Logs = () => {
           )}
         </div>
         <div className={classes.serverVersion}>
-          {version && <span>Server version: v{version}</span>}
+          {serverVersion && <span>Server version: v{serverVersion}</span>}
         </div>
       </div>
       <div className={classes.headerLine2}>
@@ -205,7 +198,7 @@ const Logs = () => {
             </TableHead>
             <TableBody>
               {logsResponse &&
-                logsResponse.data.logs
+                logsResponse.serverLogs
                   .filter(
                     log => logLevel === SHOW_ALL || log.logLevel === logLevel,
                   )
