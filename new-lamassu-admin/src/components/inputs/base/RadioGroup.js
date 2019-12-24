@@ -1,7 +1,7 @@
 import {
   Radio as MaterialRadio,
   RadioGroup as MaterialRadioGroup,
-  FormControlLabel,
+  FormControlLabel
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import classnames from 'classnames'
@@ -16,16 +16,16 @@ const GreenRadio = withStyles({
   root: {
     color: secondaryColor,
     '&$checked': {
-      color: secondaryColor,
-    },
+      color: secondaryColor
+    }
   },
-  checked: {},
+  checked: {}
 })(props => <MaterialRadio color="default" {...props} />)
 
 const Label = withStyles({
   label: {
-    extend: p,
-  },
+    extend: p
+  }
 })(props => <FormControlLabel {...props} />)
 
 /* options = [{ label, value }]

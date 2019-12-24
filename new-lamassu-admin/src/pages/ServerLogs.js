@@ -17,7 +17,7 @@ import {
   TableRow,
   TableHeader,
   TableBody,
-  TableCell,
+  TableCell
 } from 'src/components/table'
 import { Info3 } from 'src/components/typography'
 import { ReactComponent as DownloadActive } from 'src/styling/icons/button/download/white.svg'
@@ -33,22 +33,22 @@ const localStyles = {
   serverTableWrapper: {
     extend: tableWrapper,
     maxWidth: '100%',
-    marginLeft: 0,
+    marginLeft: 0
   },
   serverVersion: {
     extend: p,
     color: offColor,
-    margin: 'auto 0 auto 0',
+    margin: 'auto 0 auto 0'
   },
   headerLine2: {
     height: 60,
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    marginBottom: 24
   },
   uptimeContainer: {
-    margin: 'auto 0 auto 0',
-  },
+    margin: 'auto 0 auto 0'
+  }
 }
 
 const styles = R.merge(logsStyles, localStyles)
@@ -111,12 +111,12 @@ const Logs = () => {
 
   const { data: logsResponse } = useQuery(GET_SERVER_LOGS, {
     fetchPolicy: 'no-cache',
-    onCompleted: () => setSaveMessage(''),
+    onCompleted: () => setSaveMessage('')
   })
 
   const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
     onError: () => setSaveMessage('Failure saving snapshot'),
-    onCompleted: () => setSaveMessage('✓ Saved latest snapshot'),
+    onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
   })
 
   const handleOpenRangePicker = event => {
@@ -129,7 +129,7 @@ const Logs = () => {
     R.prepend(SHOW_ALL),
     R.uniq,
     R.map(R.path(['logLevel'])),
-    R.path(['serverLogs']),
+    R.path(['serverLogs'])
   )
 
   return (
@@ -200,7 +200,7 @@ const Logs = () => {
               {logsResponse &&
                 logsResponse.serverLogs
                   .filter(
-                    log => logLevel === SHOW_ALL || log.logLevel === logLevel,
+                    log => logLevel === SHOW_ALL || log.logLevel === logLevel
                   )
                   .map((log, idx) => (
                     <TableRow key={idx} size="sm">

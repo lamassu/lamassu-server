@@ -60,7 +60,7 @@ function pBuilder(elementClass) {
       [classes[elementClass]]: elementClass,
       className: true,
       [classes.inline]: inline,
-      [classes.noMarginP]: noMargin,
+      [classes.noMarginP]: noMargin
     }
     return (
       <p className={classnames(classNames, className)} {...props}>
@@ -84,5 +84,5 @@ export {
   Mono,
   Label1,
   Label2,
-  Label3,
+  Label3
 }

@@ -19,35 +19,35 @@ const { info1, label1, label2, h4 } = typographyStyles
 const dateContainerStyles = {
   wrapper: {
     height: 46,
-    width: 99,
+    width: 99
   },
   container: {
-    display: 'flex',
+    display: 'flex'
   },
   monthWeekDayContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   label: {
     extend: label1,
     lineHeight: 1.33,
-    color: primaryColor,
+    color: primaryColor
   },
   bigNumber: {
     extend: info1,
     lineHeight: 1,
-    marginRight: 7,
+    marginRight: 7
   },
   monthYear: {
     extend: label2,
     lineHeight: 1.17,
-    color: primaryColor,
+    color: primaryColor
   },
   weekDay: {
     extend: label1,
     lineHeight: 1.33,
-    color: offColor,
-  },
+    color: offColor
+  }
 }
 
 const dateContainerUseStyles = makeStyles(dateContainerStyles)
@@ -64,7 +64,7 @@ const DateContainer = ({ date, children, ...props }) => {
             <div className={classes.bigNumber}>{date.format('D')}</div>
             <div className={classes.monthWeekDayContainer}>
               <span className={classes.monthYear}>{`${date.format(
-                'MMM',
+                'MMM'
               )} ${date.format('YYYY')}`}</span>
               <span className={classes.weekDay}>{date.format('dddd')}</span>
             </div>
@@ -77,31 +77,31 @@ const DateContainer = ({ date, children, ...props }) => {
 
 const styles = {
   popoverContent: {
-    width: 272,
+    width: 272
   },
   popoverHeader: {
     extend: h4,
-    padding: [[15, 15, 0, 15]],
+    padding: [[15, 15, 0, 15]]
   },
   radioButtonsContainer: {
-    padding: [[5, 15, 5, 15]],
+    padding: [[5, 15, 5, 15]]
   },
   radioButtons: {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    color: primaryColor,
+    color: primaryColor
   },
   dateRangePickerShowing: {
     display: 'block',
-    height: '100%',
+    height: '100%'
   },
   dateRangePickerHidden: {
     display: 'none',
-    height: 0,
+    height: 0
   },
   download: {
-    padding: [[10, 15]],
+    padding: [[10, 15]]
   },
   dateContainerWrapper: {
     display: 'flex',
@@ -110,16 +110,16 @@ const styles = {
     position: 'relative',
     backgroundColor: zircon,
     padding: [[0, 15]],
-    minHeight: 70,
+    minHeight: 70
   },
   arrowContainer: {
     position: 'absolute',
     left: 116,
-    top: 26,
+    top: 26
   },
   arrow: {
-    margin: 'auto',
-  },
+    margin: 'auto'
+  }
 }
 
 const useStyles = makeStyles(styles)
@@ -144,7 +144,7 @@ const LogsDownloaderPopover = ({
 
   const dateRangePickerClasses = {
     [classes.dateRangePickerShowing]: selectedRadio === radioButtonRange,
-    [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll,
+    [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll
   }
 
   const handleRadioButtons = R.o(setSelectedRadio, R.path(['target', 'value']))
@@ -165,7 +165,7 @@ const LogsDownloaderPopover = ({
     if (selectedRadio === radioButtonAll) {
       const text = logs.map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8',
+        type: 'text/plain;charset=utf-8'
       })
       FileSaver.saveAs(blob, `${formatDateFile(new Date())}_${name}`)
       return
@@ -174,28 +174,23 @@ const LogsDownloaderPopover = ({
     if (selectedRadio === radioButtonRange) {
       const text = logs
         .filter(log =>
-          moment(getTimestamp(log)).isBetween(
-            range.from,
-            range.to,
-            'day',
-            '[]',
-          ),
+          moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')
         )
         .map(it => JSON.stringify(it))
         .join('\n')
       const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8',
+        type: 'text/plain;charset=utf-8'
       })
       FileSaver.saveAs(
         blob,
-        `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`,
+        `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`
       )
     }
   }
 
   const radioButtonOptions = [
     { label: 'All logs', value: radioButtonAll },
-    { label: 'Date range', value: radioButtonRange },
+    { label: 'Date range', value: radioButtonRange }
   ]
 
   return (

@@ -6,7 +6,7 @@ import {
   secondaryColor,
   offColor,
   disabledColor,
-  disabledColor2,
+  disabledColor2
 } from '../../../styling/variables'
 
 const useStyles = makeStyles(theme => ({
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     width: 32,
     height: 20,
     padding: 0,
-    margin: theme.spacing(1),
+    margin: theme.spacing(1)
   },
   switchBase: {
     padding: 2,
@@ -22,35 +22,35 @@ const useStyles = makeStyles(theme => ({
       color: disabledColor2,
       '& + $track': {
         backgroundColor: disabledColor,
-        opacity: 1,
-      },
+        opacity: 1
+      }
     },
     '&$checked': {
       color: theme.palette.common.white,
       '& + $track': {
         backgroundColor: secondaryColor,
         opacity: 1,
-        border: 'none',
-      },
+        border: 'none'
+      }
     },
     '&$focusVisible $thumb': {
-      border: '6px solid #fff',
-    },
+      border: '6px solid #fff'
+    }
   },
   thumb: {
     width: 16,
-    height: 16,
+    height: 16
   },
   track: {
     borderRadius: 17,
     border: 'none',
     backgroundColor: offColor,
     opacity: 1,
-    transition: theme.transitions.create(['background-color', 'border']),
+    transition: theme.transitions.create(['background-color', 'border'])
   },
   disabled: {},
   checked: {},
-  focusVisible: {},
+  focusVisible: {}
 }))
 
 const SwitchInput = memo(({ ...props }) => {
@@ -65,7 +65,7 @@ const SwitchInput = memo(({ ...props }) => {
         thumb: classes.thumb,
         track: classes.track,
         checked: classes.checked,
-        disabled: classes.disabled,
+        disabled: classes.disabled
       }}
       {...props}
     />

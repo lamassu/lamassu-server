@@ -10,7 +10,7 @@ import {
   tableHeaderHeight,
   tableErrorColor,
   spacer,
-  white,
+  white
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
@@ -18,7 +18,7 @@ const { tl2, p } = typographyStyles
 
 const useStyles = makeStyles({
   body: {
-    borderSpacing: '0 4px',
+    borderSpacing: '0 4px'
   },
   header: {
     extend: tl2,
@@ -27,23 +27,23 @@ const useStyles = makeStyles({
     textAlign: 'left',
     color: white,
     // display: 'flex'
-    display: 'table-row',
+    display: 'table-row'
   },
   td: {
-    padding: `0 ${spacer * 3}px`,
+    padding: `0 ${spacer * 3}px`
   },
   tdHeader: {
     verticalAlign: 'middle',
     display: 'table-cell',
-    padding: `0 ${spacer * 3}px`,
+    padding: `0 ${spacer * 3}px`
   },
   trError: {
-    backgroundColor: tableErrorColor,
+    backgroundColor: tableErrorColor
   },
   mainContent: {
     display: 'flex',
     alignItems: 'center',
-    minHeight: 54,
+    minHeight: 54
   },
   // mui-overrides
   cardContentRoot: {
@@ -51,18 +51,18 @@ const useStyles = makeStyles({
     margin: 0,
     padding: 0,
     '&:last-child': {
-      padding: 0,
-    },
+      padding: 0
+    }
   },
   card: {
     extend: p,
     '&:before': {
-      height: 0,
+      height: 0
     },
     margin: '4px 0',
     width: 'min-content',
-    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)',
-  },
+    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
+  }
 })
 
 const Table = ({ children, className, ...props }) => (
@@ -85,7 +85,7 @@ const Td = ({ children, header, className, size = 100, textAlign }) => {
   const classes = useStyles()
   const classNames = {
     [classes.td]: true,
-    [classes.tdHeader]: header,
+    [classes.tdHeader]: header
   }
 
   return (
@@ -109,7 +109,7 @@ const Tr = ({ error, errorMessage, children, className }) => {
   const classes = useStyles()
   const cardClasses = { root: classes.cardContentRoot }
   const classNames = {
-    [classes.trError]: error,
+    [classes.trError]: error
   }
 
   return (

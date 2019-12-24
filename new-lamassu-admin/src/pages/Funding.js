@@ -18,7 +18,7 @@ import {
   Info3,
   Mono,
   Label1,
-  Label3,
+  Label3
 } from 'src/components/typography'
 import { primaryColor } from 'src/styling/variables'
 
@@ -28,7 +28,7 @@ const useStyles = makeStyles(styles)
 const sizes = {
   big: 165,
   time: 140,
-  date: 130,
+  date: 130
 }
 
 const GET_FUNDING = gql`
@@ -56,7 +56,7 @@ const getConfirmedTotal = list => {
   return formatNumber(
     list
       .map(it => new BigNumber(it.fiatConfirmedBalance))
-      .reduce(sumReducer, new BigNumber(0)),
+      .reduce(sumReducer, new BigNumber(0))
   )
 }
 
@@ -64,7 +64,7 @@ const getPendingTotal = list => {
   return formatNumber(
     list
       .map(it => new BigNumber(it.fiatPending))
-      .reduce(sumReducer, new BigNumber(0)),
+      .reduce(sumReducer, new BigNumber(0))
   )
 }
 
@@ -79,22 +79,22 @@ const Funding = () => {
       fiatValue: 1000.0,
       date: new Date(),
       performedBy: null,
-      pending: true,
+      pending: true
     },
     {
       cryptoAmount: 10.0,
       balance: 12.23,
       fiatValue: 12000.0,
       date: new Date(),
-      performedBy: null,
+      performedBy: null
     },
     {
       cryptoAmount: 5.0,
       balance: 5.0,
       fiatValue: 50000.0,
       date: new Date(),
-      performedBy: null,
-    },
+      performedBy: null
+    }
   ]
 
   const isSelected = it => {

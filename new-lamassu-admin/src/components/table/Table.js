@@ -7,8 +7,8 @@ const useStyles = makeStyles({
     // backgroundColor: tableHeaderColor,
     tableLayout: 'fixed',
     borderCollapse: 'separate',
-    borderSpacing: '0 0',
-  },
+    borderSpacing: '0 0'
+  }
 })
 
 const Table = memo(({ className, children, ...props }) => {

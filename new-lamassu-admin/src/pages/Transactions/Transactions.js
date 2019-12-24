@@ -71,24 +71,24 @@ const Transactions = () => {
     {
       header: '',
       size: 62,
-      view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />),
+      view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />)
     },
     {
       header: 'Machine',
       name: 'machineName',
       size: 180,
-      view: R.path(['machineName']),
+      view: R.path(['machineName'])
     },
     {
       header: 'Customer',
       size: 162,
-      view: getCustomerDisplayName,
+      view: getCustomerDisplayName
     },
     {
       header: 'Cash',
       size: 110,
       textAlign: 'right',
-      view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`,
+      view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
     },
     {
       header: 'Crypto',
@@ -97,33 +97,33 @@ const Transactions = () => {
       view: it =>
         `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
           it.cryptoCode
-        }`,
+        }`
     },
     {
       header: 'Address',
       view: R.path(['toAddress']),
       className: classes.overflowTd,
-      size: 136,
+      size: 136
     },
     {
       header: 'Date (UTC)',
       view: it => moment.utc(it.created).format('YYYY-MM-D'),
       textAlign: 'right',
-      size: 124,
+      size: 124
     },
     {
       header: 'Time (UTC)',
       view: it => moment.utc(it.created).format('HH:mm:ss'),
       textAlign: 'right',
-      size: 124,
+      size: 124
     },
     {
       header: '', // Trade
-      size: 90,
+      size: 90
     },
     {
-      size: 71,
-    },
+      size: 71
+    }
   ]
 
   const handleOpenRangePicker = event => {

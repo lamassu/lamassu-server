@@ -7,7 +7,7 @@ import {
   inputFontWeight,
   subheaderColor,
   smallestFontSize,
-  inputFontFamily,
+  inputFontFamily
 } from 'src/styling/variables'
 
 const styles = theme => ({
@@ -15,7 +15,7 @@ const styles = theme => ({
     backgroundColor: subheaderColor,
     borderRadius: 4,
     margin: theme.spacing(0.5, 0.25),
-    height: 18,
+    height: 18
   },
   label: {
     fontSize: smallestFontSize,
@@ -23,8 +23,8 @@ const styles = theme => ({
     fontWeight: inputFontWeight,
     fontFamily: inputFontFamily,
     paddingRight: 4,
-    paddingLeft: 4,
-  },
+    paddingLeft: 4
+  }
 })
 
 const LsChip = memo(({ classes, ...props }) => (

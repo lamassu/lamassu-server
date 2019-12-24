@@ -10,7 +10,7 @@ import {
   renderInput,
   renderSuggestion,
   filterSuggestions,
-  styles,
+  styles
 } from './commons'
 
 const AutocompleteMultiple = memo(
@@ -61,7 +61,7 @@ const AutocompleteMultiple = memo(
           inputValue: inputValue2,
           selectedItem: selectedItem2,
           highlightedIndex,
-          toggleMenu,
+          toggleMenu
         }) => (
           <div className={classes.container}>
             {renderInput({
@@ -81,12 +81,12 @@ const AutocompleteMultiple = memo(
                 onChange: it => setInputValue(it.target.value),
                 onClick: () => toggleMenu(),
                 onKeyDown: handleKeyDown,
-                placeholder,
+                placeholder
               }),
               ref: node => {
                 setPopperNode(node)
               },
-              label,
+              label
             })}
             <Popper open={isOpen} anchorEl={popperNode}>
               <div
@@ -98,7 +98,7 @@ const AutocompleteMultiple = memo(
                   square
                   style={{
                     marginTop: 8,
-                    minWidth: popperNode ? popperNode.clientWidth : null,
+                    minWidth: popperNode ? popperNode.clientWidth : null
                   }}>
                   {filterSuggestions(suggestions, inputValue2, value).map(
                     (suggestion, index) =>
@@ -107,8 +107,8 @@ const AutocompleteMultiple = memo(
                         index,
                         itemProps: getItemProps({ item: suggestion }),
                         highlightedIndex,
-                        selectedItem: selectedItem2,
-                      }),
+                        selectedItem: selectedItem2
+                      })
                   )}
                 </Paper>
               </div>
@@ -117,7 +117,7 @@ const AutocompleteMultiple = memo(
         )}
       </Downshift>
     )
-  },
+  }
 )
 
 export default withStyles(styles)(AutocompleteMultiple)

@@ -10,18 +10,18 @@ const useStyles = makeStyles({
   subtitle: {
     color: offColor,
     marginTop: spacer * 2,
-    marginBottom: spacer * 2,
+    marginBottom: spacer * 2
   },
   extraMarginTop: {
-    marginTop: spacer * 9,
-  },
+    marginTop: spacer * 9
+  }
 })
 
 const Subtitle = memo(({ children, className, extraMarginTop }) => {
   const classes = useStyles()
   const classNames = {
     [classes.subtitle]: true,
-    [classes.extraMarginTop]: extraMarginTop,
+    [classes.extraMarginTop]: extraMarginTop
   }
 
   return <TL1 className={classnames(classNames, className)}>{children}</TL1>

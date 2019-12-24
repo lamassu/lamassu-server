@@ -12,7 +12,7 @@ const ActionButton = memo(
     const classNames = {
       [classes.actionButton]: true,
       [classes.primary]: color === 'primary',
-      [classes.secondary]: color === 'secondary',
+      [classes.secondary]: color === 'secondary'
     }
 
     return (
@@ -26,7 +26,7 @@ const ActionButton = memo(
           <div
             className={classnames(
               classes.actionButtonIcon,
-              classes.actionButtonIconActive,
+              classes.actionButtonIconActive
             )}>
             <InverseIcon />
           </div>
@@ -34,7 +34,7 @@ const ActionButton = memo(
         {children && <div>{children}</div>}
       </button>
     )
-  },
+  }
 )
 
 export default ActionButton

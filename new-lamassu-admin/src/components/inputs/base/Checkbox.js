@@ -10,10 +10,10 @@ const useStyles = makeStyles({
   root: {
     color: secondaryColor,
     '&$checked': {
-      color: secondaryColor,
-    },
+      color: secondaryColor
+    }
   },
-  checked: {},
+  checked: {}
 })
 
 const CheckboxInput = ({ name, onChange, value, label, ...props }) => {
@@ -26,7 +26,7 @@ const CheckboxInput = ({ name, onChange, value, label, ...props }) => {
       id={name}
       classes={{
         root: classes.root,
-        checked: classes.checked,
+        checked: classes.checked
       }}
       onChange={onChange}
       value={value}

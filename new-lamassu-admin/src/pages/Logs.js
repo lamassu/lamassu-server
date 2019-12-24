@@ -15,7 +15,7 @@ import {
   TableRow,
   TableHeader,
   TableBody,
-  TableCell,
+  TableCell
 } from 'src/components/table'
 import { Info3 } from 'src/components/typography'
 
@@ -71,14 +71,14 @@ const Logs = () => {
   const [saveSupportLogs, { loading }] = useMutation(SUPPORT_LOGS, {
     variables: { deviceId },
     onError: () => setSaveMessage('Failure saving snapshot'),
-    onCompleted: () => setSaveMessage('✓ Saved latest snapshot'),
+    onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
   })
 
   const { data: logsResponse } = useQuery(GET_MACHINE_LOGS, {
     variables: { deviceId },
     fetchPolicy: 'no-cache',
     skip: !selected,
-    onCompleted: () => setSaveMessage(''),
+    onCompleted: () => setSaveMessage('')
   })
 
   if (machineResponse?.machines?.length && !selected) {
@@ -103,11 +103,11 @@ const Logs = () => {
                   .map(it => JSON.stringify(it))
                   .join('\n')
                 const blob = new window.Blob([text], {
-                  type: 'text/plain;charset=utf-8',
+                  type: 'text/plain;charset=utf-8'
                 })
                 FileSaver.saveAs(
                   blob,
-                  `${formatDateFile(new Date())}_${selected.name}`,
+                  `${formatDateFile(new Date())}_${selected.name}`
                 )
               }}>
               DL

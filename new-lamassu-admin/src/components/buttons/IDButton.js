@@ -5,7 +5,7 @@ import React, { useState, memo } from 'react'
 import {
   subheaderColor,
   subheaderDarkColor,
-  offColor,
+  offColor
 } from 'src/styling/variables'
 import Popover from 'src/components/Popper'
 import typographyStyles from 'src/components/typography/styles'
@@ -16,11 +16,11 @@ const colors = (color1, color2, color3) => {
   return {
     backgroundColor: color1,
     '&:hover': {
-      backgroundColor: color2,
+      backgroundColor: color2
     },
     '&:active': {
-      backgroundColor: color3,
-    },
+      backgroundColor: color3
+    }
   }
 }
 
@@ -32,20 +32,20 @@ const styles = {
     borderRadius: 4,
     padding: 0,
     border: 'none',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   buttonIcon: {
     margin: 'auto',
     lineHeight: 1,
     '& svg': {
-      overflow: 'visible',
-    },
+      overflow: 'visible'
+    }
   },
   closed: {
-    extend: colors(subheaderColor, subheaderDarkColor, offColor),
+    extend: colors(subheaderColor, subheaderDarkColor, offColor)
   },
   open: {
-    extend: colors(offColor, offColor, offColor),
+    extend: colors(offColor, offColor, offColor)
   },
   popoverContent: {
     extend: info2,
@@ -55,9 +55,9 @@ const styles = {
     alignItems: 'center',
     borderRadius: 4,
     '& img': {
-      maxHeight: 145,
-    },
-  },
+      maxHeight: 145
+    }
+  }
 }
 
 const useStyles = makeStyles(styles)
@@ -83,11 +83,11 @@ const IDButton = memo(
       [classes.idButton]: true,
       [classes.primary]: true,
       [classes.open]: open,
-      [classes.closed]: !open,
+      [classes.closed]: !open
     }
 
     const iconClassNames = {
-      [classes.buttonIcon]: true,
+      [classes.buttonIcon]: true
     }
 
     const handleClick = event => {
@@ -129,7 +129,7 @@ const IDButton = memo(
         </Popover>
       </>
     )
-  },
+  }
 )
 
 export default IDButton

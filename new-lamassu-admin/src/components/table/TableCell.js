@@ -6,11 +6,11 @@ import { spacer } from 'src/styling/variables'
 
 const useStyles = makeStyles({
   td: {
-    padding: [[0, spacer * 3]],
+    padding: [[0, spacer * 3]]
   },
   alignRight: {
-    textAlign: 'right',
-  },
+    textAlign: 'right'
+  }
 })
 
 const TableCell = memo(
@@ -18,7 +18,7 @@ const TableCell = memo(
     const classes = useStyles()
     const styles = {
       [classes.td]: true,
-      [classes.alignRight]: rightAlign,
+      [classes.alignRight]: rightAlign
     }
 
     return (
@@ -29,7 +29,7 @@ const TableCell = memo(
         {children}
       </td>
     )
-  },
+  }
 )
 
 export default TableCell

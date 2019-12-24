@@ -12,13 +12,13 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
     popover: {
       zIndex: 1000,
       backgroundColor: bgColor,
-      borderRadius: 4,
+      borderRadius: 4
     },
     arrow: {
       position: 'absolute',
       fontSize: arrowSize,
       width: '3em',
-      height: '3em',
+      height: '3em'
     },
     arrowBottom: {
       top: 0,
@@ -27,7 +27,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       borderLeft: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', 'transparent']],
       borderBottom: [['2em', 'solid', bgColor]],
-      marginTop: '-1.9em',
+      marginTop: '-1.9em'
     },
     arrowTop: {
       bottom: 0,
@@ -36,7 +36,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       borderLeft: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', 'transparent']],
       borderTop: [['2em', 'solid', bgColor]],
-      marginBottom: '-1.9em',
+      marginBottom: '-1.9em'
     },
     arrowRight: {
       left: 0,
@@ -45,7 +45,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       borderTop: [['2em', 'solid', 'transparent']],
       borderBottom: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', bgColor]],
-      marginLeft: '-1.9em',
+      marginLeft: '-1.9em'
     },
     arrowLeft: {
       right: 0,
@@ -54,11 +54,11 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       borderTop: [['2em', 'solid', 'transparent']],
       borderBottom: [['2em', 'solid', 'transparent']],
       borderLeft: [['2em', 'solid', bgColor]],
-      marginRight: '-1.9em',
+      marginRight: '-1.9em'
     },
     root: {
-      backgroundColor: bgColor,
-    },
+      backgroundColor: bgColor
+    }
   }
 
   const useStyles = makeStyles(styles)
@@ -70,21 +70,21 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
     [classes.arrowBottom]: props.placement === 'bottom',
     [classes.arrowTop]: props.placement === 'top',
     [classes.arrowRight]: props.placement === 'right',
-    [classes.arrowLeft]: props.placement === 'left',
+    [classes.arrowLeft]: props.placement === 'left'
   }
 
   const modifiers = R.merge(props.modifiers, {
     flip: {
-      enabled: false,
+      enabled: false
     },
     preventOverflow: {
       enabled: true,
-      boundariesElement: 'scrollParent',
+      boundariesElement: 'scrollParent'
     },
     arrow: {
       enabled: true,
-      element: arrowRef,
-    },
+      element: arrowRef
+    }
   })
 
   return (

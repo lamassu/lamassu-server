@@ -4,7 +4,7 @@ import {
   spacer,
   placeholderColor,
   zircon,
-  xxl,
+  xxl
 } from 'src/styling/variables'
 
 import typographyStyles from './typography/styles'
@@ -28,8 +28,8 @@ export default {
       width: 'auto',
       marginLeft: 0,
       minWidth: 250,
-      boxShadow: `-200px 0px 0px 0px ${sidebarColor}`,
-    },
+      boxShadow: `-200px 0px 0px 0px ${sidebarColor}`
+    }
   },
 
   link: {
@@ -39,7 +39,7 @@ export default {
     margin: '12px 24px 12px 0',
     cursor: 'pointer',
     '&:hover::after': {
-      height: '140%',
+      height: '140%'
     },
     '&:after': {
       content: '""',
@@ -52,27 +52,27 @@ export default {
       bottom: -2,
       position: 'absolute',
       borderRadius: 1000,
-      transition: 'all 0.2s cubic-bezier(0.95, 0.1, 0.45, 0.94)',
-    },
+      transition: 'all 0.2s cubic-bezier(0.95, 0.1, 0.45, 0.94)'
+    }
   },
   activeLink: {
     color: primaryColor,
     fontWeight: 700,
     '&::after': {
-      height: '140%',
-    },
+      height: '140%'
+    }
   },
   customRenderLink: {
     '&:hover::after': {
-      height: '100%',
+      height: '100%'
     },
     '&:after': {
-      bottom: 0,
-    },
+      bottom: 0
+    }
   },
   customRenderActiveLink: {
     '&::after': {
-      height: '100%',
-    },
-  },
+      height: '100%'
+    }
+  }
 }

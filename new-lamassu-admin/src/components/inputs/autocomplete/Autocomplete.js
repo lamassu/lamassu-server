@@ -9,7 +9,7 @@ import {
   renderInput,
   renderSuggestion,
   filterSuggestions,
-  styles,
+  styles
 } from './commons'
 
 const Autocomplete = memo(
@@ -36,7 +36,7 @@ const Autocomplete = memo(
           highlightedIndex,
           inputValue,
           toggleMenu,
-          clearSelection,
+          clearSelection
         }) => (
           <div className={classes.container}>
             {renderInput({
@@ -58,12 +58,12 @@ const Autocomplete = memo(
                     clearSelection()
                   }
                   inputValue = it.target.value
-                },
+                }
               }),
               ref: node => {
                 setPopperNode(node)
               },
-              label,
+              label
             })}
             <Popper open={isOpen} anchorEl={popperNode}>
               <div
@@ -74,20 +74,20 @@ const Autocomplete = memo(
                   square
                   style={{
                     marginTop: 8,
-                    minWidth: popperNode ? popperNode.clientWidth : null,
+                    minWidth: popperNode ? popperNode.clientWidth : null
                   }}>
                   {filterSuggestions(
                     suggestions,
                     inputValue2,
-                    value ? R.of(value) : [],
+                    value ? R.of(value) : []
                   ).map((suggestion, index) =>
                     renderSuggestion({
                       suggestion,
                       index,
                       itemProps: getItemProps({ item: suggestion }),
                       highlightedIndex,
-                      selectedItem: selectedItem2,
-                    }),
+                      selectedItem: selectedItem2
+                    })
                   )}
                 </Paper>
               </div>
@@ -96,7 +96,7 @@ const Autocomplete = memo(
         )}
       </Downshift>
     )
-  },
+  }
 )
 
 export default withStyles(styles)(Autocomplete)

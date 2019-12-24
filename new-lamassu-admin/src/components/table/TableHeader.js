@@ -6,7 +6,7 @@ import {
   tableHeaderColor,
   tableHeaderHeight,
   spacer,
-  white,
+  white
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
@@ -19,11 +19,11 @@ const useStyles = makeStyles({
     height: tableHeaderHeight,
     textAlign: 'left',
     color: white,
-    padding: `0 ${spacer * 3}px`,
+    padding: `0 ${spacer * 3}px`
   },
   alignRight: {
-    textAlign: 'right',
-  },
+    textAlign: 'right'
+  }
 })
 
 const TableHeaderCell = memo(
@@ -31,7 +31,7 @@ const TableHeaderCell = memo(
     const classes = useStyles()
     const styles = {
       [classes.th]: true,
-      [classes.alignRight]: rightAlign,
+      [classes.alignRight]: rightAlign
     }
 
     return (
@@ -39,7 +39,7 @@ const TableHeaderCell = memo(
         {children}
       </th>
     )
-  },
+  }
 )
 
 export default TableHeaderCell

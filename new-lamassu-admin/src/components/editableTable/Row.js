@@ -28,13 +28,13 @@ const ERow = memo(({ elements }) => {
       {elements.map(
         (
           { name, input, size, textAlign, view = () => {}, inputProps },
-          idx,
+          idx
         ) => (
           <Td key={idx} size={size} textAlign={textAlign}>
             {editing && getField(name, input, inputProps)}
             {!editing && view(values[name])}
           </Td>
-        ),
+        )
       )}
       <Td size={175}>
         {editing ? (

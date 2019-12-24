@@ -10,7 +10,7 @@ export default {
     width: WIDTH - 41,
     display: 'block',
     whiteSpace: 'nowrap',
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   select: {
     width: WIDTH,
@@ -18,7 +18,7 @@ export default {
     '& label': {
       extend: label1,
       color: offColor,
-      paddingLeft: 10,
+      paddingLeft: 10
     },
     '& button': {
       extend: p,
@@ -32,7 +32,7 @@ export default {
       textAlign: 'left',
       color: offColor,
       cursor: 'pointer',
-      outline: '0 none',
+      outline: '0 none'
     },
     '& ul': {
       maxHeight: '200px',
@@ -54,43 +54,43 @@ export default {
           width: '100%',
           display: 'block',
           overflow: 'hidden',
-          whiteSpace: 'nowrap',
-        },
+          whiteSpace: 'nowrap'
+        }
       },
       '& li:hover': {
         backgroundColor: offColor,
-        color: white,
-      },
+        color: white
+      }
     },
     '& svg': {
       position: 'absolute',
       top: 12,
       right: 14,
-      fill: offColor,
-    },
+      fill: offColor
+    }
   },
   selectFiltered: {
     '& button': {
       backgroundColor: offColor,
-      color: white,
+      color: white
     },
     '& ul': {
       '& li': {
         backgroundColor: offColor,
-        color: white,
+        color: white
       },
       '& li:hover': {
         backgroundColor: subheaderColor,
-        color: offColor,
-      },
+        color: offColor
+      }
     },
     '& svg': {
-      fill: [[white], '!important'],
-    },
+      fill: [[white], '!important']
+    }
   },
   open: {
     '& button': {
-      borderRadius: [[16, 16, 0, 0]],
-    },
-  },
+      borderRadius: [[16, 16, 0, 0]]
+    }
+  }
 }

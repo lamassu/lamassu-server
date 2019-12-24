@@ -8,8 +8,8 @@ import { H1 } from './typography'
 const useStyles = makeStyles({
   title: {
     marginTop: spacer * 3.5,
-    marginBottom: spacer * 3,
-  },
+    marginBottom: spacer * 3
+  }
 })
 
 const Title = memo(({ children }) => {

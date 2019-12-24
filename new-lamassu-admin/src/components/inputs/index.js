@@ -15,5 +15,5 @@ export {
   Checkbox,
   Switch,
   Select,
-  RadioGroup,
+  RadioGroup
 }

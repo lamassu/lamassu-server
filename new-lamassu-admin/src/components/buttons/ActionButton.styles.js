@@ -4,7 +4,7 @@ import {
   subheaderColor,
   subheaderDarkColor,
   offColor,
-  offDarkColor,
+  offDarkColor
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
@@ -14,11 +14,11 @@ const colors = (color1, color2, color3) => {
   return {
     backgroundColor: color1,
     '&:hover': {
-      backgroundColor: color2,
+      backgroundColor: color2
     },
     '&:active': {
-      backgroundColor: color3,
-    },
+      backgroundColor: color3
+    }
   }
 }
 
@@ -32,22 +32,22 @@ export default {
     borderRadius: 6,
     padding: '0 8px',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   primary: {
     extend: colors(subheaderColor, subheaderDarkColor, offColor),
     '&:active': {
       color: white,
       '& $actionButtonIcon': {
-        display: 'none',
+        display: 'none'
       },
       '& $actionButtonIconActive': {
-        display: 'flex',
-      },
+        display: 'flex'
+      }
     },
     '& $actionButtonIconActive': {
-      display: 'none',
-    },
+      display: 'none'
+    }
   },
   secondary: {
     extend: colors(offColor, offDarkColor, white),
@@ -55,18 +55,18 @@ export default {
     '&:active': {
       color: fontColor,
       '& $actionButtonIcon': {
-        display: 'flex',
+        display: 'flex'
       },
       '& $actionButtonIconActive': {
-        display: 'none',
-      },
+        display: 'none'
+      }
     },
     '& $actionButtonIcon': {
-      display: 'none',
+      display: 'none'
     },
     '& $actionButtonIconActive': {
-      display: 'flex',
-    },
+      display: 'flex'
+    }
   },
   actionButtonIcon: {
     display: 'flex',
@@ -74,9 +74,9 @@ export default {
     '@global': {
       svg: {
         width: 14,
-        height: 14,
-      },
-    },
+        height: 14
+      }
+    }
   },
-  actionButtonIconActive: {},
+  actionButtonIconActive: {}
 }

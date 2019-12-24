@@ -9,12 +9,12 @@ const onlyFirstToUpper = S.compose(toFirstUpper)(S.toLower)
 const splitOnUpper = R.compose(
   S.splitOn(' '),
   R.replace(/([A-Z])/g, ' $1'),
-  toFirstLower,
+  toFirstLower
 )
 const startCase = R.compose(
   S.joinWith(' '),
   S.map(onlyFirstToUpper),
-  splitOnUpper,
+  splitOnUpper
 )
 
 export { startCase, onlyFirstToUpper }

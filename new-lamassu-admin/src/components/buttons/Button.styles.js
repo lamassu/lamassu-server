@@ -4,7 +4,7 @@ import {
   secondaryColor,
   secondaryColorDark,
   secondaryColorDarker,
-  spacer,
+  spacer
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
@@ -38,11 +38,11 @@ export default {
         boxShadow: 'none',
         '&:hover': {
           backgroundColor: disabledColor,
-          boxShadow: 'none',
+          boxShadow: 'none'
         },
         '&:active': {
-          marginTop: 0,
-        },
+          marginTop: 0
+        }
       },
       shadowSize,
       height,
@@ -51,13 +51,13 @@ export default {
       boxShadow: `0 ${shadowSize}px ${secondaryColorDark}`,
       '&:hover': {
         backgroundColor: secondaryColorDark,
-        boxShadow: `0 ${shadowSize}px ${secondaryColorDarker}`,
+        boxShadow: `0 ${shadowSize}px ${secondaryColorDarker}`
       },
       '&:active': {
         marginTop: shadowSize / 2,
         backgroundColor: secondaryColorDark,
-        boxShadow: `0 ${shadowSize / 2}px ${secondaryColorDarker}`,
-      },
+        boxShadow: `0 ${shadowSize / 2}px ${secondaryColorDarker}`
+      }
     }
-  },
+  }
 }

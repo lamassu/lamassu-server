@@ -11,16 +11,16 @@ const styles = {
     extend: baseButton,
     width: baseButton.height,
     borderRadius: baseButton.height / 2,
-    display: 'flex',
+    display: 'flex'
   },
   primary,
   buttonIcon: {
     margin: 'auto',
     '& svg': {
-      overflow: 'visible',
-    },
+      overflow: 'visible'
+    }
   },
-  buttonIconActive: {}, // required to extend primary
+  buttonIconActive: {} // required to extend primary
 }
 
 const useStyles = makeStyles(styles)
@@ -30,7 +30,7 @@ const FeatureButton = memo(({ className, Icon, InverseIcon, ...props }) => {
 
   const classNames = {
     [classes.featureButton]: true,
-    [classes.primary]: true,
+    [classes.primary]: true
   }
 
   return (

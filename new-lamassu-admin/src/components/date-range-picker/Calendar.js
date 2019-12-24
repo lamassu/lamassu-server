@@ -15,7 +15,7 @@ const styles = {
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   navbar: {
     extend: p,
@@ -39,9 +39,9 @@ const styles = {
       overflow: 'hidden',
       '& svg': {
         position: 'absolute',
-        left: 0,
-      },
-    },
+        left: 0
+      }
+    }
   },
   table: {
     borderCollapse: 'collapse',
@@ -49,20 +49,20 @@ const styles = {
     color: primaryColor,
     '& tr': {
       '&:first-child': {
-        paddingLeft: 5,
+        paddingLeft: 5
       },
       '&:last-child': {
-        paddingRight: 5,
-      },
+        paddingRight: 5
+      }
     },
     '& th, & td': {
       margin: 0,
-      padding: [[3, 0, 3, 0]],
+      padding: [[3, 0, 3, 0]]
     },
     '& th': {
-      extend: label2,
-    },
-  },
+      extend: label2
+    }
+  }
 }
 
 const useStyles = makeStyles(styles)
@@ -77,13 +77,13 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
     Number.parseInt(
       moment(month)
         .startOf('month')
-        .format('d'),
+        .format('d')
     )
   const monthLength = month =>
     Number.parseInt(
       moment(month)
         .endOf('month')
-        .format('D'),
+        .format('D')
     )
 
   const monthdays = month => {
@@ -92,25 +92,25 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
     const lastMonthDays = R.map(i =>
       moment(lastMonth)
         .endOf('month')
-        .subtract(i, 'days'),
+        .subtract(i, 'days')
     )(lastMonthRange)
 
     const thisMonthRange = R.range(0, monthLength(month))
     const thisMonthDays = R.map(i =>
       moment(month)
         .startOf('month')
-        .add(i, 'days'),
+        .add(i, 'days')
     )(thisMonthRange)
 
     const nextMonth = moment(month).add(1, 'month')
     const nextMonthRange = R.range(
       0,
-      42 - lastMonthDays.length - thisMonthDays.length,
+      42 - lastMonthDays.length - thisMonthDays.length
     )
     const nextMonthDays = R.map(i =>
       moment(nextMonth)
         .startOf('month')
-        .add(i, 'days'),
+        .add(i, 'days')
     )(nextMonthRange)
 
     return R.concat(R.concat(lastMonthDays, thisMonthDays), nextMonthDays)
@@ -125,7 +125,7 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
       setCurrentDisplayedMonth(
         prevMonth.isSameOrAfter(minDate, 'month')
           ? prevMonth
-          : currentDisplayedMonth,
+          : currentDisplayedMonth
       )
     }
   }
@@ -136,7 +136,7 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
       setCurrentDisplayedMonth(
         nextMonth.isSameOrBefore(maxDate, 'month')
           ? nextMonth
-          : currentDisplayedMonth,
+          : currentDisplayedMonth
       )
     }
   }
@@ -149,7 +149,7 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
         </button>
         <span>
           {`${currentDisplayedMonth.format(
-            'MMMM',
+            'MMMM'
           )} ${currentDisplayedMonth.format('YYYY')}`}
         </span>
         <button onClick={() => handleNavNext(currentDisplayedMonth)}>

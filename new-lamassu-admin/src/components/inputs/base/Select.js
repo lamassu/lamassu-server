@@ -19,19 +19,19 @@ function Select({ label, items, ...props }) {
     getToggleButtonProps,
     getLabelProps,
     getMenuProps,
-    getItemProps,
+    getItemProps
   } = useSelect({
     items,
     selectedItem: props.selectedItem,
     onSelectedItemChange: item => {
       props.onSelectedItemChange(item.selectedItem)
-    },
+    }
   })
 
   const selectClassNames = {
     [classes.select]: true,
     [classes.selectFiltered]: selectedItem !== props.default,
-    [classes.open]: isOpen,
+    [classes.open]: isOpen
   }
 
   return (

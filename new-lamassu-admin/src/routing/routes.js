@@ -24,9 +24,9 @@ const tree = [
       {
         key: 'server-logs',
         label: 'Server',
-        route: '/maintenance/server-logs',
-      },
-    ],
+        route: '/maintenance/server-logs'
+      }
+    ]
   },
   {
     key: 'settings',
@@ -36,11 +36,11 @@ const tree = [
       {
         key: 'commissions',
         label: 'Commissions',
-        route: '/settings/commissions',
+        route: '/settings/commissions'
       },
-      { key: 'locale', label: 'Locale', route: '/settings/locale' },
-    ],
-  },
+      { key: 'locale', label: 'Locale', route: '/settings/locale' }
+    ]
+  }
   // compliance: { label: 'Compliance', children: [{ label: 'Locale', route: '/locale' }] }
 ]
 

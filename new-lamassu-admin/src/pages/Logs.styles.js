@@ -3,13 +3,13 @@ export default {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   wrapper: {
     flex: 1,
     display: 'flex',
     flexDirection: 'row',
-    height: '100%',
+    height: '100%'
   },
   tableWrapper: {
     flex: 1,
@@ -18,36 +18,36 @@ export default {
     overflowX: 'auto',
     width: '100%',
     maxWidth: '78%',
-    maxHeight: '70vh',
+    maxHeight: '70vh'
   },
   table: {
     whiteSpace: 'nowrap',
     display: 'block',
     '& th': {
       position: 'sticky',
-      top: 0,
-    },
+      top: 0
+    }
   },
   dateColumn: {
-    minWidth: 160,
+    minWidth: 160
   },
   levelColumn: {
-    minWidth: 100,
+    minWidth: 100
   },
   fillColumn: {
-    width: '100%',
+    width: '100%'
   },
   button: {
-    margin: 8,
+    margin: 8
   },
   titleAndButtonsContainer: {
-    display: 'flex',
+    display: 'flex'
   },
   buttonsWrapper: {
     display: 'flex',
     marginLeft: 10,
     '& > *': {
-      margin: 'auto 10px',
-    },
-  },
+      margin: 'auto 10px'
+    }
+  }
 }

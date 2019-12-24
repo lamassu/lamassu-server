@@ -11,7 +11,7 @@ const sizes = {
   languages: 240,
   cryptoCurrencies: 270,
   showRates: 125,
-  action: 175,
+  action: 175
 }
 
 const MainForm = memo(({ value, save, auxData, validationSchema }) => {
@@ -29,36 +29,36 @@ const MainForm = memo(({ value, save, auxData, validationSchema }) => {
           size: sizes.country,
           view: R.path(['display']),
           input: Autocomplete,
-          inputProps: { suggestions: getData(['countries']) },
+          inputProps: { suggestions: getData(['countries']) }
         },
         {
           name: 'fiatCurrency',
           size: sizes.fiatCurrency,
           view: R.path(['code']),
           input: Autocomplete,
-          inputProps: { suggestions: getData(['currencies']) },
+          inputProps: { suggestions: getData(['currencies']) }
         },
         {
           name: 'languages',
           size: sizes.languages,
           view: displayCodeArray,
           input: AutocompleteMultiple,
-          inputProps: { suggestions: getData(['languages']) },
+          inputProps: { suggestions: getData(['languages']) }
         },
         {
           name: 'cryptoCurrencies',
           size: sizes.cryptoCurrencies,
           view: displayCodeArray,
           input: AutocompleteMultiple,
-          inputProps: { suggestions: getData(['cryptoCurrencies']) },
+          inputProps: { suggestions: getData(['cryptoCurrencies']) }
         },
         {
           name: 'showRates',
           size: sizes.showRates,
           textAlign: 'center',
           view: it => (it ? 'true' : 'false'),
-          input: Checkbox,
-        },
+          input: Checkbox
+        }
       ]}
     />
   )

@@ -19,7 +19,7 @@ const AuthRegister = () => {
       if (res) {
         history.push('/')
       }
-    },
+    }
   })
 
   return <span>registering...</span>

@@ -36,7 +36,7 @@ const DetailsRow = ({ it: tx, ...props }) => {
   const txHash = tx.txHash
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(
-    5,
+    5
   )
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission =
@@ -45,14 +45,14 @@ const DetailsRow = ({ it: tx, ...props }) => {
       : fiat * commissionPercentage + Number.parseFloat(tx.fee)
   const customer = tx.customerIdCardData && {
     name: `${onlyFirstToUpper(
-      tx.customerIdCardData.firstName,
+      tx.customerIdCardData.firstName
     )} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
     age: moment().diff(moment(tx.customerIdCardData.dateOfBirth), 'years'),
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
     idCardExpirationDate: moment(tx.customerIdCardData.expirationDate).format(
-      'DD-MM-YYYY',
-    ),
+      'DD-MM-YYYY'
+    )
   }
 
   const formatAddress = (address = '') => {

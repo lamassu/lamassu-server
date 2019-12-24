@@ -8,7 +8,7 @@ import {
   secondaryColorDarker,
   offErrorColor,
   errorColor,
-  offColor,
+  offColor
 } from 'src/styling/variables'
 import { onlyFirstToUpper } from 'src/utils/string'
 
@@ -19,28 +19,28 @@ const styles = {
   uptimeContainer: {
     display: 'inline-block',
     minWidth: 104,
-    margin: [[0, 20]],
+    margin: [[0, 20]]
   },
   name: {
     extend: label1,
     paddingLeft: 4,
-    color: offColor,
+    color: offColor
   },
   uptime: {
     extend: label1,
     height: 24,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   running: {
     backgroundColor: secondaryColorLighter,
-    color: secondaryColorDarker,
+    color: secondaryColorDarker
   },
   notRunning: {
     backgroundColor: offErrorColor,
-    color: errorColor,
-  },
+    color: errorColor
+  }
 }
 
 const useStyles = makeStyles(styles)
@@ -51,7 +51,7 @@ const Uptime = ({ process, ...props }) => {
   const uptimeClassNames = {
     [classes.uptime]: true,
     [classes.running]: process.state === 'RUNNING',
-    [classes.notRunning]: process.state !== 'RUNNING',
+    [classes.notRunning]: process.state !== 'RUNNING'
   }
   const uptime = time => {
     if (time < 60) return `${time}s`

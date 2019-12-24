@@ -3,7 +3,7 @@ import {
   StylesProvider,
   jssPreset,
   MuiThemeProvider,
-  makeStyles,
+  makeStyles
 } from '@material-ui/core/styles'
 import { setAutoFreeze } from 'immer'
 import { create } from 'jss'
@@ -24,7 +24,7 @@ const client = new ApolloClient({
   uri:
     process.env.NODE_ENV === 'development'
       ? 'https://localhost:8070/graphql/'
-      : '/graphql',
+      : '/graphql'
 })
 
 if (process.env.NODE_ENV !== 'production') {
@@ -36,7 +36,7 @@ if (process.env.NODE_ENV !== 'production') {
 setAutoFreeze(false)
 
 const jss = create({
-  plugins: [extendJss(), ...jssPreset().plugins],
+  plugins: [extendJss(), ...jssPreset().plugins]
 })
 
 const fill = '100%'
@@ -49,7 +49,7 @@ const useStyles = makeStyles({
     width: fill,
     minHeight: fill,
     display: 'flex',
-    flexDirection,
+    flexDirection
   },
   wrapper: {
     width: mainWidth,
@@ -57,8 +57,8 @@ const useStyles = makeStyles({
     margin: '0 auto',
     flex: 1,
     display: 'flex',
-    flexDirection,
-  },
+    flexDirection
+  }
 })
 
 const App = () => {

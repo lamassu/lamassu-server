@@ -8,7 +8,7 @@ import {
   tableSmCellHeight,
   tableLgCellHeight,
   tableErrorColor,
-  tableSuccessColor,
+  tableSuccessColor
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
@@ -20,21 +20,21 @@ const useStyles = makeStyles({
     padding: 4,
     height: tableCellHeight,
     backgroundColor: tableCellColor,
-    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)',
+    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
   },
   lg: {
     extend: info2,
-    height: tableLgCellHeight,
+    height: tableLgCellHeight
   },
   sm: {
-    height: tableSmCellHeight,
+    height: tableSmCellHeight
   },
   error: {
-    backgroundColor: tableErrorColor,
+    backgroundColor: tableErrorColor
   },
   success: {
-    backgroundColor: tableSuccessColor,
-  },
+    backgroundColor: tableSuccessColor
+  }
 })
 
 const TableRow = memo(
@@ -45,7 +45,7 @@ const TableRow = memo(
       [classes.sm]: !header && size === 'sm',
       [classes.lg]: !header && size === 'lg',
       [classes.error]: error,
-      [classes.success]: success,
+      [classes.success]: success
     }
 
     return (
@@ -53,7 +53,7 @@ const TableRow = memo(
         {children}
       </tr>
     )
-  },
+  }
 )
 
 export default TableRow

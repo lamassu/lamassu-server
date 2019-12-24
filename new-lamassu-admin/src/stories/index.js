@@ -4,7 +4,7 @@ import {
   MuiThemeProvider,
   createMuiTheme,
   StylesProvider,
-  jssPreset,
+  jssPreset
 } from '@material-ui/core/styles'
 import { withKnobs, text, boolean, select } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react'
@@ -26,12 +26,12 @@ import {
   P,
   Info1,
   Info2,
-  Mono,
+  Mono
 } from '../components/typography'
 import { inputFontFamily, secondaryColor } from '../styling/variables'
 
 const jss = create({
-  plugins: [extendJss(), ...jssPreset().plugins],
+  plugins: [extendJss(), ...jssPreset().plugins]
 })
 
 const Wrapper = ({ children }) => (
@@ -45,39 +45,39 @@ story.addDecorator(withKnobs)
 
 const colors = {
   Primary: 'primary',
-  Secondary: 'secondary',
+  Secondary: 'secondary'
 }
 
 const linkColors = {
   Primary: 'primary',
   Secondary: 'secondary',
-  'No Color': 'no-color',
+  'No Color': 'no-color'
 }
 
 const sizes = {
   Large: 'lg',
-  Small: 'sm',
+  Small: 'sm'
 }
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: inputFontFamily,
+    fontFamily: inputFontFamily
   },
   MuiButtonBase: {
-    disableRipple: true,
+    disableRipple: true
   },
   palette: {
     primary: {
       light: secondaryColor,
       dark: secondaryColor,
-      main: secondaryColor,
+      main: secondaryColor
     },
     secondary: {
       light: secondaryColor,
       dark: secondaryColor,
-      main: secondaryColor,
-    },
-  },
+      main: secondaryColor
+    }
+  }
 })
 
 story.add('Button', () => (
@@ -128,14 +128,14 @@ story.add('Checkbox', () => (
     <Checkbox
       value="checkedC"
       inputProps={{
-        'aria-label': 'uncontrolled-checkbox',
+        'aria-label': 'uncontrolled-checkbox'
       }}
     />
 
     <Checkbox
       value="checkedB"
       inputProps={{
-        'aria-label': 'uncontrolled-checkbox',
+        'aria-label': 'uncontrolled-checkbox'
       }}
     />
   </Wrapper>

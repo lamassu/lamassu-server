@@ -11,7 +11,7 @@ const checkOnlyDev = () => {
 
 const S = sanctuary.create({
   checkTypes: checkOnlyDev(),
-  env: sanctuary.env,
+  env: sanctuary.env
 })
 
 export default S

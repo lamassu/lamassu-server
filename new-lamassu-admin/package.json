@@ -66,6 +66,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "fix": "eslint --fix --ext .js,.md,.json src/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

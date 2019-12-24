@@ -174,5 +174,5 @@ export {
   tableHeaderColor,
   tableCellColor,
   tableErrorColor,
-  tableSuccessColor,
+  tableSuccessColor
 }

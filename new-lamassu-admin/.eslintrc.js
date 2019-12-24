@@ -1,6 +1,3 @@
-const baseConfig = require('eslint-config-prettier-standard/lib/base')
-const basePrettierConfig = baseConfig.rules['prettier/prettier'][1]
-
 module.exports = {
   extends: [
     'react-app',
@@ -16,16 +13,6 @@ module.exports = {
     }
   },
   rules: {
-    'prettier/prettier': [
-      'error',
-      Object.assign(
-        {},
-        basePrettierConfig,
-        {
-          trailingComma: 'all'
-        }
-      )
-    ],
     'import/order': ['error', {
       groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
       // TODO 

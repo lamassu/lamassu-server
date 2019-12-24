@@ -4,24 +4,24 @@ import { backgroundColor, inputFontFamily, secondaryColor } from './variables'
 
 export default createMuiTheme({
   typography: {
-    fontFamily: inputFontFamily,
+    fontFamily: inputFontFamily
   },
   MuiButtonBase: {
-    disableRipple: true,
+    disableRipple: true
   },
   palette: {
     primary: {
       light: secondaryColor,
       dark: secondaryColor,
-      main: secondaryColor,
+      main: secondaryColor
     },
     secondary: {
       light: secondaryColor,
       dark: secondaryColor,
-      main: secondaryColor,
+      main: secondaryColor
     },
     background: {
-      default: backgroundColor,
-    },
-  },
+      default: backgroundColor
+    }
+  }
 })

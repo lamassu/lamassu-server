@@ -7,23 +7,23 @@ import {
   fontColor,
   inputFontSize,
   inputFontSizeLg,
-  inputFontWeight,
+  inputFontWeight
 } from '../../../styling/variables'
 
 const useStyles = makeStyles({
   inputRoot: {
     fontSize: inputFontSize,
     color: fontColor,
-    fontWeight: inputFontWeight,
+    fontWeight: inputFontWeight
   },
   inputRootLg: {
     fontSize: inputFontSizeLg,
     color: fontColor,
-    fontWeight: inputFontWeight,
+    fontWeight: inputFontWeight
   },
   labelRoot: {
-    color: fontColor,
-  },
+    color: fontColor
+  }
 })
 
 const TextInput = memo(
@@ -57,13 +57,13 @@ const TextInput = memo(
               position="end">
               {suffix}
             </InputAdornment>
-          ) : null,
+          ) : null
         }}
         InputLabelProps={{ className: classes.labelRoot }}
         {...props}
       />
     )
-  },
+  }
 )
 
 export default TextInput

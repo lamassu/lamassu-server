@@ -5,7 +5,7 @@ import {
   AutoSizer,
   List,
   CellMeasurer,
-  CellMeasurerCache,
+  CellMeasurerCache
 } from 'react-virtualized'
 
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
@@ -18,11 +18,11 @@ const styles = {
     border: 'none',
     backgroundColor: 'transparent',
     cursor: 'pointer',
-    padding: 4,
+    padding: 4
   },
   row: {
-    borderRadius: 0,
-  },
+    borderRadius: 0
+  }
 }
 
 const useStyles = makeStyles(styles)
@@ -55,7 +55,7 @@ const ExpRow = ({
                 textAlign={textAlign}>
                 {view(data)}
               </Td>
-            ),
+            )
           )}
         <Td size={elements[elements.length - 1].size}>
           <button
@@ -95,7 +95,7 @@ const ExpTable = ({
 
   const cache = new CellMeasurerCache({
     defaultHeight: 62,
-    fixedWidth: true,
+    fixedWidth: true
   })
 
   function rowRenderer({ index, isScrolling, key, parent, style }) {

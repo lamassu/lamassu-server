@@ -8,7 +8,7 @@ import {
   TableRow,
   TableHeader,
   TableBody,
-  TableCell,
+  TableCell
 } from 'src/components/table'
 import { H1, H3, Info1, TL2 } from 'src/components/typography'
 

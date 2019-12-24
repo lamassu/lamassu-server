@@ -7,8 +7,8 @@ import Calendar from './Calendar'
 const styles = {
   wrapper: {
     backgroundColor: 'white',
-    borderRadius: 10,
-  },
+    borderRadius: 10
+  }
 }
 
 const useStyles = makeStyles(styles)

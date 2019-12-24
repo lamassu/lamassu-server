@@ -7,14 +7,14 @@ import { Label1 } from './typography'
 const useStyles = makeStyles({
   wrapper: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   colorIndicator: {
     borderRadius: 3,
     height: 12,
     width: 12,
-    marginRight: 8,
-  },
+    marginRight: 8
+  }
 })
 
 const TableLabel = ({ className, label, color, ...props }) => {

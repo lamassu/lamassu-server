@@ -11,8 +11,8 @@ const styles = {
     extend: baseButton,
     borderRadius: baseButton.height / 2,
     outline: 0,
-    padding: '0 20px',
-  },
+    padding: '0 20px'
+  }
 }
 
 const useStyles = makeStyles(styles)

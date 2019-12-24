@@ -12,7 +12,7 @@ const Link = memo(({ submit, className, children, color, size, ...props }) => {
     [classes.link]: true,
     [classes.primary]: color === 'primary',
     [classes.secondary]: color === 'secondary',
-    [classes.noColor]: color === 'noColor',
+    [classes.noColor]: color === 'noColor'
   }
 
   return (

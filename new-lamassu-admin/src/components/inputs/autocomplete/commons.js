@@ -8,7 +8,7 @@ import slugify from 'slugify'
 import {
   fontColor,
   inputFontSize,
-  inputFontWeight,
+  inputFontWeight
 } from 'src/styling/variables'
 import S from 'src/utils/sanctuary'
 
@@ -22,9 +22,9 @@ function renderInput(inputProps) {
         classes: {
           root: classes.inputRoot,
           input: classes.inputInput,
-          underline: success ? classes.success : '',
+          underline: success ? classes.success : ''
         },
-        ...InputProps,
+        ...InputProps
       }}
       {...other}
     />
@@ -36,7 +36,7 @@ function renderSuggestion({
   index,
   itemProps,
   highlightedIndex,
-  selectedItem,
+  selectedItem
 }) {
   const isHighlighted = highlightedIndex === index
 
@@ -51,7 +51,7 @@ function renderSuggestion({
       component="div"
       style={{
         fontSize: 14,
-        fontWeight: isSelected ? 500 : 400,
+        fontWeight: isSelected ? 500 : 400
       }}>
       {suggestion.display}
     </MenuItem>
@@ -66,7 +66,7 @@ function filterSuggestions(suggestions = [], value = '', currentValues = []) {
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    keys: ['code', 'display'],
+    keys: ['code', 'display']
   }
 
   const fuse = new Fuse(suggestions, options)
@@ -83,36 +83,36 @@ function filterSuggestions(suggestions = [], value = '', currentValues = []) {
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 250,
+    height: 250
   },
   container: {
     flexGrow: 1,
-    position: 'relative',
+    position: 'relative'
   },
   paper: {
     // position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing(1),
     left: 0,
-    right: 0,
+    right: 0
   },
   inputRoot: {
     fontSize: inputFontSize,
     color: fontColor,
     fontWeight: inputFontWeight,
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
   inputInput: {
-    flex: 1,
+    flex: 1
   },
   success: {
     '&:after': {
-      transform: 'scaleX(1)',
-    },
+      transform: 'scaleX(1)'
+    }
   },
   divider: {
-    height: theme.spacing(2),
-  },
+    height: theme.spacing(2)
+  }
 })
 
 export { renderInput, renderSuggestion, filterSuggestions, styles }

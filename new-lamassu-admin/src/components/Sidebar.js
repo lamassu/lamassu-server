@@ -12,7 +12,7 @@ const Sidebar = ({
   isSelected,
   onClick,
   children,
-  itemRender,
+  itemRender
 }) => {
   const classes = useStyles()
 
@@ -26,7 +26,7 @@ const Sidebar = ({
               [classes.activeLink]: isSelected(it),
               [classes.customRenderActiveLink]: itemRender && isSelected(it),
               [classes.customRenderLink]: itemRender,
-              [classes.link]: true,
+              [classes.link]: true
             })}
             onClick={() => onClick(it)}>
             {itemRender ? itemRender(it) : displayName(it)}

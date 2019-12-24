@@ -10,17 +10,17 @@ const cpcStyles = {
     extend: mono,
     display: 'flex',
     alignItems: 'center',
-    height: 32,
+    height: 32
   },
   address: {
-    lineBreak: 'anywhere',
+    lineBreak: 'anywhere'
   },
   buttonWrapper: {
     '& button': {
       border: 'none',
       backgroundColor: 'transparent',
-      cursor: 'pointer',
-    },
+      cursor: 'pointer'
+    }
   },
   popoverContent: {
     extend: label1,
@@ -29,44 +29,44 @@ const cpcStyles = {
     alignItems: 'center',
     color: white,
     borderRadius: 4,
-    padding: [[5, 9]],
-  },
+    padding: [[5, 9]]
+  }
 }
 
 const detailsRowStyles = {
   wrapper: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   col: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   col1: {
-    width: 413,
+    width: 413
   },
   col2: {
-    width: 506,
+    width: 506
   },
   col3: {
-    width: 233,
+    width: 233
   },
   innerRow: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   row: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: [[25, 0]],
+    margin: [[25, 0]]
   },
   mono: {
-    extend: mono,
+    extend: mono
   },
   txIcon: {
-    marginRight: 10,
+    marginRight: 10
   },
   availableIds: {
     width: 110,
@@ -76,23 +76,23 @@ const detailsRowStyles = {
       flexDirection: 'row',
       '& button': {
         '&:first-child': {
-          marginRight: 4,
+          marginRight: 4
         },
         '&:last-child': {
-          marginLeft: 4,
+          marginLeft: 4
         },
         '&:only-child': {
-          margin: 0,
+          margin: 0
         },
         '&:nth-child(2):last-child': {
-          margin: 0,
-        },
-      },
-    },
+          margin: 0
+        }
+      }
+    }
   },
   commissionWrapper: {
     width: 110,
-    marginRight: 155,
+    marginRight: 155
   },
   idCardDataCard: {
     extend: p,
@@ -106,28 +106,28 @@ const detailsRowStyles = {
         height: 37,
         marginBottom: 15,
         '&:last-child': {
-          marginBottom: 0,
-        },
-      },
-    },
+          marginBottom: 0
+        }
+      }
+    }
   },
   cryptoAddr: {
-    width: 252,
+    width: 252
   },
   txId: {
-    width: 346,
+    width: 346
   },
   sessionId: {
-    width: 184,
-  },
+    width: 184
+  }
 }
 
 const labelStyles = {
   label: {
     extend: label1,
     color: offColor,
-    marginBottom: 4,
-  },
+    marginBottom: 4
+  }
 }
 
 const mainStyles = {
@@ -139,21 +139,21 @@ const mainStyles = {
     flexDirection: 'row',
     '& div': {
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'center'
     },
     '& > div:first-child': {
-      marginRight: 24,
+      marginRight: 24
     },
     '& span': {
       extend: label1,
-      marginLeft: 6,
-    },
+      marginLeft: 6
+    }
   },
   overflowTd: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
+    textOverflow: 'ellipsis'
+  }
 }
 
 export { cpcStyles, detailsRowStyles, labelStyles, mainStyles }

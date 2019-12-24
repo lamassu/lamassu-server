@@ -12,7 +12,7 @@ const LocaleSchema = Yup.object().shape({
   country: Yup.object().required('Required'),
   fiatCurrency: Yup.object().required('Required'),
   languages: Yup.array().required('Required'),
-  cryptoCurrencies: Yup.array().required('Required'),
+  cryptoCurrencies: Yup.array().required('Required')
 })
 
 const initialValues = {
@@ -20,7 +20,7 @@ const initialValues = {
   fiatCurrency: null,
   languages: [],
   cryptoCurrencies: [],
-  showRates: false,
+  showRates: false
 }
 
 const GET_AUX_DATA = gql`

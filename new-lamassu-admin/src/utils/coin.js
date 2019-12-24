@@ -5,38 +5,38 @@ const CRYPTO_CURRENCIES = [
     cryptoCode: 'BTC',
     display: 'Bitcoin',
     code: 'bitcoin',
-    unitScale: 8,
+    unitScale: 8
   },
   {
     cryptoCode: 'ETH',
     display: 'Ethereum',
     code: 'ethereum',
-    unitScale: 18,
+    unitScale: 18
   },
   {
     cryptoCode: 'LTC',
     display: 'Litecoin',
     code: 'litecoin',
-    unitScale: 8,
+    unitScale: 8
   },
   {
     cryptoCode: 'DASH',
     display: 'Dash',
     code: 'dash',
-    unitScale: 8,
+    unitScale: 8
   },
   {
     cryptoCode: 'ZEC',
     display: 'Zcash',
     code: 'zcash',
-    unitScale: 8,
+    unitScale: 8
   },
   {
     cryptoCode: 'BCH',
     display: 'Bitcoin Cash',
     code: 'bitcoincash',
-    unitScale: 8,
-  },
+    unitScale: 8
+  }
 ]
 
 function getCryptoCurrency(cryptoCode) {
