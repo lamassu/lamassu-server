@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+const adminServer = require('../lib/new-admin/graphql-dev')
+
+adminServer.run()
