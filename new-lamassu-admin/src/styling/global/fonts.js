@@ -26,18 +26,21 @@ export default {
   '@font-face': [
     {
       fontFamily: 'Mont',
-      src: ['url("/fonts/MontHeavy/mont-heavy-webfont.woff2") format("woff2")',
-        'url("/fonts/MontHeavy/mont-heavy-webfont.woff") format("woff")'],
+      src: [
+        'url("/fonts/MontHeavy/mont-heavy-webfont.woff2") format("woff2")',
+        'url("/fonts/MontHeavy/mont-heavy-webfont.woff") format("woff")'
+      ],
       fontWeight: 900,
       fontStyle: 'normal'
     },
     {
       fontFamily: 'Mont',
-      src: ['url("/fonts/MontHeavy/mont-bold-webfont.woff2") format("woff2")',
-        'url("/fonts/MontHeavy/mont-bold-webfont.woff") format("woff")'],
+      src: [
+        'url("/fonts/MontHeavy/mont-bold-webfont.woff2") format("woff2")',
+        'url("/fonts/MontHeavy/mont-bold-webfont.woff") format("woff")'
+      ],
       fontWeight: 700,
       fontStyle: 'normal'
-
     },
     // /*!
     //  * Web Fonts from Fontspring.com
@@ -64,15 +67,19 @@ export default {
     //  */
     {
       fontFamily: 'MuseoSans',
-      src: ['url("/fonts/MuseoSans/MuseoSans_500-webfont.woff2") format("woff2")',
-        'url("/fonts/MuseoSans/MuseoSans_500-webfont.woff") format("woff")'],
+      src: [
+        'url("/fonts/MuseoSans/MuseoSans_500-webfont.woff2") format("woff2")',
+        'url("/fonts/MuseoSans/MuseoSans_500-webfont.woff") format("woff")'
+      ],
       fontWeight: 500,
       fontStyle: 'normal'
     },
     {
       fontFamily: 'MuseoSans',
-      src: ['url("/fonts/MuseoSans/MuseoSans_700-webfont.woff2") format("woff2")',
-        'url("/fonts/MuseoSans/MuseoSans_700-webfont.woff") format("woff")'],
+      src: [
+        'url("/fonts/MuseoSans/MuseoSans_700-webfont.woff2") format("woff2")',
+        'url("/fonts/MuseoSans/MuseoSans_700-webfont.woff") format("woff")'
+      ],
       fontWeight: 700,
       fontStyle: 'normal'
     },

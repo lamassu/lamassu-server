@@ -1,13 +1,14 @@
+import * as R from 'ramda'
 import React from 'react'
-import { compose, get, keyBy } from 'lodash/fp'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
-import Commissions from '../pages/Commissions'
-import Logs from '../pages/Logs'
-import Locales from '../pages/Locales'
-import Funding from '../pages/Funding'
-import ServerLogs from '../pages/ServerLogs'
-import Transactions from '../pages/Transactions/Transactions'
+import Commissions from 'src/pages/Commissions'
+import Funding from 'src/pages/Funding'
+import Locales from 'src/pages/Locales'
+import Logs from 'src/pages/Logs'
+import ServerLogs from 'src/pages/ServerLogs'
+import Transactions from 'src/pages/Transactions/Transactions'
+import AuthRegister from 'src/pages/AuthRegister'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -20,7 +21,11 @@ const tree = [
     children: [
       { key: 'logs', label: 'Logs', route: '/maintenance/logs' },
       { key: 'fuding', label: 'Funding', route: '/maintenance/funding' },
-      { key: 'server-logs', label: 'Server', route: '/maintenance/server-logs' }
+      {
+        key: 'server-logs',
+        label: 'Server',
+        route: '/maintenance/server-logs'
+      }
     ]
   },
   {
@@ -28,7 +33,11 @@ const tree = [
     label: 'Settings',
     route: '/settings',
     children: [
-      { key: 'commissions', label: 'Commissions', route: '/settings/commissions' },
+      {
+        key: 'commissions',
+        label: 'Commissions',
+        route: '/settings/commissions'
+      },
       { key: 'locale', label: 'Locale', route: '/settings/locale' }
     ]
   }
@@ -36,33 +45,31 @@ const tree = [
 ]
 
 const firstChild = key => {
-  const response = compose(
-    get(`${key}.children[0].route`),
-    keyBy('key')
-  )(tree)
-
-  return response
+  const getRoute = R.path(['children', 0, 'route'])
+  const withKey = R.find(R.propEq('key', key))
+  return R.compose(getRoute, withKey)(tree)
 }
 
 const Routes = () => (
   <Switch>
-    <Route exact path='/' />
+    <Route exact path="/" />
     <Route
-      path='/settings'
+      path="/settings"
       exact
       component={() => <Redirect to={firstChild('settings')} />}
     />
     <Route
-      path='/maintenance'
+      path="/maintenance"
       exact
       component={() => <Redirect to={firstChild('maintenance')} />}
     />
-    <Route path='/settings/commissions' component={Commissions} />
-    <Route path='/settings/locale' component={Locales} />
-    <Route path='/maintenance/logs' component={Logs} />
-    <Route path='/maintenance/funding' component={Funding} />
-    <Route path='/maintenance/server-logs' component={ServerLogs} />
-    <Route path='/transactions' component={Transactions} />
+    <Route path="/settings/commissions" component={Commissions} />
+    <Route path="/settings/locale" component={Locales} />
+    <Route path="/maintenance/logs" component={Logs} />
+    <Route path="/maintenance/funding" component={Funding} />
+    <Route path="/maintenance/server-logs" component={ServerLogs} />
+    <Route path="/transactions" component={Transactions} />
+    <Route path="/register" component={AuthRegister} />
   </Switch>
 )
 

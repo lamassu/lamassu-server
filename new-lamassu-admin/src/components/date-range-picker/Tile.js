@@ -1,9 +1,14 @@
-import React from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React from 'react'
 
-import { primaryColor, spring2, spring3, disabledColor } from '../../styling/variables'
-import typographyStyles from '../typography/styles'
+import {
+  primaryColor,
+  spring2,
+  spring3,
+  disabledColor
+} from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
 
 const { label1 } = typographyStyles
 
@@ -56,7 +61,14 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const Tile = ({ isLowerBound, isUpperBound, isBetween, isDisabled, children, ...props }) => {
+const Tile = ({
+  isLowerBound,
+  isUpperBound,
+  isBetween,
+  isDisabled,
+  children,
+  ...props
+}) => {
   const classes = useStyles()
   const selected = isLowerBound || isUpperBound
 
@@ -80,9 +92,7 @@ const Tile = ({ isLowerBound, isUpperBound, isBetween, isDisabled, children, ...
     <div className={classes.wrapper}>
       <div className={classnames(rangeClasses)} />
       <div className={classnames(buttonWrapperClasses)}>
-        <button className={classnames(buttonClasses)}>
-          {children}
-        </button>
+        <button className={classnames(buttonClasses)}>{children}</button>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { mainWidth } from '../variables'
+import { mainWidth } from 'src/styling/variables'
 
 import fonts from './fonts'
 

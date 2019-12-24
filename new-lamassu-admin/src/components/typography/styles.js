@@ -8,7 +8,7 @@ import {
   fontPrimary,
   fontSecondary,
   fontMonospaced
-} from '../../styling/variables'
+} from 'src/styling/variables'
 
 const base = {
   lineHeight: '110%',

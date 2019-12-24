@@ -5,13 +5,12 @@ import {
   secondaryColorDark,
   secondaryColorDarker,
   spacer
-} from '../../styling/variables'
-
-import typographyStyles from '../typography/styles'
+} from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
 
 const { h3 } = typographyStyles
 
-const pickSize = (size) => {
+const pickSize = size => {
   switch (size) {
     case 'sm':
       return spacer * 4

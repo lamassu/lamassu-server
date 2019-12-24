@@ -1,12 +1,17 @@
-import { disabledColor2, spacer, subheaderColor, placeholderColor, fontColor } from '../styling/variables'
-
-import typographyStyles from '../components/typography/styles'
+import typographyStyles from 'src/components/typography/styles'
+import {
+  disabledColor2,
+  spacer,
+  subheaderColor,
+  placeholderColor
+} from 'src/styling/variables'
 
 const { label1 } = typographyStyles
 
 export default {
   wrapper: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'row',
     height: '100%'
   },

@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React, { memo } from 'react'
 
 import baseButtonStyles from './BaseButton.styles'
 
@@ -35,11 +35,17 @@ const FeatureButton = memo(({ className, Icon, InverseIcon, ...props }) => {
 
   return (
     <button className={classnames(classNames, className)} {...props}>
-      {Icon && <div className={classes.buttonIcon}><Icon /></div>}
-      {InverseIcon &&
-        <div className={classnames(classes.buttonIcon, classes.buttonIconActive)}>
+      {Icon && (
+        <div className={classes.buttonIcon}>
+          <Icon />
+        </div>
+      )}
+      {InverseIcon && (
+        <div
+          className={classnames(classes.buttonIcon, classes.buttonIconActive)}>
           <InverseIcon />
-        </div>}
+        </div>
+      )}
     </button>
   )
 })

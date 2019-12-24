@@ -6,6 +6,7 @@ export default {
     flexDirection: 'row'
   },
   wrapper: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
     height: '100%'

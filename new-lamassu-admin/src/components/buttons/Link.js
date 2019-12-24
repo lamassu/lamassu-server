@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React, { memo } from 'react'
 
 import styles from './Link.styles'
 
@@ -19,8 +19,7 @@ const Link = memo(({ submit, className, children, color, size, ...props }) => {
     <button
       type={submit ? 'submit' : 'button'}
       className={classnames(classNames, className)}
-      {...props}
-    >
+      {...props}>
       {children}
     </button>
   )

@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import classnames from 'classnames'
-import { merge } from 'lodash/fp'
 import { makeStyles, Popper as MaterialPopper, Paper } from '@material-ui/core'
+import classnames from 'classnames'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 
-import { white } from '../styling/variables'
+import { white } from 'src/styling/variables'
 
 const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
   const [arrowRef, setArrowRef] = useState(null)
@@ -73,7 +73,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
     [classes.arrowLeft]: props.placement === 'left'
   }
 
-  const modifiers = merge(props.modifiers, {
+  const modifiers = R.merge(props.modifiers, {
     flip: {
       enabled: false
     },
@@ -93,8 +93,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
         disablePortal={false}
         modifiers={modifiers}
         className={classes.popover}
-        {...props}
-      >
+        {...props}>
         <Paper className={classes.root}>
           <span className={classnames(arrowClasses)} ref={setArrowRef} />
           {children}

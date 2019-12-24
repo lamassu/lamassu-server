@@ -1,12 +1,19 @@
-import React from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React from 'react'
 
 import styles from './Sidebar.styles'
 
 const useStyles = makeStyles(styles)
 
-const Logs = ({ data, displayName, isSelected, onClick, children, itemRender }) => {
+const Sidebar = ({
+  data,
+  displayName,
+  isSelected,
+  onClick,
+  children,
+  itemRender
+}) => {
   const classes = useStyles()
 
   return (
@@ -21,8 +28,7 @@ const Logs = ({ data, displayName, isSelected, onClick, children, itemRender }) 
               [classes.customRenderLink]: itemRender,
               [classes.link]: true
             })}
-            onClick={() => onClick(it)}
-          >
+            onClick={() => onClick(it)}>
             {itemRender ? itemRender(it) : displayName(it)}
           </div>
         ))}
@@ -31,4 +37,4 @@ const Logs = ({ data, displayName, isSelected, onClick, children, itemRender }) 
   )
 }
 
-export default Logs
+export default Sidebar

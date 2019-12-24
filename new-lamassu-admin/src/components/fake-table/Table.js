@@ -1,21 +1,18 @@
-import React from 'react'
-import classnames from 'classnames'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React from 'react'
 
-import { Link } from '../../components/buttons'
-
+import { Link } from 'src/components/buttons'
 import {
   tableHeaderColor,
   tableHeaderHeight,
   tableErrorColor,
   spacer,
   white
-} from '../../styling/variables'
-
-import typographyStyles from '../typography/styles'
+} from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
 
 const { tl2, p } = typographyStyles
 
@@ -76,20 +73,12 @@ const Table = ({ children, className, ...props }) => (
 
 const THead = ({ children }) => {
   const classes = useStyles()
-  return (
-    <div className={classes.header}>
-      {children}
-    </div>
-  )
+  return <div className={classes.header}>{children}</div>
 }
 
 const TBody = ({ children, className }) => {
   const classes = useStyles()
-  return (
-    <div className={classnames(className, classes.body)}>
-      {children}
-    </div>
-  )
+  return <div className={classnames(className, classes.body)}>{children}</div>
 }
 
 const Td = ({ children, header, className, size = 100, textAlign }) => {
@@ -100,7 +89,9 @@ const Td = ({ children, header, className, size = 100, textAlign }) => {
   }
 
   return (
-    <div className={classnames(className, classNames)} style={{ width: size, textAlign }}>
+    <div
+      className={classnames(className, classNames)}
+      style={{ width: size, textAlign }}>
       {children}
     </div>
   )
@@ -108,7 +99,9 @@ const Td = ({ children, header, className, size = 100, textAlign }) => {
 
 const Th = ({ children, ...props }) => {
   return (
-    <Td header {...props}>{children}</Td>
+    <Td header {...props}>
+      {children}
+    </Td>
   )
 }
 
@@ -133,10 +126,10 @@ const Tr = ({ error, errorMessage, children, className }) => {
 
 const EditCell = ({ save, cancel }) => (
   <Td>
-    <Link style={{ marginRight: '20px' }} color='secondary' onClick={cancel}>
+    <Link style={{ marginRight: '20px' }} color="secondary" onClick={cancel}>
       Cancel
     </Link>
-    <Link color='primary' onClick={save}>
+    <Link color="primary" onClick={save}>
       Save
     </Link>
   </Td>

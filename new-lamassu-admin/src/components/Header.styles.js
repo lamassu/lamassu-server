@@ -7,7 +7,7 @@ import {
   placeholderColor,
   subheaderColor,
   fontColor
-} from '../styling/variables'
+} from 'src/styling/variables'
 
 import typographyStyles from './typography/styles'
 

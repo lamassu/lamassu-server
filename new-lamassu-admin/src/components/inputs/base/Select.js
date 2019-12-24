@@ -1,16 +1,16 @@
-import React from 'react'
-import { useSelect } from 'downshift'
-import { startCase } from 'lodash/fp'
+import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import { useSelect } from 'downshift'
+import React from 'react'
 
 import { ReactComponent as Arrowdown } from '../../../styling/icons/action/arrow/regular.svg'
+import { startCase } from '../../../utils/string'
 
 import styles from './Select.styles'
-import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(styles)
 
-function Select ({ label, items, ...props }) {
+function Select({ label, items, ...props }) {
   const classes = useStyles()
 
   const {
@@ -37,19 +37,14 @@ function Select ({ label, items, ...props }) {
   return (
     <div className={classnames(selectClassNames)}>
       <label {...getLabelProps()}>{startCase(label)}</label>
-      <button
-        {...getToggleButtonProps()}
-      >
+      <button {...getToggleButtonProps()}>
         <span className={classes.selectedItem}>{startCase(selectedItem)}</span>
         <Arrowdown />
       </button>
       <ul {...getMenuProps()}>
         {isOpen &&
           items.map((item, index) => (
-            <li
-              key={`${item}${index}`}
-              {...getItemProps({ item, index })}
-            >
+            <li key={`${item}${index}`} {...getItemProps({ item, index })}>
               <span>{startCase(item)}</span>
             </li>
           ))}

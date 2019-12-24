@@ -1,9 +1,14 @@
+import Chip from '@material-ui/core/Chip'
+import { withStyles } from '@material-ui/core/styles'
 import React, { memo } from 'react'
 
-import Chip from '@material-ui/core/Chip'
-
-import { withStyles } from '@material-ui/core/styles'
-import { fontColor, inputFontWeight, subheaderColor, smallestFontSize, inputFontFamily } from '../styling/variables'
+import {
+  fontColor,
+  inputFontWeight,
+  subheaderColor,
+  smallestFontSize,
+  inputFontFamily
+} from 'src/styling/variables'
 
 const styles = theme => ({
   root: {
@@ -23,7 +28,7 @@ const styles = theme => ({
 })
 
 const LsChip = memo(({ classes, ...props }) => (
-  <Chip size='small' classes={classes} {...props} />
+  <Chip size="small" classes={classes} {...props} />
 ))
 
 export default withStyles(styles)(LsChip)

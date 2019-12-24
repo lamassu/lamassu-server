@@ -1,9 +1,11 @@
-import React, { memo, useState } from 'react'
+import React, { memo } from 'react'
 import * as Yup from 'yup'
-import useAxios from '@use-hooks/axios'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
-import Title from '../../components/Title'
-import Subtitle from '../../components/Subtitle'
+import Subtitle from 'src/components/Subtitle'
+import Title from 'src/components/Title'
+
 import MainForm from './MainForm'
 
 const LocaleSchema = Yup.object().shape({
@@ -21,41 +23,59 @@ const initialValues = {
   showRates: false
 }
 
-const Locales = memo(() => {
-  const [locale, setLocale] = useState(initialValues)
-  const [data, setData] = useState(null)
-
-  useAxios({
-    url: 'http://localhost:8070/api/config',
-    method: 'GET',
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setLocale(res.data.state)
-        setData(res.data.data)
-      }
+const GET_AUX_DATA = gql`
+  {
+    currencies {
+      code
+      display
     }
-  })
-
-  const { reFetch } = useAxios({
-    url: 'http://localhost:8070/api/config',
-    method: 'POST',
-    options: {
-      data: locale
+    countries {
+      code
+      display
     }
-  })
-
-  const save = (it) => {
-    setLocale(it)
-    reFetch()
+    cryptoCurrencies {
+      code
+      display
+    }
+    languages {
+      code
+      display
+    }
   }
+`
+
+const GET_CONFIG = gql`
+  {
+    config
+  }
+`
+
+const SAVE_CONFIG = gql`
+  mutation Save($config: JSONObject) {
+    saveConfig(config: $config)
+  }
+`
+
+const Locales = memo(() => {
+  const { data } = useQuery(GET_AUX_DATA)
+
+  const [saveConfig] = useMutation(SAVE_CONFIG)
+  const { data: configResponse } = useQuery(GET_CONFIG)
+
+  const locale = configResponse?.config ?? initialValues
+
+  const save = it => saveConfig({ variables: { config: it } })
 
   return (
     <>
       <Title>Locales</Title>
       <Subtitle>Default settings</Subtitle>
-      <MainForm validationSchema={LocaleSchema} value={locale} save={save} auxData={data} />
+      <MainForm
+        validationSchema={LocaleSchema}
+        value={locale}
+        save={save}
+        auxData={data}
+      />
       <Subtitle extraMarginTop>Overrides</Subtitle>
     </>
   )

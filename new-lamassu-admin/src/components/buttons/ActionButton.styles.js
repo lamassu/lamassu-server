@@ -5,9 +5,8 @@ import {
   subheaderDarkColor,
   offColor,
   offDarkColor
-} from '../../styling/variables'
-
-import typographyStyles from '../typography/styles'
+} from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
 
 const { p } = typographyStyles
 

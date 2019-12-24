@@ -4,13 +4,12 @@ import {
   white,
   linkPrimaryColor,
   linkSecondaryColor
-} from '../../styling/variables'
-
-import typographyStyles from '../typography/styles'
+} from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
 
 const { h4 } = typographyStyles
 
-const color = (color) => ({
+const color = color => ({
   boxShadow: `inset 0 -4px 0 0 ${fade(color, 0.8)}`,
   '&:hover': {
     boxShadow: 'none',

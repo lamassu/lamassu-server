@@ -1,22 +1,50 @@
-import React, { useState } from 'react'
-import moment from 'moment'
-import BigNumber from 'bignumber.js'
-import { upperCase } from 'lodash/fp'
 import { makeStyles } from '@material-ui/core/styles'
-import useAxios from '@use-hooks/axios'
+import BigNumber from 'bignumber.js'
+import moment from 'moment'
+import * as R from 'ramda'
+import React, { useState } from 'react'
+import { useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
-import { mainStyles } from './Transactions.styles'
+import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
+import Title from 'src/components/Title'
+import { FeatureButton } from 'src/components/buttons'
+import ExpTable from 'src/components/expandable-table/ExpTable'
+import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
+import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
+import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { toUnit } from 'src/utils/coin'
+
 import DetailsRow from './DetailsCard'
-import toUnit from './tx'
+import { mainStyles } from './Transactions.styles'
 
-import Title from '../../components/Title'
-import ExpTable from '../../components/expandable-table/ExpTable'
-import LogsDowloaderPopover from '../../components/LogsDownloaderPopper'
-import { FeatureButton } from '../../components/buttons'
-import { ReactComponent as TxInIcon } from '../../styling/icons/direction/cash-in.svg'
-import { ReactComponent as TxOutIcon } from '../../styling/icons/direction/cash-out.svg'
-import { ReactComponent as Download } from '../../styling/icons/button/download/zodiac.svg'
-import { ReactComponent as DownloadInverseIcon } from '../../styling/icons/button/download/white.svg'
+// TODO customerIdCardData
+const GET_TRANSACTIONS = gql`
+  {
+    transactions {
+      id
+      txClass
+      txHash
+      toAddress
+      commissionPercentage
+      machineName
+      deviceId
+      fiat
+      fee
+      fiatCode
+      cryptoAtoms
+      cryptoCode
+      toAddress
+      created
+      customerName
+      customerIdCardData
+      customerIdCardPhotoPath
+      customerFrontCameraPath
+      customerPhone
+    }
+  }
+`
 
 const Transactions = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -25,93 +53,80 @@ const Transactions = () => {
 
   const classes = useStyles()
 
-  const { response: txResponse } = useAxios({
-    url: 'http://localhost:8070/api/txs/',
-    method: 'GET',
-    trigger: []
-  })
+  const { data: txResponse } = useQuery(GET_TRANSACTIONS)
 
-  const formatCustomerName = (customer) => {
+  const formatCustomerName = customer => {
     const { firstName, lastName } = customer
 
-    return `${upperCase(firstName.slice(0, 1))}. ${lastName}`
+    return `${R.o(R.toUpper, R.head)(firstName)}. ${lastName}`
   }
 
-  const getCustomerDisplayName = (tx) => {
+  const getCustomerDisplayName = tx => {
     if (tx.customerName) return tx.customerName
     if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
     return tx.customerPhone
   }
 
-  const rows = txResponse && txResponse.data.map(tx => {
-    const customerName = getCustomerDisplayName(tx)
-
-    return {
-      id: tx.id,
-      columns: [
-        {
-          name: '',
-          value: tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />,
-          size: 62
-        },
-        {
-          name: 'Machine',
-          value: tx.machineName,
-          className: classes.overflowTd,
-          size: 180
-        },
-        {
-          name: 'Customer',
-          value: customerName,
-          className: classes.overflowTd,
-          size: 162
-        },
-        {
-          name: 'Cash',
-          value: `${Number.parseFloat(tx.fiat)} ${tx.fiatCode}`,
-          textAlign: 'right',
-          size: 110
-        },
-        {
-          name: 'Crypto',
-          value: `${toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(5)} ${tx.cryptoCode}`,
-          textAlign: 'right',
-          size: 141
-        },
-        {
-          name: 'Address',
-          value: tx.toAddress,
-          className: classes.overflowTd,
-          size: 136
-        },
-        {
-          name: 'Date (UTC)',
-          value: moment.utc(tx.created).format('YYYY-MM-D'),
-          textAlign: 'right',
-          size: 124
-        },
-        {
-          name: 'Time (UTC)',
-          value: moment.utc(tx.created).format('HH:mm:ss'),
-          textAlign: 'right',
-          size: 124
-        },
-        {
-          name: '', // Trade
-          value: '',
-          size: 90
-        },
-        {
-          size: 71
-        }
-      ],
-      details: (
-        <DetailsRow tx={tx} />
-      )
+  const elements = [
+    {
+      header: '',
+      size: 62,
+      view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />)
+    },
+    {
+      header: 'Machine',
+      name: 'machineName',
+      size: 180,
+      view: R.path(['machineName'])
+    },
+    {
+      header: 'Customer',
+      size: 162,
+      view: getCustomerDisplayName
+    },
+    {
+      header: 'Cash',
+      size: 110,
+      textAlign: 'right',
+      view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
+    },
+    {
+      header: 'Crypto',
+      size: 141,
+      textAlign: 'right',
+      view: it =>
+        `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
+          it.cryptoCode
+        }`
+    },
+    {
+      header: 'Address',
+      view: R.path(['toAddress']),
+      className: classes.overflowTd,
+      size: 136
+    },
+    {
+      header: 'Date (UTC)',
+      view: it => moment.utc(it.created).format('YYYY-MM-D'),
+      textAlign: 'right',
+      size: 124
+    },
+    {
+      header: 'Time (UTC)',
+      view: it => moment.utc(it.created).format('HH:mm:ss'),
+      textAlign: 'right',
+      size: 124
+    },
+    {
+      header: '', // Trade
+      size: 90
+    },
+    {
+      size: 71
     }
-  })
+  ]
 
-  const handleOpenRangePicker = (event) => {
+  const handleOpenRangePicker = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
@@ -133,28 +148,38 @@ const Transactions = () => {
                 Icon={Download}
                 InverseIcon={DownloadInverseIcon}
                 aria-describedby={id}
-                variant='contained'
+                variant="contained"
                 onClick={handleOpenRangePicker}
               />
               <LogsDowloaderPopover
-                title='Download logs'
-                name='transactions'
+                title="Download logs"
+                name="transactions"
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
-                logs={txResponse.data}
-                getTimestamp={(tx) => tx.created}
+                logs={txResponse.transactions}
+                getTimestamp={tx => tx.created}
                 onClose={handleCloseRangePicker}
               />
             </div>
           )}
         </div>
         <div className={classes.headerLabels}>
-          <div><TxOutIcon /><span>Cash-out</span></div>
-          <div><TxInIcon /><span>Cash-in</span></div>
+          <div>
+            <TxOutIcon />
+            <span>Cash-out</span>
+          </div>
+          <div>
+            <TxInIcon />
+            <span>Cash-in</span>
+          </div>
         </div>
       </div>
-      <ExpTable rows={rows} />
+      <ExpTable
+        elements={elements}
+        data={R.path(['transactions'])(txResponse)}
+        Details={DetailsRow}
+      />
     </>
   )
 }

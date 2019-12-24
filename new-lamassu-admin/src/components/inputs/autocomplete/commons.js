@@ -1,11 +1,18 @@
-import React from 'react'
-import { some, deburr, take, filter, compose } from 'lodash/fp'
-import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import TextField from '@material-ui/core/TextField'
+import Fuse from 'fuse.js'
+import * as R from 'ramda'
+import React from 'react'
+import slugify from 'slugify'
 
-import { fontColor, inputFontSize, inputFontWeight } from '../../../styling/variables'
+import {
+  fontColor,
+  inputFontSize,
+  inputFontWeight
+} from 'src/styling/variables'
+import S from 'src/utils/sanctuary'
 
-function renderInput (inputProps) {
+function renderInput(inputProps) {
   const { onBlur, success, InputProps, classes, ref, ...other } = inputProps
 
   return (
@@ -24,44 +31,53 @@ function renderInput (inputProps) {
   )
 }
 
-function renderSuggestion ({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
+function renderSuggestion({
+  suggestion,
+  index,
+  itemProps,
+  highlightedIndex,
+  selectedItem
+}) {
   const isHighlighted = highlightedIndex === index
 
-  const isSelected = ((selectedItem && selectedItem.display) || '').indexOf(suggestion.display) > -1
+  const item = R.o(R.defaultTo(''), R.path(['display']))(selectedItem)
+  const isSelected = R.indexOf(suggestion.display)(item) > -1
 
   return (
     <MenuItem
       {...itemProps}
       key={suggestion.code}
       selected={isHighlighted}
-      component='div'
+      component="div"
       style={{
         fontSize: 14,
         fontWeight: isSelected ? 500 : 400
-      }}
-    >
+      }}>
       {suggestion.display}
     </MenuItem>
   )
 }
 
-function filterSuggestions (suggestions, value, currentValues) {
-  const inputValue = deburr((value || '').trim()).toLowerCase()
-  const inputLength = inputValue.length
+function filterSuggestions(suggestions = [], value = '', currentValues = []) {
+  const options = {
+    shouldSort: true,
+    threshold: 0.2,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: ['code', 'display']
+  }
 
-  // TODO make it fuzzy and by every property
-  const filterByLabel = filter(it => {
-    return it.display.slice(0, inputLength).toLowerCase() === inputValue
-  })
-  const filterOutCurrent = filter(it => !some(({ code }) => it.code === code)(currentValues))
+  const fuse = new Fuse(suggestions, options)
+  const result = value ? fuse.search(slugify(value, ' ')) : suggestions
 
-  const onlyFive = compose(
-    take(5),
-    filterOutCurrent,
-    filterByLabel
-  )
+  const currentCodes = S.map(S.prop('code'))(currentValues)
+  const filtered = S.filter(it => !S.elem(it.code)(currentCodes))(result)
 
-  return onlyFive(suggestions)
+  const amountToTake = S.min(filtered.length)(5)
+
+  return S.compose(S.fromMaybe([]))(S.take(amountToTake))(filtered)
 }
 
 const styles = theme => ({

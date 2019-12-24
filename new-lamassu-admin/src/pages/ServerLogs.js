@@ -1,20 +1,28 @@
-import React, { useState } from 'react'
-import { concat, uniq, merge, find } from 'lodash/fp'
-import moment from 'moment'
-import useAxios from '@use-hooks/axios'
 import { makeStyles } from '@material-ui/core'
+import moment from 'moment'
+import * as R from 'ramda'
+import React, { useState } from 'react'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
-import Title from '../components/Title'
-import { Info3 } from '../components/typography'
-import { FeatureButton, SimpleButton } from '../components/buttons'
-import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '../components/table'
-import { Select } from '../components/inputs'
-import Uptime from '../components/Uptime'
-import LogsDowloaderPopover from '../components/LogsDownloaderPopper'
-import { ReactComponent as Download } from '../styling/icons/button/download/zodiac.svg'
-import { ReactComponent as DownloadActive } from '../styling/icons/button/download/white.svg'
-import { offColor } from '../styling/variables'
-import typographyStyles from '../components/typography/styles'
+import typographyStyles from 'src/components/typography/styles'
+import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
+import Title from 'src/components/Title'
+import Uptime from 'src/components/Uptime'
+import { FeatureButton, SimpleButton } from 'src/components/buttons'
+import { Select } from 'src/components/inputs'
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableBody,
+  TableCell
+} from 'src/components/table'
+import { Info3 } from 'src/components/typography'
+import { ReactComponent as DownloadActive } from 'src/styling/icons/button/download/white.svg'
+import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
+import { offColor } from 'src/styling/variables'
 
 import logsStyles from './Logs.styles'
 
@@ -43,7 +51,7 @@ const localStyles = {
   }
 }
 
-const styles = merge(logsStyles, localStyles)
+const styles = R.merge(logsStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
@@ -53,66 +61,76 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
 
-const Logs = () => {
-  const [saveMessage, setSaveMessage] = useState(null)
-  const [logLevel, setLogLevel] = useState(SHOW_ALL)
-  const [version, setVersion] = useState(null)
-  const [processStates, setProcessStates] = useState(null)
-  const [anchorEl, setAnchorEl] = useState(null)
+const GET_VERSION = gql`
+  query {
+    serverVersion
+  }
+`
 
+const GET_UPTIME = gql`
+  {
+    uptime {
+      name
+      state
+      uptime
+    }
+  }
+`
+
+const GET_SERVER_LOGS = gql`
+  {
+    serverLogs {
+      logLevel
+      id
+      timestamp
+      message
+    }
+  }
+`
+
+const SUPPORT_LOGS = gql`
+  mutation ServerSupportLogs {
+    serverSupportLogs {
+      id
+    }
+  }
+`
+
+const Logs = () => {
   const classes = useStyles()
 
-  useAxios({
-    url: 'http://localhost:8070/api/version',
-    method: 'GET',
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setVersion(res.data)
-      }
-    }
+  const [saveMessage, setSaveMessage] = useState(null)
+  const [logLevel, setLogLevel] = useState(SHOW_ALL)
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const { data: version } = useQuery(GET_VERSION)
+  const serverVersion = version?.serverVersion
+
+  const { data: uptimeResponse } = useQuery(GET_UPTIME)
+  const processStates = uptimeResponse?.uptime ?? []
+
+  const { data: logsResponse } = useQuery(GET_SERVER_LOGS, {
+    fetchPolicy: 'no-cache',
+    onCompleted: () => setSaveMessage('')
   })
 
-  useAxios({
-    url: 'http://localhost:8070/api/uptimes',
-    method: 'GET',
-    trigger: [],
-    customHandler: (err, res) => {
-      if (err) return
-      if (res) {
-        setProcessStates(res.data)
-      }
-    }
+  const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
+    onError: () => setSaveMessage('Failure saving snapshot'),
+    onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
   })
 
-  const { response: logsResponse } = useAxios({
-    url: 'http://localhost:8070/api/server_logs/',
-    method: 'GET',
-    trigger: [],
-    customHandler: () => {
-      setSaveMessage('')
-    }
-  })
-
-  const { loading, reFetch: sendSnapshot } = useAxios({
-    url: 'http://localhost:8070/api/server_support_logs',
-    method: 'POST',
-    customHandler: (err, res) => {
-      if (err) {
-        setSaveMessage('Failure saving snapshot')
-        throw err
-      }
-      setSaveMessage('✓ Saved latest snapshot')
-    }
-  })
-
-  const handleOpenRangePicker = (event) => {
+  const handleOpenRangePicker = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   const open = Boolean(anchorEl)
   const id = open ? 'date-range-popover' : undefined
+  const getLogLevels = R.compose(
+    R.prepend(SHOW_ALL),
+    R.uniq,
+    R.map(R.path(['logLevel'])),
+    R.path(['serverLogs'])
+  )
 
   return (
     <>
@@ -125,19 +143,22 @@ const Logs = () => {
                 Icon={Download}
                 InverseIcon={DownloadActive}
                 aria-describedby={id}
-                variant='contained'
+                variant="contained"
                 onClick={handleOpenRangePicker}
               />
               <LogsDowloaderPopover
-                title='Download logs'
-                name='server-logs'
+                title="Download logs"
+                name="server-logs"
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
-                logs={logsResponse.data.logs}
-                getTimestamp={(log) => log.timestamp}
+                logs={logsResponse.serverLogs}
+                getTimestamp={log => log.timestamp}
               />
-              <SimpleButton className={classes.button} disabled={loading} onClick={sendSnapshot}>
+              <SimpleButton
+                className={classes.button}
+                disabled={loading}
+                onClick={sendSnapshot}>
                 Share with Lamassu
               </SimpleButton>
               <Info3>{saveMessage}</Info3>
@@ -145,17 +166,15 @@ const Logs = () => {
           )}
         </div>
         <div className={classes.serverVersion}>
-          {version && (
-            <span>Server version: v{version}</span>
-          )}
+          {serverVersion && <span>Server version: v{serverVersion}</span>}
         </div>
       </div>
       <div className={classes.headerLine2}>
         {logsResponse && (
           <Select
             onSelectedItemChange={setLogLevel}
-            label='Level'
-            items={concat([SHOW_ALL], uniq(logsResponse.data.logs.map(log => log.logLevel)))}
+            label="Level"
+            items={getLogLevels(logsResponse)}
             default={SHOW_ALL}
             selectedItem={logLevel}
           />
@@ -179,13 +198,17 @@ const Logs = () => {
             </TableHead>
             <TableBody>
               {logsResponse &&
-                logsResponse.data.logs.filter(log => logLevel === SHOW_ALL || log.logLevel === logLevel).map((log, idx) => (
-                  <TableRow key={idx} size='sm'>
-                    <TableCell>{formatDate(log.timestamp)}</TableCell>
-                    <TableCell>{log.logLevel}</TableCell>
-                    <TableCell>{log.message}</TableCell>
-                  </TableRow>
-                ))}
+                logsResponse.serverLogs
+                  .filter(
+                    log => logLevel === SHOW_ALL || log.logLevel === logLevel
+                  )
+                  .map((log, idx) => (
+                    <TableRow key={idx} size="sm">
+                      <TableCell>{formatDate(log.timestamp)}</TableCell>
+                      <TableCell>{log.logLevel}</TableCell>
+                      <TableCell>{log.message}</TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </div>

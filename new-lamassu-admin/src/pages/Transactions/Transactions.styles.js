@@ -1,7 +1,6 @@
-import baseStyles from '../Logs.styles'
-
-import { offColor, white } from '../../styling/variables'
-import typographyStyles from '../../components/typography/styles'
+import typographyStyles from 'src/components/typography/styles'
+import { offColor, white } from 'src/styling/variables'
+import baseStyles from 'src/pages/Logs.styles'
 
 const { label1, mono, p } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles

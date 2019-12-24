@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React, { memo } from 'react'
 
 import styles from './Button.styles'
 

@@ -1,14 +1,14 @@
-import React from 'react'
-import classnames from 'classnames'
-import { withStyles } from '@material-ui/styles'
 import {
   Radio as MaterialRadio,
   RadioGroup as MaterialRadioGroup,
   FormControlLabel
 } from '@material-ui/core'
+import { withStyles } from '@material-ui/styles'
+import classnames from 'classnames'
+import React from 'react'
 
-import typographyStyles from '../../typography/styles'
 import { secondaryColor } from '../../../styling/variables'
+import typographyStyles from '../../typography/styles'
 
 const { p } = typographyStyles
 
@@ -20,7 +20,7 @@ const GreenRadio = withStyles({
     }
   },
   checked: {}
-})(props => <MaterialRadio color='default' {...props} />)
+})(props => <MaterialRadio color="default" {...props} />)
 
 const Label = withStyles({
   label: {
@@ -30,13 +30,31 @@ const Label = withStyles({
 
 /* options = [{ label, value }]
  */
-const RadioGroup = ({ name, value, options, ariaLabel, onChange, className, ...props }) => {
+const RadioGroup = ({
+  name,
+  value,
+  options,
+  ariaLabel,
+  onChange,
+  className,
+  ...props
+}) => {
   return (
     <>
       {options && (
-        <MaterialRadioGroup aria-label={ariaLabel} name={name} value={value} onChange={onChange} className={classnames(className)}>
+        <MaterialRadioGroup
+          aria-label={ariaLabel}
+          name={name}
+          value={value}
+          onChange={onChange}
+          className={classnames(className)}>
           {options.map((options, idx) => (
-            <Label key={idx} value={options.value} control={<GreenRadio />} label={options.label} />
+            <Label
+              key={idx}
+              value={options.value}
+              control={<GreenRadio />}
+              label={options.label}
+            />
           ))}
         </MaterialRadioGroup>
       )}

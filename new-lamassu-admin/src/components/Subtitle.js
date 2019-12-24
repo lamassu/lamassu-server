@@ -1,9 +1,10 @@
-import React, { memo } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
+import React, { memo } from 'react'
+
+import { spacer, offColor } from 'src/styling/variables'
 
 import { TL1 } from './typography'
-import { spacer, offColor } from '../styling/variables'
 
 const useStyles = makeStyles({
   subtitle: {
@@ -23,7 +24,7 @@ const Subtitle = memo(({ children, className, extraMarginTop }) => {
     [classes.extraMarginTop]: extraMarginTop
   }
 
-  return (<TL1 className={classnames(classNames, className)}>{children}</TL1>)
+  return <TL1 className={classnames(classNames, className)}>{children}</TL1>
 })
 
 export default Subtitle

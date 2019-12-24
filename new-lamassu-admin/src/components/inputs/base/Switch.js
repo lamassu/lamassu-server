@@ -1,8 +1,13 @@
-import React, { memo } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch'
+import { makeStyles } from '@material-ui/core/styles'
+import React, { memo } from 'react'
 
-import { secondaryColor, offColor, disabledColor, disabledColor2 } from '../../../styling/variables'
+import {
+  secondaryColor,
+  offColor,
+  disabledColor,
+  disabledColor2
+} from '../../../styling/variables'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,12 +48,9 @@ const useStyles = makeStyles(theme => ({
     opacity: 1,
     transition: theme.transitions.create(['background-color', 'border'])
   },
-  disabled: {
-  },
-  checked: {
-  },
-  focusVisible: {
-  }
+  disabled: {},
+  checked: {},
+  focusVisible: {}
 }))
 
 const SwitchInput = memo(({ ...props }) => {

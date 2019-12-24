@@ -1,5 +1,11 @@
-import { respondTo } from '../styling/helpers'
-import { primaryColor, spacer, placeholderColor, zircon, xxl } from '../styling/variables'
+import { respondTo } from 'src/styling/helpers'
+import {
+  primaryColor,
+  spacer,
+  placeholderColor,
+  zircon,
+  xxl
+} from 'src/styling/variables'
 
 import typographyStyles from './typography/styles'
 
