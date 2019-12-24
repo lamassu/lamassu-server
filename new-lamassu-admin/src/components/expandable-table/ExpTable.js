@@ -47,7 +47,16 @@ const ExpRow = ({
         {elements
           .slice(0, -1)
           .map(
-            ({ header, size, className, textAlign, view = () => {} }, idx) => (
+            (
+              {
+                header,
+                size,
+                className,
+                textAlign,
+                view = it => it?.toString()
+              },
+              idx
+            ) => (
               <Td
                 key={idx}
                 size={size}

@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import FileSaver from 'file-saver'
 import moment from 'moment'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 
 import { ReactComponent as Arrow } from 'src/styling/icons/arrow/download_logs.svg'
 import { primaryColor, offColor, zircon } from 'src/styling/variables'
@@ -131,8 +131,7 @@ const LogsDownloaderPopover = ({
   anchorEl,
   getTimestamp,
   logs,
-  title,
-  ...props
+  title
 }) => {
   const radioButtonAll = 'all'
   const radioButtonRange = 'range'
@@ -149,9 +148,12 @@ const LogsDownloaderPopover = ({
 
   const handleRadioButtons = R.o(setSelectedRadio, R.path(['target', 'value']))
 
-  const handleRangeChange = (from, to) => {
-    setRange({ from, to })
-  }
+  const handleRangeChange = useCallback(
+    (from, to) => {
+      setRange({ from, to })
+    },
+    [setRange]
+  )
 
   const downloadLogs = (range, logs) => {
     if (!range) return

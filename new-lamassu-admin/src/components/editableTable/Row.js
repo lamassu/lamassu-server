@@ -27,7 +27,14 @@ const ERow = memo(({ elements }) => {
       errorMessage={errors && errors.toString()}>
       {elements.map(
         (
-          { name, input, size, textAlign, view = () => {}, inputProps },
+          {
+            name,
+            input,
+            size,
+            textAlign,
+            view = it => it?.toString(),
+            inputProps
+          },
           idx
         ) => (
           <Td key={idx} size={size} textAlign={textAlign}>

@@ -13,13 +13,7 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const DateRangePicker = ({
-  minDate,
-  maxDate,
-  className,
-  onRangeChange,
-  ...props
-}) => {
+const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
   const [from, setFrom] = useState(null)
   const [to, setTo] = useState(null)
 
