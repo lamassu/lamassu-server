@@ -78,7 +78,7 @@ if (version === 8) {
 }
 
 const smallestFontSize = fontSize5
-const inputFontSize = fontSize4
+const inputFontSize = fontSize3
 const inputFontSizeLg = fontSize1
 const inputFontWeight = 500
 const inputFontFamily = fontSecondary
@@ -103,6 +103,8 @@ const tableSmCellHeight = 30
 const tableLgCellHeight = 76
 
 const tableHeaderColor = primaryColor
+const tableDisabledHeaderColor = zircon
+const tableNewDisabledHeaderColor = spring3
 const tableCellColor = white
 const tableErrorColor = mistyRose
 const tableSuccessColor = spring3
@@ -172,6 +174,8 @@ export {
   tableSmCellHeight,
   tableLgCellHeight,
   tableHeaderColor,
+  tableDisabledHeaderColor,
+  tableNewDisabledHeaderColor,
   tableCellColor,
   tableErrorColor,
   tableSuccessColor

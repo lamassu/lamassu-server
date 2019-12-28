@@ -10,14 +10,14 @@ import { comet } from 'src/styling/variables'
 
 import { cpcStyles } from './Transactions.styles'
 
+const useStyles = makeStyles(cpcStyles)
+
 const CopyToClipboard = ({ className, children, ...props }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   useEffect(() => {
     if (anchorEl) setTimeout(() => setAnchorEl(null), 3000)
   }, [anchorEl])
-
-  const useStyles = makeStyles(cpcStyles)
 
   const classes = useStyles()
 

@@ -19,6 +19,7 @@
     "bitgo": "4.47.0",
     "body-parser": "^1.15.1",
     "coinbase": "^2.0.6",
+    "compression": "^1.7.4",
     "console-log-level": "^1.4.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",

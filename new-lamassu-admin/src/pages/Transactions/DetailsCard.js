@@ -19,18 +19,18 @@ import { onlyFirstToUpper } from 'src/utils/string'
 import CopyToClipboard from './CopyToClipboard'
 import { detailsRowStyles, labelStyles } from './Transactions.styles'
 
-const Label = ({ children }) => {
-  const useStyles = makeStyles(labelStyles)
+const labelUseStyles = makeStyles(labelStyles)
 
-  const classes = useStyles()
+const Label = ({ children }) => {
+  const classes = labelUseStyles()
 
   return <div className={classes.label}>{children}</div>
 }
 
-const DetailsRow = ({ it: tx, ...props }) => {
-  const useStyles = makeStyles(detailsRowStyles)
+const detailsUseStyles = makeStyles(detailsRowStyles)
 
-  const classes = useStyles()
+const DetailsRow = ({ it: tx, ...props }) => {
+  const classes = detailsUseStyles()
 
   const addr = tx.toAddress
   const txHash = tx.txHash

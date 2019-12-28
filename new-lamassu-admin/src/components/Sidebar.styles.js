@@ -9,7 +9,7 @@ import {
 
 import typographyStyles from './typography/styles'
 
-const { tl2 } = typographyStyles
+const { tl2, p } = typographyStyles
 
 const sidebarColor = zircon
 
@@ -33,7 +33,7 @@ export default {
   },
 
   link: {
-    extend: tl2,
+    extend: p,
     position: 'relative',
     color: placeholderColor,
     margin: '12px 24px 12px 0',
@@ -56,8 +56,8 @@ export default {
     }
   },
   activeLink: {
+    extend: tl2,
     color: primaryColor,
-    fontWeight: 700,
     '&::after': {
       height: '140%'
     }
