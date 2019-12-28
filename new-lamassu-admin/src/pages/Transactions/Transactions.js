@@ -19,6 +19,8 @@ import { toUnit } from 'src/utils/coin'
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
 
+const useStyles = makeStyles(mainStyles)
+
 // TODO customerIdCardData
 const GET_TRANSACTIONS = gql`
   {
@@ -48,8 +50,6 @@ const GET_TRANSACTIONS = gql`
 
 const Transactions = () => {
   const [anchorEl, setAnchorEl] = useState(null)
-
-  const useStyles = makeStyles(mainStyles)
 
   const classes = useStyles()
 

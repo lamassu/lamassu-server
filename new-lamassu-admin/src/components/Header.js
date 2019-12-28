@@ -3,6 +3,8 @@ import classnames from 'classnames'
 import React, { memo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
+import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
+
 import styles from './Header.styles'
 import { Link } from './buttons'
 import { H4 } from './typography'
@@ -14,7 +16,6 @@ const renderSubheader = (item, classes) => {
   return (
     <div className={classes.subheader}>
       <div className={classes.content}>
-        <H4>{item.label}</H4>
         <nav>
           <ul className={classes.subheaderUl}>
             {item.children.map((it, idx) => (
@@ -45,7 +46,10 @@ const Header = memo(({ tree }) => {
     <header>
       <div className={classes.header}>
         <div className={classes.content}>
-          <H4 className={classes.white}>Lamassu Admin</H4>
+          <div className={classes.logo}>
+            <Logo />
+            <H4 className={classes.white}>Lamassu Admin</H4>
+          </div>
           <nav className={classes.nav}>
             <ul className={classes.ul}>
               {tree.map((it, idx) => (

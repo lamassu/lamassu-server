@@ -41,14 +41,14 @@ export default {
   ul: {
     display: 'flex',
     marginBottom: spacer * 1,
-    paddingInlineStart: spacer * 4.5
+    paddingLeft: spacer * 4.5
   },
   li: {
     extend: tl2,
     height: spacer * 3,
     listStyle: 'none',
     color: white,
-    padding: `0 ${spacer * 2.5}px`
+    padding: [[0, spacer * 2.5]]
   },
   link: {
     extend: p,
@@ -76,7 +76,7 @@ export default {
       bottom: -8,
       position: 'absolute',
       borderRadius: 1000,
-      transition: 'all 0.2s cubic-bezier(0.95, 0.1, 0.45, 0.94)'
+      transition: [['all', '0.2s', 'cubic-bezier(0.95, 0.1, 0.45, 0.94)']]
     }
   },
   forceSize: {
@@ -110,7 +110,7 @@ export default {
   },
   subheaderUl: {
     display: 'flex',
-    paddingInlineStart: spacer * 4.5
+    paddingLeft: 0
   },
   subheaderLi: {
     extend: tl2,
@@ -118,18 +118,29 @@ export default {
     alignItems: 'center',
     height: spacer * 3,
     listStyle: 'none',
-    padding: `0 ${spacer * 2.5}px`
+    padding: [[0, spacer * 2.5]],
+    '&:first-child': {
+      paddingLeft: 0
+    }
   },
   subheaderLink: {
-    extend: tl2,
+    extend: p,
     textDecoration: 'none',
     border: 'none',
     color: placeholderColor
   },
   activeSubheaderLink: {
+    extend: tl2,
     color: fontColor
   },
   white: {
     color: white
+  },
+  logo: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > svg': {
+      marginRight: 16
+    }
   }
 }
