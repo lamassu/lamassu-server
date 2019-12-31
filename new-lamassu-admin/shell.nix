@@ -1,6 +1,7 @@
 with import (fetchTarball {
-  url = https://github.com/NixOS/nixpkgs-channels/archive/nixos-19.09.tar.gz;
-  sha256 = "1msjm4kx1z73v444i1iybvmc7z0kfkbn9nzr21rn5yc4ql1jwf99";
+  name = "nixpkgs-19.09";
+  url = https://github.com/NixOS/nixpkgs-channels/archive/d5291756487d70bc336e33512a9baf9fa1788faf.tar.gz;
+  sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
 }) {};
 
 stdenv.mkDerivation {
