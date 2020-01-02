@@ -13,6 +13,9 @@ const AuthRegister = () => {
   useAxios({
     url: `https://localhost:8070/api/register?otp=${query.get('otp')}`,
     method: 'GET',
+    options: {
+      withCredentials: true
+    },
     trigger: [],
     customHandler: (err, res) => {
       if (err) return
