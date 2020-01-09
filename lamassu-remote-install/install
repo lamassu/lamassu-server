@@ -14,6 +14,7 @@ SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
 SERVER_CERT_PATH=$CERT_DIR/Lamassu_OP.pem
 MNEMONIC_DIR=$CONFIG_DIR/mnemonics 
 MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt 
+CARDANO_MNEMONIC_FILE=$MNEMONIC_DIR/cardano.txt 
 BACKUP_DIR=/var/backups/postgresql
 BLOCKCHAIN_DIR=/mnt/blockchains
 OFAC_DATA_DIR=/var/lamassu/ofac
@@ -172,6 +173,7 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
 {
   "postgresql": "postgres://lamassu_pg:$POSTGRES_PW@localhost/lamassu",
   "mnemonicPath": "$MNEMONIC_FILE",
+  "cardanoMnemonicPath": "$CARDANO_MNEMONIC_FILE",
   "lamassuCaPath": "$LAMASSU_CA_PATH",
   "caPath": "$CA_PATH",
   "certPath": "$SERVER_CERT_PATH",

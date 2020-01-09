@@ -20,6 +20,7 @@ mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
 echo "Generating mnemonic..."
 MNEMONIC_DIR=$CONFIG_DIR/mnemonics
 MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt
+CARDANO_MNEMONIC_FILE=$MNEMONIC_DIR/cardano.txt
 mkdir -p $MNEMONIC_DIR >> $LOG_FILE 2>&1
 SEED=$(openssl rand -hex 32)
 MNEMONIC=$($PWD/bin/bip39 $SEED)
@@ -92,6 +93,7 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
 {
   "postgresql": "psql://postgres:$POSTGRES_PASS@localhost/lamassu",
   "mnemonicPath": "$MNEMONIC_FILE",
+  "cardanoMnemonicPath": "$CARADANO_MNEMONIC_FILE",
   "caPath": "$CA_PATH",
   "certPath": "$SERVER_CERT_PATH",
   "keyPath": "$SERVER_KEY_PATH",
