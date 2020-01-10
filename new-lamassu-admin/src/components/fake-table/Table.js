@@ -71,9 +71,9 @@ const Table = ({ children, className, ...props }) => (
   </div>
 )
 
-const THead = ({ children }) => {
+const THead = ({ children, className }) => {
   const classes = useStyles()
-  return <div className={classes.header}>{children}</div>
+  return <div className={classnames(className, classes.header)}>{children}</div>
 }
 
 const TBody = ({ children, className }) => {

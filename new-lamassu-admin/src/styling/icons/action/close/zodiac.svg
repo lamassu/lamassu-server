@@ -1,24 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
-    <title>icon/action/close/zodiac</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <path d="M11.10567,8.99966734 L17.5616855,15.4562245 C18.1453995,16.0371533 18.1457502,16.9810221 17.5632744,17.5635465 C17.2826878,17.8441564 16.9043531,17.9996031 16.509308,17.9996031 C16.1150437,17.9996031 15.7367759,17.8439272 15.4563692,17.5634971 L8.99995005,11.1055617 L2.54567824,17.5603569 C2.26578723,17.8430155 1.88614994,17.9996031 1.48961505,17.9996031 C1.09473832,17.9996031 0.717380733,17.844225 0.436725633,17.5635465 C-0.145575211,16.9811971 -0.145575211,16.0373273 0.436725633,15.4578096 L6.89433001,8.99966707 L0.438314479,2.54310994 C-0.145399464,1.96218116 -0.145750215,1.01831232 0.436725633,0.435787934 C1.01746304,-0.144997872 1.95893893,-0.144997872 2.54250446,0.435787934 L8.99995074,6.89377234 L15.4580075,0.434202817 C16.0398949,-0.144908147 16.9801496,-0.144559181 17.5632744,0.435787934 C18.1455752,1.0181373 18.1455752,1.96200713 17.5632744,2.54152483 L11.10567,8.99966734 Z" id="path-1"></path>
-        <rect id="path-3" x="0" y="0" width="18" height="18"></rect>
-    </defs>
-    <g id="icon/action/close/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="color/primary/zodiac" transform="translate(-0.000000, 0.000000)">
-            <mask id="mask-2" fill="white">
-                <use xlink:href="#path-1"></use>
-            </mask>
-            <use id="Mask" fill="#1B2559" xlink:href="#path-1"></use>
-            <g mask="url(#mask-2)">
-                <mask id="mask-4" fill="white">
-                    <use xlink:href="#path-3"></use>
-                </mask>
-                <use id="Background" fill="#1B2559" fill-rule="evenodd" xlink:href="#path-3"></use>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 18 18" style="enable-background:new 0 0 18 18;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#1B2559;}
+</style>
+<title>icon/action/close/zodiac</title>
+<desc>Created with Sketch.</desc>
+<g id="color_x2F_primary_x2F_zodiac" transform="translate(-0.000000, 0.000000)">
+	<g id="Mask">
+		<path id="path-1_1_" class="st0" d="M11.1,9l6.5,6.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.2-1.1-0.4
+			L9,11.1l-6.5,6.5C2.3,17.8,1.9,18,1.5,18c-0.4,0-0.8-0.2-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1L6.9,9L0.4,2.5C-0.1,2-0.1,1,0.4,0.4
+			C1-0.1,2-0.1,2.5,0.4L9,6.9l6.5-6.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L11.1,9z"/>
+	</g>
+</g>
 </svg>
