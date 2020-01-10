@@ -1,9 +1,17 @@
 import React, { memo } from 'react'
-
 import Chip from '@material-ui/core/Chip'
-
 import { withStyles } from '@material-ui/core/styles'
-import { tomato, mistyRose, pumpkin, secondaryColorDarker as spring4, inputFontWeight, spring3, smallestFontSize, inputFontFamily } from '../styling/variables'
+
+import {
+  tomato,
+  mistyRose,
+  pumpkin,
+  secondaryColorDarker as spring4,
+  inputFontWeight,
+  spring3,
+  smallestFontSize,
+  inputFontFamily
+} from '../styling/variables'
 
 const green = theme => ({
   root: {
@@ -57,7 +65,7 @@ const red = theme => ({
 })
 
 const LsChip = memo(({ classes, ...props }) => (
-  <Chip size='small' classes={classes} {...props} />
+  <Chip size="small" classes={classes} {...props} />
 ))
 
 const GreenChip = withStyles(green)(LsChip)
@@ -75,7 +83,10 @@ const Status = ({ status }) => {
 }
 
 const MainStatus = ({ statuses }) => {
-  const mainStatus = statuses.find(s => s.type === 'error') || statuses.find(s => s.type === 'warning') || statuses[0]
+  const mainStatus =
+    statuses.find(s => s.type === 'error') ||
+    statuses.find(s => s.type === 'warning') ||
+    statuses[0]
   const plus = { label: `+${statuses.length - 1}`, type: mainStatus.type }
 
   return (

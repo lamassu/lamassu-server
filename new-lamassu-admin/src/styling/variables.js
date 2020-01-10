@@ -121,7 +121,6 @@ export {
   mistyRose,
   java,
   neon,
-  pumpkin,
   linen,
   // named colors
   primaryColor,
