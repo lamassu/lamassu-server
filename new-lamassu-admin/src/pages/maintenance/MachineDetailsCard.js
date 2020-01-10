@@ -33,7 +33,7 @@ const Label = ({ children }) => {
   return <div className={classes.label}>{children}</div>
 }
 
-const MachineDetailsRow = ({ machine, ...props }) => {
+const MachineDetailsRow = ({ it: machine, ...props }) => {
   const [dialogOpen, setOpen] = React.useState(false)
   const useStyles = makeStyles({ ...detailsRowStyles, colDivider })
   const classes = useStyles()

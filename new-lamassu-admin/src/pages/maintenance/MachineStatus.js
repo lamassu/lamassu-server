@@ -1,6 +1,8 @@
 import { makeStyles } from '@material-ui/core'
-import useAxios from '@use-hooks/axios'
+import { useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 import moment from 'moment'
+import * as R from 'ramda'
 import React from 'react'
 
 import ExpTable from '../../components/expandable-table/ExpTable'
@@ -12,62 +14,65 @@ import { mainStyles } from '../Transactions/Transactions.styles'
 
 import MachineDetailsRow from './MachineDetailsCard'
 
+const GET_MACHINES = gql`
+  {
+    machines {
+      name
+      deviceId
+      paired
+      cashbox
+      cassette1
+      cassette2
+      statuses {
+        label
+        type
+      }
+    }
+  }
+`
+
 const MachineStatus = () => {
   const useStyles = makeStyles(mainStyles)
 
   const classes = useStyles()
 
-  const { response } = useAxios({
-    url: 'https://localhost:8070/api/machines',
-    method: 'GET',
-    trigger: []
-  })
+  const { data: machinesResponse } = useQuery(GET_MACHINES)
 
-  const rows =
-    response &&
-    response.data.machines.map(m => ({
-      columns: [
-        {
-          name: 'Machine Name',
-          size: 232,
-          value: m.name,
-          className: classes.dateColumn,
-          textAlign: 'left'
-        },
-        {
-          name: 'Status',
-          size: 349,
-          value: <MainStatus statuses={m.statuses} />,
-          className: classes.dateColumn,
-          textAlign: 'left'
-        },
-        {
-          name: 'Last ping',
-          size: 192,
-          value: moment(m.lastPing).fromNow(),
-          className: classes.dateColumn,
-          textAlign: 'left'
-        },
-        {
-          name: 'Ping Time',
-          size: 155,
-          value: m.pingTime || 'unknown',
-          className: classes.dateColumn,
-          textAlign: 'left'
-        },
-        {
-          name: 'Software Version',
-          size: 201,
-          value: m.softwareVersion || 'unknown',
-          className: classes.dateColumn,
-          textAlign: 'left'
-        },
-        {
-          size: 71
-        }
-      ],
-      details: <MachineDetailsRow machine={m} />
-    }))
+  const elements = [
+    {
+      header: 'Machine Name',
+      size: 232,
+      textAlign: 'left',
+      view: m => m.name
+    },
+    {
+      header: 'Status',
+      size: 349,
+      textAlign: 'left',
+      view: m => <MainStatus statuses={m.statuses} />
+    },
+    {
+      header: 'Last ping',
+      size: 192,
+      textAlign: 'left',
+      view: m => moment(m.lastPing).fromNow()
+    },
+    {
+      header: 'Ping Time',
+      size: 155,
+      textAlign: 'left',
+      view: m => m.pingTime || 'unknown'
+    },
+    {
+      header: 'Software Version',
+      size: 201,
+      textAlign: 'left',
+      view: m => m.softwareVersion || 'unknown'
+    },
+    {
+      size: 71
+    }
+  ]
 
   return (
     <>
@@ -86,7 +91,11 @@ const MachineStatus = () => {
           </div>
         </div>
       </div>
-      <ExpTable rows={rows} />
+      <ExpTable
+        elements={elements}
+        data={R.path(['machines'])(machinesResponse)}
+        Details={MachineDetailsRow}
+      />
     </>
   )
 }
