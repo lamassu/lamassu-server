@@ -8,6 +8,7 @@ import Locales from 'src/pages/Locales'
 import Logs from 'src/pages/Logs'
 import ServerLogs from 'src/pages/ServerLogs'
 import Transactions from 'src/pages/Transactions/Transactions'
+import Services from 'src/pages/Services/Services'
 import AuthRegister from 'src/pages/AuthRegister'
 
 const tree = [
@@ -38,7 +39,12 @@ const tree = [
         label: 'Commissions',
         route: '/settings/commissions'
       },
-      { key: 'locale', label: 'Locale', route: '/settings/locale' }
+      { key: 'locale', label: 'Locale', route: '/settings/locale' },
+      {
+        key: 'services',
+        label: '3rd party services',
+        route: '/settings/3rd-party-services'
+      }
     ]
   }
   // compliance: { label: 'Compliance', children: [{ label: 'Locale', route: '/locale' }] }
@@ -65,6 +71,7 @@ const Routes = () => (
     />
     <Route path="/settings/commissions" component={Commissions} />
     <Route path="/settings/locale" component={Locales} />
+    <Route path="/settings/3rd-party-services" component={Services} />
     <Route path="/maintenance/logs" component={Logs} />
     <Route path="/maintenance/funding" component={Funding} />
     <Route path="/maintenance/server-logs" component={ServerLogs} />

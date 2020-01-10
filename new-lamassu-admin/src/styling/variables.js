@@ -103,6 +103,8 @@ const tableSmCellHeight = 30
 const tableLgCellHeight = 76
 
 const tableHeaderColor = primaryColor
+const tableDisabledHeaderColor = zircon
+const tableNewDisabledHeaderColor = spring3
 const tableCellColor = white
 const tableErrorColor = mistyRose
 const tableSuccessColor = spring3
@@ -172,6 +174,8 @@ export {
   tableSmCellHeight,
   tableLgCellHeight,
   tableHeaderColor,
+  tableDisabledHeaderColor,
+  tableNewDisabledHeaderColor,
   tableCellColor,
   tableErrorColor,
   tableSuccessColor
