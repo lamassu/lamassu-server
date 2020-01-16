@@ -4,10 +4,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle as MuiDialogTitle,
-  IconButton
+  IconButton,
+  makeStyles
 } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
-import React, { memo } from 'react'
+import React, { useState, memo } from 'react'
 
 import { Button } from '../components/buttons'
 import { ReactComponent as CloseIcon } from '../styling/icons/action/close/zodiac.svg'
@@ -16,7 +16,7 @@ import { spacer } from '../styling/variables'
 import { TextInput } from './inputs'
 import { H4, P } from './typography'
 
-const styles = () => ({
+const useStyles = makeStyles({
   closeButton: {
     position: 'absolute',
     right: spacer,
@@ -24,8 +24,8 @@ const styles = () => ({
   }
 })
 
-const DialogTitle = withStyles(styles)(props => {
-  const { children, classes, onClose } = props
+const DialogTitle = ({ children, onClose }) => {
+  const classes = useStyles()
   return (
     <MuiDialogTitle>
       {children}
@@ -39,7 +39,7 @@ const DialogTitle = withStyles(styles)(props => {
       )}
     </MuiDialogTitle>
   )
-})
+}
 
 const ConfirmDialog = memo(
   ({
@@ -51,8 +51,8 @@ const ConfirmDialog = memo(
     onDissmised,
     ...props
   }) => {
-    const [value, setValue] = React.useState('')
-    const [isOpen, setOpen] = React.useState(open)
+    const [value, setValue] = useState('')
+    const [isOpen, setOpen] = useState(open)
 
     const handleChange = event => {
       setValue(event.target.value)
