@@ -23,24 +23,28 @@ import { zircon } from '../../styling/variables'
 
 const colDivider = {
   background: zircon,
-  width: '2px'
+  width: 2
 }
 
+const inlineChip = {
+  marginInlineEnd: '0.25em'
+}
+
+const useLStyles = makeStyles(labelStyles)
+
 const Label = ({ children }) => {
-  const useStyles = makeStyles(labelStyles)
-  const classes = useStyles()
+  const classes = useLStyles()
 
   return <div className={classes.label}>{children}</div>
 }
 
+const useMDStyles = makeStyles({ ...detailsRowStyles, colDivider, inlineChip })
+
 const MachineDetailsRow = ({ it: machine, ...props }) => {
   const [dialogOpen, setOpen] = React.useState(false)
-  const useStyles = makeStyles({ ...detailsRowStyles, colDivider })
-  const classes = useStyles()
+  const classes = useMDStyles()
 
-  const unpairDialog = () => {
-    setOpen(true)
-  }
+  const unpairDialog = () => setOpen(true)
 
   const { loading: unpairDisabled, reFetch: unpair } = useAxios({
     url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/unpair`,
@@ -120,9 +124,13 @@ const MachineDetailsRow = ({ it: machine, ...props }) => {
                   <div className={classes.commissionWrapper}>
                     <Label>Software update</Label>
                     <div className={classes.innerRow}>
-                      {machine.softwareVersion}
-                      &nbsp;
+                      {machine.softwareVersion && (
+                        <span className={classes.inlineChip}>
+                          {machine.softwareVersion}
+                        </span>
+                      )}
                       <ActionButton
+                        className={classes.inlineChip}
                         disabled
                         color="primary"
                         Icon={DownloadIcon}
@@ -146,6 +154,7 @@ const MachineDetailsRow = ({ it: machine, ...props }) => {
                     <Label>Actions</Label>
                     <div className={classes.innerRow}>
                       <ActionButton
+                        className={classes.inlineChip}
                         color="primary"
                         Icon={UnpairIcon}
                         InverseIcon={UnpairReversedIcon}
@@ -161,8 +170,8 @@ const MachineDetailsRow = ({ it: machine, ...props }) => {
                         onConfirmed={unpair}
                         onDissmised={() => {}}
                       />
-                      &nbsp;
                       <ActionButton
+                        className={classes.inlineChip}
                         color="primary"
                         Icon={RebootIcon}
                         InverseIcon={RebootReversedIcon}
@@ -170,8 +179,8 @@ const MachineDetailsRow = ({ it: machine, ...props }) => {
                         onClick={reboot}>
                         Reboot
                       </ActionButton>
-                      &nbsp;
                       <ActionButton
+                        className={classes.inlineChip}
                         disabled={shutdownDisabled}
                         color="primary"
                         Icon={ShutdownIcon}
