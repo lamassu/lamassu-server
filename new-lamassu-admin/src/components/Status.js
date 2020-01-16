@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 import Chip from '@material-ui/core/Chip'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 
 import {
   tomato,
@@ -26,7 +26,7 @@ const backgroundColors = {
   success: spring3
 }
 
-const styles = type => ({
+const styles = ({ type }) => ({
   root: {
     borderRadius: spacer / 2,
     marginTop: spacer / 2,
@@ -50,16 +50,18 @@ const LsChip = memo(({ classes, ...props }) => (
   <Chip size="small" classes={classes} {...props} />
 ))
 
-const GreenChip = withStyles(styles('success'))(LsChip)
-const OrangeChip = withStyles(styles('warning'))(LsChip)
-const RedChip = withStyles(styles('error'))(LsChip)
+const StatusChip = ({ type, ...props }) => {
+  // TODO: Move makeStyles to outside of the component
+  const useStyles = makeStyles(styles({ type }))
+  const classes = useStyles({ type })
+
+  return <LsChip {...props} classes={classes}></LsChip>
+}
 
 const Status = ({ status }) => {
   return (
     <>
-      {status.type === 'error' && <RedChip label={status.label} />}
-      {status.type === 'warning' && <OrangeChip label={status.label} />}
-      {status.type === 'success' && <GreenChip label={status.label} />}
+      <StatusChip type={status.type} label={status.label} />
     </>
   )
 }
