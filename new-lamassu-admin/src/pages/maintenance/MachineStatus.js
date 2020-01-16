@@ -31,9 +31,9 @@ const GET_MACHINES = gql`
   }
 `
 
-const MachineStatus = () => {
-  const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(mainStyles)
 
+const MachineStatus = () => {
   const classes = useStyles()
 
   const { data: machinesResponse } = useQuery(GET_MACHINES)
