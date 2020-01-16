@@ -10,57 +10,39 @@ import {
   inputFontWeight,
   spring3,
   smallestFontSize,
-  inputFontFamily
+  inputFontFamily,
+  spacer
 } from '../styling/variables'
 
-const green = theme => ({
-  root: {
-    backgroundColor: spring3,
-    borderRadius: 4,
-    margin: theme.spacing(0.5, 0.25),
-    height: 18
-  },
-  label: {
-    fontSize: smallestFontSize,
-    color: spring4,
-    fontWeight: inputFontWeight,
-    fontFamily: inputFontFamily,
-    paddingRight: 4,
-    paddingLeft: 4
-  }
-})
+const colors = {
+  error: tomato,
+  warning: pumpkin,
+  success: spring4
+}
 
-const orange = theme => ({
-  root: {
-    backgroundColor: mistyRose,
-    borderRadius: 4,
-    margin: theme.spacing(0.5, 0.25),
-    height: 18
-  },
-  label: {
-    fontSize: smallestFontSize,
-    color: pumpkin,
-    fontWeight: inputFontWeight,
-    fontFamily: inputFontFamily,
-    paddingRight: 4,
-    paddingLeft: 4
-  }
-})
+const backgroundColors = {
+  error: mistyRose,
+  warning: mistyRose,
+  success: spring3
+}
 
-const red = theme => ({
+const styles = type => ({
   root: {
-    backgroundColor: mistyRose,
-    borderRadius: 4,
-    margin: theme.spacing(0.5, 0.25),
-    height: 18
+    borderRadius: spacer / 2,
+    marginTop: spacer / 2,
+    marginRight: spacer / 4,
+    marginBottom: spacer / 2,
+    marginLeft: spacer / 4,
+    height: 18,
+    backgroundColor: backgroundColors[type]
   },
   label: {
     fontSize: smallestFontSize,
-    color: tomato,
     fontWeight: inputFontWeight,
     fontFamily: inputFontFamily,
-    paddingRight: 4,
-    paddingLeft: 4
+    paddingRight: spacer / 2,
+    paddingLeft: spacer / 2,
+    color: colors[type]
   }
 })
 
@@ -68,9 +50,9 @@ const LsChip = memo(({ classes, ...props }) => (
   <Chip size="small" classes={classes} {...props} />
 ))
 
-const GreenChip = withStyles(green)(LsChip)
-const OrangeChip = withStyles(orange)(LsChip)
-const RedChip = withStyles(red)(LsChip)
+const GreenChip = withStyles(styles('success'))(LsChip)
+const OrangeChip = withStyles(styles('warning'))(LsChip)
+const RedChip = withStyles(styles('error'))(LsChip)
 
 const Status = ({ status }) => {
   return (
