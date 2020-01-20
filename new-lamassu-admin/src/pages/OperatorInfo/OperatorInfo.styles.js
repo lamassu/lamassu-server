@@ -3,11 +3,16 @@ import { offColor } from 'src/styling/variables'
 const styles = {
   header: {
     display: 'flex',
-    '& > button': {
-      border: 'none',
-      backgroundColor: 'transparent',
+    '& > p': {
+      marginTop: 0
+    },
+    '& > div': {
       marginLeft: 20,
-      cursor: 'pointer'
+      '& > button': {
+        border: 'none',
+        backgroundColor: 'transparent',
+        cursor: 'pointer'
+      }
     }
   },
   section: {
@@ -20,6 +25,7 @@ const contactInfoStyles = {
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: 28,
+    width: 600,
     '&:last-child': {
       marginBottom: 0
     }
@@ -35,11 +41,13 @@ const contactInfoStyles = {
     }
   },
   radioButtonsRow: {
-    height: 60
+    height: 60,
+    marginBottom: 14
   },
   radioButtons: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingLeft: 4
   },
   submit: {
     justifyContent: 'flex-start',

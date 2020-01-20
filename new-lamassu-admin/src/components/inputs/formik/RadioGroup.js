@@ -9,7 +9,8 @@ const styles = {
   label: {
     height: 16,
     lineHeight: '16px',
-    margin: [[0, 0, 4, 0]]
+    margin: [[0, 0, 4, 0]],
+    paddingLeft: 3
   }
 }
 
