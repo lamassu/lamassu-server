@@ -78,7 +78,7 @@ if (version === 8) {
 }
 
 const smallestFontSize = fontSize5
-const inputFontSize = fontSize4
+const inputFontSize = fontSize3
 const inputFontSizeLg = fontSize1
 const inputFontWeight = 500
 const inputFontFamily = fontSecondary

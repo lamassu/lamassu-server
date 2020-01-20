@@ -30,7 +30,7 @@ const fieldStyles = {
     position: 'relative',
     width: 280,
     height: 46,
-    padding: [[0, 4, 4, 4]]
+    padding: [[0, 4, 4, 0]]
   },
   notEditing: {
     display: 'flex',
@@ -38,10 +38,12 @@ const fieldStyles = {
     '& > p:first-child': {
       height: 16,
       lineHeight: '16px',
-      margin: [[0, 0, 4, 0]]
+      paddingLeft: 3,
+      margin: [[0, 0, 5, 0]]
     },
     '& > p:last-child': {
-      margin: 0
+      margin: 0,
+      paddingLeft: 4
     }
   }
 }
@@ -57,27 +59,25 @@ const Field = ({ editing, field, displayValue, ...props }) => {
   }
 
   return (
-    <>
-      <div className={classnames(classNames)}>
-        {!editing && (
-          <>
-            <Label1>{field.label}</Label1>
-            <Info3>{displayValue(field.value)}</Info3>
-          </>
-        )}
-        {editing && (
-          <FormikField
-            id={field.name}
-            name={field.name}
-            component={field.component}
-            placeholder={field.placeholder}
-            type={field.type}
-            label={field.label}
-            {...props}
-          />
-        )}
-      </div>
-    </>
+    <div className={classnames(classNames)}>
+      {!editing && (
+        <>
+          <Label1>{field.label}</Label1>
+          <Info3>{displayValue(field.value)}</Info3>
+        </>
+      )}
+      {editing && (
+        <FormikField
+          id={field.name}
+          name={field.name}
+          component={field.component}
+          placeholder={field.placeholder}
+          type={field.type}
+          label={field.label}
+          {...props}
+        />
+      )}
+    </div>
   )
 }
 
@@ -115,7 +115,7 @@ const ContactInfo = () => {
 
   useQuery(GET_CONFIG, {
     onCompleted: data => {
-      const operatorInfo = data.config
+      const { operatorInfo } = data.config
       setInfo(operatorInfo ?? {})
     }
   })
@@ -178,41 +178,58 @@ const ContactInfo = () => {
 
   const displayTextValue = value => value
 
+  const form = {
+    initialValues: {
+      infoCardEnabled: findValue('infoCardEnabled'),
+      fullName: findValue('fullName'),
+      phoneNumber: info.phoneNumber ?? '',
+      email: findValue('email'),
+      website: findValue('website'),
+      companyNumber: findValue('companyNumber')
+    },
+    validationSchema: Yup.object().shape({
+      fullName: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      phoneNumber: Yup.string()
+        .matches(mask, { excludeEmptyString: true })
+        .max(100, 'Too long')
+        .required(),
+      email: Yup.string()
+        .email('Please enter a valid email address')
+        .max(100, 'Too long')
+        .required(),
+      website: Yup.string()
+        .url('Please enter a valid url')
+        .max(100, 'Too long')
+        .required(),
+      companyNumber: Yup.string()
+        .max(30, 'Too long')
+        .required()
+    })
+  }
+
   return (
     <>
       <div className={classes.header}>
         <Info2>Contact information</Info2>
         {!editing && (
-          <button onClick={() => setEditing(true)}>
-            <EditIcon />
-          </button>
+          <div>
+            <button onClick={() => setEditing(true)}>
+              <EditIcon />
+            </button>
+          </div>
         )}
       </div>
       <div className={classes.section}>
         <Formik
-          initialValues={{
-            infoCardEnabled: findValue('infoCardEnabled'),
-            fullName: findValue('fullName'),
-            phoneNumber: info.phoneNumber ?? '',
-            email: findValue('email'),
-            website: findValue('website'),
-            companyNumber: findValue('companyNumber')
-          }}
-          validationSchema={Yup.object().shape({
-            fullName: Yup.string().max(100, 'Too long'),
-            phoneNumber: Yup.string()
-              .matches(mask, { excludeEmptyString: true })
-              .max(100, 'Too long'),
-            email: Yup.string()
-              .email('Please enter a valid email address')
-              .max(100, 'Too long'),
-            website: Yup.string()
-              .url('Please enter a valid url')
-              .max(100, 'Too long'),
-            companyNumber: Yup.string().max(30, 'Too long')
-          })}
-          onSubmit={values => {
-            save(values)
+          enableReinitialize
+          initialValues={form.initialValues}
+          validationSchema={form.validationSchema}
+          onSubmit={values => save(values)}
+          onReset={(values, bag) => {
+            setEditing(false)
+            setError(null)
           }}>
           <Form>
             <div className={classnames(classes.row, classes.radioButtonsRow)}>
@@ -270,12 +287,7 @@ const ContactInfo = () => {
                   <Link color="primary" type="submit">
                     Save
                   </Link>
-                  <Link
-                    color="secondary"
-                    onClick={() => {
-                      setEditing(false)
-                      setError(null)
-                    }}>
+                  <Link color="secondary" type="reset">
                     Cancel
                   </Link>
                   {error && (
