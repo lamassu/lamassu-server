@@ -81,6 +81,7 @@ const smallestFontSize = fontSize5
 const inputFontSize = fontSize3
 const inputFontSizeLg = fontSize1
 const inputFontWeight = 500
+const inputFontWeightLg = 700
 const inputFontFamily = fontSecondary
 
 // Breakpoints
@@ -98,6 +99,8 @@ if (version === 8) {
   tableHeaderHeight = spacer * 5
   tableCellHeight = spacer * 7 - 2
 }
+
+const tableDoubleHeaderHeight = tableHeaderHeight * 2
 
 const tableSmCellHeight = 30
 const tableLgCellHeight = 76
@@ -159,6 +162,7 @@ export {
   inputFontSizeLg,
   inputFontFamily,
   inputFontWeight,
+  inputFontWeightLg,
   // screen sizes
   sm,
   md,
@@ -170,6 +174,7 @@ export {
   mainWidth,
   // table sizes
   tableHeaderHeight,
+  tableDoubleHeaderHeight,
   tableCellHeight,
   tableSmCellHeight,
   tableLgCellHeight,

@@ -53,6 +53,7 @@ const OperatorInfo = () => {
           {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
           {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
           {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
+          {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
         </div>
       </div>
     </>
