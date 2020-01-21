@@ -1,6 +1,5 @@
 import React, { memo } from 'react'
 import classnames from 'classnames'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -10,27 +9,49 @@ import {
   secondaryColor,
   inputFontSize,
   inputFontSizeLg,
-  inputFontWeight
+  inputFontWeight,
+  inputFontWeightLg
 } from 'src/styling/variables'
+import { TL2, Label2, Info1, Info2 } from 'src/components/typography'
 
 const useStyles = makeStyles({
+  wrapper: {
+    display: 'inline-block',
+    maxWidth: '100%',
+    '& > span': {
+      display: 'flex',
+      alignItems: 'baseline',
+      '& > p:first-child': {
+        margin: [[0, 4, 5, 0]]
+      },
+      '&> p:last-child': {
+        margin: [[0, 0, 0, 3]]
+      }
+    }
+  },
   inputRoot: {
     fontSize: inputFontSize,
     color: fontColor,
     fontWeight: inputFontWeight,
-    paddingLeft: 4
+    paddingLeft: 4,
+    '& > .MuiInputBase-input': {
+      width: 282
+    }
   },
   inputRootLg: {
     fontSize: inputFontSizeLg,
     color: fontColor,
-    fontWeight: inputFontWeight
+    fontWeight: inputFontWeightLg,
+    '& > .MuiInputBase-input': {
+      width: 96
+    }
   },
   labelRoot: {
     color: fontColor,
     paddingLeft: 4
   },
   root: {
-    '& .MuiInput-underline:before': {
+    '& > .MuiInput-underline:before': {
       borderBottom: [[2, 'solid', fontColor]]
     },
     '& .Mui-focused': {
@@ -39,9 +60,6 @@ const useStyles = makeStyles({
     '& input': {
       paddingTop: 4,
       paddingBottom: 3
-    },
-    '& .MuiInputBase-input': {
-      width: 282
     },
     '& .MuiInputBase-inputMultiline': {
       width: 500,
@@ -66,6 +84,23 @@ const useStyles = makeStyles({
   }
 })
 
+const TextInputDisplay = memo(({ display, suffix, large }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.wrapper}>
+      <span>
+        {large && !suffix && <span>{display}</span>}
+        {!large && !suffix && <span>{display}</span>}
+        {large && suffix && <Info1>{display}</Info1>}
+        {!large && suffix && <Info2>{display}</Info2>}
+        {suffix && large && <TL2>{suffix}</TL2>}
+        {suffix && !large && <Label2>{suffix}</Label2>}
+      </span>
+    </div>
+  )
+})
+
 const TextInput = memo(
   ({
     name,
@@ -76,6 +111,7 @@ const TextInput = memo(
     suffix,
     large,
     className,
+    InputProps,
     ...props
   }) => {
     const classes = useStyles()
@@ -87,30 +123,33 @@ const TextInput = memo(
     }
 
     return (
-      <TextField
-        id={name}
-        onChange={onChange}
-        onBlur={onBlur}
-        error={error}
-        value={value}
-        classes={{ root: classes.root }}
-        className={classnames(classNames)}
-        InputProps={{
-          className: large ? classes.inputRootLg : classes.inputRoot,
-          endAdornment: suffix ? (
-            <InputAdornment
-              className={classes.inputRoot}
-              disableTypography
-              position="end">
-              {suffix}
-            </InputAdornment>
-          ) : null
-        }}
-        InputLabelProps={{ className: classes.labelRoot }}
-        {...props}
-      />
+      <div className={classes.wrapper}>
+        <span>
+          <TextField
+            id={name}
+            onChange={onChange}
+            onBlur={onBlur}
+            error={error}
+            value={value}
+            classes={{ root: classes.root }}
+            className={classnames(classNames)}
+            InputProps={{
+              className: large ? classes.inputRootLg : classes.inputRoot,
+              ...InputProps
+            }}
+            InputLabelProps={{ className: classes.labelRoot }}
+            {...props}
+          />
+          {suffix && large && (
+            <>
+              <TL2>{suffix}</TL2>
+            </>
+          )}
+          {suffix && !large && <Label2>{suffix}</Label2>}
+        </span>
+      </div>
     )
   }
 )
 
-export default TextInput
+export { TextInput, TextInputDisplay }

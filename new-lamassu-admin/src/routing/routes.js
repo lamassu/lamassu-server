@@ -1,30 +1,19 @@
 import * as R from 'ramda'
-
 import React from 'react'
-
 import { Route, Redirect, Switch } from 'react-router-dom'
 
 import AuthRegister from 'src/pages/AuthRegister'
-
 import Commissions from 'src/pages/Commissions'
-
+import Customers from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
-
 import Locales from 'src/pages/Locales'
-
 import MachineLogs from 'src/pages/MachineLogs'
-
+import Notifications from 'src/pages/Notifications/Notifications'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
-
 import ServerLogs from 'src/pages/ServerLogs'
-
 import Services from 'src/pages/Services/Services'
-
 import Transactions from 'src/pages/Transactions/Transactions'
-
-import Customers from '../pages/Customers'
-
-import MachineStatus from '../pages/maintenance/MachineStatus'
+import MachineStatus from 'src/pages/maintenance/MachineStatus'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -64,6 +53,11 @@ const tree = [
         key: 'services',
         label: '3rd party services',
         route: '/settings/3rd-party-services'
+      },
+      {
+        key: 'notifications',
+        label: 'Notifications',
+        route: '/settings/notifications'
       },
       { key: 'info', label: 'Operator Info', route: '/settings/operator-info' }
     ]
@@ -120,6 +114,7 @@ const Routes = () => (
     <Route path="/settings/commissions" component={Commissions} />
     <Route path="/settings/locale" component={Locales} />
     <Route path="/settings/3rd-party-services" component={Services} />
+    <Route path="/settings/notifications" component={Notifications} />
     <Route path="/settings/operator-info" component={OperatorInfo} />
     <Route path="/maintenance/logs" component={MachineLogs} />
     <Route path="/maintenance/funding" component={Funding} />
