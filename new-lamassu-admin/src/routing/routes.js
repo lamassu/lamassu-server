@@ -11,6 +11,7 @@ import Transactions from 'src/pages/Transactions/Transactions'
 import Services from 'src/pages/Services/Services'
 import AuthRegister from 'src/pages/AuthRegister'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
+import Notifications from 'src/pages/Notifications/Notifications'
 
 import MachineStatus from '../pages/maintenance/MachineStatus'
 
@@ -53,6 +54,11 @@ const tree = [
         label: '3rd party services',
         route: '/settings/3rd-party-services'
       },
+      {
+        key: 'notifications',
+        label: 'Notifications',
+        route: '/settings/notifications'
+      },
       { key: 'info', label: 'Operator Info', route: '/settings/operator-info' }
     ]
   }
@@ -81,6 +87,7 @@ const Routes = () => (
     <Route path="/settings/commissions" component={Commissions} />
     <Route path="/settings/locale" component={Locales} />
     <Route path="/settings/3rd-party-services" component={Services} />
+    <Route path="/settings/notifications" component={Notifications} />
     <Route path="/settings/operator-info" component={OperatorInfo} />
     <Route path="/maintenance/logs" component={Logs} />
     <Route path="/maintenance/funding" component={Funding} />
