@@ -18,12 +18,18 @@ const useStyles = makeStyles({
     fontSize: inputFontSize,
     color: fontColor,
     fontWeight: inputFontWeight,
-    paddingLeft: 4
+    paddingLeft: 4,
+    '& > .MuiInputBase-input': {
+      width: 282
+    }
   },
   inputRootLg: {
     fontSize: inputFontSizeLg,
     color: fontColor,
-    fontWeight: inputFontWeight
+    fontWeight: inputFontWeight,
+    '& > .MuiInputBase-input': {
+      width: 96
+    }
   },
   labelRoot: {
     color: fontColor,
@@ -39,9 +45,6 @@ const useStyles = makeStyles({
     '& input': {
       paddingTop: 4,
       paddingBottom: 3
-    },
-    '& .MuiInputBase-input': {
-      width: 282
     },
     '& .MuiInputBase-inputMultiline': {
       width: 500,

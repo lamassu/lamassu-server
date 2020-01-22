@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import classnames from 'classnames'
 import * as R from 'ramda'
+import { Form, Formik, Field as FormikField } from 'formik'
 import { makeStyles } from '@material-ui/core'
 
 import Title from 'src/components/Title'
-import { TL1 } from 'src/components/typography'
+import { TL1, H4, Label1, Info1 } from 'src/components/typography'
 import {
   Table,
   THead,
@@ -14,6 +16,8 @@ import {
 } from 'src/components/fake-table/Table'
 import commonStyles from 'src/pages/common.styles'
 import { Switch } from 'src/components/inputs'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 import { localStyles } from './Notifications.styles'
 
@@ -75,6 +79,59 @@ const Row = ({ channel, columns, values }) => {
   )
 }
 
+const fieldStyles = {
+  field: {
+    position: 'relative',
+    width: 280,
+    // height: 46,
+    padding: [[0, 4, 4, 0]]
+  },
+  notEditing: {
+    display: 'flex',
+    flexDirection: 'column',
+    '& > p:first-child': {
+      height: 16,
+      lineHeight: '16px',
+      margin: [[0, 0, 11, 0]]
+    },
+    '& > p:last-child': {
+      margin: 0
+    }
+  }
+}
+
+const fieldUseStyles = makeStyles(fieldStyles)
+
+const BigEditableTextField = ({ name, value, label, editing, ...props }) => {
+  const classes = fieldUseStyles()
+
+  const classNames = {
+    [classes.field]: true,
+    [classes.notEditing]: !editing
+  }
+
+  return (
+    <div className={classnames(classNames)}>
+      <Label1 htmlFor={editing && name}>{label}</Label1>
+      {!editing && (
+        <>
+          <Info1>{value}</Info1>
+        </>
+      )}
+      {editing && (
+        <FormikField
+          id={name}
+          name={name}
+          component={TextInputFormik}
+          type="text"
+          large
+          {...props}
+        />
+      )}
+    </div>
+  )
+}
+
 const styles = R.merge(commonStyles, localStyles)
 
 const useStyles = makeStyles(styles)
@@ -125,6 +182,7 @@ const elements = [
 ]
 
 const Notifications = () => {
+  const [editingHighValueTx, setEditingHighValueTx] = useState(false)
   const classes = useStyles()
 
   return (
@@ -162,6 +220,39 @@ const Notifications = () => {
               />
             </TBody>
           </Table>
+        </div>
+      </div>
+      <div className={classes.section}>
+        <TL1 className={classes.sectionTitle}>Transaction alerts</TL1>
+        <div>
+          <div className={classes.optionHeader}>
+            <H4>High value transaction</H4>
+            <button onClick={() => setEditingHighValueTx(true)}>
+              <EditIcon />
+            </button>
+          </div>
+          <div className={classes.optionBody}>
+            <Formik
+              enableReinitialize
+              initialValues={{ alert: '5000' }}
+              // validationSchema={form.validationSchema}
+              // onSubmit={values => save(values)}
+              // onReset={(values, bag) => {
+              //   setEditing(false)
+              //   setError(null)
+              // }}
+            >
+              <Form>
+                <BigEditableTextField
+                  name="alert"
+                  label="Alert me over"
+                  // placeholder={field.placeholder}
+                  large
+                  editing={editingHighValueTx}
+                />
+              </Form>
+            </Formik>
+          </div>
         </div>
       </div>
     </>
