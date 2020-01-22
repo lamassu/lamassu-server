@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import Chip from '@material-ui/core/Chip'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -46,18 +46,9 @@ const useStyles = makeStyles({
   }
 })
 
-const LsChip = memo(({ classes, ...props }) => (
-  <Chip size="small" classes={classes} {...props} />
-))
-
-const StatusChip = ({ type, ...props }) => {
-  const classes = useStyles({ type })
-
-  return <LsChip {...props} classes={classes}></LsChip>
-}
-
 const Status = ({ status }) => {
-  return <StatusChip type={status.type} label={status.label} />
+  const classes = useStyles({ type: status.type })
+  return <Chip type={status.type} label={status.label} classes={classes} />
 }
 
 const MainStatus = ({ statuses }) => {
