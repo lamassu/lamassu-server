@@ -26,7 +26,7 @@ const backgroundColors = {
   success: spring3
 }
 
-const styles = ({ type }) => ({
+const useStyles = makeStyles({
   root: {
     borderRadius: spacer / 2,
     marginTop: spacer / 2,
@@ -34,7 +34,7 @@ const styles = ({ type }) => ({
     marginBottom: spacer / 2,
     marginLeft: spacer / 4,
     height: 18,
-    backgroundColor: backgroundColors[type]
+    backgroundColor: ({ type }) => backgroundColors[type]
   },
   label: {
     fontSize: smallestFontSize,
@@ -42,7 +42,7 @@ const styles = ({ type }) => ({
     fontFamily: inputFontFamily,
     paddingRight: spacer / 2,
     paddingLeft: spacer / 2,
-    color: colors[type]
+    color: ({ type }) => colors[type]
   }
 })
 
@@ -51,19 +51,13 @@ const LsChip = memo(({ classes, ...props }) => (
 ))
 
 const StatusChip = ({ type, ...props }) => {
-  // TODO: Move makeStyles to outside of the component
-  const useStyles = makeStyles(styles({ type }))
   const classes = useStyles({ type })
 
   return <LsChip {...props} classes={classes}></LsChip>
 }
 
 const Status = ({ status }) => {
-  return (
-    <>
-      <StatusChip type={status.type} label={status.label} />
-    </>
-  )
+  return <StatusChip type={status.type} label={status.label} />
 }
 
 const MainStatus = ({ statuses }) => {
