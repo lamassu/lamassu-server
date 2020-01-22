@@ -1,8 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles'
-import useAxios from '@use-hooks/axios'
 import classnames from 'classnames'
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
 import ActionButton from '../../components/buttons/ActionButton'
 import ConfirmDialog from '../../components/ConfirmDialog'
@@ -20,6 +21,14 @@ import {
   labelStyles
 } from '../Transactions/Transactions.styles'
 import { zircon } from '../../styling/variables'
+
+const MACHINE_ACTION = gql`
+  mutation MachineAction($deviceId: ID!, $action: MachineAction!) {
+    machineAction(deviceId: $deviceId, action: $action) {
+      deviceId
+    }
+  }
+`
 
 const colDivider = {
   background: zircon,
@@ -40,26 +49,15 @@ const Label = ({ children }) => {
 
 const useMDStyles = makeStyles({ ...detailsRowStyles, colDivider, inlineChip })
 
-const MachineDetailsRow = ({ it: machine, ...props }) => {
-  const [dialogOpen, setOpen] = React.useState(false)
+const MachineDetailsRow = ({ it: machine }) => {
+  const [dialogOpen, setOpen] = useState(false)
   const classes = useMDStyles()
 
-  const unpairDialog = () => setOpen(true)
+  const unpairDialog = () => {
+    setOpen(true)
+  }
 
-  const { loading: unpairDisabled, reFetch: unpair } = useAxios({
-    url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/unpair`,
-    method: 'POST'
-  })
-
-  const { loading: rebootDisabled, reFetch: reboot } = useAxios({
-    url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/reboot`,
-    method: 'POST'
-  })
-
-  const { loading: shutdownDisabled, reFetch: shutdown } = useAxios({
-    url: `https://localhost:8070/api/machines/${machine.deviceId}/actions/shutdown`,
-    method: 'POST'
-  })
+  const [machineAction, { loading }] = useMutation(MACHINE_ACTION)
 
   return (
     <>
@@ -158,7 +156,7 @@ const MachineDetailsRow = ({ it: machine, ...props }) => {
                         color="primary"
                         Icon={UnpairIcon}
                         InverseIcon={UnpairReversedIcon}
-                        disabled={unpairDisabled}
+                        disabled={loading}
                         onClick={unpairDialog}>
                         Unpair
                       </ActionButton>
@@ -167,25 +165,49 @@ const MachineDetailsRow = ({ it: machine, ...props }) => {
                         title="Unpair this machine?"
                         subtitle={false}
                         toBeConfirmed={machine.name}
-                        onConfirmed={unpair}
-                        onDissmised={() => {}}
+                        onConfirmed={() => {
+                          setOpen(false)
+                          machineAction({
+                            variables: {
+                              deviceId: machine.deviceId,
+                              action: 'unpair'
+                            }
+                          })
+                        }}
+                        onDissmised={() => {
+                          setOpen(false)
+                        }}
                       />
                       <ActionButton
                         className={classes.inlineChip}
                         color="primary"
                         Icon={RebootIcon}
                         InverseIcon={RebootReversedIcon}
-                        disabled={rebootDisabled}
-                        onClick={reboot}>
+                        disabled={loading}
+                        onClick={() => {
+                          machineAction({
+                            variables: {
+                              deviceId: machine.deviceId,
+                              action: 'reboot'
+                            }
+                          })
+                        }}>
                         Reboot
                       </ActionButton>
                       <ActionButton
                         className={classes.inlineChip}
-                        disabled={shutdownDisabled}
+                        disabled={loading}
                         color="primary"
                         Icon={ShutdownIcon}
                         InverseIcon={ShutdownReversedIcon}
-                        onClick={shutdown}>
+                        onClick={() => {
+                          machineAction({
+                            variables: {
+                              deviceId: machine.deviceId,
+                              action: 'shutdown'
+                            }
+                          })
+                        }}>
                         Shutdown
                       </ActionButton>
                     </div>
