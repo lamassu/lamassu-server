@@ -1,189 +1,78 @@
 import React, { useState } from 'react'
-import classnames from 'classnames'
 import * as R from 'ramda'
-import { Form, Formik, Field as FormikField } from 'formik'
+import { gql } from 'apollo-boost'
 import { makeStyles } from '@material-ui/core'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import Title from 'src/components/Title'
-import { TL1, H4, Label1, Info1 } from 'src/components/typography'
-import {
-  Table,
-  THead,
-  TBody,
-  Tr,
-  Td,
-  Th
-} from 'src/components/fake-table/Table'
+import { TL1 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
-import { Switch } from 'src/components/inputs'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 import { localStyles } from './Notifications.styles'
+import Setup from './Setup'
 
 const initialValues = {
-  email: {
-    balance: false,
-    transactions: false,
-    compliance: false,
-    security: false,
-    errors: false,
-    active: false
-  },
-  sms: {
-    balance: false,
-    transactions: false,
-    compliance: false,
-    security: false,
-    errors: false,
-    active: false
-  }
-}
-
-const Row = ({ channel, columns, values }) => {
-  const [state, setState] = useState(values)
-
-  const findField = name => R.find(R.propEq('name', name))(columns)
-  const findSize = name => findField(name).size
-  const findAlign = name => findField(name).textAlign
-
-  const Cell = ({ name, disabled }) => {
-    const handleChange = name => event => {
-      setState(R.merge(state, { [name]: event.target.checked }))
-    }
-
-    return (
-      <Td size={findSize(name)} textAlign={findAlign(name)}>
-        <Switch
-          disabled={disabled}
-          checked={state[name]}
-          onChange={handleChange(name)}
-          value={name}
-        />
-      </Td>
-    )
-  }
-
-  return (
-    <Tr>
-      <Td size={findSize('channel')} textAlign={findAlign('channel')}>
-        {channel}
-      </Td>
-      <Cell name="balance" disabled={!state.active} />
-      <Cell name="transactions" disabled={!state.active} />
-      <Cell name="compliance" disabled={!state.active} />
-      <Cell name="security" disabled={!state.active} />
-      <Cell name="errors" disabled={!state.active} />
-      <Cell name="active" />
-    </Tr>
-  )
-}
-
-const fieldStyles = {
-  field: {
-    position: 'relative',
-    width: 280,
-    // height: 46,
-    padding: [[0, 4, 4, 0]]
-  },
-  notEditing: {
-    display: 'flex',
-    flexDirection: 'column',
-    '& > p:first-child': {
-      height: 16,
-      lineHeight: '16px',
-      margin: [[0, 0, 11, 0]]
+  setup: {
+    email: {
+      balance: false,
+      transactions: false,
+      compliance: false,
+      security: false,
+      errors: false,
+      active: false
     },
-    '& > p:last-child': {
-      margin: 0
+    sms: {
+      balance: false,
+      transactions: false,
+      compliance: false,
+      security: false,
+      errors: false,
+      active: false
     }
   }
 }
 
-const fieldUseStyles = makeStyles(fieldStyles)
-
-const BigEditableTextField = ({ name, value, label, editing, ...props }) => {
-  const classes = fieldUseStyles()
-
-  const classNames = {
-    [classes.field]: true,
-    [classes.notEditing]: !editing
+const SAVE_CONFIG = gql`
+  mutation Save($config: JSONObject) {
+    saveConfig(config: $config)
   }
+`
 
-  return (
-    <div className={classnames(classNames)}>
-      <Label1 htmlFor={editing && name}>{label}</Label1>
-      {!editing && (
-        <>
-          <Info1>{value}</Info1>
-        </>
-      )}
-      {editing && (
-        <FormikField
-          id={name}
-          name={name}
-          component={TextInputFormik}
-          type="text"
-          large
-          {...props}
-        />
-      )}
-    </div>
-  )
-}
-
+const GET_CONFIG = gql`
+  {
+    config
+  }
+`
 const styles = R.merge(commonStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
-const elements = [
-  {
-    header: 'Channel',
-    name: 'channel',
-    size: 129,
-    textAlign: 'left'
-  },
-  {
-    header: 'Balance',
-    name: 'balance',
-    size: 152,
-    textAlign: 'center'
-  },
-  {
-    header: 'Transactions',
-    name: 'transactions',
-    size: 184,
-    textAlign: 'center'
-  },
-  {
-    header: 'Compliance',
-    name: 'compliance',
-    size: 178,
-    textAlign: 'center'
-  },
-  {
-    header: 'Security',
-    name: 'security',
-    size: 152,
-    textAlign: 'center'
-  },
-  {
-    header: 'Errors',
-    name: 'errors',
-    size: 142,
-    textAlign: 'center'
-  },
-  {
-    header: 'Active',
-    name: 'active',
-    size: 263,
-    textAlign: 'center'
-  }
-]
-
 const Notifications = () => {
-  const [editingHighValueTx, setEditingHighValueTx] = useState(false)
+  const [state, setState] = useState(null)
+  const [setError] = useState(null)
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    onCompleted: data => {
+      const { notifications } = data.saveConfig
+      setState(notifications)
+    },
+    onError: e => setError(e)
+  })
   const classes = useStyles()
+
+  useQuery(GET_CONFIG, {
+    onCompleted: data => {
+      const { notifications } = data.config
+      setState(notifications ?? initialValues)
+    }
+  })
+
+  const save = it => {
+    return saveConfig({ variables: { config: { notifications: it } } })
+  }
+
+  const curriedSave = R.curry((key, values) => save({ [key]: values }))
+
+  if (!state) return null
 
   return (
     <>
@@ -193,67 +82,16 @@ const Notifications = () => {
         </div>
       </div>
       <div className={classes.section}>
-        <TL1 className={classes.sectionTitle}>Setup</TL1>
-        <div>
-          <Table>
-            <THead>
-              {elements.map(({ size, className, textAlign, header }, idx) => (
-                <Th
-                  key={idx}
-                  size={size}
-                  className={className}
-                  textAlign={textAlign}>
-                  {header}
-                </Th>
-              ))}
-            </THead>
-            <TBody>
-              <Row
-                channel="Email"
-                columns={elements}
-                values={initialValues.email}
-              />
-              <Row
-                channel="SMS"
-                columns={elements}
-                values={initialValues.sms}
-              />
-            </TBody>
-          </Table>
-        </div>
+        <Setup values={state.setup} save={curriedSave('setup')} />
       </div>
       <div className={classes.section}>
         <TL1 className={classes.sectionTitle}>Transaction alerts</TL1>
-        <div>
-          <div className={classes.optionHeader}>
-            <H4>High value transaction</H4>
-            <button onClick={() => setEditingHighValueTx(true)}>
-              <EditIcon />
-            </button>
-          </div>
-          <div className={classes.optionBody}>
-            <Formik
-              enableReinitialize
-              initialValues={{ alert: '5000' }}
-              // validationSchema={form.validationSchema}
-              // onSubmit={values => save(values)}
-              // onReset={(values, bag) => {
-              //   setEditing(false)
-              //   setError(null)
-              // }}
-            >
-              <Form>
-                <BigEditableTextField
-                  name="alert"
-                  label="Alert me over"
-                  // placeholder={field.placeholder}
-                  large
-                  editing={editingHighValueTx}
-                />
-              </Form>
-            </Formik>
-          </div>
-        </div>
+      </div>
+      <div className={classes.section}>
+        <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>
+      </div>
+      <div className={classes.section}>
+        <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
       </div>
     </>
   )
