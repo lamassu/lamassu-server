@@ -1,10 +1,10 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { gql } from 'apollo-boost'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-import { useQuery } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
@@ -119,6 +119,7 @@ const Transactions = () => {
     },
     {
       header: '', // Trade
+      view: () => {},
       size: 90
     },
     {
