@@ -56,17 +56,9 @@ const ConfirmDialog = memo(
       setValue(event.target.value)
     }
 
-    const handleConfirmed = () => {
-      onConfirmed()
-    }
-
-    const handleDissmised = () => {
-      onDissmised()
-    }
-
     return (
       <Dialog open={open} aria-labelledby="form-dialog-title" {...props}>
-        <DialogTitle id="customized-dialog-title" onClose={handleDissmised}>
+        <DialogTitle id="customized-dialog-title" onClose={onDissmised}>
           <H4>{title}</H4>
           {subtitle && (
             <DialogContentText>
@@ -94,7 +86,7 @@ const ConfirmDialog = memo(
           <Button
             color="green"
             disabled={toBeConfirmed !== value}
-            onClick={handleConfirmed}>
+            onClick={onConfirmed}>
             Confirm
           </Button>
         </DialogActions>
