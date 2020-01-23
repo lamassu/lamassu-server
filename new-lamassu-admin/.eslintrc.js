@@ -15,11 +15,9 @@ module.exports = {
   rules: {
     'import/order': ['error', {
       groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-      // TODO 
-      // bug in this version doens't allow alphabetize with newlines-between
-      // alphabetize: {
-      //   order: 'asc',
-      // },
+      alphabetize: {
+        order: 'asc'
+      },
       'newlines-between': 'always',
     }]
    }

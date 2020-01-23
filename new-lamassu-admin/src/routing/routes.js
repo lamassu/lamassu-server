@@ -2,18 +2,18 @@ import * as R from 'ramda'
 import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
+import AuthRegister from 'src/pages/AuthRegister'
 import Commissions from 'src/pages/Commissions'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
-import Logs from 'src/pages/Logs'
-import ServerLogs from 'src/pages/ServerLogs'
-import Transactions from 'src/pages/Transactions/Transactions'
-import Services from 'src/pages/Services/Services'
-import AuthRegister from 'src/pages/AuthRegister'
+import MachineLogs from 'src/pages/MachineLogs'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
+import ServerLogs from 'src/pages/ServerLogs'
+import Services from 'src/pages/Services/Services'
+import Transactions from 'src/pages/Transactions/Transactions'
 
-import MachineStatus from '../pages/maintenance/MachineStatus'
 import Customers from '../pages/Customers'
+import MachineStatus from '../pages/maintenance/MachineStatus'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -105,7 +105,7 @@ const Routes = () => (
     <Route path="/settings/locale" component={Locales} />
     <Route path="/settings/3rd-party-services" component={Services} />
     <Route path="/settings/operator-info" component={OperatorInfo} />
-    <Route path="/maintenance/logs" component={Logs} />
+    <Route path="/maintenance/logs" component={MachineLogs} />
     <Route path="/maintenance/funding" component={Funding} />
     <Route path="/maintenance/server-logs" component={ServerLogs} />
     <Route path="/transactions" component={Transactions} />
