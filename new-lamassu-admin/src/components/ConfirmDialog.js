@@ -52,24 +52,20 @@ const ConfirmDialog = memo(
     ...props
   }) => {
     const [value, setValue] = useState('')
-    const [isOpen, setOpen] = useState(open)
-
     const handleChange = event => {
       setValue(event.target.value)
     }
 
     const handleConfirmed = () => {
-      setOpen(false)
       onConfirmed()
     }
 
     const handleDissmised = () => {
-      setOpen(false)
       onDissmised()
     }
 
     return (
-      <Dialog open={isOpen} aria-labelledby="form-dialog-title" {...props}>
+      <Dialog open={open} aria-labelledby="form-dialog-title" {...props}>
         <DialogTitle id="customized-dialog-title" onClose={handleDissmised}>
           <H4>{title}</H4>
           {subtitle && (
