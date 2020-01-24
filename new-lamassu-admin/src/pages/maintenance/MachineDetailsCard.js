@@ -4,9 +4,12 @@ import moment from 'moment'
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
+import { Dialog, DialogContent } from '@material-ui/core'
+
+import { H4 } from 'src/components/typography'
 
 import ActionButton from '../../components/buttons/ActionButton'
-import ConfirmDialog from '../../components/ConfirmDialog'
+import { DialogTitle, ConfirmDialog } from '../../components/ConfirmDialog'
 import { Status } from '../../components/Status'
 import { ReactComponent as DownloadReversedIcon } from '../../styling/icons/button/download/white.svg'
 import { ReactComponent as DownloadIcon } from '../../styling/icons/button/download/zodiac.svg'
@@ -50,17 +53,31 @@ const Label = ({ children }) => {
 const useMDStyles = makeStyles({ ...detailsRowStyles, colDivider, inlineChip })
 
 const MachineDetailsRow = ({ it: machine }) => {
+  const [errorDialog, setErrorDialog] = useState(false)
   const [dialogOpen, setOpen] = useState(false)
+  const [actionMessage, setActionMessage] = useState(null)
   const classes = useMDStyles()
 
-  const unpairDialog = () => {
-    setOpen(true)
-  }
+  const unpairDialog = () => setOpen(true)
 
-  const [machineAction, { loading }] = useMutation(MACHINE_ACTION)
+  const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
+    onError: ({ graphQLErrors, message }) => {
+      const errorMessage = graphQLErrors[0] ? graphQLErrors[0].message : message
+      setActionMessage(errorMessage)
+      setErrorDialog(true)
+    }
+  })
 
   return (
     <>
+      <Dialog open={errorDialog} aria-labelledby="form-dialog-title">
+        <DialogTitle
+          id="customized-dialog-title"
+          onClose={() => setErrorDialog(false)}>
+          <H4>Error</H4>
+        </DialogTitle>
+        <DialogContent>{actionMessage}</DialogContent>
+      </Dialog>
       <div className={classes.wrapper}>
         <div className={classnames(classes.row)}>
           <div className={classnames(classes.col)}>

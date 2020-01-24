@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   }
 })
 
-const DialogTitle = ({ children, onClose }) => {
+export const DialogTitle = ({ children, onClose }) => {
   const classes = useStyles()
   return (
     <MuiDialogTitle>
@@ -41,7 +41,7 @@ const DialogTitle = ({ children, onClose }) => {
   )
 }
 
-const ConfirmDialog = memo(
+export const ConfirmDialog = memo(
   ({
     title = 'Confirm action',
     subtitle = 'This action requires confirmation',
@@ -94,5 +94,3 @@ const ConfirmDialog = memo(
     )
   }
 )
-
-export default ConfirmDialog
