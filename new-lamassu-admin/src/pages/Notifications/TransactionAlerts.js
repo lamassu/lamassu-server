@@ -1,39 +1,52 @@
-import React, { useState } from 'react'
+import React from 'react'
 import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core'
 
 import { TL1 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
 
-import { NumericInput } from './Alerts'
+import { HIGH_VALUE_TRANSACTION_KEY } from './aux.js'
+import { BigNumericInput } from './Alerts'
 import { localStyles } from './Notifications.styles'
 
 const styles = R.merge(commonStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
-const TransactionAlerts = ({ values: setupValues, save }) => {
+const TransactionAlerts = ({
+  value: setupValue,
+  save,
+  editingState,
+  handleEditingClick
+}) => {
   const classes = useStyles()
-  const [editing, setEditing] = useState(false)
-  const [disabled, setDisabled] = useState(false)
 
-  // const saveSetup = R.curry((key, values) =>
-  //   save(R.merge(setupValues, { [key]: values }))
-  // )
+  const editing = editingState[HIGH_VALUE_TRANSACTION_KEY]
+  const disabled = R.any(
+    x => x === true,
+    R.values(R.omit([HIGH_VALUE_TRANSACTION_KEY], editingState))
+  )
+
+  const handleEdit = R.curry(handleEditingClick)
+
+  const field = {
+    name: 'alert',
+    label: 'Alert me over',
+    value: setupValue
+  }
 
   return (
     <>
       <TL1 className={classes.sectionTitle}>Transaction alerts</TL1>
       <div>
-        <NumericInput editing={editing} disabled={disabled} />
-      </div>
-      <div style={{ marginTop: 50 }}>
-        <button onClick={() => setEditing(!editing)}>
-          {editing ? 'Stop' : 'Edit'}
-        </button>
-        <button onClick={() => setDisabled(!disabled)}>
-          {disabled ? 'Enable' : 'Disable'}
-        </button>
+        <BigNumericInput
+          title="High value transaction"
+          field={field}
+          editing={editing}
+          disabled={disabled}
+          setEditing={handleEdit(HIGH_VALUE_TRANSACTION_KEY)}
+          handleSubmit={save}
+        />
       </div>
     </>
   )

@@ -1,4 +1,5 @@
 import React from 'react'
+import * as R from 'ramda'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
 import { makeStyles } from '@material-ui/core'
@@ -48,8 +49,6 @@ const fieldUseStyles = makeStyles(fieldStyles)
 const Field = ({ editing, field, displayValue, decoration, ...props }) => {
   const classes = fieldUseStyles()
 
-  console.log('field', field)
-
   const classNames = {
     [classes.field]: true,
     [classes.notEditing]: !editing
@@ -83,24 +82,32 @@ const Field = ({ editing, field, displayValue, decoration, ...props }) => {
 
 const useStyles = makeStyles(inputSectionStyles)
 
-const field = [
-  {
-    name: 'alert',
-    label: 'Alert me over',
-    value: '5000'
-  }
-]
-
-const NumericInput = ({ editing, disabled }) => {
+const BigNumericInput = ({
+  title,
+  field,
+  editing,
+  disabled,
+  setEditing,
+  handleSubmit
+}) => {
   const classes = useStyles()
 
+  const { name, value } = field
+
   return (
-    <Formik initialValues={{ alert: field[0].value }}>
+    <Formik
+      initialValues={{ [name]: value }}
+      onSubmit={values => {
+        handleSubmit(R.values(values)[0])
+      }}
+      onReset={(values, bag) => {
+        setEditing(false)
+      }}>
       <Form>
         <div className={classes.header}>
-          <H4>High value transaction</H4>
+          <H4>{title}</H4>
           {!editing && !disabled && (
-            <button>
+            <button onClick={() => setEditing(true)}>
               <EditIcon />
             </button>
           )}
@@ -123,8 +130,8 @@ const NumericInput = ({ editing, disabled }) => {
         <div className={classes.body}>
           <Field
             editing={editing}
-            field={field[0]}
-            displayValue={x => x}
+            field={field}
+            displayValue={x => (x === '' ? '-' : x)}
             decoration="EUR"
           />
         </div>
@@ -133,4 +140,4 @@ const NumericInput = ({ editing, disabled }) => {
   )
 }
 
-export { NumericInput }
+export { BigNumericInput }

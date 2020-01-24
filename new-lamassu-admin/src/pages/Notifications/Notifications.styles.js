@@ -23,6 +23,7 @@ const inputSectionStyles = {
     '& > button': {
       border: 'none',
       backgroundColor: 'transparent',
+      cursor: 'pointer',
       height: '100%'
     },
     '& > div': {

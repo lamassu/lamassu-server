@@ -81,6 +81,7 @@ const smallestFontSize = fontSize5
 const inputFontSize = fontSize3
 const inputFontSizeLg = fontSize1
 const inputFontWeight = 500
+const inputFontWeightLg = 700
 const inputFontFamily = fontSecondary
 
 // Breakpoints
@@ -159,6 +160,7 @@ export {
   inputFontSizeLg,
   inputFontFamily,
   inputFontWeight,
+  inputFontWeightLg,
   // screen sizes
   sm,
   md,

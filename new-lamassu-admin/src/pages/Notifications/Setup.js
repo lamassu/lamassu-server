@@ -66,7 +66,6 @@ const elements = [
 ]
 
 const Row = ({ channel, columns, values, save }) => {
-  // const [state, setState] = useState(values)
   const { active } = values
 
   const findField = name => R.find(R.propEq('name', name))(columns)
@@ -75,7 +74,6 @@ const Row = ({ channel, columns, values, save }) => {
 
   const Cell = ({ name, disabled }) => {
     const handleChange = name => event => {
-      // setState(R.merge(state, { [name]: event.target.checked }))
       save(R.merge(values, { [name]: event.target.checked }))
     }
 

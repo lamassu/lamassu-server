@@ -11,9 +11,10 @@ import commonStyles from 'src/pages/common.styles'
 import { localStyles } from './Notifications.styles'
 import Setup from './Setup'
 import TransactionAlerts from './TransactionAlerts'
+import { SETUP_KEY, HIGH_VALUE_TRANSACTION_KEY } from './aux.js'
 
 const initialValues = {
-  setup: {
+  [SETUP_KEY]: {
     email: {
       balance: false,
       transactions: false,
@@ -30,7 +31,12 @@ const initialValues = {
       errors: false,
       active: false
     }
-  }
+  },
+  [HIGH_VALUE_TRANSACTION_KEY]: ''
+}
+
+const initialEditingState = {
+  [HIGH_VALUE_TRANSACTION_KEY]: false
 }
 
 const SAVE_CONFIG = gql`
@@ -50,11 +56,13 @@ const useStyles = makeStyles(styles)
 
 const Notifications = () => {
   const [state, setState] = useState(null)
+  const [editingState, setEditingState] = useState(initialEditingState)
   const [setError] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
       const { notifications } = data.saveConfig
       setState(notifications)
+      setEditingState(R.map(x => false, editingState))
     },
     onError: e => setError(e)
   })
@@ -71,9 +79,16 @@ const Notifications = () => {
     return saveConfig({ variables: { config: { notifications: it } } })
   }
 
-  const curriedSave = R.curry((key, values) => save({ [key]: values }))
+  const handleEditingClick = (key, state) => {
+    setEditingState(R.merge(editingState, { [key]: state }))
+  }
+
+  const curriedSave = R.curry((key, values) =>
+    save(R.merge(state, { [key]: values }))
+  )
 
   if (!state) return null
+  console.log('state', state)
 
   return (
     <>
@@ -83,10 +98,15 @@ const Notifications = () => {
         </div>
       </div>
       <div className={classes.section}>
-        <Setup values={state.setup} save={curriedSave('setup')} />
+        <Setup values={state.setup} save={curriedSave(SETUP_KEY)} />
       </div>
       <div className={classes.section}>
-        <TransactionAlerts />
+        <TransactionAlerts
+          value={state.highValueTransaction}
+          editingState={editingState}
+          handleEditingClick={handleEditingClick}
+          save={curriedSave(HIGH_VALUE_TRANSACTION_KEY)}
+        />
       </div>
       <div className={classes.section}>
         <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>
