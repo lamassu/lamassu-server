@@ -10,6 +10,7 @@ import commonStyles from 'src/pages/common.styles'
 
 import { localStyles } from './Notifications.styles'
 import Setup from './Setup'
+import TransactionAlerts from './TransactionAlerts'
 
 const initialValues = {
   setup: {
@@ -85,7 +86,7 @@ const Notifications = () => {
         <Setup values={state.setup} save={curriedSave('setup')} />
       </div>
       <div className={classes.section}>
-        <TL1 className={classes.sectionTitle}>Transaction alerts</TL1>
+        <TransactionAlerts />
       </div>
       <div className={classes.section}>
         <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>

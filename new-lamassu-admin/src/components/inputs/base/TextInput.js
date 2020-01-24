@@ -10,7 +10,8 @@ import {
   secondaryColor,
   inputFontSize,
   inputFontSizeLg,
-  inputFontWeight
+  inputFontWeight,
+  inputFontWeightLg
 } from 'src/styling/variables'
 
 const useStyles = makeStyles({
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
   inputRootLg: {
     fontSize: inputFontSizeLg,
     color: fontColor,
-    fontWeight: inputFontWeight,
+    fontWeight: inputFontWeightLg,
     '& > .MuiInputBase-input': {
       width: 96
     }
