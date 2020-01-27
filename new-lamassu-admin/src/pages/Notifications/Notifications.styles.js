@@ -1,4 +1,4 @@
-import { offColor } from 'src/styling/variables'
+import { offColor, primaryColor } from 'src/styling/variables'
 import theme from 'src/styling/theme'
 
 const localStyles = {
@@ -30,7 +30,38 @@ const inputSectionStyles = {
       padding: [[0, theme.spacing(1)]],
       lineHeight: 'normal'
     }
+  },
+  percentageInput: {
+    '& > div': {
+      '& .MuiInputBase-input': {
+        width: 30
+      }
+    }
+  },
+  percentageDisplay: {
+    position: 'relative',
+    width: 76,
+    height: 118,
+    border: [['solid', 4, primaryColor]],
+    marginRight: 12,
+    '& > div': {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      width: '100%',
+      backgroundColor: primaryColor,
+      transition: [['height', '0.5s']],
+      transitionTimingFunction: 'ease-out'
+    }
   }
 }
 
-export { localStyles, inputSectionStyles }
+const percentageAndNumericInputStyles = {
+  body: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  inputColumn: {}
+}
+
+export { localStyles, inputSectionStyles, percentageAndNumericInputStyles }

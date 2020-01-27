@@ -5,11 +5,11 @@ import { makeStyles } from '@material-ui/core'
 import { TL1 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
 
-import { HIGH_VALUE_TRANSACTION_KEY } from './aux.js'
+import { HIGH_VALUE_TRANSACTION_KEY, isDisabled } from './aux.js'
 import { BigNumericInput } from './Alerts'
 import { localStyles } from './Notifications.styles'
 
-const styles = R.merge(commonStyles, localStyles)
+const styles = R.mergeAll([commonStyles, localStyles])
 
 const useStyles = makeStyles(styles)
 
@@ -22,17 +22,15 @@ const TransactionAlerts = ({
   const classes = useStyles()
 
   const editing = editingState[HIGH_VALUE_TRANSACTION_KEY]
-  const disabled = R.any(
-    x => x === true,
-    R.values(R.omit([HIGH_VALUE_TRANSACTION_KEY], editingState))
-  )
 
   const handleEdit = R.curry(handleEditingClick)
+
+  const handleSubmit = it => save({ [HIGH_VALUE_TRANSACTION_KEY]: it })
 
   const field = {
     name: 'alert',
     label: 'Alert me over',
-    value: setupValue
+    value: setupValue[HIGH_VALUE_TRANSACTION_KEY]
   }
 
   return (
@@ -43,9 +41,9 @@ const TransactionAlerts = ({
           title="High value transaction"
           field={field}
           editing={editing}
-          disabled={disabled}
+          disabled={isDisabled(editingState, HIGH_VALUE_TRANSACTION_KEY)}
           setEditing={handleEdit(HIGH_VALUE_TRANSACTION_KEY)}
-          handleSubmit={save}
+          handleSubmit={handleSubmit}
         />
       </div>
     </>

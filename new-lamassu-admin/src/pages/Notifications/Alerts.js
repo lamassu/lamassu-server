@@ -1,6 +1,7 @@
 import React from 'react'
 import * as R from 'ramda'
 import classnames from 'classnames'
+import * as Yup from 'yup'
 import { Form, Formik, Field as FormikField } from 'formik'
 import { makeStyles } from '@material-ui/core'
 
@@ -10,7 +11,10 @@ import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edi
 import { Link } from 'src/components/buttons'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
-import { inputSectionStyles } from './Notifications.styles'
+import {
+  inputSectionStyles,
+  percentageAndNumericInputStyles
+} from './Notifications.styles'
 
 const fieldStyles = {
   field: {
@@ -18,7 +22,7 @@ const fieldStyles = {
     display: 'flex',
     flexDirection: 'column',
     width: 280,
-    height: 77,
+    height: 53,
     padding: 0,
     '& > div': {
       display: 'flex',
@@ -34,6 +38,9 @@ const fieldStyles = {
       width: 80
     }
   },
+  label: {
+    margin: 0
+  },
   notEditing: {
     '& > div': {
       margin: [[5, 0, 0, 0]],
@@ -46,17 +53,25 @@ const fieldStyles = {
 
 const fieldUseStyles = makeStyles(fieldStyles)
 
-const Field = ({ editing, field, displayValue, decoration, ...props }) => {
+const Field = ({
+  editing,
+  field,
+  displayValue,
+  decoration,
+  className,
+  ...props
+}) => {
   const classes = fieldUseStyles()
 
   const classNames = {
+    [className]: true,
     [classes.field]: true,
     [classes.notEditing]: !editing
   }
 
   return (
     <div className={classnames(classNames)}>
-      <Label1>{field.label}</Label1>
+      <Label1 className={classes.label}>{field.label}</Label1>
       <div>
         {!editing && (
           <>
@@ -140,4 +155,87 @@ const BigNumericInput = ({
   )
 }
 
-export { BigNumericInput }
+const percentageAndNumericInputUseStyles = makeStyles(
+  R.merge(inputSectionStyles, percentageAndNumericInputStyles)
+)
+
+const BigPercentageAndNumericInput = ({
+  title,
+  fields,
+  editing,
+  disabled,
+  setEditing,
+  handleSubmit
+}) => {
+  const classes = percentageAndNumericInputUseStyles()
+
+  const { percentage, numeric } = fields
+  const { name: percentageName, value: percentageValue } = percentage
+  const { name: numericName, value: numericValue } = numeric
+
+  return (
+    <Formik
+      initialValues={{
+        [percentageName]: percentageValue,
+        [numericName]: numericValue
+      }}
+      validationSchema={Yup.object().shape({
+        [percentageName]: Yup.string().required('Fill in both fields.'),
+        [numericName]: Yup.string().required('Fill in both fields.')
+      })}
+      onSubmit={values => {
+        handleSubmit(values)
+      }}
+      onReset={(values, bag) => {
+        setEditing(false)
+      }}>
+      <Form>
+        <div className={classes.header}>
+          <H4>{title}</H4>
+          {!editing && !disabled && (
+            <button onClick={() => setEditing(true)}>
+              <EditIcon />
+            </button>
+          )}
+          {disabled && (
+            <div>
+              <DisabledEditIcon />
+            </div>
+          )}
+          {editing && (
+            <>
+              <Link color="primary" type="submit">
+                Save
+              </Link>
+              <Link color="secondary" type="reset">
+                Cancel
+              </Link>
+            </>
+          )}
+        </div>
+        <div className={classes.body}>
+          <div className={classes.percentageDisplay}>
+            <div style={{ height: `${percentageValue}%` }}></div>
+          </div>
+          <div className={classes.inputColumn}>
+            <Field
+              editing={editing}
+              field={percentage}
+              displayValue={x => (x === '' ? '-' : x)}
+              decoration="%"
+              className={classes.percentageInput}
+            />
+            <Field
+              editing={editing}
+              field={numeric}
+              displayValue={x => (x === '' ? '-' : x)}
+              decoration="EUR"
+            />
+          </div>
+        </div>
+      </Form>
+    </Formik>
+  )
+}
+
+export { BigNumericInput, BigPercentageAndNumericInput }

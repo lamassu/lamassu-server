@@ -11,7 +11,17 @@ import commonStyles from 'src/pages/common.styles'
 import { localStyles } from './Notifications.styles'
 import Setup from './Setup'
 import TransactionAlerts from './TransactionAlerts'
-import { SETUP_KEY, HIGH_VALUE_TRANSACTION_KEY } from './aux.js'
+import {
+  SETUP_KEY,
+  TRANSACTION_ALERTS_KEY,
+  HIGH_VALUE_TRANSACTION_KEY,
+  CASH_IN_FULL_KEY,
+  FIAT_BALANCE_ALERTS_KEY,
+  CASH_OUT_EMPTY_KEY,
+  CASSETTE_1_KEY,
+  CASSETTE_2_KEY
+} from './aux.js'
+import FiatBalanceAlerts from './FiatBalanceAlerts'
 
 const initialValues = {
   [SETUP_KEY]: {
@@ -32,11 +42,25 @@ const initialValues = {
       active: false
     }
   },
-  [HIGH_VALUE_TRANSACTION_KEY]: ''
+  [TRANSACTION_ALERTS_KEY]: {
+    [HIGH_VALUE_TRANSACTION_KEY]: ''
+  },
+  [FIAT_BALANCE_ALERTS_KEY]: {
+    [CASH_IN_FULL_KEY]: {
+      percentage: '',
+      numeric: ''
+    },
+    [CASH_OUT_EMPTY_KEY]: {
+      [CASSETTE_1_KEY]: '0',
+      [CASSETTE_2_KEY]: '0'
+    }
+  }
 }
 
 const initialEditingState = {
-  [HIGH_VALUE_TRANSACTION_KEY]: false
+  [HIGH_VALUE_TRANSACTION_KEY]: false,
+  [CASH_IN_FULL_KEY]: false,
+  [CASH_OUT_EMPTY_KEY]: false
 }
 
 const SAVE_CONFIG = gql`
@@ -102,14 +126,19 @@ const Notifications = () => {
       </div>
       <div className={classes.section}>
         <TransactionAlerts
-          value={state.highValueTransaction}
+          value={state[TRANSACTION_ALERTS_KEY]}
           editingState={editingState}
           handleEditingClick={handleEditingClick}
-          save={curriedSave(HIGH_VALUE_TRANSACTION_KEY)}
+          save={curriedSave(TRANSACTION_ALERTS_KEY)}
         />
       </div>
       <div className={classes.section}>
-        <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>
+        <FiatBalanceAlerts
+          values={state[FIAT_BALANCE_ALERTS_KEY]}
+          editingState={editingState}
+          handleEditingClick={handleEditingClick}
+          save={curriedSave(FIAT_BALANCE_ALERTS_KEY)}
+        />
       </div>
       <div className={classes.section}>
         <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>

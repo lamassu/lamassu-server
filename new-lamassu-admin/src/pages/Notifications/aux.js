@@ -1,4 +1,25 @@
-const SETUP_KEY = 'setup'
-const HIGH_VALUE_TRANSACTION_KEY = 'highValueTransaction'
+import * as R from 'ramda'
 
-export { SETUP_KEY, HIGH_VALUE_TRANSACTION_KEY }
+const SETUP_KEY = 'setup'
+const TRANSACTION_ALERTS_KEY = 'transactionAlerts'
+const HIGH_VALUE_TRANSACTION_KEY = 'highValueTransaction'
+const FIAT_BALANCE_ALERTS_KEY = 'fiatBalanceAlerts'
+const CASH_IN_FULL_KEY = 'cashInFull'
+const CASH_OUT_EMPTY_KEY = 'cashOutEmpty'
+const CASSETTE_1_KEY = 'cassete1'
+const CASSETTE_2_KEY = 'cassete2'
+
+const isDisabled = (state, self) =>
+  R.any(x => x === true, R.values(R.omit([self], state)))
+
+export {
+  SETUP_KEY,
+  TRANSACTION_ALERTS_KEY,
+  HIGH_VALUE_TRANSACTION_KEY,
+  FIAT_BALANCE_ALERTS_KEY,
+  CASH_IN_FULL_KEY,
+  CASH_OUT_EMPTY_KEY,
+  CASSETTE_1_KEY,
+  CASSETTE_2_KEY,
+  isDisabled
+}
