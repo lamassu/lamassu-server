@@ -56,12 +56,48 @@ const inputSectionStyles = {
   }
 }
 
+const fiatBalanceAlertsStyles = {
+  body: {
+    display: 'flex',
+    height: 185,
+    '& > div:first-child': {
+      display: 'flex',
+      width: 254,
+      borderRight: [['solid', 2, primaryColor]]
+    },
+    '& > div:last-child': {
+      display: 'flex',
+      marginLeft: 56
+    }
+  }
+}
+
 const percentageAndNumericInputStyles = {
   body: {
     display: 'flex',
     alignItems: 'center'
-  },
-  inputColumn: {}
+  }
 }
 
-export { localStyles, inputSectionStyles, percentageAndNumericInputStyles }
+const multiplePercentageInputStyles = {
+  body: {
+    display: 'flex',
+    '& > div': {
+      display: 'flex'
+    },
+    '& > div:not(:last-child)': {
+      marginRight: 43
+    }
+  },
+  title: {
+    marginTop: 2
+  }
+}
+
+export {
+  localStyles,
+  inputSectionStyles,
+  fiatBalanceAlertsStyles,
+  percentageAndNumericInputStyles,
+  multiplePercentageInputStyles
+}

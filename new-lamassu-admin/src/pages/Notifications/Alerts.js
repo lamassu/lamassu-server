@@ -13,7 +13,8 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 import {
   inputSectionStyles,
-  percentageAndNumericInputStyles
+  percentageAndNumericInputStyles,
+  multiplePercentageInputStyles
 } from './Notifications.styles'
 
 const fieldStyles = {
@@ -21,7 +22,6 @@ const fieldStyles = {
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    width: 280,
     height: 53,
     padding: 0,
     '& > div': {
@@ -238,4 +238,81 @@ const BigPercentageAndNumericInput = ({
   )
 }
 
-export { BigNumericInput, BigPercentageAndNumericInput }
+const multiplePercentageInputUseStyles = makeStyles(
+  R.merge(inputSectionStyles, multiplePercentageInputStyles)
+)
+
+const MultiplePercentageInput = ({
+  title,
+  fields,
+  editing,
+  disabled,
+  setEditing,
+  handleSubmit
+}) => {
+  const classes = multiplePercentageInputUseStyles()
+
+  const initialValues = R.fromPairs(R.map(f => [f.name, f.value], fields))
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={values => {
+        handleSubmit(values)
+      }}
+      onReset={(values, bag) => {
+        setEditing(false)
+      }}>
+      <Form>
+        <div className={classes.header}>
+          <H4>{title}</H4>
+          {!editing && !disabled && (
+            <button onClick={() => setEditing(true)}>
+              <EditIcon />
+            </button>
+          )}
+          {disabled && (
+            <div>
+              <DisabledEditIcon />
+            </div>
+          )}
+          {editing && (
+            <>
+              <Link color="primary" type="submit">
+                Save
+              </Link>
+              <Link color="secondary" type="reset">
+                Cancel
+              </Link>
+            </>
+          )}
+        </div>
+        <div className={classes.body}>
+          {fields.map((field, idx) => (
+            <div key={idx}>
+              <div className={classes.percentageDisplay}>
+                <div style={{ height: `${field.value}%` }}></div>
+              </div>
+              <div className={classes.inputColumn}>
+                <TL2 className={classes.title}>{field.title}</TL2>
+                <Field
+                  editing={editing}
+                  field={field}
+                  displayValue={x => (x === '' ? '-' : x)}
+                  decoration="%"
+                  className={classes.percentageInput}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Form>
+    </Formik>
+  )
+}
+
+export {
+  BigNumericInput,
+  BigPercentageAndNumericInput,
+  MultiplePercentageInput
+}

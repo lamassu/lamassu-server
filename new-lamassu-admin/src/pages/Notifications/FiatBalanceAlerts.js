@@ -5,11 +5,17 @@ import { makeStyles } from '@material-ui/core'
 import { TL1 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
 
-import { BigPercentageAndNumericInput } from './Alerts'
-import { localStyles } from './Notifications.styles'
-import { CASH_IN_FULL_KEY, isDisabled } from './aux'
+import { BigPercentageAndNumericInput, MultiplePercentageInput } from './Alerts'
+import { localStyles, fiatBalanceAlertsStyles } from './Notifications.styles'
+import {
+  CASH_IN_FULL_KEY,
+  isDisabled,
+  CASH_OUT_EMPTY_KEY,
+  CASSETTE_1_KEY,
+  CASSETTE_2_KEY
+} from './aux'
 
-const styles = R.merge(commonStyles, localStyles)
+const styles = R.mergeAll([commonStyles, localStyles, fiatBalanceAlertsStyles])
 
 const useStyles = makeStyles(styles)
 
@@ -45,28 +51,48 @@ const FiatBalanceAlerts = ({
     }
   }
 
+  const cashOutFields = [
+    {
+      title: 'Cassette 1 (Top)',
+      name: CASH_OUT_EMPTY_KEY + '-' + CASSETTE_1_KEY,
+      label: 'Alert me at',
+      value: getValue([CASH_OUT_EMPTY_KEY, CASSETTE_1_KEY])
+    },
+    {
+      title: 'Cassette 2',
+      name: CASH_OUT_EMPTY_KEY + '-' + CASSETTE_2_KEY,
+      label: 'Alert me at',
+      value: getValue([CASH_OUT_EMPTY_KEY, CASSETTE_2_KEY])
+    }
+  ]
+
   const cashInEditing = editingState[CASH_IN_FULL_KEY]
+  const cashOutEditing = editingState[CASH_OUT_EMPTY_KEY]
 
   return (
     <>
       <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>
-      <div>
-        <BigPercentageAndNumericInput
-          title="Cash-in (Full)"
-          fields={cashInFields}
-          editing={cashInEditing}
-          disabled={isDisabled(editingState, CASH_IN_FULL_KEY)}
-          setEditing={handleEdit(CASH_IN_FULL_KEY)}
-          handleSubmit={handleSubmit(CASH_IN_FULL_KEY)}
-        />
-        {/* <BigPercentageOrNumericInput
-          title="Cash-in (Full)"
-          field={field}
-          editing={editing}
-          disabled={disabled}
-          setEditing={handleEdit(HIGH_VALUE_TRANSACTION_KEY)}
-          handleSubmit={save}
-        /> */}
+      <div className={classes.body}>
+        <div>
+          <BigPercentageAndNumericInput
+            title="Cash-in (Full)"
+            fields={cashInFields}
+            editing={cashInEditing}
+            disabled={isDisabled(editingState, CASH_IN_FULL_KEY)}
+            setEditing={handleEdit(CASH_IN_FULL_KEY)}
+            handleSubmit={handleSubmit(CASH_IN_FULL_KEY)}
+          />
+        </div>
+        <div>
+          <MultiplePercentageInput
+            title="Cash-out (Empty)"
+            fields={cashOutFields}
+            editing={cashOutEditing}
+            disabled={isDisabled(editingState, CASH_OUT_EMPTY_KEY)}
+            setEditing={handleEdit(CASH_OUT_EMPTY_KEY)}
+            handleSubmit={handleSubmit(CASH_OUT_EMPTY_KEY)}
+          />
+        </div>
       </div>
     </>
   )
