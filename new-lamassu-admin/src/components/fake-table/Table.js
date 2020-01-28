@@ -10,7 +10,9 @@ import {
   tableHeaderHeight,
   tableErrorColor,
   spacer,
-  white
+  white,
+  tableDoubleHeaderHeight,
+  offColor
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
@@ -28,6 +30,30 @@ const useStyles = makeStyles({
     color: white,
     // display: 'flex'
     display: 'table-row'
+  },
+  doubleHeader: {
+    extend: tl2,
+    backgroundColor: tableHeaderColor,
+    height: tableDoubleHeaderHeight,
+    color: white,
+    display: 'table-row'
+  },
+  thDoubleLevel: {
+    padding: `0 ${spacer * 3}px`,
+    display: 'table-cell',
+    '& > :first-child': {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: offColor,
+      borderRadius: [[0, 0, 8, 8]],
+      height: 28
+    },
+    '& > :last-child': {
+      display: 'table-cell',
+      verticalAlign: 'middle',
+      height: tableDoubleHeaderHeight - 28
+    }
   },
   td: {
     padding: `0 ${spacer * 3}px`
@@ -76,6 +102,16 @@ const THead = ({ children, className }) => {
   return <div className={classnames(className, classes.header)}>{children}</div>
 }
 
+const TDoubleLevelHead = ({ children, className }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classnames(className, classes.doubleHeader)}>
+      {children}
+    </div>
+  )
+}
+
 const TBody = ({ children, className }) => {
   const classes = useStyles()
   return <div className={classnames(className, classes.body)}>{children}</div>
@@ -102,6 +138,17 @@ const Th = ({ children, ...props }) => {
     <Td header {...props}>
       {children}
     </Td>
+  )
+}
+
+const ThDoubleLevel = ({ title, children, className }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classnames(className, classes.thDoubleLevel)}>
+      <div>{title}</div>
+      <div>{children}</div>
+    </div>
   )
 }
 
@@ -135,4 +182,14 @@ const EditCell = ({ save, cancel }) => (
   </Td>
 )
 
-export { Table, THead, TBody, Tr, Td, Th, EditCell }
+export {
+  Table,
+  THead,
+  TDoubleLevelHead,
+  TBody,
+  Tr,
+  Td,
+  Th,
+  ThDoubleLevel,
+  EditCell
+}

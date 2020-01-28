@@ -100,6 +100,8 @@ if (version === 8) {
   tableCellHeight = spacer * 7 - 2
 }
 
+const tableDoubleHeaderHeight = tableHeaderHeight * 2
+
 const tableSmCellHeight = 30
 const tableLgCellHeight = 76
 
@@ -172,6 +174,7 @@ export {
   mainWidth,
   // table sizes
   tableHeaderHeight,
+  tableDoubleHeaderHeight,
   tableCellHeight,
   tableSmCellHeight,
   tableLgCellHeight,
