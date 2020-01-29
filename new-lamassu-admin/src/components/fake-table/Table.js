@@ -16,7 +16,7 @@ import {
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
-const { tl2, p } = typographyStyles
+const { tl2, p, label1 } = typographyStyles
 
 const useStyles = makeStyles({
   body: {
@@ -39,13 +39,15 @@ const useStyles = makeStyles({
     display: 'table-row'
   },
   thDoubleLevel: {
-    padding: `0 ${spacer * 3}px`,
+    padding: `0 ${spacer * 2}px`,
     display: 'table-cell',
     '& > :first-child': {
+      extend: label1,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: offColor,
+      color: white,
       borderRadius: [[0, 0, 8, 8]],
       height: 28
     },
@@ -54,6 +56,10 @@ const useStyles = makeStyles({
       verticalAlign: 'middle',
       height: tableDoubleHeaderHeight - 28
     }
+  },
+  cellDoubleLevel: {
+    display: 'flex',
+    padding: `0 ${spacer * 2}px`
   },
   td: {
     padding: `0 ${spacer * 3}px`
@@ -152,6 +158,16 @@ const ThDoubleLevel = ({ title, children, className }) => {
   )
 }
 
+const CellDoubleLevel = ({ children, className }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classnames(className, classes.cellDoubleLevel)}>
+      {children}
+    </div>
+  )
+}
+
 const Tr = ({ error, errorMessage, children, className }) => {
   const classes = useStyles()
   const cardClasses = { root: classes.cardContentRoot }
@@ -191,5 +207,6 @@ export {
   Td,
   Th,
   ThDoubleLevel,
+  CellDoubleLevel,
   EditCell
 }

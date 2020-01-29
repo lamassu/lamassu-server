@@ -19,9 +19,23 @@ import {
   FIAT_BALANCE_ALERTS_KEY,
   CASH_OUT_EMPTY_KEY,
   CASSETTE_1_KEY,
-  CASSETTE_2_KEY
+  CASSETTE_2_KEY,
+  OVERRIDES_KEY,
+  PERCENTAGE_KEY,
+  NUMERARY_KEY
 } from './aux.js'
 import FiatBalanceAlerts from './FiatBalanceAlerts'
+
+const fiatBalanceAlertsInitialValues = {
+  [CASH_IN_FULL_KEY]: {
+    [PERCENTAGE_KEY]: '',
+    [NUMERARY_KEY]: ''
+  },
+  [CASH_OUT_EMPTY_KEY]: {
+    [CASSETTE_1_KEY]: '0',
+    [CASSETTE_2_KEY]: '0'
+  }
+}
 
 const initialValues = {
   [SETUP_KEY]: {
@@ -45,16 +59,7 @@ const initialValues = {
   [TRANSACTION_ALERTS_KEY]: {
     [HIGH_VALUE_TRANSACTION_KEY]: ''
   },
-  [FIAT_BALANCE_ALERTS_KEY]: {
-    [CASH_IN_FULL_KEY]: {
-      percentage: '',
-      numeric: ''
-    },
-    [CASH_OUT_EMPTY_KEY]: {
-      [CASSETTE_1_KEY]: '0',
-      [CASSETTE_2_KEY]: '0'
-    }
-  }
+  [FIAT_BALANCE_ALERTS_KEY]: fiatBalanceAlertsInitialValues
 }
 
 const initialEditingState = {
@@ -63,17 +68,21 @@ const initialEditingState = {
   [CASH_OUT_EMPTY_KEY]: false
 }
 
+const GET_INFO = gql`
+  {
+    config
+    machines {
+      name
+      deviceId
+    }
+  }
+`
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject) {
     saveConfig(config: $config)
   }
 `
 
-const GET_CONFIG = gql`
-  {
-    config
-  }
-`
 const styles = R.merge(commonStyles, localStyles)
 
 const useStyles = makeStyles(styles)
@@ -92,10 +101,20 @@ const Notifications = () => {
   })
   const classes = useStyles()
 
-  useQuery(GET_CONFIG, {
+  useQuery(GET_INFO, {
     onCompleted: data => {
       const { notifications } = data.config
+      const { machines } = data
+      initialValues[FIAT_BALANCE_ALERTS_KEY][OVERRIDES_KEY] = machines.map(
+        machine => {
+          return { name: machine.name, ...fiatBalanceAlertsInitialValues }
+        }
+      )
+      const editingFiatBalanceAlertsOverrides = R.fromPairs(
+        machines.map(machine => [machine.name, false])
+      )
       setState(notifications ?? initialValues)
+      setEditingState({ ...editingState, ...editingFiatBalanceAlertsOverrides })
     }
   })
 
@@ -112,7 +131,6 @@ const Notifications = () => {
   )
 
   if (!state) return null
-  console.log('state', state)
 
   return (
     <>

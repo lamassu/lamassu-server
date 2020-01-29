@@ -7,6 +7,12 @@ const localStyles = {
   },
   sectionTitle: {
     color: offColor
+  },
+  button: {
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    height: '100%'
   }
 }
 
@@ -31,13 +37,6 @@ const inputSectionStyles = {
       lineHeight: 'normal'
     }
   },
-  percentageInput: {
-    '& > div': {
-      '& .MuiInputBase-input': {
-        width: 30
-      }
-    }
-  },
   percentageDisplay: {
     position: 'relative',
     width: 76,
@@ -57,7 +56,7 @@ const inputSectionStyles = {
 }
 
 const fiatBalanceAlertsStyles = {
-  body: {
+  defaults: {
     display: 'flex',
     height: 185,
     '& > div:first-child': {
@@ -68,6 +67,21 @@ const fiatBalanceAlertsStyles = {
     '& > div:last-child': {
       display: 'flex',
       marginLeft: 56
+    }
+  },
+  overrides: {
+    '& > :first-child': {
+      color: offColor
+    }
+  },
+  eRowField: {
+    justifyContent: 'center'
+  },
+  edit: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    '& > :first-child': {
+      marginRight: 31
     }
   }
 }

@@ -6,7 +6,7 @@ import { TL1 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
 
 import { HIGH_VALUE_TRANSACTION_KEY, isDisabled } from './aux.js'
-import { BigNumericInput } from './Alerts'
+import { BigNumericInput } from './Inputs'
 import { localStyles } from './Notifications.styles'
 
 const styles = R.mergeAll([commonStyles, localStyles])

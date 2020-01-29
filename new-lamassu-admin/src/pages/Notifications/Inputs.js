@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import { Form, Formik, Field as FormikField } from 'formik'
 import { makeStyles } from '@material-ui/core'
 
-import { H4, Label1, Info1, TL2 } from 'src/components/typography'
+import { H4, Label1, Info1, TL2, Info2 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edit/disabled.svg'
 import { Link } from 'src/components/buttons'
@@ -48,6 +48,13 @@ const fieldStyles = {
         height: 16
       }
     }
+  },
+  percentageInput: {
+    '& > div': {
+      '& .MuiInputBase-input': {
+        width: 30
+      }
+    }
   }
 }
 
@@ -66,16 +73,22 @@ const Field = ({
   const classNames = {
     [className]: true,
     [classes.field]: true,
-    [classes.notEditing]: !editing
+    [classes.notEditing]: !editing,
+    [classes.percentageInput]: decoration === '%'
   }
 
   return (
     <div className={classnames(classNames)}>
-      <Label1 className={classes.label}>{field.label}</Label1>
+      {field.label && <Label1 className={classes.label}>{field.label}</Label1>}
       <div>
-        {!editing && (
+        {!editing && props.large && (
           <>
             <Info1>{displayValue(field.value)}</Info1>
+          </>
+        )}
+        {!editing && !props.large && (
+          <>
+            <Info2>{displayValue(field.value)}</Info2>
           </>
         )}
         {editing && (
@@ -85,7 +98,6 @@ const Field = ({
             component={TextInputFormik}
             placeholder={field.placeholder}
             type="text"
-            large
             {...props}
           />
         )}
@@ -148,6 +160,7 @@ const BigNumericInput = ({
             field={field}
             displayValue={x => (x === '' ? '-' : x)}
             decoration="EUR"
+            large
           />
         </div>
       </Form>
@@ -223,13 +236,14 @@ const BigPercentageAndNumericInput = ({
               field={percentage}
               displayValue={x => (x === '' ? '-' : x)}
               decoration="%"
-              className={classes.percentageInput}
+              large
             />
             <Field
               editing={editing}
               field={numeric}
               displayValue={x => (x === '' ? '-' : x)}
               decoration="EUR"
+              large
             />
           </div>
         </div>
@@ -301,6 +315,7 @@ const MultiplePercentageInput = ({
                   displayValue={x => (x === '' ? '-' : x)}
                   decoration="%"
                   className={classes.percentageInput}
+                  large
                 />
               </div>
             </div>
@@ -312,6 +327,7 @@ const MultiplePercentageInput = ({
 }
 
 export {
+  Field,
   BigNumericInput,
   BigPercentageAndNumericInput,
   MultiplePercentageInput
