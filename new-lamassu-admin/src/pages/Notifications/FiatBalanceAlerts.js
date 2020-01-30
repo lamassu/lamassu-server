@@ -127,18 +127,17 @@ const FiatBalanceAlerts = ({
   return (
     <>
       <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>
-      <div className={classes.body}>
+      <div>
         <div className={classes.defaults}>
-          <div>
-            <BigPercentageAndNumericInput
-              title="Cash-in (Full)"
-              fields={cashInFields}
-              editing={cashInEditing}
-              disabled={isDisabled(editingState, CASH_IN_FULL_KEY)}
-              setEditing={handleEdit(CASH_IN_FULL_KEY)}
-              handleSubmit={handleSubmit(CASH_IN_FULL_KEY)}
-            />
-          </div>
+          <BigPercentageAndNumericInput
+            title="Cash-in (Full)"
+            fields={cashInFields}
+            editing={cashInEditing}
+            disabled={isDisabled(editingState, CASH_IN_FULL_KEY)}
+            setEditing={handleEdit(CASH_IN_FULL_KEY)}
+            handleSubmit={handleSubmit(CASH_IN_FULL_KEY)}
+            className={classes.cashInWrapper}
+          />
           <div>
             <MultiplePercentageInput
               title="Cash-out (Empty)"

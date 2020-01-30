@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import Title from 'src/components/Title'
-import { TL1 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
 
 import { localStyles } from './Notifications.styles'
@@ -22,9 +21,14 @@ import {
   CASSETTE_2_KEY,
   OVERRIDES_KEY,
   PERCENTAGE_KEY,
-  NUMERARY_KEY
+  NUMERARY_KEY,
+  CRYPTO_BALANCE_ALERTS_KEY,
+  LOW_BALANCE_KEY,
+  HIGH_BALANCE_KEY,
+  ADD_OVERRIDE_KEY
 } from './aux.js'
 import FiatBalanceAlerts from './FiatBalanceAlerts'
+import CryptoBalanceAlerts from './CryptoBalanceAlerts'
 
 const fiatBalanceAlertsInitialValues = {
   [CASH_IN_FULL_KEY]: {
@@ -35,6 +39,11 @@ const fiatBalanceAlertsInitialValues = {
     [CASSETTE_1_KEY]: '0',
     [CASSETTE_2_KEY]: '0'
   }
+}
+
+const cryptoBalanceAlertInitialValues = {
+  [LOW_BALANCE_KEY]: '',
+  [HIGH_BALANCE_KEY]: ''
 }
 
 const initialValues = {
@@ -59,13 +68,17 @@ const initialValues = {
   [TRANSACTION_ALERTS_KEY]: {
     [HIGH_VALUE_TRANSACTION_KEY]: ''
   },
-  [FIAT_BALANCE_ALERTS_KEY]: fiatBalanceAlertsInitialValues
+  [FIAT_BALANCE_ALERTS_KEY]: fiatBalanceAlertsInitialValues,
+  [CRYPTO_BALANCE_ALERTS_KEY]: cryptoBalanceAlertInitialValues
 }
 
 const initialEditingState = {
   [HIGH_VALUE_TRANSACTION_KEY]: false,
   [CASH_IN_FULL_KEY]: false,
-  [CASH_OUT_EMPTY_KEY]: false
+  [CASH_OUT_EMPTY_KEY]: false,
+  [LOW_BALANCE_KEY]: false,
+  [HIGH_BALANCE_KEY]: false,
+  [ADD_OVERRIDE_KEY]: false
 }
 
 const GET_INFO = gql`
@@ -159,7 +172,12 @@ const Notifications = () => {
         />
       </div>
       <div className={classes.section}>
-        <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
+        <CryptoBalanceAlerts
+          value={state[CRYPTO_BALANCE_ALERTS_KEY]}
+          editingState={editingState}
+          handleEditingClick={handleEditingClick}
+          save={curriedSave(CRYPTO_BALANCE_ALERTS_KEY)}
+        />
       </div>
     </>
   )

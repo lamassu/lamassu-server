@@ -3,7 +3,10 @@ import theme from 'src/styling/theme'
 
 const localStyles = {
   section: {
-    marginBottom: 41
+    marginBottom: 41,
+    '&:last-child': {
+      marginBottom: 109
+    }
   },
   sectionTitle: {
     color: offColor
@@ -13,6 +16,33 @@ const localStyles = {
     backgroundColor: 'transparent',
     cursor: 'pointer',
     height: '100%'
+  },
+  defaults: {
+    display: 'flex',
+    height: 185,
+    '& > div:first-child': {
+      display: 'flex',
+      borderRight: [['solid', 1, primaryColor]]
+    },
+    '& > div:not(:first-child)': {
+      display: 'flex',
+      marginLeft: 56
+    }
+  },
+  overrides: {
+    '& > :first-child': {
+      color: offColor
+    }
+  },
+  displayValue: {
+    display: 'flex',
+    alignItems: 'baseline',
+    '& > p:first-child': {
+      margin: [[0, 4, 5, 0]]
+    },
+    '&> p:last-child': {
+      margin: 0
+    }
   }
 }
 
@@ -56,24 +86,6 @@ const inputSectionStyles = {
 }
 
 const fiatBalanceAlertsStyles = {
-  defaults: {
-    display: 'flex',
-    height: 185,
-    '& > div:first-child': {
-      display: 'flex',
-      width: 254,
-      borderRight: [['solid', 2, primaryColor]]
-    },
-    '& > div:last-child': {
-      display: 'flex',
-      marginLeft: 56
-    }
-  },
-  overrides: {
-    '& > :first-child': {
-      color: offColor
-    }
-  },
   eRowField: {
     justifyContent: 'center'
   },
@@ -83,6 +95,15 @@ const fiatBalanceAlertsStyles = {
     '& > :first-child': {
       marginRight: 31
     }
+  },
+  cashInWrapper: {
+    width: 254
+  }
+}
+
+const cryptoBalanceAlertsStyles = {
+  lowBalance: {
+    width: 254
   }
 }
 
@@ -108,10 +129,43 @@ const multiplePercentageInputStyles = {
   }
 }
 
+const fieldStyles = {
+  field: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: 53,
+    padding: 0,
+    '& .MuiInputBase-input': {
+      width: 80
+    }
+  },
+  label: {
+    margin: 0
+  },
+  notEditing: {
+    '& > div': {
+      margin: [[5, 0, 0, 0]],
+      '& > p:first-child': {
+        height: 16
+      }
+    }
+  },
+  percentageInput: {
+    '& > div': {
+      '& .MuiInputBase-input': {
+        width: 30
+      }
+    }
+  }
+}
+
 export {
   localStyles,
   inputSectionStyles,
   fiatBalanceAlertsStyles,
+  cryptoBalanceAlertsStyles,
   percentageAndNumericInputStyles,
-  multiplePercentageInputStyles
+  multiplePercentageInputStyles,
+  fieldStyles
 }

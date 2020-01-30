@@ -5,60 +5,28 @@ import * as Yup from 'yup'
 import { Form, Formik, Field as FormikField } from 'formik'
 import { makeStyles } from '@material-ui/core'
 
-import { H4, Label1, Info1, TL2, Info2 } from 'src/components/typography'
+import {
+  H4,
+  Label1,
+  Info1,
+  TL2,
+  Info2,
+  Label2
+} from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edit/disabled.svg'
 import { Link } from 'src/components/buttons'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 import {
+  localStyles,
   inputSectionStyles,
   percentageAndNumericInputStyles,
-  multiplePercentageInputStyles
+  multiplePercentageInputStyles,
+  fieldStyles
 } from './Notifications.styles'
 
-const fieldStyles = {
-  field: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: 53,
-    padding: 0,
-    '& > div': {
-      display: 'flex',
-      alignItems: 'baseline',
-      '& > p:first-child': {
-        margin: [[0, 4, 5, 0]]
-      },
-      '&> p:last-child': {
-        margin: 0
-      }
-    },
-    '& .MuiInputBase-input': {
-      width: 80
-    }
-  },
-  label: {
-    margin: 0
-  },
-  notEditing: {
-    '& > div': {
-      margin: [[5, 0, 0, 0]],
-      '& > p:first-child': {
-        height: 16
-      }
-    }
-  },
-  percentageInput: {
-    '& > div': {
-      '& .MuiInputBase-input': {
-        width: 30
-      }
-    }
-  }
-}
-
-const fieldUseStyles = makeStyles(fieldStyles)
+const fieldUseStyles = makeStyles(R.mergeAll([fieldStyles, localStyles]))
 
 const Field = ({
   editing,
@@ -80,7 +48,7 @@ const Field = ({
   return (
     <div className={classnames(classNames)}>
       {field.label && <Label1 className={classes.label}>{field.label}</Label1>}
-      <div>
+      <div className={classes.displayValue}>
         {!editing && props.large && (
           <>
             <Info1>{displayValue(field.value)}</Info1>
@@ -101,7 +69,16 @@ const Field = ({
             {...props}
           />
         )}
-        <TL2>{decoration}</TL2>
+        {!editing && props.large && (
+          <>
+            <TL2>{decoration}</TL2>
+          </>
+        )}
+        {!editing && !props.large && (
+          <>
+            <Label2>{decoration}</Label2>
+          </>
+        )}
       </div>
     </div>
   )
@@ -115,56 +92,59 @@ const BigNumericInput = ({
   editing,
   disabled,
   setEditing,
-  handleSubmit
+  handleSubmit,
+  className
 }) => {
   const classes = useStyles()
 
   const { name, value } = field
 
   return (
-    <Formik
-      initialValues={{ [name]: value }}
-      onSubmit={values => {
-        handleSubmit(R.values(values)[0])
-      }}
-      onReset={(values, bag) => {
-        setEditing(false)
-      }}>
-      <Form>
-        <div className={classes.header}>
-          <H4>{title}</H4>
-          {!editing && !disabled && (
-            <button onClick={() => setEditing(true)}>
-              <EditIcon />
-            </button>
-          )}
-          {disabled && (
-            <div>
-              <DisabledEditIcon />
-            </div>
-          )}
-          {editing && (
-            <>
-              <Link color="primary" type="submit">
-                Save
-              </Link>
-              <Link color="secondary" type="reset">
-                Cancel
-              </Link>
-            </>
-          )}
-        </div>
-        <div className={classes.body}>
-          <Field
-            editing={editing}
-            field={field}
-            displayValue={x => (x === '' ? '-' : x)}
-            decoration="EUR"
-            large
-          />
-        </div>
-      </Form>
-    </Formik>
+    <div className={className}>
+      <Formik
+        initialValues={{ [name]: value }}
+        onSubmit={values => {
+          handleSubmit(values)
+        }}
+        onReset={(values, bag) => {
+          setEditing(false)
+        }}>
+        <Form>
+          <div className={classes.header}>
+            <H4>{title}</H4>
+            {!editing && !disabled && (
+              <button onClick={() => setEditing(true)}>
+                <EditIcon />
+              </button>
+            )}
+            {disabled && (
+              <div>
+                <DisabledEditIcon />
+              </div>
+            )}
+            {editing && (
+              <>
+                <Link color="primary" type="submit">
+                  Save
+                </Link>
+                <Link color="secondary" type="reset">
+                  Cancel
+                </Link>
+              </>
+            )}
+          </div>
+          <div className={classes.body}>
+            <Field
+              editing={editing}
+              field={field}
+              displayValue={x => (x === '' ? '-' : x)}
+              decoration="EUR"
+              large
+            />
+          </div>
+        </Form>
+      </Formik>
+    </div>
   )
 }
 
@@ -178,7 +158,8 @@ const BigPercentageAndNumericInput = ({
   editing,
   disabled,
   setEditing,
-  handleSubmit
+  handleSubmit,
+  className
 }) => {
   const classes = percentageAndNumericInputUseStyles()
 
@@ -187,68 +168,70 @@ const BigPercentageAndNumericInput = ({
   const { name: numericName, value: numericValue } = numeric
 
   return (
-    <Formik
-      initialValues={{
-        [percentageName]: percentageValue,
-        [numericName]: numericValue
-      }}
-      validationSchema={Yup.object().shape({
-        [percentageName]: Yup.string().required('Fill in both fields.'),
-        [numericName]: Yup.string().required('Fill in both fields.')
-      })}
-      onSubmit={values => {
-        handleSubmit(values)
-      }}
-      onReset={(values, bag) => {
-        setEditing(false)
-      }}>
-      <Form>
-        <div className={classes.header}>
-          <H4>{title}</H4>
-          {!editing && !disabled && (
-            <button onClick={() => setEditing(true)}>
-              <EditIcon />
-            </button>
-          )}
-          {disabled && (
-            <div>
-              <DisabledEditIcon />
+    <div className={className}>
+      <Formik
+        initialValues={{
+          [percentageName]: percentageValue,
+          [numericName]: numericValue
+        }}
+        validationSchema={Yup.object().shape({
+          [percentageName]: Yup.string().required('Fill in both fields.'),
+          [numericName]: Yup.string().required('Fill in both fields.')
+        })}
+        onSubmit={values => {
+          handleSubmit(values)
+        }}
+        onReset={(values, bag) => {
+          setEditing(false)
+        }}>
+        <Form>
+          <div className={classes.header}>
+            <H4>{title}</H4>
+            {!editing && !disabled && (
+              <button onClick={() => setEditing(true)}>
+                <EditIcon />
+              </button>
+            )}
+            {disabled && (
+              <div>
+                <DisabledEditIcon />
+              </div>
+            )}
+            {editing && (
+              <>
+                <Link color="primary" type="submit">
+                  Save
+                </Link>
+                <Link color="secondary" type="reset">
+                  Cancel
+                </Link>
+              </>
+            )}
+          </div>
+          <div className={classes.body}>
+            <div className={classes.percentageDisplay}>
+              <div style={{ height: `${percentageValue}%` }}></div>
             </div>
-          )}
-          {editing && (
-            <>
-              <Link color="primary" type="submit">
-                Save
-              </Link>
-              <Link color="secondary" type="reset">
-                Cancel
-              </Link>
-            </>
-          )}
-        </div>
-        <div className={classes.body}>
-          <div className={classes.percentageDisplay}>
-            <div style={{ height: `${percentageValue}%` }}></div>
+            <div className={classes.inputColumn}>
+              <Field
+                editing={editing}
+                field={percentage}
+                displayValue={x => (x === '' ? '-' : x)}
+                decoration="%"
+                large
+              />
+              <Field
+                editing={editing}
+                field={numeric}
+                displayValue={x => (x === '' ? '-' : x)}
+                decoration="EUR"
+                large
+              />
+            </div>
           </div>
-          <div className={classes.inputColumn}>
-            <Field
-              editing={editing}
-              field={percentage}
-              displayValue={x => (x === '' ? '-' : x)}
-              decoration="%"
-              large
-            />
-            <Field
-              editing={editing}
-              field={numeric}
-              displayValue={x => (x === '' ? '-' : x)}
-              decoration="EUR"
-              large
-            />
-          </div>
-        </div>
-      </Form>
-    </Formik>
+        </Form>
+      </Formik>
+    </div>
   )
 }
 
@@ -262,67 +245,70 @@ const MultiplePercentageInput = ({
   editing,
   disabled,
   setEditing,
-  handleSubmit
+  handleSubmit,
+  className
 }) => {
   const classes = multiplePercentageInputUseStyles()
 
   const initialValues = R.fromPairs(R.map(f => [f.name, f.value], fields))
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={values => {
-        handleSubmit(values)
-      }}
-      onReset={(values, bag) => {
-        setEditing(false)
-      }}>
-      <Form>
-        <div className={classes.header}>
-          <H4>{title}</H4>
-          {!editing && !disabled && (
-            <button onClick={() => setEditing(true)}>
-              <EditIcon />
-            </button>
-          )}
-          {disabled && (
-            <div>
-              <DisabledEditIcon />
-            </div>
-          )}
-          {editing && (
-            <>
-              <Link color="primary" type="submit">
-                Save
-              </Link>
-              <Link color="secondary" type="reset">
-                Cancel
-              </Link>
-            </>
-          )}
-        </div>
-        <div className={classes.body}>
-          {fields.map((field, idx) => (
-            <div key={idx}>
-              <div className={classes.percentageDisplay}>
-                <div style={{ height: `${field.value}%` }}></div>
+    <div className={className}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={values => {
+          handleSubmit(values)
+        }}
+        onReset={(values, bag) => {
+          setEditing(false)
+        }}>
+        <Form>
+          <div className={classes.header}>
+            <H4>{title}</H4>
+            {!editing && !disabled && (
+              <button onClick={() => setEditing(true)}>
+                <EditIcon />
+              </button>
+            )}
+            {disabled && (
+              <div>
+                <DisabledEditIcon />
               </div>
-              <div className={classes.inputColumn}>
-                <TL2 className={classes.title}>{field.title}</TL2>
-                <Field
-                  editing={editing}
-                  field={field}
-                  displayValue={x => (x === '' ? '-' : x)}
-                  decoration="%"
-                  className={classes.percentageInput}
-                  large
-                />
+            )}
+            {editing && (
+              <>
+                <Link color="primary" type="submit">
+                  Save
+                </Link>
+                <Link color="secondary" type="reset">
+                  Cancel
+                </Link>
+              </>
+            )}
+          </div>
+          <div className={classes.body}>
+            {fields.map((field, idx) => (
+              <div key={idx}>
+                <div className={classes.percentageDisplay}>
+                  <div style={{ height: `${field.value}%` }}></div>
+                </div>
+                <div className={classes.inputColumn}>
+                  <TL2 className={classes.title}>{field.title}</TL2>
+                  <Field
+                    editing={editing}
+                    field={field}
+                    displayValue={x => (x === '' ? '-' : x)}
+                    decoration="%"
+                    className={classes.percentageInput}
+                    large
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </Form>
-    </Formik>
+            ))}
+          </div>
+        </Form>
+      </Formik>
+    </div>
   )
 }
 

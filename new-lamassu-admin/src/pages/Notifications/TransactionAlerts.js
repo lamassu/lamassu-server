@@ -25,10 +25,10 @@ const TransactionAlerts = ({
 
   const handleEdit = R.curry(handleEditingClick)
 
-  const handleSubmit = it => save({ [HIGH_VALUE_TRANSACTION_KEY]: it })
+  const handleSubmit = it => save(it)
 
   const field = {
-    name: 'alert',
+    name: HIGH_VALUE_TRANSACTION_KEY,
     label: 'Alert me over',
     value: setupValue[HIGH_VALUE_TRANSACTION_KEY]
   }
