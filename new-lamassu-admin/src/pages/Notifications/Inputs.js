@@ -69,12 +69,12 @@ const Field = ({
             {...props}
           />
         )}
-        {!editing && props.large && (
+        {props.large && (
           <>
             <TL2>{decoration}</TL2>
           </>
         )}
-        {!editing && !props.large && (
+        {!props.large && (
           <>
             <Label2>{decoration}</Label2>
           </>

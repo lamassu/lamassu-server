@@ -30,8 +30,17 @@ const localStyles = {
     }
   },
   overrides: {
+    display: 'inline-block'
+  },
+  overridesTitle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
     '& > :first-child': {
       color: offColor
+    },
+    '& > button': {
+      height: '100%'
     }
   },
   displayValue: {
@@ -43,6 +52,16 @@ const localStyles = {
     '&> p:last-child': {
       margin: 0
     }
+  },
+  edit: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    '& > :first-child': {
+      marginRight: 31
+    }
+  },
+  eRowField: {
+    justifyContent: 'center'
   }
 }
 
@@ -86,16 +105,6 @@ const inputSectionStyles = {
 }
 
 const fiatBalanceAlertsStyles = {
-  eRowField: {
-    justifyContent: 'center'
-  },
-  edit: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    '& > :first-child': {
-      marginRight: 31
-    }
-  },
   cashInWrapper: {
     width: 254
   }
@@ -136,6 +145,16 @@ const fieldStyles = {
     flexDirection: 'column',
     height: 53,
     padding: 0,
+    '& > div': {
+      display: 'flex',
+      alignItems: 'baseline',
+      '& > p:first-child': {
+        margin: [[0, 4, 5, 0]]
+      },
+      '&> p:last-child': {
+        margin: 0
+      }
+    },
     '& .MuiInputBase-input': {
       width: 80
     }

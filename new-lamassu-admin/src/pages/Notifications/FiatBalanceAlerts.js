@@ -59,7 +59,7 @@ const FiatBalanceAlerts = ({
     }, it)
     const rightKeys = R.fromPairs(R.values(pairs))
     const newItem = { [key]: R.merge(setup, rightKeys) }
-    save(R.mergeDeepRight(setupValues, newItem))
+    save(newItem)
   })
 
   const handleSubmitOverrides = R.curry((key, it) => {
@@ -79,7 +79,7 @@ const FiatBalanceAlerts = ({
     const newOverrides = {
       [OVERRIDES_KEY]: R.update(machineIdx, newOverride, setup)
     }
-    save(R.mergeDeepRight(setupValues, newOverrides))
+    save(newOverrides)
   })
 
   const cashInFields = {
@@ -150,7 +150,9 @@ const FiatBalanceAlerts = ({
           </div>
         </div>
         <div className={classes.overrides}>
-          <Info2>Overrides</Info2>
+          <div className={classes.overridesTitle}>
+            <Info2>Overrides</Info2>
+          </div>
           <Table>
             <TDoubleLevelHead>
               <Th size={sizes.machine}>Machine</Th>

@@ -25,15 +25,23 @@ import {
   CRYPTO_BALANCE_ALERTS_KEY,
   LOW_BALANCE_KEY,
   HIGH_BALANCE_KEY,
-  ADD_OVERRIDE_KEY
+  ADD_OVERRIDE_KEY,
+  EMAIL_KEY,
+  BALANCE_KEY,
+  TRANSACTIONS_KEY,
+  COMPLIANCE_KEY,
+  SECURITY_KEY,
+  ERRORS_KEY,
+  ACTIVE_KEY,
+  SMS_KEY
 } from './aux.js'
 import FiatBalanceAlerts from './FiatBalanceAlerts'
 import CryptoBalanceAlerts from './CryptoBalanceAlerts'
 
 const fiatBalanceAlertsInitialValues = {
   [CASH_IN_FULL_KEY]: {
-    [PERCENTAGE_KEY]: '',
-    [NUMERARY_KEY]: ''
+    [PERCENTAGE_KEY]: '0',
+    [NUMERARY_KEY]: '0'
   },
   [CASH_OUT_EMPTY_KEY]: {
     [CASSETTE_1_KEY]: '0',
@@ -41,35 +49,34 @@ const fiatBalanceAlertsInitialValues = {
   }
 }
 
-const cryptoBalanceAlertInitialValues = {
-  [LOW_BALANCE_KEY]: '',
-  [HIGH_BALANCE_KEY]: ''
-}
-
 const initialValues = {
   [SETUP_KEY]: {
-    email: {
-      balance: false,
-      transactions: false,
-      compliance: false,
-      security: false,
-      errors: false,
-      active: false
+    [EMAIL_KEY]: {
+      [BALANCE_KEY]: false,
+      [TRANSACTIONS_KEY]: false,
+      [COMPLIANCE_KEY]: false,
+      [SECURITY_KEY]: false,
+      [ERRORS_KEY]: false,
+      [ACTIVE_KEY]: false
     },
-    sms: {
-      balance: false,
-      transactions: false,
-      compliance: false,
-      security: false,
-      errors: false,
-      active: false
+    [SMS_KEY]: {
+      [BALANCE_KEY]: false,
+      [TRANSACTIONS_KEY]: false,
+      [COMPLIANCE_KEY]: false,
+      [SECURITY_KEY]: false,
+      [ERRORS_KEY]: false,
+      [ACTIVE_KEY]: false
     }
   },
   [TRANSACTION_ALERTS_KEY]: {
     [HIGH_VALUE_TRANSACTION_KEY]: ''
   },
   [FIAT_BALANCE_ALERTS_KEY]: fiatBalanceAlertsInitialValues,
-  [CRYPTO_BALANCE_ALERTS_KEY]: cryptoBalanceAlertInitialValues
+  [CRYPTO_BALANCE_ALERTS_KEY]: {
+    [LOW_BALANCE_KEY]: '',
+    [HIGH_BALANCE_KEY]: '',
+    [OVERRIDES_KEY]: []
+  }
 }
 
 const initialEditingState = {
@@ -110,7 +117,10 @@ const Notifications = () => {
       setState(notifications)
       setEditingState(R.map(x => false, editingState))
     },
-    onError: e => setError(e)
+    onError: e => {
+      console.error(e)
+      setError(e)
+    }
   })
   const classes = useStyles()
 
@@ -128,7 +138,8 @@ const Notifications = () => {
       )
       setState(notifications ?? initialValues)
       setEditingState({ ...editingState, ...editingFiatBalanceAlertsOverrides })
-    }
+    },
+    fetchPolicy: 'network-only'
   })
 
   const save = it => {
@@ -139,11 +150,10 @@ const Notifications = () => {
     setEditingState(R.merge(editingState, { [key]: state }))
   }
 
-  const curriedSave = R.curry((key, values) =>
-    save(R.merge(state, { [key]: values }))
-  )
+  const curriedSave = R.curry((key, values) => save({ [key]: values }))
 
   if (!state) return null
+  console.log('state', state)
 
   return (
     <>
@@ -173,7 +183,7 @@ const Notifications = () => {
       </div>
       <div className={classes.section}>
         <CryptoBalanceAlerts
-          value={state[CRYPTO_BALANCE_ALERTS_KEY]}
+          values={state[CRYPTO_BALANCE_ALERTS_KEY]}
           editingState={editingState}
           handleEditingClick={handleEditingClick}
           save={curriedSave(CRYPTO_BALANCE_ALERTS_KEY)}

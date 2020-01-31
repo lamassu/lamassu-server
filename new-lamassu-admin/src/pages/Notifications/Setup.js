@@ -15,6 +15,17 @@ import {
 import commonStyles from 'src/pages/common.styles'
 
 import { localStyles } from './Notifications.styles'
+import {
+  BALANCE_KEY,
+  TRANSACTIONS_KEY,
+  COMPLIANCE_KEY,
+  SECURITY_KEY,
+  ERRORS_KEY,
+  ACTIVE_KEY,
+  CHANNEL_KEY,
+  EMAIL_KEY,
+  SMS_KEY
+} from './aux'
 
 const styles = R.merge(commonStyles, localStyles)
 
@@ -23,43 +34,43 @@ const useStyles = makeStyles(styles)
 const elements = [
   {
     header: 'Channel',
-    name: 'channel',
+    name: CHANNEL_KEY,
     size: 129,
     textAlign: 'left'
   },
   {
     header: 'Balance',
-    name: 'balance',
+    name: BALANCE_KEY,
     size: 152,
     textAlign: 'center'
   },
   {
     header: 'Transactions',
-    name: 'transactions',
+    name: TRANSACTIONS_KEY,
     size: 184,
     textAlign: 'center'
   },
   {
     header: 'Compliance',
-    name: 'compliance',
+    name: COMPLIANCE_KEY,
     size: 178,
     textAlign: 'center'
   },
   {
     header: 'Security',
-    name: 'security',
+    name: SECURITY_KEY,
     size: 152,
     textAlign: 'center'
   },
   {
     header: 'Errors',
-    name: 'errors',
+    name: ERRORS_KEY,
     size: 142,
     textAlign: 'center'
   },
   {
     header: 'Active',
-    name: 'active',
+    name: ACTIVE_KEY,
     size: 263,
     textAlign: 'center'
   }
@@ -74,7 +85,7 @@ const Row = ({ channel, columns, values, save }) => {
 
   const Cell = ({ name, disabled }) => {
     const handleChange = name => event => {
-      save(R.merge(values, { [name]: event.target.checked }))
+      save(R.mergeDeepRight(values, { [name]: event.target.checked }))
     }
 
     return (
@@ -91,15 +102,15 @@ const Row = ({ channel, columns, values, save }) => {
 
   return (
     <Tr>
-      <Td size={findSize('channel')} textAlign={findAlign('channel')}>
+      <Td size={findSize(CHANNEL_KEY)} textAlign={findAlign(CHANNEL_KEY)}>
         {channel}
       </Td>
-      <Cell name="balance" disabled={!active} />
-      <Cell name="transactions" disabled={!active} />
-      <Cell name="compliance" disabled={!active} />
-      <Cell name="security" disabled={!active} />
-      <Cell name="errors" disabled={!active} />
-      <Cell name="active" />
+      <Cell name={BALANCE_KEY} disabled={!active} />
+      <Cell name={TRANSACTIONS_KEY} disabled={!active} />
+      <Cell name={COMPLIANCE_KEY} disabled={!active} />
+      <Cell name={SECURITY_KEY} disabled={!active} />
+      <Cell name={ERRORS_KEY} disabled={!active} />
+      <Cell name={ACTIVE_KEY} />
     </Tr>
   )
 }
@@ -107,9 +118,7 @@ const Row = ({ channel, columns, values, save }) => {
 const Setup = ({ values: setupValues, save }) => {
   const classes = useStyles()
 
-  const saveSetup = R.curry((key, values) =>
-    save(R.merge(setupValues, { [key]: values }))
-  )
+  const saveSetup = R.curry((key, values) => save({ [key]: values }))
 
   return (
     <>
@@ -131,14 +140,14 @@ const Setup = ({ values: setupValues, save }) => {
             <Row
               channel="Email"
               columns={elements}
-              values={setupValues?.email}
-              save={saveSetup('email')}
+              values={setupValues[EMAIL_KEY]}
+              save={saveSetup(EMAIL_KEY)}
             />
             <Row
               channel="SMS"
               columns={elements}
-              values={setupValues?.sms}
-              save={saveSetup('sms')}
+              values={setupValues[SMS_KEY]}
+              save={saveSetup(SMS_KEY)}
             />
           </TBody>
         </FakeTable>
