@@ -846,7 +846,8 @@
         "notificationsSMSEnabled",
         "cashOutEnabled"
       ],
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [{"code": "required"}],
+      "default": "twilio"
     },
     {
       "code": "email",
@@ -857,7 +858,8 @@
       "enabledIfAny": [
         "notificationsEmailEnabled"
       ],
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [{"code": "required"}],
+      "default": "mailgun"
     },
     {
       "code": "coinAtmRadarActive",
