@@ -9,7 +9,8 @@ const localStyles = {
     }
   },
   sectionTitle: {
-    color: offColor
+    color: offColor,
+    margin: [[8, 0, 16, 0]]
   },
   button: {
     border: 'none',
@@ -19,13 +20,14 @@ const localStyles = {
   },
   defaults: {
     display: 'flex',
-    height: 185,
-    '& > div:first-child': {
+    '& > div': {
       display: 'flex',
+      alignItems: 'center'
+    },
+    '& > div:first-child': {
       borderRight: [['solid', 1, primaryColor]]
     },
     '& > div:not(:first-child)': {
-      display: 'flex',
       marginLeft: 56
     }
   },
@@ -57,11 +59,12 @@ const localStyles = {
     display: 'flex',
     justifyContent: 'flex-end',
     '& > :first-child': {
-      marginRight: 31
+      marginRight: 16
     }
   },
   eRowField: {
-    justifyContent: 'center'
+    display: 'inline-block',
+    height: '100%'
   }
 }
 
@@ -69,25 +72,38 @@ const inputSectionStyles = {
   header: {
     display: 'flex',
     alignItems: 'center',
-    '& > *': {
-      marginLeft: 20
-    },
+    marginBottom: 24,
+    height: 26,
     '& > :first-child': {
-      marginLeft: 0
+      flexShrink: 2,
+      margin: 0,
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis'
     },
-    '& > button': {
+    '& button': {
       border: 'none',
       backgroundColor: 'transparent',
-      cursor: 'pointer',
-      height: '100%'
-    },
-    '& > div': {
-      padding: [[0, theme.spacing(1)]],
-      lineHeight: 'normal'
+      cursor: 'pointer'
+    }
+  },
+  editButton: {
+    marginLeft: 16
+  },
+  disabledButton: {
+    padding: [[0, theme.spacing(1)]],
+    lineHeight: 'normal',
+    marginLeft: 16
+  },
+  editingButtons: {
+    display: 'flex',
+    marginLeft: 16,
+    '& > :not(:last-child)': {
+      marginRight: 20
     }
   },
   percentageDisplay: {
-    position: 'relative',
+    position: '',
     width: 76,
     height: 118,
     border: [['solid', 4, primaryColor]],
@@ -107,12 +123,35 @@ const inputSectionStyles = {
 const fiatBalanceAlertsStyles = {
   cashInWrapper: {
     width: 254
+  },
+  doubleLevelHead: {
+    '& > div > div': {
+      marginRight: 72
+    }
+  },
+  doubleLevelRow: {
+    '& > div': {
+      marginRight: 72
+    }
+  },
+  fbaDefaults: {
+    '& > div': {
+      height: 185
+    }
   }
 }
 
 const cryptoBalanceAlertsStyles = {
   lowBalance: {
-    width: 254
+    width: 254,
+    '& form': {
+      width: 217
+    }
+  },
+  cbaDefaults: {
+    '& > div': {
+      height: 135
+    }
   }
 }
 
@@ -134,7 +173,7 @@ const multiplePercentageInputStyles = {
     }
   },
   title: {
-    marginTop: 2
+    margin: [[2, 0, 12, 0]]
   }
 }
 

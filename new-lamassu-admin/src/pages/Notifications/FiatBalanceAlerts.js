@@ -1,5 +1,6 @@
 import React from 'react'
 import * as R from 'ramda'
+import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core'
 import { Formik, Form } from 'formik'
 
@@ -114,10 +115,10 @@ const FiatBalanceAlerts = ({
 
   const sizes = {
     machine: 238,
-    percentage: 200,
-    amount: 200,
-    cashOut1: 200,
-    cashOut2: 200,
+    percentage: 128,
+    amount: 128,
+    cashOut1: 128,
+    cashOut2: 128,
     edit: 98
   }
 
@@ -128,7 +129,7 @@ const FiatBalanceAlerts = ({
     <>
       <TL1 className={classes.sectionTitle}>Fiat balance alerts</TL1>
       <div>
-        <div className={classes.defaults}>
+        <div className={classnames(classes.defaults, classes.fbaDefaults)}>
           <BigPercentageAndNumericInput
             title="Cash-in (Full)"
             fields={cashInFields}
@@ -156,13 +157,25 @@ const FiatBalanceAlerts = ({
           <Table>
             <TDoubleLevelHead>
               <Th size={sizes.machine}>Machine</Th>
-              <ThDoubleLevel title="Cash-in (Cassette Full)">
-                <Th size={sizes.percentage}>Percentage</Th>
-                <Th size={sizes.amount}>Amount</Th>
+              <ThDoubleLevel
+                title="Cash-in (Cassette Full)"
+                className={classes.doubleLevelHead}>
+                <Th size={sizes.percentage} textAlign="right">
+                  Percentage
+                </Th>
+                <Th size={sizes.amount} textAlign="right">
+                  Amount
+                </Th>
               </ThDoubleLevel>
-              <ThDoubleLevel title="Cash-out (Cassette Empty)">
-                <Th size={sizes.cashOut1}>Cash-out 1</Th>
-                <Th size={sizes.cashOut2}>Cash-out 2</Th>
+              <ThDoubleLevel
+                title="Cash-out (Cassette Empty)"
+                className={classes.doubleLevelHead}>
+                <Th size={sizes.cashOut1} textAlign="right">
+                  Cash-out 1
+                </Th>
+                <Th size={sizes.cashOut2} textAlign="right">
+                  Cash-out 2
+                </Th>
               </ThDoubleLevel>
               <Th size={sizes.edit} textAlign="center">
                 Edit
@@ -231,8 +244,8 @@ const FiatBalanceAlerts = ({
                     <Form>
                       <Tr>
                         <Td size={sizes.machine}>{machine.name}</Td>
-                        <CellDoubleLevel>
-                          <Td size={sizes.percentage}>
+                        <CellDoubleLevel className={classes.doubleLevelRow}>
+                          <Td size={sizes.percentage} textAlign="right">
                             <Field
                               editing={editing}
                               field={fields.percentage}
@@ -241,7 +254,7 @@ const FiatBalanceAlerts = ({
                               className={classes.eRowField}
                             />
                           </Td>
-                          <Td size={sizes.amount}>
+                          <Td size={sizes.amount} textAlign="right">
                             <Field
                               editing={editing}
                               field={fields.amount}
@@ -251,8 +264,8 @@ const FiatBalanceAlerts = ({
                             />
                           </Td>
                         </CellDoubleLevel>
-                        <CellDoubleLevel>
-                          <Td size={sizes.cashOut1}>
+                        <CellDoubleLevel className={classes.doubleLevelRow}>
+                          <Td size={sizes.cashOut1} textAlign="right">
                             <Field
                               editing={editing}
                               field={fields.cashOut1}
@@ -261,7 +274,7 @@ const FiatBalanceAlerts = ({
                               className={classes.eRowField}
                             />
                           </Td>
-                          <Td size={sizes.cashOut2}>
+                          <Td size={sizes.cashOut2} textAlign="right">
                             <Field
                               editing={editing}
                               field={fields.cashOut2}
@@ -289,11 +302,11 @@ const FiatBalanceAlerts = ({
                           )}
                           {editing && (
                             <>
-                              <Link color="secondary" type="reset">
-                                Cancel
-                              </Link>
                               <Link color="primary" type="submit">
                                 Save
+                              </Link>
+                              <Link color="secondary" type="reset">
+                                Cancel
                               </Link>
                             </>
                           )}

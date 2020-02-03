@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import * as R from 'ramda'
 import { Formik, Form, Field as FormikField } from 'formik'
 import { gql } from 'apollo-boost'
+import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core'
 import { useQuery } from '@apollo/react-hooks'
 
@@ -140,7 +141,7 @@ const CryptoBalanceAlerts = ({
     <>
       <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
       <div>
-        <div className={classes.defaults}>
+        <div className={classnames(classes.defaults, classes.cbaDefaults)}>
           <BigNumericInput
             title="Default (Low Balance)"
             field={defaultsFields[LOW_BALANCE_KEY]}

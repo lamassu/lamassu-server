@@ -86,6 +86,36 @@ const Field = ({
 
 const useStyles = makeStyles(inputSectionStyles)
 
+const Header = ({ title, editing, disabled, setEditing }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.header}>
+      <H4>{title}</H4>
+      {!editing && !disabled && (
+        <button onClick={() => setEditing(true)} className={classes.editButton}>
+          <EditIcon />
+        </button>
+      )}
+      {disabled && (
+        <div className={classes.disabledButton}>
+          <DisabledEditIcon />
+        </div>
+      )}
+      {editing && (
+        <div className={classes.editingButtons}>
+          <Link color="primary" type="submit">
+            Save
+          </Link>
+          <Link color="secondary" type="reset">
+            Cancel
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
+
 const BigNumericInput = ({
   title,
   field,
@@ -110,29 +140,12 @@ const BigNumericInput = ({
           setEditing(false)
         }}>
         <Form>
-          <div className={classes.header}>
-            <H4>{title}</H4>
-            {!editing && !disabled && (
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            )}
-            {disabled && (
-              <div>
-                <DisabledEditIcon />
-              </div>
-            )}
-            {editing && (
-              <>
-                <Link color="primary" type="submit">
-                  Save
-                </Link>
-                <Link color="secondary" type="reset">
-                  Cancel
-                </Link>
-              </>
-            )}
-          </div>
+          <Header
+            title={title}
+            editing={editing}
+            disabled={disabled}
+            setEditing={() => setEditing(true)}
+          />
           <div className={classes.body}>
             <Field
               editing={editing}
@@ -185,29 +198,12 @@ const BigPercentageAndNumericInput = ({
           setEditing(false)
         }}>
         <Form>
-          <div className={classes.header}>
-            <H4>{title}</H4>
-            {!editing && !disabled && (
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            )}
-            {disabled && (
-              <div>
-                <DisabledEditIcon />
-              </div>
-            )}
-            {editing && (
-              <>
-                <Link color="primary" type="submit">
-                  Save
-                </Link>
-                <Link color="secondary" type="reset">
-                  Cancel
-                </Link>
-              </>
-            )}
-          </div>
+          <Header
+            title={title}
+            editing={editing}
+            disabled={disabled}
+            setEditing={() => setEditing(true)}
+          />
           <div className={classes.body}>
             <div className={classes.percentageDisplay}>
               <div style={{ height: `${percentageValue}%` }}></div>
@@ -263,29 +259,12 @@ const MultiplePercentageInput = ({
           setEditing(false)
         }}>
         <Form>
-          <div className={classes.header}>
-            <H4>{title}</H4>
-            {!editing && !disabled && (
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            )}
-            {disabled && (
-              <div>
-                <DisabledEditIcon />
-              </div>
-            )}
-            {editing && (
-              <>
-                <Link color="primary" type="submit">
-                  Save
-                </Link>
-                <Link color="secondary" type="reset">
-                  Cancel
-                </Link>
-              </>
-            )}
-          </div>
+          <Header
+            title={title}
+            editing={editing}
+            disabled={disabled}
+            setEditing={() => setEditing(true)}
+          />
           <div className={classes.body}>
             {fields.map((field, idx) => (
               <div key={idx}>

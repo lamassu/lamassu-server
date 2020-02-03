@@ -40,12 +40,12 @@ import CryptoBalanceAlerts from './CryptoBalanceAlerts'
 
 const fiatBalanceAlertsInitialValues = {
   [CASH_IN_FULL_KEY]: {
-    [PERCENTAGE_KEY]: '0',
-    [NUMERARY_KEY]: '0'
+    [PERCENTAGE_KEY]: '',
+    [NUMERARY_KEY]: ''
   },
   [CASH_OUT_EMPTY_KEY]: {
-    [CASSETTE_1_KEY]: '0',
-    [CASSETTE_2_KEY]: '0'
+    [CASSETTE_1_KEY]: '',
+    [CASSETTE_2_KEY]: ''
   }
 }
 

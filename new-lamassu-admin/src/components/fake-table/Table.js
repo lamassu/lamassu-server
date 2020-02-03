@@ -20,7 +20,7 @@ const { tl2, p, label1 } = typographyStyles
 
 const useStyles = makeStyles({
   body: {
-    borderSpacing: '0 4px'
+    borderSpacing: [[0, 4]]
   },
   header: {
     extend: tl2,
@@ -28,7 +28,6 @@ const useStyles = makeStyles({
     height: tableHeaderHeight,
     textAlign: 'left',
     color: white,
-    // display: 'flex'
     display: 'table-row'
   },
   doubleHeader: {
@@ -39,7 +38,7 @@ const useStyles = makeStyles({
     display: 'table-row'
   },
   thDoubleLevel: {
-    padding: `0 ${spacer * 2}px`,
+    padding: [[0, spacer * 2]],
     display: 'table-cell',
     '& > :first-child': {
       extend: label1,
@@ -54,20 +53,23 @@ const useStyles = makeStyles({
     '& > :last-child': {
       display: 'table-cell',
       verticalAlign: 'middle',
-      height: tableDoubleHeaderHeight - 28
+      height: tableDoubleHeaderHeight - 28,
+      '& > div': {
+        display: 'inline-block'
+      }
     }
   },
   cellDoubleLevel: {
     display: 'flex',
-    padding: `0 ${spacer * 2}px`
+    padding: [[0, spacer * 2]]
   },
   td: {
-    padding: `0 ${spacer * 3}px`
+    padding: [[0, spacer * 3]]
   },
   tdHeader: {
     verticalAlign: 'middle',
     display: 'table-cell',
-    padding: `0 ${spacer * 3}px`
+    padding: [[0, spacer * 3]]
   },
   trError: {
     backgroundColor: tableErrorColor
@@ -91,9 +93,9 @@ const useStyles = makeStyles({
     '&:before': {
       height: 0
     },
-    margin: '4px 0',
+    margin: [[4, 0]],
     width: 'min-content',
-    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
+    boxShadow: [[0, 0, 4, 0, 'rgba(0, 0, 0, 0.08)']]
   }
 })
 
