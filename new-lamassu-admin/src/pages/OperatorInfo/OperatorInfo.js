@@ -7,6 +7,7 @@ import Title from 'src/components/Title'
 
 import logsStyles from '../Logs.styles'
 
+import CoinAtmRadar from './CoinATMRadar'
 import ContactInfo from './ContactInfo'
 
 const localStyles = {
@@ -49,6 +50,7 @@ const OperatorInfo = () => {
         />
         <div className={classes.contentWrapper}>
           {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
+          {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
         </div>
       </div>
     </>
