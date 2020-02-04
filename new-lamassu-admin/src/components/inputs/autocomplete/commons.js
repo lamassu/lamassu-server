@@ -1,32 +1,31 @@
 import MenuItem from '@material-ui/core/MenuItem'
-import TextField from '@material-ui/core/TextField'
 import Fuse from 'fuse.js'
-import * as R from 'ramda'
 import React from 'react'
 import slugify from 'slugify'
+import { withStyles } from '@material-ui/core/styles'
 
 import {
   fontColor,
   inputFontSize,
-  inputFontWeight
+  inputFontWeight,
+  zircon
 } from 'src/styling/variables'
 import S from 'src/utils/sanctuary'
 
-function renderInput(inputProps) {
-  const { onBlur, success, InputProps, classes, ref, ...other } = inputProps
+import { TextInput } from '../base'
+
+function renderInput({ InputProps, error, name, success, ...props }) {
+  const { onChange, onBlur, value } = InputProps
 
   return (
-    <TextField
-      InputProps={{
-        inputRef: ref,
-        classes: {
-          root: classes.inputRoot,
-          input: classes.inputInput,
-          underline: success ? classes.success : ''
-        },
-        ...InputProps
-      }}
-      {...other}
+    <TextInput
+      name={name}
+      onChange={onChange}
+      onBlur={onBlur}
+      value={value}
+      error={error}
+      InputProps={InputProps}
+      {...props}
     />
   )
 }
@@ -40,21 +39,28 @@ function renderSuggestion({
 }) {
   const isHighlighted = highlightedIndex === index
 
-  const item = R.o(R.defaultTo(''), R.path(['display']))(selectedItem)
-  const isSelected = R.indexOf(suggestion.display)(item) > -1
+  const StyledMenuItem = withStyles(theme => ({
+    root: {
+      fontSize: 14,
+      fontWeight: 400,
+      color: fontColor
+    },
+    selected: {
+      '&.Mui-selected, &.Mui-selected:hover': {
+        fontWeight: 500,
+        backgroundColor: zircon
+      }
+    }
+  }))(MenuItem)
 
   return (
-    <MenuItem
+    <StyledMenuItem
       {...itemProps}
       key={suggestion.code}
       selected={isHighlighted}
-      component="div"
-      style={{
-        fontSize: 14,
-        fontWeight: isSelected ? 500 : 400
-      }}>
+      component="div">
       {suggestion.display}
-    </MenuItem>
+    </StyledMenuItem>
   )
 }
 

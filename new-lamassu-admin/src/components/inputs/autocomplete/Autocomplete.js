@@ -40,9 +40,8 @@ const Autocomplete = memo(
         }) => (
           <div className={classes.container}>
             {renderInput({
-              id: name,
+              name,
               fullWidth: true,
-              classes,
               error:
                 (touched[`${name}-input`] || touched[name]) && errors[name],
               success:
@@ -52,7 +51,10 @@ const Autocomplete = memo(
                 value: inputValue2 || '',
                 placeholder,
                 onBlur,
-                onClick: () => toggleMenu(),
+                onClick: event => {
+                  setPopperNode(event.currentTarget.parentElement)
+                  toggleMenu()
+                },
                 onChange: it => {
                   if (it.target.value === '') {
                     clearSelection()
@@ -60,12 +62,12 @@ const Autocomplete = memo(
                   inputValue = it.target.value
                 }
               }),
-              ref: node => {
-                setPopperNode(node)
-              },
               label
             })}
-            <Popper open={isOpen} anchorEl={popperNode}>
+            <Popper
+              open={isOpen}
+              anchorEl={popperNode}
+              modifiers={{ flip: { enabled: true } }}>
               <div
                 {...(isOpen
                   ? getMenuProps({}, { suppressRefError: true })
@@ -73,8 +75,7 @@ const Autocomplete = memo(
                 <Paper
                   square
                   style={{
-                    marginTop: 8,
-                    minWidth: popperNode ? popperNode.clientWidth : null
+                    minWidth: popperNode ? popperNode.clientWidth + 2 : null
                   }}>
                   {filterSuggestions(
                     suggestions,

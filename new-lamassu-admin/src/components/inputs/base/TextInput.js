@@ -37,7 +37,7 @@ const useStyles = makeStyles({
     paddingLeft: 4
   },
   root: {
-    '& .MuiInput-underline:before': {
+    '& > .MuiInput-underline:before': {
       borderBottom: [[2, 'solid', fontColor]]
     },
     '& .Mui-focused': {
@@ -80,6 +80,7 @@ const TextInput = memo(
     suffix,
     large,
     className,
+    InputProps,
     ...props
   }) => {
     const classes = useStyles()
@@ -108,7 +109,8 @@ const TextInput = memo(
               position="end">
               {suffix}
             </InputAdornment>
-          ) : null
+          ) : null,
+          ...InputProps
         }}
         InputLabelProps={{ className: classes.labelRoot }}
         {...props}

@@ -128,16 +128,20 @@ const Notifications = () => {
     onCompleted: data => {
       const { notifications } = data.config
       const { machines } = data
-      initialValues[FIAT_BALANCE_ALERTS_KEY][OVERRIDES_KEY] = machines.map(
-        machine => {
-          return { name: machine.name, ...fiatBalanceAlertsInitialValues }
-        }
-      )
       const editingFiatBalanceAlertsOverrides = R.fromPairs(
         machines.map(machine => [machine.name, false])
       )
-      setState(notifications ?? initialValues)
       setEditingState({ ...editingState, ...editingFiatBalanceAlertsOverrides })
+      if (!notifications) {
+        initialValues[FIAT_BALANCE_ALERTS_KEY][OVERRIDES_KEY] = machines.map(
+          machine => {
+            return { name: machine.name, ...fiatBalanceAlertsInitialValues }
+          }
+        )
+        saveConfig({ variables: { config: { notifications: initialValues } } })
+        return
+      }
+      setState(notifications ?? initialValues)
     },
     fetchPolicy: 'network-only'
   })

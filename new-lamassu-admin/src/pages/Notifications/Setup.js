@@ -118,7 +118,9 @@ const Row = ({ channel, columns, values, save }) => {
 const Setup = ({ values: setupValues, save }) => {
   const classes = useStyles()
 
-  const saveSetup = R.curry((key, values) => save({ [key]: values }))
+  const saveSetup = R.curry((key, values) =>
+    save(R.mergeDeepRight(setupValues, { [key]: values }))
+  )
 
   return (
     <>

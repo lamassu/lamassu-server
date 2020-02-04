@@ -5,7 +5,8 @@ const localStyles = {
   section: {
     marginBottom: 41,
     '&:last-child': {
-      marginBottom: 109
+      // marginBottom: 109
+      marginBottom: 1009
     }
   },
   sectionTitle: {
@@ -191,7 +192,7 @@ const fieldStyles = {
         margin: [[0, 4, 5, 0]]
       },
       '&> p:last-child': {
-        margin: 0
+        margin: [[0, 0, 0, 3]]
       }
     },
     '& .MuiInputBase-input': {

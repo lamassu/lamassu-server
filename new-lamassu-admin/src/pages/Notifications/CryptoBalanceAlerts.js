@@ -97,7 +97,7 @@ const CryptoBalanceAlerts = ({
   const editingHighBalance = editingState[HIGH_BALANCE_KEY]
   const addingOverride = editingState[ADD_OVERRIDE_KEY]
 
-  const deleteDisabled = isDisabled(editingState, ADD_OVERRIDE_KEY)
+  const overrideOpsDisabled = isDisabled(editingState, ADD_OVERRIDE_KEY)
 
   const handleEdit = R.curry(handleEditingClick)
 
@@ -164,7 +164,7 @@ const CryptoBalanceAlerts = ({
       <div className={classes.overrides}>
         <div className={classes.overridesTitle}>
           <Info2>Overrides</Info2>
-          {!addingOverride && (
+          {!addingOverride && !overrideOpsDisabled && (
             <Link
               color="primary"
               onClick={() => handleEdit(ADD_OVERRIDE_KEY)(true)}>
@@ -274,8 +274,8 @@ const CryptoBalanceAlerts = ({
                     onClick={() =>
                       deleteOverride(override[CRYPTOCURRENCY_KEY])
                     }>
-                    {!deleteDisabled && <DeleteIcon />}
-                    {deleteDisabled && <DisabledDeleteIcon />}
+                    {!overrideOpsDisabled && <DeleteIcon />}
+                    {overrideOpsDisabled && <DisabledDeleteIcon />}
                   </button>
                 </Td>
               </Tr>
