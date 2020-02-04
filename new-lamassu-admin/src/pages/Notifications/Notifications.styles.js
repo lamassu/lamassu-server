@@ -3,10 +3,9 @@ import theme from 'src/styling/theme'
 
 const localStyles = {
   section: {
-    marginBottom: 41,
+    marginBottom: 80,
     '&:last-child': {
-      // marginBottom: 109
-      marginBottom: 1009
+      marginBottom: 150
     }
   },
   sectionTitle: {
@@ -104,7 +103,7 @@ const inputSectionStyles = {
     }
   },
   percentageDisplay: {
-    position: '',
+    position: 'relative',
     width: 76,
     height: 118,
     border: [['solid', 4, primaryColor]],

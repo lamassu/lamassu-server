@@ -26,7 +26,11 @@ const useStyles = makeStyles(theme => ({
       }
     },
     '&$checked': {
+      transform: 'translateX(58%)',
       color: theme.palette.common.white,
+      '&$disabled': {
+        color: disabledColor2
+      },
       '& + $track': {
         backgroundColor: secondaryColor,
         opacity: 1,

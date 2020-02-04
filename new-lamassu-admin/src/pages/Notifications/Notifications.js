@@ -163,7 +163,7 @@ const Notifications = () => {
     <>
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
-          <Title>Operator information</Title>
+          <Title>Notifications</Title>
         </div>
       </div>
       <div className={classes.section}>

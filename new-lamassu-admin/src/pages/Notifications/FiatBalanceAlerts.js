@@ -18,7 +18,7 @@ import {
 } from 'src/components/fake-table/Table'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edit/disabled.svg'
-import { Link } from 'src/components/buttons'
+import { Link, AddButton } from 'src/components/buttons'
 
 import {
   BigPercentageAndNumericInput,
@@ -154,170 +154,173 @@ const FiatBalanceAlerts = ({
           <div className={classes.overridesTitle}>
             <Info2>Overrides</Info2>
           </div>
-          <Table>
-            <TDoubleLevelHead>
-              <Th size={sizes.machine}>Machine</Th>
-              <ThDoubleLevel
-                title="Cash-in (Cassette Full)"
-                className={classes.doubleLevelHead}>
-                <Th size={sizes.percentage} textAlign="right">
-                  Percentage
+          {overrides.length === 0 && <AddButton>Add override</AddButton>}
+          {overrides.length > 0 && (
+            <Table>
+              <TDoubleLevelHead>
+                <Th size={sizes.machine}>Machine</Th>
+                <ThDoubleLevel
+                  title="Cash-in (Cassette Full)"
+                  className={classes.doubleLevelHead}>
+                  <Th size={sizes.percentage} textAlign="right">
+                    Percentage
+                  </Th>
+                  <Th size={sizes.amount} textAlign="right">
+                    Amount
+                  </Th>
+                </ThDoubleLevel>
+                <ThDoubleLevel
+                  title="Cash-out (Cassette Empty)"
+                  className={classes.doubleLevelHead}>
+                  <Th size={sizes.cashOut1} textAlign="right">
+                    Cash-out 1
+                  </Th>
+                  <Th size={sizes.cashOut2} textAlign="right">
+                    Cash-out 2
+                  </Th>
+                </ThDoubleLevel>
+                <Th size={sizes.edit} textAlign="center">
+                  Edit
                 </Th>
-                <Th size={sizes.amount} textAlign="right">
-                  Amount
-                </Th>
-              </ThDoubleLevel>
-              <ThDoubleLevel
-                title="Cash-out (Cassette Empty)"
-                className={classes.doubleLevelHead}>
-                <Th size={sizes.cashOut1} textAlign="right">
-                  Cash-out 1
-                </Th>
-                <Th size={sizes.cashOut2} textAlign="right">
-                  Cash-out 2
-                </Th>
-              </ThDoubleLevel>
-              <Th size={sizes.edit} textAlign="center">
-                Edit
-              </Th>
-            </TDoubleLevelHead>
-            <TBody>
-              {overrides.map((machine, idx) => {
-                const fields = {
-                  percentage: {
-                    name:
-                      machine.name +
-                      '-' +
-                      CASH_IN_FULL_KEY +
-                      '-' +
-                      PERCENTAGE_KEY,
-                    value: machine[CASH_IN_FULL_KEY][PERCENTAGE_KEY]
-                  },
-                  amount: {
-                    name:
-                      machine.name +
-                      '-' +
-                      CASH_IN_FULL_KEY +
-                      '-' +
-                      NUMERARY_KEY,
-                    value: machine[CASH_IN_FULL_KEY][NUMERARY_KEY]
-                  },
-                  cashOut1: {
-                    name:
-                      machine.name +
-                      '-' +
-                      CASH_OUT_EMPTY_KEY +
-                      '-' +
-                      CASSETTE_1_KEY,
-                    value: machine[CASH_OUT_EMPTY_KEY][CASSETTE_1_KEY]
-                  },
-                  cashOut2: {
-                    name:
-                      machine.name +
-                      '-' +
-                      CASH_OUT_EMPTY_KEY +
-                      '-' +
-                      CASSETTE_2_KEY,
-                    value: machine[CASH_OUT_EMPTY_KEY][CASSETTE_2_KEY]
+              </TDoubleLevelHead>
+              <TBody>
+                {overrides.map((machine, idx) => {
+                  const fields = {
+                    percentage: {
+                      name:
+                        machine.name +
+                        '-' +
+                        CASH_IN_FULL_KEY +
+                        '-' +
+                        PERCENTAGE_KEY,
+                      value: machine[CASH_IN_FULL_KEY][PERCENTAGE_KEY]
+                    },
+                    amount: {
+                      name:
+                        machine.name +
+                        '-' +
+                        CASH_IN_FULL_KEY +
+                        '-' +
+                        NUMERARY_KEY,
+                      value: machine[CASH_IN_FULL_KEY][NUMERARY_KEY]
+                    },
+                    cashOut1: {
+                      name:
+                        machine.name +
+                        '-' +
+                        CASH_OUT_EMPTY_KEY +
+                        '-' +
+                        CASSETTE_1_KEY,
+                      value: machine[CASH_OUT_EMPTY_KEY][CASSETTE_1_KEY]
+                    },
+                    cashOut2: {
+                      name:
+                        machine.name +
+                        '-' +
+                        CASH_OUT_EMPTY_KEY +
+                        '-' +
+                        CASSETTE_2_KEY,
+                      value: machine[CASH_OUT_EMPTY_KEY][CASSETTE_2_KEY]
+                    }
                   }
-                }
 
-                const initialValues = {
-                  [fields.percentage.name]: fields.percentage.value,
-                  [fields.amount.name]: fields.amount.value,
-                  [fields.cashOut1.name]: fields.cashOut1.value,
-                  [fields.cashOut2.name]: fields.cashOut2.value
-                }
+                  const initialValues = {
+                    [fields.percentage.name]: fields.percentage.value,
+                    [fields.amount.name]: fields.amount.value,
+                    [fields.cashOut1.name]: fields.cashOut1.value,
+                    [fields.cashOut2.name]: fields.cashOut2.value
+                  }
 
-                const editing = editingState[machine.name]
-                const disabled = isDisabled(editingState, machine.name)
-                return (
-                  <Formik
-                    key={idx}
-                    initialValues={initialValues}
-                    onSubmit={values => {
-                      handleSubmitOverrides(machine.name)(values)
-                    }}
-                    onReset={(values, bag) => {
-                      handleEdit(machine.name)(false)
-                    }}>
-                    <Form>
-                      <Tr>
-                        <Td size={sizes.machine}>{machine.name}</Td>
-                        <CellDoubleLevel className={classes.doubleLevelRow}>
-                          <Td size={sizes.percentage} textAlign="right">
-                            <Field
-                              editing={editing}
-                              field={fields.percentage}
-                              displayValue={x => (x === '' ? '-' : x)}
-                              decoration="%"
-                              className={classes.eRowField}
-                            />
+                  const editing = editingState[machine.name]
+                  const disabled = isDisabled(editingState, machine.name)
+                  return (
+                    <Formik
+                      key={idx}
+                      initialValues={initialValues}
+                      onSubmit={values => {
+                        handleSubmitOverrides(machine.name)(values)
+                      }}
+                      onReset={(values, bag) => {
+                        handleEdit(machine.name)(false)
+                      }}>
+                      <Form>
+                        <Tr>
+                          <Td size={sizes.machine}>{machine.name}</Td>
+                          <CellDoubleLevel className={classes.doubleLevelRow}>
+                            <Td size={sizes.percentage} textAlign="right">
+                              <Field
+                                editing={editing}
+                                field={fields.percentage}
+                                displayValue={x => (x === '' ? '-' : x)}
+                                decoration="%"
+                                className={classes.eRowField}
+                              />
+                            </Td>
+                            <Td size={sizes.amount} textAlign="right">
+                              <Field
+                                editing={editing}
+                                field={fields.amount}
+                                displayValue={x => (x === '' ? '-' : x)}
+                                decoration="EUR"
+                                className={classes.eRowField}
+                              />
+                            </Td>
+                          </CellDoubleLevel>
+                          <CellDoubleLevel className={classes.doubleLevelRow}>
+                            <Td size={sizes.cashOut1} textAlign="right">
+                              <Field
+                                editing={editing}
+                                field={fields.cashOut1}
+                                displayValue={x => (x === '' ? '-' : x)}
+                                decoration="%"
+                                className={classes.eRowField}
+                              />
+                            </Td>
+                            <Td size={sizes.cashOut2} textAlign="right">
+                              <Field
+                                editing={editing}
+                                field={fields.cashOut2}
+                                displayValue={x => (x === '' ? '-' : x)}
+                                decoration="%"
+                                className={classes.eRowField}
+                              />
+                            </Td>
+                          </CellDoubleLevel>
+                          <Td
+                            size={sizes.edit}
+                            textAlign="center"
+                            className={editing && classes.edit}>
+                            {!editing && !disabled && (
+                              <button
+                                className={classes.button}
+                                onClick={() => handleEdit(machine.name)(true)}>
+                                <EditIcon />
+                              </button>
+                            )}
+                            {disabled && (
+                              <div>
+                                <DisabledEditIcon />
+                              </div>
+                            )}
+                            {editing && (
+                              <>
+                                <Link color="primary" type="submit">
+                                  Save
+                                </Link>
+                                <Link color="secondary" type="reset">
+                                  Cancel
+                                </Link>
+                              </>
+                            )}
                           </Td>
-                          <Td size={sizes.amount} textAlign="right">
-                            <Field
-                              editing={editing}
-                              field={fields.amount}
-                              displayValue={x => (x === '' ? '-' : x)}
-                              decoration="EUR"
-                              className={classes.eRowField}
-                            />
-                          </Td>
-                        </CellDoubleLevel>
-                        <CellDoubleLevel className={classes.doubleLevelRow}>
-                          <Td size={sizes.cashOut1} textAlign="right">
-                            <Field
-                              editing={editing}
-                              field={fields.cashOut1}
-                              displayValue={x => (x === '' ? '-' : x)}
-                              decoration="%"
-                              className={classes.eRowField}
-                            />
-                          </Td>
-                          <Td size={sizes.cashOut2} textAlign="right">
-                            <Field
-                              editing={editing}
-                              field={fields.cashOut2}
-                              displayValue={x => (x === '' ? '-' : x)}
-                              decoration="%"
-                              className={classes.eRowField}
-                            />
-                          </Td>
-                        </CellDoubleLevel>
-                        <Td
-                          size={sizes.edit}
-                          textAlign="center"
-                          className={editing && classes.edit}>
-                          {!editing && !disabled && (
-                            <button
-                              className={classes.button}
-                              onClick={() => handleEdit(machine.name)(true)}>
-                              <EditIcon />
-                            </button>
-                          )}
-                          {disabled && (
-                            <div>
-                              <DisabledEditIcon />
-                            </div>
-                          )}
-                          {editing && (
-                            <>
-                              <Link color="primary" type="submit">
-                                Save
-                              </Link>
-                              <Link color="secondary" type="reset">
-                                Cancel
-                              </Link>
-                            </>
-                          )}
-                        </Td>
-                      </Tr>
-                    </Form>
-                  </Formik>
-                )
-              })}
-            </TBody>
-          </Table>
+                        </Tr>
+                      </Form>
+                    </Formik>
+                  )
+                })}
+              </TBody>
+            </Table>
+          )}
         </div>
       </div>
     </>
