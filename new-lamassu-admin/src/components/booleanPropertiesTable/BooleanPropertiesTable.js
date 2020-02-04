@@ -31,6 +31,7 @@ const BooleanPropertiesTable = memo(
     }
 
     const innerCancel = () => {
+      setRadioGroupValues(elements)
       setEditing(false)
     }
 

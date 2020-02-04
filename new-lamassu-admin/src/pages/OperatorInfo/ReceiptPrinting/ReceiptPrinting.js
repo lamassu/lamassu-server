@@ -146,7 +146,7 @@ const ReceiptPrinting = memo(() => {
           {
             name: 'customerNameOrPhoneNumber',
             display: 'Customer name or phone number (if known)',
-            value: receiptPrintingConfig.logo
+            value: receiptPrintingConfig.customerNameOrPhoneNumber
           },
           // {
           //   name: 'commission',
@@ -162,12 +162,12 @@ const ReceiptPrinting = memo(() => {
             name: 'addressQRCode',
             display: 'Address QR code',
             value: receiptPrintingConfig.addressQRCode
-          },
-          {
-            name: 'customText',
-            display: 'Custom text',
-            value: receiptPrintingConfig.customText
           }
+          // {
+          //   name: 'customText',
+          //   display: 'Custom text',
+          //   value: receiptPrintingConfig.customText
+          // }
         ]}
         save={save}
       />
