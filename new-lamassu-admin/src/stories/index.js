@@ -17,6 +17,7 @@ import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/author
 import { ActionButton, Button, Link } from 'src/components/buttons'
 import { Radio, TextInput, Switch } from 'src/components/inputs'
 
+import ConfirmDialog from '../components/ConfirmDialog'
 import {
   H1,
   H2,
@@ -119,7 +120,11 @@ story.add('Switch', () => (
 
 story.add('Text Input', () => (
   <Wrapper>
-    <TextInput color={select('Color', colors, 'amazonite')} />
+    <TextInput
+      name="text-input"
+      touched={[]}
+      color={select('Color', colors, 'amazonite')}
+    />
   </Wrapper>
 ))
 
@@ -137,6 +142,21 @@ story.add('Checkbox', () => (
       inputProps={{
         'aria-label': 'uncontrolled-checkbox'
       }}
+    />
+  </Wrapper>
+))
+
+story.add('ConfirmDialog', () => (
+  <Wrapper>
+    <ConfirmDialog
+      open={boolean('open', true)}
+      onDissmised={() => {
+        window.alert('dissmised')
+      }}
+      onConfirmed={() => {
+        window.alert('confirmed')
+      }}
+      toBeConfirmed="there-is-no-fate"
     />
   </Wrapper>
 ))

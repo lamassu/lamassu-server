@@ -12,6 +12,8 @@ import Services from 'src/pages/Services/Services'
 import AuthRegister from 'src/pages/AuthRegister'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
 
+import MachineStatus from '../pages/maintenance/MachineStatus'
+
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
   // maintenence: { label: 'Maintenence', children: [{ label: 'Locale', route: '/locale' }] },
@@ -27,6 +29,11 @@ const tree = [
         key: 'server-logs',
         label: 'Server',
         route: '/maintenance/server-logs'
+      },
+      {
+        key: 'machine-status',
+        label: 'Machine Status',
+        route: '/maintenance/machine-status'
       }
     ]
   },
@@ -80,6 +87,7 @@ const Routes = () => (
     <Route path="/maintenance/server-logs" component={ServerLogs} />
     <Route path="/transactions" component={Transactions} />
     <Route path="/register" component={AuthRegister} />
+    <Route path="/maintenance/machine-status" component={MachineStatus} />
   </Switch>
 )
 
