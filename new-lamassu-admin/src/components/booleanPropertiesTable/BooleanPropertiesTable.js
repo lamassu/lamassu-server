@@ -31,6 +31,7 @@ const BooleanPropertiesTable = memo(
     }
 
     const innerCancel = () => {
+      setRadioGroupValues(elements)
       setEditing(false)
     }
 
@@ -80,8 +81,10 @@ const BooleanPropertiesTable = memo(
             {radioGroupValues &&
               radioGroupValues.map((element, idx) => (
                 <TableRow key={idx} size="sm" className={classes.tableRow}>
-                  <TableCell className={classes.tableCell}>
+                  <TableCell className={classes.leftTableCell}>
                     {element.display}
+                  </TableCell>
+                  <TableCell className={classes.rightTableCell}>
                     {editing ? (
                       <RadioGroup
                         options={radioButtonOptions}
