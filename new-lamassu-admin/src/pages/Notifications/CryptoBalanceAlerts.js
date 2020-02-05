@@ -20,6 +20,7 @@ import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/en
 import { ReactComponent as DisabledDeleteIcon } from 'src/styling/icons/action/delete/disabled.svg'
 import Link from 'src/components/buttons/Link.js'
 import { Autocomplete } from 'src/components/inputs/index.js'
+import { AddButton } from 'src/components/buttons/index.js'
 
 import {
   isDisabled,
@@ -145,6 +146,8 @@ const CryptoBalanceAlerts = ({
     return R.without(overridenCryptos, cryptoCurrencies)
   }
 
+  const { [OVERRIDES_KEY]: overrides } = setupValues
+
   return (
     <>
       <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
@@ -172,7 +175,7 @@ const CryptoBalanceAlerts = ({
       <div className={classes.overrides}>
         <div className={classes.overridesTitle}>
           <Info2>Overrides</Info2>
-          {!addingOverride && !overrideOpsDisabled && (
+          {!addingOverride && !overrideOpsDisabled && overrides.length > 0 && (
             <Link
               color="primary"
               onClick={() => handleEdit(ADD_OVERRIDE_KEY)(true)}>
@@ -180,116 +183,123 @@ const CryptoBalanceAlerts = ({
             </Link>
           )}
         </div>
-        <Table>
-          <THead>
-            {overrideElements.map(
-              ({ size, className, textAlign, header }, idx) => (
-                <Th
-                  key={idx}
-                  size={size}
-                  className={className}
-                  textAlign={textAlign}>
-                  {header}
-                </Th>
-              )
-            )}
-          </THead>
-          <TBody>
-            {addingOverride && (
-              <Formik
-                initialValues={{
-                  [CRYPTOCURRENCY_KEY]: '',
-                  [LOW_BALANCE_KEY]: '',
-                  [HIGH_BALANCE_KEY]: ''
-                }}
-                onSubmit={values => {
-                  handleSubmitOverrides(values)
-                }}
-                onReset={(values, bag) => {
-                  handleEdit(ADD_OVERRIDE_KEY)(false)
-                }}>
-                <Form>
-                  <Tr>
-                    <Td size={findSize(CRYPTOCURRENCY_KEY)}>
-                      <FormikField
-                        id={CRYPTOCURRENCY_KEY}
-                        name={CRYPTOCURRENCY_KEY}
-                        component={Autocomplete}
-                        type="text"
-                        suggestions={getSuggestions()}
-                      />
-                    </Td>
-                    <Td size={findSize(LOW_BALANCE_KEY)}>
-                      <Field
-                        editing={addingOverride}
-                        field={{ name: LOW_BALANCE_KEY }}
-                        displayValue={x => (x === '' ? '-' : x)}
-                        decoration="EUR"
-                        className={classes.eRowField}
-                      />
-                    </Td>
-                    <Td size={findSize(HIGH_BALANCE_KEY)}>
-                      <Field
-                        editing={addingOverride}
-                        field={{ name: HIGH_BALANCE_KEY }}
-                        displayValue={x => (x === '' ? '-' : x)}
-                        decoration="EUR"
-                        className={classes.eRowField}
-                      />
-                    </Td>
-                    <Td size={findSize(DELETE_KEY)} className={classes.edit}>
-                      <>
-                        <Link color="primary" type="submit">
-                          Save
-                        </Link>
-                        <Link color="secondary" type="reset">
-                          Cancel
-                        </Link>
-                      </>
-                    </Td>
-                  </Tr>
-                </Form>
-              </Formik>
-            )}
-            {setupValues[OVERRIDES_KEY]?.map((override, idx) => (
-              <Tr key={idx}>
-                <Td
-                  size={findSize(CRYPTOCURRENCY_KEY)}
-                  textAlign={findAlign(CRYPTOCURRENCY_KEY)}>
-                  {override[CRYPTOCURRENCY_KEY].display}
-                </Td>
-                <Td
-                  size={findSize(LOW_BALANCE_KEY)}
-                  textAlign={findAlign(LOW_BALANCE_KEY)}>
-                  <span className={classes.displayValue}>
-                    <Info2>{override[LOW_BALANCE_KEY]}</Info2>
-                    <Label2>EUR</Label2>
-                  </span>
-                </Td>
-                <Td
-                  size={findSize(HIGH_BALANCE_KEY)}
-                  textAlign={findAlign(HIGH_BALANCE_KEY)}>
-                  <span className={classes.displayValue}>
-                    <Info2>{override[HIGH_BALANCE_KEY]}</Info2>
-                    <Label2>EUR</Label2>
-                  </span>
-                </Td>
-                <Td
-                  size={findSize(DELETE_KEY)}
-                  textAlign={findAlign(DELETE_KEY)}>
-                  <button
-                    className={classes.button}
-                    onClick={() =>
-                      deleteOverride(override[CRYPTOCURRENCY_KEY])
-                    }>
-                    {!overrideOpsDisabled && <DeleteIcon />}
-                    {overrideOpsDisabled && <DisabledDeleteIcon />}
-                  </button>
-                </Td>
-              </Tr>
-            ))}
-          </TBody>
-        </Table>
+        {!addingOverride && !overrideOpsDisabled && overrides.length === 0 && (
+          <AddButton onClick={() => handleEdit(ADD_OVERRIDE_KEY)(true)}>
+            Add overrides
+          </AddButton>
+        )}
+        {(addingOverride || overrides.length > 0) && (
+          <Table>
+            <THead>
+              {overrideElements.map(
+                ({ size, className, textAlign, header }, idx) => (
+                  <Th
+                    key={idx}
+                    size={size}
+                    className={className}
+                    textAlign={textAlign}>
+                    {header}
+                  </Th>
+                )
+              )}
+            </THead>
+            <TBody>
+              {addingOverride && (
+                <Formik
+                  initialValues={{
+                    [CRYPTOCURRENCY_KEY]: '',
+                    [LOW_BALANCE_KEY]: '',
+                    [HIGH_BALANCE_KEY]: ''
+                  }}
+                  onSubmit={values => {
+                    handleSubmitOverrides(values)
+                  }}
+                  onReset={(values, bag) => {
+                    handleEdit(ADD_OVERRIDE_KEY)(false)
+                  }}>
+                  <Form>
+                    <Tr>
+                      <Td size={findSize(CRYPTOCURRENCY_KEY)}>
+                        <FormikField
+                          id={CRYPTOCURRENCY_KEY}
+                          name={CRYPTOCURRENCY_KEY}
+                          component={Autocomplete}
+                          type="text"
+                          suggestions={getSuggestions()}
+                        />
+                      </Td>
+                      <Td size={findSize(LOW_BALANCE_KEY)}>
+                        <Field
+                          editing={addingOverride}
+                          field={{ name: LOW_BALANCE_KEY }}
+                          displayValue={x => (x === '' ? '-' : x)}
+                          decoration="EUR"
+                          className={classes.eRowField}
+                        />
+                      </Td>
+                      <Td size={findSize(HIGH_BALANCE_KEY)}>
+                        <Field
+                          editing={addingOverride}
+                          field={{ name: HIGH_BALANCE_KEY }}
+                          displayValue={x => (x === '' ? '-' : x)}
+                          decoration="EUR"
+                          className={classes.eRowField}
+                        />
+                      </Td>
+                      <Td size={findSize(DELETE_KEY)} className={classes.edit}>
+                        <>
+                          <Link color="primary" type="submit">
+                            Save
+                          </Link>
+                          <Link color="secondary" type="reset">
+                            Cancel
+                          </Link>
+                        </>
+                      </Td>
+                    </Tr>
+                  </Form>
+                </Formik>
+              )}
+              {setupValues[OVERRIDES_KEY]?.map((override, idx) => (
+                <Tr key={idx}>
+                  <Td
+                    size={findSize(CRYPTOCURRENCY_KEY)}
+                    textAlign={findAlign(CRYPTOCURRENCY_KEY)}>
+                    {override[CRYPTOCURRENCY_KEY].display}
+                  </Td>
+                  <Td
+                    size={findSize(LOW_BALANCE_KEY)}
+                    textAlign={findAlign(LOW_BALANCE_KEY)}>
+                    <span className={classes.displayValue}>
+                      <Info2>{override[LOW_BALANCE_KEY]}</Info2>
+                      <Label2>EUR</Label2>
+                    </span>
+                  </Td>
+                  <Td
+                    size={findSize(HIGH_BALANCE_KEY)}
+                    textAlign={findAlign(HIGH_BALANCE_KEY)}>
+                    <span className={classes.displayValue}>
+                      <Info2>{override[HIGH_BALANCE_KEY]}</Info2>
+                      <Label2>EUR</Label2>
+                    </span>
+                  </Td>
+                  <Td
+                    size={findSize(DELETE_KEY)}
+                    textAlign={findAlign(DELETE_KEY)}>
+                    <button
+                      className={classes.button}
+                      onClick={() =>
+                        deleteOverride(override[CRYPTOCURRENCY_KEY])
+                      }>
+                      {!overrideOpsDisabled && <DeleteIcon />}
+                      {overrideOpsDisabled && <DisabledDeleteIcon />}
+                    </button>
+                  </Td>
+                </Tr>
+              ))}
+            </TBody>
+          </Table>
+        )}
       </div>
     </>
   )
