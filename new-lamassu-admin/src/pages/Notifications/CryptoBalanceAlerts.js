@@ -137,6 +137,14 @@ const CryptoBalanceAlerts = ({
   const findSize = name => findField(name).size
   const findAlign = name => findField(name).textAlign
 
+  const getSuggestions = () => {
+    const overridenCryptos = R.map(
+      override => override[CRYPTOCURRENCY_KEY],
+      setupValues[OVERRIDES_KEY]
+    )
+    return R.without(overridenCryptos, cryptoCurrencies)
+  }
+
   return (
     <>
       <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
@@ -208,7 +216,7 @@ const CryptoBalanceAlerts = ({
                         name={CRYPTOCURRENCY_KEY}
                         component={Autocomplete}
                         type="text"
-                        suggestions={cryptoCurrencies}
+                        suggestions={getSuggestions()}
                       />
                     </Td>
                     <Td size={findSize(LOW_BALANCE_KEY)}>
