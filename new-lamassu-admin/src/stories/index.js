@@ -17,7 +17,7 @@ import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/author
 import { ActionButton, Button, Link } from 'src/components/buttons'
 import { Radio, TextInput, Switch } from 'src/components/inputs'
 
-import ConfirmDialog from '../components/ConfirmDialog'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import {
   H1,
   H2,
