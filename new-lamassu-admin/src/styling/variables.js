@@ -122,6 +122,7 @@ export {
   comet,
   spring2,
   spring3,
+  spring4,
   tomato,
   pumpkin,
   mistyRose,
