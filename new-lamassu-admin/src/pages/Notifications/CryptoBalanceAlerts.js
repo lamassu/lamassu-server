@@ -27,7 +27,7 @@ import {
   LOW_BALANCE_KEY,
   HIGH_BALANCE_KEY,
   OVERRIDES_KEY,
-  ADD_OVERRIDE_KEY
+  ADD_OVERRIDE_CBA_KEY
 } from './aux.js'
 import { BigNumericInput, Field } from './Inputs'
 import { localStyles, cryptoBalanceAlertsStyles } from './Notifications.styles'
@@ -90,15 +90,15 @@ const CryptoBalanceAlerts = ({
     onCompleted: data => {
       setCryptoCurrencies(data.cryptoCurrencies)
     },
-    onError: error => console.log(error)
+    onError: error => console.error(error)
   })
   const classes = useStyles()
 
   const editingLowBalance = editingState[LOW_BALANCE_KEY]
   const editingHighBalance = editingState[HIGH_BALANCE_KEY]
-  const addingOverride = editingState[ADD_OVERRIDE_KEY]
+  const addingOverride = editingState[ADD_OVERRIDE_CBA_KEY]
 
-  const overrideOpsDisabled = isDisabled(editingState, ADD_OVERRIDE_KEY)
+  const overrideOpsDisabled = isDisabled(editingState, ADD_OVERRIDE_CBA_KEY)
 
   const handleEdit = R.curry(handleEditingClick)
 
@@ -178,13 +178,13 @@ const CryptoBalanceAlerts = ({
           {!addingOverride && !overrideOpsDisabled && overrides.length > 0 && (
             <Link
               color="primary"
-              onClick={() => handleEdit(ADD_OVERRIDE_KEY)(true)}>
+              onClick={() => handleEdit(ADD_OVERRIDE_CBA_KEY)(true)}>
               Add override
             </Link>
           )}
         </div>
         {!addingOverride && !overrideOpsDisabled && overrides.length === 0 && (
-          <AddButton onClick={() => handleEdit(ADD_OVERRIDE_KEY)(true)}>
+          <AddButton onClick={() => handleEdit(ADD_OVERRIDE_CBA_KEY)(true)}>
             Add overrides
           </AddButton>
         )}
@@ -215,7 +215,7 @@ const CryptoBalanceAlerts = ({
                     handleSubmitOverrides(values)
                   }}
                   onReset={(values, bag) => {
-                    handleEdit(ADD_OVERRIDE_KEY)(false)
+                    handleEdit(ADD_OVERRIDE_CBA_KEY)(false)
                   }}>
                   <Form>
                     <Tr>

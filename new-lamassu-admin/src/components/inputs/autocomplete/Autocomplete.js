@@ -13,16 +13,30 @@ import {
 } from './commons'
 
 const Autocomplete = memo(
-  ({ suggestions, classes, placeholder, label, itemToString, ...props }) => {
+  ({
+    suggestions,
+    classes,
+    placeholder,
+    label,
+    itemToString,
+    keys = ['code', 'display'],
+    ...props
+  }) => {
     const { name, value, onBlur } = props.field
     const { touched, errors, setFieldValue } = props.form
 
     const [popperNode, setPopperNode] = useState(null)
 
+    const display = keys[1]
+
     return (
       <Downshift
         id={name}
-        itemToString={it => (itemToString ? itemToString(it) : it?.display)}
+        itemToString={it => {
+          if (itemToString) return itemToString(it)
+          if (it) return it[display]
+          return undefined
+        }}
         onChange={it => setFieldValue(name, it)}
         defaultHighlightedIndex={0}
         selectedItem={value}>
@@ -80,14 +94,16 @@ const Autocomplete = memo(
                   {filterSuggestions(
                     suggestions,
                     inputValue2,
-                    value ? R.of(value) : []
+                    value ? R.of(value) : [],
+                    keys
                   ).map((suggestion, index) =>
                     renderSuggestion({
                       suggestion,
                       index,
                       itemProps: getItemProps({ item: suggestion }),
                       highlightedIndex,
-                      selectedItem: selectedItem2
+                      selectedItem: selectedItem2,
+                      keys
                     })
                   )}
                 </Paper>

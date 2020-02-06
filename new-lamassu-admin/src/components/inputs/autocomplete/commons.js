@@ -35,7 +35,8 @@ function renderSuggestion({
   index,
   itemProps,
   highlightedIndex,
-  selectedItem
+  selectedItem,
+  keys
 }) {
   const isHighlighted = highlightedIndex === index
 
@@ -53,18 +54,26 @@ function renderSuggestion({
     }
   }))(MenuItem)
 
+  const code = keys[0]
+  const display = keys[1]
+
   return (
     <StyledMenuItem
       {...itemProps}
-      key={suggestion.code}
+      key={suggestion[code]}
       selected={isHighlighted}
       component="div">
-      {suggestion.display}
+      {suggestion[display]}
     </StyledMenuItem>
   )
 }
 
-function filterSuggestions(suggestions = [], value = '', currentValues = []) {
+function filterSuggestions(
+  suggestions = [],
+  value = '',
+  currentValues = [],
+  keys
+) {
   const options = {
     shouldSort: true,
     threshold: 0.2,
@@ -72,14 +81,16 @@ function filterSuggestions(suggestions = [], value = '', currentValues = []) {
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    keys: ['code', 'display']
+    keys: keys
   }
+
+  const code = keys[0]
 
   const fuse = new Fuse(suggestions, options)
   const result = value ? fuse.search(slugify(value, ' ')) : suggestions
 
-  const currentCodes = S.map(S.prop('code'))(currentValues)
-  const filtered = S.filter(it => !S.elem(it.code)(currentCodes))(result)
+  const currentCodes = S.map(S.prop(code))(currentValues)
+  const filtered = S.filter(it => !S.elem(it[code])(currentCodes))(result)
 
   const amountToTake = S.min(filtered.length)(5)
 

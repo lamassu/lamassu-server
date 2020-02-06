@@ -15,6 +15,7 @@ const HIGH_VALUE_TRANSACTION_KEY = 'highValueTransaction'
 const FIAT_BALANCE_ALERTS_KEY = 'fiatBalanceAlerts'
 const CASH_IN_FULL_KEY = 'cashInFull'
 const CASH_OUT_EMPTY_KEY = 'cashOutEmpty'
+const MACHINE_KEY = 'machine'
 const PERCENTAGE_KEY = 'percentage'
 const NUMERARY_KEY = 'numerary'
 const CASSETTE_1_KEY = 'cassete1'
@@ -23,7 +24,8 @@ const OVERRIDES_KEY = 'overrides'
 const CRYPTO_BALANCE_ALERTS_KEY = 'cryptoBalanceAlerts'
 const LOW_BALANCE_KEY = 'lowBalance'
 const HIGH_BALANCE_KEY = 'highBalance'
-const ADD_OVERRIDE_KEY = 'addOverride'
+const ADD_OVERRIDE_FBA_KEY = 'addOverrideFBA'
+const ADD_OVERRIDE_CBA_KEY = 'addOverrideCBA'
 
 const isDisabled = (state, self) =>
   R.any(x => x === true, R.values(R.omit([self], state)))
@@ -44,6 +46,7 @@ export {
   FIAT_BALANCE_ALERTS_KEY,
   CASH_IN_FULL_KEY,
   CASH_OUT_EMPTY_KEY,
+  MACHINE_KEY,
   PERCENTAGE_KEY,
   NUMERARY_KEY,
   CASSETTE_1_KEY,
@@ -52,6 +55,7 @@ export {
   CRYPTO_BALANCE_ALERTS_KEY,
   LOW_BALANCE_KEY,
   HIGH_BALANCE_KEY,
-  ADD_OVERRIDE_KEY,
+  ADD_OVERRIDE_FBA_KEY,
+  ADD_OVERRIDE_CBA_KEY,
   isDisabled
 }

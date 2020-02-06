@@ -25,7 +25,8 @@ import {
   CRYPTO_BALANCE_ALERTS_KEY,
   LOW_BALANCE_KEY,
   HIGH_BALANCE_KEY,
-  ADD_OVERRIDE_KEY,
+  ADD_OVERRIDE_FBA_KEY,
+  ADD_OVERRIDE_CBA_KEY,
   EMAIL_KEY,
   BALANCE_KEY,
   TRANSACTIONS_KEY,
@@ -85,18 +86,16 @@ const initialEditingState = {
   [CASH_OUT_EMPTY_KEY]: false,
   [LOW_BALANCE_KEY]: false,
   [HIGH_BALANCE_KEY]: false,
-  [ADD_OVERRIDE_KEY]: false
+  [ADD_OVERRIDE_FBA_KEY]: false,
+  [ADD_OVERRIDE_CBA_KEY]: false
 }
 
 const GET_INFO = gql`
   {
     config
-    machines {
-      name
-      deviceId
-    }
   }
 `
+
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject) {
     saveConfig(config: $config)
@@ -127,19 +126,17 @@ const Notifications = () => {
   useQuery(GET_INFO, {
     onCompleted: data => {
       const { notifications } = data.config
-      const { machines } = data
-      const editingFiatBalanceAlertsOverrides = R.fromPairs(
-        machines.map(machine => [machine.name, false])
-      )
-      setEditingState({ ...editingState, ...editingFiatBalanceAlertsOverrides })
-      if (!notifications) {
-        initialValues[FIAT_BALANCE_ALERTS_KEY][OVERRIDES_KEY] = machines.map(
-          machine => {
-            return { name: machine.name, ...fiatBalanceAlertsInitialValues }
-          }
+      if (notifications) {
+        const { [OVERRIDES_KEY]: machines } = notifications[
+          FIAT_BALANCE_ALERTS_KEY
+        ]
+        const editingFiatBalanceAlertsOverrides = R.fromPairs(
+          machines.map(machine => [machine.name, false])
         )
-        saveConfig({ variables: { config: { notifications: initialValues } } })
-        return
+        setEditingState({
+          ...editingState,
+          ...editingFiatBalanceAlertsOverrides
+        })
       }
       setState(notifications ?? initialValues)
     },
@@ -157,7 +154,6 @@ const Notifications = () => {
   const curriedSave = R.curry((key, values) => save({ [key]: values }))
 
   if (!state) return null
-  console.log('state', state)
 
   return (
     <>
