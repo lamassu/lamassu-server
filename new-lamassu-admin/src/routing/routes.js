@@ -4,7 +4,7 @@ import { Route, Redirect, Switch } from 'react-router-dom'
 
 import AuthRegister from 'src/pages/AuthRegister'
 import Commissions from 'src/pages/Commissions'
-import Customers from 'src/pages/Customers'
+import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
 import MachineLogs from 'src/pages/MachineLogs'
@@ -117,6 +117,11 @@ const tree = [
         label: 'Customers',
         route: '/compliance/customers',
         component: Customers
+      },
+      {
+        key: 'customer',
+        route: '/compliance/customer/:id',
+        component: CustomerProfile
       }
     ]
   }

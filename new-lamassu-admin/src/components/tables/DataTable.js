@@ -33,12 +33,15 @@ const Row = ({
   expanded,
   expandRow,
   expWidth,
-  expandable
+  expandable,
+  onClick
 }) => {
   const classes = useStyles()
 
   return (
-    <>
+    <div
+      style={onClick && { cursor: 'pointer' }}
+      onClick={() => onClick && onClick(data)}>
       <Tr
         className={classnames(classes.row)}
         error={data.error}
@@ -66,7 +69,7 @@ const Row = ({
           </Td>
         </Tr>
       )}
-    </>
+    </div>
   )
 }
 
@@ -76,6 +79,7 @@ const DataTable = ({
   Details,
   className,
   expandable,
+  onClick,
   ...props
 }) => {
   const [expanded, setExpanded] = useState(null)
@@ -114,6 +118,7 @@ const DataTable = ({
             expanded={index === expanded}
             expandRow={expandRow}
             expandable={expandable}
+            onClick={onClick}
           />
         </div>
       </CellMeasurer>

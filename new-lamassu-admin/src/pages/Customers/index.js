@@ -1,3 +1,4 @@
 import Customers from './Customers'
+import CustomerProfile from './CustomerProfile'
 
-export default Customers
+export { Customers, CustomerProfile }

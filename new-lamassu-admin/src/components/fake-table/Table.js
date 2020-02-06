@@ -90,12 +90,14 @@ const Tr = ({ error, errorMessage, children, className }) => {
   const classes = useStyles()
   const cardClasses = { root: classes.cardContentRoot }
   const classNames = {
-    [classes.trError]: error
+    [classes.trError]: error,
+    [classes.card]: true,
+    className
   }
 
   return (
     <>
-      <Card className={classnames(classNames, classes.card, className)}>
+      <Card className={classnames(classNames, className)}>
         <CardContent classes={cardClasses}>
           <div className={classes.mainContent}>{children}</div>
           {error && <div className={classes.errorContent}>{errorMessage}</div>}
