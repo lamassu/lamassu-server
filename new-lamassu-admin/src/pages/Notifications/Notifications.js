@@ -4,7 +4,9 @@ import { gql } from 'apollo-boost'
 import { makeStyles } from '@material-ui/core'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 
+import { TL1 } from 'src/components/typography'
 import Title from 'src/components/Title'
+import ErrorMessage from 'src/components/ErrorMessage'
 import commonStyles from 'src/pages/common.styles'
 
 import { localStyles } from './Notifications.styles'
@@ -106,19 +108,32 @@ const styles = R.merge(commonStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
+const SectionHeader = ({ error, children }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.sectionHeader}>
+      <TL1 className={classes.sectionTitle}>{children}</TL1>
+      {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
+    </div>
+  )
+}
+
 const Notifications = () => {
   const [state, setState] = useState(null)
   const [editingState, setEditingState] = useState(initialEditingState)
-  const [setError] = useState(null)
+  const [error, setError] = useState(null)
+  const [tryingToSave, setTryingToSave] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
       const { notifications } = data.saveConfig
       setState(notifications)
       setEditingState(R.map(x => false, editingState))
+      setTryingToSave(null)
+      setError(null)
     },
     onError: e => {
-      console.error(e)
-      setError(e)
+      setError({ section: tryingToSave, error: e })
     }
   })
   const classes = useStyles()
@@ -144,6 +159,7 @@ const Notifications = () => {
   })
 
   const save = it => {
+    setTryingToSave(R.keys(it)[0])
     return saveConfig({ variables: { config: { notifications: it } } })
   }
 
@@ -163,30 +179,45 @@ const Notifications = () => {
         </div>
       </div>
       <div className={classes.section}>
+        <SectionHeader error={error?.section === SETUP_KEY}>
+          Setup
+        </SectionHeader>
         <Setup values={state.setup} save={curriedSave(SETUP_KEY)} />
       </div>
       <div className={classes.section}>
+        <SectionHeader error={error?.section === TRANSACTION_ALERTS_KEY}>
+          Transaction alerts
+        </SectionHeader>
         <TransactionAlerts
           value={state[TRANSACTION_ALERTS_KEY]}
           editingState={editingState}
           handleEditingClick={handleEditingClick}
           save={curriedSave(TRANSACTION_ALERTS_KEY)}
+          setError={setError}
         />
       </div>
       <div className={classes.section}>
+        <SectionHeader error={error?.section === FIAT_BALANCE_ALERTS_KEY}>
+          Fiat balance alerts
+        </SectionHeader>
         <FiatBalanceAlerts
           values={state[FIAT_BALANCE_ALERTS_KEY]}
           editingState={editingState}
           handleEditingClick={handleEditingClick}
           save={curriedSave(FIAT_BALANCE_ALERTS_KEY)}
+          setError={setError}
         />
       </div>
       <div className={classes.section}>
+        <SectionHeader error={error?.section === CRYPTO_BALANCE_ALERTS_KEY}>
+          Crypto balance alerts
+        </SectionHeader>
         <CryptoBalanceAlerts
           values={state[CRYPTO_BALANCE_ALERTS_KEY]}
           editingState={editingState}
           handleEditingClick={handleEditingClick}
           save={curriedSave(CRYPTO_BALANCE_ALERTS_KEY)}
+          setError={setError}
         />
       </div>
     </>

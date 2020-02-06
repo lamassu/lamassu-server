@@ -3,14 +3,21 @@ import theme from 'src/styling/theme'
 
 const localStyles = {
   section: {
-    marginBottom: 80,
+    marginBottom: 72,
     '&:last-child': {
       marginBottom: 150
     }
   },
+  sectionHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > :first-child': {
+      marginRight: 20
+    }
+  },
   sectionTitle: {
     color: offColor,
-    margin: [[8, 0, 16, 0]]
+    margin: [[16, 0, 16, 0]]
   },
   button: {
     border: 'none',

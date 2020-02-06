@@ -34,6 +34,7 @@ const Field = ({
   displayValue,
   decoration,
   className,
+  setError,
   ...props
 }) => {
   const classes = fieldUseStyles()
@@ -66,6 +67,7 @@ const Field = ({
             component={TextInputFormik}
             placeholder={field.placeholder}
             type="text"
+            onFocus={() => setError(null)}
             {...props}
           />
         )}
@@ -123,6 +125,7 @@ const BigNumericInput = ({
   disabled,
   setEditing,
   handleSubmit,
+  setError,
   className
 }) => {
   const classes = useStyles()
@@ -145,6 +148,7 @@ const BigNumericInput = ({
         }}
         onReset={(values, bag) => {
           setEditing(false)
+          setError(null)
         }}>
         <Form>
           <Header
@@ -160,6 +164,7 @@ const BigNumericInput = ({
               displayValue={x => (x === '' ? '-' : x)}
               decoration="EUR"
               large
+              setError={setError}
             />
           </div>
         </Form>
@@ -179,6 +184,7 @@ const BigPercentageAndNumericInput = ({
   disabled,
   setEditing,
   handleSubmit,
+  setError,
   className
 }) => {
   const classes = percentageAndNumericInputUseStyles()
@@ -211,6 +217,7 @@ const BigPercentageAndNumericInput = ({
         }}
         onReset={(values, bag) => {
           setEditing(false)
+          setError(null)
         }}>
         <Form>
           <Header
@@ -230,6 +237,7 @@ const BigPercentageAndNumericInput = ({
                 displayValue={x => (x === '' ? '-' : x)}
                 decoration="%"
                 large
+                setError={setError}
               />
               <Field
                 editing={editing}
@@ -237,6 +245,7 @@ const BigPercentageAndNumericInput = ({
                 displayValue={x => (x === '' ? '-' : x)}
                 decoration="EUR"
                 large
+                setError={setError}
               />
             </div>
           </div>
@@ -257,6 +266,7 @@ const MultiplePercentageInput = ({
   disabled,
   setEditing,
   handleSubmit,
+  setError,
   className
 }) => {
   const classes = multiplePercentageInputUseStyles()
@@ -286,6 +296,7 @@ const MultiplePercentageInput = ({
         }}
         onReset={(values, bag) => {
           setEditing(false)
+          setError(null)
         }}>
         <Form>
           <Header
@@ -309,6 +320,7 @@ const MultiplePercentageInput = ({
                     decoration="%"
                     className={classes.percentageInput}
                     large
+                    setError={setError}
                   />
                 </div>
               </div>

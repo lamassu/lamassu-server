@@ -7,7 +7,7 @@ import * as Yup from 'yup'
 import { makeStyles } from '@material-ui/core'
 import { useQuery } from '@apollo/react-hooks'
 
-import { TL1, Info2, Label2 } from 'src/components/typography'
+import { Info2, Label2 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
 import {
   Table,
@@ -84,7 +84,8 @@ const CryptoBalanceAlerts = ({
   values: setupValues,
   save,
   editingState,
-  handleEditingClick
+  handleEditingClick,
+  setError
 }) => {
   const [cryptoCurrencies, setCryptoCurrencies] = useState(null)
   useQuery(GET_CRYPTOCURRENCIES, {
@@ -171,7 +172,6 @@ const CryptoBalanceAlerts = ({
 
   return (
     <>
-      <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
       <div>
         <div className={classnames(classes.defaults, classes.cbaDefaults)}>
           <BigNumericInput
@@ -182,6 +182,7 @@ const CryptoBalanceAlerts = ({
             setEditing={handleEdit(LOW_BALANCE_KEY)}
             handleSubmit={handleSubmit}
             className={classes.lowBalance}
+            setError={setError}
           />
           <BigNumericInput
             title="Default (High Balance)"
@@ -190,6 +191,7 @@ const CryptoBalanceAlerts = ({
             disabled={isDisabled(editingState, HIGH_BALANCE_KEY)}
             setEditing={handleEdit(HIGH_BALANCE_KEY)}
             handleSubmit={handleSubmit}
+            setError={setError}
           />
         </div>
       </div>
@@ -234,6 +236,7 @@ const CryptoBalanceAlerts = ({
                   }}
                   onReset={(values, bag) => {
                     handleEdit(ADD_OVERRIDE_CBA_KEY)(false)
+                    setError(null)
                   }}>
                   <Form>
                     <Tr>
@@ -244,6 +247,7 @@ const CryptoBalanceAlerts = ({
                           component={Autocomplete}
                           type="text"
                           suggestions={getSuggestions()}
+                          onFocus={() => setError(null)}
                         />
                       </Td>
                       <Td size={findSize(LOW_BALANCE_KEY)}>
@@ -253,6 +257,7 @@ const CryptoBalanceAlerts = ({
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="EUR"
                           className={classes.eRowField}
+                          setError={setError}
                         />
                       </Td>
                       <Td size={findSize(HIGH_BALANCE_KEY)}>
@@ -262,6 +267,7 @@ const CryptoBalanceAlerts = ({
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="EUR"
                           className={classes.eRowField}
+                          setError={setError}
                         />
                       </Td>
                       <Td size={findSize(DELETE_KEY)} className={classes.edit}>

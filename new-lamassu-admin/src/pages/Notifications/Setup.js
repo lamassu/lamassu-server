@@ -1,9 +1,7 @@
 import React from 'react'
 import * as R from 'ramda'
-import { makeStyles } from '@material-ui/core'
 
 import { Switch } from 'src/components/inputs'
-import { TL1 } from 'src/components/typography'
 import {
   Table as FakeTable,
   THead,
@@ -12,9 +10,7 @@ import {
   Td,
   Th
 } from 'src/components/fake-table/Table'
-import commonStyles from 'src/pages/common.styles'
 
-import { localStyles } from './Notifications.styles'
 import {
   BALANCE_KEY,
   TRANSACTIONS_KEY,
@@ -26,10 +22,6 @@ import {
   EMAIL_KEY,
   SMS_KEY
 } from './aux'
-
-const styles = R.merge(commonStyles, localStyles)
-
-const useStyles = makeStyles(styles)
 
 const elements = [
   {
@@ -116,45 +108,40 @@ const Row = ({ channel, columns, values, save }) => {
 }
 
 const Setup = ({ values: setupValues, save }) => {
-  const classes = useStyles()
-
   const saveSetup = R.curry((key, values) =>
     save(R.mergeDeepRight(setupValues, { [key]: values }))
   )
 
   return (
-    <>
-      <TL1 className={classes.sectionTitle}>Setup</TL1>
-      <div>
-        <FakeTable>
-          <THead>
-            {elements.map(({ size, className, textAlign, header }, idx) => (
-              <Th
-                key={idx}
-                size={size}
-                className={className}
-                textAlign={textAlign}>
-                {header}
-              </Th>
-            ))}
-          </THead>
-          <TBody>
-            <Row
-              channel="Email"
-              columns={elements}
-              values={setupValues[EMAIL_KEY]}
-              save={saveSetup(EMAIL_KEY)}
-            />
-            <Row
-              channel="SMS"
-              columns={elements}
-              values={setupValues[SMS_KEY]}
-              save={saveSetup(SMS_KEY)}
-            />
-          </TBody>
-        </FakeTable>
-      </div>
-    </>
+    <div>
+      <FakeTable>
+        <THead>
+          {elements.map(({ size, className, textAlign, header }, idx) => (
+            <Th
+              key={idx}
+              size={size}
+              className={className}
+              textAlign={textAlign}>
+              {header}
+            </Th>
+          ))}
+        </THead>
+        <TBody>
+          <Row
+            channel="Email"
+            columns={elements}
+            values={setupValues[EMAIL_KEY]}
+            save={saveSetup(EMAIL_KEY)}
+          />
+          <Row
+            channel="SMS"
+            columns={elements}
+            values={setupValues[SMS_KEY]}
+            save={saveSetup(SMS_KEY)}
+          />
+        </TBody>
+      </FakeTable>
+    </div>
   )
 }
 
