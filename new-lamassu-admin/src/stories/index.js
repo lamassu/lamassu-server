@@ -13,7 +13,13 @@ import extendJss from 'jss-plugin-extend'
 import React from 'react'
 
 import { ActionButton, Button, Link } from 'src/components/buttons'
-import { TextInput, Switch } from 'src/components/inputs'
+import {
+  Radio,
+  TextInput,
+  Switch,
+  CashIn,
+  CashOut
+} from 'src/components/inputs'
 import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 
@@ -177,6 +183,35 @@ story.add('ConfirmDialog', () => (
     />
   </Wrapper>
 ))
+
+story.add('Cashbox', () => (
+  <Wrapper>
+    <div>
+      <CashIn percent={0} notes={0} />
+      <hr />
+      <CashIn percent={49} notes={19} />
+      <hr />
+      <CashIn percent={50} notes={20} />
+      <hr />
+      <CashIn percent={51} notes={22} />
+      <hr />
+      <CashIn percent={99} notes={39} />
+      <hr />
+    </div>
+
+    <div>
+      <CashOut percent={0} notes={0} denomination={20} />
+      <hr />
+      <CashOut percent={49} notes={19} denomination={20} />
+      <hr />
+      <CashOut percent={50} notes={20} denomination={20} />
+      <hr />
+      <CashOut percent={51.00001} notes={22} denomination={20} />
+    </div>
+  </Wrapper>
+))
+
+story.add('Radio', () => <Radio label="Hehe" />)
 
 const typographyStory = storiesOf('Typography', module)
 typographyStory.add('H1', () => <H1>Hehehe</H1>)

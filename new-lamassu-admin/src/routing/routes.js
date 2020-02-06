@@ -18,6 +18,8 @@ import WalletSettings from 'src/pages/Wallet/Wallet'
 import MachineStatus from 'src/pages/maintenance/MachineStatus'
 import { namespaces } from 'src/utils/config'
 
+import Cashboxes from '../pages/maintenance/Cashboxes'
+
 const tree = [
   {
     key: 'transactions',
@@ -56,6 +58,12 @@ const tree = [
         label: 'Machine Status',
         route: '/maintenance/machine-status',
         component: MachineStatus
+      },
+      {
+        key: 'cashboxes',
+        label: 'Cashboxes',
+        route: '/maintenance/cashboxes',
+        component: Cashboxes
       }
     ]
   },
