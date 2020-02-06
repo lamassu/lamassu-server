@@ -23,7 +23,7 @@ function renderInput({ InputProps, error, name, success, ...props }) {
       onChange={onChange}
       onBlur={onBlur}
       value={value}
-      error={error}
+      error={!!error}
       InputProps={InputProps}
       {...props}
     />

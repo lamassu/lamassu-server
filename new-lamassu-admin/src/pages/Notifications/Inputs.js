@@ -133,6 +133,13 @@ const BigNumericInput = ({
     <div className={className}>
       <Formik
         initialValues={{ [name]: value }}
+        validationSchema={Yup.object().shape({
+          [name]: Yup.number()
+            .integer()
+            .min(0)
+            .max(99999)
+            .required()
+        })}
         onSubmit={values => {
           handleSubmit(values)
         }}
@@ -188,8 +195,16 @@ const BigPercentageAndNumericInput = ({
           [numericName]: numericValue
         }}
         validationSchema={Yup.object().shape({
-          [percentageName]: Yup.string().required('Fill in both fields.'),
-          [numericName]: Yup.string().required('Fill in both fields.')
+          [percentageName]: Yup.number()
+            .integer()
+            .min(0)
+            .max(100)
+            .required(),
+          [numericName]: Yup.number()
+            .integer()
+            .min(0)
+            .max(99999)
+            .required()
         })}
         onSubmit={values => {
           handleSubmit(values)
@@ -247,11 +262,25 @@ const MultiplePercentageInput = ({
   const classes = multiplePercentageInputUseStyles()
 
   const initialValues = R.fromPairs(R.map(f => [f.name, f.value], fields))
+  const validationSchemaShape = R.fromPairs(
+    R.map(
+      f => [
+        f.name,
+        Yup.number()
+          .integer()
+          .min(0)
+          .max(100)
+          .required()
+      ],
+      fields
+    )
+  )
 
   return (
     <div className={className}>
       <Formik
         initialValues={initialValues}
+        validationSchema={Yup.object().shape(validationSchemaShape)}
         onSubmit={values => {
           handleSubmit(values)
         }}

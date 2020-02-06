@@ -3,6 +3,7 @@ import * as R from 'ramda'
 import { Formik, Form, Field as FormikField } from 'formik'
 import { gql } from 'apollo-boost'
 import classnames from 'classnames'
+import * as Yup from 'yup'
 import { makeStyles } from '@material-ui/core'
 import { useQuery } from '@apollo/react-hooks'
 
@@ -148,6 +149,26 @@ const CryptoBalanceAlerts = ({
 
   const { [OVERRIDES_KEY]: overrides } = setupValues
 
+  const initialValues = {
+    [CRYPTOCURRENCY_KEY]: '',
+    [LOW_BALANCE_KEY]: '',
+    [HIGH_BALANCE_KEY]: ''
+  }
+
+  const validationSchema = Yup.object().shape({
+    [CRYPTOCURRENCY_KEY]: Yup.string().required(),
+    [LOW_BALANCE_KEY]: Yup.number()
+      .integer()
+      .min(0)
+      .max(99999999)
+      .required(),
+    [HIGH_BALANCE_KEY]: Yup.number()
+      .integer()
+      .min(0)
+      .max(99999999)
+      .required()
+  })
+
   return (
     <>
       <TL1 className={classes.sectionTitle}>Crypto balance alerts</TL1>
@@ -206,11 +227,8 @@ const CryptoBalanceAlerts = ({
             <TBody>
               {addingOverride && (
                 <Formik
-                  initialValues={{
-                    [CRYPTOCURRENCY_KEY]: '',
-                    [LOW_BALANCE_KEY]: '',
-                    [HIGH_BALANCE_KEY]: ''
-                  }}
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
                   onSubmit={values => {
                     handleSubmitOverrides(values)
                   }}

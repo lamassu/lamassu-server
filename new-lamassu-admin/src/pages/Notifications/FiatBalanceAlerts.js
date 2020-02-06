@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import * as R from 'ramda'
 import classnames from 'classnames'
 import { gql } from 'apollo-boost'
+import * as Yup from 'yup'
 import { makeStyles } from '@material-ui/core'
 import { Formik, Form, Field as FormikField } from 'formik'
 import { useQuery } from '@apollo/react-hooks'
@@ -68,18 +69,52 @@ const OverridesRow = ({
 }) => {
   const classes = useStyles()
 
-  const initialValues = {
+  const baseInitialValues = {
     [fields[PERCENTAGE_KEY].name]: fields[PERCENTAGE_KEY].value ?? '',
     [fields[NUMERARY_KEY].name]: fields[NUMERARY_KEY].value ?? '',
     [fields[CASSETTE_1_KEY].name]: fields[CASSETTE_1_KEY].value ?? '',
     [fields[CASSETTE_2_KEY].name]: fields[CASSETTE_2_KEY].value ?? ''
   }
 
-  if (!machine) R.assoc(fields[MACHINE_KEY].name, '', initialValues)
+  const initialValues = machine
+    ? baseInitialValues
+    : R.assoc(fields[MACHINE_KEY].name, '', baseInitialValues)
+
+  const baseValidationSchemaShape = {
+    [fields[PERCENTAGE_KEY].name]: Yup.number()
+      .integer()
+      .min(0)
+      .max(100)
+      .required(),
+    [fields[NUMERARY_KEY].name]: Yup.number()
+      .integer()
+      .min(0)
+      .max(99999999)
+      .required(),
+    [fields[CASSETTE_1_KEY].name]: Yup.number()
+      .integer()
+      .min(0)
+      .max(100)
+      .required(),
+    [fields[CASSETTE_2_KEY].name]: Yup.number()
+      .integer()
+      .min(0)
+      .max(100)
+      .required()
+  }
+
+  const validationSchemaShape = machine
+    ? baseValidationSchemaShape
+    : R.assoc(
+        fields[MACHINE_KEY].name,
+        Yup.string().required(),
+        baseValidationSchemaShape
+      )
 
   return (
     <Formik
       initialValues={initialValues}
+      validationSchema={Yup.object().shape(validationSchemaShape)}
       onSubmit={values => {
         const machineName = machine
           ? machine.name
