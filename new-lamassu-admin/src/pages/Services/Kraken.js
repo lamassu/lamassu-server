@@ -48,14 +48,13 @@ const KrakenCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const KrakenForm = ({ account, ...props }) => {
+const getKrakenFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const apiKey = getValue(schema.apiKey.code)
   const privateKey = getValue(schema.privateKey.code)
 
-  const formik = {
+  return {
     initialValues: {
       apiKey: apiKey,
       privateKey: privateKey
@@ -69,21 +68,29 @@ const KrakenForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.apiKey.code,
-      label: schema.apiKey.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.privateKey.code,
-      label: schema.privateKey.display,
-      type: 'text',
-      component: SecretInputFormik
-    }
-  ]
+const getKrakenFields = () => [
+  {
+    name: schema.apiKey.code,
+    label: schema.apiKey.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.privateKey.code,
+    label: schema.privateKey.display,
+    type: 'text',
+    component: SecretInputFormik
+  }
+]
+
+const KrakenForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getKrakenFormik(account)
+
+  const fields = getKrakenFields()
 
   return (
     <>
@@ -98,4 +105,4 @@ const KrakenForm = ({ account, ...props }) => {
   )
 }
 
-export { KrakenCard, KrakenForm }
+export { KrakenCard, KrakenForm, getKrakenFormik, getKrakenFields }

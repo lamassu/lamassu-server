@@ -55,16 +55,15 @@ const MailgunCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const MailgunForm = ({ account, ...props }) => {
+const getMailgunFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const apiKey = getValue(schema.apiKey.code)
   const domain = getValue(schema.domain.code)
   const fromEmail = getValue(schema.fromEmail.code)
   const toEmail = getValue(schema.toEmail.code)
 
-  const formik = {
+  return {
     initialValues: {
       apiKey: apiKey,
       domain: domain,
@@ -88,33 +87,41 @@ const MailgunForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.apiKey.code,
-      label: schema.apiKey.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.domain.code,
-      label: schema.domain.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.fromEmail.code,
-      label: schema.fromEmail.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.toEmail.code,
-      label: schema.toEmail.display,
-      type: 'text',
-      component: TextInputFormik
-    }
-  ]
+const getMailgunFields = () => [
+  {
+    name: schema.apiKey.code,
+    label: schema.apiKey.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.domain.code,
+    label: schema.domain.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.fromEmail.code,
+    label: schema.fromEmail.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.toEmail.code,
+    label: schema.toEmail.display,
+    type: 'text',
+    component: TextInputFormik
+  }
+]
+
+const MailgunForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getMailgunFormik(account)
+
+  const fields = getMailgunFields()
 
   return (
     <>
@@ -129,4 +136,4 @@ const MailgunForm = ({ account, ...props }) => {
   )
 }
 
-export { MailgunCard, MailgunForm }
+export { MailgunCard, MailgunForm, getMailgunFormik, getMailgunFields }

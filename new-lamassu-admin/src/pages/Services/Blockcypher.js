@@ -47,14 +47,13 @@ const BlockcypherCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const BlockcypherForm = ({ account, ...props }) => {
+const getBlockcypherFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const token = getValue(schema.token.code)
   const confidenceFactor = getValue(schema.confidenceFactor.code)
 
-  const formik = {
+  return {
     initialValues: {
       token: token,
       confidenceFactor: confidenceFactor
@@ -69,21 +68,29 @@ const BlockcypherForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.token.code,
-      label: schema.token.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.confidenceFactor.code,
-      label: schema.confidenceFactor.display,
-      type: 'text',
-      component: TextInputFormik
-    }
-  ]
+const getBlockcypherFields = () => [
+  {
+    name: schema.token.code,
+    label: schema.token.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.confidenceFactor.code,
+    label: schema.confidenceFactor.display,
+    type: 'text',
+    component: TextInputFormik
+  }
+]
+
+const BlockcypherForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getBlockcypherFormik(account)
+
+  const fields = getBlockcypherFields()
 
   return (
     <>
@@ -98,4 +105,9 @@ const BlockcypherForm = ({ account, ...props }) => {
   )
 }
 
-export { BlockcypherForm, BlockcypherCard }
+export {
+  BlockcypherForm,
+  BlockcypherCard,
+  getBlockcypherFormik,
+  getBlockcypherFields
+}

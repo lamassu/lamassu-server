@@ -37,13 +37,12 @@ const StrikeCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const StrikeForm = ({ account, ...props }) => {
+const getStrikeFormik = account => {
   const getValue = getValueAux(account)
 
-  const code = 'strike'
   const token = getValue(schema.token.code)
 
-  const formik = {
+  return {
     initialValues: {
       token: token
     },
@@ -53,15 +52,23 @@ const StrikeForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.token.code,
-      label: schema.token.display,
-      type: 'text',
-      component: SecretInputFormik
-    }
-  ]
+const getStrikeFields = () => [
+  {
+    name: schema.token.code,
+    label: schema.token.display,
+    type: 'text',
+    component: SecretInputFormik
+  }
+]
+
+const StrikeForm = ({ account, ...props }) => {
+  const code = 'strike'
+
+  const formik = getStrikeFormik(account)
+
+  const fields = getStrikeFields()
 
   return (
     <>
@@ -76,4 +83,4 @@ const StrikeForm = ({ account, ...props }) => {
   )
 }
 
-export { StrikeCard, StrikeForm }
+export { StrikeCard, StrikeForm, getStrikeFormik, getStrikeFields }

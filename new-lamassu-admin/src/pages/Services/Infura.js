@@ -52,15 +52,14 @@ const InfuraCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const InfuraForm = ({ account, ...props }) => {
+const getInfuraFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const apiKey = getValue(schema.apiKey.code)
   const apiSecret = getValue(schema.apiSecret.code)
   const endpoint = getValue(schema.endpoint.code)
 
-  const formik = {
+  return {
     initialValues: {
       apiKey: apiKey,
       apiSecret: apiSecret,
@@ -79,8 +78,10 @@ const InfuraForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
+const getInfuraFields = () => {
+  return [
     {
       name: schema.apiKey.code,
       label: schema.apiKey.display,
@@ -100,6 +101,14 @@ const InfuraForm = ({ account, ...props }) => {
       component: TextInputFormik
     }
   ]
+}
+
+const InfuraForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getInfuraFormik(account)
+
+  const fields = getInfuraFields()
 
   return (
     <>
@@ -114,4 +123,4 @@ const InfuraForm = ({ account, ...props }) => {
   )
 }
 
-export { InfuraCard, InfuraForm }
+export { InfuraCard, InfuraForm, getInfuraFormik, getInfuraFields }

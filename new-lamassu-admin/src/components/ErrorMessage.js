@@ -1,6 +1,6 @@
-import React from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
+import React from 'react'
 
 import { ReactComponent as ErrorIcon } from 'src/styling/icons/warning-icon/tomato.svg'
 import { errorColor } from 'src/styling/variables'
@@ -20,8 +20,7 @@ const styles = {
     alignItems: 'center',
     color: errorColor,
     margin: 0,
-    whiteSpace: 'break-spaces',
-    width: 250
+    whiteSpace: 'break-spaces'
   }
 }
 

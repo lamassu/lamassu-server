@@ -13,6 +13,7 @@ import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
 import Transactions from 'src/pages/Transactions/Transactions'
+import WalletSettings from 'src/pages/Wallet/WalletSettings'
 import MachineStatus from 'src/pages/maintenance/MachineStatus'
 
 const tree = [
@@ -93,6 +94,12 @@ const tree = [
         label: 'Operator Info',
         route: '/settings/operator-info',
         component: OperatorInfo
+      },
+      {
+        key: 'wallet',
+        label: 'Wallet',
+        route: '/settings/wallet',
+        component: WalletSettings
       }
     ]
   },

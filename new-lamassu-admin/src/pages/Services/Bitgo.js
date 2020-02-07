@@ -81,10 +81,9 @@ const BitgoCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const BitgoForm = ({ account, handleSubmit, ...props }) => {
+const getBitgoFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const token = getValue(schema.token.code)
   const btcWalletId = getValue(schema.btcWalletId.code)
   const btcWalletPassphrase = getValue(schema.btcWalletPassphrase.code)
@@ -98,7 +97,7 @@ const BitgoForm = ({ account, handleSubmit, ...props }) => {
   const dashWalletPassphrase = getValue(schema.dashWalletPassphrase.code)
   const environment = getValue(schema.environment.code)
 
-  const formik = {
+  return {
     initialValues: {
       token: token,
       BTCWalletId: btcWalletId,
@@ -157,82 +156,90 @@ const BitgoForm = ({ account, handleSubmit, ...props }) => {
       return errors
     }
   }
+}
 
-  const fields = [
-    {
-      name: schema.token.code,
-      label: schema.token.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.btcWalletId.code,
-      label: schema.btcWalletId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.btcWalletPassphrase.code,
-      label: schema.btcWalletPassphrase.display,
-      type: 'text',
-      component: SecretInputFormik
-    },
-    {
-      name: schema.ltcWalletId.code,
-      label: schema.ltcWalletId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.ltcWalletPassphrase.code,
-      label: schema.ltcWalletPassphrase.display,
-      type: 'text',
-      component: SecretInputFormik
-    },
-    {
-      name: schema.zecWalletId.code,
-      label: schema.zecWalletId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.zecWalletPassphrase.code,
-      label: schema.zecWalletPassphrase.display,
-      type: 'text',
-      component: SecretInputFormik
-    },
-    {
-      name: schema.bchWalletId.code,
-      label: schema.bchWalletId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.bchWalletPassphrase.code,
-      label: schema.bchWalletPassphrase.display,
-      type: 'text',
-      component: SecretInputFormik
-    },
-    {
-      name: schema.dashWalletId.code,
-      label: schema.dashWalletId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.dashWalletPassphrase.code,
-      label: schema.dashWalletPassphrase.display,
-      type: 'text',
-      component: SecretInputFormik
-    },
-    {
-      name: schema.environment.code,
-      label: schema.environment.display,
-      placeholder: 'prod or test',
-      type: 'text',
-      component: TextInputFormik
-    }
-  ]
+const getBitgoFields = () => [
+  {
+    name: schema.token.code,
+    label: schema.token.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.btcWalletId.code,
+    label: schema.btcWalletId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.btcWalletPassphrase.code,
+    label: schema.btcWalletPassphrase.display,
+    type: 'text',
+    component: SecretInputFormik
+  },
+  {
+    name: schema.ltcWalletId.code,
+    label: schema.ltcWalletId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.ltcWalletPassphrase.code,
+    label: schema.ltcWalletPassphrase.display,
+    type: 'text',
+    component: SecretInputFormik
+  },
+  {
+    name: schema.zecWalletId.code,
+    label: schema.zecWalletId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.zecWalletPassphrase.code,
+    label: schema.zecWalletPassphrase.display,
+    type: 'text',
+    component: SecretInputFormik
+  },
+  {
+    name: schema.bchWalletId.code,
+    label: schema.bchWalletId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.bchWalletPassphrase.code,
+    label: schema.bchWalletPassphrase.display,
+    type: 'text',
+    component: SecretInputFormik
+  },
+  {
+    name: schema.dashWalletId.code,
+    label: schema.dashWalletId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.dashWalletPassphrase.code,
+    label: schema.dashWalletPassphrase.display,
+    type: 'text',
+    component: SecretInputFormik
+  },
+  {
+    name: schema.environment.code,
+    label: schema.environment.display,
+    placeholder: 'prod or test',
+    type: 'text',
+    component: TextInputFormik
+  }
+]
+
+const BitgoForm = ({ account, handleSubmit, ...props }) => {
+  const { code } = account
+
+  const formik = getBitgoFormik(account)
+
+  const fields = getBitgoFields()
 
   return (
     <>
@@ -247,4 +254,4 @@ const BitgoForm = ({ account, handleSubmit, ...props }) => {
   )
 }
 
-export { BitgoForm, BitgoCard }
+export { BitgoForm, BitgoCard, getBitgoFormik, getBitgoFields }

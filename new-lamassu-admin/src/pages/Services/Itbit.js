@@ -51,16 +51,15 @@ const ItbitCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const ItbitForm = ({ account, ...props }) => {
+const getItbitFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const userId = getValue(schema.userId.code)
   const walletId = getValue(schema.walletId.code)
   const clientKey = getValue(schema.clientKey.code)
   const clientSecret = getValue(schema.clientSecret.code)
 
-  const formik = {
+  return {
     initialValues: {
       userId: userId,
       walletId: walletId,
@@ -82,33 +81,41 @@ const ItbitForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.userId.code,
-      label: schema.userId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.walletId.code,
-      label: schema.walletId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.clientKey.code,
-      label: schema.clientKey.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.clientSecret.code,
-      label: schema.clientSecret.display,
-      type: 'text',
-      component: SecretInputFormik
-    }
-  ]
+const getItbitFields = () => [
+  {
+    name: schema.userId.code,
+    label: schema.userId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.walletId.code,
+    label: schema.walletId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.clientKey.code,
+    label: schema.clientKey.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.clientSecret.code,
+    label: schema.clientSecret.display,
+    type: 'text',
+    component: SecretInputFormik
+  }
+]
+
+const ItbitForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getItbitFormik(account)
+
+  const fields = getItbitFields()
 
   return (
     <>
@@ -123,4 +130,4 @@ const ItbitForm = ({ account, ...props }) => {
   )
 }
 
-export { ItbitCard, ItbitForm }
+export { ItbitCard, ItbitForm, getItbitFormik, getItbitFields }

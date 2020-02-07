@@ -1,13 +1,13 @@
-import React, { memo, useState } from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
+import React, { memo, useState } from 'react'
 
 import TextInputFormik from './TextInput'
 import { styles } from './TextInput.styles'
 
 const useStyles = makeStyles(styles)
 
-const SecretInputFormik = memo(({ ...props }) => {
+const SecretInputFormik = memo(({ className, ...props }) => {
   const { value } = props.field
 
   const classes = useStyles()
@@ -37,7 +37,7 @@ const SecretInputFormik = memo(({ ...props }) => {
       <TextInputFormik
         {...props}
         onFocus={handleFocus}
-        className={classnames(inputClass)}
+        className={classnames(inputClass, className)}
       />
     </>
   )
