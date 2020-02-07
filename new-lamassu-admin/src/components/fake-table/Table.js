@@ -10,15 +10,17 @@ import {
   tableHeaderHeight,
   tableErrorColor,
   spacer,
-  white
+  white,
+  tableDoubleHeaderHeight,
+  offColor
 } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 
-const { tl2, p } = typographyStyles
+const { tl2, p, label1 } = typographyStyles
 
 const useStyles = makeStyles({
   body: {
-    borderSpacing: '0 4px'
+    borderSpacing: [[0, 4]]
   },
   header: {
     extend: tl2,
@@ -26,16 +28,48 @@ const useStyles = makeStyles({
     height: tableHeaderHeight,
     textAlign: 'left',
     color: white,
-    // display: 'flex'
     display: 'table-row'
   },
+  doubleHeader: {
+    extend: tl2,
+    backgroundColor: tableHeaderColor,
+    height: tableDoubleHeaderHeight,
+    color: white,
+    display: 'table-row'
+  },
+  thDoubleLevel: {
+    padding: [[0, spacer * 2]],
+    display: 'table-cell',
+    '& > :first-child': {
+      extend: label1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: offColor,
+      color: white,
+      borderRadius: [[0, 0, 8, 8]],
+      height: 28
+    },
+    '& > :last-child': {
+      display: 'table-cell',
+      verticalAlign: 'middle',
+      height: tableDoubleHeaderHeight - 28,
+      '& > div': {
+        display: 'inline-block'
+      }
+    }
+  },
+  cellDoubleLevel: {
+    display: 'flex',
+    padding: [[0, spacer * 2]]
+  },
   td: {
-    padding: `0 ${spacer * 3}px`
+    padding: [[0, spacer * 3]]
   },
   tdHeader: {
     verticalAlign: 'middle',
     display: 'table-cell',
-    padding: `0 ${spacer * 3}px`
+    padding: [[0, spacer * 3]]
   },
   trError: {
     backgroundColor: tableErrorColor
@@ -59,9 +93,9 @@ const useStyles = makeStyles({
     '&:before': {
       height: 0
     },
-    margin: '4px 0',
+    margin: [[4, 0]],
     width: 'min-content',
-    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
+    boxShadow: [[0, 0, 4, 0, 'rgba(0, 0, 0, 0.08)']]
   }
 })
 
@@ -74,6 +108,16 @@ const Table = ({ children, className, ...props }) => (
 const THead = ({ children, className }) => {
   const classes = useStyles()
   return <div className={classnames(className, classes.header)}>{children}</div>
+}
+
+const TDoubleLevelHead = ({ children, className }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classnames(className, classes.doubleHeader)}>
+      {children}
+    </div>
+  )
 }
 
 const TBody = ({ children, className }) => {
@@ -102,6 +146,27 @@ const Th = ({ children, ...props }) => {
     <Td header {...props}>
       {children}
     </Td>
+  )
+}
+
+const ThDoubleLevel = ({ title, children, className }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classnames(className, classes.thDoubleLevel)}>
+      <div>{title}</div>
+      <div>{children}</div>
+    </div>
+  )
+}
+
+const CellDoubleLevel = ({ children, className }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classnames(className, classes.cellDoubleLevel)}>
+      {children}
+    </div>
   )
 }
 
@@ -135,4 +200,15 @@ const EditCell = ({ save, cancel }) => (
   </Td>
 )
 
-export { Table, THead, TBody, Tr, Td, Th, EditCell }
+export {
+  Table,
+  THead,
+  TDoubleLevelHead,
+  TBody,
+  Tr,
+  Td,
+  Th,
+  ThDoubleLevel,
+  CellDoubleLevel,
+  EditCell
+}

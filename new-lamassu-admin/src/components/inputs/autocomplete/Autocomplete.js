@@ -13,16 +13,30 @@ import {
 } from './commons'
 
 const Autocomplete = memo(
-  ({ suggestions, classes, placeholder, label, itemToString, ...props }) => {
+  ({
+    suggestions,
+    classes,
+    placeholder,
+    label,
+    itemToString,
+    keys = ['code', 'display'],
+    ...props
+  }) => {
     const { name, value, onBlur } = props.field
     const { touched, errors, setFieldValue } = props.form
 
     const [popperNode, setPopperNode] = useState(null)
 
+    const display = keys[1]
+
     return (
       <Downshift
         id={name}
-        itemToString={it => (itemToString ? itemToString(it) : it?.display)}
+        itemToString={it => {
+          if (itemToString) return itemToString(it)
+          if (it) return it[display]
+          return undefined
+        }}
         onChange={it => setFieldValue(name, it)}
         defaultHighlightedIndex={0}
         selectedItem={value}>
@@ -40,9 +54,8 @@ const Autocomplete = memo(
         }) => (
           <div className={classes.container}>
             {renderInput({
-              id: name,
+              name,
               fullWidth: true,
-              classes,
               error:
                 (touched[`${name}-input`] || touched[name]) && errors[name],
               success:
@@ -52,7 +65,10 @@ const Autocomplete = memo(
                 value: inputValue2 || '',
                 placeholder,
                 onBlur,
-                onClick: () => toggleMenu(),
+                onClick: event => {
+                  setPopperNode(event.currentTarget.parentElement)
+                  toggleMenu()
+                },
                 onChange: it => {
                   if (it.target.value === '') {
                     clearSelection()
@@ -60,12 +76,12 @@ const Autocomplete = memo(
                   inputValue = it.target.value
                 }
               }),
-              ref: node => {
-                setPopperNode(node)
-              },
               label
             })}
-            <Popper open={isOpen} anchorEl={popperNode}>
+            <Popper
+              open={isOpen}
+              anchorEl={popperNode}
+              modifiers={{ flip: { enabled: true } }}>
               <div
                 {...(isOpen
                   ? getMenuProps({}, { suppressRefError: true })
@@ -73,20 +89,21 @@ const Autocomplete = memo(
                 <Paper
                   square
                   style={{
-                    marginTop: 8,
-                    minWidth: popperNode ? popperNode.clientWidth : null
+                    minWidth: popperNode ? popperNode.clientWidth + 2 : null
                   }}>
                   {filterSuggestions(
                     suggestions,
                     inputValue2,
-                    value ? R.of(value) : []
+                    value ? R.of(value) : [],
+                    keys
                   ).map((suggestion, index) =>
                     renderSuggestion({
                       suggestion,
                       index,
                       itemProps: getItemProps({ item: suggestion }),
                       highlightedIndex,
-                      selectedItem: selectedItem2
+                      selectedItem: selectedItem2,
+                      keys
                     })
                   )}
                 </Paper>

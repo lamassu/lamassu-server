@@ -36,7 +36,7 @@ function H3({ children, className, ...props }) {
 function H4({ children, className, ...props }) {
   const classes = useStyles()
   return (
-    <h4 className={classnames(classes.h3, className)} {...props}>
+    <h4 className={classnames(classes.h4, className)} {...props}>
       {children}
     </h4>
   )
