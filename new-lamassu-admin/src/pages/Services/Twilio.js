@@ -56,16 +56,15 @@ const TwilioCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const TwilioForm = ({ account, ...props }) => {
+const getTwilioFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const accountSid = getValue(schema.accountSid.code)
   const authToken = getValue(schema.authToken.code)
   const fromNumber = getValue(schema.fromNumber.code)
   const toNumber = getValue(schema.toNumber.code)
 
-  const formik = {
+  return {
     initialValues: {
       accountSid: accountSid,
       authToken: authToken,
@@ -87,33 +86,41 @@ const TwilioForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.accountSid.code,
-      label: schema.accountSid.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.authToken.code,
-      label: schema.authToken.display,
-      type: 'text',
-      component: SecretInputFormik
-    },
-    {
-      name: schema.fromNumber.code,
-      label: schema.fromNumber.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.toNumber.code,
-      label: schema.toNumber.display,
-      type: 'text',
-      component: TextInputFormik
-    }
-  ]
+const getTwilioFields = () => [
+  {
+    name: schema.accountSid.code,
+    label: schema.accountSid.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.authToken.code,
+    label: schema.authToken.display,
+    type: 'text',
+    component: SecretInputFormik
+  },
+  {
+    name: schema.fromNumber.code,
+    label: schema.fromNumber.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.toNumber.code,
+    label: schema.toNumber.display,
+    type: 'text',
+    component: TextInputFormik
+  }
+]
+
+const TwilioForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getTwilioFormik(account)
+
+  const fields = getTwilioFields()
 
   return (
     <>
@@ -128,4 +135,4 @@ const TwilioForm = ({ account, ...props }) => {
   )
 }
 
-export { TwilioCard, TwilioForm }
+export { TwilioCard, TwilioForm, getTwilioFormik, getTwilioFields }

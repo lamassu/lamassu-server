@@ -15,6 +15,7 @@ const { p } = typographyStyles
 const GreenRadio = withStyles({
   root: {
     color: secondaryColor,
+    padding: [[9, 8, 9, 9]],
     '&$checked': {
       color: secondaryColor
     }

@@ -52,15 +52,14 @@ const BitstampCard = memo(({ account, onEdit, ...props }) => {
   )
 })
 
-const BitstampForm = ({ account, ...props }) => {
+const getBitstampFormik = account => {
   const getValue = getValueAux(account)
 
-  const { code } = account
   const clientId = getValue(schema.clientId.code)
   const key = getValue(schema.key.code)
   const secret = getValue(schema.secret.code)
 
-  const formik = {
+  return {
     initialValues: {
       clientId: clientId,
       key: key,
@@ -78,27 +77,35 @@ const BitstampForm = ({ account, ...props }) => {
         .required('Required')
     })
   }
+}
 
-  const fields = [
-    {
-      name: schema.clientId.code,
-      label: schema.clientId.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.key.code,
-      label: schema.key.display,
-      type: 'text',
-      component: TextInputFormik
-    },
-    {
-      name: schema.secret.code,
-      label: schema.secret.display,
-      type: 'text',
-      component: SecretInputFormik
-    }
-  ]
+const getBitstampFields = () => [
+  {
+    name: schema.clientId.code,
+    label: schema.clientId.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.key.code,
+    label: schema.key.display,
+    type: 'text',
+    component: TextInputFormik
+  },
+  {
+    name: schema.secret.code,
+    label: schema.secret.display,
+    type: 'text',
+    component: SecretInputFormik
+  }
+]
+
+const BitstampForm = ({ account, ...props }) => {
+  const { code } = account
+
+  const formik = getBitstampFormik(account)
+
+  const fields = getBitstampFields()
 
   return (
     <>
@@ -113,4 +120,4 @@ const BitstampForm = ({ account, ...props }) => {
   )
 }
 
-export { BitstampForm, BitstampCard }
+export { BitstampForm, BitstampCard, getBitstampFormik, getBitstampFields }

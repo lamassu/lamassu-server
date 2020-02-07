@@ -1,10 +1,10 @@
-import React from 'react'
-import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core'
+import * as R from 'ramda'
+import React from 'react'
 
 import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 
-const getValue = R.curry((account, code) => account[code] ?? '')
+const getValue = R.curry((account, code) => (account ? account[code] : ''))
 
 const formatLong = value => {
   if (!value) return ''
