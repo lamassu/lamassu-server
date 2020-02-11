@@ -147,6 +147,15 @@
         "operatorInfoWebsite",
         "operatorInfoCompanyNumber"
       ]
+    },
+    {
+      "code": "fudgeFactor",
+      "display": "Fudge Factor",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "fudgeFactorActive"
+      ]
     }
   ],
   "fields": [
@@ -940,6 +949,14 @@
         "termsScreenActive"
       ],
       "fieldValidation": []
+    },
+    {
+      "code": "fudgeFactorActive",
+      "displayBottom": "Enabled",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [],
+      "default": false
     },
     {
       "code": "operatorInfoActive",
