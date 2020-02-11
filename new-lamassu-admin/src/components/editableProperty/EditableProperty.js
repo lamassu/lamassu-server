@@ -25,12 +25,6 @@ const EditableProperty = memo(
 
     const innerCancel = () => setEditing(false)
 
-    // TODO: can do this or just pass the options with the right properties... which's better?
-    const radioButtonOptions = options.map(it => ({
-      label: it.display,
-      value: it.value
-    }))
-
     return (
       <>
         <div className={classes.rowWrapper}>
@@ -60,16 +54,16 @@ const EditableProperty = memo(
         </div>
         {editing ? (
           <RadioGroup
-            options={radioButtonOptions}
+            options={options}
             value={currentValue}
             onChange={event => setCurrentValue(event.target.value)}
             className={classes.radioButtons}
           />
         ) : (
           <P>
-            {`${prefixText} ${radioButtonOptions
-              .find(it => it.value === currentValue)
-              .label.toLowerCase()}`}
+            {`${prefixText} ${options
+              .find(it => it.display === currentValue)
+              .display.toLowerCase()}`}
           </P>
         )}
       </>

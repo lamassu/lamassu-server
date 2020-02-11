@@ -51,9 +51,9 @@ const RadioGroup = ({
           {options.map((option, idx) => (
             <Label
               key={idx}
-              value={option.value}
+              value={option.display}
               control={<GreenRadio />}
-              label={option.label}
+              label={option.display}
             />
           ))}
         </MaterialRadioGroup>
