@@ -37383,7 +37383,11 @@ var _user$project$NavBar$determineConfigCategory = function (configCode) {
 							_1: {
 								ctor: '::',
 								_0: 'operatorInfo',
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: 'fudgeFactor',
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -37836,7 +37840,11 @@ var _user$project$NavBar$view = F2(
 													_1: {
 														ctor: '::',
 														_0: A2(configLink, 'operatorInfo', 'Operator Info'),
-														_1: {ctor: '[]'}
+														_1: {
+															ctor: '::',
+															_0: A2(configLink, 'fudgeFactor', 'Fudge Factor'),
+															_1: {ctor: '[]'}
+														}
 													}
 												}
 											}
