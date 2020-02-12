@@ -46,8 +46,8 @@ const BooleanPropertiesTable = memo(
     }
 
     const radioButtonOptions = [
-      { label: 'Yes', value: true },
-      { label: 'No', value: false }
+      { display: 'Yes', value: true },
+      { display: 'No', value: false }
     ]
 
     if (!elements || radioGroupValues?.length === 0) return null

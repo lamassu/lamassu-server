@@ -238,8 +238,8 @@ const ContactInfo = () => {
                 editing={editing}
                 displayValue={displayTextValue}
                 options={[
-                  { label: 'On', value: INFO_CARD_ENABLED },
-                  { label: 'Off', value: INFO_CARD_DISABLED }
+                  { display: 'On', value: INFO_CARD_ENABLED },
+                  { display: 'Off', value: INFO_CARD_DISABLED }
                 ]}
                 className={classes.radioButtons}
                 resetError={() => setError(null)}
