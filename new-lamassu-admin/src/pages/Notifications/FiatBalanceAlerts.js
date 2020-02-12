@@ -137,7 +137,8 @@ const OverridesRow = ({
                 component={Autocomplete}
                 type="text"
                 suggestions={getSuggestions()}
-                keys={['deviceId', 'name']}
+                code="deviceId"
+                display="name"
               />
             )}
           </Td>

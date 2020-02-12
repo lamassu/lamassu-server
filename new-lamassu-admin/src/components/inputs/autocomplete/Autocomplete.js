@@ -19,15 +19,14 @@ const Autocomplete = memo(
     placeholder,
     label,
     itemToString,
-    keys = ['code', 'display'],
+    code = 'code',
+    display = 'display',
     ...props
   }) => {
     const { name, value, onBlur } = props.field
     const { touched, errors, setFieldValue } = props.form
 
     const [popperNode, setPopperNode] = useState(null)
-
-    const display = keys[1]
 
     return (
       <Downshift
@@ -95,7 +94,8 @@ const Autocomplete = memo(
                     suggestions,
                     inputValue2,
                     value ? R.of(value) : [],
-                    keys
+                    code,
+                    display
                   ).map((suggestion, index) =>
                     renderSuggestion({
                       suggestion,
@@ -103,7 +103,8 @@ const Autocomplete = memo(
                       itemProps: getItemProps({ item: suggestion }),
                       highlightedIndex,
                       selectedItem: selectedItem2,
-                      keys
+                      code,
+                      display
                     })
                   )}
                 </Paper>

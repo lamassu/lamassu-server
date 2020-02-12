@@ -36,7 +36,8 @@ function renderSuggestion({
   itemProps,
   highlightedIndex,
   selectedItem,
-  keys
+  code,
+  display
 }) {
   const isHighlighted = highlightedIndex === index
 
@@ -54,9 +55,6 @@ function renderSuggestion({
     }
   }))(MenuItem)
 
-  const code = keys[0]
-  const display = keys[1]
-
   return (
     <StyledMenuItem
       {...itemProps}
@@ -72,7 +70,8 @@ function filterSuggestions(
   suggestions = [],
   value = '',
   currentValues = [],
-  keys
+  code,
+  display
 ) {
   const options = {
     shouldSort: true,
@@ -81,10 +80,9 @@ function filterSuggestions(
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    keys: keys
+    code,
+    display
   }
-
-  const code = keys[0]
 
   const fuse = new Fuse(suggestions, options)
   const result = value ? fuse.search(slugify(value, ' ')) : suggestions
