@@ -1,4 +1,8 @@
 import { offColor } from 'src/styling/variables'
+import typographyStyles from 'src/components/typography/styles'
+import theme from 'src/styling/theme'
+
+const { p } = typographyStyles
 
 const styles = {
   header: {
@@ -17,10 +21,7 @@ const styles = {
   },
   section: {
     marginBottom: 52
-  }
-}
-
-const contactInfoStyles = {
+  },
   row: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -30,6 +31,21 @@ const contactInfoStyles = {
       marginBottom: 0
     }
   },
+  submit: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: [[0, 4, 4, 4]],
+    '& > button': {
+      marginRight: 40
+    }
+  },
+  singleButton: {
+    marginTop: 50,
+    paddingLeft: 0
+  }
+}
+
+const contactInfoStyles = {
   infoMessage: {
     display: 'flex',
     marginBottom: 52,
@@ -48,15 +64,22 @@ const contactInfoStyles = {
     display: 'flex',
     flexDirection: 'row',
     paddingLeft: 4
-  },
-  submit: {
-    justifyContent: 'flex-start',
-    padding: [[0, 4, 4, 4]],
-    height: 20,
-    '& > button': {
-      marginRight: 40
+  }
+}
+
+const termsConditionsStyles = {
+  enable: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 22 - theme.spacing(1),
+    '& > span:first-child': {
+      extend: p,
+      marginRight: 116 - theme.spacing(1)
+    },
+    '& > span:last-child': {
+      marginLeft: 4
     }
   }
 }
 
-export { styles, contactInfoStyles }
+export { styles, contactInfoStyles, termsConditionsStyles }

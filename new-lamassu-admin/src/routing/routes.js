@@ -13,6 +13,7 @@ import AuthRegister from 'src/pages/AuthRegister'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
 
 import MachineStatus from '../pages/maintenance/MachineStatus'
+import Customers from '../pages/Customers'
 
 const tree = [
   { key: 'transactions', label: 'Transactions', route: '/transactions' },
@@ -55,6 +56,28 @@ const tree = [
       },
       { key: 'info', label: 'Operator Info', route: '/settings/operator-info' }
     ]
+  },
+  {
+    key: 'compliance',
+    label: 'Compliance',
+    route: '/compliance',
+    children: [
+      // {
+      //   key: 'triggers',
+      //   label: 'Triggers',
+      //   route: '/compliance/triggers'
+      // },
+      {
+        key: 'customers',
+        label: 'Customers',
+        route: '/compliance/customers'
+      }
+      // {
+      //   key: 'blacklist',
+      //   label: 'Blacklist',
+      //   route: '/compliance/blacklist'
+      // }
+    ]
   }
   // compliance: { label: 'Compliance', children: [{ label: 'Locale', route: '/locale' }] }
 ]
@@ -88,6 +111,7 @@ const Routes = () => (
     <Route path="/transactions" component={Transactions} />
     <Route path="/register" component={AuthRegister} />
     <Route path="/maintenance/machine-status" component={MachineStatus} />
+    <Route path="/compliance/customers" component={Customers} />
   </Switch>
 )
 
