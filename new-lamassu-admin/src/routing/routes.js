@@ -5,6 +5,7 @@ import { Route, Redirect, Switch } from 'react-router-dom'
 import Commissions from 'src/pages/Commissions'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
+import Cashout from 'src/pages/Cashout/Cashout'
 import Logs from 'src/pages/Logs'
 import ServerLogs from 'src/pages/ServerLogs'
 import Transactions from 'src/pages/Transactions/Transactions'
@@ -49,6 +50,11 @@ const tree = [
         route: '/settings/commissions'
       },
       { key: 'locale', label: 'Locale', route: '/settings/locale' },
+      {
+        key: 'cash-out',
+        label: 'Cash-out',
+        route: '/settings/cash-out'
+      },
       {
         key: 'services',
         label: '3rd party services',
@@ -103,6 +109,7 @@ const Routes = () => (
     />
     <Route path="/settings/commissions" component={Commissions} />
     <Route path="/settings/locale" component={Locales} />
+    <Route path="/settings/cash-out" component={Cashout} />
     <Route path="/settings/3rd-party-services" component={Services} />
     <Route path="/settings/operator-info" component={OperatorInfo} />
     <Route path="/maintenance/logs" component={Logs} />
