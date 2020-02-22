@@ -3,6 +3,7 @@ import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
 import AuthRegister from 'src/pages/AuthRegister'
+import Cashout from 'src/pages/Cashout/Cashout'
 import Commissions from 'src/pages/Commissions'
 import Customers from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
@@ -67,6 +68,12 @@ const tree = [
       return () => <Redirect to={this.children[0].route} />
     },
     children: [
+      {
+        key: namespaces.CASH_OUT,
+        label: 'Cash-out',
+        route: '/settings/cash-out',
+        component: Cashout
+      },
       {
         key: namespaces.COMMISSIONS,
         label: 'Commissions',
