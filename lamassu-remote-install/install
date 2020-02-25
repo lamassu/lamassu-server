@@ -78,6 +78,9 @@ if [ "$release" != "16.04" ] || [ "$processor" != "x86_64" ]; then
     exit 1
 fi
 
+# Create dir where blochains will be stored
+[ -d $BLOCKCHAIN_DIR ] || mkdir $BLOCKCHAIN_DIR
+
 # So we don't run out of memory
 decho "Enabling swap file for install only..."
 fallocate -l 1G /swapfile >> $LOG_FILE 2>&1
@@ -133,7 +136,7 @@ openssl req \
   -key $CA_KEY_PATH \
   -days 3650 \
   -out $CA_PATH \
-  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator CA/CN=lamassu-operator.is" \
+  -subj "/C=IS/ST=/L=Reykjavik/O=Lamassu Operator CA/CN=operator.lamassu.is" \
   >> $LOG_FILE 2>&1
 
 openssl genrsa \
@@ -252,13 +255,14 @@ service supervisor restart >> $LOG_FILE 2>&1
 decho "Disabling swap file..."
 swapoff /swapfile >> $LOG_FILE 2>&1
 
-# disable exitting on error in case DO changes motd scripts
+# disable exiting on error in case DO changes motd scripts
 set +e
-chmod -x /etc/update-motd.d/*-release-upgrade
-chmod -x /etc/update-motd.d/*-updates-available
-chmod -x /etc/update-motd.d/*-reboot-required
-chmod -x /etc/update-motd.d/*-help-text
-chmod -x /etc/update-motd.d/*-cloudguest
+chmod -x /etc/update-motd.d/*-release-upgrade 2>/dev/null
+chmod -x /etc/update-motd.d/*-updates-available 2>/dev/null
+chmod -x /etc/update-motd.d/*-reboot-required 2>/dev/null
+chmod -x /etc/update-motd.d/*-help-text 2>/dev/null
+chmod -x /etc/update-motd.d/*-cloudguest 2>/dev/null
+chmod -x /etc/update-motd.d/*-motd-news 2>/dev/null
 set -e
 
 # reset terminal to link new executables
@@ -279,3 +283,4 @@ echo
 echo
 echo "Activation URL for lamassu-admin:"
 echo $ADMIN_REGISTRATION_URL
+echo
