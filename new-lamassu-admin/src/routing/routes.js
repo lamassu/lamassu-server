@@ -1,18 +1,29 @@
 import * as R from 'ramda'
+
 import React from 'react'
+
 import { Route, Redirect, Switch } from 'react-router-dom'
 
 import AuthRegister from 'src/pages/AuthRegister'
+
 import Commissions from 'src/pages/Commissions'
+
 import Funding from 'src/pages/Funding'
+
 import Locales from 'src/pages/Locales'
+
 import MachineLogs from 'src/pages/MachineLogs'
+
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
+
 import ServerLogs from 'src/pages/ServerLogs'
+
 import Services from 'src/pages/Services/Services'
+
 import Transactions from 'src/pages/Transactions/Transactions'
 
 import Customers from '../pages/Customers'
+
 import MachineStatus from '../pages/maintenance/MachineStatus'
 
 const tree = [
@@ -100,6 +111,11 @@ const Routes = () => (
       path="/maintenance"
       exact
       component={() => <Redirect to={firstChild('maintenance')} />}
+    />
+    <Route
+      path="/compliance"
+      exact
+      component={() => <Redirect to={firstChild('compliance')} />}
     />
     <Route path="/settings/commissions" component={Commissions} />
     <Route path="/settings/locale" component={Locales} />
