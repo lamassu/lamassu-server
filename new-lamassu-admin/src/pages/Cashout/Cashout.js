@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import React, { useState } from 'react'
 
@@ -27,6 +27,12 @@ const GET_MACHINES_AND_CONFIG = gql`
       cassette2
     }
     config
+  }
+`
+
+const SAVE_CONFIG = gql`
+  mutation Save($config: JSONObject) {
+    saveConfig(config: $config)
   }
 `
 
@@ -59,23 +65,39 @@ const useStyles = makeStyles({
 
 const Cashboxes = () => {
   const [machines, setMachines] = useState([])
+  const [config, setConfig] = useState({})
+
   const [modalContent, setModalContent] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const classes = useStyles()
 
   useQuery(GET_MACHINES_AND_CONFIG, {
-    onCompleted: data =>
+    onCompleted: ({ machines, config }) => {
       setMachines(
-        data.machines.map(m => ({
+        machines.map(m => ({
           ...m,
-          currency: data.config.fiatCurrency ?? { code: 'N/D' },
-          cashOutDenominations: (data.config.cashOutDenominations ?? {})[
-            m.deviceId
-          ],
-          overrides: { top: {}, bottom: {} }
+          currency: config.fiatCurrency ?? { code: 'N/D' },
+          cashOutDenominations: (config.cashOutDenominations ?? {})[m.deviceId]
         }))
       )
+      setConfig(config)
+    }
   })
+
+  const [saveConfig] = useMutation(SAVE_CONFIG)
+
+  const saveCashoutConfig = machine =>
+    saveConfig({
+      variables: {
+        config: {
+          ...config,
+          cashOutDenominations: {
+            ...config.cashOutDenominations,
+            [machine.deviceId]: machine.cashOutDenominations
+          }
+        }
+      }
+    })
 
   const handleEnable = machine => event => {
     setModalContent(
@@ -131,8 +153,7 @@ const Cashboxes = () => {
         break
       case 4:
         // save
-        return Promise.resolve().then(m => {
-          alert('uju')
+        return saveCashoutConfig(machine).then(m => {
           setModalOpen(false)
           setModalContent(null)
         })
