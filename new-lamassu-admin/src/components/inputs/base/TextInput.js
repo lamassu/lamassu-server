@@ -10,7 +10,8 @@ import {
   secondaryColor,
   inputFontSize,
   inputFontSizeLg,
-  inputFontWeight
+  inputFontWeight,
+  inputFontWeightLg
 } from 'src/styling/variables'
 
 const useStyles = makeStyles({
@@ -18,19 +19,25 @@ const useStyles = makeStyles({
     fontSize: inputFontSize,
     color: fontColor,
     fontWeight: inputFontWeight,
-    paddingLeft: 4
+    paddingLeft: 4,
+    '& > .MuiInputBase-input': {
+      width: 282
+    }
   },
   inputRootLg: {
     fontSize: inputFontSizeLg,
     color: fontColor,
-    fontWeight: inputFontWeight
+    fontWeight: inputFontWeightLg,
+    '& > .MuiInputBase-input': {
+      width: 96
+    }
   },
   labelRoot: {
     color: fontColor,
     paddingLeft: 4
   },
   root: {
-    '& .MuiInput-underline:before': {
+    '& > .MuiInput-underline:before': {
       borderBottom: [[2, 'solid', fontColor]]
     },
     '& .Mui-focused': {
@@ -39,9 +46,6 @@ const useStyles = makeStyles({
     '& input': {
       paddingTop: 4,
       paddingBottom: 3
-    },
-    '& .MuiInputBase-input': {
-      width: 282
     },
     '& .MuiInputBase-inputMultiline': {
       width: 500,
@@ -76,6 +80,7 @@ const TextInput = memo(
     suffix,
     large,
     className,
+    InputProps,
     ...props
   }) => {
     const classes = useStyles()
@@ -104,7 +109,8 @@ const TextInput = memo(
               position="end">
               {suffix}
             </InputAdornment>
-          ) : null
+          ) : null,
+          ...InputProps
         }}
         InputLabelProps={{ className: classes.labelRoot }}
         {...props}

@@ -1,32 +1,31 @@
 import MenuItem from '@material-ui/core/MenuItem'
-import TextField from '@material-ui/core/TextField'
 import Fuse from 'fuse.js'
-import * as R from 'ramda'
 import React from 'react'
 import slugify from 'slugify'
+import { withStyles } from '@material-ui/core/styles'
 
 import {
   fontColor,
   inputFontSize,
-  inputFontWeight
+  inputFontWeight,
+  zircon
 } from 'src/styling/variables'
 import S from 'src/utils/sanctuary'
 
-function renderInput(inputProps) {
-  const { onBlur, success, InputProps, classes, ref, ...other } = inputProps
+import { TextInput } from '../base'
+
+function renderInput({ InputProps, error, name, success, ...props }) {
+  const { onChange, onBlur, value } = InputProps
 
   return (
-    <TextField
-      InputProps={{
-        inputRef: ref,
-        classes: {
-          root: classes.inputRoot,
-          input: classes.inputInput,
-          underline: success ? classes.success : ''
-        },
-        ...InputProps
-      }}
-      {...other}
+    <TextInput
+      name={name}
+      onChange={onChange}
+      onBlur={onBlur}
+      value={value}
+      error={!!error}
+      InputProps={InputProps}
+      {...props}
     />
   )
 }
@@ -36,29 +35,44 @@ function renderSuggestion({
   index,
   itemProps,
   highlightedIndex,
-  selectedItem
+  selectedItem,
+  code,
+  display
 }) {
   const isHighlighted = highlightedIndex === index
 
-  const item = R.o(R.defaultTo(''), R.path(['display']))(selectedItem)
-  const isSelected = R.indexOf(suggestion.display)(item) > -1
+  const StyledMenuItem = withStyles(theme => ({
+    root: {
+      fontSize: 14,
+      fontWeight: 400,
+      color: fontColor
+    },
+    selected: {
+      '&.Mui-selected, &.Mui-selected:hover': {
+        fontWeight: 500,
+        backgroundColor: zircon
+      }
+    }
+  }))(MenuItem)
 
   return (
-    <MenuItem
+    <StyledMenuItem
       {...itemProps}
-      key={suggestion.code}
+      key={suggestion[code]}
       selected={isHighlighted}
-      component="div"
-      style={{
-        fontSize: 14,
-        fontWeight: isSelected ? 500 : 400
-      }}>
-      {suggestion.display}
-    </MenuItem>
+      component="div">
+      {suggestion[display]}
+    </StyledMenuItem>
   )
 }
 
-function filterSuggestions(suggestions = [], value = '', currentValues = []) {
+function filterSuggestions(
+  suggestions = [],
+  value = '',
+  currentValues = [],
+  code,
+  display
+) {
   const options = {
     shouldSort: true,
     threshold: 0.2,
@@ -66,14 +80,14 @@ function filterSuggestions(suggestions = [], value = '', currentValues = []) {
     distance: 100,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    keys: ['code', 'display']
+    keys: [code, display]
   }
 
   const fuse = new Fuse(suggestions, options)
   const result = value ? fuse.search(slugify(value, ' ')) : suggestions
 
-  const currentCodes = S.map(S.prop('code'))(currentValues)
-  const filtered = S.filter(it => !S.elem(it.code)(currentCodes))(result)
+  const currentCodes = S.map(S.prop(code))(currentValues)
+  const filtered = S.filter(it => !S.elem(it[code])(currentCodes))(result)
 
   const amountToTake = S.min(filtered.length)(5)
 

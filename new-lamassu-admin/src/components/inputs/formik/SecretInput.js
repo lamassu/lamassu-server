@@ -7,7 +7,7 @@ import { styles } from './TextInput.styles'
 
 const useStyles = makeStyles(styles)
 
-const SecretInputFormik = memo(({ ...props }) => {
+const SecretInputFormik = memo(({ className, ...props }) => {
   const { value } = props.field
 
   const classes = useStyles()
@@ -37,7 +37,7 @@ const SecretInputFormik = memo(({ ...props }) => {
       <TextInputFormik
         {...props}
         onFocus={handleFocus}
-        className={classnames(inputClass)}
+        className={classnames(inputClass, className)}
       />
     </>
   )

@@ -39,6 +39,7 @@ const ActRow = ({
   active,
   rowAction,
   onSave,
+  handleEnable,
   ...props
 }) => {
   const classes = useStyles()
@@ -85,7 +86,10 @@ const ActRow = ({
         <Td
           size={elements[elements.length - 1].size}
           textAlign={elements[elements.length - 1].textAlign}>
-          <Switch checked={data.cashOutDenominations} />
+          <Switch
+            checked={data.cashOutDenominations}
+            onChange={handleEnable(data)}
+          />
         </Td>
       </Tr>
     </>
@@ -101,6 +105,7 @@ const CashOutTable = ({
   Details,
   className,
   onSave,
+  handleEnable,
   ...props
 }) => {
   const [active, setActive] = useState(null)
@@ -129,6 +134,7 @@ const CashOutTable = ({
             active={index === active}
             rowAction={rowAction}
             onSave={onSave}
+            handleEnable={handleEnable}
           />
         </div>
       </CellMeasurer>
