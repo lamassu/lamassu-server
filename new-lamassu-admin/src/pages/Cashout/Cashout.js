@@ -71,7 +71,7 @@ const Cashboxes = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const classes = useStyles()
 
-  useQuery(GET_MACHINES_AND_CONFIG, {
+  const { refetch } = useQuery(GET_MACHINES_AND_CONFIG, {
     onCompleted: ({ machines, config }) => {
       setMachines(
         machines.map(m => ({
@@ -153,10 +153,12 @@ const Cashboxes = () => {
         break
       case 4:
         // save
-        return saveCashoutConfig(machine).then(m => {
-          setModalOpen(false)
-          setModalContent(null)
-        })
+        return saveCashoutConfig(machine)
+          .then(refetch)
+          .then(() => {
+            setModalOpen(false)
+            setModalContent(null)
+          })
       default:
         break
     }
