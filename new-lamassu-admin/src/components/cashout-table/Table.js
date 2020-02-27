@@ -75,9 +75,9 @@ const ActRow = ({
         <Td
           size={elements[elements.length - 2].size}
           textAlign={elements[elements.length - 2].textAlign}>
-          {!active && data.cashOutDenominations && (
+          {data.cashOutDenominations && (
             <button
-              onClick={() => rowAction(id)}
+              onClick={() => rowAction(data)}
               className={classes.expandButton}>
               <EditIcon />
             </button>
@@ -105,19 +105,18 @@ const CashOutTable = ({
   Details,
   className,
   onSave,
+  handleEditClick,
   handleEnable,
   ...props
 }) => {
-  const [active, setActive] = useState(null)
-
-  const rowAction = id => setActive(id === active ? null : id)
+  const [active] = useState(null)
 
   const cache = new CellMeasurerCache({
     defaultHeight: 62,
     fixedWidth: true
   })
 
-  function rowRenderer({ index, isScrolling, key, parent, style }) {
+  function rowRenderer({ index, key, parent, style }) {
     return (
       <CellMeasurer
         cache={cache}
@@ -132,7 +131,7 @@ const CashOutTable = ({
             data={data[index]}
             Details={Details}
             active={index === active}
-            rowAction={rowAction}
+            rowAction={handleEditClick}
             onSave={onSave}
             handleEnable={handleEnable}
           />
