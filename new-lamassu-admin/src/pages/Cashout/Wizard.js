@@ -67,11 +67,11 @@ const Wizard = ({ pageName, currentStage, handleModalNavigation, machine }) => {
   )
 
   const overrideTop = event => {
-    setTopOverride(event.target.value)
+    setTopOverride(Number(event.target.value))
   }
 
   const overrideBottom = event => {
-    setBottomOverride(event.target.value)
+    setBottomOverride(Number(event.target.value))
   }
 
   const [error, setError] = useState(null)
@@ -88,9 +88,9 @@ const Wizard = ({ pageName, currentStage, handleModalNavigation, machine }) => {
   const isSubmittable = currentStage => {
     switch (currentStage) {
       case 1:
-        return Number(topOverride) > 0
+        return topOverride > 0
       case 2:
-        return Number(bottomOverride) > 0
+        return bottomOverride > 0
       default:
         return isSubmittable(1) && isSubmittable(2)
     }
