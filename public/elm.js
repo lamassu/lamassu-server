@@ -28534,6 +28534,7 @@ var _user$project$Common_TransactionTypes$CashOutTxRec = function (a) {
 		};
 	};
 };
+var _user$project$Common_TransactionTypes$ADA = {ctor: 'ADA'};
 var _user$project$Common_TransactionTypes$LTC = {ctor: 'LTC'};
 var _user$project$Common_TransactionTypes$DASH = {ctor: 'DASH'};
 var _user$project$Common_TransactionTypes$ZEC = {ctor: 'ZEC'};
@@ -33959,6 +33960,8 @@ var _user$project$Transaction_Decoder$mapCryptoCode = function (code) {
 			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_TransactionTypes$DASH);
 		case 'LTC':
 			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_TransactionTypes$LTC);
+		case 'ADA':
+			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_TransactionTypes$ADA);
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'No such cryptocurrency: ', code));
@@ -34142,8 +34145,10 @@ var _user$project$Transactions$cryptoCodeDisplay = function (code) {
 				return 'ZEC';
 			case 'DASH':
 				return 'DASH';
-			default:
+			case 'LTC':
 				return 'LTC';
+			default:
+				return 'ADA';
 		}
 	}();
 	return _elm_lang$html$Html$text(txt);
@@ -34177,8 +34182,10 @@ var _user$project$Transactions$multiplier = function (code) {
 			return 1.0e8;
 		case 'DASH':
 			return 1.0e8;
-		default:
+		case 'LTC':
 			return 1.0e8;
+		default:
+			return 1000000.0;
 	}
 };
 var _user$project$Transactions$rowView = function (tx) {
@@ -37914,28 +37921,19 @@ var _user$project$NavBar$view = F2(
 																	ctor: '::',
 																	_0: {
 																		ctor: '_Tuple3',
-																		_0: 'QuadrigaCX',
-																		_1: _user$project$CoreTypes$AccountRoute('quadrigacx'),
+																		_0: 'Strike',
+																		_1: _user$project$CoreTypes$AccountRoute('strike'),
 																		_2: true
 																	},
 																	_1: {
 																		ctor: '::',
 																		_0: {
 																			ctor: '_Tuple3',
-																			_0: 'Strike',
-																			_1: _user$project$CoreTypes$AccountRoute('strike'),
+																			_0: 'Twilio',
+																			_1: _user$project$CoreTypes$AccountRoute('twilio'),
 																			_2: true
 																		},
-																		_1: {
-																			ctor: '::',
-																			_0: {
-																				ctor: '_Tuple3',
-																				_0: 'Twilio',
-																				_1: _user$project$CoreTypes$AccountRoute('twilio'),
-																				_2: true
-																			},
-																			_1: {ctor: '[]'}
-																		}
+																		_1: {ctor: '[]'}
 																	}
 																}
 															}
