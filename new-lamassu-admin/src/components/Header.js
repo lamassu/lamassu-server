@@ -4,6 +4,7 @@ import React, { memo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
+import AddMachine from 'src/pages/AddMachine'
 
 import styles from './Header.styles'
 import { Link } from './buttons'
@@ -11,8 +12,8 @@ import { H4 } from './typography'
 
 const useStyles = makeStyles(styles)
 
-const renderSubheader = (item, classes) => {
-  if (!item || !item.children) return false
+const Subheader = ({ item, classes }) => {
+  const [open, setOpen] = useState(false)
   return (
     <div className={classes.subheader}>
       <div className={classes.content}>
@@ -31,7 +32,10 @@ const renderSubheader = (item, classes) => {
           </ul>
         </nav>
         <div className={classes.addMachine}>
-          <Link color="primary">Add Machine</Link>
+          <Link color="primary" onClick={() => setOpen(true)}>
+            Add Machine
+          </Link>
+          {open && <AddMachine close={() => setOpen(false)} />}
         </div>
       </div>
     </div>
@@ -73,7 +77,9 @@ const Header = memo(({ tree }) => {
           </nav>
         </div>
       </div>
-      {renderSubheader(active, classes)}
+      {active && active.children && (
+        <Subheader item={active} classes={classes} />
+      )}
     </header>
   )
 })
