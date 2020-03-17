@@ -28,7 +28,8 @@ const useStyles = makeStyles({
     height: tableHeaderHeight,
     textAlign: 'left',
     color: white,
-    display: 'table-row'
+    display: 'flex',
+    alignItems: 'center'
   },
   doubleHeader: {
     extend: tl2,
@@ -94,8 +95,11 @@ const useStyles = makeStyles({
       height: 0
     },
     margin: [[4, 0]],
-    width: 'min-content',
+    width: '100%',
     boxShadow: [[0, 0, 4, 0, 'rgba(0, 0, 0, 0.08)']]
+  },
+  actionCol: {
+    marginLeft: 'auto'
   }
 })
 
@@ -125,11 +129,12 @@ const TBody = ({ children, className }) => {
   return <div className={classnames(className, classes.body)}>{children}</div>
 }
 
-const Td = ({ children, header, className, size = 100, textAlign }) => {
+const Td = ({ children, header, className, size = 100, textAlign, action }) => {
   const classes = useStyles()
   const classNames = {
     [classes.td]: true,
-    [classes.tdHeader]: header
+    [classes.tdHeader]: header,
+    [classes.actionCol]: action
   }
 
   return (

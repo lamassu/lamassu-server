@@ -16,13 +16,17 @@ import { TL2, Label2, Info1, Info2 } from 'src/components/typography'
 
 const useStyles = makeStyles({
   wrapper: {
-    display: 'flex',
-    alignItems: 'baseline',
-    '& > p:first-child': {
-      margin: [[0, 4, 5, 0]]
-    },
-    '&> p:last-child': {
-      margin: [[0, 0, 0, 3]]
+    display: 'inline-block',
+    maxWidth: '100%',
+    '& > span': {
+      display: 'flex',
+      alignItems: 'baseline',
+      '& > p:first-child': {
+        margin: [[0, 4, 5, 0]]
+      },
+      '&> p:last-child': {
+        margin: [[0, 0, 0, 3]]
+      }
     }
   },
   inputRoot: {
@@ -85,12 +89,14 @@ const TextInputDisplay = memo(({ display, suffix, large }) => {
 
   return (
     <div className={classes.wrapper}>
-      {large && !suffix && <span>{display}</span>}
-      {!large && !suffix && <span>{display}</span>}
-      {large && suffix && <Info1>{display}</Info1>}
-      {!large && suffix && <Info2>{display}</Info2>}
-      {suffix && large && <TL2>{suffix}</TL2>}
-      {suffix && !large && <Label2>{suffix}</Label2>}
+      <span>
+        {large && !suffix && <span>{display}</span>}
+        {!large && !suffix && <span>{display}</span>}
+        {large && suffix && <Info1>{display}</Info1>}
+        {!large && suffix && <Info2>{display}</Info2>}
+        {suffix && large && <TL2>{suffix}</TL2>}
+        {suffix && !large && <Label2>{suffix}</Label2>}
+      </span>
     </div>
   )
 })
@@ -118,27 +124,29 @@ const TextInput = memo(
 
     return (
       <div className={classes.wrapper}>
-        <TextField
-          id={name}
-          onChange={onChange}
-          onBlur={onBlur}
-          error={error}
-          value={value}
-          classes={{ root: classes.root }}
-          className={classnames(classNames)}
-          InputProps={{
-            className: large ? classes.inputRootLg : classes.inputRoot,
-            ...InputProps
-          }}
-          InputLabelProps={{ className: classes.labelRoot }}
-          {...props}
-        />
-        {suffix && large && (
-          <>
-            <TL2>{suffix}</TL2>
-          </>
-        )}
-        {suffix && !large && <Label2>{suffix}</Label2>}
+        <span>
+          <TextField
+            id={name}
+            onChange={onChange}
+            onBlur={onBlur}
+            error={error}
+            value={value}
+            classes={{ root: classes.root }}
+            className={classnames(classNames)}
+            InputProps={{
+              className: large ? classes.inputRootLg : classes.inputRoot,
+              ...InputProps
+            }}
+            InputLabelProps={{ className: classes.labelRoot }}
+            {...props}
+          />
+          {suffix && large && (
+            <>
+              <TL2>{suffix}</TL2>
+            </>
+          )}
+          {suffix && !large && <Label2>{suffix}</Label2>}
+        </span>
       </div>
     )
   }

@@ -18,7 +18,8 @@ const styles = {
     cursor: 'pointer'
   },
   actionCol: {
-    display: 'flex'
+    display: 'flex',
+    marginLeft: 'auto'
   },
   actionColDisplayMode: {
     justifyContent: 'center'
@@ -27,6 +28,11 @@ const styles = {
     justifyContent: 'flex-end',
     '& > :first-child': {
       marginRight: 16
+    }
+  },
+  textInput: {
+    '& > .MuiInputBase-input': {
+      width: 282
     }
   }
 }
@@ -68,6 +74,10 @@ const ERow = memo(
             },
             idx
           ) => {
+            const colClasses = {
+              [classes.textInput]: true
+            }
+
             return (
               <Td key={idx} size={size} textAlign={textAlign}>
                 {editing && (
@@ -75,6 +85,7 @@ const ERow = memo(
                     id={name}
                     name={name}
                     component={input}
+                    className={classnames(colClasses)}
                     {...inputProps}
                   />
                 )}

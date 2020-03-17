@@ -16,7 +16,7 @@ const ETHead = memo(({ elements }) => {
           {display}
         </Td>
       ))}
-      <Td header size={action.size}>
+      <Td header size={action.size} action>
         {startCase(action.name)}
       </Td>
     </THead>
@@ -34,10 +34,11 @@ const ETable = memo(
     validationSchema,
     editing,
     addingRow,
-    disableAction
+    disableAction,
+    className
   }) => {
     return (
-      <Table>
+      <Table className={className}>
         <ETHead elements={elements} />
         <TBody>
           {addingRow && (

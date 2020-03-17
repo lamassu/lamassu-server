@@ -1,27 +1,18 @@
 import React, { useState } from 'react'
 import * as R from 'ramda'
-import { Formik, Form, Field as FormikField } from 'formik'
 import { gql } from 'apollo-boost'
 import classnames from 'classnames'
 import * as Yup from 'yup'
 import { makeStyles } from '@material-ui/core'
 import { useQuery } from '@apollo/react-hooks'
 
-import { Info2, Label2 } from 'src/components/typography'
+import { Info2 } from 'src/components/typography'
 import commonStyles from 'src/pages/common.styles'
-import {
-  Table,
-  THead,
-  Th,
-  TBody,
-  Tr,
-  Td
-} from 'src/components/fake-table/Table.js'
-import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
-import { ReactComponent as DisabledDeleteIcon } from 'src/styling/icons/action/delete/disabled.svg'
+import { Table as EditableTable } from 'src/components/editableTable'
 import Link from 'src/components/buttons/Link.js'
 import { Autocomplete } from 'src/components/inputs/index.js'
 import { AddButton } from 'src/components/buttons/index.js'
+import TextInputFormik from 'src/components/inputs/formik/TextInput.js'
 
 import {
   isDisabled,
@@ -30,7 +21,7 @@ import {
   OVERRIDES_KEY,
   ADD_OVERRIDE_CBA_KEY
 } from './aux.js'
-import { BigNumericInput, Field } from './Inputs'
+import { BigNumericInput } from './Inputs'
 import { localStyles, cryptoBalanceAlertsStyles } from './Notifications.styles'
 
 const CRYPTOCURRENCY_KEY = 'cryptocurrency'
@@ -52,14 +43,14 @@ const overrideElements = [
   {
     header: 'Low Balance',
     name: LOW_BALANCE_KEY,
-    size: 167,
-    textAlign: 'left'
+    size: 140,
+    textAlign: 'right'
   },
   {
     header: 'High Balance',
     name: HIGH_BALANCE_KEY,
-    size: 224,
-    textAlign: 'left'
+    size: 140,
+    textAlign: 'right'
   },
   {
     header: 'Delete',
@@ -88,6 +79,7 @@ const CryptoBalanceAlerts = ({
   setError
 }) => {
   const [cryptoCurrencies, setCryptoCurrencies] = useState(null)
+
   useQuery(GET_CRYPTOCURRENCIES, {
     onCompleted: data => {
       setCryptoCurrencies(data.cryptoCurrencies)
@@ -113,7 +105,14 @@ const CryptoBalanceAlerts = ({
     save(newOverrides)
   }
 
-  const deleteOverride = cryptocurrency => {
+  const handleResetForm = () => {
+    handleEdit(ADD_OVERRIDE_CBA_KEY)(false)
+    setError(null)
+  }
+
+  const deleteOverride = it => {
+    const cryptocurrency = it[CRYPTOCURRENCY_KEY]
+
     const idx = R.findIndex(
       R.propEq([CRYPTOCURRENCY_KEY], cryptocurrency),
       setupValues[OVERRIDES_KEY]
@@ -170,6 +169,8 @@ const CryptoBalanceAlerts = ({
       .required()
   })
 
+  if (!cryptoCurrencies) return null
+
   return (
     <>
       <div>
@@ -212,117 +213,68 @@ const CryptoBalanceAlerts = ({
           </AddButton>
         )}
         {(addingOverride || overrides.length > 0) && (
-          <Table>
-            <THead>
-              {overrideElements.map(
-                ({ size, className, textAlign, header }, idx) => (
-                  <Th
-                    key={idx}
-                    size={size}
-                    className={className}
-                    textAlign={textAlign}>
-                    {header}
-                  </Th>
-                )
-              )}
-            </THead>
-            <TBody>
-              {addingOverride && (
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={validationSchema}
-                  onSubmit={values => {
-                    handleSubmitOverrides(values)
-                  }}
-                  onReset={(values, bag) => {
-                    handleEdit(ADD_OVERRIDE_CBA_KEY)(false)
-                    setError(null)
-                  }}>
-                  <Form>
-                    <Tr>
-                      <Td size={findSize(CRYPTOCURRENCY_KEY)}>
-                        <FormikField
-                          id={CRYPTOCURRENCY_KEY}
-                          name={CRYPTOCURRENCY_KEY}
-                          component={Autocomplete}
-                          type="text"
-                          suggestions={getSuggestions()}
-                          onFocus={() => setError(null)}
-                        />
-                      </Td>
-                      <Td size={findSize(LOW_BALANCE_KEY)}>
-                        <Field
-                          editing={addingOverride}
-                          field={{ name: LOW_BALANCE_KEY }}
-                          displayValue={x => (x === '' ? '-' : x)}
-                          decoration="EUR"
-                          className={classes.eRowField}
-                          setError={setError}
-                        />
-                      </Td>
-                      <Td size={findSize(HIGH_BALANCE_KEY)}>
-                        <Field
-                          editing={addingOverride}
-                          field={{ name: HIGH_BALANCE_KEY }}
-                          displayValue={x => (x === '' ? '-' : x)}
-                          decoration="EUR"
-                          className={classes.eRowField}
-                          setError={setError}
-                        />
-                      </Td>
-                      <Td size={findSize(DELETE_KEY)} className={classes.edit}>
-                        <>
-                          <Link color="primary" type="submit">
-                            Save
-                          </Link>
-                          <Link color="secondary" type="reset">
-                            Cancel
-                          </Link>
-                        </>
-                      </Td>
-                    </Tr>
-                  </Form>
-                </Formik>
-              )}
-              {setupValues[OVERRIDES_KEY]?.map((override, idx) => (
-                <Tr key={idx}>
-                  <Td
-                    size={findSize(CRYPTOCURRENCY_KEY)}
-                    textAlign={findAlign(CRYPTOCURRENCY_KEY)}>
-                    {override[CRYPTOCURRENCY_KEY].display}
-                  </Td>
-                  <Td
-                    size={findSize(LOW_BALANCE_KEY)}
-                    textAlign={findAlign(LOW_BALANCE_KEY)}>
-                    <span className={classes.displayValue}>
-                      <Info2>{override[LOW_BALANCE_KEY]}</Info2>
-                      <Label2>EUR</Label2>
-                    </span>
-                  </Td>
-                  <Td
-                    size={findSize(HIGH_BALANCE_KEY)}
-                    textAlign={findAlign(HIGH_BALANCE_KEY)}>
-                    <span className={classes.displayValue}>
-                      <Info2>{override[HIGH_BALANCE_KEY]}</Info2>
-                      <Label2>EUR</Label2>
-                    </span>
-                  </Td>
-                  <Td
-                    size={findSize(DELETE_KEY)}
-                    textAlign={findAlign(DELETE_KEY)}>
-                    <button
-                      className={classes.button}
-                      onClick={() =>
-                        deleteOverride(override[CRYPTOCURRENCY_KEY])
-                      }>
-                      {!overrideOpsDisabled && <DeleteIcon />}
-                      {overrideOpsDisabled && <DisabledDeleteIcon />}
-                    </button>
-                  </Td>
-                </Tr>
-              ))}
-            </TBody>
-          </Table>
+          <EditableTable
+            className={classes.overridesTable}
+            addingRow={addingOverride}
+            disableAction={overrideOpsDisabled || addingOverride}
+            editing={R.map(
+              () => false,
+              R.range(0, setupValues[OVERRIDES_KEY].length)
+            )}
+            save={handleSubmitOverrides}
+            reset={handleResetForm}
+            action={deleteOverride}
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            data={setupValues[OVERRIDES_KEY]}
+            elements={[
+              {
+                name: CRYPTOCURRENCY_KEY,
+                display: 'Cryptocurrency',
+                size: findSize(CRYPTOCURRENCY_KEY),
+                textAlign: findAlign(CRYPTOCURRENCY_KEY),
+                view: R.path(['display']),
+                type: 'text',
+                input: Autocomplete,
+                inputProps: {
+                  suggestions: getSuggestions(),
+                  onFocus: () => setError(null)
+                }
+              },
+              {
+                name: LOW_BALANCE_KEY,
+                display: 'Low Balance',
+                size: findSize(LOW_BALANCE_KEY),
+                textAlign: findAlign(LOW_BALANCE_KEY),
+                view: it => it,
+                type: 'text',
+                input: TextInputFormik,
+                inputProps: {
+                  suffix: 'EUR',
+                  className: classes.textInput,
+                  onFocus: () => setError(null)
+                }
+              },
+              {
+                name: HIGH_BALANCE_KEY,
+                display: 'High Balance',
+                size: findSize(HIGH_BALANCE_KEY),
+                textAlign: findAlign(HIGH_BALANCE_KEY),
+                view: it => it,
+                type: 'text',
+                input: TextInputFormik,
+                inputProps: {
+                  suffix: 'EUR',
+                  className: classes.textInput,
+                  onFocus: () => setError(null)
+                }
+              },
+              {
+                name: 'delete',
+                size: findSize(DELETE_KEY)
+              }
+            ]}
+          />
         )}
       </div>
     </>

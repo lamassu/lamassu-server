@@ -172,6 +172,9 @@ const cryptoBalanceAlertsStyles = {
       height: 135
     },
     marginBottom: 36
+  },
+  overridesTable: {
+    width: 648
   }
 }
 
