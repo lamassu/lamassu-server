@@ -73,120 +73,118 @@ const CoinATMRadar = memo(() => {
   if (!coinAtmRadarConfig) return null
 
   return (
-    <>
-      <div className={classes.rightAligned}>
-        <div className={classes.button}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://coinatmradar.com/">
-            <Button>Coin ATM Radar page</Button>
-          </a>
+    <div className={classes.content}>
+      <div>
+        <div className={classes.rowWrapper}>
+          <H4>Coin ATM Radar share settings</H4>
+          <div className={classes.transparentButton}>
+            <button onClick={handleOpenHelpPopper}>
+              <HelpIcon />
+              <Popper
+                open={helpPopperOpen}
+                anchorEl={helpPopperAnchorEl}
+                placement="bottom"
+                onClose={handleCloseHelpPopper}>
+                <div className={classes.popoverContent}>
+                  <P>
+                    For details on configuring this panel, please read the
+                    relevant knowledgebase article{' '}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar">
+                      here
+                    </a>
+                    .
+                  </P>
+                </div>
+              </Popper>
+            </button>
+          </div>
         </div>
-      </div>
-      <div className={classes.rowWrapper}>
-        <H4>Coin ATM Radar share settings</H4>
-        <div className={classes.transparentButton}>
-          <button onClick={handleOpenHelpPopper}>
-            <HelpIcon />
-            <Popper
-              open={helpPopperOpen}
-              anchorEl={helpPopperAnchorEl}
-              placement="bottom"
-              onClose={handleCloseHelpPopper}>
-              <div className={classes.popoverContent}>
-                <P>
-                  For details on configuring this panel, please read the
-                  relevant knowledgebase article{' '}
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar">
-                    here
-                  </a>
-                  .
-                </P>
-              </div>
-            </Popper>
-          </button>
+        <div className={classes.rowWrapper}>
+          <P>Share information?</P>
+          <div className={classes.switchWrapper}>
+            <Switch
+              checked={coinAtmRadarConfig.active}
+              onChange={event =>
+                save({
+                  active: event.target.checked
+                })
+              }
+            />
+          </div>
+          <Label2>{coinAtmRadarConfig.active ? 'Yes' : 'No'}</Label2>
         </div>
-      </div>
-      <div className={classes.rowWrapper}>
-        <P>Share information?</P>
-        <div className={classes.switchWrapper}>
-          <Switch
-            checked={coinAtmRadarConfig.active}
-            onChange={event =>
-              save({
-                active: event.target.checked
-              })
+        <BooleanPropertiesTable
+          title={'Machine info'}
+          disabled={!coinAtmRadarConfig.active}
+          data={coinAtmRadarConfig}
+          elements={[
+            // {
+            //   name: 'location',
+            //   display: 'Location',
+            //   value: coinAtmRadarConfig.location
+            // },
+            {
+              name: 'commissions',
+              display: 'Commissions',
+              value: coinAtmRadarConfig.commissions
+            },
+            {
+              name: 'supportedCryptocurrencies',
+              display: 'Supported Cryptocurrencies',
+              value: coinAtmRadarConfig.supportedCryptocurrencies
+            },
+            {
+              name: 'supportedFiat',
+              display: 'Supported Fiat',
+              value: coinAtmRadarConfig.supportedFiat
+            },
+            {
+              name: 'supportedBuySellDirection',
+              display: 'Supported Buy Sell Direction',
+              value: coinAtmRadarConfig.supportedBuySellDirection
+            },
+            {
+              name: 'limitsAndVerification',
+              display: 'Limits And Verification',
+              value: coinAtmRadarConfig.limitsAndVerification
             }
-          />
-        </div>
-        <Label2>{coinAtmRadarConfig.active ? 'Yes' : 'No'}</Label2>
+          ]}
+          save={save}
+        />
+        {/* <BooleanPropertiesTable
+          title={'Operator info'}
+          disabled={!coinAtmRadarConfig.active}
+          data={coinAtmRadarConfig}
+          elements={[
+            {
+              name: 'operatorName',
+              display: 'Operator Name',
+              value: coinAtmRadarConfig.operatorName
+            },
+            {
+              name: 'operatorPhoneNumber',
+              display: 'Operator Phone Number',
+              value: coinAtmRadarConfig.operatorPhoneNumber
+            },
+            {
+              name: 'operatorEmail',
+              display: 'Operator Email',
+              value: coinAtmRadarConfig.operatorEmail
+            }
+          ]}
+          save={save}
+        /> */}
       </div>
-      <BooleanPropertiesTable
-        title={'Machine info'}
-        disabled={!coinAtmRadarConfig.active}
-        data={coinAtmRadarConfig}
-        elements={[
-          // {
-          //   name: 'location',
-          //   display: 'Location',
-          //   value: coinAtmRadarConfig.location
-          // },
-          {
-            name: 'commissions',
-            display: 'Commissions',
-            value: coinAtmRadarConfig.commissions
-          },
-          {
-            name: 'supportedCryptocurrencies',
-            display: 'Supported Cryptocurrencies',
-            value: coinAtmRadarConfig.supportedCryptocurrencies
-          },
-          {
-            name: 'supportedFiat',
-            display: 'Supported Fiat',
-            value: coinAtmRadarConfig.supportedFiat
-          },
-          {
-            name: 'supportedBuySellDirection',
-            display: 'Supported Buy Sell Direction',
-            value: coinAtmRadarConfig.supportedBuySellDirection
-          },
-          {
-            name: 'limitsAndVerification',
-            display: 'Limits And Verification',
-            value: coinAtmRadarConfig.limitsAndVerification
-          }
-        ]}
-        save={save}
-      />
-      {/* <BooleanPropertiesTable
-        title={'Operator info'}
-        disabled={!coinAtmRadarConfig.active}
-        data={coinAtmRadarConfig}
-        elements={[
-          {
-            name: 'operatorName',
-            display: 'Operator Name',
-            value: coinAtmRadarConfig.operatorName
-          },
-          {
-            name: 'operatorPhoneNumber',
-            display: 'Operator Phone Number',
-            value: coinAtmRadarConfig.operatorPhoneNumber
-          },
-          {
-            name: 'operatorEmail',
-            display: 'Operator Email',
-            value: coinAtmRadarConfig.operatorEmail
-          }
-        ]}
-        save={save}
-      /> */}
-    </>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://coinatmradar.com/">
+        <Button>Coin ATM Radar page</Button>
+      </a>
+    </div>
   )
 })
 

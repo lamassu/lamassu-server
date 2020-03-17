@@ -13,6 +13,7 @@ import TermsConditions from './TermsConditions'
 
 const localStyles = {
   contentWrapper: {
+    width: '100%',
     marginLeft: 48,
     paddingTop: 15
   }

@@ -46,9 +46,7 @@ const booleanPropertiesTableStyles = {
     flex: 'wrap'
   },
   rightAligned: {
-    display: 'flex',
-    position: 'absolute',
-    right: 0
+    marginLeft: 'auto'
   },
   radioButtons: {
     display: 'flex',
