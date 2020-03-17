@@ -171,12 +171,10 @@ const Notifications = () => {
 
   const curriedSave = R.curry((key, values) => {
     setTryingToSave(key)
-    console.log(key)
     save(R.mergeDeepRight(state)({ [key]: values }))
   })
 
   if (!state) return null
-  console.log(state)
 
   return (
     <>

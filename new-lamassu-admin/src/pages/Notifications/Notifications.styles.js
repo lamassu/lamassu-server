@@ -73,6 +73,11 @@ const localStyles = {
   eRowField: {
     display: 'inline-block',
     height: '100%'
+  },
+  textInput: {
+    '& .MuiInputBase-input': {
+      width: 80
+    }
   }
 }
 
