@@ -1,25 +1,72 @@
 import React, { memo } from 'react'
 import * as R from 'ramda'
 
-import { Td, THead, TBody, Table } from 'src/components/fake-table/Table'
+import {
+  Th,
+  ThDoubleLevel,
+  THead,
+  TBody,
+  Table,
+  TDoubleLevelHead
+} from 'src/components/fake-table/Table'
 import { startCase } from 'src/utils/string'
 
 import ERow from './Row'
 
-const ETHead = memo(({ elements }) => {
+const ETHead = memo(({ elements, className }) => {
   const action = R.last(elements)
 
   return (
-    <THead>
+    <THead className={className?.root}>
       {R.init(elements).map(({ name, size, display, textAlign }, idx) => (
-        <Td id={name} key={idx} size={size} textAlign={textAlign} header>
+        <Th
+          id={name}
+          key={idx}
+          size={size}
+          textAlign={textAlign}
+          className={className?.cell}>
           {display}
-        </Td>
+        </Th>
       ))}
-      <Td header size={action.size} action>
+      <Th size={action.size} action>
         {startCase(action.name)}
-      </Td>
+      </Th>
     </THead>
+  )
+})
+
+const ETDoubleHead = memo(({ elements, className }) => {
+  const action = R.last(elements)
+
+  return (
+    <TDoubleLevelHead className={className?.root}>
+      {R.init(elements).map((element, idx) => {
+        if (Array.isArray(element)) {
+          return (
+            <ThDoubleLevel
+              key={idx}
+              title={element[0].display}
+              className={className?.cell}>
+              {R.map(({ name, size, display, textAlign }) => (
+                <Th key={name} id={name} size={size} textAlign={textAlign}>
+                  {display}
+                </Th>
+              ))(R.tail(element))}
+            </ThDoubleLevel>
+          )
+        }
+
+        const { name, size, display, textAlign } = element
+        return (
+          <Th id={idx} key={name} size={size} textAlign={textAlign}>
+            {display}
+          </Th>
+        )
+      })}
+      <Th size={action.size} action>
+        {startCase(action.name)}
+      </Th>
+    </TDoubleLevelHead>
   )
 })
 
@@ -35,16 +82,20 @@ const ETable = memo(
     editing,
     addingRow,
     disableAction,
-    className
+    className,
+    double
   }) => {
     return (
       <Table className={className}>
-        <ETHead elements={elements} />
+        {!double && <ETHead elements={elements} />}
+        {double && (
+          <ETDoubleHead elements={elements} className={className?.head} />
+        )}
         <TBody>
           {addingRow && (
             <ERow
               elements={elements}
-              value={initialValues}
+              initialValues={initialValues}
               save={save}
               reset={reset}
               validationSchema={validationSchema}
@@ -54,10 +105,10 @@ const ETable = memo(
           {data.map((it, idx) => (
             <ERow
               key={idx}
-              value={it}
+              initialValues={it}
               elements={elements}
               save={save}
-              reset={reset}
+              reset={it => reset(it)}
               action={action}
               validationSchema={validationSchema}
               disableAction={disableAction}

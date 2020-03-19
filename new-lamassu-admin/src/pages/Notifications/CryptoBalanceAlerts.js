@@ -25,40 +25,12 @@ import { BigNumericInput } from './Inputs'
 import { localStyles, cryptoBalanceAlertsStyles } from './Notifications.styles'
 
 const CRYPTOCURRENCY_KEY = 'cryptocurrency'
-const DELETE_KEY = 'delete'
 
 const styles = R.mergeAll([
   commonStyles,
   localStyles,
   cryptoBalanceAlertsStyles
 ])
-
-const overrideElements = [
-  {
-    header: 'Cryptocurrency',
-    name: CRYPTOCURRENCY_KEY,
-    size: 166,
-    textAlign: 'left'
-  },
-  {
-    header: 'Low Balance',
-    name: LOW_BALANCE_KEY,
-    size: 140,
-    textAlign: 'right'
-  },
-  {
-    header: 'High Balance',
-    name: HIGH_BALANCE_KEY,
-    size: 140,
-    textAlign: 'right'
-  },
-  {
-    header: 'Delete',
-    name: DELETE_KEY,
-    size: 91,
-    textAlign: 'center'
-  }
-]
 
 const GET_CRYPTOCURRENCIES = gql`
   {
@@ -135,16 +107,12 @@ const CryptoBalanceAlerts = ({
     }
   }
 
-  const findField = name => R.find(R.propEq('name', name))(overrideElements)
-  const findSize = name => findField(name).size
-  const findAlign = name => findField(name).textAlign
-
   const getSuggestions = () => {
     const overridenCryptos = R.map(
       override => override[CRYPTOCURRENCY_KEY],
       setupValues[OVERRIDES_KEY]
     )
-    return R.without(overridenCryptos, cryptoCurrencies)
+    return R.without(overridenCryptos, cryptoCurrencies ?? [])
   }
 
   const { [OVERRIDES_KEY]: overrides } = setupValues
@@ -168,6 +136,54 @@ const CryptoBalanceAlerts = ({
       .max(99999999)
       .required()
   })
+
+  const elements = [
+    {
+      name: CRYPTOCURRENCY_KEY,
+      display: 'Cryptocurrency',
+      size: 166,
+      textAlign: 'left',
+      view: R.path(['display']),
+      type: 'text',
+      input: Autocomplete,
+      inputProps: {
+        suggestions: getSuggestions(),
+        onFocus: () => setError(null)
+      }
+    },
+    {
+      name: LOW_BALANCE_KEY,
+      display: 'Low Balance',
+      size: 140,
+      textAlign: 'right',
+      view: it => it,
+      type: 'text',
+      input: TextInputFormik,
+      inputProps: {
+        suffix: 'EUR', // TODO: Current currency?
+        className: classes.textInput,
+        onFocus: () => setError(null)
+      }
+    },
+    {
+      name: HIGH_BALANCE_KEY,
+      display: 'High Balance',
+      size: 140,
+      textAlign: 'right',
+      view: it => it,
+      type: 'text',
+      input: TextInputFormik,
+      inputProps: {
+        suffix: 'EUR', // TODO: Current currency?
+        className: classes.textInput,
+        onFocus: () => setError(null)
+      }
+    },
+    {
+      name: 'delete',
+      size: 91
+    }
+  ]
 
   if (!cryptoCurrencies) return null
 
@@ -227,53 +243,7 @@ const CryptoBalanceAlerts = ({
             initialValues={initialValues}
             validationSchema={validationSchema}
             data={setupValues[OVERRIDES_KEY]}
-            elements={[
-              {
-                name: CRYPTOCURRENCY_KEY,
-                display: 'Cryptocurrency',
-                size: findSize(CRYPTOCURRENCY_KEY),
-                textAlign: findAlign(CRYPTOCURRENCY_KEY),
-                view: R.path(['display']),
-                type: 'text',
-                input: Autocomplete,
-                inputProps: {
-                  suggestions: getSuggestions(),
-                  onFocus: () => setError(null)
-                }
-              },
-              {
-                name: LOW_BALANCE_KEY,
-                display: 'Low Balance',
-                size: findSize(LOW_BALANCE_KEY),
-                textAlign: findAlign(LOW_BALANCE_KEY),
-                view: it => it,
-                type: 'text',
-                input: TextInputFormik,
-                inputProps: {
-                  suffix: 'EUR',
-                  className: classes.textInput,
-                  onFocus: () => setError(null)
-                }
-              },
-              {
-                name: HIGH_BALANCE_KEY,
-                display: 'High Balance',
-                size: findSize(HIGH_BALANCE_KEY),
-                textAlign: findAlign(HIGH_BALANCE_KEY),
-                view: it => it,
-                type: 'text',
-                input: TextInputFormik,
-                inputProps: {
-                  suffix: 'EUR',
-                  className: classes.textInput,
-                  onFocus: () => setError(null)
-                }
-              },
-              {
-                name: 'delete',
-                size: findSize(DELETE_KEY)
-              }
-            ]}
+            elements={elements}
           />
         )}
       </div>
