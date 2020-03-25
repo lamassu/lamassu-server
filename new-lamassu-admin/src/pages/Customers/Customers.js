@@ -44,7 +44,7 @@ const Customers = () => {
     {
       header: 'Phone',
       width: 166,
-      view: it => parsePhoneNumberFromString(it.phone).formatInternational()
+      view: it => parsePhoneNumberFromString(it.phone)?.formatInternational()
     },
     {
       header: 'Total TXs',
@@ -56,23 +56,28 @@ const Customers = () => {
       header: 'Total spent',
       width: 188,
       textAlign: 'right',
-      view: it => `${Number.parseFloat(it.totalSpent)} ${it.lastTxFiatCode}`
+      view: it =>
+        it.lastTxFiatCode
+          ? `${Number.parseFloat(it.totalSpent)} ${it.lastTxFiatCode}`
+          : null
     },
     {
       header: 'Last active',
       width: 197,
-      view: it => moment.utc(it.lastActive).format('YYYY-MM-D')
+      view: it =>
+        it.lastActive ? moment.utc(it.lastActive).format('YYYY-MM-D') : null
     },
     {
       header: 'Last transaction',
       width: 198,
       textAlign: 'right',
-      view: it => (
-        <>
-          {`${Number.parseFloat(it.lastTxFiat)} ${it.lastTxFiatCode} `}
-          {it.lastTxClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />}
-        </>
-      )
+      view: it =>
+        it.lastTxFiatCode ? (
+          <div>
+            {`${Number.parseFloat(it.lastTxFiat)} ${it.lastTxFiatCode} `}
+            {it.lastTxClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />}
+          </div>
+        ) : null
     }
   ]
 
@@ -95,9 +100,10 @@ const Customers = () => {
       </div>
       <DataTable
         elements={elements}
-        data={R.sortWith([R.descend('lastActive')])(
-          R.path(['customers'])(customersResponse) ?? []
-        )}
+        data={R.sortWith([
+          R.ascend(R.prop('name')),
+          R.descend(R.prop('lastActive'))
+        ])(R.path(['customers'])(customersResponse) ?? [])}
       />
     </>
   )
