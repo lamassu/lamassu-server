@@ -90,6 +90,7 @@ const Tr = ({ error, errorMessage, children, className }) => {
   const classes = useStyles()
   const cardClasses = { root: classes.cardContentRoot }
   const classNames = {
+    [classes.tr]: true,
     [classes.trError]: error
   }
 
