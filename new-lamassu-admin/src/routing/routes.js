@@ -15,6 +15,8 @@ import Services from 'src/pages/Services/Services'
 import Transactions from 'src/pages/Transactions/Transactions'
 import WalletSettings from 'src/pages/Wallet/Wallet'
 import MachineStatus from 'src/pages/maintenance/MachineStatus'
+import Customers from 'src/pages/Customers'
+import Triggers from 'src/pages/Triggers'
 import { namespaces } from 'src/utils/config'
 
 const tree = [
@@ -112,6 +114,11 @@ const tree = [
       return () => <Redirect to={this.children[0].route} />
     },
     children: [
+      {
+        key: 'triggers',
+        label: 'Triggers',
+        route: '/compliance/triggers'
+      },
       {
         key: 'customers',
         label: 'Customers',
