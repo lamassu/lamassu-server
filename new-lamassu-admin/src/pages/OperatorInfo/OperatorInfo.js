@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import * as R from 'ramda'
 import { makeStyles } from '@material-ui/core'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 
 import Sidebar from 'src/components/Sidebar'
 import Title from 'src/components/Title'
@@ -53,7 +53,6 @@ const OperatorInfo = () => {
           {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
           {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
           {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
-          {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
         </div>
       </div>
     </>

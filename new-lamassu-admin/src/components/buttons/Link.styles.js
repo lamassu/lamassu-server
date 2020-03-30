@@ -1,11 +1,11 @@
 import { fade } from '@material-ui/core/styles/colorManipulator'
 
+import typographyStyles from 'src/components/typography/styles'
 import {
   white,
   linkPrimaryColor,
   linkSecondaryColor
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { h4 } = typographyStyles
 
@@ -24,7 +24,8 @@ export default {
     border: 'none',
     backgroundColor: 'transparent',
     cursor: 'pointer',
-    padding: '0'
+    padding: '0',
+    height: '100%'
   },
   primary: {
     extend: color(linkPrimaryColor)

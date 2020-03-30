@@ -20,41 +20,48 @@ const MainForm = memo(({ value, save, auxData, validationSchema }) => {
 
   return (
     <EditableTable
+      name="locale"
+      title="Default Settings"
+      altTitleColor
+      initialValues={{ country: null }}
+      enableEdit
+      onDelete={() => {}}
+      setEditing={() => {}}
       save={save}
       validationSchema={validationSchema}
       data={R.of(value)}
       elements={[
         {
           name: 'country',
-          size: sizes.country,
+          width: sizes.country,
           view: R.path(['display']),
           input: Autocomplete,
           inputProps: { suggestions: getData(['countries']) }
         },
         {
           name: 'fiatCurrency',
-          size: sizes.fiatCurrency,
+          width: sizes.fiatCurrency,
           view: R.path(['code']),
           input: Autocomplete,
           inputProps: { suggestions: getData(['currencies']) }
         },
         {
           name: 'languages',
-          size: sizes.languages,
+          width: sizes.languages,
           view: displayCodeArray,
           input: AutocompleteMultiple,
           inputProps: { suggestions: getData(['languages']) }
         },
         {
           name: 'cryptoCurrencies',
-          size: sizes.cryptoCurrencies,
+          width: sizes.cryptoCurrencies,
           view: displayCodeArray,
           input: AutocompleteMultiple,
           inputProps: { suggestions: getData(['cryptoCurrencies']) }
         },
         {
           name: 'showRates',
-          size: sizes.showRates,
+          width: sizes.showRates,
           textAlign: 'center',
           view: it => (it ? 'true' : 'false'),
           input: Checkbox

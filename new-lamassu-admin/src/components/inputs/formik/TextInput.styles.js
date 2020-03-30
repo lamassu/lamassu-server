@@ -1,10 +1,10 @@
+import typographyStyles from 'src/components/typography/styles'
 import {
   fontColor,
   offColor,
   inputFontSize,
   inputFontWeight
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { info3 } = typographyStyles
 

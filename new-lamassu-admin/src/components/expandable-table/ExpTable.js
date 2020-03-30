@@ -8,10 +8,10 @@ import {
   CellMeasurerCache
 } from 'react-virtualized'
 
+import { THead, Tr, Td, Th } from 'src/components/fake-table/Table'
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from 'src/styling/icons/action/expand/open.svg'
 import { mainWidth } from 'src/styling/variables'
-import { THead, Tr, Td, Th } from 'src/components/fake-table/Table'
 
 const styles = {
   expandButton: {
@@ -48,25 +48,19 @@ const ExpRow = ({
           .slice(0, -1)
           .map(
             (
-              {
-                header,
-                size,
-                className,
-                textAlign,
-                view = it => it?.toString()
-              },
+              { width, className, textAlign, view = it => it?.toString() },
               idx
             ) => (
               <Td
                 key={idx}
-                size={size}
+                width={width}
                 className={className}
                 textAlign={textAlign}>
                 {view(data)}
               </Td>
             )
           )}
-        <Td size={elements[elements.length - 1].size}>
+        <Td width={elements[elements.length - 1].width}>
           <button
             onClick={() => expandRow(id)}
             className={classes.expandButton}>
@@ -77,7 +71,7 @@ const ExpRow = ({
       </Tr>
       {expanded && (
         <Tr className={classes.detailsRow}>
-          <Td size={mainWidth}>
+          <Td width={mainWidth}>
             <Details it={data} />
           </Td>
         </Tr>
@@ -86,8 +80,8 @@ const ExpRow = ({
   )
 }
 
-/* rows = [{ columns = [{ name, value, className, textAlign, size }], details, className, error, errorMessage }]
- * Don't forget to include the size of the last (expand button) column!
+/* rows = [{ columns = [{ name, value, className, textAlign, width }], details, className, error, errorMessage }]
+ * Don't forget to include the width of the last (expand button) column!
  */
 const ExpTable = ({
   elements = [],
@@ -133,10 +127,10 @@ const ExpTable = ({
     <>
       <div>
         <THead>
-          {elements.map(({ size, className, textAlign, header }, idx) => (
+          {elements.map(({ width, className, textAlign, header }, idx) => (
             <Th
               key={idx}
-              size={size}
+              width={width}
               className={className}
               textAlign={textAlign}>
               {header}

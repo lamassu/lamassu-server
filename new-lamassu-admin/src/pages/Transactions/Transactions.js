@@ -70,29 +70,29 @@ const Transactions = () => {
   const elements = [
     {
       header: '',
-      size: 62,
+      width: 62,
       view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />)
     },
     {
       header: 'Machine',
       name: 'machineName',
-      size: 180,
+      width: 180,
       view: R.path(['machineName'])
     },
     {
       header: 'Customer',
-      size: 162,
+      width: 162,
       view: getCustomerDisplayName
     },
     {
       header: 'Cash',
-      size: 110,
+      width: 110,
       textAlign: 'right',
       view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
     },
     {
       header: 'Crypto',
-      size: 141,
+      width: 141,
       textAlign: 'right',
       view: it =>
         `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
@@ -103,27 +103,27 @@ const Transactions = () => {
       header: 'Address',
       view: R.path(['toAddress']),
       className: classes.overflowTd,
-      size: 136
+      width: 136
     },
     {
       header: 'Date (UTC)',
       view: it => moment.utc(it.created).format('YYYY-MM-D'),
       textAlign: 'right',
-      size: 124
+      width: 124
     },
     {
       header: 'Time (UTC)',
       view: it => moment.utc(it.created).format('HH:mm:ss'),
       textAlign: 'right',
-      size: 124
+      width: 124
     },
     {
       header: '', // Trade
       view: () => {},
-      size: 90
+      width: 90
     },
     {
-      size: 71
+      width: 71
     }
   ]
 
