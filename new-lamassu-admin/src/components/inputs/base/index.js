@@ -1,6 +1,7 @@
+import Autocomplete from './Autocomplete'
 import Checkbox from './Checkbox'
-import { TextInput } from './TextInput'
-import Switch from './Switch'
 import RadioGroup from './RadioGroup'
+import Switch from './Switch'
+import TextInput from './TextInput'
 
-export { Checkbox, TextInput, Switch, RadioGroup }
+export { Checkbox, TextInput, Switch, RadioGroup, Autocomplete }

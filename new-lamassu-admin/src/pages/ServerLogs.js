@@ -1,11 +1,10 @@
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
+import { gql } from 'apollo-boost'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
 
-import typographyStyles from 'src/components/typography/styles'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
 import Uptime from 'src/components/Uptime'
@@ -20,6 +19,7 @@ import {
   TableCell
 } from 'src/components/table'
 import { Info3 } from 'src/components/typography'
+import typographyStyles from 'src/components/typography/styles'
 import { ReactComponent as DownloadActive } from 'src/styling/icons/button/download/white.svg'
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { offColor } from 'src/styling/variables'

@@ -1,10 +1,10 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { gql } from 'apollo-boost'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import Title from 'src/components/Title'
 import { DataTable } from 'src/components/dataTable'
@@ -38,34 +38,34 @@ const Customers = () => {
   const elements = [
     {
       header: 'Name',
-      size: 277,
+      width: 277,
       view: R.path(['name'])
     },
     {
       header: 'Phone',
-      size: 166,
+      width: 166,
       view: it => parsePhoneNumberFromString(it.phone).formatInternational()
     },
     {
       header: 'Total TXs',
-      size: 174,
+      width: 174,
       textAlign: 'right',
       view: it => `${Number.parseInt(it.totalTxs)}`
     },
     {
       header: 'Total spent',
-      size: 188,
+      width: 188,
       textAlign: 'right',
       view: it => `${Number.parseFloat(it.totalSpent)} ${it.lastTxFiatCode}`
     },
     {
       header: 'Last active',
-      size: 197,
+      width: 197,
       view: it => moment.utc(it.lastActive).format('YYYY-MM-D')
     },
     {
       header: 'Last transaction',
-      size: 198,
+      width: 198,
       textAlign: 'right',
       view: it => (
         <>

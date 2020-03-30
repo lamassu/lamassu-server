@@ -1,14 +1,13 @@
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState, memo } from 'react'
 
-import { H4 } from 'src/components/typography'
 import { Link } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { Table, TableBody, TableRow, TableCell } from 'src/components/table'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import BooleanCell from 'src/components/tables/BooleanCell'
+import { H4 } from 'src/components/typography'
 import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
-import { ReactComponent as TrueIcon } from 'src/styling/icons/table/true.svg'
-import { ReactComponent as FalseIcon } from 'src/styling/icons/table/false.svg'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 
 import { booleanPropertiesTableStyles } from './BooleanPropertiesTable.styles'
 
@@ -82,7 +81,7 @@ const BooleanPropertiesTable = memo(
                 <TableRow key={idx} size="sm" className={classes.tableRow}>
                   <TableCell className={classes.tableCell}>
                     {element.display}
-                    {editing ? (
+                    {editing && (
                       <RadioGroup
                         options={radioButtonOptions}
                         value={element.value}
@@ -94,11 +93,8 @@ const BooleanPropertiesTable = memo(
                         }
                         className={classes.radioButtons}
                       />
-                    ) : element.value ? (
-                      <TrueIcon />
-                    ) : (
-                      <FalseIcon />
                     )}
+                    {!editing && <BooleanCell value={element.value} />}
                   </TableCell>
                 </TableRow>
               ))}

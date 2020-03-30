@@ -1,13 +1,13 @@
-import { makeStyles } from '@material-ui/core'
 import { useQuery } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
 import { gql } from 'apollo-boost'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
-import ExpTable from '../../components/expandable-table/ExpTable'
 import { MainStatus } from '../../components/Status'
 import Title from '../../components/Title'
+import ExpTable from '../../components/expandable-table/ExpTable'
 import { ReactComponent as WarningIcon } from '../../styling/icons/status/pumpkin.svg'
 import { ReactComponent as ErrorIcon } from '../../styling/icons/status/tomato.svg'
 import { mainStyles } from '../Transactions/Transactions.styles'
@@ -41,36 +41,36 @@ const MachineStatus = () => {
   const elements = [
     {
       header: 'Machine Name',
-      size: 232,
+      width: 232,
       textAlign: 'left',
       view: m => m.name
     },
     {
       header: 'Status',
-      size: 349,
+      width: 349,
       textAlign: 'left',
       view: m => <MainStatus statuses={m.statuses} />
     },
     {
       header: 'Last ping',
-      size: 192,
+      width: 192,
       textAlign: 'left',
       view: m => moment(m.lastPing).fromNow()
     },
     {
       header: 'Ping Time',
-      size: 155,
+      width: 155,
       textAlign: 'left',
       view: m => m.pingTime || 'unknown'
     },
     {
       header: 'Software Version',
-      size: 201,
+      width: 201,
       textAlign: 'left',
       view: m => m.softwareVersion || 'unknown'
     },
     {
-      size: 71
+      width: 71
     }
   ]
 

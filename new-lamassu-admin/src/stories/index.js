@@ -12,10 +12,10 @@ import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
 import React from 'react'
 
-import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
-import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ActionButton, Button, Link } from 'src/components/buttons'
 import { Radio, TextInput, Switch } from 'src/components/inputs'
+import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
+import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 
 import ConfirmDialog from '../components/ConfirmDialog'
 import {
@@ -29,7 +29,11 @@ import {
   Info2,
   Mono
 } from '../components/typography'
-import { inputFontFamily, secondaryColor } from '../styling/variables'
+import {
+  inputFontFamily,
+  secondaryColor,
+  fontColor
+} from '../styling/variables'
 
 const jss = create({
   plugins: [extendJss(), ...jssPreset().plugins]
@@ -77,6 +81,19 @@ const theme = createMuiTheme({
       light: secondaryColor,
       dark: secondaryColor,
       main: secondaryColor
+    }
+  },
+  overrides: {
+    MuiInputLabel: {
+      paddingLeft: 4
+    },
+    MuiFormLabel: {
+      root: {
+        color: fontColor,
+        '&$focused': {
+          color: 'blue'
+        }
+      }
     }
   }
 })

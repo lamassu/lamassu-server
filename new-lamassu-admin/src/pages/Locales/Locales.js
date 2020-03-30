@@ -1,7 +1,7 @@
-import React, { memo } from 'react'
-import * as Yup from 'yup'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
+import React, { memo } from 'react'
+import * as Yup from 'yup'
 
 import Subtitle from 'src/components/Subtitle'
 import Title from 'src/components/Title'

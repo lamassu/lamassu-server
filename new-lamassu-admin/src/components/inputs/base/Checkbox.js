@@ -19,8 +19,6 @@ const useStyles = makeStyles({
 const CheckboxInput = ({ name, onChange, value, label, ...props }) => {
   const classes = useStyles()
 
-  // const { name, onChange, value } = props.field
-
   return (
     <Checkbox
       id={name}

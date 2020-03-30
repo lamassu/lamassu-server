@@ -3,6 +3,7 @@ import AddButton from './AddButton'
 import Button from './Button'
 import FeatureButton from './FeatureButton'
 import IDButton from './IDButton'
+import IconButton from './IconButton'
 import Link from './Link'
 import SimpleButton from './SimpleButton'
 
@@ -12,6 +13,7 @@ export {
   SimpleButton,
   ActionButton,
   FeatureButton,
+  IconButton,
   IDButton,
   AddButton
 }
