@@ -1,9 +1,11 @@
-import React from 'react'
-import classnames from 'classnames'
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
+import React from 'react'
 
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/white.svg'
+import { Table, THead, TBody, Td, Th } from 'src/components/fake-table/Table'
+import typographyStyles from 'src/components/typography/styles'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/white.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 import {
   offColor,
@@ -11,8 +13,6 @@ import {
   tableNewDisabledHeaderColor,
   secondaryColorDarker
 } from 'src/styling/variables'
-import { Table, THead, TBody, Td, Th } from 'src/components/fake-table/Table'
-import typographyStyles from 'src/components/typography/styles'
 
 const { label1, p } = typographyStyles
 
@@ -106,11 +106,11 @@ const SingleRowTable = ({
       {items && (
         <Table className={classnames(className, classes.wrapper)}>
           <THead className={classnames(headerClasses)}>
-            <Th size={width - editButtonSize}>
+            <Th width={width - editButtonSize}>
               {title}
               {newService && <span className={classes.spanNew}>New</span>}
             </Th>
-            <Th size={editButtonSize} className={classes.buttonTh}>
+            <Th width={editButtonSize} className={classes.buttonTh}>
               {!disabled && (
                 <button className={classes.editButton} onClick={onEdit}>
                   <EditIcon />
@@ -124,7 +124,7 @@ const SingleRowTable = ({
             </Th>
           </THead>
           <TBody className={classnames(bodyClasses)}>
-            <Td size={width}>
+            <Td width={width}>
               {!disabled && (
                 <>
                   {items[0] && (

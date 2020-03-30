@@ -1,11 +1,11 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { gql } from 'apollo-boost'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
-import { useQuery } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
 
 import Sidebar from 'src/components/Sidebar'
 import TableLabel from 'src/components/TableLabel'
@@ -200,22 +200,22 @@ const Funding = () => {
             />
             <Table className={classes.table}>
               <THead>
-                <Td header size={sizes.big}>
+                <Td header width={sizes.big}>
                   Amount Entered
                 </Td>
-                <Td header size={sizes.big}>
+                <Td header width={sizes.big}>
                   Balance After
                 </Td>
-                <Td header size={sizes.big}>
+                <Td header width={sizes.big}>
                   Cash Value
                 </Td>
-                <Td header size={sizes.date}>
+                <Td header width={sizes.date}>
                   Date
                 </Td>
-                <Td header size={sizes.time}>
+                <Td header width={sizes.time}>
                   Time (h:m:s)
                 </Td>
-                <Td header size={sizes.big}>
+                <Td header width={sizes.big}>
                   Performed By
                 </Td>
               </THead>
@@ -224,22 +224,22 @@ const Funding = () => {
                   <Tr
                     key={idx}
                     className={classnames({ [classes.pending]: it.pending })}>
-                    <Td size={sizes.big}>
+                    <Td width={sizes.big}>
                       {it.cryptoAmount} {selected.cryptoCode}
                     </Td>
-                    <Td size={sizes.big}>
+                    <Td width={sizes.big}>
                       {it.balance} {selected.cryptoCode}
                     </Td>
-                    <Td size={sizes.big}>
+                    <Td width={sizes.big}>
                       {it.fiatValue} {selected.fiatCode}
                     </Td>
-                    <Td size={sizes.date}>
+                    <Td width={sizes.date}>
                       {moment(it.date).format('YYYY-MM-DD')}
                     </Td>
-                    <Td size={sizes.time}>
+                    <Td width={sizes.time}>
                       {moment(it.date).format('hh:mm:ss')}
                     </Td>
-                    <Td size={sizes.big}>add</Td>
+                    <Td width={sizes.big}>add</Td>
                   </Tr>
                 ))}
               </TBody>

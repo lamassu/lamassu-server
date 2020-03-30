@@ -2,9 +2,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { memo } from 'react'
 
+import typographyStyles from 'src/components/typography/styles'
 import { ReactComponent as AddIcon } from 'src/styling/icons/button/add/zodiac.svg'
 import { zircon, zircon2, comet, fontColor, white } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { p } = typographyStyles
 

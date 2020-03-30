@@ -19,15 +19,18 @@ const DataTable = memo(({ elements, data }) => {
     <>
       <div>
         <THead>
-          {elements.map(({ size, className, textAlign, header }, idx) => (
-            <Th
-              key={idx}
-              size={size}
-              className={className}
-              textAlign={textAlign}>
-              {header}
-            </Th>
-          ))}
+          {elements.map(
+            ({ width, size, className, textAlign, header }, idx) => (
+              <Th
+                key={idx}
+                size={size}
+                width={width}
+                className={className}
+                textAlign={textAlign}>
+                {header}
+              </Th>
+            )
+          )}
         </THead>
       </div>
       <div style={{ flex: '1 1 auto' }}>
@@ -52,8 +55,8 @@ const DataTable = memo(({ elements, data }) => {
                       {elements.map(
                         (
                           {
-                            header,
                             size,
+                            width,
                             className,
                             textAlign,
                             view = it => it?.toString()
@@ -63,6 +66,7 @@ const DataTable = memo(({ elements, data }) => {
                           <Td
                             key={idx}
                             size={size}
+                            width={width}
                             className={className}
                             textAlign={textAlign}>
                             {view(data[index])}

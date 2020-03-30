@@ -73,7 +73,7 @@ export const ConfirmDialog = memo(
             autoFocus
             id="confirm-input"
             type="text"
-            large
+            size="lg"
             fullWidth
             value={value}
             touched={{}}

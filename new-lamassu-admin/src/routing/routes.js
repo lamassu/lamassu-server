@@ -16,25 +16,43 @@ import Transactions from 'src/pages/Transactions/Transactions'
 import MachineStatus from 'src/pages/maintenance/MachineStatus'
 
 const tree = [
-  { key: 'transactions', label: 'Transactions', route: '/transactions' },
-  // maintenence: { label: 'Maintenence', children: [{ label: 'Locale', route: '/locale' }] },
-  // analytics: { label: 'Analytics', children: [{ label: 'Locale', route: '/locale' }] },
+  {
+    key: 'transactions',
+    label: 'Transactions',
+    route: '/transactions',
+    component: Transactions
+  },
   {
     key: 'maintenance',
     label: 'Maintenance',
     route: '/maintenance',
+    get component() {
+      return () => <Redirect to={this.children[0].route} />
+    },
     children: [
-      { key: 'logs', label: 'Logs', route: '/maintenance/logs' },
-      { key: 'fuding', label: 'Funding', route: '/maintenance/funding' },
+      {
+        key: 'logs',
+        label: 'Logs',
+        route: '/maintenance/logs',
+        component: MachineLogs
+      },
+      {
+        key: 'fuding',
+        label: 'Funding',
+        route: '/maintenance/funding',
+        component: Funding
+      },
       {
         key: 'server-logs',
         label: 'Server',
-        route: '/maintenance/server-logs'
+        route: '/maintenance/server-logs',
+        component: ServerLogs
       },
       {
         key: 'machine-status',
         label: 'Machine Status',
-        route: '/maintenance/machine-status'
+        route: '/maintenance/machine-status',
+        component: MachineStatus
       }
     ]
   },
@@ -42,87 +60,74 @@ const tree = [
     key: 'settings',
     label: 'Settings',
     route: '/settings',
+    get component() {
+      return () => <Redirect to={this.children[0].route} />
+    },
     children: [
       {
         key: 'commissions',
         label: 'Commissions',
-        route: '/settings/commissions'
+        route: '/settings/commissions',
+        component: Commissions
       },
-      { key: 'locale', label: 'Locale', route: '/settings/locale' },
+      {
+        key: 'locale',
+        label: 'Locale',
+        route: '/settings/locale',
+        component: Locales
+      },
       {
         key: 'services',
         label: '3rd party services',
-        route: '/settings/3rd-party-services'
+        route: '/settings/3rd-party-services',
+        component: Services
       },
       {
         key: 'notifications',
         label: 'Notifications',
-        route: '/settings/notifications'
+        route: '/settings/notifications',
+        component: Notifications
       },
-      { key: 'info', label: 'Operator Info', route: '/settings/operator-info' }
+      {
+        key: 'info',
+        label: 'Operator Info',
+        route: '/settings/operator-info',
+        component: OperatorInfo
+      }
     ]
   },
   {
     key: 'compliance',
     label: 'Compliance',
     route: '/compliance',
+    get component() {
+      return () => <Redirect to={this.children[0].route} />
+    },
     children: [
-      // {
-      //   key: 'triggers',
-      //   label: 'Triggers',
-      //   route: '/compliance/triggers'
-      // },
       {
         key: 'customers',
         label: 'Customers',
-        route: '/compliance/customers'
+        route: '/compliance/customers',
+        component: Customers
       }
-      // {
-      //   key: 'blacklist',
-      //   label: 'Blacklist',
-      //   route: '/compliance/blacklist'
-      // }
     ]
   }
-  // compliance: { label: 'Compliance', children: [{ label: 'Locale', route: '/locale' }] }
 ]
 
-const firstChild = key => {
-  const getRoute = R.path(['children', 0, 'route'])
-  const withKey = R.find(R.propEq('key', key))
-  return R.compose(getRoute, withKey)(tree)
-}
+const map = R.map(R.when(R.has('children'), R.prop('children')))
+const leafRoutes = R.compose(R.flatten, map)(tree)
+const parentRoutes = R.filter(R.has('children'))(tree)
+const flattened = R.concat(leafRoutes, parentRoutes)
 
 const Routes = () => (
   <Switch>
     <Route exact path="/" />
-    <Route
-      path="/settings"
-      exact
-      component={() => <Redirect to={firstChild('settings')} />}
-    />
-    <Route
-      path="/maintenance"
-      exact
-      component={() => <Redirect to={firstChild('maintenance')} />}
-    />
-    <Route
-      path="/compliance"
-      exact
-      component={() => <Redirect to={firstChild('compliance')} />}
-    />
-    <Route path="/settings/commissions" component={Commissions} />
-    <Route path="/settings/locale" component={Locales} />
-    <Route path="/settings/3rd-party-services" component={Services} />
-    <Route path="/settings/notifications" component={Notifications} />
-    <Route path="/settings/operator-info" component={OperatorInfo} />
-    <Route path="/maintenance/logs" component={MachineLogs} />
-    <Route path="/maintenance/funding" component={Funding} />
-    <Route path="/maintenance/server-logs" component={ServerLogs} />
-    <Route path="/transactions" component={Transactions} />
     <Route path="/register" component={AuthRegister} />
-    <Route path="/maintenance/machine-status" component={MachineStatus} />
-    <Route path="/compliance/customers" component={Customers} />
+    {flattened.map(({ route, component: Page, key }) => (
+      <Route path={route} key={key}>
+        <Page name={key} />
+      </Route>
+    ))}
   </Switch>
 )
 
