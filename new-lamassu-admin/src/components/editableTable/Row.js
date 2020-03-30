@@ -43,25 +43,29 @@ const ERow = memo(({ elements }) => {
           </Td>
         )
       )}
-      <Td size={175}>
-        {editing ? (
-          <>
-            <Link
-              style={{ marginRight: '20px' }}
-              color="secondary"
-              onClick={innerCancel}>
-              Cancel
+
+      {!elements.find(({ name }) => name === 'edit') && (
+        // fallback to this edit action buttons if no custom one was provided
+        <Td size={175}>
+          {editing ? (
+            <>
+              <Link
+                style={{ marginRight: '20px' }}
+                color="secondary"
+                onClick={innerCancel}>
+                Cancel
+              </Link>
+              <Link color="primary" onClick={innerSave}>
+                Save
+              </Link>
+            </>
+          ) : (
+            <Link color="primary" onClick={() => setEditing(true)}>
+              Edit
             </Link>
-            <Link color="primary" onClick={innerSave}>
-              Save
-            </Link>
-          </>
-        ) : (
-          <Link color="primary" onClick={() => setEditing(true)}>
-            Edit
-          </Link>
-        )}
-      </Td>
+          )}
+        </Td>
+      )}
     </Tr>
   )
 })

@@ -14,7 +14,10 @@ const ETable = memo(({ elements = [], data = [], save, validationSchema }) => {
             {header || startCase(name)}
           </Td>
         ))}
-        <Td header size={175} />
+        {!elements.find(({ name }) => name === 'edit') && (
+          // default to this 'edit' header when no custom one was provided
+          <Td header size={175} />
+        )}
       </THead>
       <TBody>
         {data.map((it, idx) => (
