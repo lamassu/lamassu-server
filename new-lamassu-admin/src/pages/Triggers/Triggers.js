@@ -37,7 +37,7 @@ const Triggers = () => {
           </div>
         </div>
         <div className={classes.headerLabels}>
-          <Link color="primary">Add new trigger</Link>
+          <Link color="primary">+ Add new trigger</Link>
         </div>
       </div>
       <EditableTable
