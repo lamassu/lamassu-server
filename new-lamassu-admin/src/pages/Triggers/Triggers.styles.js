@@ -1,11 +1,14 @@
 import baseStyles from 'src/pages/Logs.styles'
+import { booleanPropertiesTableStyles } from 'src/components/booleanPropertiesTable/BooleanPropertiesTable.styles'
 
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
+const { rowWrapper } = booleanPropertiesTableStyles
 
 const mainStyles = {
   titleWrapper,
   titleAndButtonsContainer,
   buttonsWrapper,
+  rowWrapper,
   modal: {
     display: 'flex',
     alignItems: 'center',
@@ -46,6 +49,20 @@ const mainStyles = {
   modalBody: {
     display: 'flex',
     flexGrow: 2
+  },
+  transparentButton: {
+    '& > *': {
+      margin: 'auto 12px'
+    },
+    '& button': {
+      border: 'none',
+      backgroundColor: 'transparent',
+      cursor: 'pointer'
+    }
+  },
+  popoverContent: {
+    width: 272,
+    padding: [[10, 15]]
   }
 }
 
