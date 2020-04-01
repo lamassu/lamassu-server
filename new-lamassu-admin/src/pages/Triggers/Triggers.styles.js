@@ -1,14 +1,32 @@
 import baseStyles from 'src/pages/Logs.styles'
 import { booleanPropertiesTableStyles } from 'src/components/booleanPropertiesTable/BooleanPropertiesTable.styles'
 
-const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
-const { rowWrapper } = booleanPropertiesTableStyles
+const {
+  titleWrapper,
+  titleAndButtonsContainer,
+  buttonsWrapper,
+  button
+} = baseStyles
+const { rowWrapper, radioButtons } = booleanPropertiesTableStyles
 
 const mainStyles = {
   titleWrapper,
   titleAndButtonsContainer,
   buttonsWrapper,
+  button,
   rowWrapper,
+  radioButtons,
+  columnWrapper: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  topLeftAligned: {
+    alignSelf: 'flex-start'
+  },
+  bottomRightAligned: {
+    alignSelf: 'flex-end',
+    marginLeft: 'auto'
+  },
   modal: {
     display: 'flex',
     alignItems: 'center',
