@@ -81,6 +81,14 @@ const mainStyles = {
   popoverContent: {
     width: 272,
     padding: [[10, 15]]
+  },
+  radioGroupWrapper: {
+    marginBottom: 46
+  },
+  textInput: {
+    width: 96,
+    height: 40,
+    marginRight: 8
   }
 }
 
