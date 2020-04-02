@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { makeStyles, Modal } from '@material-ui/core'
+import { makeStyles, Modal, Paper } from '@material-ui/core'
 
 import Title from 'src/components/Title'
 import { FeatureButton, Link } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { ReactComponent as ConfigureInverseIcon } from 'src/styling/icons/button/configure/white.svg'
 import { ReactComponent as Configure } from 'src/styling/icons/button/configure/zodiac.svg'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 
 import { NewTriggerWizard } from './NewTriggerWizard'
 import { mainStyles } from './Triggers.styles'
@@ -29,6 +30,10 @@ const Triggers = () => {
   }
 
   const handleCloseWizard = () => {
+    handleFinishWizard()
+  }
+
+  const handleFinishWizard = () => {
     setWizardModalOpen(false)
   }
 
@@ -79,9 +84,12 @@ const Triggers = () => {
           open={wizardModalOpen}
           onClose={handleCloseWizard}
           className={classes.modal}>
-          <div>
-            <NewTriggerWizard handleClose={handleCloseWizard} />
-          </div>
+          <Paper className={classes.paper}>
+            <button onClick={handleCloseWizard}>
+              <CloseIcon />
+            </button>
+            <NewTriggerWizard finish={handleFinishWizard} />
+          </Paper>
         </Modal>
       )}
     </>
