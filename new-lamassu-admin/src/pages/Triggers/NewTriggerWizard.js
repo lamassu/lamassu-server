@@ -262,7 +262,7 @@ const SelectTriggerRequirements = () => {
   )
 }
 
-const Wizard = ({ finish, children }) => {
+const Wizard = ({ nextStepText, finalStepText, finish, children }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
   const classes = useStyles()
@@ -278,14 +278,42 @@ const Wizard = ({ finish, children }) => {
   }
 
   const currentStep = children[currentStepIndex]
+  const finalStepIndex = children.length - 1
+  const isFinalStep = currentStepIndex === finalStepIndex
 
   return (
     <>
-      <div className={classes.topLeftAligned}>{currentStep}</div>
+      <div className={classes.topLeftAligned}>
+        <div className={classes.wizardStepsWrapper}>
+          {children.map((e, i) => {
+            const elementToRender = []
+
+            if (i < currentStepIndex)
+              elementToRender.push(
+                <div className={classes.completedStepCircle}>
+                  <div className={classes.completedStepCheck} />
+                </div>
+              )
+            else if (i === currentStepIndex)
+              elementToRender.push(<div className={classes.currentStep} />)
+            else elementToRender.push(<div className={classes.unreachedStep} />)
+
+            if (i < currentStepIndex)
+              elementToRender.push(<div className={classes.reachedStepLine} />)
+            else if (i < finalStepIndex)
+              elementToRender.push(
+                <div className={classes.unreachedStepLine} />
+              )
+
+            return elementToRender
+          })}
+        </div>
+        {currentStep}
+      </div>
       <div className={classes.bottomRightAligned}>
         <div className={classes.button}>
           <Button onClick={() => handleMoveToNextStep(currentStepIndex + 1)}>
-            Next
+            {isFinalStep ? finalStepText : nextStepText}
           </Button>
         </div>
       </div>
@@ -334,7 +362,10 @@ const NewTriggerWizard = ({ finish }) => {
         </div>
       </div>
       <div className={classes.modalBody}>
-        <Wizard finish={finish}>
+        <Wizard
+          nextStepText={'Next'}
+          finalStepText={'Add Trigger'}
+          finish={finish}>
           <SelectTriggerDirection />
           <SelectTriggerRequirements />
           <SelectTriggerType />
