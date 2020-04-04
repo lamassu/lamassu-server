@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
 
 import { H2, H4, TL1, P } from 'src/components/typography'
 import { RadioGroup, TextInput } from 'src/components/inputs'
 import { Button } from 'src/components/buttons'
 import Popper from 'src/components/Popper'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
+import { ReactComponent as CompleteIcon } from 'src/styling/icons/stage/spring/complete.svg'
+import { ReactComponent as CurrentIcon } from 'src/styling/icons/stage/spring/current.svg'
+import { ReactComponent as EmptyIcon } from 'src/styling/icons/stage/spring/empty.svg'
 
 import { mainStyles } from './Triggers.styles'
 
@@ -38,7 +42,7 @@ const SelectTriggerDirection = () => {
   ]
 
   return (
-    <>
+    <div className={classes.columnWrapper}>
       <div className={classes.rowWrapper}>
         <H4>In which type of transactions will it trigger?</H4>
         <div className={classes.transparentButton}>
@@ -65,10 +69,13 @@ const SelectTriggerDirection = () => {
           options={radioButtonOptions}
           value={radioGroupValue}
           onChange={event => handleRadioButtons(event.target.value)}
-          className={classes.radioButtons}
+          className={classnames(
+            classes.radioButtons,
+            classes.stepOneRadioButtons
+          )}
         />
       </div>
-    </>
+    </div>
   )
 }
 
@@ -100,7 +107,7 @@ const SelectTriggerType = () => {
   ]
 
   return (
-    <>
+    <div className={classes.columnWrapper}>
       <div className={classes.rowWrapper}>
         <H4>Choose trigger type</H4>
         <div className={classes.transparentButton}>
@@ -123,22 +130,24 @@ const SelectTriggerType = () => {
         </div>
       </div>
       <div class={classes.radioGroupWrapper}>
-        {/* TODO: fix the radio group alignment */}
         <RadioGroup
           options={radioButtonOptions}
           value={radioGroupValue}
           onChange={event => handleRadioButtons(event.target.value)}
-          className={classes.radioButtons}
+          className={classnames(
+            classes.radioButtons,
+            classes.stepTwoRadioButtons
+          )}
         />
       </div>
       <H4>Threshold</H4>
       <div className={classes.rowWrapper}>
-        {/* TODO: fix styles and allow only monetary values */}
+        {/* TODO: allow only monetary values */}
         <TextInput large className={classes.textInput} />
         {/* TODO: how should we define the fiat code? */}
         <TL1>EUR</TL1>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -200,7 +209,7 @@ const SelectTriggerRequirements = () => {
   ]
 
   return (
-    <>
+    <div className={classes.columnWrapper}>
       <div className={classes.rowWrapper}>
         <H4>Choose a requirement</H4>
         <div className={classes.transparentButton}>
@@ -222,12 +231,14 @@ const SelectTriggerRequirements = () => {
           </button>
         </div>
       </div>
-      {/* TODO: fix the radio group alignment */}
       <RadioGroup
         options={requirementRadioButtonOptions}
         value={requirementRadioGroupValue}
         onChange={event => handleRequirementRadioButtons(event.target.value)}
-        className={classes.radioButtons}
+        className={classnames(
+          classes.radioButtons,
+          classes.stepThreeRadioButtons
+        )}
       />
       <div className={classes.rowWrapper}>
         {/* TODO: why there's a trigger type property two times? Here and on the prior step */}
@@ -251,14 +262,16 @@ const SelectTriggerRequirements = () => {
           </button>
         </div>
       </div>
-      {/* TODO: fix the radio group alignment */}
       <RadioGroup
         options={typeRadioButtonOptions}
         value={typeRadioGroupValue}
         onChange={event => handleTypeRadioButtons(event.target.value)}
-        className={classes.radioButtons}
+        className={classnames(
+          classes.radioButtons,
+          classes.stepThreeRadioButtons
+        )}
       />
-    </>
+    </div>
   )
 }
 
@@ -282,42 +295,31 @@ const Wizard = ({ nextStepText, finalStepText, finish, children }) => {
   const isFinalStep = currentStepIndex === finalStepIndex
 
   return (
-    <>
-      <div className={classes.topLeftAligned}>
-        <div className={classes.wizardStepsWrapper}>
-          {children.map((e, i) => {
-            const elementToRender = []
+    <div className={classes.columnWrapper}>
+      {/* TODO: wizard steps icons are a little strange... */}
+      <div className={classes.wizardStepsWrapper}>
+        {children.map((e, i) => {
+          const elementToRender = []
 
-            if (i < currentStepIndex)
-              elementToRender.push(
-                <div className={classes.completedStepCircle}>
-                  <div className={classes.completedStepCheck} />
-                </div>
-              )
-            else if (i === currentStepIndex)
-              elementToRender.push(<div className={classes.currentStep} />)
-            else elementToRender.push(<div className={classes.unreachedStep} />)
+          if (i < currentStepIndex) elementToRender.push(<CompleteIcon />)
+          else if (i === currentStepIndex) elementToRender.push(<CurrentIcon />)
+          else elementToRender.push(<EmptyIcon />)
 
-            if (i < currentStepIndex)
-              elementToRender.push(<div className={classes.reachedStepLine} />)
-            else if (i < finalStepIndex)
-              elementToRender.push(
-                <div className={classes.unreachedStepLine} />
-              )
+          if (i < currentStepIndex)
+            elementToRender.push(<div className={classes.reachedStepLine} />)
+          else if (i < finalStepIndex)
+            elementToRender.push(<div className={classes.unreachedStepLine} />)
 
-            return elementToRender
-          })}
-        </div>
-        {currentStep}
+          return elementToRender
+        })}
       </div>
+      {currentStep}
       <div className={classes.bottomRightAligned}>
-        <div className={classes.button}>
-          <Button onClick={() => handleMoveToNextStep(currentStepIndex + 1)}>
-            {isFinalStep ? finalStepText : nextStepText}
-          </Button>
-        </div>
+        <Button onClick={() => handleMoveToNextStep(currentStepIndex + 1)}>
+          {isFinalStep ? finalStepText : nextStepText}
+        </Button>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -367,8 +369,8 @@ const NewTriggerWizard = ({ finish }) => {
           finalStepText={'Add Trigger'}
           finish={finish}>
           <SelectTriggerDirection />
-          <SelectTriggerRequirements />
           <SelectTriggerType />
+          <SelectTriggerRequirements />
         </Wizard>
       </div>
     </>
