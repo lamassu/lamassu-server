@@ -2,31 +2,42 @@ import baseStyles from 'src/pages/Logs.styles'
 import { booleanPropertiesTableStyles } from 'src/components/booleanPropertiesTable/BooleanPropertiesTable.styles'
 import { disabledColor, secondaryColor } from 'src/styling/variables'
 
-const {
-  titleWrapper,
-  titleAndButtonsContainer,
-  buttonsWrapper,
-  button
-} = baseStyles
+const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
 const { rowWrapper, radioButtons } = booleanPropertiesTableStyles
 
 const mainStyles = {
   titleWrapper,
   titleAndButtonsContainer,
   buttonsWrapper,
-  button,
   rowWrapper,
   radioButtons,
+  stepOneRadioButtons: {
+    '& > *': {
+      marginRight: 48
+    }
+  },
+  stepTwoRadioButtons: {
+    '& > *': {
+      minWidth: 174,
+      marginRight: 72
+    }
+  },
+  stepThreeRadioButtons: {
+    '& > *': {
+      minWidth: 160,
+      marginRight: 12
+    }
+  },
   columnWrapper: {
     display: 'flex',
-    flexDirection: 'column'
-  },
-  topLeftAligned: {
-    alignSelf: 'flex-start'
+    flexDirection: 'column',
+    height: '100%',
+    width: '100%'
   },
   bottomRightAligned: {
     alignSelf: 'flex-end',
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    marginTop: 'auto'
   },
   modal: {
     display: 'flex',
@@ -67,7 +78,7 @@ const mainStyles = {
   },
   modalBody: {
     display: 'flex',
-    flexGrow: 2
+    height: '100%'
   },
   transparentButton: {
     '& > *': {
@@ -96,38 +107,7 @@ const mainStyles = {
     alignItems: 'center',
     position: 'relative',
     flex: 'wrap',
-    marginTop: 8,
     marginBottom: 10
-  },
-  unreachedStep: {
-    width: 24,
-    height: 24,
-    border: `solid 2px ${disabledColor}`,
-    borderRadius: '50%'
-  },
-  currentStep: {
-    display: 'block',
-    width: 24,
-    height: 24,
-    borderRadius: '100%',
-    backgroundColor: secondaryColor,
-    border: `2px solid ${secondaryColor}`,
-    backgroundClip: 'content-box',
-    padding: 4
-  },
-  completedStepCircle: {
-    width: 24,
-    height: 24,
-    border: `solid 2px ${secondaryColor}`,
-    borderRadius: '50%'
-  },
-  completedStepCheck: {
-    width: 6,
-    height: 10,
-    margin: '4px 7px',
-    borderBottom: `3px solid ${secondaryColor}`,
-    borderRight: `3px solid ${secondaryColor}`,
-    transform: 'rotate(45deg)'
   },
   unreachedStepLine: {
     width: 24,
