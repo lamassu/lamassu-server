@@ -10,7 +10,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
 
   const styles = {
     popover: {
-      zIndex: 1000,
+      zIndex: 3000,
       backgroundColor: bgColor,
       borderRadius: 4
     },
