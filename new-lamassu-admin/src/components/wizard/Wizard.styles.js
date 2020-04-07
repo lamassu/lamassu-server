@@ -12,11 +12,11 @@ const mainStyles = {
     marginLeft: 'auto',
     marginTop: 'auto'
   },
-  modalHeader: {
+  header: {
     display: 'flex',
     marginBottom: 14
   },
-  modalBody: {
+  body: {
     display: 'flex',
     height: '100%'
   },
