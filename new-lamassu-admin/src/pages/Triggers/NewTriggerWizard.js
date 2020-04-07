@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core'
 import { Wizard } from 'src/components/wizard'
 import { H2, P } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import Popper from 'src/components/Popper'
 
 import SelectTriggerDirection from './SelectTriggerDirection'
@@ -21,7 +22,7 @@ const GET_CONFIG = gql`
   }
 `
 
-const NewTriggerWizard = ({ finish }) => {
+const NewTriggerWizard = ({ close, finish }) => {
   const { data: configResponse } = useQuery(GET_CONFIG)
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
 
@@ -41,7 +42,7 @@ const NewTriggerWizard = ({ finish }) => {
 
   const wizardHeader = (
     <div className={classes.rowWrapper}>
-      <H2>New Compliance Trigger</H2>
+      <H2 className={classes.wizardHeaderText}>New Compliance Trigger</H2>
       <div className={classes.transparentButton}>
         <button onClick={handleOpenHelpPopper}>
           <HelpIcon />
@@ -58,6 +59,11 @@ const NewTriggerWizard = ({ finish }) => {
               </P>
             </div>
           </Popper>
+        </button>
+      </div>
+      <div className={classes.transparentButton}>
+        <button onClick={close}>
+          <CloseIcon className={classes.closeButton} />
         </button>
       </div>
     </div>
