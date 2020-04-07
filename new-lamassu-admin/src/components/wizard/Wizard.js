@@ -31,8 +31,8 @@ const Wizard = ({ header, nextStepText, finalStepText, finish, children }) => {
 
   return (
     <>
-      <div className={classes.modalHeader}>{header}</div>
-      <div className={classes.modalBody}>
+      <div className={classes.header}>{header}</div>
+      <div className={classes.body}>
         <div className={classes.columnWrapper}>
           {/* TODO: wizard steps icons are a little strange... */}
           <div className={classes.wizardStepsWrapper}>

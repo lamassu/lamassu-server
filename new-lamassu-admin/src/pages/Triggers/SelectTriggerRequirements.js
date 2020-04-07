@@ -105,7 +105,6 @@ const SelectTriggerRequirements = () => {
         )}
       />
       <div className={classes.rowWrapper}>
-        {/* TODO: why there's a trigger type property two times? Here and on the prior step */}
         <H4>Choose trigger type</H4>
         <div className={classes.transparentButton}>
           <button onClick={handleOpenTypeHelpPopper}>

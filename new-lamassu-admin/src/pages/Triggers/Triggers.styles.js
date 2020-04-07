@@ -1,6 +1,5 @@
 import baseStyles from 'src/pages/Logs.styles'
 import { booleanPropertiesTableStyles } from 'src/components/booleanPropertiesTable/BooleanPropertiesTable.styles'
-import { disabledColor, secondaryColor } from 'src/styling/variables'
 
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
 const { rowWrapper, radioButtons } = booleanPropertiesTableStyles
@@ -27,17 +26,6 @@ const mainStyles = {
       minWidth: 160,
       marginRight: 12
     }
-  },
-  columnWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    width: '100%'
-  },
-  bottomRightAligned: {
-    alignSelf: 'flex-end',
-    marginLeft: 'auto',
-    marginTop: 'auto'
   },
   modal: {
     display: 'flex',
@@ -72,14 +60,6 @@ const mainStyles = {
       flexGrow: 2
     }
   },
-  modalHeader: {
-    display: 'flex',
-    marginBottom: 14
-  },
-  modalBody: {
-    display: 'flex',
-    height: '100%'
-  },
   transparentButton: {
     '& > *': {
       margin: 'auto 12px'
@@ -101,23 +81,6 @@ const mainStyles = {
     width: 96,
     height: 40,
     marginRight: 8
-  },
-  wizardStepsWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    position: 'relative',
-    flex: 'wrap',
-    marginBottom: 10
-  },
-  unreachedStepLine: {
-    width: 24,
-    height: 2,
-    border: `solid 1px ${disabledColor}`
-  },
-  reachedStepLine: {
-    width: 24,
-    height: 2,
-    border: `solid 1px ${secondaryColor}`
   }
 }
 
