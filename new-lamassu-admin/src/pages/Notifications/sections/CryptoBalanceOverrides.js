@@ -15,7 +15,7 @@ const NAME = 'cryptoBalanceOverrides'
 
 const CryptoBalanceOverrides = ({ section }) => {
   const {
-    cryptoCurrencies,
+    cryptoCurrencies = [],
     data,
     save,
     currency,
@@ -32,12 +32,17 @@ const CryptoBalanceOverrides = ({ section }) => {
     return save(newOverrides)
   }
 
-  const getSuggestions = () => {
-    const overridenCryptos = R.map(
-      override => override[CRYPTOCURRENCY_KEY],
-      setupValues
+  const overridenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(setupValues)
+  const suggestionFilter = R.filter(
+    it => !R.contains(it.code, overridenCryptos)
+  )
+  const suggestions = suggestionFilter(cryptoCurrencies)
+
+  const findSuggestion = it => {
+    const coin = R.compose(R.find(R.propEq('code', it?.cryptoCurrency)))(
+      cryptoCurrencies
     )
-    return R.without(overridenCryptos, cryptoCurrencies ?? [])
+    return coin ? [coin] : []
   }
 
   const initialValues = {
@@ -60,7 +65,11 @@ const CryptoBalanceOverrides = ({ section }) => {
       .required()
   })
 
-  const suggestions = getSuggestions()
+  const viewCrypto = it =>
+    R.compose(
+      R.path(['display']),
+      R.find(R.propEq('code', it))
+    )(cryptoCurrencies)
 
   const elements = [
     {
@@ -68,13 +77,13 @@ const CryptoBalanceOverrides = ({ section }) => {
       header: 'Cryptocurrency',
       width: 166,
       size: 'sm',
-      view: R.path(['display']),
+      view: viewCrypto,
       input: Autocomplete,
       inputProps: {
-        options: suggestions,
+        options: it => R.concat(suggestions, findSuggestion(it)),
         limit: null,
-        forceShowValue: true,
-        getOptionSelected: R.eqProps('display')
+        valueProp: 'code',
+        getLabel: R.path(['display'])
       }
     },
     {

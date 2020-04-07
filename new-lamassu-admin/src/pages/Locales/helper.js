@@ -3,77 +3,98 @@ import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
-const displayCodeArray = it => {
-  return it ? R.compose(R.join(', '), R.map(R.path(['code'])))(it) : it
-}
-
 const getFields = (getData, names) => {
   return R.filter(it => R.includes(it.name, names), allFields(getData))
 }
 
-const allFields = getData => [
-  {
-    name: 'machine',
-    width: 200,
-    size: 'sm',
-    view: R.path(['name']),
-    input: Autocomplete,
-    inputProps: {
-      options: getData(['machines']),
-      limit: null,
-      forceShowValue: true,
-      getOptionSelected: R.eqProps('machineId')
-    }
-  },
-  {
-    name: 'country',
-    width: 200,
-    size: 'sm',
-    view: R.path(['display']),
-    input: Autocomplete,
-    inputProps: {
-      options: getData(['countries']),
-      getOptionSelected: R.eqProps('display')
-    }
-  },
-  {
-    name: 'fiatCurrency',
-    width: 150,
-    size: 'sm',
-    view: R.path(['code']),
-    input: Autocomplete,
-    inputProps: {
-      options: getData(['currencies']),
-      getOptionSelected: R.eqProps('display')
-    }
-  },
-  {
-    name: 'languages',
-    width: 240,
-    size: 'sm',
-    view: displayCodeArray,
-    input: Autocomplete,
-    inputProps: {
-      options: getData(['languages']),
-      getLabel: R.path(['code']),
-      getOptionSelected: R.eqProps('code'),
-      multiple: true
-    }
-  },
-  {
-    name: 'cryptoCurrencies',
-    width: 270,
-    size: 'sm',
-    view: displayCodeArray,
-    input: Autocomplete,
-    inputProps: {
-      options: getData(['cryptoCurrencies']),
-      getLabel: it => R.path(['code'])(it) ?? it,
-      getOptionSelected: R.eqProps('code'),
-      multiple: true
-    }
+const allFields = getData => {
+  const getView = (data, code, compare) => it => {
+    if (!data) return ''
+
+    return R.compose(
+      R.prop(code),
+      R.find(R.propEq(compare ?? 'code', it))
+    )(data)
   }
-]
+
+  const displayCodeArray = data => it => {
+    if (!it) return it
+
+    return R.compose(R.join(', '), R.map(getView(data, 'code')))(it)
+  }
+
+  const machineData = getData(['machines'])
+  const countryData = getData(['countries'])
+  const currencyData = getData(['currencies'])
+  const languageData = getData(['languages'])
+  const cryptoData = getData(['cryptoCurrencies'])
+
+  return [
+    {
+      name: 'machine',
+      width: 200,
+      size: 'sm',
+      view: getView(machineData, 'name', 'deviceId'),
+      input: Autocomplete,
+      inputProps: {
+        options: machineData,
+        valueProp: 'deviceId',
+        getLabel: R.path(['name']),
+        limit: null
+      }
+    },
+    {
+      name: 'country',
+      width: 200,
+      size: 'sm',
+      view: getView(countryData, 'display'),
+      input: Autocomplete,
+      inputProps: {
+        options: countryData,
+        valueProp: 'code',
+        getLabel: R.path(['display'])
+      }
+    },
+    {
+      name: 'fiatCurrency',
+      width: 150,
+      size: 'sm',
+      view: getView(currencyData, 'code'),
+      input: Autocomplete,
+      inputProps: {
+        options: currencyData,
+        valueProp: 'code',
+        getLabel: R.path(['code'])
+      }
+    },
+    {
+      name: 'languages',
+      width: 240,
+      size: 'sm',
+      view: displayCodeArray(languageData),
+      input: Autocomplete,
+      inputProps: {
+        options: languageData,
+        valueProp: 'code',
+        getLabel: R.path(['code']),
+        multiple: true
+      }
+    },
+    {
+      name: 'cryptoCurrencies',
+      width: 270,
+      size: 'sm',
+      view: displayCodeArray(cryptoData),
+      input: Autocomplete,
+      inputProps: {
+        options: cryptoData,
+        valueProp: 'code',
+        getLabel: R.path(['code']),
+        multiple: true
+      }
+    }
+  ]
+}
 
 const mainFields = auxData => {
   const getData = R.path(R.__, auxData)
@@ -98,29 +119,29 @@ const overrides = auxData => {
 }
 
 const LocaleSchema = Yup.object().shape({
-  country: Yup.object().required('Required'),
-  fiatCurrency: Yup.object().required('Required'),
+  country: Yup.string().required('Required'),
+  fiatCurrency: Yup.string().required('Required'),
   languages: Yup.array().required('Required'),
   cryptoCurrencies: Yup.array().required('Required')
 })
 
 const OverridesSchema = Yup.object().shape({
-  machine: Yup.object().required('Required'),
-  country: Yup.object().required('Required'),
+  machine: Yup.string().required('Required'),
+  country: Yup.string().required('Required'),
   languages: Yup.array().required('Required'),
   cryptoCurrencies: Yup.array().required('Required')
 })
 
 const localeDefaults = {
-  country: null,
-  fiatCurrency: null,
+  country: '',
+  fiatCurrency: '',
   languages: [],
   cryptoCurrencies: []
 }
 
 const overridesDefaults = {
-  machine: null,
-  country: null,
+  machine: '',
+  country: '',
   languages: [],
   cryptoCurrencies: []
 }

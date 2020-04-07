@@ -11,71 +11,64 @@ import { ReactComponent as LitecoinLogo } from 'src/styling/logos/icon-litecoin-
 import { ReactComponent as ZCashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
 
 const styles = {
-  logoWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 80,
-    margin: [[40, 0, 24]],
-    '& > svg': {
-      maxHeight: '100%',
-      width: '100%'
-    }
+  logo: {
+    maxHeight: 80,
+    maxWidth: 200
+  },
+  title: {
+    margin: [[24, 0, 32, 0]]
+  },
+  text: {
+    margin: 0
+  },
+  button: {
+    marginTop: 'auto',
+    marginBottom: 58
   },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: [[0, 66]],
-    '& > h1': {
-      margin: [[0, 0, 32]]
-    },
-    '& > p': {
-      margin: 0
-    },
-    '& > button': {
-      margin: [['auto', 0, 56]],
-      '&:active': {
-        margin: [['auto', 0, 56]]
-      }
-    }
+    padding: [[0, 42]],
+    flex: 1
   }
 }
 
 const useStyles = makeStyles(styles)
 
-const renderLogo = code => {
+const getLogo = code => {
   switch (code) {
     case 'BTC':
-      return <BitcoinLogo />
+      return BitcoinLogo
     case 'BCH':
-      return <BitcoinCashLogo />
+      return BitcoinCashLogo
     case 'DASH':
-      return <DashLogo />
+      return DashLogo
     case 'ETH':
-      return <EthereumLogo />
+      return EthereumLogo
     case 'LTC':
-      return <LitecoinLogo />
+      return LitecoinLogo
     case 'ZEC':
-      return <ZCashLogo />
+      return ZCashLogo
     default:
       return null
   }
 }
 
-const WizardSplash = ({ code, coinName, handleModalNavigation }) => {
+const WizardSplash = ({ code, name, onContinue }) => {
   const classes = useStyles()
+  const Logo = getLogo(code)
 
   return (
     <div className={classes.modalContent}>
-      <div className={classes.logoWrapper}>{renderLogo(code)}</div>
-      <H1>Enable {coinName}</H1>
-      <P>
-        You are about to enable {coinName} on your system. This will allow you
-        to use this cryptocurrency on your machines. To able to do that, you’ll
+      <Logo className={classes.logo} />
+      <H1 className={classes.title}>Enable {name}</H1>
+      <P className={classes.text}>
+        You are about to enable {name} on your system. This will allow you to
+        use this cryptocurrency on your machines. To be able to do that, you’ll
         have to setup all the necessary 3rd party services.
       </P>
-      <Button onClick={() => handleModalNavigation(1)}>
+      <Button className={classes.button} onClick={onContinue}>
         Start configuration
       </Button>
     </div>

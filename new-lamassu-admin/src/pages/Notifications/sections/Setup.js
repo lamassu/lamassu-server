@@ -11,6 +11,7 @@ import {
   Th
 } from 'src/components/fake-table/Table'
 import { Switch } from 'src/components/inputs'
+import { fromNamespace, toNamespace } from 'src/utils/config'
 import { startCase } from 'src/utils/string'
 
 import NotificationsCtx from '../NotificationsContext'
@@ -26,12 +27,15 @@ const sizes = {
 const width = R.sum(R.values(sizes)) + channelSize
 
 const Row = ({ namespace }) => {
-  const { data, save } = useContext(NotificationsCtx)
-  const disabled = !data || !data[`${namespace}_active`]
+  const { data: rawData, save: rawSave } = useContext(NotificationsCtx)
+
+  const save = R.compose(rawSave(null), toNamespace(namespace))
+  const data = fromNamespace(namespace)(rawData)
+
+  const disabled = !data || !data.active
 
   const Cell = ({ name, disabled }) => {
-    const namespaced = `${namespace}_${name}`
-    const value = !!(data && data[namespaced])
+    const value = !!(data && data[name])
 
     return (
       <Td width={sizes[name]} textAlign="center">
@@ -39,7 +43,7 @@ const Row = ({ namespace }) => {
           disabled={disabled}
           checked={value}
           onChange={event => {
-            save(null, { [namespaced]: event.target.checked })
+            save({ [name]: event.target.checked })
           }}
           value={value}
         />

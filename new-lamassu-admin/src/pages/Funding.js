@@ -7,10 +7,10 @@ import moment from 'moment'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
 
-import Sidebar from 'src/components/Sidebar'
 import TableLabel from 'src/components/TableLabel'
 import Title from 'src/components/Title'
 import { Tr, Td, THead, TBody, Table } from 'src/components/fake-table/Table'
+import Sidebar from 'src/components/layout/Sidebar'
 import {
   H3,
   Info1,

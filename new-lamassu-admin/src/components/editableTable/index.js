@@ -1,3 +1,4 @@
+import NamespacedTable from './NamespacedTable'
 import Table from './Table'
 
-export { Table }
+export { Table, NamespacedTable }

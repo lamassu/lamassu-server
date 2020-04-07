@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import React from 'react'
 
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import { H4 } from 'src/components/typography'
 import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edit/disabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
@@ -17,12 +17,12 @@ const Header = ({ title, editing, disabled, setEditing }) => {
     <div className={classes.header}>
       <H4 className={classes.title}>{title}</H4>
       {!editing && (
-        <button
+        <IconButton
           onClick={() => setEditing(true)}
           className={classes.button}
           disabled={disabled}>
           {disabled ? <DisabledEditIcon /> : <EditIcon />}
-        </button>
+        </IconButton>
       )}
       {editing && (
         <div className={classes.editingButtons}>

@@ -15,7 +15,12 @@ const stripl = R.curry((q, str) =>
 const filtered = key => filterByKey(R.startsWith(`${key}_`))
 const stripped = key => mapKeys(stripl(`${key}_`))
 
-const fromServer = key => R.compose(stripped(key), filtered(key))
-const toServer = key => mapKeys(it => `${key}_${it}`)
+const fromNamespace = R.curry((key, config) =>
+  R.compose(stripped(key), filtered(key))(config)
+)
 
-export { fromServer, toServer }
+const toNamespace = R.curry((key, config) =>
+  mapKeys(it => `${key}_${it}`)(config)
+)
+
+export { fromNamespace, toNamespace }

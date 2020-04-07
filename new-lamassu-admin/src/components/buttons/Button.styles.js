@@ -1,3 +1,4 @@
+import typographyStyles from 'src/components/typography/styles'
 import {
   white,
   disabledColor,
@@ -6,7 +7,6 @@ import {
   secondaryColorDarker,
   spacer
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { h3 } = typographyStyles
 
@@ -21,6 +21,11 @@ const pickSize = size => {
 }
 
 export default {
+  wrapper: ({ size }) => {
+    const height = pickSize(size)
+    const shadowSize = height / 12
+    return { height: height + shadowSize / 2 }
+  },
   button: ({ size }) => {
     const height = pickSize(size)
     const shadowSize = height / 12

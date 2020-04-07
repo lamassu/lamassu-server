@@ -1,241 +1,96 @@
-import React, { useState } from 'react'
-import * as R from 'ramda'
-import { gql } from 'apollo-boost'
-import { makeStyles, Modal } from '@material-ui/core'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles, Grid } from '@material-ui/core'
+import { gql } from 'apollo-boost'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 
-import Title from 'src/components/Title'
+import Modal from 'src/components/Modal'
+import TitleSection from 'src/components/layout/TitleSection'
+import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
+import { formatLong } from 'src/utils/string'
 
-import { BitgoCard, BitgoForm } from './Bitgo'
-import { BitstampCard, BitstampForm } from './Bitstamp'
-import { BlockcypherCard, BlockcypherForm } from './Blockcypher'
-import { InfuraCard, InfuraForm } from './Infura'
-import { ItbitCard, ItbitForm } from './Itbit'
-import { KrakenCard, KrakenForm } from './Kraken'
-import { MailgunCard, MailgunForm } from './Mailgun'
-import { StrikeCard, StrikeForm } from './Strike'
-import { TwilioCard, TwilioForm } from './Twilio'
-import { servicesStyles as styles } from './Services.styles'
+import FormRenderer from './FormRenderer'
+import schemas from './schemas'
+
+const GET_INFO = gql`
+  query getData {
+    accounts
+  }
+`
+
+const SAVE_ACCOUNT = gql`
+  mutation Save($account: JSONObject) {
+    saveAccount(account: $account)
+  }
+`
+
+const styles = {
+  wrapper: {
+    // widths + spacing is a little over 1200 on the design
+    // this adjusts the margin after a small reduction on card size
+    marginLeft: 1
+  }
+}
 
 const useStyles = makeStyles(styles)
 
-const GET_CONFIG = gql`
-  {
-    config
-  }
-`
+const Services = ({ key: SCREEN_KEY }) => {
+  const [editingSchema, setEditingSchema] = useState(null)
 
-const GET_ACCOUNTS = gql`
-  {
-    accounts {
-      code
-      display
-      class
-      cryptos
-    }
-  }
-`
-
-const SAVE_CONFIG = gql`
-  mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
-  }
-`
-
-const Services = () => {
-  const [open, setOpen] = useState(false)
-  const [modalContent, setModalContent] = useState(null)
-  const [accountsConfig, setAccountsConfig] = useState(null)
-  const [saveConfig, { loading }] = useMutation(SAVE_CONFIG, {
-    onCompleted: data => setAccountsConfig(data.saveConfig.accounts)
+  const { data } = useQuery(GET_INFO)
+  const [saveAccount] = useMutation(SAVE_ACCOUNT, {
+    onCompleted: () => setEditingSchema(null),
+    refetchQueries: ['getData']
   })
 
   const classes = useStyles()
 
-  useQuery(GET_CONFIG, {
-    onCompleted: data => setAccountsConfig(data.config.accounts ?? {})
-  })
-  const { data: accountsResponse } = useQuery(GET_ACCOUNTS)
+  const accounts = data?.accounts ?? []
 
-  const accounts = accountsResponse?.accounts
+  const getValue = code => R.find(R.propEq('code', code))(accounts)
 
-  const save = (code, it) => {
-    const newAccounts = R.clone(accountsConfig)
-    newAccounts[code] = it
-    return saveConfig({ variables: { config: { accounts: newAccounts } } })
+  const getItems = (code, elements) => {
+    const faceElements = R.filter(R.prop('face'))(elements)
+    const values = getValue(code) || {}
+    return R.map(({ display, code, long }) => ({
+      label: display,
+      value: long ? formatLong(values[code]) : values[code]
+    }))(faceElements)
   }
-
-  const getAccount = code => {
-    return R.mergeDeepLeft(
-      R.find(R.propEq('code', code))(accounts) ?? {},
-      accountsConfig[code] ?? {}
-    )
-  }
-
-  const handleOpen = content => {
-    setOpen(true)
-    setModalContent(content)
-  }
-
-  const handleClose = (canClose = true) => {
-    if (canClose && !loading) {
-      setOpen(false)
-      setModalContent(null)
-    }
-  }
-
-  if (!accounts || !accountsConfig) return null
-
-  const codes = {
-    bitgo: 'bitgo',
-    bitstamp: 'bitstamp',
-    blockcypher: 'blockcypher',
-    infura: 'infura',
-    itbit: 'itbit',
-    kraken: 'kraken',
-    mailgun: 'mailgun',
-    strike: 'strike',
-    twilio: 'twilio'
-  }
-
-  const bitgo = getAccount(codes.bitgo)
-  const bitstamp = getAccount(codes.bitstamp)
-  const blockcypher = getAccount(codes.blockcypher)
-  const infura = getAccount(codes.infura)
-  const itbit = getAccount(codes.itbit)
-  const kraken = getAccount(codes.kraken)
-  const mailgun = getAccount(codes.mailgun)
-  const strike = getAccount(codes.strike)
-  const twilio = getAccount(codes.twilio)
 
   return (
-    <>
-      <div className={classes.titleWrapper}>
-        <div className={classes.titleContainer}>
-          <Title>3rd Party Services</Title>
-        </div>
-      </div>
-      <div className={classes.mainWrapper}>
-        <BitgoCard
-          account={bitgo}
-          onEdit={() =>
-            handleOpen(
-              <BitgoForm
-                account={bitgo}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <BitstampCard
-          account={bitstamp}
-          onEdit={() =>
-            handleOpen(
-              <BitstampForm
-                account={bitstamp}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <BlockcypherCard
-          account={blockcypher}
-          onEdit={() =>
-            handleOpen(
-              <BlockcypherForm
-                account={blockcypher}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <InfuraCard
-          account={infura}
-          onEdit={() =>
-            handleOpen(
-              <InfuraForm
-                account={infura}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <ItbitCard
-          account={itbit}
-          onEdit={() =>
-            handleOpen(
-              <ItbitForm
-                account={itbit}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <KrakenCard
-          account={kraken}
-          onEdit={() =>
-            handleOpen(
-              <KrakenForm
-                account={kraken}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <MailgunCard
-          account={mailgun}
-          onEdit={() =>
-            handleOpen(
-              <MailgunForm
-                account={mailgun}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <StrikeCard
-          account={strike}
-          onEdit={() =>
-            handleOpen(
-              <StrikeForm
-                account={strike}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-        <TwilioCard
-          account={twilio}
-          onEdit={() =>
-            handleOpen(
-              <TwilioForm
-                account={twilio}
-                handleClose={handleClose}
-                save={save}
-              />
-            )
-          }
-        />
-      </div>
-      {modalContent && (
+    <div className={classes.wrapper}>
+      <TitleSection title="3rd Party Services" />
+      <Grid container spacing={4}>
+        {R.values(schemas).map(schema => (
+          <Grid item key={schema.code}>
+            <SingleRowTable
+              title={schema.title}
+              onEdit={() => setEditingSchema(schema)}
+              items={getItems(schema.code, schema.elements)}
+            />
+          </Grid>
+        ))}
+      </Grid>
+      {editingSchema && (
         <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={open}
-          onClose={handleClose}
-          className={classes.modal}>
-          <div>{modalContent}</div>
+          title={`Edit ${editingSchema.name}`}
+          width={478}
+          handleClose={() => setEditingSchema(null)}
+          open={true}>
+          <FormRenderer
+            save={it =>
+              saveAccount({
+                variables: { account: { code: editingSchema.code, ...it } }
+              })
+            }
+            elements={editingSchema.elements}
+            validationSchema={editingSchema.validationSchema}
+            value={getValue(editingSchema.code)}
+          />
         </Modal>
       )}
-    </>
+    </div>
   )
 }
 

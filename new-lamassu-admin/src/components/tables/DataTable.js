@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 import {
   AutoSizer,
@@ -8,33 +9,31 @@ import {
   CellMeasurerCache
 } from 'react-virtualized'
 
-import { THead, Tr, Td, Th } from 'src/components/fake-table/Table'
+import {
+  Table,
+  TBody,
+  THead,
+  Tr,
+  Td,
+  Th
+} from 'src/components/fake-table/Table'
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from 'src/styling/icons/action/expand/open.svg'
-import { mainWidth } from 'src/styling/variables'
 
-const styles = {
-  expandButton: {
-    border: 'none',
-    backgroundColor: 'transparent',
-    cursor: 'pointer',
-    padding: 4
-  },
-  row: {
-    borderRadius: 0
-  }
-}
+import styles from './DataTable.styles'
 
 const useStyles = makeStyles(styles)
 
-const ExpRow = ({
+const Row = ({
   id,
   elements,
   data,
+  width,
   Details,
   expanded,
   expandRow,
-  ...props
+  expWidth,
+  expandable
 }) => {
   const classes = useStyles()
 
@@ -44,34 +43,25 @@ const ExpRow = ({
         className={classnames(classes.row)}
         error={data.error}
         errorMessage={data.errorMessage}>
-        {elements
-          .slice(0, -1)
-          .map(
-            (
-              { width, className, textAlign, view = it => it?.toString() },
-              idx
-            ) => (
-              <Td
-                key={idx}
-                width={width}
-                className={className}
-                textAlign={textAlign}>
-                {view(data)}
-              </Td>
-            )
-          )}
-        <Td width={elements[elements.length - 1].width}>
-          <button
-            onClick={() => expandRow(id)}
-            className={classes.expandButton}>
-            {expanded && <ExpandOpenIcon />}
-            {!expanded && <ExpandClosedIcon />}
-          </button>
-        </Td>
+        {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
+          <Td key={idx} {...props}>
+            {view(data)}
+          </Td>
+        ))}
+        {expandable && (
+          <Td width={expWidth} textAlign="center">
+            <button
+              onClick={() => expandRow(id)}
+              className={classes.expandButton}>
+              {expanded && <ExpandOpenIcon />}
+              {!expanded && <ExpandClosedIcon />}
+            </button>
+          </Td>
+        )}
       </Tr>
-      {expanded && (
+      {expandable && expanded && (
         <Tr className={classes.detailsRow}>
-          <Td width={mainWidth}>
+          <Td width={width}>
             <Details it={data} />
           </Td>
         </Tr>
@@ -80,17 +70,21 @@ const ExpRow = ({
   )
 }
 
-/* rows = [{ columns = [{ name, value, className, textAlign, width }], details, className, error, errorMessage }]
- * Don't forget to include the width of the last (expand button) column!
- */
-const ExpTable = ({
+const DataTable = ({
   elements = [],
   data = [],
   Details,
   className,
+  expandable,
   ...props
 }) => {
   const [expanded, setExpanded] = useState(null)
+
+  const coreWidth = R.compose(R.sum, R.map(R.prop('width')))(elements)
+  const expWidth = 1200 - coreWidth
+  const width = coreWidth + (expandable ? expWidth : 0)
+
+  const classes = useStyles({ width })
 
   const expandRow = id => {
     setExpanded(id === expanded ? null : id)
@@ -101,7 +95,7 @@ const ExpTable = ({
     fixedWidth: true
   })
 
-  function rowRenderer({ index, isScrolling, key, parent, style }) {
+  function rowRenderer({ index, key, parent, style }) {
     return (
       <CellMeasurer
         cache={cache}
@@ -110,13 +104,16 @@ const ExpTable = ({
         parent={parent}
         rowIndex={index}>
         <div style={style}>
-          <ExpRow
+          <Row
+            width={width}
             id={index}
+            expWidth={expWidth}
             elements={elements}
             data={data[index]}
             Details={Details}
             expanded={index === expanded}
             expandRow={expandRow}
+            expandable={expandable}
           />
         </div>
       </CellMeasurer>
@@ -124,27 +121,28 @@ const ExpTable = ({
   }
 
   return (
-    <>
-      <div>
-        <THead>
-          {elements.map(({ width, className, textAlign, header }, idx) => (
-            <Th
-              key={idx}
-              width={width}
-              className={className}
-              textAlign={textAlign}>
-              {header}
-            </Th>
-          ))}
-        </THead>
-      </div>
-      <div style={{ flex: '1 1 auto' }}>
+    <Table className={classes.table}>
+      <THead>
+        {elements.map(({ width, className, textAlign, header }, idx) => (
+          <Th
+            key={idx}
+            width={width}
+            className={className}
+            textAlign={textAlign}>
+            {header}
+          </Th>
+        ))}
+        {expandable && <Th width={expWidth}></Th>}
+      </THead>
+      <TBody className={classes.body}>
         <AutoSizer disableWidth>
           {({ height }) => (
             <List
+              // this has to be in a style because of how the component works
+              style={{ overflow: 'inherit', outline: 'none' }}
               {...props}
               height={height}
-              width={mainWidth}
+              width={width}
               rowCount={data.length}
               rowHeight={cache.rowHeight}
               rowRenderer={rowRenderer}
@@ -153,9 +151,9 @@ const ExpTable = ({
             />
           )}
         </AutoSizer>
-      </div>
-    </>
+      </TBody>
+    </Table>
   )
 }
 
-export default ExpTable
+export default DataTable

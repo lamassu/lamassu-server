@@ -41,6 +41,10 @@ export default {
     },
     'button::-moz-focus-inner': {
       border: 0
+    },
+    // forcing styling onto inner container
+    '.ReactVirtualized__Grid__innerScrollContainer': {
+      overflow: 'inherit !important'
     }
   }
 }

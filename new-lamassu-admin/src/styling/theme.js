@@ -1,5 +1,7 @@
 import { createMuiTheme } from '@material-ui/core/styles'
 
+import typographyStyles from 'src/components/typography/styles'
+
 import {
   backgroundColor,
   inputFontFamily,
@@ -10,9 +12,12 @@ import {
   fontSize5
 } from './variables'
 
+const { p } = typographyStyles
+
 export default createMuiTheme({
   typography: {
-    fontFamily: inputFontFamily
+    fontFamily: inputFontFamily,
+    body1: { ...p }
   },
   MuiButtonBase: {
     disableRipple: true
@@ -33,6 +38,11 @@ export default createMuiTheme({
     }
   },
   overrides: {
+    MuiRadio: {
+      colorSecondary: {
+        color: secondaryColor
+      }
+    },
     MuiAutocomplete: {
       root: {
         color: fontColor
