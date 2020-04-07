@@ -8,10 +8,7 @@ export default {
   titleAndButtonsContainer: {
     display: 'flex'
   },
-  iconButton: {
-    border: 'none',
-    outline: 0,
-    backgroundColor: 'transparent',
-    cursor: 'pointer'
+  error: {
+    marginLeft: 12
   }
 }

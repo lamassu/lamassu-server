@@ -1,3 +1,4 @@
+import typographyStyles from 'src/components/typography/styles'
 import { respondTo } from 'src/styling/helpers'
 import {
   primaryColor,
@@ -6,8 +7,6 @@ import {
   zircon,
   xxl
 } from 'src/styling/variables'
-
-import typographyStyles from './typography/styles'
 
 const { tl2, p } = typographyStyles
 

@@ -14,16 +14,22 @@ const MACHINE_KEY = 'machine'
 const NAME = 'fiatBalanceOverrides'
 
 const FiatBalanceOverrides = ({ section }) => {
-  const { machines, data, save, isDisabled, setEditing } = useContext(
+  const { machines = [], data, save, isDisabled, setEditing } = useContext(
     NotificationsCtx
   )
 
   const setupValues = data?.fiatBalanceOverrides ?? []
   const innerSetEditing = it => setEditing(NAME, it)
 
-  const getSuggestions = () => {
-    const overridenMachines = R.map(override => override.machine, setupValues)
-    return R.without(overridenMachines, machines ?? [])
+  const overridenMachines = R.map(override => override.machine, setupValues)
+  const suggestionFilter = R.filter(
+    it => !R.contains(it.code, overridenMachines)
+  )
+  const suggestions = suggestionFilter(machines)
+
+  const findSuggestion = it => {
+    const coin = R.compose(R.find(R.propEq('deviceId', it?.machine)))(machines)
+    return coin ? [coin] : []
   }
 
   const initialValues = {
@@ -44,8 +50,6 @@ const FiatBalanceOverrides = ({ section }) => {
       .required()
   })
 
-  const suggestions = getSuggestions()
-
   const elements = [
     {
       name: MACHINE_KEY,
@@ -54,9 +58,8 @@ const FiatBalanceOverrides = ({ section }) => {
       view: R.path(['name']),
       input: Autocomplete,
       inputProps: {
-        options: suggestions,
+        options: it => R.concat(suggestions, findSuggestion(it)),
         limit: null,
-        forceShowValue: true,
         getOptionSelected: R.eqProps('display')
       }
     },

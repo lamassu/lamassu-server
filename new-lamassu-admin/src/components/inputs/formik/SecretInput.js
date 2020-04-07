@@ -1,45 +1,22 @@
-import { makeStyles } from '@material-ui/core'
-import classnames from 'classnames'
-import React, { memo, useState } from 'react'
+import React, { memo } from 'react'
 
-import TextInputFormik from './TextInput'
-import { styles } from './TextInput.styles'
+import { SecretInput } from '../base'
 
-const useStyles = makeStyles(styles)
+const SecretInputFormik = memo(({ ...props }) => {
+  const { name, onChange, onBlur, value } = props.field
+  const { touched, errors } = props.form
 
-const SecretInputFormik = memo(({ className, ...props }) => {
-  const { value } = props.field
-
-  const classes = useStyles()
-
-  const [localTouched, setLocalTouched] = useState(false)
-
-  const handleFocus = event => {
-    setLocalTouched(true)
-    props.onFocus()
-  }
-
-  const spanClass = {
-    [classes.secretSpan]: true,
-    [classes.masked]: value && !localTouched,
-    [classes.hideSpan]: !value || localTouched
-  }
-
-  const inputClass = {
-    [classes.maskedInput]: value && !localTouched
-  }
+  const error = !!(touched[name] && errors[name])
 
   return (
-    <>
-      <span className={classnames(spanClass)} aria-hidden="true">
-        ⚬ ⚬ ⚬ This field is set ⚬ ⚬ ⚬
-      </span>
-      <TextInputFormik
-        {...props}
-        onFocus={handleFocus}
-        className={classnames(inputClass, className)}
-      />
-    </>
+    <SecretInput
+      name={name}
+      onChange={onChange}
+      onBlur={onBlur}
+      value={value}
+      error={error}
+      {...props}
+    />
   )
 })
 

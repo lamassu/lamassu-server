@@ -10,34 +10,45 @@ const Autocomplete = ({
   limit = 5,
   options,
   label,
-  shouldAdd,
-  getOptionSelected,
-  forceShowValue,
-  value,
-  onChange,
+  valueProp,
   multiple,
+  onChange,
   getLabel,
+  value: outsideValue,
   error,
   fullWidth,
   textAlign,
   size,
   ...props
 }) => {
-  let iOptions = options
+  const mapFromValue = options => it => R.find(R.propEq(valueProp, it))(options)
+  const mapToValue = R.prop(valueProp)
 
-  const compare = getOptionSelected || R.equals
-  const find = R.find(it => compare(value, it))
+  const getValue = () => {
+    if (!valueProp) return outsideValue
 
-  if (forceShowValue && !multiple && value && !find(options)) {
-    iOptions = R.concat(options, [value])
+    const transform = multiple
+      ? R.map(mapFromValue(options))
+      : mapFromValue(options)
+
+    return transform(outsideValue)
+  }
+
+  const value = getValue()
+
+  const iOnChange = (evt, value) => {
+    if (!valueProp) return onChange(evt, value)
+
+    const rValue = multiple ? R.map(mapToValue)(value) : mapToValue(value)
+    onChange(evt, rValue)
   }
 
   return (
     <MAutocomplete
-      options={iOptions}
+      options={options}
       multiple={multiple}
       value={value}
-      onChange={onChange}
+      onChange={iOnChange}
       getOptionLabel={getLabel}
       forcePopupIcon={false}
       filterOptions={createFilterOptions({ ignoreAccents: true, limit })}
@@ -47,14 +58,14 @@ const Autocomplete = ({
       ChipProps={{ onDelete: null }}
       blurOnSelect
       clearOnEscape
-      getOptionSelected={getOptionSelected}
+      getOptionSelected={R.eqProps(valueProp)}
       {...props}
       renderInput={params => {
         return (
           <TextInput
             {...params}
             label={label}
-            value={value}
+            value={outsideValue}
             error={error}
             size={size}
             fullWidth={fullWidth}

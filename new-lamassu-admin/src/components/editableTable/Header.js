@@ -1,14 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import { Td, THead } from 'src/components/fake-table/Table'
 import { startCase } from 'src/utils/string'
 
-import { ACTION_COL_SIZE, DEFAULT_COL_SIZE } from './consts'
+import TableCtx from './Context'
 
-const Header = ({ elements, enableEdit, enableDelete }) => {
-  const actionColSize =
-    enableDelete && enableEdit ? ACTION_COL_SIZE / 2 : ACTION_COL_SIZE
-
+const Header = () => {
+  const {
+    elements,
+    enableEdit,
+    editWidth,
+    enableDelete,
+    deleteWidth,
+    enableToggle,
+    toggleWidth,
+    DEFAULT_COL_SIZE
+  } = useContext(TableCtx)
   return (
     <THead>
       {elements.map(
@@ -19,13 +26,18 @@ const Header = ({ elements, enableEdit, enableDelete }) => {
         )
       )}
       {enableEdit && (
-        <Td header width={actionColSize} textAlign="right">
+        <Td header width={editWidth} textAlign="center">
           Edit
         </Td>
       )}
       {enableDelete && (
-        <Td header width={actionColSize} textAlign="right">
+        <Td header width={deleteWidth} textAlign="center">
           Delete
+        </Td>
+      )}
+      {enableToggle && (
+        <Td header width={toggleWidth} textAlign="center">
+          Enable
         </Td>
       )}
     </THead>

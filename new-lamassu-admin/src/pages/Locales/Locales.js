@@ -6,7 +6,7 @@ import React from 'react'
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
-import { fromServer, toServer } from 'src/utils/config'
+import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import {
   mainFields,
@@ -55,25 +55,27 @@ const Locales = ({ name: SCREEN_KEY }) => {
     refetchQueries: () => ['getData']
   })
 
-  const config = data?.config && fromServer(SCREEN_KEY)(data.config)
+  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
 
   const locale = config && !R.isEmpty(config) ? config : localeDefaults
 
   const save = it => {
-    const config = toServer(SCREEN_KEY)(it.locale[0])
+    const config = toNamespace(SCREEN_KEY)(it.locale[0])
     return saveConfig({ variables: { config } })
   }
 
   const saveOverrides = it => {
-    const config = toServer(SCREEN_KEY)(it)
+    const config = toNamespace(SCREEN_KEY)(it)
     return saveConfig({ variables: { config } })
   }
 
   return (
     <>
       <TitleSection title="Locales" />
-      <Section title="Default settings">
+      <Section>
         <EditableTable
+          title="Default settings"
+          titleLg
           name="locale"
           enableEdit
           initialValues={locale}
@@ -83,8 +85,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
           elements={mainFields(data)}
         />
       </Section>
-      <Section title="Overrides">
+      <Section>
         <EditableTable
+          title="Overrides"
+          titleLg
           name="overrides"
           enableDelete
           enableEdit

@@ -13,7 +13,7 @@ import extendJss from 'jss-plugin-extend'
 import React from 'react'
 
 import { ActionButton, Button, Link } from 'src/components/buttons'
-import { Radio, TextInput, Switch } from 'src/components/inputs'
+import { TextInput, Switch } from 'src/components/inputs'
 import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 
@@ -177,8 +177,6 @@ story.add('ConfirmDialog', () => (
     />
   </Wrapper>
 ))
-
-story.add('Radio', () => <Radio label="Hehe" />)
 
 const typographyStory = storiesOf('Typography', module)
 typographyStory.add('H1', () => <H1>Hehehe</H1>)

@@ -7,7 +7,7 @@ import * as R from 'ramda'
 import React from 'react'
 
 import Title from 'src/components/Title'
-import { DataTable } from 'src/components/dataTable'
+import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 

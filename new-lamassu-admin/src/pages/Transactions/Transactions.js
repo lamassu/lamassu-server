@@ -9,7 +9,7 @@ import React, { useState } from 'react'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
 import { FeatureButton } from 'src/components/buttons'
-import ExpTable from 'src/components/expandable-table/ExpTable'
+import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -71,29 +71,34 @@ const Transactions = () => {
     {
       header: '',
       width: 62,
+      size: 'sm',
       view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />)
     },
     {
       header: 'Machine',
       name: 'machineName',
       width: 180,
+      size: 'sm',
       view: R.path(['machineName'])
     },
     {
       header: 'Customer',
       width: 162,
+      size: 'sm',
       view: getCustomerDisplayName
     },
     {
       header: 'Cash',
       width: 110,
       textAlign: 'right',
+      size: 'sm',
       view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
     },
     {
       header: 'Crypto',
       width: 141,
       textAlign: 'right',
+      size: 'sm',
       view: it =>
         `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
           it.cryptoCode
@@ -103,27 +108,22 @@ const Transactions = () => {
       header: 'Address',
       view: R.path(['toAddress']),
       className: classes.overflowTd,
+      size: 'sm',
       width: 136
     },
     {
       header: 'Date (UTC)',
       view: it => moment.utc(it.created).format('YYYY-MM-D'),
       textAlign: 'right',
+      size: 'sm',
       width: 124
     },
     {
       header: 'Time (UTC)',
       view: it => moment.utc(it.created).format('HH:mm:ss'),
       textAlign: 'right',
+      size: 'sm',
       width: 124
-    },
-    {
-      header: '', // Trade
-      view: () => {},
-      width: 90
-    },
-    {
-      width: 71
     }
   ]
 
@@ -176,10 +176,11 @@ const Transactions = () => {
           </div>
         </div>
       </div>
-      <ExpTable
+      <DataTable
         elements={elements}
         data={R.path(['transactions'])(txResponse)}
         Details={DetailsRow}
+        expandable
       />
     </>
   )

@@ -2,8 +2,8 @@ import { makeStyles } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import Sidebar from 'src/components/Sidebar'
 import Title from 'src/components/Title'
+import Sidebar from 'src/components/layout/Sidebar'
 
 import logsStyles from '../Logs.styles'
 

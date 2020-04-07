@@ -191,8 +191,8 @@ const LogsDownloaderPopover = ({
   }
 
   const radioButtonOptions = [
-    { label: 'All logs', value: radioButtonAll },
-    { label: 'Date range', value: radioButtonRange }
+    { display: 'All logs', code: radioButtonAll },
+    { display: 'Date range', code: radioButtonRange }
   ]
 
   return (

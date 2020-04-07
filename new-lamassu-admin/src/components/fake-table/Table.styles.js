@@ -1,4 +1,5 @@
 import typographyStyles from 'src/components/typography/styles'
+import { bySize, bold } from 'src/styling/helpers'
 import {
   tableHeaderColor,
   tableHeaderHeight,
@@ -9,18 +10,11 @@ import {
   offColor
 } from 'src/styling/variables'
 
-const { tl1, info2, tl2, p, label1 } = typographyStyles
+const { tl2, p, label1 } = typographyStyles
 
 export default {
-  body: {
-    borderSpacing: [[0, 4]]
-  },
-  large: {
-    extend: tl1
-  },
-  md: {
-    extend: info2
-  },
+  size: ({ size }) => bySize(size),
+  bold,
   header: {
     extend: tl2,
     backgroundColor: tableHeaderColor,
@@ -79,7 +73,7 @@ export default {
   mainContent: {
     display: 'flex',
     alignItems: 'center',
-    minHeight: 54
+    minHeight: 48
   },
   // mui-overrides
   cardContentRoot: {

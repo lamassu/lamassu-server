@@ -6,9 +6,9 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
-import Sidebar from 'src/components/Sidebar'
 import Title from 'src/components/Title'
 import { FeatureButton, SimpleButton } from 'src/components/buttons'
+import Sidebar from 'src/components/layout/Sidebar'
 import {
   Table,
   TableHead,

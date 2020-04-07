@@ -13,7 +13,7 @@ import extendJss from 'jss-plugin-extend'
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-import Header from './components/Header'
+import Header from './components/layout/Header'
 import { tree, Routes } from './routing/routes'
 import global from './styling/global'
 import theme from './styling/theme'

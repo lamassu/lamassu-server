@@ -2,130 +2,46 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import React from 'react'
 
-import { Table, THead, TBody, Td, Th } from 'src/components/fake-table/Table'
-import typographyStyles from 'src/components/typography/styles'
-import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/white.svg'
-import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+import { IconButton } from 'src/components/buttons'
 import {
-  offColor,
-  tableDisabledHeaderColor,
-  tableNewDisabledHeaderColor,
-  secondaryColorDarker
-} from 'src/styling/variables'
+  Table,
+  THead,
+  TBody,
+  Td,
+  Th,
+  Tr
+} from 'src/components/fake-table/Table'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/white.svg'
 
-const { label1, p } = typographyStyles
+import styles from './SingleRowTable.styles'
+
+const useStyles = makeStyles(styles)
 
 const SingleRowTable = ({
-  width = 380,
-  height = 160,
+  width = 378,
+  height = 128,
   title,
   items,
   onEdit,
-  disabled,
-  newService,
-  className,
-  ...props
+  className
 }) => {
-  const editButtonSize = 54
-
-  const styles = {
-    wrapper: {
-      width: width,
-      boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
-    },
-    buttonTh: {
-      padding: [[0, 16]]
-    },
-    disabledHeader: {
-      backgroundColor: tableDisabledHeaderColor,
-      color: offColor
-    },
-    newDisabledHeader: {
-      backgroundColor: tableNewDisabledHeaderColor
-    },
-    disabledBody: {
-      extend: p,
-      display: 'flex',
-      alignItems: 'center',
-      height: 104
-    },
-    itemWrapper: {
-      display: 'flex',
-      flexDirection: 'column',
-      marginTop: 16,
-      minHeight: 40,
-      '& > div:last-child': {}
-    },
-    disabledWrapper: {
-      display: 'flex',
-      alignItems: 'center',
-      '& > span:first-child': {
-        display: 'flex'
-      },
-      '& > span:last-child': {
-        paddingLeft: 16
-      }
-    },
-    label: {
-      extend: label1,
-      color: offColor,
-      marginBottom: 4
-    },
-    item: {
-      extend: p
-    },
-    editButton: {
-      border: 'none',
-      backgroundColor: 'transparent',
-      cursor: 'pointer',
-      display: 'flex',
-      padding: 0
-    },
-    spanNew: {
-      color: secondaryColorDarker,
-      marginLeft: 12
-    }
-  }
-
-  const useStyles = makeStyles(styles)
-
-  const classes = useStyles()
-
-  const headerClasses = {
-    [classes.disabledHeader]: disabled,
-    [classes.newDisabledHeader]: newService && disabled
-  }
-
-  const bodyClasses = {
-    [classes.disabledBody]: disabled
-  }
+  const classes = useStyles({ width, height })
 
   return (
     <>
-      {items && (
-        <Table className={classnames(className, classes.wrapper)}>
-          <THead className={classnames(headerClasses)}>
-            <Th width={width - editButtonSize}>
-              {title}
-              {newService && <span className={classes.spanNew}>New</span>}
-            </Th>
-            <Th width={editButtonSize} className={classes.buttonTh}>
-              {!disabled && (
-                <button className={classes.editButton} onClick={onEdit}>
-                  <EditIcon />
-                </button>
-              )}
-              {disabled && (
-                <button className={classes.editButton}>
-                  <DeleteIcon />
-                </button>
-              )}
-            </Th>
-          </THead>
-          <TBody className={classnames(bodyClasses)}>
+      <Table className={classnames(className, classes.table)}>
+        <THead>
+          <Th className={classes.head}>
+            {title}
+            <IconButton onClick={onEdit} className={classes.button}>
+              <EditIcon />
+            </IconButton>
+          </Th>
+        </THead>
+        <TBody>
+          <Tr className={classes.tr}>
             <Td width={width}>
-              {!disabled && (
+              {items && (
                 <>
                   {items[0] && (
                     <div className={classes.itemWrapper}>
@@ -141,18 +57,10 @@ const SingleRowTable = ({
                   )}
                 </>
               )}
-              {disabled && (
-                <div className={classes.disabledWrapper}>
-                  <span>
-                    <WarningIcon />
-                  </span>
-                  <span>This service is not being used</span>
-                </div>
-              )}
             </Td>
-          </TBody>
-        </Table>
-      )}
+          </Tr>
+        </TBody>
+      </Table>
     </>
   )
 }

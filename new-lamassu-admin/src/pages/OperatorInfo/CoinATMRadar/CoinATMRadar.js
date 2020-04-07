@@ -1,13 +1,13 @@
-import { makeStyles } from '@material-ui/core/styles'
-import React, { useState, memo } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core/styles'
 import { gql } from 'apollo-boost'
+import React, { useState, memo } from 'react'
 
-import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
-import { H4, P, Label2 } from 'src/components/typography'
-import { Button } from 'src/components/buttons'
 import Popper from 'src/components/Popper'
+import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
+import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
+import { H4, P, Label2 } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 
 import { mainStyles } from './CoinATMRadar.styles'

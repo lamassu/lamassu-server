@@ -59,10 +59,10 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const Stage = memo(({ stages, currentStage, color = 'spring', className }) => {
-  if (currentStage < 1 || currentStage > stages)
+const Stepper = memo(({ steps, currentStep, color = 'spring', className }) => {
+  if (currentStep < 1 || currentStep > steps)
     throw Error('Value of currentStage is invalid')
-  if (stages < 1) throw Error('Value of stages is invalid')
+  if (steps < 1) throw Error('Value of stages is invalid')
 
   const classes = useStyles()
 
@@ -80,7 +80,7 @@ const Stage = memo(({ stages, currentStage, color = 'spring', className }) => {
 
   return (
     <div className={classnames(className, classes.stages)}>
-      {R.range(1, currentStage).map(idx => (
+      {R.range(1, currentStep).map(idx => (
         <div key={idx} className={classes.wrapper}>
           {idx > 1 && <div className={classnames(separatorClasses)} />}
           <div className={classes.stage}>
@@ -90,13 +90,13 @@ const Stage = memo(({ stages, currentStage, color = 'spring', className }) => {
         </div>
       ))}
       <div className={classes.wrapper}>
-        {currentStage > 1 && <div className={classnames(separatorClasses)} />}
+        {currentStep > 1 && <div className={classnames(separatorClasses)} />}
         <div className={classes.stage}>
           {color === 'spring' && <CurrentStageIconSpring />}
           {color === 'zodiac' && <CurrentStageIconZodiac />}
         </div>
       </div>
-      {R.range(currentStage + 1, stages + 1).map(idx => (
+      {R.range(currentStep + 1, steps + 1).map(idx => (
         <div key={idx} className={classes.wrapper}>
           <div className={classnames(separatorEmptyClasses)} />
           <div className={classes.stage}>
@@ -109,4 +109,4 @@ const Stage = memo(({ stages, currentStage, color = 'spring', className }) => {
   )
 })
 
-export default Stage
+export default Stepper

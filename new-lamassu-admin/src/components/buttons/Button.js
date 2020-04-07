@@ -9,9 +9,11 @@ const useStyles = makeStyles(styles)
 const ActionButton = memo(({ size = 'lg', children, className, ...props }) => {
   const classes = useStyles({ size })
   return (
-    <button className={classnames(classes.button, className)} {...props}>
-      {children}
-    </button>
+    <div className={classnames(className, classes.wrapper)}>
+      <button className={classes.button} {...props}>
+        {children}
+      </button>
+    </div>
   )
 })
 

@@ -5,9 +5,10 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
+import DataTable from 'src/components/tables/DataTable'
+
 import { MainStatus } from '../../components/Status'
 import Title from '../../components/Title'
-import ExpTable from '../../components/expandable-table/ExpTable'
 import { ReactComponent as WarningIcon } from '../../styling/icons/status/pumpkin.svg'
 import { ReactComponent as ErrorIcon } from '../../styling/icons/status/tomato.svg'
 import { mainStyles } from '../Transactions/Transactions.styles'
@@ -42,35 +43,37 @@ const MachineStatus = () => {
     {
       header: 'Machine Name',
       width: 232,
+      size: 'sm',
       textAlign: 'left',
       view: m => m.name
     },
     {
       header: 'Status',
       width: 349,
+      size: 'sm',
       textAlign: 'left',
       view: m => <MainStatus statuses={m.statuses} />
     },
     {
       header: 'Last ping',
       width: 192,
+      size: 'sm',
       textAlign: 'left',
       view: m => moment(m.lastPing).fromNow()
     },
     {
       header: 'Ping Time',
       width: 155,
+      size: 'sm',
       textAlign: 'left',
       view: m => m.pingTime || 'unknown'
     },
     {
       header: 'Software Version',
       width: 201,
+      size: 'sm',
       textAlign: 'left',
       view: m => m.softwareVersion || 'unknown'
-    },
-    {
-      width: 71
     }
   ]
 
@@ -91,10 +94,11 @@ const MachineStatus = () => {
           </div>
         </div>
       </div>
-      <ExpTable
+      <DataTable
         elements={elements}
         data={R.path(['machines'])(machinesResponse)}
         Details={MachineDetailsRow}
+        expandable
       />
     </>
   )

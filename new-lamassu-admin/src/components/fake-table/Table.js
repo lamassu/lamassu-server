@@ -32,8 +32,7 @@ const TDoubleLevelHead = ({ children, className }) => {
 }
 
 const TBody = ({ children, className }) => {
-  const classes = useStyles()
-  return <div className={classnames(className, classes.body)}>{children}</div>
+  return <div className={classnames(className)}>{children}</div>
 }
 
 const Td = ({
@@ -42,16 +41,17 @@ const Td = ({
   className,
   width = 100,
   size,
+  bold,
   textAlign,
   action
 }) => {
-  const classes = useStyles({ textAlign, width })
+  const classes = useStyles({ textAlign, width, size })
   const classNames = {
     [classes.td]: true,
     [classes.tdHeader]: header,
     [classes.actionCol]: action,
-    [classes.large]: size === 'lg' && !header,
-    [classes.md]: size === 'md' && !header
+    [classes.size]: !header,
+    [classes.bold]: !header && bold
   }
 
   return <div className={classnames(className, classNames)}>{children}</div>

@@ -1,8 +1,15 @@
-import { makeStyles, IconButton as IconB, SvgIcon } from '@material-ui/core'
+import { makeStyles, IconButton as IconB } from '@material-ui/core'
 import React from 'react'
 
 const styles = {
+  label: ({ size }) => ({
+    width: size,
+    height: size
+  }),
   root: {
+    '&svg': {
+      viewbox: null
+    },
     '&:hover': {
       backgroundColor: 'inherit'
     }
@@ -11,15 +18,16 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const IconButton = ({ children, onClick, ...props }) => {
-  const classes = useStyles()
+const IconButton = ({ size, children, onClick, ...props }) => {
+  const classes = useStyles({ size })
   return (
     <IconB
       {...props}
-      classes={{ root: classes.root }}
+      size="small"
+      classes={{ root: classes.root, label: classes.label }}
       disableRipple
       onClick={onClick}>
-      <SvgIcon>{children}</SvgIcon>
+      {children}
     </IconB>
   )
 }

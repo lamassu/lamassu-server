@@ -3,12 +3,12 @@ import classnames from 'classnames'
 import React, { memo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
+import { Link } from 'src/components/buttons'
+import { H4 } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 import AddMachine from 'src/pages/AddMachine'
 
 import styles from './Header.styles'
-import { Link } from './buttons'
-import { H4 } from './typography'
 
 const useStyles = makeStyles(styles)
 
