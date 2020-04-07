@@ -12,10 +12,6 @@ const mainStyles = {
     marginLeft: 'auto',
     marginTop: 'auto'
   },
-  header: {
-    display: 'flex',
-    marginBottom: 14
-  },
   body: {
     display: 'flex',
     height: '100%'
@@ -24,8 +20,11 @@ const mainStyles = {
     display: 'flex',
     alignItems: 'center',
     position: 'relative',
-    flex: 'wrap',
-    marginBottom: 10
+    flex: 'wrap'
+  },
+  wizardStepIcon: {
+    width: 24,
+    height: 24
   },
   unreachedStepLine: {
     width: 24,

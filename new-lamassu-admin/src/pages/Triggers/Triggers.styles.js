@@ -10,6 +10,13 @@ const mainStyles = {
   buttonsWrapper,
   rowWrapper,
   radioButtons,
+  closeButton: {
+    position: 'absolute',
+    width: 16,
+    height: 16,
+    top: 20,
+    right: 0
+  },
   stepOneRadioButtons: {
     '& > *': {
       marginRight: 48
@@ -34,6 +41,10 @@ const mainStyles = {
     '& > div': {
       outline: 'none'
     }
+  },
+  wizardHeaderText: {
+    display: 'flex',
+    margin: [[24, 0]]
   },
   paper: {
     padding: [[5, 20, 32, 24]],

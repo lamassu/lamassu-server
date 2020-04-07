@@ -31,7 +31,7 @@ const Wizard = ({ header, nextStepText, finalStepText, finish, children }) => {
 
   return (
     <>
-      <div className={classes.header}>{header}</div>
+      <div>{header}</div>
       <div className={classes.body}>
         <div className={classes.columnWrapper}>
           {/* TODO: wizard steps icons are a little strange... */}
@@ -41,14 +41,25 @@ const Wizard = ({ header, nextStepText, finalStepText, finish, children }) => {
 
               if (i < currentStepIndex)
                 elementToRender.push(
-                  <CompleteIcon key={elementToRender.length} />
+                  <CompleteIcon
+                    key={elementToRender.length}
+                    className={classes.wizardStepIcon}
+                  />
                 )
               else if (i === currentStepIndex)
                 elementToRender.push(
-                  <CurrentIcon key={elementToRender.length} />
+                  <CurrentIcon
+                    key={elementToRender.length}
+                    className={classes.wizardStepIcon}
+                  />
                 )
               else
-                elementToRender.push(<EmptyIcon key={elementToRender.length} />)
+                elementToRender.push(
+                  <EmptyIcon
+                    key={elementToRender.length}
+                    className={classes.wizardStepIcon}
+                  />
+                )
 
               if (i < currentStepIndex)
                 elementToRender.push(
