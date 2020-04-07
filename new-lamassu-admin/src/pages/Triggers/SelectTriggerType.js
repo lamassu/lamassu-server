@@ -14,6 +14,7 @@ const useStyles = makeStyles(mainStyles)
 const SelectTriggerType = ({ fiatCurrencyCode }) => {
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
   const [radioGroupValue, setRadioGroupValue] = useState('amount')
+  const [thresholdValue, setThresholdValue] = useState('')
 
   const classes = useStyles()
 
@@ -27,6 +28,12 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
 
   const handleRadioButtons = newValue => {
     setRadioGroupValue(newValue)
+  }
+
+  const validateThresholdInputIsPositiveInteger = value => {
+    if (parseFloat(value) === value >>> 0 && !value.includes('.')) {
+      setThresholdValue(value)
+    }
   }
 
   const helpPopperOpen = Boolean(helpPopperAnchorEl)
@@ -74,8 +81,14 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
       </div>
       <H4>Threshold</H4>
       <div className={classes.rowWrapper}>
-        {/* TODO: allow only monetary values */}
-        <TextInput large className={classes.textInput} />
+        <TextInput
+          className={classes.textInput}
+          onChange={event =>
+            validateThresholdInputIsPositiveInteger(event.target.value)
+          }
+          large
+          value={thresholdValue}
+        />
         <TL1>{fiatCurrencyCode}</TL1>
       </div>
     </div>
