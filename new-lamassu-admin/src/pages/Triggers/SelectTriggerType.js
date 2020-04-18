@@ -15,6 +15,7 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
   const [radioGroupValue, setRadioGroupValue] = useState('amount')
   const [thresholdValue, setThresholdValue] = useState('')
+  const [thresholdError, setThresholdError] = useState(false)
 
   const classes = useStyles()
 
@@ -31,8 +32,12 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
   }
 
   const validateThresholdInputIsPositiveInteger = value => {
-    if (parseFloat(value) === value >>> 0 && !value.includes('.')) {
+    if (
+      (parseFloat(value) === value >>> 0 && !value.includes('.')) ||
+      value === ''
+    ) {
       setThresholdValue(value)
+      setThresholdError(value === '')
     }
   }
 
@@ -86,6 +91,7 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
           onChange={event =>
             validateThresholdInputIsPositiveInteger(event.target.value)
           }
+          error={thresholdError}
           large
           value={thresholdValue}
         />
