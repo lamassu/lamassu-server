@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import TitleSection from 'src/components/layout/TitleSection'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import Section from '../../components/layout/Section'
 
@@ -49,12 +49,13 @@ const Notifications = ({ name: SCREEN_KEY }) => {
     onError: error => setError({ error })
   })
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config = fromNamespace(SCREEN_KEY)(data?.config)
   const machines = data?.machines
   const cryptoCurrencies = data?.cryptoCurrencies
 
-  // TODO improve the way of fetching this
-  const currency = R.path(['locale_fiatCurrency', 'code'])(data?.config ?? {})
+  const currency = R.path(['fiatCurrency'])(
+    fromNamespace(namespaces.LOCALE)(data?.config)
+  )
 
   const save = R.curry((section, rawConfig) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)

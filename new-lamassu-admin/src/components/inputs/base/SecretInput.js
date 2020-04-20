@@ -9,12 +9,12 @@ const SecretInput = memo(({ value, onFocus, onBlur, ...props }) => {
   const previouslyFilled = !!value
   const tempValue = previouslyFilled ? '' : value
 
-  const iOnFocus = event => {
+  const innerOnFocus = event => {
     setFocused(true)
     onFocus && onFocus(event)
   }
 
-  const iOnBlur = event => {
+  const innerOnBlur = event => {
     setFocused(false)
     onBlur && onBlur(event)
   }
@@ -23,8 +23,8 @@ const SecretInput = memo(({ value, onFocus, onBlur, ...props }) => {
     <TextInput
       {...props}
       type="password"
-      onFocus={iOnFocus}
-      onBlur={iOnBlur}
+      onFocus={innerOnFocus}
+      onBlur={innerOnBlur}
       value={value}
       InputProps={{ value: !focused ? tempValue : value }}
       InputLabelProps={{ shrink: previouslyFilled || focused }}

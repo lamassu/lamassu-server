@@ -10,7 +10,7 @@ const AutocompleteFormik = ({ options, ...props }) => {
   const error = !!(touched[name] && errors[name])
   const { initialValues } = useFormikContext()
 
-  const iOptions =
+  const innerOptions =
     R.type(options) === 'Function' ? options(initialValues) : options
 
   return (
@@ -20,7 +20,7 @@ const AutocompleteFormik = ({ options, ...props }) => {
       onBlur={onBlur}
       value={value}
       error={error}
-      options={iOptions}
+      options={innerOptions}
       {...props}
     />
   )

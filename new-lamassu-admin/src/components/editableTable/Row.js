@@ -100,7 +100,7 @@ const ECol = ({ editing, config }) => {
   const { values } = useFormikContext()
   const classes = useStyles({ textAlign, size })
 
-  const iProps = {
+  const innerProps = {
     fullWidth: true,
     size,
     bold,
@@ -109,8 +109,8 @@ const ECol = ({ editing, config }) => {
   }
 
   // Autocomplete
-  if (iProps.options && !iProps.getLabel) {
-    iProps.getLabel = view
+  if (innerProps.options && !innerProps.getLabel) {
+    innerProps.getLabel = view
   }
 
   return (
@@ -121,7 +121,7 @@ const ECol = ({ editing, config }) => {
       bold={bold}
       textAlign={textAlign}>
       {editing && editable ? (
-        <Field name={name} component={input} {...iProps} />
+        <Field name={name} component={input} {...innerProps} />
       ) : (
         values && <>{view(values[name])}</>
       )}
@@ -160,12 +160,12 @@ const ERow = ({ editing, disabled }) => {
   const { values } = useFormikContext()
   const shouldStripe = stripeWhen && stripeWhen(values) && !editing
 
-  const iElements = shouldStripe ? groupStriped(elements) : elements
+  const innerElements = shouldStripe ? groupStriped(elements) : elements
   return (
     <Tr
       error={errors && errors.length}
       errorMessage={errors && errors.toString()}>
-      {iElements.map((it, idx) => {
+      {innerElements.map((it, idx) => {
         return <ECol key={idx} config={it} editing={editing} />
       })}
       {(enableEdit || enableDelete || enableToggle) && (

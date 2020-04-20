@@ -15,6 +15,7 @@ import Services from 'src/pages/Services/Services'
 import Transactions from 'src/pages/Transactions/Transactions'
 import WalletSettings from 'src/pages/Wallet/Wallet'
 import MachineStatus from 'src/pages/maintenance/MachineStatus'
+import { namespaces } from 'src/utils/config'
 
 const tree = [
   {
@@ -38,7 +39,7 @@ const tree = [
         component: MachineLogs
       },
       {
-        key: 'fuding',
+        key: 'funding',
         label: 'Funding',
         route: '/maintenance/funding',
         component: Funding
@@ -66,39 +67,39 @@ const tree = [
     },
     children: [
       {
-        key: 'commissions',
+        key: namespaces.COMMISSIONS,
         label: 'Commissions',
         route: '/settings/commissions',
         component: Commissions
       },
       {
-        key: 'locale',
+        key: namespaces.LOCALE,
         label: 'Locale',
         route: '/settings/locale',
         component: Locales
       },
       {
-        key: 'services',
+        key: namespaces.SERVICES,
         label: '3rd party services',
         route: '/settings/3rd-party-services',
         component: Services
       },
       {
-        key: 'notifications',
+        key: namespaces.NOTIFICATIONS,
         label: 'Notifications',
         route: '/settings/notifications',
         component: Notifications
       },
       {
-        key: 'info',
+        key: namespaces.OPERATOR_INFO,
         label: 'Operator Info',
         route: '/settings/operator-info',
         component: OperatorInfo
       },
       {
-        key: 'wallet',
+        key: namespaces.WALLETS,
         label: 'Wallet',
-        route: '/settings/wallet',
+        route: '/settings/wallet-settings',
         component: WalletSettings
       }
     ]

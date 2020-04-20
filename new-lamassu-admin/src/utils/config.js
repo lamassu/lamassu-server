@@ -1,5 +1,14 @@
 import * as R from 'ramda'
 
+const namespaces = {
+  WALLETS: 'wallets',
+  OPERATOR_INFO: 'operatorInfo',
+  NOTIFICATIONS: 'notifications',
+  SERVICES: 'services',
+  LOCALE: 'locale',
+  COMMISSIONS: 'commissions'
+}
+
 const mapKeys = R.curry((fn, obj) =>
   R.fromPairs(R.map(R.adjust(0, fn), R.toPairs(obj)))
 )
@@ -23,4 +32,4 @@ const toNamespace = R.curry((key, config) =>
   mapKeys(it => `${key}_${it}`)(config)
 )
 
-export { fromNamespace, toNamespace }
+export { fromNamespace, toNamespace, namespaces }
