@@ -56,12 +56,10 @@ const CryptoBalanceOverrides = ({ section }) => {
     [LOW_BALANCE_KEY]: Yup.number()
       .integer()
       .min(0)
-      .max(99999999)
       .required(),
     [HIGH_BALANCE_KEY]: Yup.number()
       .integer()
       .min(0)
-      .max(99999999)
       .required()
   })
 

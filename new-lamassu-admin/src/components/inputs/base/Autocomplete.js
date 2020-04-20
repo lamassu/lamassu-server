@@ -36,7 +36,7 @@ const Autocomplete = ({
 
   const value = getValue()
 
-  const iOnChange = (evt, value) => {
+  const innerOnChange = (evt, value) => {
     if (!valueProp) return onChange(evt, value)
 
     const rValue = multiple ? R.map(mapToValue)(value) : mapToValue(value)
@@ -48,7 +48,7 @@ const Autocomplete = ({
       options={options}
       multiple={multiple}
       value={value}
-      onChange={iOnChange}
+      onChange={innerOnChange}
       getOptionLabel={getLabel}
       forcePopupIcon={false}
       filterOptions={createFilterOptions({ ignoreAccents: true, limit })}
