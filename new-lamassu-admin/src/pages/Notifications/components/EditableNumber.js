@@ -42,7 +42,6 @@ const EditableNumber = ({
             name={name}
             component={TextInput}
             textAlign="right"
-            type="text"
             width={width}
           />
         )}

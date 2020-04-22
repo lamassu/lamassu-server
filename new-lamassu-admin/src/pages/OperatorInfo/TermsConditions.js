@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
-import classnames from 'classnames'
-import * as R from 'ramda'
-import * as Yup from 'yup'
-import { Form, Formik, Field } from 'formik'
-import { gql } from 'apollo-boost'
-import { makeStyles } from '@material-ui/core'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
+import { gql } from 'apollo-boost'
+import classnames from 'classnames'
+import { Form, Formik, Field } from 'formik'
+import * as R from 'ramda'
+import React, { useState } from 'react'
+import * as Yup from 'yup'
 
-import { Info2, Label2 } from 'src/components/typography'
+import ErrorMessage from 'src/components/ErrorMessage'
+import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
-import { Button } from 'src/components/buttons'
-import ErrorMessage from 'src/components/ErrorMessage'
+import { Info2, Label2 } from 'src/components/typography'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
   styles as globalStyles,
@@ -40,7 +41,10 @@ const TermsConditions = () => {
   const [error, setError] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
-      const { termsAndConditions } = data.saveConfig
+      const termsAndConditions = fromNamespace(
+        namespaces.TERMS_CONDITIONS,
+        data.saveConfig
+      )
       setFormData(termsAndConditions)
       setShowOnScreen(termsAndConditions.show)
       setError(null)
@@ -52,7 +56,10 @@ const TermsConditions = () => {
 
   useQuery(GET_CONFIG, {
     onCompleted: data => {
-      const { termsAndConditions } = data.config
+      const termsAndConditions = fromNamespace(
+        namespaces.TERMS_CONDITIONS,
+        data.config
+      )
       setFormData(termsAndConditions ?? {})
       setShowOnScreen(termsAndConditions?.show ?? false)
     }
@@ -61,7 +68,7 @@ const TermsConditions = () => {
   const save = it => {
     setError(null)
     return saveConfig({
-      variables: { config: { termsAndConditions: it } }
+      variables: { config: toNamespace(namespaces.TERMS_CONDITIONS, it) }
     })
   }
 

@@ -7,7 +7,11 @@ const namespaces = {
   NOTIFICATIONS: 'notifications',
   SERVICES: 'services',
   LOCALE: 'locale',
-  COMMISSIONS: 'commissions'
+  COMMISSIONS: 'commissions',
+  CONTACT_INFO: 'contactInfo',
+  RECEIPT: 'receipt',
+  COIN_ATM_RADAR: 'coinAtmRadar',
+  TERMS_CONDITIONS: 'termsConditions'
 }
 
 const mapKeys = R.curry((fn, obj) =>

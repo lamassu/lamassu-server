@@ -1,26 +1,25 @@
 import { makeStyles } from '@material-ui/core'
-import * as R from 'ramda'
+import Grid from '@material-ui/core/Grid'
 import React, { useState } from 'react'
 
-import Title from 'src/components/Title'
 import Sidebar from 'src/components/layout/Sidebar'
-
-import logsStyles from '../Logs.styles'
+import TitleSection from 'src/components/layout/TitleSection'
 
 import CoinAtmRadar from './CoinATMRadar'
 import ContactInfo from './ContactInfo'
 import ReceiptPrinting from './ReceiptPrinting'
 import TermsConditions from './TermsConditions'
 
-const localStyles = {
-  contentWrapper: {
-    width: '100%',
+const styles = {
+  grid: {
+    flex: 1,
+    height: '100%'
+  },
+  content: {
     marginLeft: 48,
     paddingTop: 15
   }
 }
-
-const styles = R.merge(logsStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
@@ -39,25 +38,21 @@ const OperatorInfo = () => {
 
   return (
     <>
-      <div className={classes.titleWrapper}>
-        <div className={classes.titleAndButtonsContainer}>
-          <Title>Operator information</Title>
-        </div>
-      </div>
-      <div className={classes.wrapper}>
+      <TitleSection title="Operator information"></TitleSection>
+      <Grid container className={classes.grid}>
         <Sidebar
           data={pages}
           isSelected={isSelected}
           displayName={it => it}
           onClick={it => setSelected(it)}
         />
-        <div className={classes.contentWrapper}>
+        <div className={classes.content}>
           {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
           {isSelected(RECEIPT) && <ReceiptPrinting />}
           {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
           {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
         </div>
-      </div>
+      </Grid>
     </>
   )
 }

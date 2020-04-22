@@ -51,7 +51,8 @@ const ETable = ({
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
 
-  const innerSave = async it => {
+  const innerSave = async value => {
+    const it = validationSchema.cast(value)
     const index = R.findIndex(R.propEq('id', it.id))(data)
     const list = index !== -1 ? R.update(index, it, data) : R.prepend(it, data)
 

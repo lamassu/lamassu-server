@@ -42,7 +42,7 @@ const FiatBalance = ({ section }) => {
         fiatBalanceCassette2: data?.fiatBalanceCassette2 ?? ''
       }}
       validationSchema={schema}
-      onSubmit={it => save(section, it)}
+      onSubmit={it => save(section, schema.cast(it))}
       onReset={() => {
         setEditing(NAME, false)
       }}>

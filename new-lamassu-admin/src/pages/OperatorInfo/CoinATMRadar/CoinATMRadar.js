@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import { gql } from 'apollo-boost'
+import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
 import Popper from 'src/components/Popper'
@@ -9,6 +10,7 @@ import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { mainStyles } from './CoinATMRadar.styles'
 
@@ -48,17 +50,25 @@ const CoinATMRadar = memo(() => {
   // TODO: treat errors on useMutation and useQuery
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: configResponse =>
-      setCoinAtmRadarConfig(configResponse.saveConfig.coinAtmRadar)
+      setCoinAtmRadarConfig(
+        fromNamespace(namespaces.COIN_ATM_RADAR, configResponse.saveConfig)
+      )
   })
   useQuery(GET_CONFIG, {
     onCompleted: configResponse => {
-      setCoinAtmRadarConfig(
-        configResponse?.config?.coinAtmRadar ?? initialValues
+      const response = fromNamespace(
+        namespaces.COIN_ATM_RADAR,
+        configResponse.config
       )
+      const values = R.merge(initialValues, response)
+      setCoinAtmRadarConfig(values)
     }
   })
 
-  const save = it => saveConfig({ variables: { config: { coinAtmRadar: it } } })
+  const save = it =>
+    saveConfig({
+      variables: { config: toNamespace(namespaces.COIN_ATM_RADAR, it) }
+    })
 
   const handleOpenHelpPopper = event => {
     setHelpPopperAnchorEl(helpPopperAnchorEl ? null : event.currentTarget)

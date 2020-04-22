@@ -36,7 +36,7 @@ const SingleFieldEditableNumber = ({
       enableReinitialize
       initialValues={{ [name]: (data && data[name]) ?? '' }}
       validationSchema={schema}
-      onSubmit={it => save(section, it)}
+      onSubmit={it => save(section, schema.cast(it))}
       onReset={() => {
         setEditing(name, false)
       }}>
