@@ -8,7 +8,7 @@ const namespaces = {
   SERVICES: 'services',
   LOCALE: 'locale',
   COMMISSIONS: 'commissions',
-  CONTACT_INFO: 'contactInfo',
+  CONTACT_INFO: 'operatorInfo',
   RECEIPT: 'receipt',
   COIN_ATM_RADAR: 'coinAtmRadar',
   TERMS_CONDITIONS: 'termsConditions'

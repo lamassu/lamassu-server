@@ -19,8 +19,8 @@ const GET_INFO = gql`
 `
 
 const SAVE_ACCOUNT = gql`
-  mutation Save($account: JSONObject) {
-    saveAccount(account: $account)
+  mutation Save($accounts: JSONObject) {
+    saveAccounts(accounts: $accounts)
   }
 `
 
@@ -45,13 +45,11 @@ const Services = ({ key: SCREEN_KEY }) => {
 
   const classes = useStyles()
 
-  const accounts = data?.accounts ?? []
-
-  const getValue = code => R.find(R.propEq('code', code))(accounts)
+  const accounts = data?.accounts ?? {}
 
   const getItems = (code, elements) => {
     const faceElements = R.filter(R.prop('face'))(elements)
-    const values = getValue(code) || {}
+    const values = accounts[code] || {}
     return R.map(({ display, code, long }) => ({
       label: display,
       value: long ? formatLong(values[code]) : values[code]
@@ -81,12 +79,12 @@ const Services = ({ key: SCREEN_KEY }) => {
           <FormRenderer
             save={it =>
               saveAccount({
-                variables: { account: { code: editingSchema.code, ...it } }
+                variables: { accounts: { [editingSchema.code]: it } }
               })
             }
             elements={editingSchema.elements}
             validationSchema={editingSchema.validationSchema}
-            value={getValue(editingSchema.code)}
+            value={accounts[editingSchema.code]}
           />
         </Modal>
       )}
