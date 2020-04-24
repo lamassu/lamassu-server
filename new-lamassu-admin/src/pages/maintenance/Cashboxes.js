@@ -13,7 +13,6 @@ import {
   CashInFormik
 } from 'src/components/inputs/cashbox/Cashbox'
 import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ErrorIcon } from 'src/styling/icons/status/tomato.svg'
 
 const ValidationSchema = Yup.object().shape({
@@ -125,20 +124,20 @@ const Cashboxes = () => {
     }
   })
 
-  const onSave = ({ cashin, cashout1, cashout2 }, { setSubmitting }) =>
+  const onSave = (_, { cashin, cashout1, cashout2 }) =>
     resetCashOut({
       variables: {
         deviceId: cashin.deviceId,
         action: 'resetCashOutBills',
         cassettes: [Number(cashout1.notes), Number(cashout2.notes)]
       }
-    }).then(() => setSubmitting(false))
+    })
 
   const elements = [
     {
       name: 'name',
       header: 'Machine',
-      size: 254,
+      width: 254,
       textAlign: 'left',
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
@@ -146,7 +145,7 @@ const Cashboxes = () => {
     {
       name: 'cashin',
       header: 'Cash-in',
-      size: 265,
+      width: 265,
       textAlign: 'left',
       view: props => <CashIn {...props} />,
       input: props => <CashInFormik onEmpty={onEmpty} {...props} />
@@ -154,7 +153,7 @@ const Cashboxes = () => {
     {
       name: 'cashout1',
       header: 'Cash-out 1',
-      size: 265,
+      width: 265,
       textAlign: 'left',
       view: props => <CashOut {...props} />,
       input: CashOutFormik
@@ -162,17 +161,10 @@ const Cashboxes = () => {
     {
       name: 'cashout2',
       header: 'Cash-out 2',
-      size: 265,
+      width: 265,
       textAlign: 'left',
       view: props => <CashOut {...props} />,
       input: CashOutFormik
-    },
-    {
-      name: 'edit',
-      header: 'Update',
-      size: 151,
-      textAlign: 'right',
-      view: onclick => <EditIcon onClick={onclick} />
     }
   ]
 
@@ -205,6 +197,8 @@ const Cashboxes = () => {
         </div>
       </div>
       <EditableTable
+        name="cashboxes"
+        enableEdit
         elements={elements}
         data={data}
         save={onSave}
