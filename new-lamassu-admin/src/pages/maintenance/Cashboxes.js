@@ -1,10 +1,8 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
 import { gql } from 'apollo-boost'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
-import Title from 'src/components/Title'
 import { Table as EditableTable } from 'src/components/editableTable'
 import {
   CashIn,
@@ -12,7 +10,7 @@ import {
   CashOutFormik,
   CashInFormik
 } from 'src/components/inputs/cashbox/Cashbox'
-import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
+import TitleSection from 'src/components/layout/TitleSection'
 import { ReactComponent as ErrorIcon } from 'src/styling/icons/status/tomato.svg'
 
 const ValidationSchema = Yup.object().shape({
@@ -88,11 +86,8 @@ const RESET_CASHOUT_BILLS = gql`
   }
 `
 
-const useStyles = makeStyles(mainStyles)
-
 const Cashboxes = () => {
   const [machines, setMachines] = useState([])
-  const classes = useStyles()
 
   useQuery(GET_MACHINES_AND_CONFIG, {
     onCompleted: data =>
@@ -188,15 +183,16 @@ const Cashboxes = () => {
 
   return (
     <>
-      <div className={classes.titleWrapper}>
-        <div className={classes.titleAndButtonsContainer}>
-          <Title>Cashboxes</Title>
-        </div>
-        <div className={classes.headerLabels}>
-          <ErrorIcon />
-          <span>Action required</span>
-        </div>
-      </div>
+      <TitleSection
+        title="Cashboxes"
+        labels={
+          <>
+            <ErrorIcon />
+            <span>Action required</span>
+          </>
+        }
+      />
+
       <EditableTable
         name="cashboxes"
         enableEdit

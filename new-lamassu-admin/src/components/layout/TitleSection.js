@@ -8,7 +8,7 @@ import styles from './TitleSection.styles'
 
 const useStyles = makeStyles(styles)
 
-const TitleSection = ({ title, error }) => {
+const TitleSection = ({ title, error, labels }) => {
   const classes = useStyles()
   return (
     <div className={classes.titleWrapper}>
@@ -18,6 +18,7 @@ const TitleSection = ({ title, error }) => {
           <ErrorMessage className={classes.error}>Failed to save</ErrorMessage>
         )}
       </div>
+      <div className={classes.headerLabels}>{labels}</div>
     </div>
   )
 }
