@@ -100,8 +100,11 @@ const Cashboxes = () => {
       setMachines(
         data.machines.map(m => ({
           ...m,
+          // TODO: move this to the new flat config style
           currency: data.config.fiatCurrency ?? { code: 'N/D' },
-          denominations: (data.config.cashOutDenominations ?? {})[m.deviceId]
+          denominations: (data.config.cashOutDenominations ?? {})[
+            m.deviceId
+          ] || { top: 11111, bottom: 22222 }
         }))
       )
   })
