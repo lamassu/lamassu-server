@@ -178,6 +178,7 @@ const Cashboxes = () => {
       cashbox,
       deviceId
     }) => ({
+      id: deviceId,
       name,
       cashin: { notes: cashbox, deviceId },
       cashout1: { notes: cassette1, denomination: top, currency },
