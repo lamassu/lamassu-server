@@ -13,10 +13,9 @@ import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
 import Transactions from 'src/pages/Transactions/Transactions'
+import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
 import MachineStatus from 'src/pages/maintenance/MachineStatus'
-import Customers from 'src/pages/Customers'
-import Triggers from 'src/pages/Triggers'
 import { namespaces } from 'src/utils/config'
 
 const tree = [
@@ -117,7 +116,8 @@ const tree = [
       {
         key: 'triggers',
         label: 'Triggers',
-        route: '/compliance/triggers'
+        route: '/compliance/triggers',
+        component: Triggers
       },
       {
         key: 'customers',

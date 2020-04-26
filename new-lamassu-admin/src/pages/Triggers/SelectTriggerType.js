@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
+import React, { useState } from 'react'
 
-import { H4, TL1, P } from 'src/components/typography'
-import { RadioGroup, TextInput } from 'src/components/inputs'
 import Popper from 'src/components/Popper'
+import { RadioGroup, TextInput } from 'src/components/inputs'
+import { H4, TL1, P } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 
 import { mainStyles } from './Triggers.styles'
@@ -44,10 +44,10 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
   const helpPopperOpen = Boolean(helpPopperAnchorEl)
 
   const radioButtonOptions = [
-    { label: 'Transaction amount', value: 'amount' },
-    { label: 'Transaction velocity', value: 'velocity' },
-    { label: 'Transaction volume', value: 'volume' },
-    { label: 'Consecutive days', value: 'days' }
+    { display: 'Transaction amount', code: 'amount' },
+    { display: 'Transaction velocity', code: 'velocity' },
+    { display: 'Transaction volume', code: 'volume' },
+    { display: 'Consecutive days', code: 'days' }
   ]
 
   return (
@@ -92,7 +92,7 @@ const SelectTriggerType = ({ fiatCurrencyCode }) => {
             validateThresholdInputIsPositiveInteger(event.target.value)
           }
           error={thresholdError}
-          large
+          size="lg"
           value={thresholdValue}
         />
         <TL1>{fiatCurrencyCode}</TL1>
