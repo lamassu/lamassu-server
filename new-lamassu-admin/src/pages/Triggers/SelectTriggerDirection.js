@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
+import React, { useState } from 'react'
 
-import { H4, P } from 'src/components/typography'
-import { RadioGroup } from 'src/components/inputs'
 import Popper from 'src/components/Popper'
+import { RadioGroup } from 'src/components/inputs'
+import { H4, P } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 
 import { mainStyles } from './Triggers.styles'
@@ -32,9 +32,9 @@ const SelectTriggerDirection = () => {
   const helpPopperOpen = Boolean(helpPopperAnchorEl)
 
   const radioButtonOptions = [
-    { label: 'Both', value: 'both' },
-    { label: 'Only cash-in', value: 'cash-in' },
-    { label: 'Only cash-out', value: 'cash-out' }
+    { display: 'Both', code: 'both' },
+    { display: 'Only cash-in', code: 'cash-in' },
+    { display: 'Only cash-out', code: 'cash-out' }
   ]
 
   return (

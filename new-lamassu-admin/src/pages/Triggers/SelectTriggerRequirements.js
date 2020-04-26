@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
+import React, { useState } from 'react'
 
-import { H4, P } from 'src/components/typography'
-import { RadioGroup } from 'src/components/inputs'
 import Popper from 'src/components/Popper'
+import { RadioGroup } from 'src/components/inputs'
+import { H4, P } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 
 import { mainStyles } from './Triggers.styles'
@@ -56,20 +56,20 @@ const SelectTriggerRequirements = () => {
   const typeHelpPopperOpen = Boolean(typeHelpPopperAnchorEl)
 
   const requirementRadioButtonOptions = [
-    { label: 'SMS verification', value: 'sms' },
-    { label: 'ID card image', value: 'id-card' },
-    { label: 'ID data', value: 'id-data' },
-    { label: 'Customer camera', value: 'camera' },
-    { label: 'Sanctions', value: 'sanctions' },
-    { label: 'Super user', value: 'super-user' },
-    { label: 'Suspend', value: 'suspend' },
-    { label: 'Block', value: 'block' }
+    { display: 'SMS verification', code: 'sms' },
+    { display: 'ID card image', code: 'id-card' },
+    { display: 'ID data', code: 'id-data' },
+    { display: 'Customer camera', code: 'camera' },
+    { display: 'Sanctions', code: 'sanctions' },
+    { display: 'Super user', code: 'super-user' },
+    { display: 'Suspend', code: 'suspend' },
+    { display: 'Block', code: 'block' }
   ]
 
   const typeRadioButtonOptions = [
-    { label: 'Fully automatic', value: 'automatic' },
-    { label: 'Semi automatic', value: 'semi-automatic' },
-    { label: 'Manual', value: 'manual' }
+    { display: 'Fully automatic', code: 'automatic' },
+    { display: 'Semi automatic', code: 'semi-automatic' },
+    { display: 'Manual', code: 'manual' }
   ]
 
   return (
