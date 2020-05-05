@@ -33,6 +33,7 @@ const ValidationSchema = Yup.object().shape({
       denomination: Yup.number()
         .required('Required')
         .integer()
+        .default(0)
     }),
   cashout2: Yup.object()
     .required('Required')
@@ -44,6 +45,7 @@ const ValidationSchema = Yup.object().shape({
       denomination: Yup.number()
         .required('Required')
         .integer()
+        .default(0)
     })
 })
 
@@ -90,15 +92,15 @@ const Cashboxes = () => {
   const [machines, setMachines] = useState([])
 
   useQuery(GET_MACHINES_AND_CONFIG, {
-    onCompleted: data =>
+    onCompleted: ({ machines, config }) =>
       setMachines(
-        data.machines.map(m => ({
+        machines.map(m => ({
           ...m,
-          // TODO: move this to the new flat config style
-          currency: data.config.fiatCurrency ?? { code: 'N/D' },
-          denominations: (data.config.cashOutDenominations ?? {})[
-            m.deviceId
-          ] || { top: 11111, bottom: 22222 }
+          currency: { code: config.locale_fiatCurrency ?? '' },
+          denominations: {
+            top: config[`denominations_${m.deviceId}_top`],
+            bottom: config[`denominations_${m.deviceId}_bottom`]
+          }
         }))
       )
   })
