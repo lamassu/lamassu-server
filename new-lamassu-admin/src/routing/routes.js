@@ -69,12 +69,6 @@ const tree = [
     },
     children: [
       {
-        key: namespaces.CASH_OUT,
-        label: 'Cash-out',
-        route: '/settings/cash-out',
-        component: Cashout
-      },
-      {
         key: namespaces.COMMISSIONS,
         label: 'Commissions',
         route: '/settings/commissions',
@@ -85,6 +79,12 @@ const tree = [
         label: 'Locale',
         route: '/settings/locale',
         component: Locales
+      },
+      {
+        key: namespaces.CASH_OUT,
+        label: 'Cash-out',
+        route: '/settings/cash-out',
+        component: Cashout
       },
       {
         key: namespaces.SERVICES,

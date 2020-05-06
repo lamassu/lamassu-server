@@ -1,191 +1,70 @@
+import * as R from 'ramda'
 import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core'
 
-import { H1, Info2, H4, P } from 'src/components/typography'
-import { Button } from 'src/components/buttons'
-import Stage from 'src/components/Stage'
-import { TextInput } from 'src/components/inputs'
-import ErrorMessage from 'src/components/ErrorMessage'
-import { spacer } from 'src/styling/variables'
+import Modal from 'src/components/Modal'
+import { toNamespace } from 'src/utils/config'
 
-const styles = {
-  modalContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: [[24, 32, 0]],
-    '& > h1': {
-      margin: [[0, 0, 10]]
-    },
-    '& > h4': {
-      margin: [[32, 0, 32 - 9, 0]]
-    },
-    '& > p': {
-      margin: 0
+import WizardSplash from './WizardSplash'
+import WizardStep from './WizardStep'
+
+const LAST_STEP = 3
+const MODAL_WIDTH = 554
+
+const Wizard = ({ machine, onClose, save, error }) => {
+  const [{ step, config }, setState] = useState({
+    step: 0,
+    config: { active: true }
+  })
+
+  const title = `Enable cash-out`
+  const isLastStep = step === LAST_STEP
+
+  const onContinue = async it => {
+    const newConfig = R.merge(config, it)
+
+    if (isLastStep) {
+      return save(toNamespace(machine.deviceId, newConfig))
     }
-  },
-  submitButtonWrapper: {
-    display: 'flex',
-    alignSelf: 'flex-end',
-    margin: [['auto', 0, 0]]
-  },
-  submitButton: {
-    width: 67,
-    padding: [[0, 0]],
-    margin: [['auto', 0, 24, 20]],
-    '&:active': {
-      margin: [['auto', 0, 24, 20]]
-    }
-  },
-  stages: {
-    marginTop: 10
-  },
-  texInput: {
-    width: spacer * 6,
-    marginRight: spacer * 2
-  }
-}
 
-const useStyles = makeStyles(styles)
-
-const SubmitButton = ({ error, label, ...props }) => {
-  const classes = useStyles()
-
-  return (
-    <div className={classes.submitButtonWrapper}>
-      {error && <ErrorMessage>Failed to save</ErrorMessage>}
-      <Button {...props}>{label}</Button>
-    </div>
-  )
-}
-
-const Wizard = ({ pageName, currentStage, handleModalNavigation, machine }) => {
-  const [topOverride, setTopOverride] = useState(
-    machine?.cashOutDenominations?.top
-  )
-  const [bottomOverride, setBottomOverride] = useState(
-    machine?.cashOutDenominations?.bottom
-  )
-
-  const overrideTop = event => {
-    setTopOverride(Number(event.target.value))
+    setState({
+      step: step + 1,
+      config: newConfig
+    })
   }
 
-  const overrideBottom = event => {
-    setBottomOverride(Number(event.target.value))
-  }
-
-  const [error, setError] = useState(null)
-  const classes = useStyles()
-
-  const handleNext = machine => event => {
-    const cashOutDenominations = { top: topOverride, bottom: bottomOverride }
-    const nav = handleModalNavigation({ ...machine, cashOutDenominations })(
-      currentStage + 1
-    )
-    nav.catch(error => setError(error))
-  }
-
-  const isSubmittable = currentStage => {
-    switch (currentStage) {
+  const getStepData = () => {
+    switch (step) {
       case 1:
-        return topOverride > 0
+        return { type: 'top', display: 'Cassete 1 (Top)' }
       case 2:
-        return bottomOverride > 0
+        return { type: 'bottom', display: 'Cassete 2' }
+      case 3:
+        return { type: 'agreed' }
       default:
-        return isSubmittable(1) && isSubmittable(2)
+        return null
     }
   }
 
   return (
-    <div className={classes.modalContent}>
-      <H1>Enable cash-out</H1>
-      <Info2>{machine.name}</Info2>
-      <Stage
-        stages={3}
-        currentStage={currentStage}
-        color="spring"
-        className={classes.stages}
-      />
-      {currentStage < 3 && (
-        <>
-          <H4>{pageName}</H4>
-          <P>Choose bill denomination</P>
-        </>
+    <Modal
+      title={step === 0 ? null : title}
+      handleClose={onClose}
+      width={MODAL_WIDTH}
+      open={true}>
+      {step === 0 && (
+        <WizardSplash name={machine.name} onContinue={() => onContinue()} />
       )}
-      <div>
-        {currentStage < 3 && (
-          <>
-            {currentStage === 1 && (
-              <TextInput
-                autoFocus
-                id="confirm-input"
-                type="text"
-                large
-                value={topOverride}
-                touched={{}}
-                error={false}
-                InputLabelProps={{ shrink: true }}
-                onChange={overrideTop}
-                className={classes.texInput}
-              />
-            )}
-
-            {currentStage === 2 && (
-              <TextInput
-                autoFocus
-                id="confirm-input"
-                type="text"
-                large
-                value={bottomOverride}
-                touched={{}}
-                error={false}
-                InputLabelProps={{ shrink: true }}
-                onChange={overrideBottom}
-                className={classes.texInput}
-              />
-            )}
-
-            <TextInput
-              disabled
-              autoFocus
-              id="confirm-input"
-              type="text"
-              large
-              value={machine.currency.code}
-              touched={{}}
-              InputLabelProps={{ shrink: true }}
-              className={classes.texInput}
-            />
-          </>
-        )}
-        {currentStage === 3 && (
-          <>
-            <H4>{pageName}</H4>
-            <P>
-              When enabling cash out, your bill count will be authomatically set
-              to zero. Make sure you physically put cash inside the cashboxes to
-              allow the machine to dispense it to your users. If you already
-              did, make sure you set the correct cash out bill count for this
-              machine on your Cashboxes tab under Maintenance.
-            </P>
-            <H4>{pageName}</H4>
-            <P>
-              When enabling cash out, default commissions will be set. To change
-              commissions for this machine, please go to the Commissions tab
-              under Settings. where you can set exceptions for each of the
-              available cryptocurrencies.
-            </P>
-          </>
-        )}
-      </div>
-      <SubmitButton
-        className={classes.submitButton}
-        label={currentStage === 3 ? 'Finish' : 'Next'}
-        disabled={!isSubmittable(currentStage)}
-        onClick={handleNext(machine)}
-        error={error}
-      />
-    </div>
+      {step !== 0 && (
+        <WizardStep
+          step={step}
+          name={machine.name}
+          error={error}
+          lastStep={isLastStep}
+          {...getStepData()}
+          onContinue={onContinue}
+        />
+      )}
+    </Modal>
   )
 }
 
