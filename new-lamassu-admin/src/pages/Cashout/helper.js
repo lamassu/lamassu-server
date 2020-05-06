@@ -4,7 +4,8 @@ import TextInput from 'src/components/inputs/formik/TextInput'
 
 const DenominationsSchema = Yup.object().shape({
   top: Yup.number().required('Required'),
-  bottom: Yup.number().required('Required')
+  bottom: Yup.number().required('Required'),
+  zeroConfLimit: Yup.number().required('Required')
 })
 
 const getElements = (machines, { fiatCurrency } = {}) => {
@@ -28,11 +29,19 @@ const getElements = (machines, { fiatCurrency } = {}) => {
     },
     {
       name: 'bottom',
-      header: 'Cassette 2',
+      header: 'Cassette 2 (Bottom)',
       view: it => `${it} ${fiatCurrency}`,
       size: 'sm',
       stripe: true,
       width: 265,
+      input: TextInput
+    },
+    {
+      name: 'zeroConfLimit',
+      header: '0-conf Limit',
+      size: 'sm',
+      stripe: true,
+      width: 200,
       input: TextInput
     }
   ]

@@ -1,5 +1,5 @@
 const plugins = require('../lib/plugins')
-const settingsLoader = require('../lib/settings-loader')
+const settingsLoader = require('../lib/new-settings-loader')
 const pp = require('../lib/pp')
 
 settingsLoader.loadLatest()

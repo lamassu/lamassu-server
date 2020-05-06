@@ -1,11 +1,13 @@
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { toNamespace } from 'src/utils/config'
 
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
+import { DenominationsSchema } from './helper'
 
 const LAST_STEP = 3
 const MODAL_WIDTH = 554
@@ -20,11 +22,13 @@ const Wizard = ({ machine, onClose, save, error }) => {
   const isLastStep = step === LAST_STEP
 
   const onContinue = async it => {
-    const newConfig = R.merge(config, it)
-
     if (isLastStep) {
-      return save(toNamespace(machine.deviceId, newConfig))
+      return save(
+        toNamespace(machine.deviceId, DenominationsSchema.cast(config))
+      )
     }
+
+    const newConfig = R.merge(config, it)
 
     setState({
       step: step + 1,
@@ -35,11 +39,17 @@ const Wizard = ({ machine, onClose, save, error }) => {
   const getStepData = () => {
     switch (step) {
       case 1:
-        return { type: 'top', display: 'Cassete 1 (Top)' }
+        return {
+          type: 'top',
+          display: 'Cassete 1 (Top)',
+          schema: Yup.object().shape({ top: Yup.number().required() })
+        }
       case 2:
-        return { type: 'bottom', display: 'Cassete 2' }
-      case 3:
-        return { type: 'agreed' }
+        return {
+          type: 'bottom',
+          display: 'Cassete 2',
+          schema: Yup.object().shape({ bottom: Yup.number().required() })
+        }
       default:
         return null
     }

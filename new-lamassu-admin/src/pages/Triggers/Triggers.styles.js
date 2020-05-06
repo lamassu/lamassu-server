@@ -1,5 +1,5 @@
-import baseStyles from 'src/pages/Logs.styles'
 import { booleanPropertiesTableStyles } from 'src/components/booleanPropertiesTable/BooleanPropertiesTable.styles'
+import baseStyles from 'src/pages/Logs.styles'
 
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
 const { rowWrapper, radioButtons } = booleanPropertiesTableStyles
@@ -10,6 +10,17 @@ const mainStyles = {
   buttonsWrapper,
   rowWrapper,
   radioButtons,
+  radioGroup: {
+    flexDirection: 'row'
+  },
+  radioLabel: {
+    width: 150,
+    height: 40
+  },
+  radio: {
+    padding: 4,
+    margin: 4
+  },
   closeButton: {
     position: 'absolute',
     width: 16,
@@ -32,14 +43,6 @@ const mainStyles = {
     '& > *': {
       minWidth: 160,
       marginRight: 12
-    }
-  },
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    '& > div': {
-      outline: 'none'
     }
   },
   wizardHeaderText: {

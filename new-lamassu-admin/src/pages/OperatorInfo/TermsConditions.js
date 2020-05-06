@@ -46,7 +46,7 @@ const TermsConditions = () => {
         data.saveConfig
       )
       setFormData(termsAndConditions)
-      setShowOnScreen(termsAndConditions.show)
+      setShowOnScreen(termsAndConditions.active)
       setError(null)
     },
     onError: e => setError(e)
@@ -61,7 +61,7 @@ const TermsConditions = () => {
         data.config
       )
       setFormData(termsAndConditions ?? {})
-      setShowOnScreen(termsAndConditions?.show ?? false)
+      setShowOnScreen(termsAndConditions?.active ?? false)
     }
   })
 
@@ -74,21 +74,21 @@ const TermsConditions = () => {
 
   const handleEnable = () => {
     const s = !showOnScreen
-    save({ show: s })
+    save({ active: s })
   }
 
   if (!formData) return null
 
   const fields = [
     {
-      name: 'screenTitle',
+      name: 'title',
       label: 'Screen title',
-      value: formData.screenTitle ?? ''
+      value: formData.title ?? ''
     },
     {
-      name: 'textContent',
+      name: 'text',
       label: 'Text content',
-      value: formData.textContent ?? '',
+      value: formData.text ?? '',
       multiline: true
     },
     {
@@ -109,14 +109,14 @@ const TermsConditions = () => {
   const findValue = name => findField(name).value
 
   const initialValues = {
-    screenTitle: findValue('screenTitle'),
-    textContent: findValue('textContent'),
+    title: findValue('title'),
+    text: findValue('text'),
     acceptButtonText: findValue('acceptButtonText'),
     cancelButtonText: findValue('cancelButtonText')
   }
 
   const validationSchema = Yup.object().shape({
-    screenTitle: Yup.string().max(50, 'Too long'),
+    title: Yup.string().max(50, 'Too long'),
     acceptButtonText: Yup.string().max(15, 'Too long'),
     cancelButtonText: Yup.string().max(15, 'Too long')
   })

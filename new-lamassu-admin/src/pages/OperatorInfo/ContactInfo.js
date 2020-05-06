@@ -22,9 +22,9 @@ import {
 } from './OperatorInfo.styles'
 
 const validationSchema = Yup.object().shape({
-  infoCardEnabled: Yup.boolean().required(),
-  fullName: Yup.string().required(),
-  phoneNumber: Yup.string().required(),
+  active: Yup.boolean().required(),
+  name: Yup.string().required(),
+  phone: Yup.string().required(),
   email: Yup.string()
     .email('Please enter a valid email address')
     .required(),
@@ -111,7 +111,7 @@ const ContactInfo = () => {
   const [error, setError] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
-      setInfo(fromNamespace(namespaces.CONTACT_INFO, data.saveConfig))
+      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.saveConfig))
       setEditing(false)
     },
     onError: e => setError(e)
@@ -119,13 +119,13 @@ const ContactInfo = () => {
 
   useQuery(GET_CONFIG, {
     onCompleted: data => {
-      setInfo(fromNamespace(namespaces.CONTACT_INFO, data.config))
+      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.config))
     }
   })
 
   const save = it => {
     return saveConfig({
-      variables: { config: toNamespace(namespaces.CONTACT_INFO, it) }
+      variables: { config: toNamespace(namespaces.OPERATOR_INFO, it) }
     })
   }
 
@@ -135,21 +135,21 @@ const ContactInfo = () => {
 
   const fields = [
     {
-      name: 'infoCardEnabled',
+      name: 'active',
       label: 'Info Card Enabled',
-      value: String(info.infoCardEnabled),
+      value: String(info.active),
       component: RadioGroupFormik
     },
     {
-      name: 'fullName',
+      name: 'name',
       label: 'Full name',
-      value: info.fullName ?? '',
+      value: info.name ?? '',
       component: TextInputFormik
     },
     {
-      name: 'phoneNumber',
+      name: 'phone',
       label: 'Phone number',
-      value: info.phoneNumber ?? '',
+      value: info.phone ?? '',
       component: TextInputFormik
     },
     {
@@ -179,9 +179,9 @@ const ContactInfo = () => {
 
   const form = {
     initialValues: {
-      infoCardEnabled: findValue('infoCardEnabled'),
-      fullName: findValue('fullName'),
-      phoneNumber: info.phoneNumber ?? '',
+      active: findValue('active'),
+      name: findValue('name'),
+      phone: info.phone ?? '',
       email: findValue('email'),
       website: findValue('website'),
       companyNumber: findValue('companyNumber')
@@ -213,7 +213,7 @@ const ContactInfo = () => {
           <Form>
             <div className={classnames(classes.row, classes.radioButtonsRow)}>
               <Field
-                field={findField('infoCardEnabled')}
+                field={findField('active')}
                 editing={editing}
                 displayValue={it => (it === 'true' ? 'On' : 'Off')}
                 options={[
@@ -226,13 +226,13 @@ const ContactInfo = () => {
             </div>
             <div className={classes.row}>
               <Field
-                field={findField('fullName')}
+                field={findField('name')}
                 editing={editing}
                 displayValue={displayTextValue}
                 onFocus={() => setError(null)}
               />
               <Field
-                field={findField('phoneNumber')}
+                field={findField('phone')}
                 editing={editing}
                 displayValue={displayTextValue}
                 onFocus={() => setError(null)}

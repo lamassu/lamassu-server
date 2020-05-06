@@ -1,10 +1,12 @@
 // import { makeStyles } from '@material-ui/core/styles'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
+import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
 import { EditableProperty } from 'src/components/editableProperty'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 // import { ActionButton } from 'src/components/buttons'
 // import { ReactComponent as UploadIcon } from 'src/styling/icons/button/upload/zodiac.svg'
 // import { ReactComponent as UploadIconInverse } from 'src/styling/icons/button/upload/white.svg'
@@ -64,21 +66,28 @@ const ReceiptPrinting = memo(() => {
 
   // TODO: treat errors on useMutation and useQuery
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: configResponse =>
-      setReceiptPrintingConfig(configResponse.saveConfig.receiptPrinting)
+    onCompleted: configResponse => {
+      console.log(configResponse.saveConfig)
+      return setReceiptPrintingConfig(
+        fromNamespace(namespaces.RECEIPT, configResponse.saveConfig)
+      )
+    }
   })
   useQuery(GET_CONFIG, {
     onCompleted: configResponse => {
-      setReceiptPrintingConfig(
-        configResponse?.config?.receiptPrinting ?? initialValues
-      )
+      const response = fromNamespace(namespaces.RECEIPT, configResponse.config)
+      const values = R.merge(initialValues, response)
+      setReceiptPrintingConfig(values)
     }
   })
 
   const save = it =>
-    saveConfig({ variables: { config: { receiptPrinting: it } } })
+    saveConfig({
+      variables: { config: toNamespace(namespaces.RECEIPT, it) }
+    })
 
   if (!receiptPrintingConfig) return null
+  console.log(receiptPrintingConfig)
 
   return (
     <>
@@ -90,7 +99,12 @@ const ReceiptPrinting = memo(() => {
         code={receiptPrintingConfig.active}
         save={it =>
           saveConfig({
-            variables: { config: { receiptPrinting: { active: it } } }
+            variables: {
+              config: toNamespace(
+                namespaces.RECEIPT,
+                R.merge(receiptPrintingConfig, { active: it })
+              )
+            }
           })
         }
       />

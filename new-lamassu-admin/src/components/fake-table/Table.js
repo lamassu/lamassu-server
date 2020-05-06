@@ -76,18 +76,8 @@ const ThDoubleLevel = ({ title, children, className }) => {
   )
 }
 
-const CellDoubleLevel = ({ children, className }) => {
-  const classes = useStyles()
-
-  return (
-    <div className={classnames(className, classes.cellDoubleLevel)}>
-      {children}
-    </div>
-  )
-}
-
-const Tr = ({ error, errorMessage, children, className }) => {
-  const classes = useStyles()
+const Tr = ({ error, errorMessage, children, className, size }) => {
+  const classes = useStyles({ size })
   const cardClasses = { root: classes.cardContentRoot }
   const classNames = {
     [classes.tr]: true,
@@ -128,6 +118,5 @@ export {
   Td,
   Th,
   ThDoubleLevel,
-  CellDoubleLevel,
   EditCell
 }

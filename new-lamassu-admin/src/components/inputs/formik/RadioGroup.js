@@ -13,8 +13,9 @@ const RadioGroupFormik = memo(({ label, ...props }) => {
       options={props.options}
       ariaLabel={name}
       onChange={e => {
+        console.log(e)
         onChange(e)
-        props.resetError()
+        props.resetError && props.resetError()
       }}
       className={props.className}
       {...props}

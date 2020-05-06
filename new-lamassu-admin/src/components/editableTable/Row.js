@@ -154,6 +154,7 @@ const ERow = ({ editing, disabled }) => {
     enableEdit,
     enableDelete,
     enableToggle,
+    rowSize,
     stripeWhen
   } = useContext(TableCtx)
 
@@ -163,6 +164,7 @@ const ERow = ({ editing, disabled }) => {
   const innerElements = shouldStripe ? groupStriped(elements) : elements
   return (
     <Tr
+      size={rowSize}
       error={errors && errors.length}
       errorMessage={errors && errors.toString()}>
       {innerElements.map((it, idx) => {

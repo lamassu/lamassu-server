@@ -34,7 +34,7 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const Services = ({ key: SCREEN_KEY }) => {
+const Services = () => {
   const [editingSchema, setEditingSchema] = useState(null)
 
   const { data } = useQuery(GET_INFO)

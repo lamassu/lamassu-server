@@ -70,14 +70,16 @@ export default {
   trError: {
     backgroundColor: tableErrorColor
   },
-  mainContent: {
-    display: 'flex',
-    alignItems: 'center',
-    minHeight: 48
+  mainContent: ({ size }) => {
+    const minHeight = size === 'lg' ? 68 : 48
+    return {
+      display: 'flex',
+      alignItems: 'center',
+      minHeight
+    }
   },
   // mui-overrides
   cardContentRoot: {
-    // display: 'flex',
     margin: 0,
     padding: 0,
     '&:last-child': {
