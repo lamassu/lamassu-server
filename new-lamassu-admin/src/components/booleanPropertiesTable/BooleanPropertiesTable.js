@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import React, { useState, memo } from 'react'
 
 import { Link } from 'src/components/buttons'
@@ -30,6 +31,7 @@ const BooleanPropertiesTable = memo(
     }
 
     const innerCancel = () => {
+      setRadioGroupValues(elements)
       setEditing(false)
     }
 
@@ -79,23 +81,31 @@ const BooleanPropertiesTable = memo(
             {radioGroupValues &&
               radioGroupValues.map((element, idx) => (
                 <TableRow key={idx} size="sm" className={classes.tableRow}>
-                  <TableCell className={classes.tableCell}>
+                  <TableCell className={classes.leftTableCell}>
                     {element.display}
-                    {editing && (
-                      <RadioGroup
-                        options={radioButtonOptions}
-                        value={element.value}
-                        onChange={event =>
-                          handleRadioButtons(
-                            element.name,
-                            event.target.value === 'true'
-                          )
-                        }
-                        className={classes.radioButtons}
-                      />
-                    )}
-                    {!editing && <BooleanCell value={element.value} />}
                   </TableCell>
+                  {editing && (
+                    <RadioGroup
+                      options={radioButtonOptions}
+                      value={element.value}
+                      onChange={event =>
+                        handleRadioButtons(
+                          element.name,
+                          event.target.value === 'true'
+                        )
+                      }
+                      className={classnames(
+                        classes.radioButtons,
+                        classes.rightTableCell
+                      )}
+                    />
+                  )}
+                  {!editing && (
+                    <BooleanCell
+                      className={classes.rightTableCell}
+                      value={element.value}
+                    />
+                  )}
                 </TableRow>
               ))}
           </TableBody>

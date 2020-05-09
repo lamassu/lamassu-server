@@ -9,6 +9,7 @@ import logsStyles from '../Logs.styles'
 
 import CoinAtmRadar from './CoinATMRadar'
 import ContactInfo from './ContactInfo'
+import ReceiptPrinting from './ReceiptPrinting'
 import TermsConditions from './TermsConditions'
 
 const localStyles = {
@@ -52,6 +53,7 @@ const OperatorInfo = () => {
         />
         <div className={classes.contentWrapper}>
           {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
+          {isSelected(RECEIPT) && <ReceiptPrinting />}
           {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
           {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
         </div>

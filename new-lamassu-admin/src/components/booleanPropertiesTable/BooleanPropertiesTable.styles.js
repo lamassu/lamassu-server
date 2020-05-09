@@ -1,5 +1,5 @@
 import baseStyles from 'src/pages/Logs.styles'
-import { tableCellColor, zircon } from 'src/styling/variables'
+import { backgroundColor, zircon } from 'src/styling/variables'
 
 const { fillColumn } = baseStyles
 
@@ -14,20 +14,28 @@ const booleanPropertiesTableStyles = {
     alignItems: 'center',
     justifyContent: 'space-between',
     '&:nth-child(even)': {
-      backgroundColor: tableCellColor
+      backgroundColor: backgroundColor
     },
     '&:nth-child(odd)': {
       backgroundColor: zircon
     },
+    minHeight: 32,
+    height: 'auto',
+    padding: [[8, 16, 8, 24]],
     boxShadow: '0 0 0 0 rgba(0, 0, 0, 0)'
   },
-  tableCell: {
+  leftTableCell: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    height: 32,
-    padding: [[5, 14, 5, 20]]
+    justifyContent: 'left',
+    width: 200,
+    padding: [0]
+  },
+  rightTableCell: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'right',
+    padding: [0]
   },
   transparentButton: {
     '& > *': {
@@ -51,7 +59,7 @@ const booleanPropertiesTableStyles = {
   radioButtons: {
     display: 'flex',
     flexDirection: 'row',
-    marginRight: -15
+    margin: [-15]
   },
   rightLink: {
     marginLeft: '20px'
