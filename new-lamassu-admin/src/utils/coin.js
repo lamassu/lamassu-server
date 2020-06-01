@@ -36,6 +36,12 @@ const CRYPTO_CURRENCIES = [
     display: 'Bitcoin Cash',
     code: 'bitcoincash',
     unitScale: 8
+  },
+  {
+    cryptoCode: 'DUC',
+    display: 'Ducatus',
+    code: 'ducatuscoin',
+    unitScale: 8
   }
 ]
 

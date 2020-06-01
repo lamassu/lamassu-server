@@ -78,6 +78,9 @@ multiplier code =
         LTC ->
             1.0e8
 
+        DUC ->
+            1.0e8
+
 
 
 txLink : String -> Html Msg
@@ -96,6 +99,7 @@ cryptoCodeDisplay code =
             ZEC -> "ZEC"
             DASH -> "DASH"
             LTC -> "LTC"
+            DUC -> "DUC"
     in
         text txt
 
