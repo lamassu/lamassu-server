@@ -147,6 +147,15 @@
         "operatorInfoWebsite",
         "operatorInfoCompanyNumber"
       ]
+    },
+    {
+      "code": "fudgeFactor",
+      "display": "Fudge Factor",
+      "cryptoScope": "global",
+      "machineScope": "global",
+      "fields": [
+        "fudgeFactorActive"
+      ]
     }
   ],
   "fields": [
@@ -846,7 +855,8 @@
         "notificationsSMSEnabled",
         "cashOutEnabled"
       ],
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [{"code": "required"}],
+      "default": "twilio"
     },
     {
       "code": "email",
@@ -857,7 +867,8 @@
       "enabledIfAny": [
         "notificationsEmailEnabled"
       ],
-      "fieldValidation": [{"code": "required"}]
+      "fieldValidation": [{"code": "required"}],
+      "default": "mailgun"
     },
     {
       "code": "coinAtmRadarActive",
@@ -938,6 +949,14 @@
         "termsScreenActive"
       ],
       "fieldValidation": []
+    },
+    {
+      "code": "fudgeFactorActive",
+      "displayBottom": "Enabled",
+      "fieldType": "onOff",
+      "fieldClass": null,
+      "fieldValidation": [],
+      "default": false
     },
     {
       "code": "operatorInfoActive",

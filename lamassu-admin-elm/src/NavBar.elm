@@ -156,7 +156,7 @@ determineConfigCategory : String -> Maybe Category
 determineConfigCategory configCode =
     if List.member configCode [ "definition", "setup", "cashOut", "commissions", "balanceAlerts" ] then
         Just MachineSettingsCat
-    else if List.member configCode [ "walletSettings", "notifications", "compliance", "coinAtmRadar", "terms", "operatorInfo" ] then
+    else if List.member configCode [ "walletSettings", "notifications", "compliance", "coinAtmRadar", "terms", "operatorInfo", "fudgeFactor" ] then
         Just GlobalSettingsCat
     else
         Nothing
@@ -253,6 +253,7 @@ view route invalidGroups =
                 , configLink "coinAtmRadar" "Coin ATM Radar"
                 , configLink "terms" "Terms and Conditions"
                 , configLink "operatorInfo" "Operator Info"
+                , configLink "fudgeFactor" "Fudge Factor"
                 ]
             , ll ( "Third Party Services", AccountCat, AccountRoute "bitgo", True )
                 [ ( "BitGo", AccountRoute "bitgo", True )
