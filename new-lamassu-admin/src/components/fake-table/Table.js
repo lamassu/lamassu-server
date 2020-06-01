@@ -76,7 +76,7 @@ const ThDoubleLevel = ({ title, children, className }) => {
   )
 }
 
-const Tr = ({ error, errorMessage, children, className, size }) => {
+const Tr = ({ onClick, error, errorMessage, children, className, size }) => {
   const classes = useStyles({ size })
   const cardClasses = { root: classes.cardContentRoot }
   const classNames = {
@@ -88,7 +88,7 @@ const Tr = ({ error, errorMessage, children, className, size }) => {
 
   return (
     <>
-      <Card className={classnames(classNames, className)}>
+      <Card className={classnames(classNames, className)} onClick={onClick}>
         <CardContent classes={cardClasses}>
           <div className={classes.mainContent}>{children}</div>
           {error && <div className={classes.errorContent}>{errorMessage}</div>}

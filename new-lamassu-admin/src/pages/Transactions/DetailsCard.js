@@ -39,10 +39,7 @@ const DetailsRow = ({ it: tx, ...props }) => {
     5
   )
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
-  const commission =
-    tx.txClass === 'cashOut'
-      ? fiat * commissionPercentage
-      : fiat * commissionPercentage + Number.parseFloat(tx.fee)
+  const commission = fiat * commissionPercentage
   const customer = tx.customerIdCardData && {
     name: `${onlyFirstToUpper(
       tx.customerIdCardData.firstName
@@ -163,6 +160,12 @@ const DetailsRow = ({ it: tx, ...props }) => {
                     100} %)`}
                 </div>
               </div>
+              {tx.txClass === 'cashIn' && (
+                <div className={classes.innerRow}>
+                  <Label>Fixed fee</Label>
+                  <div>{Number.parseFloat(tx.cashInFee)}</div>
+                </div>
+              )}
             </div>
           </div>
           <div className={classnames(classes.col, classes.col3)}>

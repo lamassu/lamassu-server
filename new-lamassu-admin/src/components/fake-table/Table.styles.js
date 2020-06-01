@@ -91,7 +91,7 @@ export default {
     '&:before': {
       height: 0
     },
-    margin: [[4, 0]],
+    margin: [[4, 0, 0, 0]],
     width: '100%',
     boxShadow: [[0, 0, 4, 0, 'rgba(0, 0, 0, 0.08)']]
   },

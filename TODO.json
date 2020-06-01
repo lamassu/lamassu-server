@@ -1,0 +1,46 @@
+{
+  "groups": [
+    {
+      "code": "balanceAlerts",
+      "fields": [
+        "cashInAlertThreshold"
+      ]
+    },
+    {
+      "code": "compliance",
+      "fields": [
+         "smsVerificationActive",
+         "smsVerificationThreshold",
+         "idCardDataVerificationActive",
+         "idCardDataVerificationThreshold",
+         "idCardPhotoVerificationActive",
+         "idCardPhotoVerificationThreshold",
+         "sanctionsVerificationActive",
+         "sanctionsVerificationThreshold",
+         "frontCameraVerificationActive",
+         "frontCameraVerificationThreshold",
+         "hardLimitVerificationActive",
+         "hardLimitVerificationThreshold",
+         "receiptPrintingActive",
+         "rejectAddressReuseActive"
+      ]
+    },
+    {
+      "code": "walletSettings",
+      "fields": [
+        "ticker",
+        "wallet",
+        "layer2",
+        "exchange",
+        "zeroConf"
+      ]
+    },
+    {
+      "code": "notifications",
+      "fields": [
+        "sms",
+        "email"
+      ]
+    }
+  ]
+}
