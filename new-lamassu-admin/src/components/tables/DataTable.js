@@ -38,36 +38,49 @@ const Row = ({
 }) => {
   const classes = useStyles()
 
+  const hasPointer = onClick || expandable
+  const trClasses = {
+    [classes.pointer]: hasPointer,
+    [classes.row]: true,
+    [classes.expanded]: expanded
+  }
+
   return (
-    <div
-      style={onClick && { cursor: 'pointer' }}
-      onClick={() => onClick && onClick(data)}>
-      <Tr
-        className={classnames(classes.row)}
-        error={data.error}
-        errorMessage={data.errorMessage}>
-        {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
-          <Td key={idx} {...props}>
-            {view(data)}
-          </Td>
-        ))}
-        {expandable && (
-          <Td width={expWidth} textAlign="center">
-            <button
-              onClick={() => expandRow(id)}
-              className={classes.expandButton}>
-              {expanded && <ExpandOpenIcon />}
-              {!expanded && <ExpandClosedIcon />}
-            </button>
-          </Td>
-        )}
-      </Tr>
-      {expandable && expanded && (
-        <Tr className={classes.detailsRow}>
-          <Td width={width}>
-            <Details it={data} />
-          </Td>
+    <div>
+      <div className={classnames({ [classes.before]: expanded })}>
+        <Tr
+          className={classnames(trClasses)}
+          onClick={() => {
+            expandable && expandRow(id)
+            onClick && onClick(data)
+          }}
+          error={data.error}
+          errorMessage={data.errorMessage}>
+          {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
+            <Td key={idx} {...props}>
+              {view(data)}
+            </Td>
+          ))}
+          {expandable && (
+            <Td width={expWidth} textAlign="center">
+              <button
+                onClick={() => expandRow(id)}
+                className={classes.expandButton}>
+                {expanded && <ExpandOpenIcon />}
+                {!expanded && <ExpandClosedIcon />}
+              </button>
+            </Td>
+          )}
         </Tr>
+      </div>
+      {expandable && expanded && (
+        <div className={classes.after}>
+          <Tr className={classnames({ [classes.expanded]: expanded })}>
+            <Td width={width}>
+              <Details it={data} />
+            </Td>
+          </Tr>
+        </div>
       )}
     </div>
   )

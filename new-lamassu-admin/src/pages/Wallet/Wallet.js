@@ -11,7 +11,7 @@ import Wizard from './Wizard'
 import { WalletSchema, getElements } from './helper'
 
 const SAVE_CONFIG = gql`
-  mutation Save($config: JSONObject, $accounts: [JSONObject]) {
+  mutation Save($config: JSONObject, $accounts: JSONObject) {
     saveConfig(config: $config)
     saveAccounts(accounts: $accounts)
   }

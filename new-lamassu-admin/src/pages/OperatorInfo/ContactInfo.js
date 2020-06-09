@@ -1,29 +1,36 @@
-import React, { useState } from 'react'
-import classnames from 'classnames'
-import * as R from 'ramda'
-import * as Yup from 'yup'
-import { gql } from 'apollo-boost'
-import { Form, Formik, Field as FormikField } from 'formik'
-import { makeStyles } from '@material-ui/core'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
+import { gql } from 'apollo-boost'
+import classnames from 'classnames'
+import { Form, Formik, Field as FormikField } from 'formik'
+import * as R from 'ramda'
+import React, { useState } from 'react'
+import * as Yup from 'yup'
 
-import { Info2, Info3, Label1 } from 'src/components/typography'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
-import RadioGroupFormik from 'src/components/inputs/formik/RadioGroup'
-import {
-  PhoneNumberInputFormik,
-  maskValue,
-  mask
-} from 'src/components/inputs/formik/PhoneNumberInput'
-import { Link } from 'src/components/buttons'
 import ErrorMessage from 'src/components/ErrorMessage'
+import { Link } from 'src/components/buttons'
+import RadioGroupFormik from 'src/components/inputs/formik/RadioGroup'
+import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import { Info2, Info3, Label1, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
   styles as globalStyles,
   contactInfoStyles
 } from './OperatorInfo.styles'
+
+const validationSchema = Yup.object().shape({
+  active: Yup.boolean().required(),
+  name: Yup.string().required(),
+  phone: Yup.string().required(),
+  email: Yup.string()
+    .email('Please enter a valid email address')
+    .required(),
+  website: Yup.string().required(),
+  companyNumber: Yup.string().required()
+})
 
 const fieldStyles = {
   field: {
@@ -38,12 +45,13 @@ const fieldStyles = {
     '& > p:first-child': {
       height: 16,
       lineHeight: '16px',
-      paddingLeft: 3,
+      transform: 'scale(0.75)',
+      transformOrigin: 'left',
+      paddingLeft: 0,
       margin: [[0, 0, 5, 0]]
     },
     '& > p:last-child': {
-      margin: 0,
-      paddingLeft: 4
+      margin: 0
     }
   }
 }
@@ -62,7 +70,7 @@ const Field = ({ editing, field, displayValue, ...props }) => {
     <div className={classnames(classNames)}>
       {!editing && (
         <>
-          <Label1>{field.label}</Label1>
+          <Label3>{field.label}</Label3>
           <Info3>{displayValue(field.value)}</Info3>
         </>
       )}
@@ -93,9 +101,6 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const INFO_CARD_ENABLED = 'On'
-const INFO_CARD_DISABLED = 'Off'
-
 const styles = R.merge(globalStyles, contactInfoStyles)
 
 const contactUseStyles = makeStyles(styles)
@@ -106,8 +111,7 @@ const ContactInfo = () => {
   const [error, setError] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
-      const { operatorInfo } = data.saveConfig
-      setInfo(operatorInfo)
+      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.saveConfig))
       setEditing(false)
     },
     onError: e => setError(e)
@@ -115,13 +119,14 @@ const ContactInfo = () => {
 
   useQuery(GET_CONFIG, {
     onCompleted: data => {
-      const { operatorInfo } = data.config
-      setInfo(operatorInfo ?? {})
+      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.config))
     }
   })
 
   const save = it => {
-    return saveConfig({ variables: { config: { operatorInfo: it } } })
+    return saveConfig({
+      variables: { config: toNamespace(namespaces.OPERATOR_INFO, it) }
+    })
   }
 
   const classes = contactUseStyles()
@@ -130,45 +135,39 @@ const ContactInfo = () => {
 
   const fields = [
     {
-      name: 'infoCardEnabled',
+      name: 'active',
       label: 'Info Card Enabled',
-      value: info.infoCardEnabled ?? INFO_CARD_DISABLED,
-      type: 'select',
+      value: String(info.active),
       component: RadioGroupFormik
     },
     {
-      name: 'fullName',
+      name: 'name',
       label: 'Full name',
-      value: info.fullName ?? '',
-      type: 'text',
+      value: info.name ?? '',
       component: TextInputFormik
     },
     {
-      name: 'phoneNumber',
+      name: 'phone',
       label: 'Phone number',
-      value: maskValue(info.phoneNumber) ?? '',
-      type: 'text',
-      component: PhoneNumberInputFormik
+      value: info.phone ?? '',
+      component: TextInputFormik
     },
     {
       name: 'email',
       label: 'Email',
       value: info.email ?? '',
-      type: 'text',
       component: TextInputFormik
     },
     {
       name: 'website',
       label: 'Website',
       value: info.website ?? '',
-      type: 'text',
       component: TextInputFormik
     },
     {
       name: 'companyNumber',
       label: 'Company number',
       value: info.companyNumber ?? '',
-      type: 'text',
       component: TextInputFormik
     }
   ]
@@ -180,33 +179,13 @@ const ContactInfo = () => {
 
   const form = {
     initialValues: {
-      infoCardEnabled: findValue('infoCardEnabled'),
-      fullName: findValue('fullName'),
-      phoneNumber: info.phoneNumber ?? '',
+      active: findValue('active'),
+      name: findValue('name'),
+      phone: info.phone ?? '',
       email: findValue('email'),
       website: findValue('website'),
       companyNumber: findValue('companyNumber')
-    },
-    validationSchema: Yup.object().shape({
-      fullName: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      phoneNumber: Yup.string()
-        .matches(mask, { excludeEmptyString: true })
-        .max(100, 'Too long')
-        .required(),
-      email: Yup.string()
-        .email('Please enter a valid email address')
-        .max(100, 'Too long')
-        .required(),
-      website: Yup.string()
-        .url('Please enter a valid url')
-        .max(100, 'Too long')
-        .required(),
-      companyNumber: Yup.string()
-        .max(30, 'Too long')
-        .required()
-    })
+    }
   }
 
   return (
@@ -225,21 +204,21 @@ const ContactInfo = () => {
         <Formik
           enableReinitialize
           initialValues={form.initialValues}
-          validationSchema={form.validationSchema}
-          onSubmit={values => save(values)}
-          onReset={(values, bag) => {
+          validationSchema={validationSchema}
+          onSubmit={values => save(validationSchema.cast(values))}
+          onReset={() => {
             setEditing(false)
             setError(null)
           }}>
           <Form>
             <div className={classnames(classes.row, classes.radioButtonsRow)}>
               <Field
-                field={findField('infoCardEnabled')}
+                field={findField('active')}
                 editing={editing}
-                displayValue={displayTextValue}
+                displayValue={it => (it === 'true' ? 'On' : 'Off')}
                 options={[
-                  { label: 'On', value: INFO_CARD_ENABLED },
-                  { label: 'Off', value: INFO_CARD_DISABLED }
+                  { display: 'On', code: 'true' },
+                  { display: 'Off', code: 'false' }
                 ]}
                 className={classes.radioButtons}
                 resetError={() => setError(null)}
@@ -247,13 +226,13 @@ const ContactInfo = () => {
             </div>
             <div className={classes.row}>
               <Field
-                field={findField('fullName')}
+                field={findField('name')}
                 editing={editing}
                 displayValue={displayTextValue}
                 onFocus={() => setError(null)}
               />
               <Field
-                field={findField('phoneNumber')}
+                field={findField('phone')}
                 editing={editing}
                 displayValue={displayTextValue}
                 onFocus={() => setError(null)}

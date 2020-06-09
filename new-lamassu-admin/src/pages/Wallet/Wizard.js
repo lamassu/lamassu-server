@@ -18,7 +18,7 @@ const filterConfig = (crypto, type) =>
 
 const getItems = (accountsConfig, accounts, type, crypto) => {
   const fConfig = filterConfig(crypto, type)(accountsConfig)
-  const find = code => R.find(R.propEq('code', code))(accounts)
+  const find = code => accounts && accounts[code]
 
   const [filled, unfilled] = R.partition(({ code }) => {
     const account = find(code)
@@ -35,7 +35,7 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
   const [{ step, config, accountsToSave }, setState] = useState({
     step: 0,
     config: { active: true },
-    accountsToSave: []
+    accountsToSave: {}
   })
 
   const title = `Enable ${coin.display}`
@@ -48,9 +48,11 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
 
   const getValue = code => R.find(R.propEq('code', code))(accounts)
 
-  const onContinue = async (it, it2) => {
-    const newConfig = R.merge(config, it)
-    const newAccounts = it2 ? R.concat(accountsToSave, [it2]) : accountsToSave
+  const onContinue = async (stepConfig, stepAccount) => {
+    const newConfig = R.merge(config, stepConfig)
+    const newAccounts = stepAccount
+      ? R.merge(accountsToSave, stepAccount)
+      : accountsToSave
 
     if (isLastStep) {
       return save(toNamespace(coin.code, newConfig), newAccounts)

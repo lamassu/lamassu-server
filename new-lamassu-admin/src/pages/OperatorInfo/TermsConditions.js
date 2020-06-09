@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
-import classnames from 'classnames'
-import * as R from 'ramda'
-import * as Yup from 'yup'
-import { Form, Formik, Field } from 'formik'
-import { gql } from 'apollo-boost'
-import { makeStyles } from '@material-ui/core'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
+import { gql } from 'apollo-boost'
+import classnames from 'classnames'
+import { Form, Formik, Field } from 'formik'
+import * as R from 'ramda'
+import React, { useState } from 'react'
+import * as Yup from 'yup'
 
-import { Info2, Label2 } from 'src/components/typography'
+import ErrorMessage from 'src/components/ErrorMessage'
+import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
-import { Button } from 'src/components/buttons'
-import ErrorMessage from 'src/components/ErrorMessage'
+import { Info2, Label2 } from 'src/components/typography'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
   styles as globalStyles,
@@ -40,9 +41,12 @@ const TermsConditions = () => {
   const [error, setError] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
-      const { termsAndConditions } = data.saveConfig
+      const termsAndConditions = fromNamespace(
+        namespaces.TERMS_CONDITIONS,
+        data.saveConfig
+      )
       setFormData(termsAndConditions)
-      setShowOnScreen(termsAndConditions.show)
+      setShowOnScreen(termsAndConditions.active)
       setError(null)
     },
     onError: e => setError(e)
@@ -52,36 +56,39 @@ const TermsConditions = () => {
 
   useQuery(GET_CONFIG, {
     onCompleted: data => {
-      const { termsAndConditions } = data.config
+      const termsAndConditions = fromNamespace(
+        namespaces.TERMS_CONDITIONS,
+        data.config
+      )
       setFormData(termsAndConditions ?? {})
-      setShowOnScreen(termsAndConditions?.show ?? false)
+      setShowOnScreen(termsAndConditions?.active ?? false)
     }
   })
 
   const save = it => {
     setError(null)
     return saveConfig({
-      variables: { config: { termsAndConditions: it } }
+      variables: { config: toNamespace(namespaces.TERMS_CONDITIONS, it) }
     })
   }
 
   const handleEnable = () => {
     const s = !showOnScreen
-    save({ show: s })
+    save({ active: s })
   }
 
   if (!formData) return null
 
   const fields = [
     {
-      name: 'screenTitle',
+      name: 'title',
       label: 'Screen title',
-      value: formData.screenTitle ?? ''
+      value: formData.title ?? ''
     },
     {
-      name: 'textContent',
+      name: 'text',
       label: 'Text content',
-      value: formData.textContent ?? '',
+      value: formData.text ?? '',
       multiline: true
     },
     {
@@ -102,14 +109,14 @@ const TermsConditions = () => {
   const findValue = name => findField(name).value
 
   const initialValues = {
-    screenTitle: findValue('screenTitle'),
-    textContent: findValue('textContent'),
+    title: findValue('title'),
+    text: findValue('text'),
     acceptButtonText: findValue('acceptButtonText'),
     cancelButtonText: findValue('cancelButtonText')
   }
 
   const validationSchema = Yup.object().shape({
-    screenTitle: Yup.string().max(50, 'Too long'),
+    title: Yup.string().max(50, 'Too long'),
     acceptButtonText: Yup.string().max(15, 'Too long'),
     cancelButtonText: Yup.string().max(15, 'Too long')
   })

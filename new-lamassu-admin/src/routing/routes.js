@@ -3,12 +3,14 @@ import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
 import AuthRegister from 'src/pages/AuthRegister'
-import Cashout from 'src/pages/Cashout/Cashout'
+import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
 import MachineLogs from 'src/pages/MachineLogs'
+import Cashboxes from 'src/pages/Maintenance/Cashboxes'
+import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
 import ServerLogs from 'src/pages/ServerLogs'
@@ -16,10 +18,7 @@ import Services from 'src/pages/Services/Services'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
-import MachineStatus from 'src/pages/maintenance/MachineStatus'
 import { namespaces } from 'src/utils/config'
-
-import Cashboxes from '../pages/maintenance/Cashboxes'
 
 const tree = [
   {
@@ -95,7 +94,7 @@ const tree = [
         component: Cashout
       },
       {
-        key: namespaces.SERVICES,
+        key: 'services',
         label: '3rd party services',
         route: '/settings/3rd-party-services',
         component: Services

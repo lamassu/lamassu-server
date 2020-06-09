@@ -1,16 +1,16 @@
+import { useMutation } from '@apollo/react-hooks'
+import { Dialog, DialogContent } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { gql } from 'apollo-boost'
 import classnames from 'classnames'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
-import { Dialog, DialogContent } from '@material-ui/core'
 
 import { H4 } from 'src/components/typography'
 
-import ActionButton from '../../components/buttons/ActionButton'
 import { DialogTitle, ConfirmDialog } from '../../components/ConfirmDialog'
 import { Status } from '../../components/Status'
+import ActionButton from '../../components/buttons/ActionButton'
 import { ReactComponent as DownloadReversedIcon } from '../../styling/icons/button/download/white.svg'
 import { ReactComponent as DownloadIcon } from '../../styling/icons/button/download/zodiac.svg'
 import { ReactComponent as RebootReversedIcon } from '../../styling/icons/button/reboot/white.svg'
@@ -19,11 +19,11 @@ import { ReactComponent as ShutdownReversedIcon } from '../../styling/icons/butt
 import { ReactComponent as ShutdownIcon } from '../../styling/icons/button/shut down/zodiac.svg'
 import { ReactComponent as UnpairReversedIcon } from '../../styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from '../../styling/icons/button/unpair/zodiac.svg'
+import { zircon } from '../../styling/variables'
 import {
   detailsRowStyles,
   labelStyles
 } from '../Transactions/Transactions.styles'
-import { zircon } from '../../styling/variables'
 
 const MACHINE_ACTION = gql`
   mutation MachineAction($deviceId: ID!, $action: MachineAction!) {

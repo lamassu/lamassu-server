@@ -1,77 +1,33 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
-import * as R from 'ramda'
-import React, { useReducer, useEffect } from 'react'
+import { Formik, Form, Field } from 'formik'
+import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
-import { TextInput } from 'src/components/inputs'
+import { TextInput } from 'src/components/inputs/formik'
 import { Info2, H4, P } from 'src/components/typography'
 
 import styles from './WizardStep.styles'
 const useStyles = makeStyles(styles)
 
-const initialState = {
-  selected: null,
-  iError: false
-}
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'select':
-      return {
-        form: null,
-        selected: action.selected,
-        isNew: null,
-        iError: false
-      }
-    case 'form':
-      return {
-        form: action.form,
-        selected: action.form.code,
-        isNew: true,
-        iError: false
-      }
-    case 'error':
-      return R.merge(state, { iError: true })
-    case 'reset':
-      return initialState
-    default:
-      throw new Error()
-  }
-}
-
 const WizardStep = ({
   type,
   name,
   step,
+  schema,
   error,
   lastStep,
   onContinue,
   display
 }) => {
   const classes = useStyles()
-  const [{ iError, selected }, dispatch] = useReducer(reducer, initialState)
-
-  useEffect(() => {
-    dispatch({ type: 'reset' })
-  }, [step])
-
-  const iContinue = config => {
-    if (lastStep) config[type] = true
-
-    if (!config || !config[type]) {
-      return dispatch({ type: 'error' })
-    }
-
-    onContinue(config)
-  }
 
   const label = lastStep ? 'Finish' : 'Next'
   const subtitleClass = {
     [classes.subtitle]: true,
-    [classes.error]: iError
+    [classes.error]: error
   }
 
   return (
@@ -81,19 +37,26 @@ const WizardStep = ({
       {display && <H4 className={classnames(subtitleClass)}>Edit {display}</H4>}
 
       {!lastStep && (
-        <TextInput
-          label={'Choose bill denomination'}
-          onChange={evt =>
-            dispatch({ type: 'select', selected: evt.target.value })
-          }
-          autoFocus
-          id="confirm-input"
-          type="text"
-          size="lg"
-          touched={{}}
-          error={false}
-          InputLabelProps={{ shrink: true }}
-        />
+        <Formik
+          onSubmit={onContinue}
+          initialValues={{ [type]: '' }}
+          enableReinitialize
+          validationSchema={schema}>
+          <Form>
+            <Field
+              name={type}
+              component={TextInput}
+              label={'Choose bill denomination'}
+              autoFocus
+              InputLabelProps={{ shrink: true }}
+            />
+            <div className={classes.submit}>
+              <Button className={classes.button} type="submit">
+                {label}
+              </Button>
+            </div>
+          </Form>
+        </Formik>
         // TODO: there was a disabled link here showing the currency code; restore it
       )}
 
@@ -112,17 +75,14 @@ const WizardStep = ({
             Settings. where you can set exceptions for each of the available
             cryptocurrencies.
           </P>
+          <div className={classes.submit}>
+            {error && <ErrorMessage>Failed to save</ErrorMessage>}
+            <Button className={classes.button} onClick={() => onContinue()}>
+              {label}
+            </Button>
+          </div>
         </>
       )}
-
-      <div className={classes.submit}>
-        {error && <ErrorMessage>Failed to save</ErrorMessage>}
-        <Button
-          className={classes.button}
-          onClick={() => iContinue({ [type]: selected })}>
-          {label}
-        </Button>
-      </div>
     </>
   )
 }

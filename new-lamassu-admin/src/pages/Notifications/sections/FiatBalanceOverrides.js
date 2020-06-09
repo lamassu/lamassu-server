@@ -23,7 +23,7 @@ const FiatBalanceOverrides = ({ section }) => {
 
   const overridenMachines = R.map(override => override.machine, setupValues)
   const suggestionFilter = R.filter(
-    it => !R.contains(it.code, overridenMachines)
+    it => !R.contains(it.deviceId, overridenMachines)
   )
   const suggestions = suggestionFilter(machines)
 
@@ -50,17 +50,21 @@ const FiatBalanceOverrides = ({ section }) => {
       .required()
   })
 
+  const viewMachine = it =>
+    R.compose(R.path(['name']), R.find(R.propEq('deviceId', it)))(machines)
+
   const elements = [
     {
       name: MACHINE_KEY,
       width: 238,
       size: 'sm',
-      view: R.path(['name']),
+      view: viewMachine,
       input: Autocomplete,
       inputProps: {
         options: it => R.concat(suggestions, findSuggestion(it)),
         limit: null,
-        getOptionSelected: R.eqProps('display')
+        valueProp: 'deviceId',
+        getLabel: R.path(['name'])
       }
     },
     {
@@ -90,7 +94,7 @@ const FiatBalanceOverrides = ({ section }) => {
       enableDelete
       enableEdit
       enableCreate
-      save={it => save(section, it)}
+      save={it => save(section, validationSchema.cast(it))}
       initialValues={initialValues}
       validationSchema={validationSchema}
       forceDisable={isDisabled(NAME) || !machines}

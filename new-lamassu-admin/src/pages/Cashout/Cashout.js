@@ -11,9 +11,8 @@ import Wizard from './Wizard'
 import { DenominationsSchema, getElements } from './helper'
 
 const SAVE_CONFIG = gql`
-  mutation Save($config: JSONObject, $accounts: [JSONObject]) {
+  mutation Save($config: JSONObject) {
     saveConfig(config: $config)
-    saveAccounts(accounts: $accounts)
   }
 `
 
@@ -44,7 +43,6 @@ const CashOut = ({ name: SCREEN_KEY }) => {
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
     setError(false)
-
     return saveConfig({ variables: { config, accounts } })
   }
 

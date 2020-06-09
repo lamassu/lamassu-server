@@ -7,12 +7,13 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { RadioGroup, Autocomplete } from 'src/components/inputs'
-import { Info2, H4 } from 'src/components/typography'
+import { H4, Info2 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schema from 'src/pages/Services/schemas'
 import { startCase } from 'src/utils/string'
 
 import styles from './WizardStep.styles'
+
 const useStyles = makeStyles(styles)
 
 const initialState = {
@@ -41,7 +42,7 @@ const reducer = (state, action) => {
         iError: false
       }
     case 'error':
-      return R.merge(state, { iError: true })
+      return R.merge(state, { innerError: true })
     case 'reset':
       return initialState
     default:
@@ -61,7 +62,7 @@ const WizardStep = ({
   getValue
 }) => {
   const classes = useStyles()
-  const [{ iError, selected, form, isNew }, dispatch] = useReducer(
+  const [{ innerError, selected, form, isNew }, dispatch] = useReducer(
     reducer,
     initialState
   )
@@ -70,7 +71,7 @@ const WizardStep = ({
     dispatch({ type: 'reset' })
   }, [step])
 
-  const iContinue = (config, account) => {
+  const innerContinue = (config, account) => {
     if (!config || !config[type]) {
       return dispatch({ type: 'error' })
     }
@@ -81,7 +82,7 @@ const WizardStep = ({
   const displayName = name ?? type
   const subtitleClass = {
     [classes.subtitle]: true,
-    [classes.error]: iError
+    [classes.error]: innerError
   }
 
   return (
@@ -129,9 +130,7 @@ const WizardStep = ({
       </div>
       {form && (
         <FormRenderer
-          save={it =>
-            iContinue({ [type]: form.code }, R.merge(it, { code: form.code }))
-          }
+          save={it => innerContinue({ [type]: form.code }, { [form.code]: it })}
           elements={schema[form.code].elements}
           validationSchema={schema[form.code].validationSchema}
           value={getValue(form.code)}
@@ -143,7 +142,7 @@ const WizardStep = ({
           {error && <ErrorMessage>Failed to save</ErrorMessage>}
           <Button
             className={classes.button}
-            onClick={() => iContinue({ [type]: selected })}>
+            onClick={() => innerContinue({ [type]: selected })}>
             {label}
           </Button>
         </div>

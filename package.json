@@ -112,8 +112,7 @@
     "build-admin": "npm run build-admin:css && npm run build-admin:main && npm run build-admin:lamassu"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
-    "eslint-plugin-import": "^2.19.1",
+    "ava": "3.8.2",
     "mocha": "^5.0.1",
     "rewire": "^4.0.1",
     "standard": "^12.0.1"
@@ -121,7 +120,8 @@
   "standard": {
     "ignore": [
       "/lamassu-admin-elm",
-      "/public"
+      "/public",
+      "/new-lamassu-admin"
     ]
   }
 }

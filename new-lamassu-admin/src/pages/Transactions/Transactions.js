@@ -33,7 +33,7 @@ const GET_TRANSACTIONS = gql`
       machineName
       deviceId
       fiat
-      fee
+      cashInFee
       fiatCode
       cryptoAtoms
       cryptoCode

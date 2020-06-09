@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
-import { useHistory } from 'react-router-dom'
 import * as R from 'ramda'
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 
 import CustomersList from './CustomersList'
 
@@ -29,7 +29,7 @@ const Customers = () => {
   const handleCustomerClicked = customer =>
     history.push(`/compliance/customer/${customer.id}`)
 
-  const customersData = R.sortWith([R.descend('lastActive')])(
+  const customersData = R.sortWith([R.descend(R.prop('lastActive'))])(
     R.path(['customers'])(customersResponse) ?? []
   )
 
