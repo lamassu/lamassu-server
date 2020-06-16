@@ -6,37 +6,62 @@ import styles from './styles'
 
 const useStyles = makeStyles(styles)
 
-function H1({ children, className, ...props }) {
+function H1({ children, noMargin, className, ...props }) {
   const classes = useStyles()
+  const classNames = {
+    [classes.h1]: true,
+    [classes.noMargin]: noMargin,
+    [className]: !!className
+  }
+
   return (
-    <h1 className={classnames(classes.h1, className)} {...props}>
+    <h1 className={classnames(classNames)} {...props}>
       {children}
     </h1>
   )
 }
 
-function H2({ children, className, ...props }) {
+function H2({ children, noMargin, className, ...props }) {
   const classes = useStyles()
+  const classNames = {
+    [classes.h2]: true,
+    [classes.noMargin]: noMargin,
+    [className]: !!className
+  }
+
   return (
-    <h2 className={classnames(classes.h2, className)} {...props}>
+    <h2 className={classnames(classNames)} {...props}>
       {children}
     </h2>
   )
 }
 
-function H3({ children, className, ...props }) {
+function H3({ children, noMargin, className, ...props }) {
   const classes = useStyles()
+  const classNames = {
+    [classes.h3]: true,
+    [classes.noMargin]: noMargin,
+    [className]: !!className
+  }
+
   return (
-    <h3 className={classnames(classes.h3, className)} {...props}>
+    <h3 className={classnames(classNames)} {...props}>
       {children}
     </h3>
   )
 }
 
-function H4({ children, className, ...props }) {
+function H4({ children, noMargin, className, ...props }) {
   const classes = useStyles()
+  console.log(className)
+  const classNames = {
+    [classes.h4]: true,
+    [classes.noMargin]: noMargin,
+    [className]: !!className
+  }
+
   return (
-    <h4 className={classnames(classes.h4, className)} {...props}>
+    <h4 className={classnames(classNames)} {...props}>
       {children}
     </h4>
   )
@@ -57,13 +82,13 @@ function pBuilder(elementClass) {
   return ({ inline, noMargin, className, children, ...props }) => {
     const classes = useStyles()
     const classNames = {
+      [className]: !!className,
       [classes[elementClass]]: elementClass,
-      className: true,
       [classes.inline]: inline,
-      [classes.noMarginP]: noMargin
+      [classes.noMargin]: noMargin
     }
     return (
-      <p className={classnames(classNames, className)} {...props}>
+      <p className={classnames(classNames)} {...props}>
         {children}
       </p>
     )

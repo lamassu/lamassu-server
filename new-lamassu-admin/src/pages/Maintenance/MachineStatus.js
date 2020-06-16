@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
@@ -20,6 +20,8 @@ const GET_MACHINES = gql`
     machines {
       name
       deviceId
+      lastPing
+      pairedAt
       paired
       cashbox
       cassette1
@@ -42,35 +44,28 @@ const MachineStatus = () => {
   const elements = [
     {
       header: 'Machine Name',
-      width: 232,
+      width: 250,
       size: 'sm',
       textAlign: 'left',
       view: m => m.name
     },
     {
       header: 'Status',
-      width: 349,
+      width: 350,
       size: 'sm',
       textAlign: 'left',
       view: m => <MainStatus statuses={m.statuses} />
     },
     {
       header: 'Last ping',
-      width: 192,
+      width: 200,
       size: 'sm',
       textAlign: 'left',
-      view: m => moment(m.lastPing).fromNow()
-    },
-    {
-      header: 'Ping Time',
-      width: 155,
-      size: 'sm',
-      textAlign: 'left',
-      view: m => m.pingTime || 'unknown'
+      view: m => (m.lastPing ? moment(m.lastPing).fromNow() : 'unknown')
     },
     {
       header: 'Software Version',
-      width: 201,
+      width: 200,
       size: 'sm',
       textAlign: 'left',
       view: m => m.softwareVersion || 'unknown'

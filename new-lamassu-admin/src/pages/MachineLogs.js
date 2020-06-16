@@ -1,13 +1,13 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
-import { FeatureButton, SimpleButton } from 'src/components/buttons'
+import { SimpleButton } from 'src/components/buttons'
 import Sidebar from 'src/components/layout/Sidebar'
 import {
   Table,
@@ -18,8 +18,8 @@ import {
   TableCell
 } from 'src/components/table'
 import { Info3 } from 'src/components/typography'
-import { ReactComponent as DownloadActive } from 'src/styling/icons/button/download/white.svg'
-import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
+import { ReactComponent as WhiteShareIcon } from 'src/styling/icons/circle buttons/share/white.svg'
+import { ReactComponent as ShareIcon } from 'src/styling/icons/circle buttons/share/zodiac.svg'
 
 import styles from './Logs.styles'
 
@@ -62,7 +62,6 @@ const Logs = () => {
 
   const [selected, setSelected] = useState(null)
   const [saveMessage, setSaveMessage] = useState(null)
-  const [anchorEl, setAnchorEl] = useState(null)
 
   const deviceId = selected?.deviceId
 
@@ -76,7 +75,6 @@ const Logs = () => {
 
   const { data: logsResponse } = useQuery(GET_MACHINE_LOGS, {
     variables: { deviceId },
-    fetchPolicy: 'no-cache',
     skip: !selected,
     onCompleted: () => setSaveMessage('')
   })
@@ -89,13 +87,6 @@ const Logs = () => {
     return R.path(['deviceId'])(selected) === it.deviceId
   }
 
-  const handleOpenRangePicker = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'date-range-popover' : undefined
-
   return (
     <>
       <div className={classes.titleWrapper}>
@@ -103,25 +94,17 @@ const Logs = () => {
           <Title>Machine Logs</Title>
           {logsResponse && (
             <div className={classes.buttonsWrapper}>
-              <FeatureButton
-                Icon={Download}
-                InverseIcon={DownloadActive}
-                aria-describedby={id}
-                variant="contained"
-                onClick={handleOpenRangePicker}
-              />
               <LogsDowloaderPopover
                 title="Download logs"
                 name="machine-logs"
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
                 logs={logsResponse.machineLogs}
                 getTimestamp={log => log.timestamp}
               />
               <SimpleButton
-                className={classes.button}
+                className={classes.shareButton}
                 disabled={loading}
+                Icon={ShareIcon}
+                InverseIcon={WhiteShareIcon}
                 onClick={sendSnapshot}>
                 Share with Lamassu
               </SimpleButton>

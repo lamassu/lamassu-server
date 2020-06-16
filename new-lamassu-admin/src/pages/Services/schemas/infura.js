@@ -10,14 +10,14 @@ export default {
   elements: [
     {
       code: 'apiKey',
-      display: 'API Key',
+      display: 'Project ID',
       component: TextInputFormik,
       face: true,
       long: true
     },
     {
       code: 'apiSecret',
-      display: 'API Secret',
+      display: 'Project Secret',
       component: SecretInputFormik
     },
     {

@@ -1,19 +1,19 @@
 import { makeStyles } from '@material-ui/core/styles'
-import * as R from 'ramda'
 import moment from 'moment'
+import * as R from 'ramda'
 import React, { memo } from 'react'
 
-import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
 import {
   PropertyCard,
   OVERRIDE_AUTHORIZED,
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
+import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
+import { URI } from 'src/utils/apollo'
 
-import { mainStyles } from '../Customers.styles'
+import mainStyles from '../CustomersList.styles'
 
 import Field from './Field'
-import { IMAGES_URI } from './variables'
 
 const useStyles = makeStyles(mainStyles)
 
@@ -33,7 +33,7 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
         {customerData.idCardPhotoPath ? (
           <img
             className={classes.idCardPhoto}
-            src={`${IMAGES_URI}/id-card-photo/${R.path(['idCardPhotoPath'])(
+            src={`${URI}/id-card-photo/${R.path(['idCardPhotoPath'])(
               customerData
             )}`}
             alt=""

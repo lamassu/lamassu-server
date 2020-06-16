@@ -37,6 +37,16 @@ export default {
   fillColumn: {
     width: '100%'
   },
+  shareButton: {
+    margin: 8,
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: 12,
+    padding: [[0, 12]]
+  },
+  shareIcon: {
+    marginRight: 6
+  },
   button: {
     margin: 8
   },
@@ -45,9 +55,9 @@ export default {
   },
   buttonsWrapper: {
     display: 'flex',
-    marginLeft: 10,
+    marginLeft: 16,
     '& > *': {
-      margin: 'auto 10px'
+      margin: 'auto 6px'
     }
   }
 }

@@ -26,16 +26,6 @@
       ]
     },
     {
-      "code": "walletSettings",
-      "fields": [
-        "ticker",
-        "wallet",
-        "layer2",
-        "exchange",
-        "zeroConf"
-      ]
-    },
-    {
       "code": "notifications",
       "fields": [
         "sms",

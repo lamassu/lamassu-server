@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
-import * as R from 'ramda'
 import moment from 'moment'
+import * as R from 'ramda'
 import React, { memo } from 'react'
 
 import {
@@ -9,7 +9,7 @@ import {
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
 
-import { mainStyles } from '../Customers.styles'
+import mainStyles from '../CustomersList.styles'
 
 import Field from './Field'
 

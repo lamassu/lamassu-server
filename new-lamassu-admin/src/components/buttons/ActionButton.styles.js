@@ -1,3 +1,4 @@
+import typographyStyles from 'src/components/typography/styles'
 import {
   white,
   fontColor,
@@ -6,7 +7,6 @@ import {
   offColor,
   offDarkColor
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { p } = typographyStyles
 
@@ -27,7 +27,7 @@ export default {
     extend: p,
     cursor: 'pointer',
     border: 'none',
-    height: 24,
+    height: 28,
     outline: 0,
     borderRadius: 6,
     padding: '0 8px',

@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import React from 'react'
 import * as Yup from 'yup'
 

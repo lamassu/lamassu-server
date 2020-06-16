@@ -1,6 +1,6 @@
 import typographyStyles from 'src/components/typography/styles'
-import { offColor, white } from 'src/styling/variables'
 import baseStyles from 'src/pages/Logs.styles'
+import { offColor, white } from 'src/styling/variables'
 
 const { label1, mono, p } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
@@ -34,66 +34,6 @@ const cpcStyles = {
 }
 
 const detailsRowStyles = {
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  col: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  col1: {
-    width: 413
-  },
-  col2: {
-    width: 506
-  },
-  col3: {
-    width: 233
-  },
-  innerRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  row: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: [[25, 0]]
-  },
-  mono: {
-    extend: mono
-  },
-  txIcon: {
-    marginRight: 10
-  },
-  availableIds: {
-    width: 110,
-    marginRight: 61,
-    '& > div': {
-      display: 'flex',
-      flexDirection: 'row',
-      '& button': {
-        '&:first-child': {
-          marginRight: 4
-        },
-        '&:last-child': {
-          marginLeft: 4
-        },
-        '&:only-child': {
-          margin: 0
-        },
-        '&:nth-child(2):last-child': {
-          margin: 0
-        }
-      }
-    }
-  },
-  commissionWrapper: {
-    width: 110,
-    marginRight: 155
-  },
   idCardDataCard: {
     extend: p,
     display: 'flex',
@@ -110,15 +50,6 @@ const detailsRowStyles = {
         }
       }
     }
-  },
-  cryptoAddr: {
-    width: 252
-  },
-  txId: {
-    width: 346
-  },
-  sessionId: {
-    width: 184
   }
 }
 

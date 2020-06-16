@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
@@ -47,7 +47,6 @@ const CoinATMRadar = memo(() => {
 
   const classes = useStyles()
 
-  // TODO: treat errors on useMutation and useQuery
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: configResponse =>
       setCoinAtmRadarConfig(

@@ -4,7 +4,7 @@ import * as Yup from 'yup'
 import { TextInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
-const getOverridesFields = getData => {
+const getOverridesFields = (getData, currency) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -39,7 +39,7 @@ const getOverridesFields = getData => {
     },
     {
       name: 'cryptoCurrencies',
-      width: 270,
+      width: 250,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
@@ -54,69 +54,91 @@ const getOverridesFields = getData => {
       name: 'cashIn',
       display: 'Cash-in',
       width: 140,
-      input: TextInput
+      input: TextInput,
+      textAlign: 'right',
+      suffix: '%'
     },
     {
       name: 'cashOut',
       display: 'Cash-out',
       width: 140,
-      input: TextInput
+      input: TextInput,
+      textAlign: 'right',
+      suffix: '%'
     },
     {
       name: 'fixedFee',
       display: 'Fixed fee',
       width: 140,
-      input: TextInput
+      input: TextInput,
+      doubleHeader: 'Cash-in only',
+      textAlign: 'right',
+      suffix: currency
     },
     {
       name: 'minimumTx',
       display: 'Minimun Tx',
       width: 140,
-      input: TextInput
+      input: TextInput,
+      doubleHeader: 'Cash-in only',
+      textAlign: 'right',
+      suffix: currency
     }
   ]
 }
 
-const mainFields = auxData => [
+const mainFields = currency => [
   {
     name: 'cashIn',
     display: 'Cash-in',
     width: 169,
     size: 'lg',
-    input: TextInput
+    input: TextInput,
+    suffix: '%'
   },
   {
     name: 'cashOut',
     display: 'Cash-out',
     width: 169,
     size: 'lg',
-    input: TextInput
+    input: TextInput,
+    suffix: '%'
   },
   {
     name: 'fixedFee',
     display: 'Fixed fee',
     width: 169,
     size: 'lg',
-    input: TextInput
+    doubleHeader: 'Cash-in only',
+    textAlign: 'center',
+    input: TextInput,
+    suffix: currency
   },
   {
     name: 'minimumTx',
     display: 'Minimun Tx',
     width: 169,
     size: 'lg',
-    input: TextInput
+    doubleHeader: 'Cash-in only',
+    textAlign: 'center',
+    input: TextInput,
+    suffix: currency
   }
 ]
 
-const overrides = auxData => {
+const overrides = (auxData, currency) => {
   const getData = R.path(R.__, auxData)
 
-  return getOverridesFields(getData)
+  return getOverridesFields(getData, currency)
 }
 
 const schema = Yup.object().shape({
-  cashIn: Yup.number().required('Required'),
-  cashOut: Yup.number().required('Required'),
+  cashIn: Yup.number()
+    .max(100)
+    .required('Required'),
+  cashOut: Yup.number()
+    .max(100)
+    .required('Required'),
   fixedFee: Yup.number().required('Required'),
   minimumTx: Yup.number().required('Required')
 })
@@ -124,8 +146,12 @@ const schema = Yup.object().shape({
 const OverridesSchema = Yup.object().shape({
   machine: Yup.string().required('Required'),
   cryptoCurrencies: Yup.array().required('Required'),
-  cashIn: Yup.number().required('Required'),
-  cashOut: Yup.number().required('Required'),
+  cashIn: Yup.number()
+    .max(100)
+    .required('Required'),
+  cashOut: Yup.number()
+    .max(100)
+    .required('Required'),
   fixedFee: Yup.number().required('Required'),
   minimumTx: Yup.number().required('Required')
 })

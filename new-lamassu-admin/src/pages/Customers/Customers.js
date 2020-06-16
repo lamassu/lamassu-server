@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'

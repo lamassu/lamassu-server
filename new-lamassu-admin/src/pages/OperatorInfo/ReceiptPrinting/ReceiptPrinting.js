@@ -1,6 +1,6 @@
 // import { makeStyles } from '@material-ui/core/styles'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
@@ -49,10 +49,10 @@ const receiptPrintingOptions = [
     code: 'off',
     display: 'Off'
   },
-  {
-    code: 'optional',
-    display: 'Optional (ask user)'
-  },
+  // {
+  //   code: 'optional',
+  //   display: 'Optional (ask user)'
+  // },
   {
     code: 'on',
     display: 'On'
@@ -64,10 +64,8 @@ const ReceiptPrinting = memo(() => {
 
   // const classes = useStyles()
 
-  // TODO: treat errors on useMutation and useQuery
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: configResponse => {
-      console.log(configResponse.saveConfig)
       return setReceiptPrintingConfig(
         fromNamespace(namespaces.RECEIPT, configResponse.saveConfig)
       )
@@ -87,7 +85,6 @@ const ReceiptPrinting = memo(() => {
     })
 
   if (!receiptPrintingConfig) return null
-  console.log(receiptPrintingConfig)
 
   return (
     <>

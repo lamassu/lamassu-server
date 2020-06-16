@@ -16,6 +16,7 @@ const styles = {
     height: '100%'
   },
   content: {
+    flex: 1,
     marginLeft: 48,
     paddingTop: 15
   }

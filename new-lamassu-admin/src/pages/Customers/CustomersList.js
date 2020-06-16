@@ -9,9 +9,9 @@ import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
-import { mainStyles } from './Customers.styles'
+import styles from './CustomersList.styles'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(styles)
 
 const CustomersList = ({ data, onClick }) => {
   const classes = useStyles()

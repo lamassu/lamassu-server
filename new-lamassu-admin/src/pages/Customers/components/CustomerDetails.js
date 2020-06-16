@@ -1,18 +1,18 @@
-import { makeStyles } from '@material-ui/core/styles'
-import * as R from 'ramda'
+import { makeStyles, Box } from '@material-ui/core'
 import moment from 'moment'
+import * as R from 'ramda'
 import React, { memo } from 'react'
 
 import { H2 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
-import { mainStyles } from '../Customers.styles'
 import { ifNotNull } from '../../../utils/nullCheck'
+import styles from '../CustomersList.styles'
 
 import FrontCameraPhoto from './FrontCameraPhoto'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(styles)
 
 const CustomerDetails = memo(({ customer }) => {
   const classes = useStyles()
@@ -61,30 +61,30 @@ const CustomerDetails = memo(({ customer }) => {
   ]
 
   return (
-    <div className={classes.customerDetails}>
+    <Box display="flex">
       <FrontCameraPhoto
         frontCameraPath={R.path(['frontCameraPath'])(customer)}
       />
       <div>
-        <div className={classes.rowCenterAligned}>
-          <H2 className={classes.customerName}>{R.path(['name'])(customer)}</H2>
-        </div>
-        <div className={classes.rowCenterAligned}>
+        <Box display="flex">
+          <H2 noMargin>Rafael{R.path(['name'])(customer)}</H2>
+        </Box>
+        <Box display="flex">
           {elements.map(({ size, header }, idx) => (
             <div key={idx} className={classes.label1} style={{ width: size }}>
               {header}
             </div>
           ))}
-        </div>
-        <div className={classes.rowCenterAligned}>
+        </Box>
+        <Box display="flex">
           {elements.map(({ size, value }, idx) => (
             <div key={idx} className={classes.p} style={{ width: size }}>
               {value}
             </div>
           ))}
-        </div>
+        </Box>
       </div>
-    </div>
+    </Box>
   )
 })
 

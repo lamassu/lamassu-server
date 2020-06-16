@@ -1,17 +1,14 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import { gql } from 'apollo-boost'
 import BigNumber from 'bignumber.js'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
-import { FeatureButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
-import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
-import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit } from 'src/utils/coin'
@@ -21,7 +18,6 @@ import { mainStyles } from './Transactions.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-// TODO customerIdCardData
 const GET_TRANSACTIONS = gql`
   {
     transactions {
@@ -30,7 +26,12 @@ const GET_TRANSACTIONS = gql`
       txHash
       toAddress
       commissionPercentage
+      expired
       machineName
+      operatorCompleted
+      sendConfirmed
+      dispense
+      hasError: error
       deviceId
       fiat
       cashInFee
@@ -49,8 +50,6 @@ const GET_TRANSACTIONS = gql`
 `
 
 const Transactions = () => {
-  const [anchorEl, setAnchorEl] = useState(null)
-
   const classes = useStyles()
 
   const { data: txResponse } = useQuery(GET_TRANSACTIONS)
@@ -127,17 +126,6 @@ const Transactions = () => {
     }
   ]
 
-  const handleOpenRangePicker = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget)
-  }
-
-  const handleCloseRangePicker = () => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'date-range-popover' : undefined
-
   return (
     <>
       <div className={classes.titleWrapper}>
@@ -145,22 +133,11 @@ const Transactions = () => {
           <Title>Transactions</Title>
           {txResponse && (
             <div className={classes.buttonsWrapper}>
-              <FeatureButton
-                Icon={Download}
-                InverseIcon={DownloadInverseIcon}
-                aria-describedby={id}
-                variant="contained"
-                onClick={handleOpenRangePicker}
-              />
               <LogsDowloaderPopover
                 title="Download logs"
                 name="transactions"
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
                 logs={txResponse.transactions}
                 getTimestamp={tx => tx.created}
-                onClose={handleCloseRangePicker}
               />
             </div>
           )}

@@ -10,7 +10,7 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { toUnit } from 'src/utils/coin'
 
 import CopyToClipboard from '../../Transactions/CopyToClipboard'
-import { mainStyles } from '../Customers.styles'
+import mainStyles from '../CustomersList.styles'
 
 const useStyles = makeStyles(mainStyles)
 

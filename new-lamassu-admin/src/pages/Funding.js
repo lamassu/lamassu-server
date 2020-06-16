@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import { gql } from 'apollo-boost'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
 import React, { useState } from 'react'
@@ -35,6 +35,7 @@ const GET_FUNDING = gql`
   {
     funding {
       cryptoCode
+      errorMsg
       fundingAddress
       fundingAddressUrl
       confirmedBalance
@@ -55,6 +56,7 @@ const formatNumber = it => new BigNumber(it).toFormat(2)
 const getConfirmedTotal = list => {
   return formatNumber(
     list
+      .filter(it => !it.errorMsg)
       .map(it => new BigNumber(it.fiatConfirmedBalance))
       .reduce(sumReducer, new BigNumber(0))
   )
@@ -63,6 +65,7 @@ const getConfirmedTotal = list => {
 const getPendingTotal = list => {
   return formatNumber(
     list
+      .filter(it => !it.errorMsg)
       .map(it => new BigNumber(it.fiatPending))
       .reduce(sumReducer, new BigNumber(0))
   )
@@ -107,16 +110,29 @@ const Funding = () => {
     setSelected(fundingResponse?.funding[0])
   }
 
-  const itemRender = it => {
+  const itemRender = (it, active) => {
+    const itemClass = {
+      [classes.item]: true,
+      [classes.inactiveItem]: !active
+    }
+    const wrapperClass = {
+      [classes.itemWrapper]: true,
+      [classes.error]: it.errorMsg
+    }
+
     return (
-      <div className={classes.itemWrapper}>
+      <div className={classnames(wrapperClass)}>
         <div className={classes.firstItem}>{it.display}</div>
-        <div className={classes.item}>
-          {it.fiatConfirmedBalance} {it.fiatCode}
-        </div>
-        <div className={classes.item}>
-          {it.confirmedBalance} {it.cryptoCode}
-        </div>
+        {!it.errorMsg && (
+          <>
+            <div className={classnames(itemClass)}>
+              {it.fiatConfirmedBalance} {it.fiatCode}
+            </div>
+            <div className={classnames(itemClass)}>
+              {it.confirmedBalance} {it.cryptoCode}
+            </div>
+          </>
+        )}
       </div>
     )
   }
@@ -149,7 +165,14 @@ const Funding = () => {
             </div>
           )}
         </Sidebar>
-        {selected && !viewHistory && (
+        {selected && !viewHistory && selected.errorMsg && (
+          <div className={classes.main}>
+            <div className={classes.firstSide}>
+              <Info3 className={classes.error}>{selected.errorMsg}</Info3>
+            </div>
+          </div>
+        )}
+        {selected && !viewHistory && !selected.errorMsg && (
           <div className={classes.main}>
             <div className={classes.firstSide}>
               <H3>Balance ({selected.display})</H3>

@@ -2,7 +2,10 @@ import { bySize, bold } from 'src/styling/helpers'
 import { secondaryColor } from 'src/styling/variables'
 
 export default {
-  size: ({ size }) => bySize(size),
+  size: ({ size }) => ({
+    marginTop: size === 'lg' ? -2 : 0,
+    ...bySize(size)
+  }),
   bold,
   root: ({ width, textAlign }) => ({
     width,

@@ -3,41 +3,53 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle as MuiDialogTitle,
-  IconButton,
   makeStyles
 } from '@material-ui/core'
-import React, { useState, memo } from 'react'
+import React, { useEffect, useState, memo } from 'react'
 
-import { Button } from '../components/buttons'
-import { ReactComponent as CloseIcon } from '../styling/icons/action/close/zodiac.svg'
-import { spacer } from '../styling/variables'
+import { Button, IconButton } from 'src/components/buttons'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 
 import { TextInput } from './inputs'
 import { H4, P } from './typography'
 
 const useStyles = makeStyles({
+  label: {
+    fontSize: 16
+  },
+  spacing: {
+    padding: 32
+  },
+  wrapper: {
+    display: 'flex'
+  },
+  title: {
+    margin: [[20, 0, 24, 16]]
+  },
   closeButton: {
-    position: 'absolute',
-    right: spacer,
-    top: spacer
+    padding: 0,
+    margin: [[12, 12, 'auto', 'auto']]
+    // position: 'absolute',
+    // right: spacer,
+    // top: spacer
   }
 })
 
 export const DialogTitle = ({ children, onClose }) => {
   const classes = useStyles()
   return (
-    <MuiDialogTitle>
+    <div className={classes.wrapper}>
       {children}
       {onClose && (
         <IconButton
+          size={16}
           aria-label="close"
           className={classes.closeButton}
           onClick={onClose}>
           <CloseIcon />
         </IconButton>
       )}
-    </MuiDialogTitle>
+    </div>
   )
 }
 
@@ -49,9 +61,12 @@ export const ConfirmDialog = memo(
     toBeConfirmed,
     onConfirmed,
     onDissmised,
+    className,
     ...props
   }) => {
+    const classes = useStyles()
     const [value, setValue] = useState('')
+    useEffect(() => setValue(''), [open])
     const handleChange = event => {
       setValue(event.target.value)
     }
@@ -59,14 +74,14 @@ export const ConfirmDialog = memo(
     return (
       <Dialog open={open} aria-labelledby="form-dialog-title" {...props}>
         <DialogTitle id="customized-dialog-title" onClose={onDissmised}>
-          <H4>{title}</H4>
+          <H4 className={classes.title}>{title}</H4>
           {subtitle && (
             <DialogContentText>
               <P>{subtitle}</P>
             </DialogContentText>
           )}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent className={className}>
           <TextInput
             label={`Write '${toBeConfirmed}' to confirm`}
             name="confirm-input"
@@ -78,11 +93,11 @@ export const ConfirmDialog = memo(
             value={value}
             touched={{}}
             error={toBeConfirmed !== value}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{ shrink: true, className: classes.label }}
             onChange={handleChange}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions classes={{ spacing: classes.spacing }}>
           <Button
             color="green"
             disabled={toBeConfirmed !== value}

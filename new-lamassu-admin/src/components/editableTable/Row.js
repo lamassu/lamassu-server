@@ -83,7 +83,7 @@ const ActionCol = ({ disabled, editing }) => {
   )
 }
 
-const ECol = ({ editing, config }) => {
+const ECol = ({ editing, config, extraPaddingRight, extraPaddingLeft }) => {
   const {
     name,
     input,
@@ -115,7 +115,11 @@ const ECol = ({ editing, config }) => {
 
   return (
     <Td
-      className={{ [classes.withSuffix]: suffix }}
+      className={{
+        [classes.extraPaddingRight]: extraPaddingRight,
+        [classes.extraPaddingLeft]: extraPaddingLeft,
+        [classes.withSuffix]: suffix
+      }}
       width={width}
       size={size}
       bold={bold}
@@ -162,13 +166,31 @@ const ERow = ({ editing, disabled }) => {
   const shouldStripe = stripeWhen && stripeWhen(values) && !editing
 
   const innerElements = shouldStripe ? groupStriped(elements) : elements
+  const [toSHeader] = R.partition(R.has('doubleHeader'))(elements)
+
+  const extraPaddingLeftIndex = toSHeader?.length
+    ? R.indexOf(toSHeader[0], elements)
+    : -1
+
+  const extraPaddingRightIndex = toSHeader?.length
+    ? R.indexOf(toSHeader[toSHeader.length - 1], elements)
+    : -1
+
   return (
     <Tr
       size={rowSize}
       error={errors && errors.length}
       errorMessage={errors && errors.toString()}>
       {innerElements.map((it, idx) => {
-        return <ECol key={idx} config={it} editing={editing} />
+        return (
+          <ECol
+            key={idx}
+            config={it}
+            editing={editing}
+            extraPaddingRight={extraPaddingRightIndex === idx}
+            extraPaddingLeft={extraPaddingLeftIndex === idx}
+          />
+        )
       })}
       {(enableEdit || enableDelete || enableToggle) && (
         <ActionCol disabled={disabled} editing={editing} />
