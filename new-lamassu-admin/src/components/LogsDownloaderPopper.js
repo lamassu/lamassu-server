@@ -5,11 +5,13 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState, useCallback } from 'react'
 
+import { FeatureButton, Link } from 'src/components/buttons'
 import { ReactComponent as Arrow } from 'src/styling/icons/arrow/download_logs.svg'
+import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
+import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { primaryColor, offColor, zircon } from 'src/styling/variables'
 
 import Popper from './Popper'
-import { Link } from './buttons'
 import DateRangePicker from './date-range-picker/DateRangePicker'
 import { RadioGroup } from './inputs'
 import typographyStyles from './typography/styles'
@@ -123,30 +125,26 @@ const styles = {
 }
 
 const useStyles = makeStyles(styles)
+const ALL = 'all'
+const RANGE = 'range'
 
-const LogsDownloaderPopover = ({
-  id,
-  name,
-  open,
-  anchorEl,
-  getTimestamp,
-  logs,
-  title
-}) => {
-  const radioButtonAll = 'all'
-  const radioButtonRange = 'range'
-
-  const [selectedRadio, setSelectedRadio] = useState(radioButtonAll)
-  const [range, setRange] = useState(null)
+const LogsDownloaderPopover = ({ name, getTimestamp, logs, title }) => {
+  const [selectedRadio, setSelectedRadio] = useState(ALL)
+  const [range, setRange] = useState({ from: null, to: null })
+  const [anchorEl, setAnchorEl] = useState(null)
 
   const classes = useStyles()
 
   const dateRangePickerClasses = {
-    [classes.dateRangePickerShowing]: selectedRadio === radioButtonRange,
-    [classes.dateRangePickerHidden]: selectedRadio === radioButtonAll
+    [classes.dateRangePickerShowing]: selectedRadio === RANGE,
+    [classes.dateRangePickerHidden]: selectedRadio === ALL
   }
 
-  const handleRadioButtons = R.o(setSelectedRadio, R.path(['target', 'value']))
+  const handleRadioButtons = evt => {
+    const selectedRadio = R.path(['target', 'value'])(evt)
+    setSelectedRadio(selectedRadio)
+    if (selectedRadio === ALL) setRange({ from: null, to: null })
+  }
 
   const handleRangeChange = useCallback(
     (from, to) => {
@@ -164,7 +162,7 @@ const LogsDownloaderPopover = ({
       return moment(date).format('YYYY-MM-DD_HH-mm')
     }
 
-    if (selectedRadio === radioButtonAll) {
+    if (selectedRadio === ALL) {
       const text = logs.map(it => JSON.stringify(it)).join('\n')
       const blob = new window.Blob([text], {
         type: 'text/plain;charset=utf-8'
@@ -173,7 +171,7 @@ const LogsDownloaderPopover = ({
       return
     }
 
-    if (selectedRadio === radioButtonRange) {
+    if (selectedRadio === RANGE) {
       const text = logs
         .filter(log =>
           moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')
@@ -190,51 +188,67 @@ const LogsDownloaderPopover = ({
     }
   }
 
+  const handleOpenRangePicker = event => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
+  }
+
   const radioButtonOptions = [
-    { display: 'All logs', code: radioButtonAll },
-    { display: 'Date range', code: radioButtonRange }
+    { display: 'All logs', code: ALL },
+    { display: 'Date range', code: RANGE }
   ]
 
+  const open = Boolean(anchorEl)
+  const id = open ? 'date-range-popover' : undefined
+
   return (
-    <Popper id={id} open={open} anchorEl={anchorEl} placement="bottom">
-      <div className={classes.popoverContent}>
-        <div className={classes.popoverHeader}>{title}</div>
-        <div className={classes.radioButtonsContainer}>
-          <RadioGroup
-            name="logs-select"
-            value={selectedRadio}
-            options={radioButtonOptions}
-            ariaLabel="logs-select"
-            onChange={handleRadioButtons}
-            className={classes.radioButtons}
-          />
-        </div>
-        {selectedRadio === radioButtonRange && (
-          <div className={classnames(dateRangePickerClasses)}>
-            <div className={classes.dateContainerWrapper}>
-              {range && (
-                <>
-                  <DateContainer date={range.from}>From</DateContainer>
-                  <div className={classes.arrowContainer}>
-                    <Arrow className={classes.arrow} />
-                  </div>
-                  <DateContainer date={range.to}>To</DateContainer>
-                </>
-              )}
-            </div>
-            <DateRangePicker
-              maxDate={moment()}
-              onRangeChange={handleRangeChange}
+    <>
+      <FeatureButton
+        Icon={Download}
+        InverseIcon={DownloadInverseIcon}
+        aria-describedby={id}
+        variant="contained"
+        onClick={handleOpenRangePicker}
+      />
+      <Popper id={id} open={open} anchorEl={anchorEl} placement="bottom">
+        <div className={classes.popoverContent}>
+          <div className={classes.popoverHeader}>{title}</div>
+          <div className={classes.radioButtonsContainer}>
+            <RadioGroup
+              name="logs-select"
+              value={selectedRadio}
+              options={radioButtonOptions}
+              ariaLabel="logs-select"
+              onChange={handleRadioButtons}
+              className={classes.radioButtons}
             />
           </div>
-        )}
-        <div className={classes.download}>
-          <Link color="primary" onClick={() => downloadLogs(range, logs)}>
-            Download
-          </Link>
+          {selectedRadio === RANGE && (
+            <div className={classnames(dateRangePickerClasses)}>
+              <div className={classes.dateContainerWrapper}>
+                {range && (
+                  <>
+                    <DateContainer date={range.from}>From</DateContainer>
+                    <div className={classes.arrowContainer}>
+                      <Arrow className={classes.arrow} />
+                    </div>
+                    <DateContainer date={range.to}>To</DateContainer>
+                  </>
+                )}
+              </div>
+              <DateRangePicker
+                maxDate={moment()}
+                onRangeChange={handleRangeChange}
+              />
+            </div>
+          )}
+          <div className={classes.download}>
+            <Link color="primary" onClick={() => downloadLogs(range, logs)}>
+              Download
+            </Link>
+          </div>
         </div>
-      </div>
-    </Popper>
+      </Popper>
+    </>
   )
 }
 

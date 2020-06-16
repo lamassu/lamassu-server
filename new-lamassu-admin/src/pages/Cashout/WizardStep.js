@@ -57,14 +57,13 @@ const WizardStep = ({
             </div>
           </Form>
         </Formik>
-        // TODO: there was a disabled link here showing the currency code; restore it
       )}
 
       {lastStep && (
         <>
           <P>
-            When enabling cash out, your bill count will be authomatically set
-            to zero. Make sure you physically put cash inside the cashboxes to
+            When enabling cash out, your bill count will be automatically set to
+            zero. Make sure you physically put cash inside the cashboxes to
             allow the machine to dispense it to your users. If you already did,
             make sure you set the correct cash out bill count for this machine
             on your Cashboxes tab under Maintenance.
@@ -72,7 +71,7 @@ const WizardStep = ({
           <P>
             When enabling cash out, default commissions will be set. To change
             commissions for this machine, please go to the Commissions tab under
-            Settings. where you can set exceptions for each of the available
+            Settings where you can set exceptions for each of the available
             cryptocurrencies.
           </P>
           <div className={classes.submit}>

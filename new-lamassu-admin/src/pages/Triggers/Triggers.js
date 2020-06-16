@@ -1,15 +1,13 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
 import Title from 'src/components/Title'
-import { FeatureButton, Link } from 'src/components/buttons'
+import { Link } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
-import { ReactComponent as ConfigureInverseIcon } from 'src/styling/icons/button/configure/white.svg'
-import { ReactComponent as Configure } from 'src/styling/icons/button/configure/zodiac.svg'
 
 import { mainStyles } from './Triggers.styles'
 import Wizard from './Wizard'
@@ -60,13 +58,6 @@ const Triggers = () => {
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <Title>Compliance Triggers</Title>
-          <div className={classes.buttonsWrapper}>
-            <FeatureButton
-              Icon={Configure}
-              InverseIcon={ConfigureInverseIcon}
-              variant="contained"
-            />
-          </div>
         </div>
         <div className={classes.headerLabels}>
           <Link color="primary" onClick={() => setWizard(true)}>

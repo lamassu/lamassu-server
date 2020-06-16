@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { memo } from 'react'
 
+import typographyStyles from 'src/components/typography/styles'
 import {
   tableCellColor,
   tableCellHeight,
@@ -10,7 +11,6 @@ import {
   tableErrorColor,
   tableSuccessColor
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { info2, p } = typographyStyles
 
@@ -19,8 +19,7 @@ const useStyles = makeStyles({
     extend: p,
     padding: 4,
     height: tableCellHeight,
-    backgroundColor: tableCellColor,
-    boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)'
+    backgroundColor: tableCellColor
   },
   lg: {
     extend: info2,

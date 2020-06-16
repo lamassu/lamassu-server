@@ -1,8 +1,8 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
-import { gql } from 'apollo-boost'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
@@ -22,14 +22,14 @@ import {
 } from './OperatorInfo.styles'
 
 const validationSchema = Yup.object().shape({
-  active: Yup.boolean().required(),
-  name: Yup.string().required(),
-  phone: Yup.string().required(),
+  active: Yup.boolean(),
+  name: Yup.string(),
+  phone: Yup.string(),
   email: Yup.string()
     .email('Please enter a valid email address')
     .required(),
-  website: Yup.string().required(),
-  companyNumber: Yup.string().required()
+  website: Yup.string(),
+  companyNumber: Yup.string()
 })
 
 const fieldStyles = {

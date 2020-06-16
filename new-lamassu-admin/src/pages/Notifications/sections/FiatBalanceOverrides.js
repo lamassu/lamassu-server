@@ -72,6 +72,7 @@ const FiatBalanceOverrides = ({ section }) => {
       display: 'Cash-out 1',
       width: 155,
       textAlign: 'right',
+      doubleHeader: 'Cash-out (Cassette Empty)',
       bold: true,
       input: TextInputFormik,
       suffix: 'notes'
@@ -81,6 +82,7 @@ const FiatBalanceOverrides = ({ section }) => {
       display: 'Cash-out 2',
       width: 155,
       textAlign: 'right',
+      doubleHeader: 'Cash-out (Cassette Empty)',
       bold: true,
       input: TextInputFormik,
       suffix: 'notes'

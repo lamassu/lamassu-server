@@ -1,6 +1,6 @@
-import React from 'react'
 import Chip from '@material-ui/core/Chip'
 import { makeStyles } from '@material-ui/core/styles'
+import React from 'react'
 
 import {
   tomato,
@@ -40,15 +40,21 @@ const useStyles = makeStyles({
     fontSize: smallestFontSize,
     fontWeight: inputFontWeight,
     fontFamily: inputFontFamily,
-    paddingRight: spacer / 2,
-    paddingLeft: spacer / 2,
+    padding: [[spacer / 2, spacer]],
     color: ({ type }) => colors[type]
   }
 })
 
-const Status = ({ status }) => {
+const Status = ({ status, className }) => {
   const classes = useStyles({ type: status.type })
-  return <Chip type={status.type} label={status.label} classes={classes} />
+  return (
+    <Chip
+      type={status.type}
+      label={status.label}
+      className={className ?? null}
+      classes={classes}
+    />
+  )
 }
 
 const MainStatus = ({ statuses }) => {
@@ -59,7 +65,7 @@ const MainStatus = ({ statuses }) => {
   const plus = { label: `+${statuses.length - 1}`, type: mainStatus.type }
 
   return (
-    <div>
+    <div style={{ marginLeft: -3 }}>
       <Status status={mainStatus} />
       {statuses.length > 1 && <Status status={plus} />}
     </div>

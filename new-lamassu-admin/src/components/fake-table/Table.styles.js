@@ -31,11 +31,13 @@ export default {
     color: white,
     display: 'table-row'
   },
-  thDoubleLevel: {
-    padding: [[0, spacer * 2]],
+  thDoubleLevel: ({ width }) => ({
+    width,
     display: 'table-cell',
     '& > :first-child': {
+      margin: [[0, 10]],
       extend: label1,
+      fontWeight: 700,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -45,14 +47,12 @@ export default {
       height: 28
     },
     '& > :last-child': {
+      padding: [[0, 11]],
       display: 'table-cell',
       verticalAlign: 'middle',
-      height: tableDoubleHeaderHeight - 28,
-      '& > div': {
-        display: 'inline-block'
-      }
+      height: tableDoubleHeaderHeight - 28
     }
-  },
+  }),
   cellDoubleLevel: {
     display: 'flex',
     padding: [[0, spacer * 2]]

@@ -3,7 +3,7 @@ import React, { memo } from 'react'
 
 import { Info3, Label1 } from 'src/components/typography'
 
-import { mainStyles } from '../Customers.styles'
+import mainStyles from '../CustomersList.styles'
 
 const useStyles = makeStyles(mainStyles)
 

@@ -1,38 +1,16 @@
 import typographyStyles from 'src/components/typography/styles'
 import baseStyles from 'src/pages/Logs.styles'
-import { zircon, primaryColor, comet } from 'src/styling/variables'
+import { zircon, primaryColor } from 'src/styling/variables'
 
 const { label1 } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer } = baseStyles
 
-const mainStyles = {
-  rightAligned: {
-    display: 'flex',
-    flexFlow: 'column nowrap',
-    right: 0
-  },
-  actionButton: {
-    height: 28
-  },
+export default {
   titleWrapper,
   titleAndButtonsContainer,
-  header: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'space-between'
-  },
-  customerDetails: {
-    display: 'flex',
-    flex: 1
-  },
   row: {
     display: 'flex',
     flexFlow: 'row nowrap'
-  },
-  rowCenterAligned: {
-    display: 'flex',
-    flexFlow: 'row nowrap',
-    alignItems: 'center'
   },
   rowSpaceBetween: {
     display: 'flex',
@@ -50,17 +28,6 @@ const mainStyles = {
   textInput: {
     width: 144
   },
-  label1: {
-    fontFamily: 'MuseoSans',
-    fontSize: 12,
-    fontWeight: 500,
-    fontStretch: 'normal',
-    fontStyle: 'normal',
-    lineHeight: 1.33,
-    letterSpacing: 'normal',
-    color: comet,
-    margin: [[4, 0]]
-  },
   p: {
     fontFamily: 'MuseoSans',
     fontSize: 14,
@@ -70,9 +37,6 @@ const mainStyles = {
     lineHeight: 1.14,
     letterSpacing: 'normal',
     color: primaryColor
-  },
-  bold: {
-    fontWeight: 'bold'
   },
   txId: {
     fontFamily: 'MuseoSans',
@@ -106,7 +70,7 @@ const mainStyles = {
     height: 92,
     borderRadius: 8,
     backgroundColor: zircon,
-    margin: [[15, 28, 0, 0]],
+    margin: [[0, 28, 0, 0]],
     padding: [[30]],
     alignItems: 'center',
     justifyContent: 'space-between'
@@ -123,9 +87,6 @@ const mainStyles = {
     width: 378,
     height: 240,
     margin: [[32, 0, 0, 0]]
-  },
-  labelLink: {
-    cursor: 'pointer'
   },
   field: {
     position: 'relative',
@@ -158,5 +119,3 @@ const mainStyles = {
     maxHeight: 97
   }
 }
-
-export { mainStyles }

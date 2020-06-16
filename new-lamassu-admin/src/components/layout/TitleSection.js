@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
 import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
@@ -8,10 +9,10 @@ import styles from './TitleSection.styles'
 
 const useStyles = makeStyles(styles)
 
-const TitleSection = ({ title, error, labels }) => {
+const TitleSection = ({ className, title, error, labels, children }) => {
   const classes = useStyles()
   return (
-    <div className={classes.titleWrapper}>
+    <div className={classnames(classes.titleWrapper, className)}>
       <div className={classes.titleAndButtonsContainer}>
         <Title>{title}</Title>
         {error && (
@@ -19,6 +20,7 @@ const TitleSection = ({ title, error, labels }) => {
         )}
       </div>
       <div className={classes.headerLabels}>{labels}</div>
+      {children}
     </div>
   )
 }

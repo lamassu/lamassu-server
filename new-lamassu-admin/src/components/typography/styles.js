@@ -122,7 +122,7 @@ export default {
   inline: {
     display: 'inline'
   },
-  noMarginP: {
+  noMargin: {
     margin: 0
   }
 }

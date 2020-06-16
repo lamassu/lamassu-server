@@ -1,12 +1,12 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
   mainFields,
@@ -44,6 +44,9 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   })
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const currency = R.path(['fiatCurrency'])(
+    fromNamespace(namespaces.LOCALE)(data?.config)
+  )
 
   const commission = config && !R.isEmpty(config) ? config : defaults
 
@@ -71,7 +74,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           save={save}
           validationSchema={schema}
           data={R.of(commission)}
-          elements={mainFields(data)}
+          elements={mainFields(currency)}
         />
       </Section>
       <Section>
@@ -86,7 +89,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           save={saveOverrides}
           validationSchema={OverridesSchema}
           data={commission.overrides ?? []}
-          elements={overrides(data)}
+          elements={overrides(data, currency)}
         />
       </Section>
     </>

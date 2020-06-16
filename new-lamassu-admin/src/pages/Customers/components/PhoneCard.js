@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import React, { memo } from 'react'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import {
   PropertyCard,
@@ -9,7 +9,7 @@ import {
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
 
-import { mainStyles } from '../Customers.styles'
+import mainStyles from '../CustomersList.styles'
 
 import Field from './Field'
 

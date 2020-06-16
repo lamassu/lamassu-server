@@ -3,7 +3,9 @@ import {
   disabledColor2,
   spacer,
   subheaderColor,
-  placeholderColor
+  errorColor,
+  placeholderColor,
+  comet
 } from 'src/styling/variables'
 
 const { label1 } = typographyStyles
@@ -24,6 +26,9 @@ export default {
   },
   secondSide: {
     marginTop: -29
+  },
+  error: {
+    color: errorColor
   },
   coinTotal: {
     margin: `${spacer * 1.5}px 0`
@@ -51,7 +56,11 @@ export default {
     extend: label1,
     margin: 2
   },
+  inactiveItem: {
+    color: comet
+  },
   firstItem: {
+    fontWeight: 700,
     margin: 2
   },
   total: {

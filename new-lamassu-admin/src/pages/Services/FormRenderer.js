@@ -45,10 +45,11 @@ const FormRenderer = ({
       onSubmit={save}>
       <Form className={classes.form}>
         <Grid container spacing={3} className={classes.grid}>
-          {elements.map(({ component, code, display }) => (
+          {elements.map(({ component, code, display, inputProps }) => (
             <Grid item xs={12} key={code}>
               <FastField
                 component={component}
+                {...inputProps}
                 name={code}
                 label={display}
                 fullWidth={true}

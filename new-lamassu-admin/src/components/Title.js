@@ -7,7 +7,7 @@ import { H1 } from './typography'
 
 const useStyles = makeStyles({
   title: {
-    marginTop: spacer * 3.5,
+    marginTop: spacer * 3,
     marginBottom: spacer * 3
   }
 })

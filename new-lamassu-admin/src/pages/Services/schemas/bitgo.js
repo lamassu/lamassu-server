@@ -1,7 +1,10 @@
 import * as Yup from 'yup'
 
-import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import {
+  TextInput,
+  SecretInput,
+  Autocomplete
+} from 'src/components/inputs/formik'
 
 const isDefined = it => it && it.length
 
@@ -13,65 +16,71 @@ export default {
     {
       code: 'token',
       display: 'API Token',
-      component: TextInputFormik,
+      component: TextInput,
       face: true,
       long: true
     },
     {
       code: 'environment',
       display: 'Environment',
-      component: TextInputFormik,
+      component: Autocomplete,
+      inputProps: {
+        options: ['prod', 'test']
+        // valueProp: 'deviceId',
+        // getLabel: R.path(['name']),
+        // limit: null
+      },
       face: true
     },
     {
       code: 'btcWalletId',
       display: 'BTC Wallet ID',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       code: 'btcWalletPassphrase',
       display: 'BTC Wallet Passphrase',
-      component: SecretInputFormik
+      component: SecretInput
     },
     {
       code: 'ltcWalletId',
       display: 'LTC Wallet ID',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       code: 'ltcWalletPassphrase',
       display: 'LTC Wallet Passphrase',
-      component: SecretInputFormik
+      component: SecretInput
     },
     {
       code: 'zecWalletId',
       display: 'ZEC Wallet ID',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       code: 'zecWalletPassphrase',
       display: 'ZEC Wallet Passphrase',
-      component: SecretInputFormik
+      component: SecretInput
     },
     {
       code: 'bchWalletId',
       display: 'BCH Wallet ID',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       code: 'bchWalletPassphrase',
       display: 'BCH Wallet Passphrase',
-      component: SecretInputFormik
+      component: SecretInput
     },
     {
       code: 'dashWalletId',
       display: 'DASH Wallet ID',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       code: 'dashWalletPassphrase',
       display: 'DASH Wallet Passphrase',
-      component: SecretInputFormik
+      component: SecretInput
     }
   ],
   validationSchema: Yup.object().shape({

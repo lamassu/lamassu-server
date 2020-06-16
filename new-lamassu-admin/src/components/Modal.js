@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import React from 'react'
 
 import { IconButton } from 'src/components/buttons'
-import { H1, H2 } from 'src/components/typography'
+import { H1, H4 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 
 const styles = {
@@ -18,29 +18,29 @@ const styles = {
     height,
     display: 'flex',
     flexDirection: 'column',
-    minHeight: 400,
+    minHeight: height ?? 400,
     maxHeight: '90vh',
     overflowY: 'auto',
     borderRadius: 8,
     outline: 0
   }),
-  content: {
+  content: ({ small }) => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    padding: [[0, 32]]
-  },
-  button: {
+    padding: small ? [[0, 16]] : [[0, 32]]
+  }),
+  button: ({ small }) => ({
     padding: 0,
-    margin: [[20, 20, 'auto', 'auto']]
-  },
+    margin: small ? [[12, 12, 'auto', 'auto']] : [[16, 16, 'auto', 'auto']]
+  }),
   header: {
     display: 'flex'
   },
-  title: {
-    margin: [[28, 0, 8, 32]]
-  }
+  title: ({ small }) => ({
+    margin: small ? [[20, 0, 8, 16]] : [[28, 0, 8, 32]]
+  })
 }
 
 const useStyles = makeStyles(styles)
@@ -49,7 +49,7 @@ const Modal = ({
   width,
   height,
   title,
-  titleSmall,
+  small,
   infoPanel,
   handleClose,
   children,
@@ -58,9 +58,9 @@ const Modal = ({
   closeOnBackdropClick,
   ...props
 }) => {
-  const classes = useStyles({ width, height })
-  const TitleCase = titleSmall ? H2 : H1
-  const closeSize = titleSmall ? 16 : 20
+  const classes = useStyles({ width, height, small })
+  const TitleCase = small ? H4 : H1
+  const closeSize = small ? 16 : 20
 
   const innerClose = (evt, reason) => {
     if (!closeOnBackdropClick && reason === 'backdropClick') return

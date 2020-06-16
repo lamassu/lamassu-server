@@ -29,7 +29,7 @@ const Sidebar = ({
               [classes.link]: true
             })}
             onClick={() => onClick(it)}>
-            {itemRender ? itemRender(it) : displayName(it)}
+            {itemRender ? itemRender(it, isSelected(it)) : displayName(it)}
           </div>
         ))}
       {children}

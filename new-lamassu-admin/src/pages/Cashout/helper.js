@@ -13,7 +13,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
     {
       name: 'id',
       header: 'Machine',
-      width: 254,
+      width: 200,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -24,7 +24,8 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       view: it => `${it} ${fiatCurrency}`,
       size: 'sm',
       stripe: true,
-      width: 265,
+      width: 200,
+      textAlign: 'right',
       input: TextInput
     },
     {
@@ -33,7 +34,8 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       view: it => `${it} ${fiatCurrency}`,
       size: 'sm',
       stripe: true,
-      width: 265,
+      textAlign: 'right',
+      width: 200,
       input: TextInput
     },
     {
@@ -41,6 +43,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       header: '0-conf Limit',
       size: 'sm',
       stripe: true,
+      textAlign: 'right',
       width: 200,
       input: TextInput
     }

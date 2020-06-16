@@ -4,11 +4,20 @@ export default {
   cancelButton: {
     marginRight: 20
   },
-  withSuffix: ({ textAlign }) => ({
-    display: 'flex',
-    alignItems: 'baseline',
-    justifyContent: textAlign === 'right' && 'end'
-  }),
+  extraPaddingLeft: {
+    paddingLeft: 35
+  },
+  extraPaddingRight: {
+    paddingRight: 45
+  },
+  withSuffix: ({ textAlign }) => {
+    const justifyContent = textAlign === 'right' ? 'end' : textAlign
+    return {
+      display: 'flex',
+      alignItems: 'baseline',
+      justifyContent
+    }
+  },
   suffix: {
     marginLeft: 7
   },

@@ -1,8 +1,8 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
-import { gql } from 'apollo-boost'
 import classnames from 'classnames'
 import { Form, Formik, Field } from 'formik'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
@@ -83,25 +83,30 @@ const TermsConditions = () => {
     {
       name: 'title',
       label: 'Screen title',
-      value: formData.title ?? ''
+      value: formData.title ?? '',
+      width: 282
     },
     {
       name: 'text',
       label: 'Text content',
       value: formData.text ?? '',
-      multiline: true
+      width: 502,
+      multiline: true,
+      rows: 6
     },
     {
       name: 'acceptButtonText',
       label: 'Accept button text',
       value: formData.acceptButtonText ?? '',
-      placeholder: 'I accept'
+      placeholder: 'I accept',
+      width: 282
     },
     {
       name: 'cancelButtonText',
       label: 'Cancel button text',
       value: formData.cancelButtonText ?? '',
-      placeholder: 'Cancel'
+      placeholder: 'Cancel',
+      width: 282
     }
   ]
 
@@ -145,10 +150,12 @@ const TermsConditions = () => {
                   id={f.name}
                   name={f.name}
                   component={TextInputFormik}
+                  width={f.width}
                   placeholder={f.placeholder}
                   type="text"
                   label={f.label}
                   multiline={f.multiline}
+                  rows={f.rows}
                   rowsMax="6"
                   onFocus={() => setError(null)}
                 />

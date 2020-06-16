@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
 import Uptime from 'src/components/Uptime'
-import { FeatureButton, SimpleButton } from 'src/components/buttons'
+import { SimpleButton } from 'src/components/buttons'
 import { Select } from 'src/components/inputs'
 import {
   Table,
@@ -20,8 +20,8 @@ import {
 } from 'src/components/table'
 import { Info3 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
-import { ReactComponent as DownloadActive } from 'src/styling/icons/button/download/white.svg'
-import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
+import { ReactComponent as WhiteShareIcon } from 'src/styling/icons/circle buttons/share/white.svg'
+import { ReactComponent as ShareIcon } from 'src/styling/icons/circle buttons/share/zodiac.svg'
 import { offColor } from 'src/styling/variables'
 
 import logsStyles from './Logs.styles'
@@ -41,7 +41,6 @@ const localStyles = {
     margin: 'auto 0 auto 0'
   },
   headerLine2: {
-    height: 60,
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: 24
@@ -61,24 +60,14 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
 
-const GET_VERSION = gql`
-  query {
-    serverVersion
-  }
-`
-
-const GET_UPTIME = gql`
+const GET_DATA = gql`
   {
+    serverVersion
     uptime {
       name
       state
       uptime
     }
-  }
-`
-
-const GET_SERVER_LOGS = gql`
-  {
     serverLogs {
       logLevel
       id
@@ -87,7 +76,6 @@ const GET_SERVER_LOGS = gql`
     }
   }
 `
-
 const SUPPORT_LOGS = gql`
   mutation ServerSupportLogs {
     serverSupportLogs {
@@ -101,30 +89,19 @@ const Logs = () => {
 
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
-  const [anchorEl, setAnchorEl] = useState(null)
 
-  const { data: version } = useQuery(GET_VERSION)
-  const serverVersion = version?.serverVersion
-
-  const { data: uptimeResponse } = useQuery(GET_UPTIME)
-  const processStates = uptimeResponse?.uptime ?? []
-
-  const { data: logsResponse } = useQuery(GET_SERVER_LOGS, {
-    fetchPolicy: 'no-cache',
+  const { data } = useQuery(GET_DATA, {
     onCompleted: () => setSaveMessage('')
   })
+
+  const serverVersion = data?.serverVersion
+  const processStates = data?.uptime ?? []
 
   const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
     onError: () => setSaveMessage('Failure saving snapshot'),
     onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
   })
 
-  const handleOpenRangePicker = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'date-range-popover' : undefined
   const getLogLevels = R.compose(
     R.prepend(SHOW_ALL),
     R.uniq,
@@ -137,27 +114,19 @@ const Logs = () => {
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <Title>Server</Title>
-          {logsResponse && (
+          {data && (
             <div className={classes.buttonsWrapper}>
-              <FeatureButton
-                Icon={Download}
-                InverseIcon={DownloadActive}
-                aria-describedby={id}
-                variant="contained"
-                onClick={handleOpenRangePicker}
-              />
               <LogsDowloaderPopover
                 title="Download logs"
                 name="server-logs"
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                logs={logsResponse.serverLogs}
+                logs={data.serverLogs}
                 getTimestamp={log => log.timestamp}
               />
               <SimpleButton
-                className={classes.button}
+                className={classes.shareButton}
                 disabled={loading}
+                Icon={ShareIcon}
+                InverseIcon={WhiteShareIcon}
                 onClick={sendSnapshot}>
                 Share with Lamassu
               </SimpleButton>
@@ -170,11 +139,11 @@ const Logs = () => {
         </div>
       </div>
       <div className={classes.headerLine2}>
-        {logsResponse && (
+        {data && (
           <Select
             onSelectedItemChange={setLogLevel}
             label="Level"
-            items={getLogLevels(logsResponse)}
+            items={getLogLevels(data)}
             default={SHOW_ALL}
             selectedItem={logLevel}
           />
@@ -197,8 +166,8 @@ const Logs = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {logsResponse &&
-                logsResponse.serverLogs
+              {data &&
+                data.serverLogs
                   .filter(
                     log => logLevel === SHOW_ALL || log.logLevel === logLevel
                   )

@@ -2,13 +2,13 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { useState, memo } from 'react'
 
+import Popover from 'src/components/Popper'
+import typographyStyles from 'src/components/typography/styles'
 import {
   subheaderColor,
   subheaderDarkColor,
   offColor
 } from 'src/styling/variables'
-import Popover from 'src/components/Popper'
-import typographyStyles from 'src/components/typography/styles'
 
 const { info2 } = typographyStyles
 
@@ -70,6 +70,7 @@ const IDButton = memo(
     InverseIcon,
     popoverWidth = 152,
     children,
+    popoverClassname,
     ...props
   }) => {
     const [anchorEl, setAnchorEl] = useState(null)
@@ -117,6 +118,7 @@ const IDButton = memo(
           )}
         </button>
         <Popover
+          className={popoverClassname}
           id={id}
           open={open}
           anchorEl={anchorEl}

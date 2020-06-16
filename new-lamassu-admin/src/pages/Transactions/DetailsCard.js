@@ -1,10 +1,10 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
-import classnames from 'classnames'
 import moment from 'moment'
 import React, { memo } from 'react'
 
 import { IDButton } from 'src/components/buttons'
+import { Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
 import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
 import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone/white.svg'
@@ -13,33 +13,55 @@ import { ReactComponent as CamIdInverseIcon } from 'src/styling/icons/ID/photo/w
 import { ReactComponent as CamIdIcon } from 'src/styling/icons/ID/photo/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { URI } from 'src/utils/apollo'
 import { toUnit } from 'src/utils/coin'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import CopyToClipboard from './CopyToClipboard'
-import { detailsRowStyles, labelStyles } from './Transactions.styles'
+import styles from './DetailsCard.styles'
 
-const labelUseStyles = makeStyles(labelStyles)
+const useStyles = makeStyles(styles)
 
-const Label = ({ children }) => {
-  const classes = labelUseStyles()
+const formatAddress = (address = '') => address.replace(/(.{5})/g, '$1 ')
 
-  return <div className={classes.label}>{children}</div>
+const getCashOutStatus = it => {
+  if (it.hasError) return 'Error'
+  if (it.dispense) return 'Success'
+  if (it.expired) return 'Expired'
+  return 'Pending'
 }
 
-const detailsUseStyles = makeStyles(detailsRowStyles)
+const getCashInStatus = it => {
+  console.log(it)
+  if (it.operatorCompleted) return 'Cancelled'
+  if (it.hasError) return 'Error'
+  if (it.sendConfirmed) return 'Sent'
+  if (it.expired) return 'Expired'
+  return 'Pending'
+}
 
-const DetailsRow = ({ it: tx, ...props }) => {
-  const classes = detailsUseStyles()
+const getStatus = it => {
+  if (it.class === 'cashOut') {
+    return getCashOutStatus(it)
+  }
+  return getCashInStatus(it)
+}
 
-  const addr = tx.toAddress
-  const txHash = tx.txHash
+const Label = ({ children }) => {
+  const classes = useStyles()
+  return <Label1 className={classes.label}>{children}</Label1>
+}
+
+const DetailsRow = ({ it: tx }) => {
+  const classes = useStyles()
+
   const fiat = Number.parseFloat(tx.fiat)
-  const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toFormat(
-    5
-  )
+  const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = fiat * commissionPercentage
+  const exchangeRate = Number(fiat / crypto).toFixed(3)
+  const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
+
   const customer = tx.customerIdCardData && {
     name: `${onlyFirstToUpper(
       tx.customerIdCardData.firstName
@@ -52,170 +74,140 @@ const DetailsRow = ({ it: tx, ...props }) => {
     )
   }
 
-  const formatAddress = (address = '') => {
-    return address.replace(/(.{5})/g, '$1 ')
-  }
-
   return (
-    <>
-      <div className={classes.wrapper}>
-        <div className={classnames(classes.row)}>
-          <div className={classnames(classes.col, classes.col1)}>
-            {/* Column 1 */}
-            <div className={classes.innerRow}>
-              <div>
-                <Label>Direction</Label>
-                <div>
-                  <span className={classes.txIcon}>
-                    {tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />}
-                  </span>
-                  <span>
-                    {tx.txClass === 'cashOut' ? 'Cash-out' : 'Cash-in'}
-                  </span>
-                </div>
-              </div>
-              <div className={classes.availableIds}>
-                <Label>Available IDs</Label>
-                <div>
-                  {tx.customerPhone && (
-                    <IDButton
-                      name="phone"
-                      Icon={PhoneIdIcon}
-                      InverseIcon={PhoneIdInverseIcon}>
-                      {tx.customerPhone}
-                    </IDButton>
-                  )}
-                  {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
-                    <IDButton
-                      name="card"
-                      Icon={CardIdIcon}
-                      InverseIcon={CardIdInverseIcon}>
-                      <img alt="" src={tx.customerIdCardPhotoPath} />
-                    </IDButton>
-                  )}
-                  {tx.customerIdCardData && (
-                    <IDButton
-                      name="card"
-                      Icon={CardIdIcon}
-                      InverseIcon={CardIdInverseIcon}>
-                      <div className={classes.idCardDataCard}>
-                        <div>
-                          <div>
-                            <Label>Name</Label>
-                            <div>{customer.name}</div>
-                          </div>
-                          <div>
-                            <Label>Age</Label>
-                            <div>{customer.age}</div>
-                          </div>
-                          <div>
-                            <Label>Country</Label>
-                            <div>{customer.country}</div>
-                          </div>
-                        </div>
-                        <div>
-                          <div>
-                            <Label>ID number</Label>
-                            <div>{customer.idCardNumber}</div>
-                          </div>
-                          <div>
-                            <Label>Gender</Label>
-                            <div />
-                          </div>
-                          <div>
-                            <Label>Expiration date</Label>
-                            <div>{customer.idCardExpirationDate}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </IDButton>
-                  )}
-                  {tx.customerFrontCameraPath && (
-                    <IDButton
-                      name="cam"
-                      Icon={CamIdIcon}
-                      InverseIcon={CamIdInverseIcon}>
-                      <img alt="" src={tx.customerFrontCameraPath} />
-                    </IDButton>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={classnames(classes.col, classes.col2)}>
-            {/* Column 2 */}
-            <div className={classes.innerRow}>
-              <div>
-                <Label>Exchange rate</Label>
-                <div>
-                  {`1 ${tx.cryptoCode} = ${Number(fiat / crypto).toFixed(3)} ${
-                    tx.fiatCode
-                  }`}
-                </div>
-              </div>
-              <div className={classes.commissionWrapper}>
-                <Label>Commission</Label>
-                <div>
-                  {`${commission} ${tx.fiatCode} (${commissionPercentage *
-                    100} %)`}
-                </div>
-              </div>
-              {tx.txClass === 'cashIn' && (
-                <div className={classes.innerRow}>
-                  <Label>Fixed fee</Label>
-                  <div>{Number.parseFloat(tx.cashInFee)}</div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className={classnames(classes.col, classes.col3)}>
-            {/* Column 3 */}
-            <div className={classnames(classes.innerRow)}>
-              <div style={{ height: 43.4 }}>{/* Export to PDF */}</div>
-            </div>
+    <div className={classes.wrapper}>
+      <div className={classes.row}>
+        <div className={classes.direction}>
+          <Label>Direction</Label>
+          <div>
+            <span className={classes.txIcon}>
+              {tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />}
+            </span>
+            <span>{tx.txClass === 'cashOut' ? 'Cash-out' : 'Cash-in'}</span>
           </div>
         </div>
-        <div className={classnames(classes.row)}>
-          <div className={classnames(classes.col, classes.col1)}>
-            {/* Column 1 */}
-            <div className={classes.innerRow}>
-              <div>
-                <Label>BTC address</Label>
-                <div>
-                  <CopyToClipboard className={classes.cryptoAddr}>
-                    {formatAddress(addr)}
-                  </CopyToClipboard>
+
+        <div className={classes.availableIds}>
+          <Label>Available IDs</Label>
+          <Box display="flex" flexDirection="row">
+            {tx.customerPhone && (
+              <IDButton
+                className={classes.idButton}
+                name="phone"
+                Icon={PhoneIdIcon}
+                InverseIcon={PhoneIdInverseIcon}>
+                {tx.customerPhone}
+              </IDButton>
+            )}
+            {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
+              <IDButton
+                popoverClassname={classes.popover}
+                className={classes.idButton}
+                name="card"
+                Icon={CardIdIcon}
+                InverseIcon={CardIdInverseIcon}>
+                <img
+                  className={classes.idCardPhoto}
+                  src={`${URI}/id-card-photo/${tx.customerIdCardPhotoPath}`}
+                  alt=""
+                />
+              </IDButton>
+            )}
+            {tx.customerIdCardData && (
+              <IDButton
+                className={classes.idButton}
+                name="card"
+                Icon={CardIdIcon}
+                InverseIcon={CardIdInverseIcon}>
+                <div className={classes.idCardDataCard}>
+                  <div>
+                    <div>
+                      <Label>Name</Label>
+                      <div>{customer.name}</div>
+                    </div>
+                    <div>
+                      <Label>Age</Label>
+                      <div>{customer.age}</div>
+                    </div>
+                    <div>
+                      <Label>Country</Label>
+                      <div>{customer.country}</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div>
+                      <Label>ID number</Label>
+                      <div>{customer.idCardNumber}</div>
+                    </div>
+                    <div>
+                      <Label>Expiration date</Label>
+                      <div>{customer.idCardExpirationDate}</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </IDButton>
+            )}
+            {tx.customerFrontCameraPath && (
+              <IDButton
+                name="cam"
+                Icon={CamIdIcon}
+                InverseIcon={CamIdInverseIcon}>
+                <img
+                  src={`${URI}/front-camera-photo/${tx.customerFrontCameraPath}`}
+                  alt=""
+                />
+              </IDButton>
+            )}
+          </Box>
+        </div>
+        <div className={classes.exchangeRate}>
+          <Label>Exchange rate</Label>
+          <div>{crypto > 0 ? displayExRate : '-'}</div>
+        </div>
+        <div className={classes.commission}>
+          <Label>Commission</Label>
+          <div>
+            {`${commission} ${tx.fiatCode} (${commissionPercentage * 100} %)`}
           </div>
-          <div className={classnames(classes.col, classes.col2)}>
-            {/* Column 2 */}
-            <div className={classes.innerRow}>
-              <div>
-                <Label>Transaction ID</Label>
-                <div>
-                  <CopyToClipboard className={classes.txId}>
-                    {txHash}
-                  </CopyToClipboard>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={classnames(classes.col, classes.col3)}>
-            {/* Column 3 */}
-            <div className={classes.innerRow}>
-              <div>
-                <Label>Session ID</Label>
-                <CopyToClipboard className={classes.sessionId}>
-                  {tx.id}
-                </CopyToClipboard>
-              </div>
-            </div>
+        </div>
+        <div>
+          <Label>Fixed fee</Label>
+          <div>
+            {tx.txClass === 'cashIn'
+              ? `${Number.parseFloat(tx.cashInFee)} ${tx.fiatCode}`
+              : 'N/A'}
           </div>
         </div>
       </div>
-    </>
+      <div className={classes.secondRow}>
+        <div className={classes.address}>
+          <Label>BTC address</Label>
+          <div>
+            <CopyToClipboard>{formatAddress(tx.toAddress)}</CopyToClipboard>
+          </div>
+        </div>
+        <div className={classes.transactionId}>
+          <Label>Transaction ID</Label>
+          <div>
+            {tx.txClass === 'cashOut' ? (
+              'N/A'
+            ) : (
+              <CopyToClipboard>{tx.txHash}</CopyToClipboard>
+            )}
+          </div>
+        </div>
+        <div className={classes.sessionId}>
+          <Label>Session ID</Label>
+          <CopyToClipboard>{tx.id}</CopyToClipboard>
+        </div>
+      </div>
+      <div className={classes.lastRow}>
+        <div>
+          <Label>Transaction status</Label>
+          <span className={classes.bold}>{getStatus(tx)}</span>
+        </div>
+      </div>
+    </div>
   )
 }
 

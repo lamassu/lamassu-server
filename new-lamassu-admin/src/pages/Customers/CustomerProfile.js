@@ -1,23 +1,23 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
 import { useHistory, useParams } from 'react-router-dom'
-import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
+import { ActionButton } from 'src/components/buttons'
+import { Label1, Label2 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
-import { ActionButton } from 'src/components/buttons'
-import { Label1 } from 'src/components/typography'
-import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
-import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
+import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
+import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 
+import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
   IdDataCard,
@@ -25,9 +25,8 @@ import {
   IdCardPhotoCard,
   TransactionsList
 } from './components'
-import { mainStyles } from './Customers.styles'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(styles)
 
 const GET_CUSTOMER = gql`
   query customer($customerId: ID!) {
@@ -96,8 +95,7 @@ const CustomerProfile = memo(() => {
   const { data: customerResponse, refetch: getCustomer } = useQuery(
     GET_CUSTOMER,
     {
-      variables: { customerId },
-      fetchPolicy: 'no-cache'
+      variables: { customerId }
     }
   )
 
@@ -125,24 +123,25 @@ const CustomerProfile = memo(() => {
   return (
     <>
       <Breadcrumbs
+        classes={{ root: classes.breadcrumbs }}
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb">
         <Label1
+          noMargin
           className={classes.labelLink}
           onClick={() => history.push('/compliance/customers')}>
           Customers
         </Label1>
-        <Label1 className={classes.bold}>
-          {R.path(['name'])(customerData)}
-        </Label1>
+        <Label2 noMargin className={classes.labelLink}>
+          Rafael{R.path(['name'])(customerData)}
+        </Label2>
       </Breadcrumbs>
       <div>
-        <div className={classes.header}>
+        <Box display="flex" justifyContent="space-between">
           <CustomerDetails customer={customerData} />
-          <div className={classes.rightAligned}>
-            <Label1 className={classes.label1}>Actions</Label1>
+          <div>
+            <Label1 className={classes.actionLabel}>Actions</Label1>
             <ActionButton
-              className={classes.actionButton}
               color="primary"
               Icon={blocked ? AuthorizeIcon : BlockIcon}
               InverseIcon={blocked ? AuthorizeReversedIcon : BlockReversedIcon}
@@ -156,8 +155,8 @@ const CustomerProfile = memo(() => {
               {`${blocked ? 'Authorize' : 'Block'} customer`}
             </ActionButton>
           </div>
-        </div>
-        <div className={classes.rowCenterAligned}>
+        </Box>
+        <Box display="flex">
           <IdDataCard
             customerData={customerData}
             updateCustomer={updateCustomer}
@@ -170,7 +169,7 @@ const CustomerProfile = memo(() => {
             customerData={customerData}
             updateCustomer={updateCustomer}
           />
-        </div>
+        </Box>
       </div>
       <TransactionsList data={transactionsData} />
     </>

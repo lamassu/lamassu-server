@@ -36,10 +36,10 @@ const tree = [
     },
     children: [
       {
-        key: 'logs',
-        label: 'Logs',
-        route: '/maintenance/logs',
-        component: MachineLogs
+        key: 'cashboxes',
+        label: 'Cashboxes',
+        route: '/maintenance/cashboxes',
+        component: Cashboxes
       },
       {
         key: 'funding',
@@ -48,10 +48,10 @@ const tree = [
         component: Funding
       },
       {
-        key: 'server-logs',
-        label: 'Server',
-        route: '/maintenance/server-logs',
-        component: ServerLogs
+        key: 'logs',
+        label: 'Machine logs',
+        route: '/maintenance/logs',
+        component: MachineLogs
       },
       {
         key: 'machine-status',
@@ -60,10 +60,10 @@ const tree = [
         component: MachineStatus
       },
       {
-        key: 'cashboxes',
-        label: 'Cashboxes',
-        route: '/maintenance/cashboxes',
-        component: Cashboxes
+        key: 'server-logs',
+        label: 'Server',
+        route: '/maintenance/server-logs',
+        component: ServerLogs
       }
     ]
   },
@@ -83,7 +83,7 @@ const tree = [
       },
       {
         key: namespaces.LOCALE,
-        label: 'Locale',
+        label: 'Locales',
         route: '/settings/locale',
         component: Locales
       },
@@ -94,28 +94,28 @@ const tree = [
         component: Cashout
       },
       {
-        key: 'services',
-        label: '3rd party services',
-        route: '/settings/3rd-party-services',
-        component: Services
-      },
-      {
         key: namespaces.NOTIFICATIONS,
         label: 'Notifications',
         route: '/settings/notifications',
         component: Notifications
       },
       {
-        key: namespaces.OPERATOR_INFO,
-        label: 'Operator Info',
-        route: '/settings/operator-info',
-        component: OperatorInfo
+        key: 'services',
+        label: '3rd party services',
+        route: '/settings/3rd-party-services',
+        component: Services
       },
       {
         key: namespaces.WALLETS,
         label: 'Wallet',
         route: '/settings/wallet-settings',
         component: WalletSettings
+      },
+      {
+        key: namespaces.OPERATOR_INFO,
+        label: 'Operator Info',
+        route: '/settings/operator-info',
+        component: OperatorInfo
       }
     ]
   },

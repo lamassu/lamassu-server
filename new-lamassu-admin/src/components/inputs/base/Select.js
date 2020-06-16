@@ -1,10 +1,10 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { useSelect } from 'downshift'
 import React from 'react'
 
-import { ReactComponent as Arrowdown } from '../../../styling/icons/action/arrow/regular.svg'
-import { startCase } from '../../../utils/string'
+import { ReactComponent as Arrowdown } from 'src/styling/icons/action/arrow/regular.svg'
+import { startCase } from 'src/utils/string'
 
 import styles from './Select.styles'
 

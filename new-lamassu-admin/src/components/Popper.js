@@ -5,7 +5,13 @@ import React, { useState } from 'react'
 
 import { white } from 'src/styling/variables'
 
-const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
+const Popover = ({
+  children,
+  bgColor = white,
+  arrowSize = 6,
+  className,
+  ...props
+}) => {
   const [arrowRef, setArrowRef] = useState(null)
 
   const styles = {
@@ -27,7 +33,24 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       borderLeft: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', 'transparent']],
       borderBottom: [['2em', 'solid', bgColor]],
-      marginTop: '-1.9em'
+      marginTop: '-1.9em',
+      '&:after': {
+        zIndex: -10,
+        content: '""',
+        position: 'absolute',
+        width: arrowSize * 3,
+        height: arrowSize * 3,
+        marginLeft: 0,
+        bottom: 0,
+        top: 'calc(50% - 0px)',
+        left: 0,
+        border: '5px solid #fff',
+        borderColor: 'transparent transparent #fff #fff',
+        transformOrigin: '0 0',
+        transform: 'rotate(45deg)',
+        boxShadow:
+          '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)'
+      }
     },
     arrowTop: {
       bottom: 0,
@@ -36,7 +59,24 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       borderLeft: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', 'transparent']],
       borderTop: [['2em', 'solid', bgColor]],
-      marginBottom: '-1.9em'
+      marginBottom: '-1.9em',
+      '&:after': {
+        zIndex: -10,
+        content: '""',
+        position: 'absolute',
+        width: arrowSize * 3,
+        height: arrowSize * 3,
+        marginLeft: 0,
+        bottom: 0,
+        top: -(arrowSize * 4 + 2),
+        left: 0,
+        border: '5px solid #fff',
+        borderColor: 'transparent transparent #fff #fff',
+        transformOrigin: '0 0',
+        transform: 'rotate(45deg)',
+        boxShadow:
+          '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)'
+      }
     },
     arrowRight: {
       left: 0,
@@ -81,6 +121,10 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
       enabled: true,
       boundariesElement: 'scrollParent'
     },
+    offset: {
+      enabled: true,
+      offset: '0, 10'
+    },
     arrow: {
       enabled: true,
       element: arrowRef
@@ -94,7 +138,7 @@ const Popover = ({ children, bgColor = white, arrowSize = 7, ...props }) => {
         modifiers={modifiers}
         className={classes.popover}
         {...props}>
-        <Paper className={classes.root}>
+        <Paper className={classnames(classes.root, className)}>
           <span className={classnames(arrowClasses)} ref={setArrowRef} />
           {children}
         </Paper>

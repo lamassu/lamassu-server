@@ -65,8 +65,8 @@ const Th = ({ children, ...props }) => {
   )
 }
 
-const ThDoubleLevel = ({ title, children, className }) => {
-  const classes = useStyles()
+const ThDoubleLevel = ({ title, children, className, width }) => {
+  const classes = useStyles({ width })
 
   return (
     <div className={classnames(className, classes.thDoubleLevel)}>
