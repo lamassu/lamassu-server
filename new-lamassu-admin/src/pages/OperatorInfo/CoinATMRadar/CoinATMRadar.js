@@ -5,8 +5,6 @@ import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
 import Popper from 'src/components/Popper'
-import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
-import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
@@ -18,15 +16,8 @@ const useStyles = makeStyles(mainStyles)
 
 const initialValues = {
   active: false,
-  // location: false,
   commissions: false,
-  supportedCryptocurrencies: false,
-  supportedFiat: false,
-  supportedBuySellDirection: false,
   limitsAndVerification: false
-  // operatorName: false,
-  // operatorPhoneNumber: false,
-  // operatorEmail: false
 }
 
 const GET_CONFIG = gql`
@@ -41,19 +32,31 @@ const SAVE_CONFIG = gql`
   }
 `
 
+const Row = memo(({ title, disabled = false, checked, save, label }) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.rowWrapper}>
+      <div className={classes.rowTextAndSwitch}>
+        <P>{title}</P>
+        <Switch
+          disabled={disabled}
+          checked={checked}
+          onChange={event => save && save(event.target.checked)}
+        />
+      </div>
+      {label && <Label2>{label}</Label2>}
+    </div>
+  )
+})
+
 const CoinATMRadar = memo(() => {
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
   const [coinAtmRadarConfig, setCoinAtmRadarConfig] = useState(null)
 
   const classes = useStyles()
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: configResponse =>
-      setCoinAtmRadarConfig(
-        fromNamespace(namespaces.COIN_ATM_RADAR, configResponse.saveConfig)
-      )
-  })
-  useQuery(GET_CONFIG, {
+  const { refetch: getCoinAtmRadarConfig } = useQuery(GET_CONFIG, {
     onCompleted: configResponse => {
       const response = fromNamespace(
         namespaces.COIN_ATM_RADAR,
@@ -61,6 +64,16 @@ const CoinATMRadar = memo(() => {
       )
       const values = R.merge(initialValues, response)
       setCoinAtmRadarConfig(values)
+    }
+  })
+
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    onCompleted: configResponse => {
+      setCoinAtmRadarConfig(
+        fromNamespace(namespaces.COIN_ATM_RADAR, configResponse.saveConfig)
+      )
+
+      getCoinAtmRadarConfig()
     }
   })
 
@@ -84,7 +97,7 @@ const CoinATMRadar = memo(() => {
   return (
     <div className={classes.content}>
       <div>
-        <div className={classes.rowWrapper}>
+        <div className={classes.titleWrapper}>
           <H4>Coin ATM Radar share settings</H4>
           <div className={classes.transparentButton}>
             <button onClick={handleOpenHelpPopper}>
@@ -111,88 +124,26 @@ const CoinATMRadar = memo(() => {
             </button>
           </div>
         </div>
-        <div className={classes.rowWrapper}>
-          <P>Share information?</P>
-          <div className={classes.switchWrapper}>
-            <Switch
-              checked={coinAtmRadarConfig.active}
-              onChange={event =>
-                save({
-                  active: event.target.checked
-                })
-              }
-            />
-          </div>
-          <Label2>{coinAtmRadarConfig.active ? 'Yes' : 'No'}</Label2>
-        </div>
-        <BooleanPropertiesTable
-          title={'Machine info'}
-          disabled={!coinAtmRadarConfig.active}
-          data={coinAtmRadarConfig}
-          elements={[
-            // {
-            //   name: 'location',
-            //   display: 'Location',
-            //   value: coinAtmRadarConfig.location
-            // },
-            {
-              name: 'commissions',
-              display: 'Commissions',
-              value: coinAtmRadarConfig.commissions
-            },
-            {
-              name: 'supportedCryptocurrencies',
-              display: 'Supported Cryptocurrencies',
-              value: coinAtmRadarConfig.supportedCryptocurrencies
-            },
-            {
-              name: 'supportedFiat',
-              display: 'Supported Fiat',
-              value: coinAtmRadarConfig.supportedFiat
-            },
-            {
-              name: 'supportedBuySellDirection',
-              display: 'Supported Buy Sell Direction',
-              value: coinAtmRadarConfig.supportedBuySellDirection
-            },
-            {
-              name: 'limitsAndVerification',
-              display: 'Limits And Verification',
-              value: coinAtmRadarConfig.limitsAndVerification
-            }
-          ]}
-          save={save}
+        <Row
+          title={'Share information?'}
+          checked={coinAtmRadarConfig.active}
+          save={value => save({ active: value })}
+          label={coinAtmRadarConfig.active ? 'Yes' : 'No'}
         />
-        {/* <BooleanPropertiesTable
-          title={'Operator info'}
+        <H4>{'Machine info'}</H4>
+        <Row
+          title={'Commissions'}
           disabled={!coinAtmRadarConfig.active}
-          data={coinAtmRadarConfig}
-          elements={[
-            {
-              name: 'operatorName',
-              display: 'Operator Name',
-              value: coinAtmRadarConfig.operatorName
-            },
-            {
-              name: 'operatorPhoneNumber',
-              display: 'Operator Phone Number',
-              value: coinAtmRadarConfig.operatorPhoneNumber
-            },
-            {
-              name: 'operatorEmail',
-              display: 'Operator Email',
-              value: coinAtmRadarConfig.operatorEmail
-            }
-          ]}
-          save={save}
-        /> */}
+          checked={coinAtmRadarConfig.commissions}
+          save={value => save({ commissions: value })}
+        />
+        <Row
+          title={'Limits and verification'}
+          disabled={!coinAtmRadarConfig.active}
+          checked={coinAtmRadarConfig.limitsAndVerification}
+          save={value => save({ limitsAndVerification: value })}
+        />
       </div>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://coinatmradar.com/">
-        <Button>Coin ATM Radar page</Button>
-      </a>
     </div>
   )
 })
