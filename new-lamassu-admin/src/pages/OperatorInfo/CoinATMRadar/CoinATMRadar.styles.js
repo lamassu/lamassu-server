@@ -1,18 +1,15 @@
 import baseStyles from 'src/pages/Logs.styles'
-import { booleanPropertiesTableStyles } from 'src/components/booleanPropertiesTable/BooleanPropertiesTable.styles'
 
 const { button } = baseStyles
-const { rowWrapper } = booleanPropertiesTableStyles
 
 const mainStyles = {
   button,
   content: {
-    display: 'flex',
-    justifyContent: 'space-between'
+    display: 'flex'
   },
   transparentButton: {
     '& > *': {
-      margin: 'auto 15px'
+      margin: 'auto 10px'
     },
     '& button': {
       border: 'none',
@@ -20,10 +17,22 @@ const mainStyles = {
       cursor: 'pointer'
     }
   },
-  rowWrapper,
-  switchWrapper: {
+  titleWrapper: {
     display: 'flex',
-    marginLeft: 120
+    alignItems: 'center',
+    flex: 'wrap'
+  },
+  rowWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  rowTextAndSwitch: {
+    display: 'flex',
+    flex: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 285
   },
   popoverContent: {
     width: 272,
