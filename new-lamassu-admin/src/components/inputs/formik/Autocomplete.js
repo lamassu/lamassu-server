@@ -1,10 +1,12 @@
 import { useFormikContext } from 'formik'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Autocomplete } from '../base'
 
 const AutocompleteFormik = ({ options, ...props }) => {
+  const [open, setOpen] = useState(false)
+
   const { name, onBlur, value } = props.field
   const { touched, errors, setFieldValue } = props.form
   const error = !!(touched[name] && errors[name])
@@ -20,7 +22,10 @@ const AutocompleteFormik = ({ options, ...props }) => {
       onBlur={onBlur}
       value={value}
       error={error}
+      open={open}
       options={innerOptions}
+      onOpen={() => setOpen(value.length !== props.limit)}
+      onClose={() => setOpen(false)}
       {...props}
     />
   )

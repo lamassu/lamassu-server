@@ -1,7 +1,10 @@
+import { createFilterOptions } from '@material-ui/lab/Autocomplete'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+
+const LANGUAGE_SELECTION_LIMIT = 4
 
 const getFields = (getData, names) => {
   return R.filter(it => R.includes(it.name, names), allFields(getData))
@@ -28,7 +31,6 @@ const allFields = getData => {
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
   const cryptoData = getData(['cryptoCurrencies'])
-
   return [
     {
       name: 'machine',
@@ -76,8 +78,9 @@ const allFields = getData => {
       inputProps: {
         options: languageData,
         valueProp: 'code',
-        getLabel: R.path(['code']),
-        multiple: true
+        getLabel: R.path(['display']),
+        multiple: true,
+        limit: LANGUAGE_SELECTION_LIMIT
       }
     },
     {
@@ -90,7 +93,10 @@ const allFields = getData => {
         options: cryptoData,
         valueProp: 'code',
         getLabel: R.path(['code']),
-        multiple: true
+        multiple: true,
+        filterOptions: createFilterOptions({
+          stringify: option => `${option.code} ${option.display}`
+        })
       }
     }
   ]
