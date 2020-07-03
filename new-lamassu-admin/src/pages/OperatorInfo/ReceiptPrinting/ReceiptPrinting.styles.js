@@ -1,10 +1,13 @@
 const mainStyles = {
-  textInput: {
-    margin: [[28, 20]],
-    width: 304
+  rowWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    position: 'relative',
+    flex: 'wrap'
   },
-  actionButton: {
-    margin: [[0, 24]]
+  switchWrapper: {
+    display: 'flex',
+    marginLeft: 120
   }
 }
 

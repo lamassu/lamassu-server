@@ -1,3 +1,5 @@
+const optionsRowHeigth = 43
+
 const editablePropertyStyles = {
   transparentButton: {
     '& > *': {
@@ -13,7 +15,8 @@ const editablePropertyStyles = {
     display: 'flex',
     alignItems: 'center',
     position: 'relative',
-    flex: 'wrap'
+    flex: 'wrap',
+    height: optionsRowHeigth
   },
   rightAligned: {
     display: 'flex',
@@ -22,7 +25,8 @@ const editablePropertyStyles = {
   },
   radioButtons: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    height: optionsRowHeigth
   },
   leftSpace: {
     marginLeft: '20px'
