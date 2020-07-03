@@ -84,28 +84,30 @@ const BooleanPropertiesTable = memo(
                   <TableCell className={classes.leftTableCell}>
                     {element.display}
                   </TableCell>
-                  {editing && (
-                    <RadioGroup
-                      options={radioButtonOptions}
-                      value={element.value}
-                      onChange={event =>
-                        handleRadioButtons(
-                          element.name,
-                          event.target.value === 'true'
-                        )
-                      }
-                      className={classnames(
-                        classes.radioButtons,
-                        classes.rightTableCell
-                      )}
-                    />
-                  )}
-                  {!editing && (
-                    <BooleanCell
-                      className={classes.rightTableCell}
-                      value={element.value}
-                    />
-                  )}
+                  <TableCell className={classes.rightTableCell}>
+                    {editing && (
+                      <RadioGroup
+                        options={radioButtonOptions}
+                        value={element.value}
+                        onChange={event =>
+                          handleRadioButtons(
+                            element.name,
+                            event.target.value === 'true'
+                          )
+                        }
+                        className={classnames(
+                          classes.radioButtons,
+                          classes.rightTableCell
+                        )}
+                      />
+                    )}
+                    {!editing && (
+                      <BooleanCell
+                        className={classes.rightTableCell}
+                        value={element.value}
+                      />
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
