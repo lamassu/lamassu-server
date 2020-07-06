@@ -54,7 +54,7 @@ const innerRoutes = [
   }
 ]
 
-const Routes = () => (
+const Routes = ({ wizard }) => (
   <Switch>
     <Redirect
       exact
@@ -64,13 +64,13 @@ const Routes = () => (
     <Route exact path="/" />
     {innerRoutes.map(({ route, component: Page, key }) => (
       <Route path={route} key={key}>
-        <Page name={key} />
+        <Page name={key} wizard={wizard} />
       </Route>
     ))}
   </Switch>
 )
 
-const OperatorInfo = () => {
+const OperatorInfo = ({ wizard = false }) => {
   const classes = useStyles()
   const history = useHistory()
   const location = useLocation()
@@ -90,7 +90,7 @@ const OperatorInfo = () => {
           onClick={onClick}
         />
         <div className={classes.content}>
-          <Routes />
+          <Routes wizard={wizard} />
         </div>
       </Grid>
     </>

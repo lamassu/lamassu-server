@@ -38,7 +38,17 @@ const SAVE_CONFIG = gql`
 
 const FIELDS_WIDTH = 130
 
-const Notifications = ({ name: SCREEN_KEY }) => {
+// TODO: what about 'onlySetup' 'onlyFiat'?
+const Notifications = ({
+  name: SCREEN_KEY,
+  displaySetup = true,
+  displayTransactionAlerts = true,
+  displayFiatAlerts = true,
+  displayCryptoAlerts = true,
+  displayOverrides = true,
+  displayTitle = true,
+  wizard = false
+}) => {
   const [section, setSection] = useState(null)
   const [error, setError] = useState(null)
   const [editingKey, setEditingKey] = useState(null)
@@ -92,27 +102,38 @@ const Notifications = ({ name: SCREEN_KEY }) => {
 
   return (
     <NotificationsCtx.Provider value={contextValue}>
-      <TitleSection title="Notifications" />
-
-      <Section title="Setup" error={error && !section}>
-        <Setup forceDisable={!!editingKey} />
-      </Section>
-
-      <Section title="Transaction alerts" error={error && section === 'tx'}>
-        <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
-      </Section>
-
-      <Section title="Fiat balance alerts" error={error && section === 'fiat'}>
-        <FiatBalanceAlerts section="fiat" max={500} fieldWidth={50} />
-        <FiatBalanceOverrides section="fiat" />
-      </Section>
-
-      <Section
-        title="Crypto balance alerts"
-        error={error && section === 'crypto'}>
-        <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
-        <CryptoBalanceOverrides section="crypto" fieldWidth={FIELDS_WIDTH} />
-      </Section>
+      {displayTitle && <TitleSection title="Notifications" />}
+      {displaySetup && (
+        <Section title="Setup" error={error && !section}>
+          <Setup forceDisable={!!editingKey} wizard={wizard} />
+        </Section>
+      )}
+      {displayTransactionAlerts && (
+        <Section title="Transaction alerts" error={error && section === 'tx'}>
+          <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
+        </Section>
+      )}
+      {displayFiatAlerts && (
+        <Section
+          title="Fiat balance alerts"
+          error={error && section === 'fiat'}>
+          <FiatBalanceAlerts section="fiat" max={500} fieldWidth={50} />
+          {displayOverrides && <FiatBalanceOverrides section="fiat" />}
+        </Section>
+      )}
+      {displayCryptoAlerts && (
+        <Section
+          title="Crypto balance alerts"
+          error={error && section === 'crypto'}>
+          <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
+          {displayOverrides && (
+            <CryptoBalanceOverrides
+              section="crypto"
+              fieldWidth={FIELDS_WIDTH}
+            />
+          )}
+        </Section>
+      )}
     </NotificationsCtx.Provider>
   )
 }

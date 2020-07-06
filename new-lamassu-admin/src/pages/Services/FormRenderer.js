@@ -26,7 +26,8 @@ const FormRenderer = ({
   elements,
   value,
   save,
-  buttonLabel = 'Save changes'
+  buttonLabel = 'Save changes',
+  xs = 12
 }) => {
   const classes = useStyles()
 
@@ -46,7 +47,7 @@ const FormRenderer = ({
       <Form className={classes.form}>
         <Grid container spacing={3} className={classes.grid}>
           {elements.map(({ component, code, display, inputProps }) => (
-            <Grid item xs={12} key={code}>
+            <Grid item xs={xs} key={code}>
               <FastField
                 component={component}
                 {...inputProps}

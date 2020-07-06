@@ -103,10 +103,10 @@ const styles = R.merge(globalStyles, contactInfoStyles)
 
 const contactUseStyles = makeStyles(styles)
 
-const ContactInfo = () => {
+const ContactInfo = ({ wizard }) => {
   const classes = contactUseStyles()
 
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(wizard || false)
   const [error, setError] = useState(null)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
@@ -298,14 +298,16 @@ const ContactInfo = () => {
           </Form>
         </Formik>
       </div>
-      <div className={classnames(classes.section, classes.infoMessage)}>
-        <WarningIcon />
-        <Label1>
-          Sharing your information with your customers through your machines
-          allows them to contact you in case there's a problem with a machine in
-          your network or a transaction.
-        </Label1>
-      </div>
+      {!wizard && (
+        <div className={classnames(classes.section, classes.infoMessage)}>
+          <WarningIcon />
+          <Label1>
+            Sharing your information with your customers through your machines
+            allows them to contact you in case there's a problem with a machine
+            in your network or a transaction.
+          </Label1>
+        </div>
+      )}
     </>
   )
 }

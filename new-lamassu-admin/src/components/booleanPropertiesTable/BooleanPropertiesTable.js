@@ -25,13 +25,13 @@ const BooleanCell = ({ name }) => {
 }
 
 const BooleanPropertiesTable = memo(
-  ({ title, disabled, data, elements, save }) => {
+  ({ title, disabled, data, elements, save, forcedEditing = false }) => {
     const initialValues = _.fromPairs(elements.map(it => [it.name, '']))
     const schemaValidation = _.fromPairs(
       elements.map(it => [it.name, Yup.boolean().required()])
     )
 
-    const [editing, setEditing] = useState(false)
+    const [editing, setEditing] = useState(forcedEditing)
 
     const classes = useStyles()
 

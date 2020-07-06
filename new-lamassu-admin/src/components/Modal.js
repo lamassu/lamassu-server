@@ -43,16 +43,20 @@ const styles = {
     flex: 1,
     padding: [[0, 24]]
   },
-  content: ({ small }) => ({
+  content: ({ small, xl }) => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    padding: small ? [[0, 16]] : [[0, 32]]
+    padding: xl ? [[0, 60 + 28]] : small ? [[0, 16]] : [[0, 32]]
   }),
-  button: ({ small }) => ({
-    padding: 0,
-    margin: small ? [[12, 12, 'auto', 'auto']] : [[16, 16, 'auto', 'auto']]
+  button: ({ small, xl }) => ({
+    padding: [[0, 0, xl ? 26 : 0, 0]],
+    margin: xl
+      ? [[0, 0, 'auto', 'auto']]
+      : small
+      ? [[12, 12, 'auto', 'auto']]
+      : [[16, 16, 'auto', 'auto']]
   }),
   header: {
     display: 'flex'
@@ -70,6 +74,7 @@ const Modal = ({
   infoPanelHeight,
   title,
   small,
+  xl,
   infoPanel,
   handleClose,
   children,
@@ -79,14 +84,9 @@ const Modal = ({
   closeOnBackdropClick,
   ...props
 }) => {
-  const classes = useStyles({
-    width,
-    height,
-    small,
-    infoPanelHeight
-  })
+  const classes = useStyles({ width, height, small, infoPanelHeight, xl })
   const TitleCase = small ? H4 : H1
-  const closeSize = small ? 16 : 20
+  const closeSize = xl ? 28 : small ? 16 : 20
 
   const innerClose = (evt, reason) => {
     if (!closeOnBackdropClick && reason === 'backdropClick') return
