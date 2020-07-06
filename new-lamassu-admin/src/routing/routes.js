@@ -18,6 +18,7 @@ import Services from 'src/pages/Services/Services'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
+import Wizard from 'src/pages/Wizard'
 import { namespaces } from 'src/utils/config'
 
 const tree = [
@@ -157,6 +158,7 @@ const Routes = () => (
   <Switch>
     <Route exact path="/" />
     <Route path="/register" component={AuthRegister} />
+    <Route path="/wizard" component={Wizard}></Route>
     {flattened.map(({ route, component: Page, key }) => (
       <Route path={route} key={key}>
         <Page name={key} />
