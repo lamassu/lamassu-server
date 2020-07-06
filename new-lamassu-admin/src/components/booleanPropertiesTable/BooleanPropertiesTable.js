@@ -15,8 +15,8 @@ import { booleanPropertiesTableStyles } from './BooleanPropertiesTable.styles'
 const useStyles = makeStyles(booleanPropertiesTableStyles)
 
 const BooleanPropertiesTable = memo(
-  ({ title, disabled, data, elements, save }) => {
-    const [editing, setEditing] = useState(false)
+  ({ title, disabled, data, elements, save, editing = false }) => {
+    const [innerEditing, setEditing] = useState(editing)
     const [radioGroupValues, setRadioGroupValues] = useState(elements)
 
     const classes = useStyles()
@@ -56,7 +56,7 @@ const BooleanPropertiesTable = memo(
       <div className={classes.booleanPropertiesTableWrapper}>
         <div className={classes.rowWrapper}>
           <H4>{title}</H4>
-          {editing ? (
+          {innerEditing ? (
             <div className={classes.rightAligned}>
               <Link onClick={innerCancel} color="secondary">
                 Cancel
@@ -85,7 +85,7 @@ const BooleanPropertiesTable = memo(
                     {element.display}
                   </TableCell>
                   <TableCell className={classes.rightTableCell}>
-                    {editing && (
+                    {innerEditing && (
                       <RadioGroup
                         options={radioButtonOptions}
                         value={element.value}
@@ -101,7 +101,7 @@ const BooleanPropertiesTable = memo(
                         )}
                       />
                     )}
-                    {!editing && (
+                    {!innerEditing && (
                       <BooleanCell
                         className={classes.rightTableCell}
                         value={element.value}

@@ -8,10 +8,12 @@ import {
   spacer
 } from 'src/styling/variables'
 
-const { h3 } = typographyStyles
+const { h1, h3 } = typographyStyles
 
 const pickSize = size => {
   switch (size) {
+    case 'xl':
+      return spacer * 7.625
     case 'sm':
       return spacer * 4
     case 'lg':
@@ -28,10 +30,11 @@ export default {
   },
   button: ({ size }) => {
     const height = pickSize(size)
-    const shadowSize = height / 12
+    const shadowSize = size === 'xl' ? 3 : height / 12
+    const padding = size === 'xl' ? 20 : height / 2
 
     return {
-      extend: h3,
+      extend: size === 'xl' ? h1 : h3,
       border: 'none',
       color: white,
       cursor: 'pointer',
@@ -51,7 +54,7 @@ export default {
       },
       shadowSize,
       height,
-      padding: `0 ${height / 2}px`,
+      padding: `0 ${padding}px`,
       borderRadius: height / 4,
       boxShadow: `0 ${shadowSize}px ${secondaryColorDark}`,
       '&:hover': {

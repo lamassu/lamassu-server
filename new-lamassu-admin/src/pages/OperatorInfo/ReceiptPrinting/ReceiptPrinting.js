@@ -37,7 +37,7 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const ReceiptPrinting = memo(() => {
+const ReceiptPrinting = memo(({ wizard }) => {
   const [receiptPrintingConfig, setReceiptPrintingConfig] = useState(null)
 
   const classes = useStyles()
@@ -94,6 +94,7 @@ const ReceiptPrinting = memo(() => {
         <Label2>{receiptPrintingConfig.active ? 'Yes' : 'No'}</Label2>
       </div>
       <BooleanPropertiesTable
+        editing={wizard}
         title={'Visible on the receipt (optionals)'}
         data={receiptPrintingConfig}
         elements={[

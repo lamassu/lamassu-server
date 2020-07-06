@@ -66,16 +66,20 @@ const Row = ({ namespace }) => {
 const useStyles = makeStyles({
   mainTable: {
     width
+  },
+  wizardTable: {
+    width: 930
   }
 })
-const Setup = () => {
+const Setup = ({ wizard }) => {
+  const widthAdjust = wizard ? 20 : 0
   const classes = useStyles()
   return (
-    <Table className={classes.mainTable}>
+    <Table className={wizard ? classes.wizardTable : classes.mainTable}>
       <THead>
-        <Th width={channelSize}>Channel</Th>
+        <Th width={channelSize - widthAdjust}>Channel</Th>
         {Object.keys(sizes).map(it => (
-          <Th key={it} width={sizes[it]} textAlign="center">
+          <Th key={it} width={sizes[it] - widthAdjust} textAlign="center">
             {startCase(it)}
           </Th>
         ))}

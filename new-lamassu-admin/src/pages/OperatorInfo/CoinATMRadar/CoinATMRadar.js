@@ -5,6 +5,7 @@ import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
 import Tooltip from 'src/components/Tooltip'
+import { IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
@@ -88,7 +89,7 @@ const CoinATMRadar = memo(() => {
       <div>
         <div className={classes.titleWrapper}>
           <H4>Coin ATM Radar share settings</H4>
-          <Tooltip enableClick width={304} Icon={HelpIcon}>
+          <Tooltip enableClick width={304} Icon={HelpIcon} Button={IconButton}>
             <P>
               For details on configuring this panel, please read the relevant
               knowledgebase article{' '}

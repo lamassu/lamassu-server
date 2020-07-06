@@ -31,7 +31,7 @@ const TERMS_CONDITIONS = 'Terms & Conditions'
 
 const pages = [CONTACT_INFORMATION, RECEIPT, COIN_ATM_RADAR, TERMS_CONDITIONS]
 
-const OperatorInfo = () => {
+const OperatorInfo = ({ wizard = false }) => {
   const [selected, setSelected] = useState(CONTACT_INFORMATION)
   const classes = useStyles()
 
@@ -48,10 +48,10 @@ const OperatorInfo = () => {
           onClick={it => setSelected(it)}
         />
         <div className={classes.content}>
-          {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
-          {isSelected(RECEIPT) && <ReceiptPrinting />}
-          {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
-          {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
+          {isSelected(CONTACT_INFORMATION) && <ContactInfo wizard={wizard} />}
+          {isSelected(RECEIPT) && <ReceiptPrinting wizard={wizard} />}
+          {isSelected(TERMS_CONDITIONS) && <TermsConditions wizard={wizard} />}
+          {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar wizard={wizard} />}
         </div>
       </Grid>
     </>

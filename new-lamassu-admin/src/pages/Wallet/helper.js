@@ -13,7 +13,8 @@ const WalletSchema = Yup.object().shape({
   zeroConf: Yup.string().required('Required')
 })
 
-const getElements = (cryptoCurrencies, accounts) => {
+const getElements = (cryptoCurrencies, accounts, wizard = false) => {
+  const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it =>
     R.compose(
       R.prop(['display']),
@@ -36,7 +37,7 @@ const getElements = (cryptoCurrencies, accounts) => {
     {
       name: 'id',
       header: 'Cryptocurrency',
-      width: 180,
+      width: 180 - widthAdjust,
       view: viewCryptoCurrency,
       size: 'sm',
       editable: false
@@ -46,7 +47,7 @@ const getElements = (cryptoCurrencies, accounts) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('ticker'),
-      width: 190,
+      width: 190 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('ticker'),
@@ -60,7 +61,7 @@ const getElements = (cryptoCurrencies, accounts) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('wallet'),
-      width: 190,
+      width: 190 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('wallet'),
@@ -74,7 +75,7 @@ const getElements = (cryptoCurrencies, accounts) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('exchange'),
-      width: 190,
+      width: 190 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('exchange'),
@@ -89,7 +90,7 @@ const getElements = (cryptoCurrencies, accounts) => {
       stripe: true,
       view: getDisplayName('zeroConf'),
       input: Autocomplete,
-      width: 190,
+      width: 190 - widthAdjust,
       inputProps: {
         options: getOptions('zeroConf'),
         valueProp: 'code',
