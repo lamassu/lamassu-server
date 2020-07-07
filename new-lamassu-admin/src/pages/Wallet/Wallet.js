@@ -71,13 +71,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         data={config}
         stripeWhen={it => !WalletSchema.isValidSync(it)}
         enableEdit
-        editWidth={134}
-        enableToggle
-        toggleWidth={109}
+        editWidth={200}
         onToggle={onToggle}
         save={save}
         validationSchema={WalletSchema}
-        disableRowEdit={R.compose(R.not, R.path(['active']))}
         elements={getElements(cryptoCurrencies, accountsConfig)}
       />
       {wizard && (
