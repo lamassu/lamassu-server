@@ -109,6 +109,7 @@ const FiatBalanceOverrides = ({ section }) => {
       elements={elements}
       disableAdd={!suggestions?.length}
       setEditing={innerSetEditing}
+      setAdding={innerSetEditing}
     />
   )
 }

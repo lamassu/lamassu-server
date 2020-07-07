@@ -45,6 +45,7 @@ const ETable = ({
   disableAdd,
   initialValues,
   setEditing,
+  setAdding,
   stripeWhen,
   disableRowEdit,
   groupBy,
@@ -52,7 +53,7 @@ const ETable = ({
   createText = 'Add override'
 }) => {
   const [editingId, setEditingId] = useState(null)
-  const [adding, setAdding] = useState(false)
+  const [innerAdding, innerSetAdding] = useState(false)
 
   const innerSave = async value => {
     const it = validationSchema.cast(value)
@@ -82,10 +83,13 @@ const ETable = ({
 
   const onEdit = it => {
     setEditingId(it)
-    setEditing && setEditing(it, true)
+    setEditing && setEditing(true)
   }
 
-  const addField = () => setAdding(true)
+  const addField = () => {
+    innerSetAdding(true)
+    setAdding && setAdding(true)
+  }
 
   const widthIfEditNull =
     enableDelete || enableToggle ? ACTION_COL_SIZE : ACTION_COL_SIZE * 2
@@ -100,9 +104,9 @@ const ETable = ({
   const width = getWidth(elements) + actionColSize
   const classes = useStyles({ width })
 
-  const showButtonOnEmpty = !data.length && enableCreate && !adding
-  const canAdd = !forceDisable && !editingId && !disableAdd && !adding
-  const showTable = adding || data.length !== 0
+  const showButtonOnEmpty = !data.length && enableCreate && !innerAdding
+  const canAdd = !forceDisable && !editingId && !disableAdd && !innerAdding
+  const showTable = innerAdding || data.length !== 0
 
   const innerData = sortBy ? R.sortWith(sortBy)(data) : data
 
@@ -152,10 +156,10 @@ const ETable = ({
             <Table>
               <Header />
               <TBody>
-                {adding && (
+                {innerAdding && (
                   <Formik
                     initialValues={{ id: v4(), ...initialValues }}
-                    onReset={onReset}
+                    onReset={reset}
                     validationSchema={validationSchema}
                     onSubmit={innerSave}>
                     <Form>

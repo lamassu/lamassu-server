@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import Prompt from 'src/components/Prompt'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
 import { fromNamespace, toNamespace } from 'src/utils/config'
@@ -35,6 +36,7 @@ const GET_INFO = gql`
 `
 
 const Wallet = ({ name: SCREEN_KEY }) => {
+  const [isUnsaved, setIsUnsaved] = useState(false)
   const [wizard, setWizard] = useState(false)
   const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
@@ -64,6 +66,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
+      <Prompt when={isUnsaved} />
       <TitleSection title="Wallet Settings" error={error} />
       <EditableTable
         name="test"
@@ -71,6 +74,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         data={config}
         stripeWhen={it => !WalletSchema.isValidSync(it)}
         enableEdit
+        setEditing={setIsUnsaved}
+        setAdding={setIsUnsaved}
         editWidth={134}
         enableToggle
         toggleWidth={109}

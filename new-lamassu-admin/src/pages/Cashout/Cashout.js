@@ -4,7 +4,8 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import Tooltip from 'src/components/Tooltip'
+import HelpTooltip from 'src/components/HelpTooltip'
+import Prompt from 'src/components/Prompt'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -45,6 +46,7 @@ const GET_INFO = gql`
 `
 
 const CashOut = ({ name: SCREEN_KEY }) => {
+  const [isUnsaved, setIsUnsaved] = useState(false)
   const classes = useStyles()
   const [wizard, setWizard] = useState(false)
   const [error, setError] = useState(false)
@@ -75,6 +77,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
+      <Prompt when={isUnsaved} />
       <TitleSection title="Cash-out" error={error}>
         <div className={classes.fudgeFactor}>
           <P>Transaction fudge factor</P>
@@ -106,6 +109,8 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         data={config}
         stripeWhen={it => !DenominationsSchema.isValidSync(it)}
         enableEdit
+        setEditing={setIsUnsaved}
+        setAdding={setIsUnsaved}
         editWidth={134}
         enableToggle
         toggleWidth={109}

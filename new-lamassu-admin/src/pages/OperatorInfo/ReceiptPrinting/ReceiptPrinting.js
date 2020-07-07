@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
+import Prompt from 'src/components/Prompt'
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
@@ -38,6 +39,7 @@ const SAVE_CONFIG = gql`
 `
 
 const ReceiptPrinting = memo(() => {
+  const [isUnsaved, setIsUnsaved] = useState(false)
   const [receiptPrintingConfig, setReceiptPrintingConfig] = useState(null)
 
   const classes = useStyles()
@@ -69,6 +71,7 @@ const ReceiptPrinting = memo(() => {
 
   return (
     <>
+      <Prompt when={isUnsaved} />
       <div className={classes.rowWrapper}>
         <H4>Receipt options</H4>
       </div>
@@ -96,6 +99,7 @@ const ReceiptPrinting = memo(() => {
       <BooleanPropertiesTable
         title={'Visible on the receipt (optionals)'}
         data={receiptPrintingConfig}
+        setEditing={setIsUnsaved}
         elements={[
           {
             name: 'operatorWebsite',

@@ -1,8 +1,9 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import Prompt from 'src/components/Prompt'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -52,6 +53,7 @@ const RESET_CASHOUT_BILLS = gql`
 `
 
 const Cashboxes = () => {
+  const [isUnsaved, setIsUnsaved] = useState(false)
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
   const [resetCashOut] = useMutation(RESET_CASHOUT_BILLS, {
@@ -105,6 +107,7 @@ const Cashboxes = () => {
 
   return (
     <>
+      <Prompt when={isUnsaved} />
       <TitleSection title="Cashboxes" />
 
       <EditableTable
@@ -113,6 +116,8 @@ const Cashboxes = () => {
         elements={elements}
         data={data && data.machines}
         save={onSave}
+        setEditing={setIsUnsaved}
+        setAdding={setIsUnsaved}
         validationSchema={ValidationSchema}
       />
     </>

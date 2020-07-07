@@ -15,11 +15,16 @@ import { booleanPropertiesTableStyles } from './BooleanPropertiesTable.styles'
 const useStyles = makeStyles(booleanPropertiesTableStyles)
 
 const BooleanPropertiesTable = memo(
-  ({ title, disabled, data, elements, save }) => {
-    const [editing, setEditing] = useState(false)
+  ({ title, disabled, data, elements, save, setEditing }) => {
+    const [isEditing, setIsEditing] = useState(false)
     const [radioGroupValues, setRadioGroupValues] = useState(elements)
 
     const classes = useStyles()
+
+    const innerSetIsEditing = isEditing => {
+      setIsEditing(isEditing)
+      setEditing && setEditing(isEditing)
+    }
 
     const innerSave = () => {
       radioGroupValues.forEach(element => {
@@ -27,12 +32,12 @@ const BooleanPropertiesTable = memo(
       })
 
       save(data)
-      setEditing(false)
+      innerSetIsEditing(false)
     }
 
     const innerCancel = () => {
       setRadioGroupValues(elements)
-      setEditing(false)
+      innerSetIsEditing(false)
     }
 
     const handleRadioButtons = (elementName, newValue) => {
@@ -56,7 +61,7 @@ const BooleanPropertiesTable = memo(
       <div className={classes.booleanPropertiesTableWrapper}>
         <div className={classes.rowWrapper}>
           <H4>{title}</H4>
-          {editing ? (
+          {isEditing ? (
             <div className={classes.rightAligned}>
               <Link onClick={innerCancel} color="secondary">
                 Cancel
@@ -70,7 +75,9 @@ const BooleanPropertiesTable = memo(
             </div>
           ) : (
             <div className={classes.transparentButton}>
-              <button disabled={disabled} onClick={() => setEditing(true)}>
+              <button
+                disabled={disabled}
+                onClick={() => innerSetIsEditing(true)}>
                 {disabled ? <EditIconDisabled /> : <EditIcon />}
               </button>
             </div>
@@ -85,7 +92,7 @@ const BooleanPropertiesTable = memo(
                     {element.display}
                   </TableCell>
                   <TableCell className={classes.rightTableCell}>
-                    {editing && (
+                    {isEditing && (
                       <RadioGroup
                         options={radioButtonOptions}
                         value={element.value}
@@ -101,7 +108,7 @@ const BooleanPropertiesTable = memo(
                         )}
                       />
                     )}
-                    {!editing && (
+                    {!isEditing && (
                       <BooleanCell
                         className={classes.rightTableCell}
                         value={element.value}
