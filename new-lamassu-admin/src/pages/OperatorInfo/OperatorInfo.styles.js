@@ -1,6 +1,6 @@
-import { offColor } from 'src/styling/variables'
 import typographyStyles from 'src/components/typography/styles'
 import theme from 'src/styling/theme'
+import { offColor } from 'src/styling/variables'
 
 const { p } = typographyStyles
 
@@ -24,6 +24,7 @@ const styles = {
   },
   row: {
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 28,
     width: 600,
@@ -31,9 +32,21 @@ const styles = {
       marginBottom: 0
     }
   },
+  switchRow: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 28,
+    width: 600
+  },
+  switch: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: 120
+  },
   submit: {
     justifyContent: 'flex-start',
     alignItems: 'center',
+    height: 19,
     padding: [[0, 4, 4, 4]],
     '& > button': {
       marginRight: 40
