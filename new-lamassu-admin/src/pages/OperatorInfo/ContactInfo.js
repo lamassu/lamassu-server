@@ -3,15 +3,23 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
 import gql from 'graphql-tag'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import { Link } from 'src/components/buttons'
-import RadioGroupFormik from 'src/components/inputs/formik/RadioGroup'
+import Switch from 'src/components/inputs/base/Switch'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
-import { Info2, Info3, Label1, Label3 } from 'src/components/typography'
+import {
+  P,
+  Info2,
+  Info3,
+  Label1,
+  Label2,
+  Label3
+} from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
@@ -21,36 +29,30 @@ import {
   contactInfoStyles
 } from './OperatorInfo.styles'
 
-const validationSchema = Yup.object().shape({
-  active: Yup.boolean(),
-  name: Yup.string(),
-  phone: Yup.string(),
-  email: Yup.string()
-    .email('Please enter a valid email address')
-    .required(),
-  website: Yup.string(),
-  companyNumber: Yup.string()
-})
+const FIELD_WIDTH = 280
 
 const fieldStyles = {
   field: {
     position: 'relative',
     width: 280,
-    height: 46,
+    height: 48,
     padding: [[0, 4, 4, 0]]
   },
   notEditing: {
     display: 'flex',
     flexDirection: 'column',
     '& > p:first-child': {
-      height: 16,
+      height: 17,
       lineHeight: '16px',
       transform: 'scale(0.75)',
       transformOrigin: 'left',
       paddingLeft: 0,
-      margin: [[0, 0, 5, 0]]
+      margin: [[1, 0, 5, 0]]
     },
     '& > p:last-child': {
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
       margin: 0
     }
   }
@@ -82,6 +84,7 @@ const Field = ({ editing, field, displayValue, ...props }) => {
           placeholder={field.placeholder}
           type={field.type}
           label={field.label}
+          width={FIELD_WIDTH}
           {...props}
         />
       )}
@@ -108,6 +111,7 @@ const contactUseStyles = makeStyles(styles)
 const ContactInfo = () => {
   const [editing, setEditing] = useState(false)
   const [info, setInfo] = useState(null)
+  const [locale, setLocale] = useState(null)
   const [error, setError] = useState(null)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
@@ -120,6 +124,7 @@ const ContactInfo = () => {
   useQuery(GET_CONFIG, {
     onCompleted: data => {
       setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.config))
+      setLocale(fromNamespace(namespaces.LOCALE, data.config))
     }
   })
 
@@ -133,13 +138,24 @@ const ContactInfo = () => {
 
   if (!info) return null
 
+  const validationSchema = Yup.object().shape({
+    active: Yup.boolean(),
+    name: Yup.string(),
+    phone: Yup.string().test(
+      'phone',
+      'Please enter a valid phone number',
+      function(phone) {
+        return parsePhoneNumberFromString(phone, locale.country).isValid()
+      }
+    ),
+    email: Yup.string()
+      .email('Please enter a valid email address')
+      .required(),
+    website: Yup.string(),
+    companyNumber: Yup.number()
+  })
+
   const fields = [
-    {
-      name: 'active',
-      label: 'Info Card Enabled',
-      value: String(info.active),
-      component: RadioGroupFormik
-    },
     {
       name: 'name',
       label: 'Full name',
@@ -149,7 +165,11 @@ const ContactInfo = () => {
     {
       name: 'phone',
       label: 'Phone number',
-      value: info.phone ?? '',
+      value:
+        parsePhoneNumberFromString(
+          info.phone,
+          locale.country
+        ).formatInternational() ?? '',
       component: TextInputFormik
     },
     {
@@ -179,7 +199,7 @@ const ContactInfo = () => {
 
   const form = {
     initialValues: {
-      active: findValue('active'),
+      active: info.active,
       name: findValue('name'),
       phone: info.phone ?? '',
       email: findValue('email'),
@@ -192,15 +212,32 @@ const ContactInfo = () => {
     <>
       <div className={classes.header}>
         <Info2>Contact information</Info2>
-        {!editing && (
-          <div>
-            <button onClick={() => setEditing(true)}>
-              <EditIcon />
-            </button>
-          </div>
-        )}
       </div>
       <div className={classes.section}>
+        <div className={classes.switchRow}>
+          <P>Info card enabled?</P>
+          <div className={classes.switch}>
+            <Switch
+              checked={info.active}
+              onChange={event =>
+                save({
+                  active: event.target.checked
+                })
+              }
+            />
+            <Label2>{info.active ? 'Yes' : 'No'}</Label2>
+          </div>
+        </div>
+        <div className={classes.header}>
+          <Info2>Info card</Info2>
+          {!editing && (
+            <div className={classes.transparentButton}>
+              <button onClick={() => setEditing(true)}>
+                <EditIcon />
+              </button>
+            </div>
+          )}
+        </div>
         <Formik
           enableReinitialize
           initialValues={form.initialValues}
@@ -211,19 +248,6 @@ const ContactInfo = () => {
             setError(null)
           }}>
           <Form>
-            <div className={classnames(classes.row, classes.radioButtonsRow)}>
-              <Field
-                field={findField('active')}
-                editing={editing}
-                displayValue={it => (it === 'true' ? 'On' : 'Off')}
-                options={[
-                  { display: 'On', code: 'true' },
-                  { display: 'Off', code: 'false' }
-                ]}
-                className={classes.radioButtons}
-                resetError={() => setError(null)}
-              />
-            </div>
             <div className={classes.row}>
               <Field
                 field={findField('name')}
