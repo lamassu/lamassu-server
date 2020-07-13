@@ -5,13 +5,12 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
+import { MainStatus } from 'src/components/Status'
+import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
-
-import { MainStatus } from '../../components/Status'
-import Title from '../../components/Title'
-import { ReactComponent as WarningIcon } from '../../styling/icons/status/pumpkin.svg'
-import { ReactComponent as ErrorIcon } from '../../styling/icons/status/tomato.svg'
-import { mainStyles } from '../Transactions/Transactions.styles'
+import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
+import { ReactComponent as WarningIcon } from 'src/styling/icons/status/pumpkin.svg'
+import { ReactComponent as ErrorIcon } from 'src/styling/icons/status/tomato.svg'
 
 import MachineDetailsRow from './MachineDetailsCard'
 
@@ -22,10 +21,13 @@ const GET_MACHINES = gql`
       deviceId
       lastPing
       pairedAt
+      version
       paired
       cashbox
       cassette1
       cassette2
+      version
+      model
       statuses {
         label
         type
@@ -68,7 +70,7 @@ const MachineStatus = () => {
       width: 200,
       size: 'sm',
       textAlign: 'left',
-      view: m => m.softwareVersion || 'unknown'
+      view: m => m.version || 'unknown'
     }
   ]
 
