@@ -5,13 +5,12 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
+import { MainStatus } from 'src/components/Status'
+import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
-
-import { MainStatus } from '../../components/Status'
-import Title from '../../components/Title'
-import { ReactComponent as WarningIcon } from '../../styling/icons/status/pumpkin.svg'
-import { ReactComponent as ErrorIcon } from '../../styling/icons/status/tomato.svg'
-import { mainStyles } from '../Transactions/Transactions.styles'
+import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
+import { ReactComponent as WarningIcon } from 'src/styling/icons/status/pumpkin.svg'
+import { ReactComponent as ErrorIcon } from 'src/styling/icons/status/tomato.svg'
 
 import MachineDetailsRow from './MachineDetailsCard'
 
@@ -26,6 +25,8 @@ const GET_MACHINES = gql`
       cashbox
       cassette1
       cassette2
+      version
+      model
       statuses {
         label
         type
@@ -44,31 +45,38 @@ const MachineStatus = () => {
   const elements = [
     {
       header: 'Machine Name',
-      width: 250,
+      width: 232,
       size: 'sm',
       textAlign: 'left',
       view: m => m.name
     },
     {
       header: 'Status',
-      width: 350,
+      width: 349,
       size: 'sm',
       textAlign: 'left',
       view: m => <MainStatus statuses={m.statuses} />
     },
     {
       header: 'Last ping',
-      width: 200,
+      width: 192,
       size: 'sm',
       textAlign: 'left',
-      view: m => (m.lastPing ? moment(m.lastPing).fromNow() : 'unknown')
+      view: m => moment(m.lastPing).fromNow()
+    },
+    {
+      header: 'Ping Time',
+      width: 155,
+      size: 'sm',
+      textAlign: 'left',
+      view: m => m.pingTime || 'unknown'
     },
     {
       header: 'Software Version',
-      width: 200,
+      width: 201,
       size: 'sm',
       textAlign: 'left',
-      view: m => m.softwareVersion || 'unknown'
+      view: m => m.version || 'unknown'
     }
   ]
 

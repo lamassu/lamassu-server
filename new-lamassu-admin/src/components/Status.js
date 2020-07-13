@@ -11,7 +11,8 @@ import {
   spring3,
   smallestFontSize,
   inputFontFamily,
-  spacer
+  spacer,
+  linen
 } from '../styling/variables'
 
 const colors = {
@@ -22,7 +23,7 @@ const colors = {
 
 const backgroundColors = {
   error: mistyRose,
-  warning: mistyRose,
+  warning: linen,
   success: spring3
 }
 
@@ -33,28 +34,22 @@ const useStyles = makeStyles({
     marginRight: spacer / 4,
     marginBottom: spacer / 2,
     marginLeft: spacer / 4,
-    height: 18,
+    height: spacer * 3,
     backgroundColor: ({ type }) => backgroundColors[type]
   },
   label: {
     fontSize: smallestFontSize,
     fontWeight: inputFontWeight,
     fontFamily: inputFontFamily,
-    padding: [[spacer / 2, spacer]],
+    paddingRight: spacer / 2,
+    paddingLeft: spacer / 2,
     color: ({ type }) => colors[type]
   }
 })
 
-const Status = ({ status, className }) => {
+const Status = ({ status }) => {
   const classes = useStyles({ type: status.type })
-  return (
-    <Chip
-      type={status.type}
-      label={status.label}
-      className={className ?? null}
-      classes={classes}
-    />
-  )
+  return <Chip type={status.type} label={status.label} classes={classes} />
 }
 
 const MainStatus = ({ statuses }) => {
@@ -65,7 +60,7 @@ const MainStatus = ({ statuses }) => {
   const plus = { label: `+${statuses.length - 1}`, type: mainStatus.type }
 
   return (
-    <div style={{ marginLeft: -3 }}>
+    <div>
       <Status status={mainStatus} />
       {statuses.length > 1 && <Status status={plus} />}
     </div>
