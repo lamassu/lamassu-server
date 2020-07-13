@@ -1,53 +1,55 @@
 import { fade } from '@material-ui/core/styles/colorManipulator'
 
-import { fontSize4, offColor, comet } from 'src/styling/variables'
+import {
+  detailsRowStyles,
+  labelStyles
+} from 'src/pages/Transactions/Transactions.styles'
+import { spacer, comet, primaryColor, fontSize4 } from 'src/styling/variables'
 
-export default {
+const machineDetailsStyles = {
+  ...detailsRowStyles,
+  colDivider: {
+    width: 1,
+    margin: [[spacer * 2, spacer * 4]],
+    backgroundColor: comet,
+    border: 'none'
+  },
+  inlineChip: {
+    marginInlineEnd: '0.25em'
+  },
+  stack: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
   wrapper: {
     display: 'flex',
     marginTop: 24,
     marginBottom: 32,
     fontSize: fontSize4
   },
-  column1: {
-    width: 600
-  },
-  column2: {
-    flex: 1
-  },
-  lastRow: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
   row: {
     display: 'flex',
     flexDirection: 'row',
     marginBottom: 36
   },
-  actionRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginLeft: -4
+  list: {
+    padding: 0,
+    margin: 0,
+    listStyle: 'none',
+    '& > li': {
+      height: spacer * 3,
+      marginBottom: spacer * 1.5,
+      '& > a, & > a:visited': {
+        color: primaryColor,
+        textDecoration: 'none'
+      }
+    }
   },
-  action: {
-    marginRight: 4,
-    marginLeft: 4
+  divider: {
+    margin: '0 1rem'
   },
-  dialog: {
-    width: 434
-  },
-  label: {
-    color: offColor,
-    margin: [[0, 0, 6, 0]]
-  },
-  chips: {
-    marginLeft: -2
-  },
-  status: {
-    width: 248
-  },
-  machineModel: {
-    width: 198
+  mr: {
+    marginRight: spacer
   },
   separator: {
     width: 1,
@@ -58,3 +60,5 @@ export default {
     background: fade(comet, 0.5)
   }
 }
+
+export { labelStyles, machineDetailsStyles }
