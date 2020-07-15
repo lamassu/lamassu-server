@@ -18,7 +18,7 @@ const cashboxStyles = {
   cashbox: {
     borderColor: colorPicker,
     backgroundColor: colorPicker,
-    height: 34,
+    height: 118,
     width: 80,
     border: '2px solid',
     textAlign: 'end',

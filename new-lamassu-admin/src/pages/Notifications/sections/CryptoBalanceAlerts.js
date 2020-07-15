@@ -11,7 +11,7 @@ const HIGH_BALANCE_KEY = 'cryptoHighBalance'
 
 const useStyles = makeStyles(styles)
 
-const CryptoBalanceAlerts = ({ section }) => {
+const CryptoBalanceAlerts = ({ section, fieldWidth }) => {
   const classes = useStyles()
 
   const {
@@ -37,6 +37,7 @@ const CryptoBalanceAlerts = ({ section }) => {
         editing={isEditing(LOW_BALANCE_KEY)}
         disabled={isDisabled(LOW_BALANCE_KEY)}
         setEditing={it => setEditing(LOW_BALANCE_KEY, it)}
+        width={fieldWidth}
       />
 
       <div className={classes.vertSeparator} />
@@ -53,6 +54,7 @@ const CryptoBalanceAlerts = ({ section }) => {
         editing={isEditing(HIGH_BALANCE_KEY)}
         disabled={isDisabled(HIGH_BALANCE_KEY)}
         setEditing={it => setEditing(HIGH_BALANCE_KEY, it)}
+        width={fieldWidth}
       />
     </div>
   )

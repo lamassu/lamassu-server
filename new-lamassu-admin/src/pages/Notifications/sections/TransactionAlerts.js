@@ -4,13 +4,14 @@ import SingleFieldEditableNumber from '../components/SingleFieldEditableNumber'
 
 const NAME = 'highValueTransaction'
 
-const TransactionAlerts = ({ section }) => {
+const TransactionAlerts = ({ section, fieldWidth }) => {
   return (
     <SingleFieldEditableNumber
       section={section}
       title="High value transaction"
       label="Alert me over"
       name={NAME}
+      width={fieldWidth}
     />
   )
 }

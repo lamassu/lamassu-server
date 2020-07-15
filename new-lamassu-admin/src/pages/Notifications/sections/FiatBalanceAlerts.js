@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 
 import { TL2 } from 'src/components/typography'
 
+import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
 import NotificationsCtx from '../NotificationsContext'
 import Header from '../components/EditHeader'
 import EditableNumber from '../components/EditableNumber'
@@ -13,26 +14,40 @@ import styles from './FiatBalanceAlerts.styles.js'
 
 const useStyles = makeStyles(styles)
 
-const schema = Yup.object().shape({
-  fiatBalanceCassette1: Yup.number()
-    .integer()
-    .min(0)
-    .required(),
-  fiatBalanceCassette2: Yup.number()
-    .integer()
-    .min(0)
-    .required()
-})
-
 const NAME = 'fiatBalanceAlerts'
 
-const FiatBalance = ({ section }) => {
+const FiatBalance = ({
+  section,
+  max = Number.MAX_SAFE_INTEGER,
+  fieldWidth = 80
+}) => {
   const { isEditing, isDisabled, setEditing, data, save } = useContext(
     NotificationsCtx
   )
   const classes = useStyles()
 
   const editing = isEditing(NAME)
+
+  const schema = Yup.object().shape({
+    fiatBalanceCassette1: Yup.number()
+      .integer()
+      .min(0)
+      .max(max)
+      .required(),
+    fiatBalanceCassette2: Yup.number()
+      .integer()
+      .min(0)
+      .max(max)
+      .required()
+  })
+
+  const fiatBalanceCassette1Percent = data?.fiatBalanceCassette1
+    ? (100 * data?.fiatBalanceCassette1) / max
+    : 0
+
+  const fiatBalanceCassette2Percent = data?.fiatBalanceCassette2
+    ? (100 * data?.fiatBalanceCassette2) / max
+    : 0
 
   return (
     <Formik
@@ -55,24 +70,34 @@ const FiatBalance = ({ section }) => {
         />
         <div className={classes.wrapper}>
           <div className={classes.first}>
-            <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
-            <EditableNumber
-              label="Alert me under"
-              name="fiatBalanceCassette1"
-              editing={editing}
-              displayValue={x => (x === '' ? '-' : x)}
-              decoration="notes"
-            />
+            <div className={classes.row}>
+              <Cashbox percent={fiatBalanceCassette1Percent} cashOut />
+              <div className={classes.col2}>
+                <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
+                <EditableNumber
+                  label="Alert me under"
+                  name="fiatBalanceCassette1"
+                  editing={editing}
+                  displayValue={x => (x === '' ? '-' : x)}
+                  decoration="notes"
+                  width={fieldWidth}
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
-            <EditableNumber
-              label="Alert me under"
-              name="fiatBalanceCassette2"
-              editing={editing}
-              displayValue={x => (x === '' ? '-' : x)}
-              decoration="notes"
-            />
+          <div className={classes.row}>
+            <Cashbox percent={fiatBalanceCassette2Percent} cashOut />
+            <div className={classes.col2}>
+              <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
+              <EditableNumber
+                label="Alert me under"
+                name="fiatBalanceCassette2"
+                editing={editing}
+                displayValue={x => (x === '' ? '-' : x)}
+                decoration="notes"
+                width={fieldWidth}
+              />
+            </div>
           </div>
         </div>
       </Form>
