@@ -28540,6 +28540,7 @@ var _user$project$Common_TransactionTypes$ZEC = {ctor: 'ZEC'};
 var _user$project$Common_TransactionTypes$ETH = {ctor: 'ETH'};
 var _user$project$Common_TransactionTypes$BCH = {ctor: 'BCH'};
 var _user$project$Common_TransactionTypes$BTC = {ctor: 'BTC'};
+var _user$project$Common_TransactionTypes$DUC = {ctor: 'DUC'};
 var _user$project$Common_TransactionTypes$CashOutTx = function (a) {
 	return {ctor: 'CashOutTx', _0: a};
 };
@@ -33959,6 +33960,8 @@ var _user$project$Transaction_Decoder$mapCryptoCode = function (code) {
 			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_TransactionTypes$DASH);
 		case 'LTC':
 			return _elm_lang$core$Json_Decode$succeed(_user$project$Common_TransactionTypes$LTC);
+    case 'DUC':
+      return _elm_lang$core$Json_Decode$succeed(_user$project$Common_TransactionTypes$DUC);
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'No such cryptocurrency: ', code));
