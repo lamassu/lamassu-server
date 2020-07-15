@@ -34145,6 +34145,8 @@ var _user$project$Transactions$cryptoCodeDisplay = function (code) {
 				return 'ZEC';
 			case 'DASH':
 				return 'DASH';
+      case 'DUC':
+        return 'DUC';
 			default:
 				return 'LTC';
 		}
@@ -34180,6 +34182,8 @@ var _user$project$Transactions$multiplier = function (code) {
 			return 1.0e8;
 		case 'DASH':
 			return 1.0e8;
+    case 'DUC':
+      return 1.0e8;
 		default:
 			return 1.0e8;
 	}
