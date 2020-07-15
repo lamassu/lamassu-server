@@ -36,6 +36,8 @@ const SAVE_CONFIG = gql`
   }
 `
 
+const FIELDS_WIDTH = 130
+
 const Notifications = ({ name: SCREEN_KEY }) => {
   const [section, setSection] = useState(null)
   const [error, setError] = useState(null)
@@ -97,19 +99,19 @@ const Notifications = ({ name: SCREEN_KEY }) => {
       </Section>
 
       <Section title="Transaction alerts" error={error && section === 'tx'}>
-        <TransactionAlerts section="tx" />
+        <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
       </Section>
 
       <Section title="Fiat balance alerts" error={error && section === 'fiat'}>
-        <FiatBalanceAlerts section="fiat" />
+        <FiatBalanceAlerts section="fiat" max={500} fieldWidth={50} />
         <FiatBalanceOverrides section="fiat" />
       </Section>
 
       <Section
         title="Crypto balance alerts"
         error={error && section === 'crypto'}>
-        <CryptoBalanceAlerts section="crypto" />
-        <CryptoBalanceOverrides section="crypto" />
+        <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
+        <CryptoBalanceOverrides section="crypto" fieldWidth={FIELDS_WIDTH} />
       </Section>
     </NotificationsCtx.Provider>
   )
