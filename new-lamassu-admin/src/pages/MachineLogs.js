@@ -34,9 +34,16 @@ const GET_MACHINES = gql`
   }
 `
 
+const NUM_LOG_RESULTS = 1000
+
 const GET_MACHINE_LOGS = gql`
-  query MachineLogs($deviceId: ID!) {
-    machineLogs(deviceId: $deviceId) {
+  query MachineLogs($deviceId: ID!, $limit: Int, $from: Date, $until: Date) {
+    machineLogs(
+      deviceId: $deviceId
+      limit: $limit
+      from: $from
+      until: $until
+    ) {
       logLevel
       id
       timestamp
@@ -65,7 +72,11 @@ const Logs = () => {
 
   const deviceId = selected?.deviceId
 
-  const { data: machineResponse } = useQuery(GET_MACHINES)
+  const { data: machineResponse } = useQuery(GET_MACHINES, {
+    variables: {
+      limit: NUM_LOG_RESULTS
+    }
+  })
 
   const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
     variables: { deviceId },
@@ -97,8 +108,9 @@ const Logs = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="machine-logs"
-                logs={logsResponse.machineLogs}
-                getTimestamp={log => log.timestamp}
+                query={GET_MACHINE_LOGS}
+                args={{ deviceId }}
+                getLogs={logs => R.path(['machineLogs'])(logs)}
               />
               <SimpleButton
                 className={classes.shareButton}

@@ -1,3 +1,4 @@
+import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import FileSaver from 'file-saver'
@@ -128,10 +129,13 @@ const useStyles = makeStyles(styles)
 const ALL = 'all'
 const RANGE = 'range'
 
-const LogsDownloaderPopover = ({ name, getTimestamp, logs, title }) => {
+const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
-  const [range, setRange] = useState({ from: null, to: null })
+  const [range, setRange] = useState({ from: null, until: null })
   const [anchorEl, setAnchorEl] = useState(null)
+  const [fetchLogs] = useLazyQuery(query, {
+    onCompleted: data => createLogsFile(getLogs(data), range)
+  })
 
   const classes = useStyles()
 
@@ -143,49 +147,55 @@ const LogsDownloaderPopover = ({ name, getTimestamp, logs, title }) => {
   const handleRadioButtons = evt => {
     const selectedRadio = R.path(['target', 'value'])(evt)
     setSelectedRadio(selectedRadio)
-    if (selectedRadio === ALL) setRange({ from: null, to: null })
+    if (selectedRadio === ALL) setRange({ from: null, until: null })
   }
 
   const handleRangeChange = useCallback(
-    (from, to) => {
-      setRange({ from, to })
+    (from, until) => {
+      setRange({ from, until })
     },
     [setRange]
   )
 
-  const downloadLogs = (range, logs) => {
-    if (!range) return
+  const downloadLogs = (range, args, fetchLogs) => {
+    if (selectedRadio === ALL) {
+      fetchLogs({
+        variables: {
+          ...args
+        }
+      })
+    }
 
-    if (range.from && !range.to) range.to = moment()
+    if (!range || !range.from) return
+    if (range.from && !range.until) range.until = moment()
 
+    if (selectedRadio === RANGE) {
+      fetchLogs({
+        variables: {
+          ...args,
+          from: range.from,
+          until: range.until
+        }
+      })
+    }
+  }
+
+  const createLogsFile = (logs, range) => {
     const formatDateFile = date => {
       return moment(date).format('YYYY-MM-DD_HH-mm')
     }
 
-    if (selectedRadio === ALL) {
-      const text = logs.map(it => JSON.stringify(it)).join('\n')
-      const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
-      })
-      FileSaver.saveAs(blob, `${formatDateFile(new Date())}_${name}`)
-      return
-    }
+    const text = logs.map(it => JSON.stringify(it)).join('\n')
+    const blob = new window.Blob([text], {
+      type: 'text/plain;charset=utf-8'
+    })
 
-    if (selectedRadio === RANGE) {
-      const text = logs
-        .filter(log =>
-          moment(getTimestamp(log)).isBetween(range.from, range.to, 'day', '[]')
-        )
-        .map(it => JSON.stringify(it))
-        .join('\n')
-      const blob = new window.Blob([text], {
-        type: 'text/plain;charset=utf-8'
-      })
-      FileSaver.saveAs(
-        blob,
-        `${formatDateFile(range.from)}_${formatDateFile(range.to)}_${name}`
-      )
-    }
+    FileSaver.saveAs(
+      blob,
+      selectedRadio === ALL
+        ? `${formatDateFile(new Date())}_${name}`
+        : `${formatDateFile(range.from)}_${formatDateFile(range.until)}_${name}`
+    )
   }
 
   const handleOpenRangePicker = event => {
@@ -231,7 +241,7 @@ const LogsDownloaderPopover = ({ name, getTimestamp, logs, title }) => {
                     <div className={classes.arrowContainer}>
                       <Arrow className={classes.arrow} />
                     </div>
-                    <DateContainer date={range.to}>To</DateContainer>
+                    <DateContainer date={range.until}>To</DateContainer>
                   </>
                 )}
               </div>
@@ -242,7 +252,9 @@ const LogsDownloaderPopover = ({ name, getTimestamp, logs, title }) => {
             </div>
           )}
           <div className={classes.download}>
-            <Link color="primary" onClick={() => downloadLogs(range, logs)}>
+            <Link
+              color="primary"
+              onClick={() => downloadLogs(range, args, fetchLogs)}>
               Download
             </Link>
           </div>
