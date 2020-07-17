@@ -18,9 +18,11 @@ import { mainStyles } from './Transactions.styles'
 
 const useStyles = makeStyles(mainStyles)
 
+const NUM_LOG_RESULTS = 1000
+
 const GET_TRANSACTIONS = gql`
-  {
-    transactions {
+  query transactions($limit: Int, $from: Date, $until: Date) {
+    transactions(limit: $limit, from: $from, until: $until) {
       id
       txClass
       txHash
@@ -52,7 +54,11 @@ const GET_TRANSACTIONS = gql`
 const Transactions = () => {
   const classes = useStyles()
 
-  const { data: txResponse } = useQuery(GET_TRANSACTIONS)
+  const { data: txResponse } = useQuery(GET_TRANSACTIONS, {
+    variables: {
+      limit: NUM_LOG_RESULTS
+    }
+  })
 
   const formatCustomerName = customer => {
     const { firstName, lastName } = customer
@@ -136,8 +142,8 @@ const Transactions = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="transactions"
-                logs={txResponse.transactions}
-                getTimestamp={tx => tx.created}
+                query={GET_TRANSACTIONS}
+                getLogs={logs => R.path(['transactions'])(logs)}
               />
             </div>
           )}
