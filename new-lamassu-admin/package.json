@@ -32,6 +32,7 @@
     "react-dom": "^16.10.2",
     "react-number-format": "^4.4.1",
     "react-router-dom": "5.1.2",
+    "react-use": "15.3.2",
     "react-virtualized": "^9.21.2",
     "sanctuary": "^2.0.1",
     "uuid": "^7.0.2",
