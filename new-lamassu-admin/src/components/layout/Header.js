@@ -5,15 +5,14 @@ import { NavLink } from 'react-router-dom'
 
 import { Link } from 'src/components/buttons'
 import { H4 } from 'src/components/typography'
-import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 import AddMachine from 'src/pages/AddMachine'
+import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import styles from './Header.styles'
 
 const useStyles = makeStyles(styles)
 
 const Subheader = ({ item, classes }) => {
-  const [open, setOpen] = useState(false)
   return (
     <div className={classes.subheader}>
       <div className={classes.content}>
@@ -31,20 +30,17 @@ const Subheader = ({ item, classes }) => {
             ))}
           </ul>
         </nav>
-        <div className={classes.addMachine}>
-          <Link color="primary" onClick={() => setOpen(true)}>
-            Add Machine
-          </Link>
-          {open && <AddMachine close={() => setOpen(false)} />}
-        </div>
       </div>
     </div>
   )
 }
 
 const Header = memo(({ tree }) => {
+  const [open, setOpen] = useState(false)
   const [active, setActive] = useState()
   const classes = useStyles()
+
+  const onPaired = _name => {}
 
   return (
     <header>
@@ -74,12 +70,16 @@ const Header = memo(({ tree }) => {
                 </li>
               ))}
             </ul>
+            <Link color="action" onClick={() => setOpen(true)}>
+              Add Machine
+            </Link>
           </nav>
         </div>
       </div>
       {active && active.children && (
         <Subheader item={active} classes={classes} />
       )}
+      {open && <AddMachine close={() => setOpen(false)} onPaired={onPaired} />}
     </header>
   )
 })

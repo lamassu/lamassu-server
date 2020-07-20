@@ -1,10 +1,10 @@
+import typographyStyles from 'src/components/typography/styles'
 import {
   placeholderColor,
   backgroundColor,
   primaryColor,
   mainWidth
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { tl2, p } = typographyStyles
 
@@ -58,7 +58,9 @@ const styles = {
   qrTextWrapper: {
     width: 381,
     marginLeft: 80,
-    display: 'flex'
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   qrTextIcon: {
     marginRight: 16
@@ -88,8 +90,8 @@ const styles = {
     height: 25,
     width: 1,
     border: [[1, 'solid', placeholderColor]],
-    right: 7,
-    top: 15
+    right: 8,
+    top: 18
   },
   stepperPast: {
     border: [[1, 'solid', primaryColor]]

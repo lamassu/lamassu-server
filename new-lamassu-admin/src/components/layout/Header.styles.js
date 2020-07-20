@@ -35,7 +35,10 @@ export default {
     margin: '0 auto'
   },
   nav: {
-    flex: 1
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   ul: {
     display: 'flex',
