@@ -4,7 +4,8 @@ import typographyStyles from 'src/components/typography/styles'
 import {
   white,
   linkPrimaryColor,
-  linkSecondaryColor
+  linkSecondaryColor,
+  zircon
 } from 'src/styling/variables'
 
 const { h4 } = typographyStyles
@@ -38,5 +39,9 @@ export default {
   },
   noColor: {
     extend: color(white)
+  },
+  action: {
+    extend: color(linkPrimaryColor),
+    color: zircon
   }
 }

@@ -13,7 +13,8 @@ const Link = memo(
       [classes.link]: true,
       [classes.primary]: color === 'primary',
       [classes.secondary]: color === 'secondary',
-      [classes.noColor]: color === 'noColor'
+      [classes.noColor]: color === 'noColor',
+      [classes.action]: color === 'action'
     }
 
     return (
