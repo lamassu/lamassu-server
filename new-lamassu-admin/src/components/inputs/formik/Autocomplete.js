@@ -8,18 +8,23 @@ const AutocompleteFormik = ({ options, ...props }) => {
   const [open, setOpen] = useState(false)
 
   const { name, onBlur, value } = props.field
-  const { touched, errors, setFieldValue } = props.form
+  const { touched, errors, setFieldValue, setFieldTouched } = props.form
   const error = !!(touched[name] && errors[name])
   const { initialValues } = useFormikContext()
 
   const innerOptions =
     R.type(options) === 'Function' ? options(initialValues) : options
 
+  const innerOnBlur = event => {
+    name && setFieldTouched(name, true)
+    onBlur && onBlur(event)
+  }
+
   return (
     <Autocomplete
       name={name}
       onChange={(event, item) => setFieldValue(name, item)}
-      onBlur={onBlur}
+      onBlur={innerOnBlur}
       value={value}
       error={error}
       open={open}

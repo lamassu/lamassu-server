@@ -1,4 +1,3 @@
-import { createFilterOptions } from '@material-ui/lab/Autocomplete'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
@@ -94,9 +93,7 @@ const allFields = getData => {
         valueProp: 'code',
         getLabel: R.path(['code']),
         multiple: true,
-        filterOptions: createFilterOptions({
-          stringify: option => `${option.code} ${option.display}`
-        })
+        limit: null
       }
     }
   ]
