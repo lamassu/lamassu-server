@@ -1,13 +1,12 @@
-import MAutocomplete, {
-  createFilterOptions
-} from '@material-ui/lab/Autocomplete'
+import MAutocomplete from '@material-ui/lab/Autocomplete'
+import sort from 'match-sorter'
 import * as R from 'ramda'
 import React from 'react'
 
 import TextInput from './TextInput'
 
 const Autocomplete = ({
-  limit = 5,
+  limit = 5, // set limit = null for no limit
   options,
   label,
   valueProp,
@@ -43,6 +42,12 @@ const Autocomplete = ({
     onChange(evt, rValue)
   }
 
+  const filterOptions = (options, { inputValue }) =>
+    sort(options, inputValue, { keys: ['code', 'display'] }).slice(
+      0,
+      R.defaultTo(undefined)(limit)
+    )
+
   return (
     <MAutocomplete
       options={options}
@@ -51,7 +56,7 @@ const Autocomplete = ({
       onChange={innerOnChange}
       getOptionLabel={getLabel}
       forcePopupIcon={false}
-      filterOptions={createFilterOptions({ ignoreAccents: true, limit })}
+      filterOptions={filterOptions}
       openOnFocus
       autoHighlight
       disableClearable
