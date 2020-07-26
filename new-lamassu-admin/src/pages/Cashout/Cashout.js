@@ -23,7 +23,8 @@ const useStyles = makeStyles({
     marginRight: 156
   },
   switchLabel: {
-    margin: 6
+    margin: 6,
+    width: 24
   }
 })
 
@@ -123,6 +124,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           onClose={() => setWizard(false)}
           save={save}
           error={error}
+          locale={locale}
         />
       )}
     </>

@@ -21,7 +21,6 @@ const getElements = (machines, { fiatCurrency } = {}) => {
     {
       name: 'top',
       header: 'Cassette 1 (Top)',
-      view: it => `${it} ${fiatCurrency}`,
       size: 'sm',
       stripe: true,
       width: 200,
@@ -29,12 +28,12 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
-      }
+      },
+      suffix: fiatCurrency
     },
     {
       name: 'bottom',
       header: 'Cassette 2 (Bottom)',
-      view: it => `${it} ${fiatCurrency}`,
       size: 'sm',
       stripe: true,
       textAlign: 'right',
@@ -42,7 +41,8 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
-      }
+      },
+      suffix: fiatCurrency
     },
     {
       name: 'zeroConfLimit',
@@ -54,7 +54,8 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
-      }
+      },
+      suffix: fiatCurrency
     }
   ]
 }

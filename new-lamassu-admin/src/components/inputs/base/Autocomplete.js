@@ -18,6 +18,7 @@ const Autocomplete = ({
   fullWidth,
   textAlign,
   size,
+  autoFocus,
   ...props
 }) => {
   const mapFromValue = options => it => R.find(R.propEq(valueProp, it))(options)
@@ -78,6 +79,7 @@ const Autocomplete = ({
         return (
           <TextInput
             {...params}
+            autoFocus={autoFocus}
             label={label}
             value={outsideValue}
             error={error}
