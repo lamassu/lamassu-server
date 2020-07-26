@@ -11,7 +11,7 @@ const styles = {
     maxHeight: 80,
     maxWidth: 200
   },
-  title: {
+  subtitle: {
     margin: 0,
     marginBottom: 42,
     textAlign: 'center'
@@ -27,22 +27,22 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     flex: 1,
-    padding: [[0, 34, 107, 34]],
-    '& > div': {
-      paddingBottom: 72,
-      '& > h1': {
-        color: neon,
-        marginBottom: 12,
-        marginTop: 30,
-        textAlign: 'center',
-        '& > svg': {
-          verticalAlign: 'bottom',
-          marginRight: spacer * 1.5,
-          width: spacer * 3,
-          height: spacer * 3.25
-        }
-      }
-    }
+    padding: [[0, 34, 107, 34]]
+  },
+  innerContent: {
+    paddingBottom: 72
+  },
+  title: {
+    color: neon,
+    marginBottom: 12,
+    marginTop: 30,
+    textAlign: 'center'
+  },
+  titleDecorator: {
+    verticalAlign: 'bottom',
+    marginRight: spacer * 1.5,
+    width: spacer * 3,
+    height: spacer * 3.25
   }
 }
 
@@ -53,12 +53,12 @@ const WizardSplash = ({ name, onContinue }) => {
 
   return (
     <div className={classes.modalContent}>
-      <div>
-        <H1>
-          <TxOutIcon />
+      <div className={classes.innerContent}>
+        <H1 className={classes.title}>
+          <TxOutIcon className={classes.titleDecorator} />
           <span>Enable cash-out</span>
         </H1>
-        <Info2 className={classes.title}>{name}</Info2>
+        <Info2 className={classes.subtitle}>{name}</Info2>
         <P>
           You are about to activate cash-out functionality on your {name}{' '}
           machine which will allow your customers to sell crypto to you.

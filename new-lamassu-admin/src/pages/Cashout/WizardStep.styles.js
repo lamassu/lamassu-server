@@ -38,15 +38,15 @@ export default {
   },
   header: {
     display: 'flex',
-    paddingBottom: 96,
-    '& div': {
-      flex: 1
-    },
-    '& img': {
-      position: 'relative',
-      top: -20,
-      right: 14
-    }
+    paddingBottom: 96
+  },
+  step: {
+    flex: 1
+  },
+  stepImage: {
+    position: 'relative',
+    top: -20,
+    right: 14
   },
   content: {
     display: 'flex',
@@ -59,12 +59,10 @@ export default {
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    '& > p': {
-      '& > svg': {
-        float: 'left',
-        margin: [[-4, 16, 48, 0]]
-      }
-    }
+    justifyContent: 'space-between'
+  },
+  disclaimerIcon: {
+    float: 'left',
+    margin: [[-4, 16, 48, 0]]
   }
 }

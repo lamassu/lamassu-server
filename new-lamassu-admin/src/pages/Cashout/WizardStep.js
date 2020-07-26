@@ -53,7 +53,7 @@ const WizardStep = ({
               {steps.map(
                 ({ type, display, component }, idx) =>
                   1 + idx === step && (
-                    <div key={idx}>
+                    <div key={idx} className={classes.step}>
                       <H4 className={classes.edit}>Edit {display}</H4>
 
                       <Label1>Choose bill denomination</Label1>
@@ -78,6 +78,7 @@ const WizardStep = ({
                   )
               )}
               <img
+                className={classes.stepImage}
                 alt="cassette"
                 width="148"
                 height="196"
@@ -95,7 +96,7 @@ const WizardStep = ({
         <div className={classes.disclaimer}>
           <Info2 className={classes.title}>Cashout Bill Count</Info2>
           <P>
-            <WarningIcon />
+            <WarningIcon className={classes.disclaimerIcon} />
             When enabling cash out, your bill count will be automatically set to
             zero. Make sure you physically put cash inside the cashboxes to
             allow the machine to dispense it to your users. If you already did,
@@ -105,7 +106,7 @@ const WizardStep = ({
 
           <Info2 className={classes.title}>Default Commissions</Info2>
           <P>
-            <WarningIcon />
+            <WarningIcon className={classes.disclaimerIcon} />
             When enabling cash out, default commissions will be set. To change
             commissions for this machine, please go to the Commissions tab under
             Settings where you can set exceptions for each of the available
