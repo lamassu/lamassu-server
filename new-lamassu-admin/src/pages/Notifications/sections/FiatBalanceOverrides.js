@@ -38,15 +38,18 @@ const FiatBalanceOverrides = ({ section }) => {
     [CASSETTE_2_KEY]: ''
   }
 
+  const notesMax = 9999999
   const validationSchema = Yup.object().shape({
     [MACHINE_KEY]: Yup.string().required(),
     [CASSETTE_1_KEY]: Yup.number()
       .integer()
       .min(0)
+      .max(notesMax)
       .required(),
     [CASSETTE_2_KEY]: Yup.number()
       .integer()
       .min(0)
+      .max(notesMax)
       .required()
   })
 

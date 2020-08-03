@@ -200,20 +200,24 @@ const overrides = (auxData, currency, auxElements) => {
   return getOverridesFields(getData, currency, auxElements)
 }
 
+const percentMax = 100
+const currencyMax = 9999999
 const schema = Yup.object().shape({
   cashIn: Yup.number()
     .min(0)
-    .max(100)
+    .max(percentMax)
     .required('Required'),
   cashOut: Yup.number()
     .min(0)
-    .max(100)
+    .max(percentMax)
     .required('Required'),
   fixedFee: Yup.number()
     .min(0)
+    .max(currencyMax)
     .required('Required'),
   minimumTx: Yup.number()
     .min(0)
+    .max(currencyMax)
     .required('Required')
 })
 
@@ -222,17 +226,19 @@ const OverridesSchema = Yup.object().shape({
   cryptoCurrencies: Yup.array().required('Required'),
   cashIn: Yup.number()
     .min(0)
-    .max(100)
+    .max(percentMax)
     .required('Required'),
   cashOut: Yup.number()
     .min(0)
-    .max(100)
+    .max(percentMax)
     .required('Required'),
   fixedFee: Yup.number()
     .min(0)
+    .max(currencyMax)
     .required('Required'),
   minimumTx: Yup.number()
     .min(0)
+    .max(currencyMax)
     .required('Required')
 })
 

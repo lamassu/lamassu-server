@@ -2,10 +2,20 @@ import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
 
+const currencyMax = 999999999
 const DenominationsSchema = Yup.object().shape({
-  top: Yup.number().required('Required'),
-  bottom: Yup.number().required('Required'),
-  zeroConfLimit: Yup.number().required('Required')
+  top: Yup.number()
+    .required('Required')
+    .min(0)
+    .max(currencyMax),
+  bottom: Yup.number()
+    .required('Required')
+    .min(0)
+    .max(currencyMax),
+  zeroConfLimit: Yup.number()
+    .required('Required')
+    .min(0)
+    .max(currencyMax)
 })
 
 const getElements = (machines, { fiatCurrency } = {}) => {
