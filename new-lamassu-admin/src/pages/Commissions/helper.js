@@ -1,10 +1,35 @@
 import * as R from 'ramda'
+import React from 'react'
 import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
-const getOverridesFields = (getData, currency) => {
+const ALL_MACHINES = {
+  name: 'All Machines',
+  deviceId: 'ALL_MACHINES',
+  __typename: 'Machine'
+}
+
+const cashInAndOutHeaderStyle = { marginLeft: 6 }
+
+const cashInHeader = (
+  <div>
+    <TxInIcon />
+    <span style={cashInAndOutHeaderStyle}>Cash-in</span>
+  </div>
+)
+
+const cashOutHeader = (
+  <div>
+    <TxOutIcon />
+    <span style={cashInAndOutHeaderStyle}>Cash-out</span>
+  </div>
+)
+
+const getOverridesFields = (getData, currency, auxElements) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -20,7 +45,24 @@ const getOverridesFields = (getData, currency) => {
     return R.compose(R.join(', '), R.map(getView(data, 'code')))(it)
   }
 
-  const machineData = getData(['machines'])
+  var overridenMachineCoins = R.reduceBy(
+    (acc, { cryptoCurrencies }) => acc.concat(cryptoCurrencies),
+    [],
+    R.prop('machine'),
+    auxElements
+  )
+
+  const suggestionFilter = (it, cryptoData) => {
+    if (!it?.machine) return cryptoData
+
+    return R.differenceWith(
+      (x, y) => x.code === y && !it?.cryptoCurrencies.includes(x.code),
+      cryptoData,
+      overridenMachineCoins[it?.machine]
+    )
+  }
+
+  const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const cryptoData = getData(['cryptoCurrencies'])
 
   return [
@@ -43,13 +85,14 @@ const getOverridesFields = (getData, currency) => {
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
       inputProps: {
-        options: cryptoData,
+        options: it => suggestionFilter(it, cryptoData),
         valueProp: 'code',
         getLabel: R.path(['code']),
         multiple: true
       }
     },
     {
+      header: cashInHeader,
       name: 'cashIn',
       display: 'Cash-in',
       width: 130,
@@ -61,6 +104,7 @@ const getOverridesFields = (getData, currency) => {
       }
     },
     {
+      header: cashOutHeader,
       name: 'cashOut',
       display: 'Cash-out',
       width: 130,
@@ -100,6 +144,7 @@ const getOverridesFields = (getData, currency) => {
 
 const mainFields = currency => [
   {
+    header: cashInHeader,
     name: 'cashIn',
     display: 'Cash-in',
     width: 169,
@@ -111,6 +156,7 @@ const mainFields = currency => [
     }
   },
   {
+    header: cashOutHeader,
     name: 'cashOut',
     display: 'Cash-out',
     width: 169,
@@ -149,34 +195,46 @@ const mainFields = currency => [
   }
 ]
 
-const overrides = (auxData, currency) => {
+const overrides = (auxData, currency, auxElements) => {
   const getData = R.path(R.__, auxData)
 
-  return getOverridesFields(getData, currency)
+  return getOverridesFields(getData, currency, auxElements)
 }
 
 const schema = Yup.object().shape({
   cashIn: Yup.number()
+    .min(0)
     .max(100)
     .required('Required'),
   cashOut: Yup.number()
+    .min(0)
     .max(100)
     .required('Required'),
-  fixedFee: Yup.number().required('Required'),
-  minimumTx: Yup.number().required('Required')
+  fixedFee: Yup.number()
+    .min(0)
+    .required('Required'),
+  minimumTx: Yup.number()
+    .min(0)
+    .required('Required')
 })
 
 const OverridesSchema = Yup.object().shape({
   machine: Yup.string().required('Required'),
   cryptoCurrencies: Yup.array().required('Required'),
   cashIn: Yup.number()
+    .min(0)
     .max(100)
     .required('Required'),
   cashOut: Yup.number()
+    .min(0)
     .max(100)
     .required('Required'),
-  fixedFee: Yup.number().required('Required'),
-  minimumTx: Yup.number().required('Required')
+  fixedFee: Yup.number()
+    .min(0)
+    .required('Required'),
+  minimumTx: Yup.number()
+    .min(0)
+    .required('Required')
 })
 
 const defaults = {
@@ -187,8 +245,8 @@ const defaults = {
 }
 
 const overridesDefaults = {
-  machine: '',
-  cryptoCurrencies: [],
+  machine: null,
+  cryptoCurrencies: '',
   cashIn: '',
   cashOut: '',
   fixedFee: '',
