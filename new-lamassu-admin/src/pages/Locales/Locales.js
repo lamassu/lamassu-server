@@ -160,6 +160,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
           validationSchema={OverridesSchema}
           data={localeOverrides ?? []}
           elements={overrides(data, localeOverrides)}
+          disableAdd={R.compose(R.isEmpty, R.difference)(
+            data?.machines.map(m => m.deviceId) ?? [],
+            localeOverrides?.map(o => o.machine) ?? []
+          )}
           setEditing={onEditingOverrides}
           forceDisable={isEditingDefault}
         />

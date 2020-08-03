@@ -13,6 +13,8 @@ const SingleFieldEditableNumber = ({
   title,
   label,
   width = 80,
+  min = 0,
+  max = 9999999,
   name,
   section,
   className
@@ -42,7 +44,8 @@ const SingleFieldEditableNumber = ({
   const schema = Yup.object().shape({
     [name]: Yup.number()
       .integer()
-      .min(0)
+      .min(min)
+      .max(max)
       .required()
   })
 
