@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 import { Autocomplete } from '../base'
 
-const AutocompleteFormik = ({ options, ...props }) => {
+const AutocompleteFormik = ({ options, onChange, ...props }) => {
   const [open, setOpen] = useState(false)
 
   const { name, onBlur, value } = props.field
@@ -23,7 +23,10 @@ const AutocompleteFormik = ({ options, ...props }) => {
   return (
     <Autocomplete
       name={name}
-      onChange={(event, item) => setFieldValue(name, item)}
+      onChange={(event, item) => {
+        onChange && onChange(value, item)
+        setFieldValue(name, item)
+      }}
       onBlur={innerOnBlur}
       value={value}
       error={error}

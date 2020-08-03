@@ -10,7 +10,9 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
+
+import Wizard from '../Wallet/Wizard'
 
 import { styles } from './Locales.styles'
 import {
@@ -27,6 +29,13 @@ const useStyles = makeStyles(styles)
 const GET_DATA = gql`
   query getData {
     config
+    accounts
+    accountsConfig {
+      code
+      display
+      class
+      cryptos
+    }
     currencies {
       code
       display
@@ -89,17 +98,25 @@ const FiatCurrencyChangeAlert = ({ open, close, save }) => {
 }
 
 const Locales = ({ name: SCREEN_KEY }) => {
+  const [wizard, setWizard] = useState(false)
+  const [error, setError] = useState(false)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
+    onCompleted: () => setWizard(false),
+    onError: () => setError(true),
     refetchQueries: () => ['getData']
   })
 
   const [dataToSave, setDataToSave] = useState(null)
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const wallets = data?.config && fromNamespace(namespaces.WALLETS)(data.config)
 
+  const accountsConfig = data?.accountsConfig
+  const accounts = data?.accounts ?? []
+  const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const locale = config && !R.isEmpty(config) ? config : localeDefaults
   const localeOverrides = locale.overrides ?? []
 
@@ -115,13 +132,22 @@ const Locales = ({ name: SCREEN_KEY }) => {
   }
 
   const save = config => {
+    console.log(config)
     setDataToSave(null)
+    setError(false)
     saveConfig({ variables: { config } })
   }
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
     return saveConfig({ variables: { config } })
+  }
+
+  const enableCoin = it => {
+    if (!it) return
+
+    const namespaced = fromNamespace(it)(wallets)
+    if (!namespaced?.active) return setWizard(it)
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
@@ -145,7 +171,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={handleSave}
           validationSchema={LocaleSchema}
           data={R.of(locale)}
-          elements={mainFields(data)}
+          elements={mainFields(data, enableCoin)}
           setEditing={onEditingDefault}
           forceDisable={isEditingOverrides}
         />
@@ -162,7 +188,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={saveOverrides}
           validationSchema={OverridesSchema}
           data={localeOverrides ?? []}
-          elements={overrides(data, localeOverrides)}
+          elements={overrides(data, localeOverrides, enableCoin)}
           disableAdd={R.compose(R.isEmpty, R.difference)(
             data?.machines.map(m => m.deviceId) ?? [],
             localeOverrides?.map(o => o.machine) ?? []
@@ -171,6 +197,18 @@ const Locales = ({ name: SCREEN_KEY }) => {
           forceDisable={isEditingDefault}
         />
       </Section>
+      {wizard && (
+        <Wizard
+          coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
+          onClose={() => setWizard(false)}
+          save={rawConfig => save(toNamespace(namespaces.WALLETS)(rawConfig))}
+          error={error}
+          cryptoCurrencies={cryptoCurrencies}
+          userAccounts={data?.config?.accounts}
+          accounts={accounts}
+          accountsConfig={accountsConfig}
+        />
+      )}
     </>
   )
 }

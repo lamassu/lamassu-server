@@ -46,6 +46,7 @@ const ETable = ({
   disableAdd,
   initialValues,
   setEditing,
+  focusOnEditWhen,
   stripeWhen,
   disableRowEdit,
   groupBy,
@@ -135,6 +136,7 @@ const ETable = ({
     toggleWidth,
     actionColSize,
     stripeWhen,
+    focusOnEditWhen,
     DEFAULT_COL_SIZE
   }
 

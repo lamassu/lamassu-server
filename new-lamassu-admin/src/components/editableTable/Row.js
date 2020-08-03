@@ -175,7 +175,8 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
     enableDelete,
     enableToggle,
     rowSize,
-    stripeWhen
+    stripeWhen,
+    focusOnEditWhen
   } = useContext(TableCtx)
 
   const classes = useStyles()
@@ -214,7 +215,12 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
             key={idx}
             config={it}
             editing={editing}
-            focus={idx === elementToFocusIndex && editing}
+            focus={
+              idx === elementToFocusIndex &&
+              editing &&
+              focusOnEditWhen &&
+              focusOnEditWhen(values)
+            }
             extraPaddingRight={extraPaddingRightIndex === idx}
             extraPaddingLeft={extraPaddingLeftIndex === idx}
           />
