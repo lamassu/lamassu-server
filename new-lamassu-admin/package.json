@@ -30,6 +30,7 @@
     "react": "^16.12.0",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.10.2",
+    "react-number-format": "^4.4.1",
     "react-router-dom": "5.1.2",
     "react-virtualized": "^9.21.2",
     "sanctuary": "^2.0.1",

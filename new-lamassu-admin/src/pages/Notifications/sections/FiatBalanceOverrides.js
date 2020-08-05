@@ -3,8 +3,8 @@ import React, { useContext } from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
+import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
-import TextInputFormik from 'src/components/inputs/formik/TextInput.js'
 
 import NotificationsCtx from '../NotificationsContext'
 
@@ -74,8 +74,11 @@ const FiatBalanceOverrides = ({ section }) => {
       textAlign: 'right',
       doubleHeader: 'Cash-out (Cassette Empty)',
       bold: true,
-      input: TextInputFormik,
-      suffix: 'notes'
+      input: NumberInput,
+      suffix: 'notes',
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: CASSETTE_2_KEY,
@@ -84,8 +87,11 @@ const FiatBalanceOverrides = ({ section }) => {
       textAlign: 'right',
       doubleHeader: 'Cash-out (Cassette Empty)',
       bold: true,
-      input: TextInputFormik,
-      suffix: 'notes'
+      input: NumberInput,
+      suffix: 'notes',
+      inputProps: {
+        decimalPlaces: 0
+      }
     }
   ]
 

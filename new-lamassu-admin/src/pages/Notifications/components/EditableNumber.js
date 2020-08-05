@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import { useFormikContext, Field as FormikField } from 'formik'
 import React from 'react'
 
-import TextInput from 'src/components/inputs/formik/TextInput'
+import { NumberInput } from 'src/components/inputs/formik'
 import { Label1, Info1, TL2 } from 'src/components/typography'
 
 import styles from './EditableNumber.styles'
@@ -17,6 +17,7 @@ const EditableNumber = ({
   displayValue,
   decoration,
   className,
+  decimalPlaces = 0,
   width = 80
 }) => {
   const classes = useStyles({ width, editing })
@@ -40,9 +41,10 @@ const EditableNumber = ({
             size="lg"
             fullWidth
             name={name}
-            component={TextInput}
+            component={NumberInput}
             textAlign="right"
             width={width}
+            decimalPlaces={decimalPlaces}
           />
         )}
         <TL2 className={classes.decoration}>{decoration}</TL2>

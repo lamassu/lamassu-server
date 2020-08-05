@@ -4,7 +4,7 @@ import React from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import { NumberInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 
 const ValidationSchema = Yup.object().shape({
@@ -87,14 +87,20 @@ const Cashboxes = () => {
       header: 'Cash-out 1',
       width: 265,
       textAlign: 'left',
-      input: TextInputFormik
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'cassette2',
       header: 'Cash-out 2',
       width: 265,
       textAlign: 'left',
-      input: TextInputFormik
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     }
   ]
 

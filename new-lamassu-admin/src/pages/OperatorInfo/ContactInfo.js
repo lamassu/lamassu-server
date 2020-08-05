@@ -11,7 +11,7 @@ import * as Yup from 'yup'
 import ErrorMessage from 'src/components/ErrorMessage'
 import { Link } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import { TextInput, NumberInput } from 'src/components/inputs/formik'
 import {
   P,
   Info2,
@@ -160,7 +160,7 @@ const ContactInfo = () => {
       name: 'name',
       label: 'Full name',
       value: info.name ?? '',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       name: 'phone',
@@ -170,25 +170,25 @@ const ContactInfo = () => {
           info.phone,
           locale.country
         ).formatInternational() ?? '',
-      component: TextInputFormik
+      component: NumberInput
     },
     {
       name: 'email',
       label: 'Email',
       value: info.email ?? '',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       name: 'website',
       label: 'Website',
       value: info.website ?? '',
-      component: TextInputFormik
+      component: TextInput
     },
     {
       name: 'companyNumber',
       label: 'Company number',
       value: info.companyNumber ?? '',
-      component: TextInputFormik
+      component: NumberInput
     }
   ]
 

@@ -3,8 +3,8 @@ import React, { useContext } from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
+import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-import TextInputFormik from 'src/components/inputs/formik/TextInput.js'
 
 import NotificationsCtx from '../NotificationsContext'
 
@@ -89,16 +89,22 @@ const CryptoBalanceOverrides = ({ section }) => {
       width: 155,
       textAlign: 'right',
       bold: true,
-      input: TextInputFormik,
-      suffix: currency
+      input: NumberInput,
+      suffix: currency,
+      inputProps: {
+        decimalPlaces: 2
+      }
     },
     {
       name: HIGH_BALANCE_KEY,
       width: 155,
       textAlign: 'right',
       bold: true,
-      input: TextInputFormik,
-      suffix: currency
+      input: NumberInput,
+      suffix: currency,
+      inputProps: {
+        decimalPlaces: 2
+      }
     }
   ]
 
