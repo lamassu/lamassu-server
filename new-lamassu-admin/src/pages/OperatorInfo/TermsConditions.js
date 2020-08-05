@@ -10,7 +10,7 @@ import * as Yup from 'yup'
 import ErrorMessage from 'src/components/ErrorMessage'
 import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import { TextInput } from 'src/components/inputs/formik'
 import { Info2, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
@@ -149,7 +149,7 @@ const TermsConditions = () => {
                 <Field
                   id={f.name}
                   name={f.name}
-                  component={TextInputFormik}
+                  component={TextInput}
                   width={f.width}
                   placeholder={f.placeholder}
                   type="text"

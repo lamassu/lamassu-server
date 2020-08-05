@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
-import { TextInput } from 'src/components/inputs/formik'
+import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
 const getOverridesFields = (getData, currency) => {
@@ -54,35 +54,47 @@ const getOverridesFields = (getData, currency) => {
       name: 'cashIn',
       display: 'Cash-in',
       width: 140,
-      input: TextInput,
+      input: NumberInput,
       textAlign: 'right',
-      suffix: '%'
+      suffix: '%',
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'cashOut',
       display: 'Cash-out',
       width: 140,
-      input: TextInput,
+      input: NumberInput,
       textAlign: 'right',
-      suffix: '%'
+      suffix: '%',
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'fixedFee',
       display: 'Fixed fee',
       width: 140,
-      input: TextInput,
+      input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
-      suffix: currency
+      suffix: currency,
+      inputProps: {
+        decimalPlaces: 2
+      }
     },
     {
       name: 'minimumTx',
       display: 'Minimun Tx',
       width: 140,
-      input: TextInput,
+      input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
-      suffix: currency
+      suffix: currency,
+      inputProps: {
+        decimalPlaces: 2
+      }
     }
   ]
 }
@@ -93,16 +105,22 @@ const mainFields = currency => [
     display: 'Cash-in',
     width: 169,
     size: 'lg',
-    input: TextInput,
-    suffix: '%'
+    input: NumberInput,
+    suffix: '%',
+    inputProps: {
+      decimalPlaces: 0
+    }
   },
   {
     name: 'cashOut',
     display: 'Cash-out',
     width: 169,
     size: 'lg',
-    input: TextInput,
-    suffix: '%'
+    input: NumberInput,
+    suffix: '%',
+    inputProps: {
+      decimalPlaces: 0
+    }
   },
   {
     name: 'fixedFee',
@@ -111,8 +129,11 @@ const mainFields = currency => [
     size: 'lg',
     doubleHeader: 'Cash-in only',
     textAlign: 'center',
-    input: TextInput,
-    suffix: currency
+    input: NumberInput,
+    suffix: currency,
+    inputProps: {
+      decimalPlaces: 2
+    }
   },
   {
     name: 'minimumTx',
@@ -121,8 +142,11 @@ const mainFields = currency => [
     size: 'lg',
     doubleHeader: 'Cash-in only',
     textAlign: 'center',
-    input: TextInput,
-    suffix: currency
+    input: NumberInput,
+    suffix: currency,
+    inputProps: {
+      decimalPlaces: 2
+    }
   }
 ]
 

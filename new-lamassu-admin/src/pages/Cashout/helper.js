@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 
-import TextInput from 'src/components/inputs/formik/TextInput'
+import { NumberInput } from 'src/components/inputs/formik'
 
 const DenominationsSchema = Yup.object().shape({
   top: Yup.number().required('Required'),
@@ -26,7 +26,10 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       stripe: true,
       width: 200,
       textAlign: 'right',
-      input: TextInput
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'bottom',
@@ -36,7 +39,10 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       stripe: true,
       textAlign: 'right',
       width: 200,
-      input: TextInput
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'zeroConfLimit',
@@ -45,7 +51,10 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       stripe: true,
       textAlign: 'right',
       width: 200,
-      input: TextInput
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     }
   ]
 }
