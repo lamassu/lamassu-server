@@ -75,47 +75,7 @@ export default {
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  idDataCard: {
-    width: 544,
-    height: 240
-  },
-  phoneCard: {
-    width: 253,
-    height: 240
-  },
-  idCardPhotoCard: {
-    width: 378,
-    height: 240,
-    margin: [[32, 0, 0, 0]]
-  },
-  field: {
-    position: 'relative',
-    width: 144,
-    height: 46,
-    padding: [[0, 4, 4, 0]],
-    display: 'flex',
-    flexDirection: 'column',
-    '& > p:first-child': {
-      height: 16,
-      lineHeight: '16px',
-      paddingLeft: 3,
-      margin: [[0, 0, 5, 0]]
-    },
-    '& > p:last-child': {
-      margin: 0,
-      paddingLeft: 4
-    }
-  },
   customerName: {
     marginBottom: 32
-  },
-  fieldDisplay: {
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  idCardPhoto: {
-    maxWidth: 171,
-    maxHeight: 97
   }
 }

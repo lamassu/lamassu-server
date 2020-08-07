@@ -1,9 +1,10 @@
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Title from 'src/components/Title'
+import { Label1 } from 'src/components/typography'
 
 import styles from './TitleSection.styles'
 
@@ -19,7 +20,14 @@ const TitleSection = ({ className, title, error, labels, children }) => {
           <ErrorMessage className={classes.error}>Failed to save</ErrorMessage>
         )}
       </div>
-      <div className={classes.headerLabels}>{labels}</div>
+      <Box display="flex" flexDirection="row">
+        {(labels ?? []).map(({ icon, label }, idx) => (
+          <Box key={idx} display="flex" alignItems="center">
+            <div className={classes.icon}>{icon}</div>
+            <Label1 className={classes.label}>{label}</Label1>
+          </Box>
+        ))}
+      </Box>
       {children}
     </div>
   )

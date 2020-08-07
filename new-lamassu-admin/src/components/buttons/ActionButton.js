@@ -8,7 +8,7 @@ const useStyles = makeStyles(styles)
 
 const ActionButton = memo(
   ({ className, Icon, InverseIcon, color, children, ...props }) => {
-    const classes = useStyles({ color })
+    const classes = useStyles()
     const classNames = {
       [classes.actionButton]: true,
       [classes.primary]: color === 'primary',

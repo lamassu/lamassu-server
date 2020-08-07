@@ -9,11 +9,14 @@ import {
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
 
-import mainStyles from '../CustomersList.styles'
-
 import Field from './Field'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles({
+  phoneCard: {
+    width: 300,
+    height: 240
+  }
+})
 
 const PhoneCard = memo(({ customerData, updateCustomer }) => {
   const classes = useStyles()
