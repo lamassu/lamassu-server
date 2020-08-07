@@ -1,7 +1,3 @@
-Main menu:
-- do not change fonts on hover in the main menu
-- make the clickable button bigger, not just text
-
 Overall:
 - caching the page
 - validation is bad rn, negatives being allowed
@@ -80,7 +76,6 @@ Compliance:
 - Reject Address Reuse missing (MAKE BLACKLIST SCREEN AND PUT IT THERE)
 - Currently admin only handles { type: 'amount', direction: 'both' }
 - Sanctions should have more care in customers.js, currently just looking if is active as if old config
-
 
 Ideas
   - Transactions could have a link to the customer
