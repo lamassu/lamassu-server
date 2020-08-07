@@ -39,24 +39,17 @@ export default {
   },
   ul: {
     display: 'flex',
-    marginBottom: spacer * 1,
-    paddingLeft: spacer * 4.5
+    paddingLeft: spacer * 4.5,
+    height: spacer * 7,
+    margin: 0
   },
   li: {
-    extend: tl2,
-    height: spacer * 3,
+    // extend: tl2,
+    // height: spacer * 7,
     listStyle: 'none',
     color: white,
-    padding: [[0, spacer * 2.5]]
-  },
-  link: {
-    extend: p,
-    textDecoration: 'none',
-    border: 'none',
-    color: white,
-    backgroundColor: 'transparent',
+    margin: [[spacer * 2.5, spacer * 2.5, 0, spacer * 2.5]],
     '&:hover': {
-      extend: tl2,
       color: white
     },
     '&:hover::after': {
@@ -78,6 +71,34 @@ export default {
       transition: [['all', '0.2s', 'cubic-bezier(0.95, 0.1, 0.45, 0.94)']]
     }
   },
+  link: {
+    extend: p,
+    textDecoration: 'none',
+    border: 'none',
+    color: white,
+    backgroundColor: 'transparent'
+    // '&:hover': {
+    //   color: white
+    // },
+    // '&:hover::after': {
+    //   width: '50%',
+    //   marginLeft: '-25%'
+    // },
+    // position: 'relative',
+    // '&:after': {
+    //   content: '""',
+    //   display: 'block',
+    //   background: white,
+    //   width: 0,
+    //   height: 4,
+    //   left: '50%',
+    //   marginLeft: 0,
+    //   bottom: -8,
+    //   position: 'absolute',
+    //   borderRadius: 1000,
+    //   transition: [['all', '0.2s', 'cubic-bezier(0.95, 0.1, 0.45, 0.94)']]
+    // }
+  },
   forceSize: {
     display: 'inline-block',
     textAlign: 'center',
@@ -91,9 +112,8 @@ export default {
     }
   },
   activeLink: {
-    extend: tl2,
     color: white,
-    '&::after': {
+    '& li::after': {
       width: '50%',
       marginLeft: '-25%'
     }
