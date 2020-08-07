@@ -57,21 +57,22 @@ const Header = memo(({ tree }) => {
           <nav className={classes.nav}>
             <ul className={classes.ul}>
               {tree.map((it, idx) => (
-                <li key={idx} className={classes.li}>
-                  <NavLink
-                    to={it.route || it.children[0].route}
-                    isActive={match => {
-                      if (!match) return false
-                      setActive(it)
-                      return true
-                    }}
-                    className={classnames(classes.link, classes.whiteLink)}
-                    activeClassName={classes.activeLink}>
+                <NavLink
+                  key={idx}
+                  to={it.route || it.children[0].route}
+                  isActive={match => {
+                    if (!match) return false
+                    setActive(it)
+                    return true
+                  }}
+                  className={classnames(classes.link, classes.whiteLink)}
+                  activeClassName={classes.activeLink}>
+                  <li className={classes.li}>
                     <span className={classes.forceSize} forcesize={it.label}>
                       {it.label}
                     </span>
-                  </NavLink>
-                </li>
+                  </li>
+                </NavLink>
               ))}
             </ul>
           </nav>
