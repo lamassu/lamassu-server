@@ -46,7 +46,7 @@ const Row = ({
   }
 
   return (
-    <div>
+    <div className={classes.rowWrapper}>
       <div className={classnames({ [classes.before]: expanded })}>
         <Tr
           className={classnames(trClasses)}

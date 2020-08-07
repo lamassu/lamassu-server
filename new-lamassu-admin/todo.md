@@ -4,107 +4,84 @@ Main menu:
 
 Overall:
 - caching the page
-- coin dropdown should show all coins
 - validation is bad rn, negatives being allowed
-- input number should only allow numbers
 - right aligned numbers on all tables
 - locale based mil separators 1.000 1,000
 
 Cashboxes: 
-- right aligned number (SAME EVERYWHERE)
+- right aligned number
+
+Locale:
+- Only allow one override per machine
+
+Notifications:
+- one of the crypto balance alerts has to be optional because of migration
 
 UI:
-- replace all the tooltips with new component
 - tooltip like components should close on esc
 - saving should be a one time thing. disable buttons so user doesnt spam it
 - transitions
 - error handling
-- should all (machines/coins/...) be a option on some overrides?
 - select components
 - talk with nunu + neal: Hover css for edit buttons + first first cancel later
-- filter countries by code as well, US should go to United States
-- filter prioritize the start of words(not alphabetically)
-- dropdown should have everythihg selected on the top
 - disable edit on non-everrides => overrides
-- remove the broswer default tooltip
-
+- splash screens and home
+- maybe a indication that there's more to search on dropdown
+- required signifier on form fields - (required) or *
+- USD should show as a suffix (validate all screens)
+- stop line breaking on multi select
+- input width should be enough to hold values without cutting text
+- font sizes could be better
+- min height in virtualized table (rows get hidden if not enough height in browser)
 
 Machine status:
-- legend colors are different from the spec
-- action Error/Success indication 
-- load machine model from l-m
-- align popup title with content
-- talk with neal to see if the actions should be consistent
 - font-size of the 'write to confirm'
-- reboot icon cut off
-- ask neal for the support articles
-- stop line breaking on multi select
-
-Commissions:
-- overrides can be tighter. Hide coins already used by the same machine on another line.
-- no negative values
-- autoselect not getting errored when tabbed out
-
-Operator Info:
-- That should be paginated with routes!
-
-Terms and Conditions:
-- default values are not working properly
-
-Contact information:
-- When the fields are empty, should there be a warning somewhere? Or maybe we could create an exception that if the fields are empty they shouldn't show up
-- l-m uses name, email, phone. The rest is just used for the receipt printing for now
-
-CoinATMRadar:
-- We now have photo, should we relay that info?
-
-Sms/email:
-- There's no place to pick a third party provider anymore. (sms.js, email.js)
-
-Notifications:
-- cash out 500 notes max top 500 max bottom
-- crypto balance alerts input width (CHECK FOR ALL)
-
-Locale:
-- limit languages
-- search crypto per name as well
-- show full name on the dropdown
-
-Machine name:
-- Previously we were grabbing that from the config, but since new admin still cant change the name i`m now grabbing it from the db. Possible issues if users change the machine name from the initial one. Investivate alternatives.
 
 Migrate:
 - Need to write config migration. 
 - Rewrite config validate
 - remove apply defaults
 
-Compliance:
-- Reject Address Reuse missing
-- Currently admin only handles { type: 'volume', direction: 'both' }
-- Sanctions should have more care in customers.js, currently just looking if is active as if old config
-
-Customers:
-- Should add id and make it main part of the table? Name is not common at all
-
-Logs:
-- the new functionality that saves server logs to a db breaks initial install chicken-egg with db-logger
-
-Downloading (logs and tx):
-- They are always downloading from the local data, should be from server
-
 Cash out:
-- On off should have a fixed sized so things dont move a lot
-- separate text from the first screen
-- auto focus on fields after clicking next
-- improve spacing around paragraphs
-- button is on a wrong place on steps 2 and 3
-- make it a dropdown based on the machine denomimnations settings
 - ask nuno about zero conf limit
-- USD should show as a suffix (validate all screens)
-- Splash image for wizard
 
 Server:
 - Takes too long to load. Investigate
 
 Review slow internet loading:
-- Table should be loaded
+- Table should be loaded (we want to load the table with no data)
+
+3rd party services:
+- remove strike
+- ask neal anyone uses itbit
+
+Wallet:
+- ask neal and nuno how to handle unconfigured third party services on the table edit
+
+Operator Info:
+- That should be paginated with routes!
+
+CoinATMRadar:
+- relay facephoto info
+- we should show the highest amount that requires a requirement
+
+Customers:
+- add status
+- cash-in cash-out are reversed
+
+Sms/email:
+- There's no place to pick a third party provider anymore. (sms.js, email.js) neal + nuno
+
+Machine name:
+- update the db with whatever name is on the old config
+- where to change name of the mahcines NUNO + NEAL
+
+Compliance:
+- Reject Address Reuse missing (MAKE BLACKLIST SCREEN AND PUT IT THERE)
+- Currently admin only handles { type: 'amount', direction: 'both' }
+- Sanctions should have more care in customers.js, currently just looking if is active as if old config
+
+
+Ideas
+  - Transactions could have a link to the customer
+  - Transactions table on customer should have a link to "transactions"

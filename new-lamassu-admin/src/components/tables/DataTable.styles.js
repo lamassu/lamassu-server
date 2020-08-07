@@ -7,6 +7,10 @@ export default {
     cursor: 'pointer',
     padding: 4
   },
+  rowWrapper: {
+    // workaround to shadows cut by r-virtualized when scroll is visible
+    padding: 1
+  },
   row: {
     borderRadius: 0
   },
@@ -27,6 +31,8 @@ export default {
     flex: [[1, 1, 'auto']]
   },
   table: ({ width }) => ({
+    marginBottom: 30,
+    minHeight: 200,
     width,
     flex: 1,
     display: 'flex',

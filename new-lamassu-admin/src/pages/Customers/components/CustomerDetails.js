@@ -3,19 +3,35 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
-import { H2 } from 'src/components/typography'
+import { H2, Label1, P } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-
-import { ifNotNull } from '../../../utils/nullCheck'
-import styles from '../CustomersList.styles'
+import { comet } from 'src/styling/variables'
+import { ifNotNull } from 'src/utils/nullCheck'
 
 import FrontCameraPhoto from './FrontCameraPhoto'
+
+const styles = {
+  icon: {
+    marginRight: 11
+  },
+  name: {
+    marginTop: 6
+  },
+  value: {
+    height: 16
+  },
+  label: {
+    marginBottom: 4,
+    color: comet
+  }
+}
 
 const useStyles = makeStyles(styles)
 
 const CustomerDetails = memo(({ customer }) => {
   const classes = useStyles()
+  const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
 
   const elements = [
     {
@@ -48,13 +64,9 @@ const CustomerDetails = memo(({ customer }) => {
       value: ifNotNull(
         customer.lastTxFiat,
         <>
+          <LastTxIcon className={classes.icon} />
           {`${Number.parseFloat(customer.lastTxFiat)} 
             ${customer.lastTxFiatCode}`}
-          {customer.lastTxClass === 'cashOut' ? (
-            <TxOutIcon className={classes.txClassIconRight} />
-          ) : (
-            <TxInIcon className={classes.txClassIconRight} />
-          )}
         </>
       )
     }
@@ -65,25 +77,35 @@ const CustomerDetails = memo(({ customer }) => {
       <FrontCameraPhoto
         frontCameraPath={R.path(['frontCameraPath'])(customer)}
       />
-      <div>
-        <Box display="flex">
-          <H2 noMargin>Rafael{R.path(['name'])(customer)}</H2>
-        </Box>
-        <Box display="flex">
+      <Box display="flex" flexDirection="column">
+        <div className={classes.name}>
+          <H2 noMargin>
+            {R.path(['name'])(customer) ?? R.path(['phone'])(customer)}
+          </H2>
+        </div>
+        <Box display="flex" mt="auto">
           {elements.map(({ size, header }, idx) => (
-            <div key={idx} className={classes.label1} style={{ width: size }}>
+            <Label1
+              noMargin
+              key={idx}
+              className={classes.label}
+              style={{ width: size }}>
               {header}
-            </div>
+            </Label1>
           ))}
         </Box>
         <Box display="flex">
           {elements.map(({ size, value }, idx) => (
-            <div key={idx} className={classes.p} style={{ width: size }}>
+            <P
+              noMargin
+              key={idx}
+              className={classes.value}
+              style={{ width: size }}>
               {value}
-            </div>
+            </P>
           ))}
         </Box>
-      </div>
+      </Box>
     </Box>
   )
 })

@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
+import * as R from 'ramda'
 import React from 'react'
 
 import DataTable from 'src/components/tables/DataTable'
@@ -16,6 +17,7 @@ const useStyles = makeStyles(mainStyles)
 
 const TransactionsList = ({ data }) => {
   const classes = useStyles()
+  const hasData = !(R.isEmpty(data) || R.isNil(data))
 
   const elements = [
     {
@@ -77,10 +79,14 @@ const TransactionsList = ({ data }) => {
     <>
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
-          <H4>All transactions from this customer</H4>
+          <H4>
+            {hasData
+              ? 'All transactions from this customer'
+              : 'No transactions so far'}
+          </H4>
         </div>
       </div>
-      <DataTable elements={elements} data={data} />
+      {hasData && <DataTable elements={elements} data={data} />}
     </>
   )
 }
