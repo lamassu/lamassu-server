@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles'
-import moment from 'moment'
+import { makeStyles, Box } from '@material-ui/core'
+// import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
@@ -11,11 +11,21 @@ import {
 import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
 import { URI } from 'src/utils/apollo'
 
-import mainStyles from '../CustomersList.styles'
+// import Field from './Field'
 
-import Field from './Field'
-
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles({
+  idCardPhotoCard: {
+    width: 325,
+    height: 240,
+    margin: [[32, 0, 0, 0]]
+  },
+  idCardPhoto: {
+    maxHeight: 130
+  },
+  field: {
+    marginLeft: 14
+  }
+})
 
 const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
   const classes = useStyles()
@@ -29,7 +39,7 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
         updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED })
       }
       reject={() => updateCustomer({ idCardPhotoOverride: OVERRIDE_REJECTED })}>
-      <div className={classes.row}>
+      <Box display="flex" flex="1" justifyContent="center" alignItems="center">
         {customerData.idCardPhotoPath ? (
           <img
             className={classes.idCardPhoto}
@@ -41,13 +51,14 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
         ) : (
           <CrossedCameraIcon />
         )}
-        <Field
+        {/* <Field
+          className={classes.field}
           label={'Expiration date'}
           display={moment
             .utc(R.path(['idCardDataExpiration'])(customerData))
             .format('YYYY-MM-D')}
-        />
-      </div>
+        /> */}
+      </Box>
     </PropertyCard>
   )
 })

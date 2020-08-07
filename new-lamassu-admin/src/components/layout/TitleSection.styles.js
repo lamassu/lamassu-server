@@ -1,5 +1,3 @@
-import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
-
 export default {
   titleWrapper: {
     display: 'flex',
@@ -13,5 +11,10 @@ export default {
   error: {
     marginLeft: 12
   },
-  headerLabels: mainStyles.headerLabels
+  icon: {
+    marginRight: 6
+  },
+  label: {
+    marginRight: 24
+  }
 }

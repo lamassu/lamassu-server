@@ -53,7 +53,6 @@ function H3({ children, noMargin, className, ...props }) {
 
 function H4({ children, noMargin, className, ...props }) {
   const classes = useStyles()
-  console.log(className)
   const classNames = {
     [classes.h4]: true,
     [classes.noMargin]: noMargin,

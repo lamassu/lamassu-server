@@ -112,9 +112,9 @@ const CustomerProfile = memo(() => {
     })
 
   const customerData = R.path(['customer'])(customerResponse) ?? []
-
-  const transactionsData = R.sortWith([R.descend('created')])(
-    R.path(['transactions'])(customerData) ?? []
+  const rawTransactions = R.path(['transactions'])(customerData) ?? []
+  const sortedTransactions = R.sort(R.descend(R.prop('cryptoAtoms')))(
+    rawTransactions
   )
 
   const blocked =
@@ -133,7 +133,7 @@ const CustomerProfile = memo(() => {
           Customers
         </Label1>
         <Label2 noMargin className={classes.labelLink}>
-          Rafael{R.path(['name'])(customerData)}
+          {R.path(['name'])(customerData) ?? R.path(['phone'])(customerData)}
         </Label2>
       </Breadcrumbs>
       <div>
@@ -171,7 +171,7 @@ const CustomerProfile = memo(() => {
           />
         </Box>
       </div>
-      <TransactionsList data={transactionsData} />
+      <TransactionsList data={sortedTransactions} />
     </>
   )
 })

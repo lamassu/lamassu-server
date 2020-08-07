@@ -61,7 +61,8 @@
     "prettier": "1.19.1",
     "prettier-config-standard": "^1.0.1",
     "react-scripts": "^3.3.0",
-    "serve": "^11.2.0"
+    "serve": "^11.2.0",
+    "source-map-explorer": "^2.4.2"
   },
   "husky": {
     "hooks": {
@@ -78,6 +79,7 @@
     "start": "react-scripts start",
     "fix": "eslint --fix --ext .js,.md,.json src/",
     "build": "react-scripts build",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
