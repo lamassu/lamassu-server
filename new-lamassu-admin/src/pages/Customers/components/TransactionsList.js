@@ -44,6 +44,7 @@ const TransactionsList = ({ data }) => {
     {
       header: 'Cash',
       width: 146,
+      textAlign: 'right',
       view: it => (
         <>
           {`${Number.parseFloat(it.fiat)} `}
@@ -54,6 +55,7 @@ const TransactionsList = ({ data }) => {
     {
       header: 'Crypto',
       width: 142,
+      textAlign: 'right',
       view: it => (
         <>
           {`${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(
