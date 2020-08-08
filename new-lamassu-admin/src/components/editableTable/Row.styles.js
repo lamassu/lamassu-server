@@ -4,6 +4,9 @@ export default {
   cancelButton: {
     marginRight: 20
   },
+  lastOfGroup: {
+    marginBottom: 24
+  },
   extraPaddingLeft: {
     paddingLeft: 35
   },

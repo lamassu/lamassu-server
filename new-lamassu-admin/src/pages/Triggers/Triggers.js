@@ -8,10 +8,11 @@ import { v4 } from 'uuid'
 import Title from 'src/components/Title'
 import { Link } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import { mainStyles } from './Triggers.styles'
 import Wizard from './Wizard'
-import { Schema, elements } from './helper'
+import { Schema, elements, sortBy } from './helper'
 
 const useStyles = makeStyles(mainStyles)
 
@@ -28,6 +29,7 @@ const GET_INFO = gql`
 `
 
 const Triggers = () => {
+  const classes = useStyles()
   const [wizard, setWizard] = useState(false)
   const [error, setError] = useState(false)
 
@@ -51,7 +53,9 @@ const Triggers = () => {
     return saveConfig({ variables: { config } })
   }
 
-  const classes = useStyles()
+  const currency = R.path(['fiatCurrency'])(
+    fromNamespace(namespaces.LOCALE)(data?.config)
+  )
 
   return (
     <>
@@ -69,13 +73,20 @@ const Triggers = () => {
         data={triggers}
         name="triggers"
         enableEdit
+        sortBy={sortBy}
+        groupBy="triggerType"
         enableDelete
         save={save}
         validationSchema={Schema}
         elements={elements}
       />
       {wizard && (
-        <Wizard error={error} save={add} onClose={() => setWizard(null)} />
+        <Wizard
+          currency={currency}
+          error={error}
+          save={add}
+          onClose={() => setWizard(null)}
+        />
       )}
     </>
   )

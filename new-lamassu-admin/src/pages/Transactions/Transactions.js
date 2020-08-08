@@ -118,17 +118,17 @@ const Transactions = () => {
     },
     {
       header: 'Date (UTC)',
-      view: it => moment.utc(it.created).format('YYYY-MM-D'),
+      view: it => moment.utc(it.created).format('YYYY-MM-DD'),
       textAlign: 'right',
       size: 'sm',
-      width: 124
+      width: 144
     },
     {
       header: 'Time (UTC)',
       view: it => moment.utc(it.created).format('HH:mm:ss'),
       textAlign: 'right',
       size: 'sm',
-      width: 124
+      width: 144
     }
   ]
 

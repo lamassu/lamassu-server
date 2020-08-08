@@ -1,13 +1,13 @@
 import { fade } from '@material-ui/core/styles/colorManipulator'
 
-import { offColor, comet } from 'src/styling/variables'
+import { fontSize4, offColor, comet } from 'src/styling/variables'
 
 export default {
   wrapper: {
     display: 'flex',
     marginTop: 24,
     marginBottom: 32,
-    fontSize: 14
+    fontSize: fontSize4
   },
   column1: {
     width: 600

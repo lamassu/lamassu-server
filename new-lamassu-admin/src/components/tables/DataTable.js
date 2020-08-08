@@ -47,7 +47,7 @@ const Row = ({
 
   return (
     <div className={classes.rowWrapper}>
-      <div className={classnames({ [classes.before]: expanded })}>
+      <div className={classnames({ [classes.before]: expanded && id !== 0 })}>
         <Tr
           className={classnames(trClasses)}
           onClick={() => {
