@@ -9,13 +9,14 @@ import React, { useEffect, useState, memo } from 'react'
 
 import { Button, IconButton } from 'src/components/buttons'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { fontSize3 } from 'src/styling/variables'
 
 import { TextInput } from './inputs'
 import { H4, P } from './typography'
 
 const useStyles = makeStyles({
   label: {
-    fontSize: 16
+    fontSize: fontSize3
   },
   spacing: {
     padding: 32

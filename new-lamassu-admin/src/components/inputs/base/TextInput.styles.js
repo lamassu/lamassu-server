@@ -3,7 +3,7 @@ import { secondaryColor } from 'src/styling/variables'
 
 export default {
   size: ({ size }) => ({
-    marginTop: size === 'lg' ? -2 : 0,
+    marginTop: size === 'lg' ? 0 : 2,
     ...bySize(size)
   }),
   bold,

@@ -63,11 +63,11 @@ const fontPrimary = 'Mont'
 const fontSecondary = 'MuseoSans'
 const fontMonospaced = 'BPmono'
 
-let fontSize1 = 24
-let fontSize2 = 20
-let fontSize3 = 16
-let fontSize4 = 14
-let fontSize5 = 12
+let fontSize1 = 25
+let fontSize2 = 21
+let fontSize3 = 17
+let fontSize4 = 15
+let fontSize5 = 13
 
 if (version === 8) {
   fontSize1 = 32

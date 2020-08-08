@@ -4,7 +4,7 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import React from 'react'
 
-import { secondaryColor } from '../../../styling/variables'
+import { fontSize2, fontSize3, secondaryColor } from 'src/styling/variables'
 
 const useStyles = makeStyles({
   root: {
@@ -30,9 +30,11 @@ const CheckboxInput = ({ name, onChange, value, label, ...props }) => {
       value={value}
       checked={value}
       icon={
-        <CheckBoxOutlineBlankIcon style={{ marginLeft: 2, fontSize: 16 }} />
+        <CheckBoxOutlineBlankIcon
+          style={{ marginLeft: 2, fontSize: fontSize3 }}
+        />
       }
-      checkedIcon={<CheckBoxIcon style={{ fontSize: 20 }} />}
+      checkedIcon={<CheckBoxIcon style={{ fontSize: fontSize2 }} />}
       disableRipple
       {...props}
     />

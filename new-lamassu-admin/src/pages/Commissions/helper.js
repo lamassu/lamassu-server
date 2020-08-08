@@ -75,7 +75,7 @@ const getOverridesFields = (getData, currency) => {
     {
       name: 'fixedFee',
       display: 'Fixed fee',
-      width: 140,
+      width: 144,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
@@ -87,7 +87,7 @@ const getOverridesFields = (getData, currency) => {
     {
       name: 'minimumTx',
       display: 'Minimun Tx',
-      width: 140,
+      width: 144,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',

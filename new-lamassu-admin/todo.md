@@ -5,7 +5,6 @@ Overall:
   - validation is bad rn, negatives being allowed
   - locale based mil separators 1.000 1,000
   - Table should be loaded on slow internet (we want to load the table with no data) 
-  - font sizes could be better
   - tooltip like components should close on esc
   - saving should be a one time thing. disable buttons so user doesnt spam it
   - disable edit on non-everrides => overrides
@@ -20,9 +19,6 @@ Locale:
 
 Notifications:
   - one of the crypto balance alerts has to be optional because of migration
-
-Machine status:
-  - font-size of the 'write to confirm'
 
 Server:
   - Takes too long to load. Investigate
@@ -47,3 +43,7 @@ Compliance:
 Ideas
   - Transactions could have a link to the customer
   - Transactions table on customer should have a link to "transactions"
+
+
+Feedback needed
+  - font sizes could be better (I've bumped all font sizes by 1px, looks pretty good as fonts do a good vertical bump in size. Maybe some of the fonts don't like even values)

@@ -47,6 +47,8 @@ const ETable = ({
   setEditing,
   stripeWhen,
   disableRowEdit,
+  groupBy,
+  sortBy,
   createText = 'Add override'
 }) => {
   const [editingId, setEditingId] = useState(null)
@@ -101,6 +103,8 @@ const ETable = ({
   const showButtonOnEmpty = !data.length && enableCreate && !adding
   const canAdd = !forceDisable && !editingId && !disableAdd && !adding
   const showTable = adding || data.length !== 0
+
+  const innerData = sortBy ? R.sortWith(sortBy)(data) : data
 
   const ctxValue = {
     elements,
@@ -159,24 +163,33 @@ const ETable = ({
                     </Form>
                   </Formik>
                 )}
-                {data.map((it, idx) => (
-                  <Formik
-                    key={it.id ?? idx}
-                    enableReinitialize
-                    initialValues={it}
-                    onReset={onReset}
-                    validationSchema={validationSchema}
-                    onSubmit={innerSave}>
-                    <Form>
-                      <ERow
-                        editing={editingId === it.id}
-                        disabled={
-                          forceDisable || (editingId && editingId !== it.id)
-                        }
-                      />
-                    </Form>
-                  </Formik>
-                ))}
+                {innerData.map((it, idx) => {
+                  const nextElement = innerData[idx + 1]
+                  const isLastOfGroup =
+                    groupBy &&
+                    nextElement &&
+                    nextElement[groupBy] !== it[groupBy]
+
+                  return (
+                    <Formik
+                      key={it.id ?? idx}
+                      enableReinitialize
+                      initialValues={it}
+                      onReset={onReset}
+                      validationSchema={validationSchema}
+                      onSubmit={innerSave}>
+                      <Form>
+                        <ERow
+                          lastOfGroup={isLastOfGroup}
+                          editing={editingId === it.id}
+                          disabled={
+                            forceDisable || (editingId && editingId !== it.id)
+                          }
+                        />
+                      </Form>
+                    </Formik>
+                  )
+                })}
               </TBody>
             </Table>
           </>

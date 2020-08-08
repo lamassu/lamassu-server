@@ -1,6 +1,6 @@
 import typographyStyles from 'src/components/typography/styles'
 import baseStyles from 'src/pages/Logs.styles'
-import { zircon, primaryColor } from 'src/styling/variables'
+import { zircon, primaryColor, fontSize4 } from 'src/styling/variables'
 
 const { label1 } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer } = baseStyles
@@ -30,7 +30,7 @@ export default {
   },
   p: {
     fontFamily: 'MuseoSans',
-    fontSize: 14,
+    fontSize: fontSize4,
     fontWeight: 500,
     fontStretch: 'normal',
     fontStyle: 'normal',
