@@ -12,6 +12,7 @@ export default {
     padding: 1
   },
   row: {
+    border: [[2, 'solid', 'transparent']],
     borderRadius: 0
   },
   expanded: {

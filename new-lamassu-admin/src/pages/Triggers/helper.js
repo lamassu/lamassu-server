@@ -8,6 +8,8 @@ import * as Yup from 'yup'
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
 import { H4 } from 'src/components/typography'
+import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { errorColor } from 'src/styling/variables'
 
 const useStyles = makeStyles({
@@ -32,6 +34,12 @@ const useStyles = makeStyles({
   specialGrid: {
     display: 'grid',
     gridTemplateColumns: [[182, 162, 141]]
+  },
+  directionIcon: {
+    marginRight: 2
+  },
+  directionName: {
+    marginLeft: 6
   }
 })
 
@@ -98,8 +106,8 @@ const typeSchema = Yup.object().shape({
 
 const typeOptions = [
   { display: 'Transaction amount', code: 'txAmount' },
-  { display: 'Transaction velocity', code: 'txVelocity' },
   { display: 'Transaction volume', code: 'txVolume' },
+  { display: 'Transaction velocity', code: 'txVelocity' },
   { display: 'Consecutive days', code: 'consecutiveDays' }
 ]
 
@@ -131,9 +139,6 @@ const Type = () => {
         size="lg"
         name="threshold"
         options={typeOptions}
-        labelClassName={classes.radioLabel}
-        radioClassName={classes.radio}
-        className={classes.radioGroup}
       />
     </>
   )
@@ -199,12 +204,29 @@ const getView = (data, code, compare) => it => {
   return R.compose(R.prop(code), R.find(R.propEq(compare ?? 'code', it)))(data)
 }
 
+const DirectionDisplay = ({ code }) => {
+  const classes = useStyles()
+  const displayName = getView(directionOptions, 'display')(code)
+  const showCashIn = code === 'cashIn' || code === 'both'
+  const showCashOut = code === 'cashOut' || code === 'both'
+
+  return (
+    <div>
+      {showCashOut && <TxOutIcon className={classes.directionIcon} />}
+      {showCashIn && <TxInIcon className={classes.directionIcon} />}
+      <span className={classes.directionName}>{displayName}</span>
+    </div>
+  )
+}
+
 const elements = [
   {
     name: 'triggerType',
     size: 'sm',
-    width: 271,
-    input: Autocomplete,
+    width: 230,
+    input: ({ field: { value: name } }) => (
+      <>{getView(typeOptions, 'display')(name)}</>
+    ),
     view: getView(typeOptions, 'display'),
     inputProps: {
       options: typeOptions,
@@ -216,8 +238,10 @@ const elements = [
   {
     name: 'requirement',
     size: 'sm',
-    width: 271,
-    input: Autocomplete,
+    width: 230,
+    input: ({ field: { value: name } }) => (
+      <>{getView(requirementOptions, 'display')(name)}</>
+    ),
     view: getView(requirementOptions, 'display'),
     inputProps: {
       options: requirementOptions,
@@ -229,14 +253,15 @@ const elements = [
   {
     name: 'threshold',
     size: 'sm',
-    width: 271,
+    width: 260,
+    textAlign: 'right',
     input: TextInput
   },
   {
     name: 'cashDirection',
     size: 'sm',
-    width: 200,
-    view: getView(directionOptions, 'display'),
+    width: 282,
+    view: it => <DirectionDisplay code={it} />,
     input: Autocomplete,
     inputProps: {
       options: directionOptions,
@@ -247,4 +272,12 @@ const elements = [
   }
 ]
 
-export { Schema, elements, direction, type, requirements }
+const triggerOrder = R.map(R.prop('code'))(typeOptions)
+const sortBy = [
+  R.comparator(
+    (a, b) =>
+      triggerOrder.indexOf(a.triggerType) < triggerOrder.indexOf(b.triggerType)
+  )
+]
+
+export { Schema, elements, direction, type, requirements, sortBy }

@@ -5,7 +5,8 @@ import {
   tomato,
   spring3,
   spring4,
-  comet
+  comet,
+  fontSize5
 } from 'src/styling/variables'
 
 const propertyCardStyles = {
@@ -25,7 +26,7 @@ const propertyCardStyles = {
   },
   label1: {
     fontFamily: 'MuseoSans',
-    fontSize: 12,
+    fontSize: fontSize5,
     fontWeight: 500,
     fontStretch: 'normal',
     fontStyle: 'normal',

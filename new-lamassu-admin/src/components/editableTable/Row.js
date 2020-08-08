@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
@@ -158,7 +159,7 @@ const groupStriped = elements => {
   )
 }
 
-const ERow = ({ editing, disabled }) => {
+const ERow = ({ editing, disabled, lastOfGroup }) => {
   const { errors } = useFormikContext()
   const {
     elements,
@@ -168,6 +169,8 @@ const ERow = ({ editing, disabled }) => {
     rowSize,
     stripeWhen
   } = useContext(TableCtx)
+
+  const classes = useStyles()
 
   const { values } = useFormikContext()
   const shouldStripe = stripeWhen && stripeWhen(values) && !editing
@@ -187,8 +190,13 @@ const ERow = ({ editing, disabled }) => {
     it => it.editable === undefined || it.editable
   )
 
+  const classNames = {
+    [classes.lastOfGroup]: lastOfGroup
+  }
+
   return (
     <Tr
+      className={classnames(classNames)}
       size={rowSize}
       error={errors && errors.length}
       errorMessage={errors && errors.toString()}>

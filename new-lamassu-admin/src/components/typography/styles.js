@@ -11,7 +11,7 @@ import {
 } from 'src/styling/variables'
 
 const base = {
-  lineHeight: '110%',
+  lineHeight: '120%',
   color: fontColor
 }
 
@@ -37,6 +37,12 @@ export default {
   h4: {
     extend: base,
     fontSize: fontSize4,
+    fontFamily: fontPrimary,
+    fontWeight: 700
+  },
+  h5: {
+    extend: base,
+    fontSize: fontSize3,
     fontFamily: fontPrimary,
     fontWeight: 700
   },

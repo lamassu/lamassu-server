@@ -66,6 +66,21 @@ function H4({ children, noMargin, className, ...props }) {
   )
 }
 
+function H5({ children, noMargin, className, ...props }) {
+  const classes = useStyles()
+  const classNames = {
+    [classes.h5]: true,
+    [classes.noMargin]: noMargin,
+    [className]: !!className
+  }
+
+  return (
+    <h5 className={classnames(classNames)} {...props}>
+      {children}
+    </h5>
+  )
+}
+
 const P = pBuilder('p')
 const Info1 = pBuilder('info1')
 const Info2 = pBuilder('info2')
@@ -99,6 +114,7 @@ export {
   H2,
   H3,
   H4,
+  H5,
   TL1,
   TL2,
   P,

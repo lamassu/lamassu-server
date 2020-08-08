@@ -24,6 +24,25 @@ const styles = {
     borderRadius: 8,
     outline: 0
   }),
+  infoPanelWrapper: ({ width, infoPanelHeight }) => ({
+    width,
+    height: infoPanelHeight,
+    marginTop: 16,
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: infoPanelHeight ?? 200,
+    maxHeight: '90vh',
+    overflowY: 'auto',
+    borderRadius: 8,
+    outline: 0
+  }),
+  panelContent: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    padding: [[0, 24]]
+  },
   content: ({ small }) => ({
     width: '100%',
     display: 'flex',
@@ -48,17 +67,24 @@ const useStyles = makeStyles(styles)
 const Modal = ({
   width,
   height,
+  infoPanelHeight,
   title,
   small,
   infoPanel,
   handleClose,
   children,
+  secondaryModal,
   className,
   closeOnEscape,
   closeOnBackdropClick,
   ...props
 }) => {
-  const classes = useStyles({ width, height, small })
+  const classes = useStyles({
+    width,
+    height,
+    small,
+    infoPanelHeight
+  })
   const TitleCase = small ? H4 : H1
   const closeSize = small ? 16 : 20
 
@@ -84,8 +110,8 @@ const Modal = ({
           <div className={classes.content}>{children}</div>
         </Paper>
         {infoPanel && (
-          <Paper className={classnames(classes.wrapper, className)}>
-            {infoPanel}
+          <Paper className={classnames(classes.infoPanelWrapper, className)}>
+            <div className={classes.panelContent}>{infoPanel}</div>
           </Paper>
         )}
       </>

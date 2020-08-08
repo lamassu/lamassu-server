@@ -1,3 +1,5 @@
+import { fontSize5 } from 'src/styling/variables'
+
 export default {
   titleWrapper: {
     display: 'flex',
@@ -41,7 +43,7 @@ export default {
     margin: 8,
     display: 'flex',
     alignItems: 'center',
-    fontSize: 12,
+    fontSize: fontSize5,
     padding: [[0, 12]]
   },
   shareIcon: {
