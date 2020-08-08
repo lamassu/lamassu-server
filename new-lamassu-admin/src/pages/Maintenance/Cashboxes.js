@@ -78,7 +78,6 @@ const Cashboxes = () => {
       name: 'name',
       header: 'Machine',
       width: 254,
-      textAlign: 'left',
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
     },
@@ -86,7 +85,7 @@ const Cashboxes = () => {
       name: 'cassette1',
       header: 'Cash-out 1',
       width: 265,
-      textAlign: 'left',
+      textAlign: 'right',
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
@@ -96,7 +95,7 @@ const Cashboxes = () => {
       name: 'cassette2',
       header: 'Cash-out 2',
       width: 265,
-      textAlign: 'left',
+      textAlign: 'right',
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0

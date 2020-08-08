@@ -5,7 +5,6 @@ import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
-import strike from './strike'
 import twilio from './twilio'
 
 export default {
@@ -16,6 +15,5 @@ export default {
   [itbit.code]: itbit,
   [kraken.code]: kraken,
   [mailgun.code]: mailgun,
-  [strike.code]: strike,
   [twilio.code]: twilio
 }

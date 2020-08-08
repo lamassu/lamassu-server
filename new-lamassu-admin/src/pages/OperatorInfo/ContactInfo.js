@@ -166,6 +166,7 @@ const ContactInfo = () => {
       name: 'phone',
       label: 'Phone number',
       value:
+        info.phone &&
         parsePhoneNumberFromString(
           info.phone,
           locale.country
