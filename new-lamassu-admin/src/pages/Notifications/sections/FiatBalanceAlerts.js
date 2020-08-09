@@ -41,13 +41,10 @@ const FiatBalance = ({
       .required()
   })
 
-  const fiatBalanceCassette1Percent = data?.fiatBalanceCassette1
-    ? (100 * data?.fiatBalanceCassette1) / max
-    : 0
-
-  const fiatBalanceCassette2Percent = data?.fiatBalanceCassette2
-    ? (100 * data?.fiatBalanceCassette2) / max
-    : 0
+  const fiatBalanceCassette1Percent =
+    (100 * (data?.fiatBalanceCassette1 ?? 0)) / max
+  const fiatBalanceCassette2Percent =
+    (100 * (data?.fiatBalanceCassette2 ?? 0)) / max
 
   return (
     <Formik
