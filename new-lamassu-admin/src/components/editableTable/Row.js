@@ -100,6 +100,7 @@ const ECol = ({
     width,
     textAlign,
     suffix,
+    SuffixComponent = TL2,
     view = it => it?.toString(),
     inputProps = {}
   } = config
@@ -137,7 +138,9 @@ const ECol = ({
       ) : (
         values && <>{view(values[name])}</>
       )}
-      {suffix && <TL2 className={classes.suffix}>{suffix}</TL2>}
+      {suffix && (
+        <SuffixComponent className={classes.suffix}>{suffix}</SuffixComponent>
+      )}
     </Td>
   )
 }

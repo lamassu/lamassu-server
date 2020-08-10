@@ -17,7 +17,7 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Info3 } from 'src/components/typography'
+import { Label1, Info3 } from 'src/components/typography'
 import { ReactComponent as WhiteShareIcon } from 'src/styling/icons/circle buttons/share/white.svg'
 import { ReactComponent as ShareIcon } from 'src/styling/icons/circle buttons/share/zodiac.svg'
 
@@ -118,7 +118,7 @@ const Logs = () => {
                 Icon={ShareIcon}
                 InverseIcon={WhiteShareIcon}
                 onClick={sendSnapshot}>
-                Share with Lamassu
+                <Label1>Share with Lamassu</Label1>
               </SimpleButton>
               <Info3>{saveMessage}</Info3>
             </div>
