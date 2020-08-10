@@ -58,7 +58,7 @@ const getOverridesFields = (getData, currency) => {
       textAlign: 'right',
       suffix: '%',
       inputProps: {
-        decimalPlaces: 0
+        decimalPlaces: 3
       }
     },
     {
@@ -69,7 +69,7 @@ const getOverridesFields = (getData, currency) => {
       textAlign: 'right',
       suffix: '%',
       inputProps: {
-        decimalPlaces: 0
+        decimalPlaces: 3
       }
     },
     {
@@ -108,7 +108,7 @@ const mainFields = currency => [
     input: NumberInput,
     suffix: '%',
     inputProps: {
-      decimalPlaces: 0
+      decimalPlaces: 3
     }
   },
   {
@@ -119,7 +119,7 @@ const mainFields = currency => [
     input: NumberInput,
     suffix: '%',
     inputProps: {
-      decimalPlaces: 0
+      decimalPlaces: 3
     }
   },
   {
