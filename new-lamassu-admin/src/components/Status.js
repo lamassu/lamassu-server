@@ -33,7 +33,7 @@ const useStyles = makeStyles({
     marginRight: spacer / 4,
     marginBottom: spacer / 2,
     marginLeft: spacer / 4,
-    height: 18,
+    height: spacer * 3,
     backgroundColor: ({ type }) => backgroundColors[type]
   },
   label: {

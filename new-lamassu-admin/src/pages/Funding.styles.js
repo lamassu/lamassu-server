@@ -85,5 +85,11 @@ export default {
   },
   pending: {
     backgroundColor: disabledColor2
+  },
+  copyToClipboard: {
+    marginLeft: 'auto',
+    paddingTop: 6,
+    paddingLeft: 15,
+    marginRight: -11
   }
 }

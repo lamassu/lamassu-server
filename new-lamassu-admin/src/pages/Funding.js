@@ -20,6 +20,7 @@ import {
   Label1,
   Label3
 } from 'src/components/typography'
+import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { primaryColor } from 'src/styling/variables'
 
 import styles from './Funding.styles'
@@ -199,7 +200,11 @@ const Funding = () => {
               <H3 className={classes.topSpacer}>Address</H3>
               <div className={classes.addressWrapper}>
                 <Mono className={classes.address}>
-                  <strong>{formatAddress(selected.fundingAddress)}</strong>
+                  <strong>
+                    <CopyToClipboard buttonClassname={classes.copyToClipboard}>
+                      {formatAddress(selected.fundingAddress)}
+                    </CopyToClipboard>
+                  </strong>
                 </Mono>
               </div>
             </div>
