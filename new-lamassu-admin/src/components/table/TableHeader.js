@@ -10,11 +10,11 @@ import {
   white
 } from 'src/styling/variables'
 
-const { label2 } = typographyStyles
+const { tl2 } = typographyStyles
 
 const useStyles = makeStyles({
   th: {
-    extend: label2,
+    extend: tl2,
     backgroundColor: tableHeaderColor,
     height: tableHeaderHeight,
     textAlign: 'left',
