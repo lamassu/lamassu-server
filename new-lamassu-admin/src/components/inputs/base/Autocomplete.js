@@ -42,10 +42,15 @@ const Autocomplete = ({
     onChange(evt, rValue)
   }
 
-  const filterOptions = (options, { inputValue }) =>
-    sort(options, inputValue, { keys: ['code', 'display'] }).slice(
+  const valueArray = () => (multiple ? value : [value])
+
+  const filter = (array, input) =>
+    sort(array, input, { keys: ['code', 'display'] })
+
+  const filterOptions = (array, { inputValue }) =>
+    R.union(valueArray(), filter(array, inputValue)).slice(
       0,
-      R.defaultTo(undefined)(limit)
+      R.defaultTo(undefined)(limit) && Math.max(limit, valueArray().length)
     )
 
   return (
