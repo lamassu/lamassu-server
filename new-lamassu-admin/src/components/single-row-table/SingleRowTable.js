@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import React from 'react'
 
+import Tooltip from 'src/components/Tooltip'
 import { IconButton } from 'src/components/buttons'
 import {
   Table,
@@ -13,6 +14,8 @@ import {
 } from 'src/components/fake-table/Table'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/white.svg'
 
+import { P } from '../typography'
+
 import styles from './SingleRowTable.styles'
 
 const useStyles = makeStyles(styles)
@@ -23,7 +26,8 @@ const SingleRowTable = ({
   title,
   items,
   onEdit,
-  className
+  className,
+  editMessage
 }) => {
   const classes = useStyles({ width, height })
 
@@ -33,9 +37,15 @@ const SingleRowTable = ({
         <THead>
           <Th className={classes.head}>
             {title}
-            <IconButton onClick={onEdit} className={classes.button}>
-              <EditIcon />
-            </IconButton>
+            <Tooltip
+              enableOver
+              element={
+                <IconButton onClick={onEdit} className={classes.button}>
+                  <EditIcon />
+                </IconButton>
+              }>
+              <P>{editMessage}</P>
+            </Tooltip>
           </Th>
         </THead>
         <TBody>

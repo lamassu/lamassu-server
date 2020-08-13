@@ -3,10 +3,11 @@ import { Field, useFormikContext } from 'formik'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 
+import Tooltip from 'src/components/Tooltip'
 import { Link, IconButton } from 'src/components/buttons'
 import { Td, Tr } from 'src/components/fake-table/Table'
 import { Switch } from 'src/components/inputs'
-import { TL2 } from 'src/components/typography'
+import { TL2, P } from 'src/components/typography'
 import { ReactComponent as DisabledDeleteIcon } from 'src/styling/icons/action/delete/disabled.svg'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edit/disabled.svg'
@@ -54,19 +55,46 @@ const ActionCol = ({ disabled, editing }) => {
       )}
       {!editing && enableEdit && (
         <Td textAlign="center" width={editWidth}>
-          <IconButton
-            disabled={disableEdit}
-            className={classes.editButton}
-            onClick={() => onEdit && onEdit(values.id)}>
-            {disableEdit ? <DisabledEditIcon /> : <EditIcon />}
-          </IconButton>
+          {!disableEdit && (
+            <Tooltip
+              enableOver
+              element={
+                <IconButton
+                  className={classes.editButton}
+                  onClick={() => onEdit && onEdit(values.id)}>
+                  <EditIcon />
+                </IconButton>
+              }>
+              <P>Modify row contents</P>
+            </Tooltip>
+          )}
+
+          {disableEdit && (
+            <IconButton disabled className={classes.editButton}>
+              <DisabledEditIcon />
+            </IconButton>
+          )}
         </Td>
       )}
       {!editing && enableDelete && (
         <Td textAlign="center" width={deleteWidth}>
-          <IconButton disabled={disabled} onClick={() => onDelete(values.id)}>
-            {disabled ? <DisabledDeleteIcon /> : <DeleteIcon />}
-          </IconButton>
+          {!disabled && (
+            <Tooltip
+              enableOver
+              element={
+                <IconButton onClick={() => onDelete(values.id)}>
+                  <DeleteIcon />
+                </IconButton>
+              }>
+              <P>Delete row</P>
+            </Tooltip>
+          )}
+
+          {disabled && (
+            <IconButton disabled>
+              <DisabledDeleteIcon />
+            </IconButton>
+          )}
         </Td>
       )}
       {!editing && enableToggle && (

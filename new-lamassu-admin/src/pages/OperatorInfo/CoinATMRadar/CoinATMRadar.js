@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
-import Popper from 'src/components/Popper'
+import Tooltip from 'src/components/Tooltip'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
@@ -51,7 +51,6 @@ const Row = memo(({ title, disabled = false, checked, save, label }) => {
 })
 
 const CoinATMRadar = memo(() => {
-  const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
   const [coinAtmRadarConfig, setCoinAtmRadarConfig] = useState(null)
 
   const classes = useStyles()
@@ -82,16 +81,6 @@ const CoinATMRadar = memo(() => {
       variables: { config: toNamespace(namespaces.COIN_ATM_RADAR, it) }
     })
 
-  const handleOpenHelpPopper = event => {
-    setHelpPopperAnchorEl(helpPopperAnchorEl ? null : event.currentTarget)
-  }
-
-  const handleCloseHelpPopper = () => {
-    setHelpPopperAnchorEl(null)
-  }
-
-  const helpPopperOpen = Boolean(helpPopperAnchorEl)
-
   if (!coinAtmRadarConfig) return null
 
   return (
@@ -99,30 +88,19 @@ const CoinATMRadar = memo(() => {
       <div>
         <div className={classes.titleWrapper}>
           <H4>Coin ATM Radar share settings</H4>
-          <div className={classes.transparentButton}>
-            <button onClick={handleOpenHelpPopper}>
-              <HelpIcon />
-              <Popper
-                open={helpPopperOpen}
-                anchorEl={helpPopperAnchorEl}
-                placement="bottom"
-                onClose={handleCloseHelpPopper}>
-                <div className={classes.popoverContent}>
-                  <P>
-                    For details on configuring this panel, please read the
-                    relevant knowledgebase article{' '}
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar">
-                      here
-                    </a>
-                    .
-                  </P>
-                </div>
-              </Popper>
-            </button>
-          </div>
+          <Tooltip enableClick width={304} element={<HelpIcon />}>
+            <P>
+              For details on configuring this panel, please read the relevant
+              knowledgebase article{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar">
+                here
+              </a>
+              .
+            </P>
+          </Tooltip>
         </div>
         <Row
           title={'Share information?'}

@@ -7,6 +7,9 @@ import baseButtonStyles from './BaseButton.styles'
 const { baseButton, primary } = baseButtonStyles
 
 const styles = {
+  preventDefaultTooltip: {
+    pointerEvents: 'none'
+  },
   featureButton: {
     extend: baseButton,
     width: baseButton.height,
@@ -44,7 +47,7 @@ const FeatureButton = memo(
       <button className={classnames(classNames, className)} {...props}>
         {Icon && (
           <div className={classes.buttonIcon}>
-            <Icon />
+            <Icon className={classes.preventDefaultTooltip} />
           </div>
         )}
         {InverseIcon && (

@@ -23,6 +23,9 @@ const colors = (color1, color2, color3) => {
 }
 
 export default {
+  preventDefaultTooltip: {
+    pointerEvents: 'none'
+  },
   actionButton: {
     extend: p,
     cursor: 'pointer',

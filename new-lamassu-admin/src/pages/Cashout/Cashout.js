@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import HelpTooltip from 'src/components/HelpTooltip'
+import Tooltip from 'src/components/Tooltip'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -88,7 +88,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           <Label2 className={classes.switchLabel}>
             {fudgeFactorActive ? 'On' : 'Off'}
           </Label2>
-          <HelpTooltip width={304}>
+          <Tooltip width={304} enableClick>
             <P>
               Automatically accept customer deposits as complete if their
               received amount is 10 crypto atoms or less.
@@ -97,7 +97,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
               (Crypto atoms are the smallest unit in each cryptocurrency. E.g.,
               satoshis in Bitcoin, or wei in Ethereum.)
             </P>
-          </HelpTooltip>
+          </Tooltip>
         </div>
       </TitleSection>
       <EditableTable

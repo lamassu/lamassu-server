@@ -9,7 +9,8 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
-import { Link } from 'src/components/buttons'
+import Tooltip from 'src/components/Tooltip'
+import { Link, IconButton } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 import {
@@ -231,11 +232,15 @@ const ContactInfo = () => {
         <div className={classes.header}>
           <Info2>Info card</Info2>
           {!editing && (
-            <div className={classes.transparentButton}>
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            </div>
+            <Tooltip
+              enableOver
+              element={
+                <IconButton onClick={() => setEditing(true)}>
+                  <EditIcon />
+                </IconButton>
+              }>
+              <P>Configure info card settings</P>
+            </Tooltip>
           )}
         </div>
         <Formik
@@ -305,7 +310,11 @@ const ContactInfo = () => {
         </Formik>
       </div>
       <div className={classnames(classes.section, classes.infoMessage)}>
-        <WarningIcon />
+        <Tooltip width={304} enableOver element={<WarningIcon />}>
+          Sharing your information with your customers through your machines
+          allows them to contact you in case there's a problem with a machine in
+          your network or a transaction.
+        </Tooltip>
         <Label1>
           Sharing your information with your customers through your machines
           allows them to contact you in case there's a problem with a machine in
