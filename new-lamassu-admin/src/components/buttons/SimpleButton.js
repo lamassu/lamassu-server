@@ -7,6 +7,9 @@ import baseButtonStyles from './BaseButton.styles'
 const { baseButton, primary } = baseButtonStyles
 
 const styles = {
+  preventDefaultTooltip: {
+    pointerEvents: 'none'
+  },
   button: {
     extend: baseButton,
     borderRadius: baseButton.height / 2,
@@ -38,7 +41,7 @@ const SimpleButton = memo(
         {...props}>
         {Icon && (
           <div className={classes.buttonIcon}>
-            <Icon />
+            <Icon className={classes.preventDefaultTooltip} />
           </div>
         )}
         {InverseIcon && (

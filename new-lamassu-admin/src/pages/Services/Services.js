@@ -63,6 +63,7 @@ const Services = () => {
         {R.values(schemas).map(schema => (
           <Grid item key={schema.code}>
             <SingleRowTable
+              editMessage={'Configure ' + schema.title}
               title={schema.title}
               onEdit={() => setEditingSchema(schema)}
               items={getItems(schema.code, schema.elements)}

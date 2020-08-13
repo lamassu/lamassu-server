@@ -19,7 +19,7 @@ const ActionButton = memo(
       <button className={classnames(classNames, className)} {...props}>
         {Icon && (
           <div className={classes.actionButtonIcon}>
-            <Icon />
+            <Icon className={classes.preventDefaultTooltip} />
           </div>
         )}
         {InverseIcon && (

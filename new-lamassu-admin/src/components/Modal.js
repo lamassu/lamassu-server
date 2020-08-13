@@ -3,8 +3,10 @@ import classnames from 'classnames'
 import React from 'react'
 
 import { IconButton } from 'src/components/buttons'
-import { H1, H4 } from 'src/components/typography'
+import { H1, H4, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+
+import Tooltip from './Tooltip'
 
 const styles = {
   modal: {
@@ -74,12 +76,16 @@ const Modal = ({
         <Paper className={classnames(classes.wrapper, className)}>
           <div className={classes.header}>
             {title && <TitleCase className={classes.title}>{title}</TitleCase>}
-            <IconButton
-              size={closeSize}
+            <Tooltip
+              enableOver
               className={classes.button}
-              onClick={() => handleClose()}>
-              <CloseIcon />
-            </IconButton>
+              element={
+                <IconButton size={closeSize} onClick={() => handleClose()}>
+                  <CloseIcon />
+                </IconButton>
+              }>
+              <P>Close</P>
+            </Tooltip>
           </div>
           <div className={classes.content}>{children}</div>
         </Paper>

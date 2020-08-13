@@ -2,13 +2,15 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { useState, memo } from 'react'
 
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { Table, TableBody, TableRow, TableCell } from 'src/components/table'
 import BooleanCell from 'src/components/tables/BooleanCell'
-import { H4 } from 'src/components/typography'
+import { H4, P } from 'src/components/typography'
 import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+
+import Tooltip from '../Tooltip'
 
 import { booleanPropertiesTableStyles } from './BooleanPropertiesTable.styles'
 
@@ -69,11 +71,25 @@ const BooleanPropertiesTable = memo(
               </Link>
             </div>
           ) : (
-            <div className={classes.transparentButton}>
-              <button disabled={disabled} onClick={() => setEditing(true)}>
-                {disabled ? <EditIconDisabled /> : <EditIcon />}
-              </button>
-            </div>
+            <>
+              {disabled && (
+                <IconButton disabled>
+                  <EditIconDisabled />
+                </IconButton>
+              )}
+
+              {!disabled && (
+                <Tooltip
+                  enableOver
+                  element={
+                    <IconButton onClick={() => setEditing(true)}>
+                      <EditIcon />
+                    </IconButton>
+                  }>
+                  <P>Configure the following properties as desired</P>
+                </Tooltip>
+              )}
+            </>
           )}
         </div>
         <Table className={classes.fillColumn}>
