@@ -48,9 +48,13 @@ const Autocomplete = ({
     sort(array, input, { keys: ['code', 'display'] })
 
   const filterOptions = (array, { inputValue }) =>
-    R.union(valueArray(), filter(array, inputValue)).slice(
+    R.union(
+      R.isEmpty(inputValue) ? valueArray() : [],
+      filter(array, inputValue)
+    ).slice(
       0,
-      R.defaultTo(undefined)(limit) && Math.max(limit, valueArray().length)
+      R.defaultTo(undefined)(limit) &&
+        Math.max(limit, R.isEmpty(inputValue) ? valueArray().length : 0)
     )
 
   return (
