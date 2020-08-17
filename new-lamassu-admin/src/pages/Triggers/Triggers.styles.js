@@ -21,6 +21,13 @@ const mainStyles = {
     padding: 4,
     margin: 4
   },
+  tableRadioGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  tableRadioLabel: {
+    marginRight: 0
+  },
   closeButton: {
     position: 'absolute',
     width: 16,
