@@ -12,7 +12,7 @@ import { fromNamespace, namespaces } from 'src/utils/config'
 
 import { mainStyles } from './Triggers.styles'
 import Wizard from './Wizard'
-import { Schema, elements, sortBy } from './helper'
+import { Schema, getElements, sortBy, fromServer, toServer } from './helper'
 
 const useStyles = makeStyles(mainStyles)
 
@@ -34,7 +34,7 @@ const Triggers = () => {
   const [error, setError] = useState(false)
 
   const { data } = useQuery(GET_INFO)
-  const triggers = data?.config?.triggers ?? []
+  const triggers = fromServer(data?.config?.triggers ?? [])
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
@@ -45,12 +45,14 @@ const Triggers = () => {
   const add = rawConfig => {
     const toSave = R.concat([{ id: v4(), ...rawConfig }])(triggers)
     setError(false)
-    return saveConfig({ variables: { config: { triggers: toSave } } })
+    return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
   }
 
   const save = config => {
     setError(false)
-    return saveConfig({ variables: { config } })
+    return saveConfig({
+      variables: { config: { triggers: toServer(config.triggers) } }
+    })
   }
 
   const currency = R.path(['fiatCurrency'])(
@@ -78,7 +80,7 @@ const Triggers = () => {
         enableDelete
         save={save}
         validationSchema={Schema}
-        elements={elements}
+        elements={getElements(currency, classes)}
       />
       {wizard && (
         <Wizard

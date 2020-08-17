@@ -3,12 +3,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { memo } from 'react'
 
-// import { ActionButton } from 'src/components/buttons'
+import { ActionButton } from 'src/components/buttons'
 import { H3 } from 'src/components/typography'
-// import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
-// import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
-// import { ReactComponent as RejectReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
-// import { ReactComponent as RejectIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
+import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
+import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
+import { ReactComponent as RejectReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
+import { ReactComponent as RejectIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
 
 import { propertyCardStyles } from './PropertyCard.styles'
 
@@ -24,48 +24,46 @@ const PropertyCard = memo(
 
     const propertyCardClassNames = {
       [classes.propertyCard]: true,
-      [classes.propertyCardPending]: true
-      // [classes.propertyCardPending]: state === OVERRIDE_PENDING
-      // [classes.propertyCardRejected]: state === OVERRIDE_REJECTED,
-      // [classes.propertyCardAccepted]: state === OVERRIDE_AUTHORIZED
+      [classes.propertyCardPending]: state === OVERRIDE_PENDING,
+      [classes.propertyCardRejected]: state === OVERRIDE_REJECTED,
+      [classes.propertyCardAccepted]: state === OVERRIDE_AUTHORIZED
     }
 
-    // const label1ClassNames = {
-    //   [classes.label1]: true,
-    //   [classes.label1Pending]: true
-    //   [classes.label1Pending]: state === OVERRIDE_PENDING
-    //   [classes.label1Rejected]: state === OVERRIDE_REJECTED,
-    //   [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
-    // }
+    const label1ClassNames = {
+      [classes.label1]: true,
+      [classes.label1Pending]: state === OVERRIDE_PENDING,
+      [classes.label1Rejected]: state === OVERRIDE_REJECTED,
+      [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
+    }
 
-    // const AuthorizeButton = () => (
-    //   <ActionButton
-    //     className={classes.cardActionButton}
-    //     color="secondary"
-    //     Icon={AuthorizeIcon}
-    //     InverseIcon={AuthorizeReversedIcon}
-    //     onClick={() => authorize()}>
-    //     Authorize
-    //   </ActionButton>
-    // )
+    const AuthorizeButton = () => (
+      <ActionButton
+        className={classes.cardActionButton}
+        color="secondary"
+        Icon={AuthorizeIcon}
+        InverseIcon={AuthorizeReversedIcon}
+        onClick={() => authorize()}>
+        Authorize
+      </ActionButton>
+    )
 
-    // const RejectButton = () => (
-    //   <ActionButton
-    //     className={classes.cardActionButton}
-    //     color="secondary"
-    //     Icon={RejectIcon}
-    //     InverseIcon={RejectReversedIcon}
-    //     onClick={() => reject()}>
-    //     Reject
-    //   </ActionButton>
-    // )
+    const RejectButton = () => (
+      <ActionButton
+        className={classes.cardActionButton}
+        color="secondary"
+        Icon={RejectIcon}
+        InverseIcon={RejectReversedIcon}
+        onClick={() => reject()}>
+        Reject
+      </ActionButton>
+    )
 
-    // const authorizedAsString =
-    //   state === OVERRIDE_PENDING
-    //     ? 'Pending'
-    //     : state === OVERRIDE_REJECTED
-    //     ? 'Rejected'
-    //     : 'Accepted'
+    const authorizedAsString =
+      state === OVERRIDE_PENDING
+        ? 'Pending'
+        : state === OVERRIDE_REJECTED
+        ? 'Rejected'
+        : 'Accepted'
 
     return (
       <Paper
@@ -73,18 +71,17 @@ const PropertyCard = memo(
         elevation={0}>
         <div className={classes.rowSpaceBetween}>
           <H3>{title}</H3>
-          {/* <div className={classnames(label1ClassNames)}>
+          <div className={classnames(label1ClassNames)}>
             {authorizedAsString}
-          </div> */}
+          </div>
         </div>
         <Paper className={classes.cardProperties} elevation={0}>
           {children}
         </Paper>
-        {/* V2 */}
-        {/* <div className={classes.buttonsWrapper}>
+        <div className={classes.buttonsWrapper}>
           {state !== OVERRIDE_AUTHORIZED && AuthorizeButton()}
           {state !== OVERRIDE_REJECTED && RejectButton()}
-        </div> */}
+        </div>
       </Paper>
     )
   }
