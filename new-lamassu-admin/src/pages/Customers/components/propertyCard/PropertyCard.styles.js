@@ -52,7 +52,7 @@ const propertyCardStyles = {
     display: 'flex',
     borderRadius: 8,
     width: '100%',
-    height: 'calc(100% - 75px)',
+    height: 'calc(100% - 104px)',
     padding: [[20]],
     boxSizing: 'border-box',
     boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.04)',

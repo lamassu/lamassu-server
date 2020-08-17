@@ -12,7 +12,12 @@ import { cpcStyles } from './Transactions.styles'
 
 const useStyles = makeStyles(cpcStyles)
 
-const CopyToClipboard = ({ className, children, ...props }) => {
+const CopyToClipboard = ({
+  className,
+  buttonClassname,
+  children,
+  ...props
+}) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   useEffect(() => {
@@ -39,7 +44,7 @@ const CopyToClipboard = ({ className, children, ...props }) => {
           <div className={classnames(classes.address, className)}>
             {children}
           </div>
-          <div className={classes.buttonWrapper}>
+          <div className={classnames(classes.buttonWrapper, buttonClassname)}>
             <ReactCopyToClipboard text={R.replace(/\s/g, '')(children)}>
               <button
                 aria-describedby={id}

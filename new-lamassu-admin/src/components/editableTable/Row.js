@@ -93,6 +93,7 @@ const ECol = ({
 }) => {
   const {
     name,
+    bypassField,
     input,
     editable = true,
     size,
@@ -122,6 +123,9 @@ const ECol = ({
     innerProps.getLabel = view
   }
 
+  const isEditing = editing && editable
+  const isField = !bypassField
+
   return (
     <Td
       className={{
@@ -133,11 +137,11 @@ const ECol = ({
       size={size}
       bold={bold}
       textAlign={textAlign}>
-      {editing && editable ? (
+      {isEditing && isField && (
         <Field name={name} component={input} {...innerProps} />
-      ) : (
-        values && <>{view(values[name])}</>
       )}
+      {isEditing && !isField && <config.input name={name} />}
+      {!isEditing && values && <>{view(values[name], values)}</>}
       {suffix && (
         <SuffixComponent className={classes.suffix}>{suffix}</SuffixComponent>
       )}

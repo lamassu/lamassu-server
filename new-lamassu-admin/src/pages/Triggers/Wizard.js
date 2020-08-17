@@ -88,19 +88,19 @@ const getTypeText = (config, currency) => {
   switch (config.triggerType) {
     case 'txAmount':
       return `makes a single transaction over ${orUnderline(
-        config.threshold
+        config.threshold.threshold
       )} ${currency}`
     case 'txVolume':
       return `makes transactions over ${orUnderline(
-        config.threshold
-      )} ${currency} in ${orUnderline(config.days)} days`
+        config.threshold.threshold
+      )} ${currency} in ${orUnderline(config.threshold.thresholdDays)} days`
     case 'txVelocity':
       return `makes ${orUnderline(
-        config.threshold
-      )} transactions in ${orUnderline(config.days)} days`
+        config.threshold.threshold
+      )} transactions in ${orUnderline(config.threshold.thresholdDays)} days`
     case 'consecutiveDays':
       return `at least one transaction every day for ${orUnderline(
-        config.days
+        config.threshold.thresholdDays
       )} days`
     default:
       return ''
@@ -108,7 +108,7 @@ const getTypeText = (config, currency) => {
 }
 
 const getRequirementText = config => {
-  switch (config.requirement) {
+  switch (config.requirement?.requirement) {
     case 'sms':
       return 'asked to enter code provided through SMS verification'
     case 'idPhoto':
@@ -122,7 +122,9 @@ const getRequirementText = config => {
     case 'superuser':
       return ''
     case 'suspend':
-      return 'suspended'
+      return `suspended for ${orUnderline(
+        config.requirement.suspensionDays
+      )} days`
     case 'block':
       return 'blocked'
     default:
@@ -155,7 +157,6 @@ const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
 const GetValues = ({ setValues }) => {
   const { values } = useFormikContext()
   useEffect(() => {
-    console.log('triggered')
     setValues && values && setValues(values)
   }, [setValues, values])
 
