@@ -66,6 +66,7 @@ export const ConfirmDialog = memo(
   }) => {
     const classes = useStyles()
     const [value, setValue] = useState('')
+    const [error, setError] = useState(false)
     useEffect(() => setValue(''), [open])
     const handleChange = event => {
       setValue(event.target.value)
@@ -92,9 +93,10 @@ export const ConfirmDialog = memo(
             fullWidth
             value={value}
             touched={{}}
-            error={toBeConfirmed !== value}
+            error={error}
             InputLabelProps={{ shrink: true, className: classes.label }}
             onChange={handleChange}
+            onBlur={() => setError(toBeConfirmed !== value)}
           />
         </DialogContent>
         <DialogActions classes={{ spacing: classes.spacing }}>
