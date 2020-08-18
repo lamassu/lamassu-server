@@ -3,9 +3,9 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import typographyStyles from 'src/components/typography/styles'
 import { ReactComponent as Arrow } from 'src/styling/icons/arrow/month_change.svg'
 import { primaryColor, zircon } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 import Tile from './Tile'
 
@@ -73,12 +73,6 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
   const classes = useStyles()
 
   const weekdays = moment.weekdaysMin().map(day => day.slice(0, 1))
-  const firstDayOfMonth = month =>
-    Number.parseInt(
-      moment(month)
-        .startOf('month')
-        .format('d')
-    )
   const monthLength = month =>
     Number.parseInt(
       moment(month)
@@ -88,7 +82,12 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
 
   const monthdays = month => {
     const lastMonth = moment(month).subtract(1, 'month')
-    const lastMonthRange = R.range(firstDayOfMonth(month) - 1, -1)
+    const lastMonthRange = R.range(
+      0,
+      moment(month)
+        .startOf('month')
+        .weekday()
+    ).reverse()
     const lastMonthDays = R.map(i =>
       moment(lastMonth)
         .endOf('month')
