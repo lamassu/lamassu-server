@@ -5,11 +5,14 @@ import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
 const LANGUAGE_SELECTION_LIMIT = 4
 
-const getFields = (getData, names) => {
-  return R.filter(it => R.includes(it.name, names), allFields(getData))
+const getFields = (getData, names, auxElements = []) => {
+  return R.filter(
+    it => R.includes(it.name, names),
+    allFields(getData, auxElements)
+  )
 }
 
-const allFields = getData => {
+const allFields = (getData, auxElements = []) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -19,11 +22,25 @@ const allFields = getData => {
     )(data)
   }
 
+  const findSuggestion = (it, machines) => {
+    const machine = R.compose(R.find(R.propEq('deviceId', it?.machine)))(
+      machines
+    )
+    return machine ? [machine] : []
+  }
+
   const displayCodeArray = data => it => {
     if (!it) return it
 
     return R.compose(R.join(', '), R.map(getView(data, 'code')))(it)
   }
+
+  const overridenMachines = R.map(override => override.machine, auxElements)
+  const suggestionFilter = R.filter(
+    it => !R.contains(it.deviceId, overridenMachines)
+  )
+
+  console.log(getData(['machines']))
 
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])
@@ -38,7 +55,11 @@ const allFields = getData => {
       view: getView(machineData, 'name', 'deviceId'),
       input: Autocomplete,
       inputProps: {
-        options: machineData,
+        options: it =>
+          R.concat(
+            suggestionFilter(machineData),
+            findSuggestion(it, machineData)
+          ),
         valueProp: 'deviceId',
         getLabel: R.path(['name']),
         limit: null
@@ -110,15 +131,14 @@ const mainFields = auxData => {
   ])
 }
 
-const overrides = auxData => {
+const overrides = (auxData, auxElements) => {
   const getData = R.path(R.__, auxData)
 
-  return getFields(getData, [
-    'machine',
-    'country',
-    'languages',
-    'cryptoCurrencies'
-  ])
+  return getFields(
+    getData,
+    ['machine', 'country', 'languages', 'cryptoCurrencies'],
+    auxElements
+  )
 }
 
 const LocaleSchema = Yup.object().shape({
