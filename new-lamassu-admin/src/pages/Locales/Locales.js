@@ -58,6 +58,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
 
   const locale = config && !R.isEmpty(config) ? config : localeDefaults
+  const localeOverrides = locale.overrides ?? []
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.locale[0])
@@ -67,18 +68,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
     return saveConfig({ variables: { config } })
-  }
-
-  const removeOverridenMachines = data => {
-    if (data) {
-      const overridenMachines = locale.overrides?.map(o => o.machine)
-      const machinesIndex = data.findIndex(o => o.name === 'machine')
-      data[machinesIndex].inputProps.options = data[
-        machinesIndex
-      ].inputProps.options?.filter(m => !overridenMachines.includes(m.deviceId))
-    }
-
-    return data
   }
 
   return (
@@ -108,8 +97,8 @@ const Locales = ({ name: SCREEN_KEY }) => {
           initialValues={overridesDefaults}
           save={saveOverrides}
           validationSchema={OverridesSchema}
-          data={locale.overrides ?? []}
-          elements={removeOverridenMachines(overrides(data))}
+          data={localeOverrides}
+          elements={overrides(data, localeOverrides)}
         />
       </Section>
     </>
