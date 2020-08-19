@@ -57,9 +57,12 @@ const ETable = ({
     const index = R.findIndex(R.propEq('id', it.id))(data)
     const list = index !== -1 ? R.update(index, it, data) : R.prepend(it, data)
 
-    // no response means the save failed
-    const response = await save({ [name]: list }, it)
-    if (!response) return
+    if (!R.equals(data[index], it)) {
+      // no response means the save failed
+      const response = await save({ [name]: list }, it)
+      if (!response) return
+    }
+
     setAdding(false)
     setEditingId(null)
   }
