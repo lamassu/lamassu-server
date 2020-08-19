@@ -41,8 +41,6 @@ const allFields = (getData, auxElements = []) => {
     it => !R.contains(it.deviceId, overridenMachines)
   )
 
-  console.log(getData(['machines']))
-
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])
   const currencyData = getData(['currencies'])
