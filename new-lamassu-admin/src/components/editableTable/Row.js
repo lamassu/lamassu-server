@@ -83,7 +83,13 @@ const ActionCol = ({ disabled, editing }) => {
   )
 }
 
-const ECol = ({ editing, config, extraPaddingRight, extraPaddingLeft }) => {
+const ECol = ({
+  editing,
+  focus,
+  config,
+  extraPaddingRight,
+  extraPaddingLeft
+}) => {
   const {
     name,
     input,
@@ -102,6 +108,7 @@ const ECol = ({ editing, config, extraPaddingRight, extraPaddingLeft }) => {
 
   const innerProps = {
     fullWidth: true,
+    autoFocus: focus,
     size,
     bold,
     textAlign,
@@ -176,6 +183,10 @@ const ERow = ({ editing, disabled }) => {
     ? R.indexOf(toSHeader[toSHeader.length - 1], elements)
     : -1
 
+  const elementToFocusIndex = innerElements.findIndex(
+    it => it.editable === undefined || it.editable
+  )
+
   return (
     <Tr
       size={rowSize}
@@ -187,6 +198,7 @@ const ERow = ({ editing, disabled }) => {
             key={idx}
             config={it}
             editing={editing}
+            focus={idx === elementToFocusIndex && editing}
             extraPaddingRight={extraPaddingRightIndex === idx}
             extraPaddingLeft={extraPaddingLeftIndex === idx}
           />
