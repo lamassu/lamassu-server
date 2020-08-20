@@ -10,7 +10,6 @@ import React, { useEffect, useState, memo } from 'react'
 import { Button, IconButton } from 'src/components/buttons'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 
-import Tooltip from './Tooltip'
 import { TextInput } from './inputs'
 import { H4, P } from './typography'
 
@@ -42,16 +41,13 @@ export const DialogTitle = ({ children, onClose }) => {
     <div className={classes.wrapper}>
       {children}
       {onClose && (
-        <Tooltip
+        <IconButton
+          size={16}
+          aria-label="close"
           className={classes.closeButton}
-          enableOver
-          element={
-            <IconButton size={16} aria-label="close" onClick={onClose}>
-              <CloseIcon />
-            </IconButton>
-          }>
-          <P>Close</P>
-        </Tooltip>
+          onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
       )}
     </div>
   )
