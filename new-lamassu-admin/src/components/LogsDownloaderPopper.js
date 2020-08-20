@@ -12,7 +12,7 @@ import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { primaryColor, offColor, zircon } from 'src/styling/variables'
 
-import Popper from './Popper'
+import Tooltip from './Tooltip'
 import DateRangePicker from './date-range-picker/DateRangePicker'
 import { RadioGroup } from './inputs'
 import typographyStyles from './typography/styles'
@@ -132,7 +132,6 @@ const RANGE = 'range'
 const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
   const [range, setRange] = useState({ from: null, until: null })
-  const [anchorEl, setAnchorEl] = useState(null)
   const [fetchLogs] = useLazyQuery(query, {
     onCompleted: data => createLogsFile(getLogs(data), range)
   })
@@ -198,68 +197,57 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
     )
   }
 
-  const handleOpenRangePicker = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget)
-  }
-
   const radioButtonOptions = [
     { display: 'All logs', code: ALL },
     { display: 'Date range', code: RANGE }
   ]
 
-  const open = Boolean(anchorEl)
-  const id = open ? 'date-range-popover' : undefined
-
   return (
     <>
-      <FeatureButton
+      <Tooltip
+        enableClick
+        Button={FeatureButton}
         Icon={Download}
         InverseIcon={DownloadInverseIcon}
-        aria-describedby={id}
-        variant="contained"
-        onClick={handleOpenRangePicker}
-      />
-      <Popper id={id} open={open} anchorEl={anchorEl} placement="bottom">
-        <div className={classes.popoverContent}>
-          <div className={classes.popoverHeader}>{title}</div>
-          <div className={classes.radioButtonsContainer}>
-            <RadioGroup
-              name="logs-select"
-              value={selectedRadio}
-              options={radioButtonOptions}
-              ariaLabel="logs-select"
-              onChange={handleRadioButtons}
-              className={classes.radioButtons}
+        variant="contained">
+        <div className={classes.popoverHeader}>{title}</div>
+        <div className={classes.radioButtonsContainer}>
+          <RadioGroup
+            name="logs-select"
+            value={selectedRadio}
+            options={radioButtonOptions}
+            ariaLabel="logs-select"
+            onChange={handleRadioButtons}
+            className={classes.radioButtons}
+          />
+        </div>
+        {selectedRadio === RANGE && (
+          <div className={classnames(dateRangePickerClasses)}>
+            <div className={classes.dateContainerWrapper}>
+              {range && (
+                <>
+                  <DateContainer date={range.from}>From</DateContainer>
+                  <div className={classes.arrowContainer}>
+                    <Arrow className={classes.arrow} />
+                  </div>
+                  <DateContainer date={range.until}>To</DateContainer>
+                </>
+              )}
+            </div>
+            <DateRangePicker
+              maxDate={moment()}
+              onRangeChange={handleRangeChange}
             />
           </div>
-          {selectedRadio === RANGE && (
-            <div className={classnames(dateRangePickerClasses)}>
-              <div className={classes.dateContainerWrapper}>
-                {range && (
-                  <>
-                    <DateContainer date={range.from}>From</DateContainer>
-                    <div className={classes.arrowContainer}>
-                      <Arrow className={classes.arrow} />
-                    </div>
-                    <DateContainer date={range.until}>To</DateContainer>
-                  </>
-                )}
-              </div>
-              <DateRangePicker
-                maxDate={moment()}
-                onRangeChange={handleRangeChange}
-              />
-            </div>
-          )}
-          <div className={classes.download}>
-            <Link
-              color="primary"
-              onClick={() => downloadLogs(range, args, fetchLogs)}>
-              Download
-            </Link>
-          </div>
+        )}
+        <div className={classes.download}>
+          <Link
+            color="primary"
+            onClick={() => downloadLogs(range, args, fetchLogs)}>
+            Download
+          </Link>
         </div>
-      </Popper>
+      </Tooltip>
     </>
   )
 }
