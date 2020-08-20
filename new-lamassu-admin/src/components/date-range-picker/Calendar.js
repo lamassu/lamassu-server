@@ -3,9 +3,9 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import typographyStyles from 'src/components/typography/styles'
 import { ReactComponent as Arrow } from 'src/styling/icons/arrow/month_change.svg'
 import { primaryColor, zircon } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 import Tile from './Tile'
 

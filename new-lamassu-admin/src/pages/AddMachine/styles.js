@@ -1,10 +1,10 @@
+import typographyStyles from 'src/components/typography/styles'
 import {
   placeholderColor,
   backgroundColor,
   primaryColor,
   mainWidth
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { tl2, p } = typographyStyles
 
