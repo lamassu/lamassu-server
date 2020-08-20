@@ -1,6 +1,6 @@
 import CustomerDetails from './CustomerDetails'
-import IdDataCard from './IdDataCard'
 import IdCardPhotoCard from './IdCardPhotoCard'
+import IdDataCard from './IdDataCard'
 import PhoneCard from './PhoneCard'
 import TransactionsList from './TransactionsList'
 

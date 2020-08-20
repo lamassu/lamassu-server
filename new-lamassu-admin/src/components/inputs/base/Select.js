@@ -39,7 +39,7 @@ function Select({ label, items, ...props }) {
       <label {...getLabelProps()}>{startCase(label)}</label>
       <button {...getToggleButtonProps()}>
         <span className={classes.selectedItem}>{startCase(selectedItem)}</span>
-        <Arrowdown className={classes.preventDefaultTooltip}/>
+        <Arrowdown className={classes.preventDefaultTooltip} />
       </button>
       <ul {...getMenuProps()}>
         {isOpen &&

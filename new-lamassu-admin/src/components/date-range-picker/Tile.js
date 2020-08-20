@@ -2,13 +2,13 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React from 'react'
 
+import typographyStyles from 'src/components/typography/styles'
 import {
   primaryColor,
   spring2,
   spring3,
   disabledColor
 } from 'src/styling/variables'
-import typographyStyles from 'src/components/typography/styles'
 
 const { label1 } = typographyStyles
 

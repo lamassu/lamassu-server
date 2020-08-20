@@ -9,6 +9,7 @@ import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2 } from 'src/components/typography'
+import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import Wizard from './Wizard'
@@ -88,7 +89,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           <Label2 className={classes.switchLabel}>
             {fudgeFactorActive ? 'On' : 'Off'}
           </Label2>
-          <Tooltip width={304} enableClick>
+          <Tooltip width={304} enableClick Icon={HelpIcon}>
             <P>
               Automatically accept customer deposits as complete if their
               received amount is 10 crypto atoms or less.

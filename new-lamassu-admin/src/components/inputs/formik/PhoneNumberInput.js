@@ -1,5 +1,5 @@
-import React, { memo, useState } from 'react'
 import { makeStyles } from '@material-ui/core'
+import React, { memo, useState } from 'react'
 
 import TextInputFormik from './TextInput'
 import { styles } from './TextInput.styles'

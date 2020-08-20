@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
+import React, { useState } from 'react'
 
 import { Button } from 'src/components/buttons'
 import { ReactComponent as CompleteIcon } from 'src/styling/icons/stage/spring/complete.svg'

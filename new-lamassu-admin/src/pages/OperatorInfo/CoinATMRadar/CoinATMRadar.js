@@ -88,7 +88,7 @@ const CoinATMRadar = memo(() => {
       <div>
         <div className={classes.titleWrapper}>
           <H4>Coin ATM Radar share settings</H4>
-          <Tooltip enableClick width={304} element={<HelpIcon />}>
+          <Tooltip enableClick width={304} Icon={HelpIcon}>
             <P>
               For details on configuring this panel, please read the relevant
               knowledgebase article{' '}

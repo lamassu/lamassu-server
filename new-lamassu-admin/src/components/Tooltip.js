@@ -1,9 +1,8 @@
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
-import React, { useState, memo, cloneElement } from 'react'
+import React, { useState, memo } from 'react'
 
 import Popper from 'src/components/Popper'
-import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 
 const useStyles = makeStyles({
   transparentButton: {
@@ -26,7 +25,7 @@ const Tooltip = memo(
     enableOver = false,
     enableClick = false,
     className,
-    element,
+    Icon,
     children,
     width,
     ...props
@@ -50,22 +49,9 @@ const Tooltip = memo(
           type={'button'}
           className={classnames(className, classes.transparentButton)}
           onPointerOver={event => enableOver && handleOpenHelpPopper(event)}
-          onClick={
-            element?.props?.onClick
-              ? element.props.onClick
-              : event => enableClick && handleOpenHelpPopper(event)
-          }
+          onClick={event => enableClick && handleOpenHelpPopper(event)}
           {...props}>
-          {element &&
-            cloneElement(element, {
-              className: classnames(
-                element.props.className,
-                classes.preventDefaultTooltip
-              )
-            })}
-          {!element && (
-            <HelpIcon className={classes.preventDefaultTooltip}></HelpIcon>
-          )}
+          <Icon className={classes.preventDefaultTooltip}></Icon>
           <Popper
             open={helpPopperOpen}
             anchorEl={helpPopperAnchorEl}

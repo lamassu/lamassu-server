@@ -5,8 +5,8 @@ import { NavLink } from 'react-router-dom'
 
 import { Link } from 'src/components/buttons'
 import { H4 } from 'src/components/typography'
-import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 import AddMachine from 'src/pages/AddMachine'
+import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import styles from './Header.styles'
 
