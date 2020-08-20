@@ -1,8 +1,8 @@
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
-import classnames from 'classnames'
 import React, { useState, memo } from 'react'
 
 import Popper from 'src/components/Popper'
+import { FeatureButton } from 'src/components/buttons'
 
 const useStyles = makeStyles({
   transparentButton: {
@@ -25,6 +25,7 @@ const Tooltip = memo(
     enableOver = false,
     enableClick = false,
     className,
+    Button,
     Icon,
     children,
     width,
@@ -45,13 +46,17 @@ const Tooltip = memo(
 
     return (
       <ClickAwayListener onClickAway={handleCloseHelpPopper}>
-        <button
-          type={'button'}
-          className={classnames(className, classes.transparentButton)}
-          onPointerOver={event => enableOver && handleOpenHelpPopper(event)}
-          onClick={event => enableClick && handleOpenHelpPopper(event)}
-          {...props}>
-          <Icon className={classes.preventDefaultTooltip}></Icon>
+        <>
+          <Button
+            Icon={Button === FeatureButton && Icon}
+            className={className}
+            onPointerOver={event => enableOver && handleOpenHelpPopper(event)}
+            onClick={event => enableClick && handleOpenHelpPopper(event)}
+            {...props}>
+            {Button !== FeatureButton && (
+              <Icon className={classes.preventDefaultTooltip}></Icon>
+            )}
+          </Button>
           <Popper
             open={helpPopperOpen}
             anchorEl={helpPopperAnchorEl}
@@ -59,7 +64,7 @@ const Tooltip = memo(
             onClose={handleCloseHelpPopper}>
             <div className={classes.popoverContent}>{children}</div>
           </Popper>
-        </button>
+        </>
       </ClickAwayListener>
     )
   }
