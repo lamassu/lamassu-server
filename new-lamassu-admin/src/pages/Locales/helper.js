@@ -22,13 +22,6 @@ const allFields = (getData, auxElements = []) => {
     )(data)
   }
 
-  const findSuggestion = (it, machines) => {
-    const machine = R.compose(R.find(R.propEq('deviceId', it?.machine)))(
-      machines
-    )
-    return machine ? [machine] : []
-  }
-
   const displayCodeArray = data => it => {
     if (!it) return it
 
@@ -36,9 +29,9 @@ const allFields = (getData, auxElements = []) => {
   }
 
   const overridenMachines = R.map(override => override.machine, auxElements)
-  const suggestionFilter = R.filter(
-    it => !R.contains(it.deviceId, overridenMachines)
-  )
+
+  const suggestionFilter = it =>
+    R.differenceWith((x, y) => x.deviceId === y, it, overridenMachines)
 
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])
@@ -54,9 +47,8 @@ const allFields = (getData, auxElements = []) => {
       input: Autocomplete,
       inputProps: {
         options: it =>
-          R.concat(
-            suggestionFilter(machineData),
-            findSuggestion(it, machineData)
+          R.concat(it?.machine ? [it.machine] : [])(
+            suggestionFilter(machineData)
           ),
         valueProp: 'deviceId',
         getLabel: R.path(['name']),
