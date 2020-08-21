@@ -11,7 +11,7 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import { Button } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
-import { Info2, Label2 } from 'src/components/typography'
+import { H4, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
@@ -128,8 +128,8 @@ const TermsConditions = () => {
 
   return (
     <>
-      <div className={classes.header}>
-        <Info2>Terms &amp; Conditions</Info2>
+      <div className={classes.rowWrapper}>
+        <H4>Terms &amp; Conditions</H4>
       </div>
       <div className={classes.section}>
         <div className={classes.enable}>
