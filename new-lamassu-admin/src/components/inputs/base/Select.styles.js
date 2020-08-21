@@ -6,9 +6,6 @@ const { p, label1 } = typographyStyles
 const WIDTH = 152
 
 export default {
-  preventDefaultTooltip: {
-    pointerEvents: 'none'
-  },
   selectedItem: {
     width: WIDTH - 41,
     display: 'block',

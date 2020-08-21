@@ -11,9 +11,6 @@ const useStyles = makeStyles({
     marginTop: 4,
     cursor: 'pointer'
   },
-  preventDefaultTooltip: {
-    pointerEvents: 'none'
-  },
   popoverContent: ({ width }) => ({
     width,
     padding: [[10, 15]]
@@ -53,9 +50,7 @@ const Tooltip = memo(
             onPointerOver={event => enableOver && handleOpenHelpPopper(event)}
             onClick={event => enableClick && handleOpenHelpPopper(event)}
             {...props}>
-            {Button !== FeatureButton && (
-              <Icon className={classes.preventDefaultTooltip}></Icon>
-            )}
+            {Button !== FeatureButton && <Icon></Icon>}
           </Button>
           <Popper
             open={helpPopperOpen}
