@@ -1,9 +1,8 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 
-import Prompt from 'src/components/Prompt'
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -39,7 +38,6 @@ const SAVE_CONFIG = gql`
 `
 
 const Commissions = ({ name: SCREEN_KEY }) => {
-  const [isUnsaved, setIsUnsaved] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
@@ -64,7 +62,6 @@ const Commissions = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <Prompt when={isUnsaved} />
       <TitleSection title="Commissions" />
       <Section>
         <EditableTable
@@ -73,8 +70,6 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           titleLg
           name="commissions"
           enableEdit
-          setEditing={setIsUnsaved}
-          setAdding={setIsUnsaved}
           initialValues={commission}
           save={save}
           validationSchema={schema}
@@ -90,8 +85,6 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           enableDelete
           enableEdit
           enableCreate
-          setEditing={setIsUnsaved}
-          setAdding={setIsUnsaved}
           initialValues={overridesDefaults}
           save={saveOverrides}
           validationSchema={OverridesSchema}

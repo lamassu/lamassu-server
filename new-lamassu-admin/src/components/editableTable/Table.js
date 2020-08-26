@@ -4,6 +4,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import Link from 'src/components/buttons/Link.js'
 import { AddButton } from 'src/components/buttons/index.js'
 import { TBody, Table } from 'src/components/fake-table/Table'
@@ -45,7 +46,6 @@ const ETable = ({
   disableAdd,
   initialValues,
   setEditing,
-  setAdding,
   stripeWhen,
   disableRowEdit,
   groupBy,
@@ -53,7 +53,7 @@ const ETable = ({
   createText = 'Add override'
 }) => {
   const [editingId, setEditingId] = useState(null)
-  const [innerAdding, innerSetAdding] = useState(false)
+  const [adding, setAdding] = useState(false)
 
   const innerSave = async value => {
     const it = validationSchema.cast(value)
@@ -83,13 +83,10 @@ const ETable = ({
 
   const onEdit = it => {
     setEditingId(it)
-    setEditing && setEditing(true)
+    setEditing && setEditing(it, true)
   }
 
-  const addField = () => {
-    innerSetAdding(true)
-    setAdding && setAdding(true)
-  }
+  const addField = () => setAdding(true)
 
   const widthIfEditNull =
     enableDelete || enableToggle ? ACTION_COL_SIZE : ACTION_COL_SIZE * 2
@@ -104,9 +101,9 @@ const ETable = ({
   const width = getWidth(elements) + actionColSize
   const classes = useStyles({ width })
 
-  const showButtonOnEmpty = !data.length && enableCreate && !innerAdding
-  const canAdd = !forceDisable && !editingId && !disableAdd && !innerAdding
-  const showTable = innerAdding || data.length !== 0
+  const showButtonOnEmpty = !data.length && enableCreate && !adding
+  const canAdd = !forceDisable && !editingId && !disableAdd && !adding
+  const showTable = adding || data.length !== 0
 
   const innerData = sortBy ? R.sortWith(sortBy)(data) : data
 
@@ -156,13 +153,14 @@ const ETable = ({
             <Table>
               <Header />
               <TBody>
-                {innerAdding && (
+                {adding && (
                   <Formik
                     initialValues={{ id: v4(), ...initialValues }}
-                    onReset={reset}
+                    onReset={onReset}
                     validationSchema={validationSchema}
                     onSubmit={innerSave}>
                     <Form>
+                      <PromptWhenDirty />
                       <ERow editing={true} disabled={forceDisable} />
                     </Form>
                   </Formik>

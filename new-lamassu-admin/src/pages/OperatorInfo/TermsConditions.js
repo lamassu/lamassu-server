@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
-import Prompt from 'src/components/Prompt'
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
@@ -90,7 +90,6 @@ const styles = R.merge(globalStyles, termsConditionsStyles)
 const useTermsConditionsStyles = makeStyles(styles)
 
 const TermsConditions = () => {
-  const [isUnsaved, setIsUnsaved] = useState(false)
   const [showOnScreen, setShowOnScreen] = useState(false)
   const [formData, setFormData] = useState(null)
   const [error, setError] = useState(null)
@@ -104,7 +103,7 @@ const TermsConditions = () => {
       setFormData(termsAndConditions)
       setShowOnScreen(termsAndConditions.active)
       setError(null)
-      innerSetEditing(false)
+      setEditing(false)
     },
     onError: e => setError(e)
   })
@@ -121,11 +120,6 @@ const TermsConditions = () => {
       setShowOnScreen(termsAndConditions?.active ?? false)
     }
   })
-
-  const innerSetEditing = editing => {
-    setEditing(editing)
-    setIsUnsaved(editing)
-  }
 
   const save = it => {
     setError(null)
@@ -197,7 +191,6 @@ const TermsConditions = () => {
 
   return (
     <>
-      <Prompt when={isUnsaved} />
       <div className={classes.header}>
         <Info2>Terms &amp; Conditions</Info2>
       </div>
@@ -211,7 +204,7 @@ const TermsConditions = () => {
           <Info2>Info card</Info2>
           {!editing && (
             <div className={classes.transparentButton}>
-              <button onClick={() => innerSetEditing(true)}>
+              <button onClick={() => setEditing(true)}>
                 <EditIcon />
               </button>
             </div>
@@ -222,10 +215,11 @@ const TermsConditions = () => {
           validationSchema={validationSchema}
           onSubmit={values => save(values)}
           onReset={() => {
-            innerSetEditing(false)
+            setEditing(false)
             setError(null)
           }}>
           <Form>
+            <PromptWhenDirty />
             {fields.map((f, idx) => (
               <div className={classes.row} key={idx}>
                 <Field

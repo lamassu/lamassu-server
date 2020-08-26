@@ -124,7 +124,6 @@ const CryptoBalanceOverrides = ({ section }) => {
       disableAdd={!suggestions?.length}
       onDelete={onDelete}
       setEditing={innerSetEditing}
-      setAdding={innerSetEditing}
     />
   )
 }

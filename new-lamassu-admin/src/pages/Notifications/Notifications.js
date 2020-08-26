@@ -3,7 +3,6 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import Prompt from 'src/components/Prompt'
 import TitleSection from 'src/components/layout/TitleSection'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
@@ -93,7 +92,6 @@ const Notifications = ({ name: SCREEN_KEY }) => {
 
   return (
     <NotificationsCtx.Provider value={contextValue}>
-      <Prompt when={editingKey} />
       <TitleSection title="Notifications" />
 
       <Section title="Setup" error={error && !section}>

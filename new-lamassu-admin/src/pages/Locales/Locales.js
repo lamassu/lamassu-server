@@ -1,9 +1,8 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 
-import Prompt from 'src/components/Prompt'
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -51,7 +50,6 @@ const SAVE_CONFIG = gql`
 `
 
 const Locales = ({ name: SCREEN_KEY }) => {
-  const [isUnsaved, setIsUnsaved] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
@@ -74,7 +72,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <Prompt when={isUnsaved} />
       <TitleSection title="Locales" />
       <Section>
         <EditableTable
@@ -82,8 +79,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
           titleLg
           name="locale"
           enableEdit
-          setEditing={setIsUnsaved}
-          setAdding={setIsUnsaved}
           initialValues={locale}
           save={save}
           validationSchema={LocaleSchema}
@@ -99,8 +94,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
           enableDelete
           enableEdit
           enableCreate
-          setEditing={setIsUnsaved}
-          setAdding={setIsUnsaved}
           initialValues={overridesDefaults}
           save={saveOverrides}
           validationSchema={OverridesSchema}

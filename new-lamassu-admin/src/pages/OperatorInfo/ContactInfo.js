@@ -9,7 +9,7 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
-import Prompt from 'src/components/Prompt'
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import { TextInput, NumberInput } from 'src/components/inputs/formik'
@@ -111,7 +111,6 @@ const styles = R.merge(globalStyles, contactInfoStyles)
 const contactUseStyles = makeStyles(styles)
 
 const ContactInfo = () => {
-  const [isUnsaved, setIsUnsaved] = useState(false)
   const [editing, setEditing] = useState(false)
   const [info, setInfo] = useState(null)
   const [locale, setLocale] = useState(null)
@@ -119,7 +118,7 @@ const ContactInfo = () => {
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: data => {
       setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.saveConfig))
-      innerSetEditing(false)
+      setEditing(false)
     },
     onError: e => setError(e)
   })
@@ -130,11 +129,6 @@ const ContactInfo = () => {
       setLocale(fromNamespace(namespaces.LOCALE, data.config))
     }
   })
-
-  const innerSetEditing = editing => {
-    setEditing(editing)
-    setIsUnsaved(editing)
-  }
 
   const save = it => {
     return saveConfig({
@@ -220,7 +214,6 @@ const ContactInfo = () => {
 
   return (
     <>
-      <Prompt when={isUnsaved} />
       <div className={classes.header}>
         <Info2>Contact information</Info2>
       </div>
@@ -243,7 +236,7 @@ const ContactInfo = () => {
           <Info2>Info card</Info2>
           {!editing && (
             <div className={classes.transparentButton}>
-              <button onClick={() => innerSetEditing(true)}>
+              <button onClick={() => setEditing(true)}>
                 <EditIcon />
               </button>
             </div>
@@ -255,10 +248,11 @@ const ContactInfo = () => {
           validationSchema={validationSchema}
           onSubmit={values => save(validationSchema.cast(values))}
           onReset={() => {
-            innerSetEditing(false)
+            setEditing(false)
             setError(null)
           }}>
           <Form>
+            <PromptWhenDirty />
             <div className={classes.row}>
               <Field
                 field={findField('name')}
