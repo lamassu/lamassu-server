@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
@@ -50,6 +50,8 @@ const SAVE_CONFIG = gql`
 `
 
 const Locales = ({ name: SCREEN_KEY }) => {
+  const [isEditingDefault, setEditingDefault] = useState(false)
+  const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
@@ -70,6 +72,9 @@ const Locales = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config } })
   }
 
+  const onEditingDefault = (it, editing) => setEditingDefault(editing)
+  const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
+
   return (
     <>
       <TitleSection title="Locales" />
@@ -84,6 +89,8 @@ const Locales = ({ name: SCREEN_KEY }) => {
           validationSchema={LocaleSchema}
           data={R.of(locale)}
           elements={mainFields(data)}
+          setEditing={onEditingDefault}
+          forceDisable={isEditingOverrides}
         />
       </Section>
       <Section>
@@ -97,8 +104,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
           initialValues={overridesDefaults}
           save={saveOverrides}
           validationSchema={OverridesSchema}
-          data={localeOverrides}
+          data={localeOverrides ?? []}
           elements={overrides(data, localeOverrides)}
+          setEditing={onEditingOverrides}
+          forceDisable={isEditingDefault}
         />
       </Section>
     </>
