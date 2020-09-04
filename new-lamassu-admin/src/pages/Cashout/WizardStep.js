@@ -6,7 +6,7 @@ import React from 'react'
 import ErrorMessage from 'src/components/ErrorMessage'
 import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
-import { TextInput } from 'src/components/inputs/formik'
+import { NumberInput } from 'src/components/inputs/formik'
 import { Info2, H4, P, Info1, Label1 } from 'src/components/typography'
 import cassetteOne from 'src/styling/icons/cassettes/cashout-cassette-1.svg'
 import cassetteTwo from 'src/styling/icons/cassettes/cashout-cassette-2.svg'
@@ -59,13 +59,15 @@ const WizardStep = ({
                       <Label1>Choose bill denomination</Label1>
                       <div className={classes.bill}>
                         <Field
+                          className={classes.billInput}
                           type="text"
                           size="lg"
                           autoFocus={1 + idx === step}
                           component={
-                            options?.length > 0 ? component : TextInput
+                            options?.length > 0 ? component : NumberInput
                           }
                           fullWidth
+                          decimalPlaces={0}
                           name={type}
                           options={options}
                           valueProp={'code'}
