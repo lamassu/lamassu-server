@@ -9,6 +9,7 @@ import {
   fontColor,
   offColor,
   subheaderColor,
+  fontSize3,
   fontSize5
 } from './variables'
 
@@ -93,10 +94,12 @@ export default createMuiTheme({
     MuiInputLabel: {
       root: {
         font: 'inherit',
+        fontSize: fontSize3,
         color: offColor
       },
       shrink: {
-        color: fontColor
+        color: fontColor,
+        transform: 'translate(0, 1.7px) scale(0.83)'
       }
     },
     MuiFormLabel: {

@@ -22,6 +22,7 @@ import {
 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+import { fontSize5 } from 'src/styling/variables'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
@@ -42,12 +43,12 @@ const fieldStyles = {
     display: 'flex',
     flexDirection: 'column',
     '& > p:first-child': {
-      height: 17,
+      height: 16,
       lineHeight: '16px',
-      transform: 'scale(0.75)',
+      fontSize: fontSize5,
       transformOrigin: 'left',
       paddingLeft: 0,
-      margin: [[1, 0, 5, 0]]
+      margin: [[3, 0, 3, 0]]
     },
     '& > p:last-child': {
       overflow: 'hidden',
