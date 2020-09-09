@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
 import FileSaver from 'file-saver'
 import moment from 'moment'
@@ -12,7 +12,7 @@ import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { primaryColor, offColor, zircon } from 'src/styling/variables'
 
-import Tooltip from './Tooltip'
+import Popper from './Popper'
 import DateRangePicker from './date-range-picker/DateRangePicker'
 import { RadioGroup } from './inputs'
 import typographyStyles from './typography/styles'
@@ -80,7 +80,7 @@ const DateContainer = ({ date, children, ...props }) => {
 
 const styles = {
   popoverContent: {
-    width: 272
+    width: 280
   },
   popoverHeader: {
     extend: h4,
@@ -117,7 +117,7 @@ const styles = {
   },
   arrowContainer: {
     position: 'absolute',
-    left: 116,
+    left: 125,
     top: 26
   },
   arrow: {
@@ -132,6 +132,7 @@ const RANGE = 'range'
 const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
   const [range, setRange] = useState({ from: null, until: null })
+  const [anchorEl, setAnchorEl] = useState(null)
   const [fetchLogs] = useLazyQuery(query, {
     onCompleted: data => createLogsFile(getLogs(data), range)
   })
@@ -197,58 +198,74 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
     )
   }
 
+  const handleOpenRangePicker = event => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
+  }
+
+  const handleClickAway = () => {
+    setAnchorEl(null)
+  }
+
   const radioButtonOptions = [
     { display: 'All logs', code: ALL },
     { display: 'Date range', code: RANGE }
   ]
 
+  const open = Boolean(anchorEl)
+  const id = open ? 'date-range-popover' : undefined
+
   return (
-    <>
-      <Tooltip
-        enableClick
-        Button={FeatureButton}
-        Icon={Download}
-        InverseIcon={DownloadInverseIcon}
-        variant="contained">
-        <div className={classes.popoverHeader}>{title}</div>
-        <div className={classes.radioButtonsContainer}>
-          <RadioGroup
-            name="logs-select"
-            value={selectedRadio}
-            options={radioButtonOptions}
-            ariaLabel="logs-select"
-            onChange={handleRadioButtons}
-            className={classes.radioButtons}
-          />
-        </div>
-        {selectedRadio === RANGE && (
-          <div className={classnames(dateRangePickerClasses)}>
-            <div className={classes.dateContainerWrapper}>
-              {range && (
-                <>
-                  <DateContainer date={range.from}>From</DateContainer>
-                  <div className={classes.arrowContainer}>
-                    <Arrow className={classes.arrow} />
-                  </div>
-                  <DateContainer date={range.until}>To</DateContainer>
-                </>
-              )}
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <div>
+        <FeatureButton
+          Icon={Download}
+          InverseIcon={DownloadInverseIcon}
+          onClick={handleOpenRangePicker}
+          variant="contained"
+        />
+        <Popper id={id} open={open} anchorEl={anchorEl} placement="bottom">
+          <div className={classes.popoverContent}>
+            <div className={classes.popoverHeader}>{title}</div>
+            <div className={classes.radioButtonsContainer}>
+              <RadioGroup
+                name="logs-select"
+                value={selectedRadio}
+                options={radioButtonOptions}
+                ariaLabel="logs-select"
+                onChange={handleRadioButtons}
+                className={classes.radioButtons}
+              />
             </div>
-            <DateRangePicker
-              maxDate={moment()}
-              onRangeChange={handleRangeChange}
-            />
+            {selectedRadio === RANGE && (
+              <div className={classnames(dateRangePickerClasses)}>
+                <div className={classes.dateContainerWrapper}>
+                  {range && (
+                    <>
+                      <DateContainer date={range.from}>From</DateContainer>
+                      <div className={classes.arrowContainer}>
+                        <Arrow className={classes.arrow} />
+                      </div>
+                      <DateContainer date={range.until}>To</DateContainer>
+                    </>
+                  )}
+                </div>
+                <DateRangePicker
+                  maxDate={moment()}
+                  onRangeChange={handleRangeChange}
+                />
+              </div>
+            )}
+            <div className={classes.download}>
+              <Link
+                color="primary"
+                onClick={() => downloadLogs(range, args, fetchLogs)}>
+                Download
+              </Link>
+            </div>
           </div>
-        )}
-        <div className={classes.download}>
-          <Link
-            color="primary"
-            onClick={() => downloadLogs(range, args, fetchLogs)}>
-            Download
-          </Link>
-        </div>
-      </Tooltip>
-    </>
+        </Popper>
+      </div>
+    </ClickAwayListener>
   )
 }
 

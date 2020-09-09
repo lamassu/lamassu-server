@@ -52,7 +52,7 @@ const getElements = (cryptoCurrencies, accounts) => {
         options: getOptions('ticker'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        limit: null
+        optionsLimit: null
       }
     },
     {
@@ -66,7 +66,7 @@ const getElements = (cryptoCurrencies, accounts) => {
         options: getOptions('wallet'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        limit: null
+        optionsLimit: null
       }
     },
     {
@@ -80,7 +80,7 @@ const getElements = (cryptoCurrencies, accounts) => {
         options: getOptions('exchange'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        limit: null
+        optionsLimit: null
       }
     },
     {
@@ -94,7 +94,7 @@ const getElements = (cryptoCurrencies, accounts) => {
         options: getOptions('zeroConf'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        limit: null
+        optionsLimit: null
       }
     }
   ]

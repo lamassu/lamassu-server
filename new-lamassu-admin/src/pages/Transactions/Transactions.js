@@ -94,14 +94,14 @@ const Transactions = () => {
     },
     {
       header: 'Cash',
-      width: 110,
+      width: 144,
       textAlign: 'right',
       size: 'sm',
       view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
     },
     {
       header: 'Crypto',
-      width: 141,
+      width: 144,
       textAlign: 'right',
       size: 'sm',
       view: it =>
@@ -114,21 +114,21 @@ const Transactions = () => {
       view: R.path(['toAddress']),
       className: classes.overflowTd,
       size: 'sm',
-      width: 136
+      width: 140
     },
     {
       header: 'Date (UTC)',
       view: it => moment.utc(it.created).format('YYYY-MM-DD'),
       textAlign: 'right',
       size: 'sm',
-      width: 144
+      width: 140
     },
     {
       header: 'Time (UTC)',
       view: it => moment.utc(it.created).format('HH:mm:ss'),
       textAlign: 'right',
       size: 'sm',
-      width: 144
+      width: 140
     }
   ]
 

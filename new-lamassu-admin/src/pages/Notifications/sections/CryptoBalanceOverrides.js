@@ -79,7 +79,7 @@ const CryptoBalanceOverrides = ({ section }) => {
       input: Autocomplete,
       inputProps: {
         options: it => R.concat(suggestions, findSuggestion(it)),
-        limit: null,
+        optionsLimit: null,
         valueProp: 'code',
         getLabel: R.path(['display'])
       }

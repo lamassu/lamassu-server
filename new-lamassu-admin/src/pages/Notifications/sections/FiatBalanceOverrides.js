@@ -62,7 +62,6 @@ const FiatBalanceOverrides = ({ section }) => {
       input: Autocomplete,
       inputProps: {
         options: it => R.concat(suggestions, findSuggestion(it)),
-        limit: null,
         valueProp: 'deviceId',
         getLabel: R.path(['name'])
       }

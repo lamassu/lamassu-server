@@ -29,7 +29,10 @@ const AutocompleteFormik = ({ options, ...props }) => {
       error={error}
       open={open}
       options={innerOptions}
-      onOpen={() => setOpen(value?.length !== props?.limit)}
+      onOpen={() => {
+        if (!props.multiple) return setOpen(true)
+        setOpen(value?.length !== props.limit)
+      }}
       onClose={() => setOpen(false)}
       {...props}
     />
