@@ -26,9 +26,6 @@ export default {
       component: Autocomplete,
       inputProps: {
         options: ['prod', 'test']
-        // valueProp: 'deviceId',
-        // getLabel: R.path(['name']),
-        // limit: null
       },
       face: true
     },

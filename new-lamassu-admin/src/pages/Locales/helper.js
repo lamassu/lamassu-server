@@ -51,8 +51,7 @@ const allFields = (getData, auxElements = []) => {
             suggestionFilter(machineData)
           ),
         valueProp: 'deviceId',
-        getLabel: R.path(['name']),
-        limit: null
+        getLabel: R.path(['name'])
       }
     },
     {
@@ -95,7 +94,7 @@ const allFields = (getData, auxElements = []) => {
     },
     {
       name: 'cryptoCurrencies',
-      width: 270,
+      width: 290,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
@@ -104,7 +103,7 @@ const allFields = (getData, auxElements = []) => {
         valueProp: 'code',
         getLabel: R.path(['code']),
         multiple: true,
-        limit: null
+        optionsLimit: null
       }
     }
   ]

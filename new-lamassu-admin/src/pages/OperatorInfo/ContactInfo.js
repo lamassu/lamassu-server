@@ -170,7 +170,7 @@ const ContactInfo = () => {
         parsePhoneNumberFromString(
           info.phone,
           locale.country
-        ).formatInternational() ?? '',
+        ).formatInternational(),
       component: NumberInput
     },
     {
