@@ -66,6 +66,7 @@ export default createMuiTheme({
         '&[data-tag-index="0"]': {
           marginLeft: 0
         },
+        margin: 2,
         backgroundColor: subheaderColor,
         borderRadius: 4,
         height: 18

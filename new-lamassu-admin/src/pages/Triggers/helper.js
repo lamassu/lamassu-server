@@ -486,7 +486,7 @@ const getElements = (currency, classes) => [
       options: typeOptions,
       valueProp: 'code',
       getLabel: R.path(['display']),
-      limit: null
+      optionsLimit: null
     }
   },
   {

@@ -7,7 +7,6 @@ import React, { useState, memo } from 'react'
 import Tooltip from 'src/components/Tooltip'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
-import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { mainStyles } from './CoinATMRadar.styles'
@@ -88,7 +87,7 @@ const CoinATMRadar = memo(() => {
       <div>
         <div className={classes.titleWrapper}>
           <H4>Coin ATM Radar share settings</H4>
-          <Tooltip enableClick width={304} Icon={HelpIcon}>
+          <Tooltip width={304}>
             <P>
               For details on configuring this panel, please read the relevant
               knowledgebase article{' '}

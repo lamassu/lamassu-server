@@ -33,13 +33,12 @@ const getOverridesFields = (getData, currency) => {
       inputProps: {
         options: machineData,
         valueProp: 'deviceId',
-        getLabel: R.path(['name']),
-        limit: null
+        getLabel: R.path(['name'])
       }
     },
     {
       name: 'cryptoCurrencies',
-      width: 250,
+      width: 280,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
@@ -53,7 +52,7 @@ const getOverridesFields = (getData, currency) => {
     {
       name: 'cashIn',
       display: 'Cash-in',
-      width: 140,
+      width: 130,
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
@@ -64,7 +63,7 @@ const getOverridesFields = (getData, currency) => {
     {
       name: 'cashOut',
       display: 'Cash-out',
-      width: 140,
+      width: 130,
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',

@@ -6,7 +6,8 @@ import React from 'react'
 import TextInput from './TextInput'
 
 const Autocomplete = ({
-  limit = 5, // set limit = null for no limit
+  optionsLimit = 5, // set limit = null for no limit
+  limit,
   options,
   label,
   valueProp,
@@ -18,6 +19,7 @@ const Autocomplete = ({
   fullWidth,
   textAlign,
   size,
+  autoFocus,
   ...props
 }) => {
   const mapFromValue = options => it => R.find(R.propEq(valueProp, it))(options)
@@ -42,7 +44,10 @@ const Autocomplete = ({
     onChange(evt, rValue)
   }
 
-  const valueArray = () => (multiple ? value : [value])
+  const valueArray = () => {
+    if (R.isNil(value)) return []
+    return multiple ? value : [value]
+  }
 
   const filter = (array, input) =>
     sort(array, input, { keys: ['code', 'display'] })
@@ -70,7 +75,6 @@ const Autocomplete = ({
       autoHighlight
       disableClearable
       ChipProps={{ onDelete: null }}
-      blurOnSelect
       clearOnEscape
       getOptionSelected={R.eqProps(valueProp)}
       {...props}
@@ -84,7 +88,7 @@ const Autocomplete = ({
             size={size}
             fullWidth={fullWidth}
             textAlign={textAlign}
-            {...props}
+            autoFocus={autoFocus}
           />
         )
       }}
