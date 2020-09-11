@@ -1,5 +1,3 @@
-import Modal from 'src/components/Modal'
-
 import { makeStyles, Drawer, Grid } from '@material-ui/core'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import classnames from 'classnames'
@@ -7,11 +5,11 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import Modal from 'src/components/Modal'
 import Stepper from 'src/components/Stepper'
 import { Button, Link } from 'src/components/buttons'
 import { P, H2, Info2 } from 'src/components/typography'
 import { spacer } from 'src/styling/variables'
-import { URI } from 'src/utils/apollo'
 
 const getStepperProps = (current, steps) => ({
   steps: R.length(steps),
@@ -35,7 +33,7 @@ const useStyles = makeStyles(() => ({
     height: 84
   },
   title: {
-    margin: [[0, spacer * 4, 0, 0]],
+    margin: [[0, spacer * 4, 0, 0]]
   },
   subtitle: {
     marginTop: spacer,
@@ -45,8 +43,8 @@ const useStyles = makeStyles(() => ({
   },
   modal: {
     background: 'none',
-    boxShadow: 'none',
-  },
+    boxShadow: 'none'
+  }
 }))
 
 function Footer({ next, current, steps: collection, path, tag, p }) {
@@ -82,7 +80,7 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
               item
               xs={5}
               container
-              direction={open ? "column" : "row"}
+              direction={open ? 'column' : 'row'}
               justify="flex-start"
               alignItems="baseline">
               <H2 className={classes.title}>Setup Lamassu Admin</H2>
@@ -117,7 +115,12 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
                 direction="column"
                 justify="flex-start"
                 alignItems="flex-start">
-                <Link onClick={() => { setFullExample(true) }}>See full example</Link>
+                <Link
+                  onClick={() => {
+                    setFullExample(true)
+                  }}>
+                  See full example
+                </Link>
               </Grid>
               <Grid
                 item
@@ -142,9 +145,15 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
           className={classes.modal}
           xl={true}
           width={1152 + 120 + 56}
-          handleClose={() => { setFullExample(false) }}
+          handleClose={() => {
+            setFullExample(false)
+          }}
           open={fullExample}>
-          <img width={1152} src={`/fullexample.${current}.png`} alt={`${current} configuration example`} />
+          <img
+            width={1152}
+            src={`/fullexample.${current}.png`}
+            alt={`${current} configuration example`}
+          />
         </Modal>
       </Drawer>
     </ClickAwayListener>

@@ -100,7 +100,9 @@ const validateSteps = ({ config, accounts }) => {
           compliance options
         </>
       ),
-      isComplete: twilio.validationSchema.isValidSync(accounts?.twilio) || R.isEmpty(accounts?.twilio)
+      isComplete:
+        twilio.validationSchema.isValidSync(accounts?.twilio) ||
+        R.isEmpty(accounts?.twilio)
     },
     {
       namespace: namespaces.COMMISSIONS,
