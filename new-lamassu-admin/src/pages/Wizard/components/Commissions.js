@@ -15,7 +15,7 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config,
+    config
     accounts
   }
 `

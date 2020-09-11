@@ -29,11 +29,15 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    padding: xl ? [[0, 60 + 28]] : small ? [[0, 16]] : [[0, 32]],
+    padding: xl ? [[0, 60 + 28]] : small ? [[0, 16]] : [[0, 32]]
   }),
   button: ({ small, xl }) => ({
     padding: [[0, 0, xl ? 26 : 0, 0]],
-    margin: xl ? [[0, 0, 'auto', 'auto']] : small ? [[12, 12, 'auto', 'auto']] : [[16, 16, 'auto', 'auto']]
+    margin: xl
+      ? [[0, 0, 'auto', 'auto']]
+      : small
+      ? [[12, 12, 'auto', 'auto']]
+      : [[16, 16, 'auto', 'auto']]
   }),
   header: {
     display: 'flex'

@@ -4,6 +4,9 @@ import classnames from 'classnames'
 import gql from 'graphql-tag'
 import React, { useEffect, useState } from 'react'
 
+import Tooltip from 'src/components/Tooltip'
+import { IconButton } from 'src/components/buttons'
+import { RadioGroup } from 'src/components/inputs'
 import { H1, Label1, H4, P } from 'src/components/typography'
 import addMachineStyles from 'src/pages/AddMachine/styles'
 import {
@@ -12,12 +15,9 @@ import {
 } from 'src/pages/OperatorInfo/OperatorInfo.styles'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import twilio from 'src/pages/Services/schemas/twilio'
-import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
-import { RadioGroup } from 'src/components/inputs'
 import styles from 'src/pages/Wizard/Radio.styles'
-import Tooltip from 'src/components/Tooltip'
-import { IconButton } from 'src/components/buttons'
 import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
+import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
 const GET_CONFIG = gql`
   {
@@ -54,7 +54,7 @@ const options = [
   },
   {
     code: 'disable',
-    display: "No, not for now"
+    display: 'No, not for now'
   }
 ]
 
@@ -62,7 +62,6 @@ function Twilio({ dispatch, namespace }) {
   const { data, refetch } = useQuery(GET_CONFIG)
   const [saveAccounts] = useMutation(SAVE_ACCOUNTS)
   const accounts = data?.accounts ?? []
-  const config = data?.config ?? []
 
   const [enable, setEnable] = useState('disable')
 
@@ -100,13 +99,18 @@ function Twilio({ dispatch, namespace }) {
         <H1>Twilio (SMS service)</H1>
         <H4>
           Will you setup a two way machine?
-        <Tooltip width={304} enableClick Button={IconButton} Icon={HelpIcon}>
+          <Tooltip width={304} enableClick Button={IconButton} Icon={HelpIcon}>
             <P>
-              Two-way machines allow your customers not only to buy (cash-in) but also sell cryptocurrencies (cash-out).</P>
+              Two-way machines allow your customers not only to buy (cash-in)
+              but also sell cryptocurrencies (cash-out).
+            </P>
             <P>
-              To get your admin up and running, you’ll only need an SMS service for cash-out transactions. If you’re using one-way machines, select “No” to skip this step for now. You can later set it up within the Lamassu Admin.</P>
+              To get your admin up and running, you’ll only need an SMS service
+              for cash-out transactions. If you’re using one-way machines,
+              select “No” to skip this step for now. You can later set it up
+              within the Lamassu Admin.
+            </P>
           </Tooltip>
-
         </H4>
 
         <RadioGroup
@@ -117,13 +121,12 @@ function Twilio({ dispatch, namespace }) {
           onChange={event => handleRadio(event.target.value)}
         />
 
-
         <div className={classnames(classes.section, classes.infoMessage)}>
           <WarningIcon />
           <Label1>
             Before configuring Twilio, create an account and phone number to use
             the Admin.
-        </Label1>
+          </Label1>
         </div>
         {enable === 'enable' && (
           <FormRenderer
