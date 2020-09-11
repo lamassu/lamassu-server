@@ -86,11 +86,12 @@ function Locales({ dispatch, namespace }) {
           rowSize="lg"
           titleLg
           name="locale"
-          enableEdit
           initialValues={locale}
+          outerEditingId={1}
+          enableEdit
           save={save}
           validationSchema={schema}
-          data={R.of(locale)}
+          data={R.of({ ...locale, id: 1 })}
           elements={mainFields(data)}
         />
       </Section>
