@@ -65,11 +65,11 @@ function Commissions({ dispatch, namespace }) {
           rowSize="lg"
           titleLg
           name="commissions"
+          outerEditingId={1}
           enableEdit
-          initialValues={values}
           save={save}
           validationSchema={schema}
-          data={R.of(values)}
+          data={R.of({ ...values, id: 1 })}
           elements={mainFields(currency)}
         />
       </Section>
