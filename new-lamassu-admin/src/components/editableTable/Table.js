@@ -47,7 +47,8 @@ const ETable = ({
   setEditing,
   stripeWhen,
   disableRowEdit,
-  createText = 'Add override'
+  createText = 'Add override',
+  outerEditingId = null
 }) => {
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
@@ -74,7 +75,7 @@ const ETable = ({
 
   const onReset = () => {
     setAdding(false)
-    setEditingId(null)
+    setEditingId(outerEditingId)
     setEditing && setEditing(false)
   }
 
