@@ -34,6 +34,9 @@ const useStyles = makeStyles(() => ({
   smallWrapper: {
     height: 84
   },
+  title: {
+    margin: [[0, spacer * 4, 0, 0]],
+  },
   subtitle: {
     marginTop: spacer,
     marginBottom: 6,
@@ -79,11 +82,11 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
               item
               xs={5}
               container
-              direction="column"
+              direction={open ? "column" : "row"}
               justify="flex-start"
-              alignItems="flex-start">
-              <H2 noMargin>Setup Lamassu Admin</H2>
-              {open && <Info2 className={classes.subtitle}>{tag}</Info2>}
+              alignItems="baseline">
+              <H2 className={classes.title}>Setup Lamassu Admin</H2>
+              <Info2 className={classes.subtitle}>{tag}</Info2>
               {open && <P>{p}</P>}
             </Grid>
             <Grid
