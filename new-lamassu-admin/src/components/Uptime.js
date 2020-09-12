@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core'
-import classnames from 'classnames'
+import Chip from '@material-ui/core/Chip'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -8,12 +8,26 @@ import {
   secondaryColorDarker,
   offErrorColor,
   errorColor,
-  offColor
+  offColor,
+  inputFontWeight,
+  smallestFontSize,
+  inputFontFamily,
+  spacer
 } from 'src/styling/variables'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import typographyStyles from './typography/styles'
 const { label1 } = typographyStyles
+
+const colors = {
+  running: secondaryColorDarker,
+  notRunning: offErrorColor
+}
+
+const backgroundColors = {
+  running: secondaryColorLighter,
+  notRunning: errorColor
+}
 
 const styles = {
   uptimeContainer: {
@@ -25,34 +39,33 @@ const styles = {
     extend: label1,
     paddingLeft: 4,
     color: offColor
-  },
-  uptime: {
-    extend: label1,
-    height: 24,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  running: {
-    backgroundColor: secondaryColorLighter,
-    color: secondaryColorDarker
-  },
-  notRunning: {
-    backgroundColor: offErrorColor,
-    color: errorColor
   }
 }
 
 const useStyles = makeStyles(styles)
 
+const useChipStyles = makeStyles({
+  root: {
+    borderRadius: spacer / 2,
+    marginTop: spacer / 2,
+    marginRight: spacer / 4,
+    marginBottom: spacer / 2,
+    marginLeft: spacer / 4,
+    height: spacer * 3,
+    backgroundColor: ({ type }) => backgroundColors[type]
+  },
+  label: {
+    fontSize: smallestFontSize,
+    fontWeight: inputFontWeight,
+    fontFamily: inputFontFamily,
+    padding: [[spacer / 2, spacer]],
+    color: ({ type }) => colors[type]
+  }
+})
+
 const Uptime = ({ process, ...props }) => {
   const classes = useStyles()
 
-  const uptimeClassNames = {
-    [classes.uptime]: true,
-    [classes.running]: process.state === 'RUNNING',
-    [classes.notRunning]: process.state !== 'RUNNING'
-  }
   const uptime = time => {
     if (time < 60) return `${time}s`
     if (time < 3600) return `${Math.floor(time / 60)}m`
@@ -63,11 +76,16 @@ const Uptime = ({ process, ...props }) => {
   return (
     <div className={classes.uptimeContainer}>
       <div className={classes.name}>{R.toLower(process.name)}</div>
-      <div className={classnames(uptimeClassNames)}>
-        {process.state === 'RUNNING'
-          ? `Running for ${uptime(process.uptime)}`
-          : onlyFirstToUpper(process.state)}
-      </div>
+      <Chip
+        label={
+          process.state === 'RUNNING'
+            ? `Running for ${uptime(process.uptime)}`
+            : onlyFirstToUpper(process.state)
+        }
+        classes={useChipStyles({
+          type: process.state === 'RUNNING' ? 'running' : 'notRunning'
+        })}
+      />
     </div>
   )
 }
