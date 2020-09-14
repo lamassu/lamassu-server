@@ -60,15 +60,17 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
 
+const NUM_LOG_RESULTS = 1000
+
 const GET_DATA = gql`
-  {
+  query ServerData($limit: Int) {
     serverVersion
     uptime {
       name
       state
       uptime
     }
-    serverLogs {
+    serverLogs(limit: $limit) {
       logLevel
       id
       timestamp
@@ -93,7 +95,10 @@ const Logs = () => {
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
   const { data } = useQuery(GET_DATA, {
-    onCompleted: () => setSaveMessage('')
+    onCompleted: () => setSaveMessage(''),
+    variables: {
+      limit: NUM_LOG_RESULTS
+    }
   })
 
   const serverVersion = data?.serverVersion

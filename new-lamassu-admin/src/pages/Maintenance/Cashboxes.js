@@ -57,7 +57,7 @@ const Cashboxes = () => {
   const [resetCashOut] = useMutation(RESET_CASHOUT_BILLS, {
     onError: ({ graphQLErrors, message }) => {
       const errorMessage = graphQLErrors[0] ? graphQLErrors[0].message : message
-      // TODO: this should not be final
+      // TODO new-admin : this should not be final
       alert(JSON.stringify(errorMessage))
     }
   })

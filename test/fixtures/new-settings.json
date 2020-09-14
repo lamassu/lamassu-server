@@ -3,7 +3,7 @@
     "triggers": [
       {
         "id": "ce8f240f-7235-4948-b833-4af56ccfa90f",
-        "cashDirection": "cash-out",
+        "direction": "cash-out",
         "triggerType": "volume",
         "threshold": "12",
         "requirement": "block"

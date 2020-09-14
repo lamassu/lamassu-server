@@ -15,7 +15,11 @@ const FrontCameraPhoto = memo(({ frontCameraPath }) => {
   return (
     <Paper className={classes.photo} elevation={0}>
       {frontCameraPath ? (
-        <img src={`${URI}/front-camera-photo/${frontCameraPath}`} alt="" />
+        <img
+          className={classes.img}
+          src={`${URI}/front-camera-photo/${frontCameraPath}`}
+          alt=""
+        />
       ) : (
         <CrossedCameraIcon />
       )}

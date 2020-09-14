@@ -68,7 +68,7 @@ const useStyles = makeStyles({
   }
 })
 
-const cashDirection = Yup.string().required('Required')
+const direction = Yup.string().required('Required')
 const triggerType = Yup.string().required('Required')
 const threshold = Yup.object().shape({
   threshold: Yup.number(),
@@ -83,11 +83,11 @@ const Schema = Yup.object().shape({
   triggerType,
   requirement,
   threshold,
-  cashDirection
+  direction
 })
 
 // Direction
-const directionSchema = Yup.object().shape({ cashDirection })
+const directionSchema = Yup.object().shape({ direction })
 
 const directionOptions = [
   {
@@ -143,7 +143,7 @@ const Direction = () => {
   const { errors } = useFormikContext()
 
   const titleClass = {
-    [classes.error]: errors.cashDirection
+    [classes.error]: errors.direction
   }
 
   return (
@@ -155,7 +155,7 @@ const Direction = () => {
       </Box>
       <Field
         component={RadioGroup}
-        name="cashDirection"
+        name="direction"
         options={directionOptions}
         labelClassName={classes.radioLabel}
         radioClassName={classes.radio}
@@ -165,11 +165,11 @@ const Direction = () => {
   )
 }
 
-const direction = {
+const txDirection = {
   schema: directionSchema,
   options: directionOptions,
   Component: Direction,
-  initialValues: { cashDirection: '' }
+  initialValues: { direction: '' }
 }
 
 // TYPE
@@ -257,11 +257,11 @@ const requirementSchema = Yup.object().shape({
 
 const requirementOptions = [
   { display: 'SMS verification', code: 'sms' },
-  { display: 'ID card image', code: 'idPhoto' },
-  { display: 'ID data', code: 'idData' },
+  { display: 'ID card image', code: 'idCardPhoto' },
+  { display: 'ID data', code: 'idCardData' },
   { display: 'Customer camera', code: 'facephoto' },
   { display: 'Sanctions', code: 'sanctions' },
-  { display: 'Super user', code: 'superuser' },
+  // { display: 'Super user', code: 'superuser' },
   { display: 'Suspend', code: 'suspend' },
   { display: 'Block', code: 'block' }
 ]
@@ -506,7 +506,7 @@ const getElements = (currency, classes) => [
     view: (it, config) => <ThresholdView config={config} currency={currency} />
   },
   {
-    name: 'cashDirection',
+    name: 'direction',
     size: 'sm',
     width: 282,
     view: it => <DirectionDisplay code={it} />,
@@ -554,7 +554,7 @@ const toServer = triggers =>
 export {
   Schema,
   getElements,
-  direction,
+  txDirection,
   type,
   requirements,
   sortBy,

@@ -76,7 +76,7 @@ const MachineDetailsRow = ({ it: machine }) => {
               <Label>Lamassu Support article</Label>
               <div>
                 {machine.statuses.map((...[, index]) => (
-                  // TODO support articles
+                  // TODO new-admin: support articles
                   <span key={index}></span>
                 ))}
               </div>

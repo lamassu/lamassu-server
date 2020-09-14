@@ -71,9 +71,12 @@ export default {
     borderRadius: 8,
     backgroundColor: zircon,
     margin: [[0, 28, 0, 0]],
-    padding: [[30]],
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'center',
+    display: 'flex'
+  },
+  img: {
+    width: 80
   },
   customerName: {
     marginBottom: 32

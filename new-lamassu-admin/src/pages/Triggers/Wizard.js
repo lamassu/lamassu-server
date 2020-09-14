@@ -10,7 +10,7 @@ import { Button } from 'src/components/buttons'
 import { H5, Info3 } from 'src/components/typography'
 import { comet } from 'src/styling/variables'
 
-import { direction, type, requirements } from './helper'
+import { txDirection, type, requirements } from './helper'
 
 const LAST_STEP = 3
 
@@ -44,7 +44,7 @@ const useStyles = makeStyles(styles)
 const getStep = step => {
   switch (step) {
     case 1:
-      return direction
+      return txDirection
     case 2:
       return type
     case 3:
@@ -72,7 +72,7 @@ const orUnderline = value => {
 }
 
 const getDirectionText = config => {
-  switch (config.cashDirection) {
+  switch (config.direction) {
     case 'both':
       return 'both cash-in and cash-out'
     case 'cashIn':
@@ -111,9 +111,9 @@ const getRequirementText = config => {
   switch (config.requirement?.requirement) {
     case 'sms':
       return 'asked to enter code provided through SMS verification'
-    case 'idPhoto':
+    case 'idCardPhoto':
       return 'asked to scan a ID with photo'
-    case 'idData':
+    case 'idCardData':
       return 'asked to scan a ID'
     case 'facephoto':
       return 'asked to have a photo taken'
