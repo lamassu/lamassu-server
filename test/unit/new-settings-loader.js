@@ -9,7 +9,7 @@ const config = settings.config
 
 test('first examples', () => {
   const triggers = configManager.getTriggers(config)
-  const filtered = _.filter(_.matches({ triggerType: 'volume', cashDirection: 'both' }))(triggers)
+  const filtered = _.filter(_.matches({ triggerType: 'volume', direction: 'both' }))(triggers)
   const grouped = _.groupBy(_.prop('requirement'))(filtered)
   const final = _.mapValues(_.compose(_.get('threshold'), _.minBy('threshold')))(grouped)
 
