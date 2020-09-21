@@ -82,6 +82,7 @@ const Autocomplete = ({
         return (
           <TextInput
             {...params}
+            autoFocus={autoFocus}
             label={label}
             value={outsideValue}
             error={error}

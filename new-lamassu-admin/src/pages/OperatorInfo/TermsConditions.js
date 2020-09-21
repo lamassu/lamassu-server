@@ -225,7 +225,6 @@ const TermsConditions = () => {
                 <Field
                   editing={editing}
                   name={f.name}
-                  component={TextInput}
                   width={f.width}
                   placeholder={f.placeholder}
                   label={f.label}
