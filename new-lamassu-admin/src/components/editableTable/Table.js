@@ -98,7 +98,6 @@ const ETable = ({
   const addField = () => {
     setAdding(true)
     setEditing && setEditing(true, true)
-    // TODO: maybe create a setAdding argument would be better?
   }
 
   const widthIfEditNull =
