@@ -9,8 +9,7 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 
 const ALL_MACHINES = {
   name: 'All Machines',
-  deviceId: 'ALL_MACHINES',
-  __typename: 'Machine'
+  deviceId: 'ALL_MACHINES'
 }
 
 const cashInAndOutHeaderStyle = { marginLeft: 6 }
@@ -246,7 +245,7 @@ const defaults = {
 
 const overridesDefaults = {
   machine: null,
-  cryptoCurrencies: '',
+  cryptoCurrencies: [],
   cashIn: '',
   cashOut: '',
   fixedFee: '',
