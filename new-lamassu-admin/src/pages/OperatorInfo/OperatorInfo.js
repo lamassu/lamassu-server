@@ -1,6 +1,13 @@
 import { makeStyles } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
-import React, { useState } from 'react'
+import React from 'react'
+import {
+  Route,
+  Switch,
+  Redirect,
+  useLocation,
+  useHistory
+} from 'react-router-dom'
 
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -24,34 +31,66 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const CONTACT_INFORMATION = 'Contact information'
-const RECEIPT = 'Receipt'
-const COIN_ATM_RADAR = 'Coin ATM Radar'
-const TERMS_CONDITIONS = 'Terms & Conditions'
+const innerRoutes = [
+  {
+    label: 'Contact information',
+    route: '/settings/operator-info/contact-info',
+    component: ContactInfo
+  },
+  {
+    label: 'Receipt',
+    route: '/settings/operator-info/receipt-printing',
+    component: ReceiptPrinting
+  },
+  {
+    label: 'Coin ATM Radar',
+    route: '/settings/operator-info/coin-atm-radar',
+    component: CoinAtmRadar
+  },
+  {
+    label: 'Terms & Conditions',
+    route: '/settings/operator-info/terms-conditions',
+    component: TermsConditions
+  }
+]
 
-const pages = [CONTACT_INFORMATION, RECEIPT, COIN_ATM_RADAR, TERMS_CONDITIONS]
+const Routes = () => (
+  <Switch>
+    <Redirect
+      exact
+      from="/settings/operator-info"
+      to="/settings/operator-info/contact-info"
+    />
+    <Route exact path="/" />
+    {innerRoutes.map(({ route, component: Page, key }) => (
+      <Route path={route} key={key}>
+        <Page name={key} />
+      </Route>
+    ))}
+  </Switch>
+)
 
 const OperatorInfo = () => {
-  const [selected, setSelected] = useState(CONTACT_INFORMATION)
   const classes = useStyles()
+  const history = useHistory()
+  const location = useLocation()
 
-  const isSelected = it => selected === it
+  const isSelected = it => location.pathname === it.route
+
+  const onClick = it => history.push(it.route)
 
   return (
     <>
       <TitleSection title="Operator information"></TitleSection>
       <Grid container className={classes.grid}>
         <Sidebar
-          data={pages}
+          data={innerRoutes}
           isSelected={isSelected}
-          displayName={it => it}
-          onClick={it => setSelected(it)}
+          displayName={it => it.label}
+          onClick={onClick}
         />
         <div className={classes.content}>
-          {isSelected(CONTACT_INFORMATION) && <ContactInfo />}
-          {isSelected(RECEIPT) && <ReceiptPrinting />}
-          {isSelected(TERMS_CONDITIONS) && <TermsConditions />}
-          {isSelected(COIN_ATM_RADAR) && <CoinAtmRadar />}
+          <Routes />
         </div>
       </Grid>
     </>

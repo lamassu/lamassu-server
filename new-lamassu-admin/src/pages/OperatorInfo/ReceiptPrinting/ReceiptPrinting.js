@@ -99,43 +99,35 @@ const ReceiptPrinting = memo(() => {
         elements={[
           {
             name: 'operatorWebsite',
-            display: 'Operator website',
-            value: receiptPrintingConfig.operatorWebsite
+            display: 'Operator website'
           },
           {
             name: 'operatorEmail',
-            display: 'Operator email',
-            value: receiptPrintingConfig.operatorEmail
+            display: 'Operator email'
           },
           {
             name: 'operatorPhone',
-            display: 'Operator phone',
-            value: receiptPrintingConfig.operatorPhone
+            display: 'Operator phone'
           },
           {
             name: 'companyNumber',
-            display: 'Company number',
-            value: receiptPrintingConfig.companyNumber
+            display: 'Company number'
           },
           {
             name: 'machineLocation',
-            display: 'Machine location',
-            value: receiptPrintingConfig.machineLocation
+            display: 'Machine location'
           },
           {
             name: 'customerNameOrPhoneNumber',
-            display: 'Customer name or phone number (if known)',
-            value: receiptPrintingConfig.customerNameOrPhoneNumber
+            display: 'Customer name or phone number (if known)'
           },
           {
             name: 'exchangeRate',
-            display: 'Exchange rate',
-            value: receiptPrintingConfig.exchangeRate
+            display: 'Exchange rate'
           },
           {
             name: 'addressQRCode',
-            display: 'Address QR code',
-            value: receiptPrintingConfig.addressQRCode
+            display: 'Address QR code'
           }
         ]}
         save={save}

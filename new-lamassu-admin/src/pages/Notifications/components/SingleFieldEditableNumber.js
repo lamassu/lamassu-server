@@ -2,6 +2,8 @@ import { Form, Formik } from 'formik'
 import React, { useContext } from 'react'
 import * as Yup from 'yup'
 
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
+
 import NotificationsCtx from '../NotificationsContext'
 
 import Header from './EditHeader'
@@ -41,6 +43,7 @@ const SingleFieldEditableNumber = ({
         setEditing(name, false)
       }}>
       <Form className={className}>
+        <PromptWhenDirty />
         <Header
           title={title}
           editing={isEditing(name)}

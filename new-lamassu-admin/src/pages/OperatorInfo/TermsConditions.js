@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
@@ -218,6 +219,7 @@ const TermsConditions = () => {
             setError(null)
           }}>
           <Form>
+            <PromptWhenDirty />
             {fields.map((f, idx) => (
               <div className={classes.row} key={idx}>
                 <Field

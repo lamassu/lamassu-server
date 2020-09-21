@@ -3,6 +3,7 @@ import { Form, Formik } from 'formik'
 import React, { useContext } from 'react'
 import * as Yup from 'yup'
 
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { TL2 } from 'src/components/typography'
 
 import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
@@ -59,6 +60,7 @@ const FiatBalance = ({
         setEditing(NAME, false)
       }}>
       <Form className={classes.form}>
+        <PromptWhenDirty />
         <Header
           title="Cash out (Empty)"
           editing={editing}
