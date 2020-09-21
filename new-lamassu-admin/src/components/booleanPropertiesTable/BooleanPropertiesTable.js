@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
-import { Form, Formik, Field as FormikField } from 'formik'
+import { useFormikContext, Form, Formik, Field as FormikField } from 'formik'
 import _ from 'lodash'
 import React, { useState, memo } from 'react'
 import * as Yup from 'yup'
@@ -9,14 +9,20 @@ import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs/formik'
 import { Table, TableBody, TableRow, TableCell } from 'src/components/table'
-import { BooleanCell } from 'src/components/tables/formik'
 import { H4 } from 'src/components/typography'
 import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import { ReactComponent as FalseIcon } from 'src/styling/icons/table/false.svg'
+import { ReactComponent as TrueIcon } from 'src/styling/icons/table/true.svg'
 
 import { booleanPropertiesTableStyles } from './BooleanPropertiesTable.styles'
 
 const useStyles = makeStyles(booleanPropertiesTableStyles)
+
+const BooleanCell = ({ name }) => {
+  const { values } = useFormikContext()
+  return values[name] === 'true' ? <TrueIcon /> : <FalseIcon />
+}
 
 const BooleanPropertiesTable = memo(
   ({ title, disabled, data, elements, save }) => {
@@ -91,17 +97,7 @@ const BooleanPropertiesTable = memo(
                           )}
                         />
                       )}
-                      {!editing && (
-                        <FormikField
-                          component={BooleanCell}
-                          name={it.name}
-                          className={classes.rightTableCell}
-                        />
-                        // <BooleanCell
-                        //   className={classes.rightTableCell}
-                        //   value={it.value}
-                        // />
-                      )}
+                      {!editing && <BooleanCell name={it.name} />}
                     </TableCell>
                   </TableRow>
                 ))}

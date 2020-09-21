@@ -57,7 +57,7 @@ const Field = ({
         <FormikField
           id={name}
           name={name}
-          component={TextInputFormik}
+          component={TextInput}
           width={width}
           placeholder={placeholder}
           type="text"
