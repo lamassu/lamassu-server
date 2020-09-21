@@ -11,7 +11,7 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
-import { Info2, Info3, Label2, Label3 } from 'src/components/typography'
+import { H4, Info2, Info3, Label2, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
