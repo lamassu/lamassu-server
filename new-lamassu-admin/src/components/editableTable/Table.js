@@ -4,6 +4,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import Link from 'src/components/buttons/Link.js'
 import { AddButton } from 'src/components/buttons/index.js'
 import { TBody, Table } from 'src/components/fake-table/Table'
@@ -159,6 +160,7 @@ const ETable = ({
                     validationSchema={validationSchema}
                     onSubmit={innerSave}>
                     <Form>
+                      <PromptWhenDirty />
                       <ERow editing={true} disabled={forceDisable} />
                     </Form>
                   </Formik>

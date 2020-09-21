@@ -9,6 +9,7 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
+import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import { TextInput, NumberInput } from 'src/components/inputs/formik'
@@ -244,6 +245,7 @@ const ContactInfo = () => {
             setError(null)
           }}>
           <Form>
+            <PromptWhenDirty />
             <div className={classes.row}>
               <Field
                 field={findField('name')}
