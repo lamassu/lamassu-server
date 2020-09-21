@@ -111,4 +111,51 @@ const termsConditionsStyles = {
   }
 }
 
-export { styles, contactInfoStyles, termsConditionsStyles }
+const fieldStyles = {
+  field: {
+    position: 'relative',
+    width: 280,
+    padding: [[0, 4, 4, 0]]
+  },
+  notEditing: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  notEditingSingleLine: {
+    '& > p:first-child': {
+      height: 16,
+      lineHeight: '16px',
+      transform: 'scale(0.75)',
+      transformOrigin: 'left',
+      paddingLeft: 0,
+      margin: [[1, 0, 6, 0]]
+    },
+    '& > p:last-child': {
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      height: 25,
+      margin: 0
+    }
+  },
+  notEditingMultiline: {
+    '& > p:first-child': {
+      height: 16,
+      lineHeight: '16px',
+      transform: 'scale(0.75)',
+      transformOrigin: 'left',
+      paddingLeft: 0,
+      margin: [[1, 0, 5, 0]]
+    },
+    '& > p:last-child': {
+      width: 502,
+      height: 121,
+      overflowY: 'auto',
+      lineHeight: '19px',
+      wordWrap: 'anywhere',
+      margin: 0
+    }
+  }
+}
+
+export { styles, contactInfoStyles, termsConditionsStyles, fieldStyles }

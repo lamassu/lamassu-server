@@ -42,7 +42,7 @@ export default {
       margin: 0,
       borderTop: 0,
       padding: 0,
-      borderRadius: [[0, 0, 16, 16]],
+      borderRadius: [[0, 0, 8, 8]],
       backgroundColor: subheaderColor,
       outline: '0 none',
       '& li': {
@@ -90,7 +90,7 @@ export default {
   },
   open: {
     '& button': {
-      borderRadius: [[16, 16, 0, 0]]
+      borderRadius: [[8, 8, 0, 0]]
     }
   }
 }
