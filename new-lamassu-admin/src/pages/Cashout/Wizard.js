@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
+import { Autocomplete } from 'src/components/inputs/formik'
+import denominations from 'src/utils/bill-denominations'
 import { toNamespace } from 'src/utils/config'
 
 import WizardSplash from './WizardSplash'
@@ -11,12 +13,24 @@ import { DenominationsSchema } from './helper'
 
 const LAST_STEP = 3
 const MODAL_WIDTH = 554
+const MODAL_HEIGHT = 520
 
-const Wizard = ({ machine, onClose, save, error }) => {
+const getOptions = R.curry((locale, denomiations) => {
+  const currency = R.prop('fiatCurrency')(locale)
+  return R.compose(
+    R.map(code => ({ code, display: code })),
+    R.keys,
+    R.path([currency])
+  )(denomiations)
+})
+
+const Wizard = ({ machine, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
   })
+
+  const options = getOptions(locale, denominations)
 
   const title = `Enable cash-out`
   const isLastStep = step === LAST_STEP
@@ -36,30 +50,31 @@ const Wizard = ({ machine, onClose, save, error }) => {
     })
   }
 
-  const getStepData = () => {
-    switch (step) {
-      case 1:
-        return {
-          type: 'top',
-          display: 'Cassete 1 (Top)',
-          schema: Yup.object().shape({ top: Yup.number().required() })
-        }
-      case 2:
-        return {
-          type: 'bottom',
-          display: 'Cassete 2',
-          schema: Yup.object().shape({ bottom: Yup.number().required() })
-        }
-      default:
-        return null
+  const steps = [
+    {
+      type: 'top',
+      display: 'Cassette 1 (Top)',
+      component: Autocomplete
+    },
+    {
+      type: 'bottom',
+      display: 'Cassette 2',
+      component: Autocomplete
     }
-  }
+  ]
+
+  const schema = () =>
+    Yup.object().shape({
+      top: Yup.number().required(),
+      bottom: step >= 2 ? Yup.number().required() : Yup.number()
+    })
 
   return (
     <Modal
       title={step === 0 ? null : title}
       handleClose={onClose}
       width={MODAL_WIDTH}
+      height={MODAL_HEIGHT}
       open={true}>
       {step === 0 && (
         <WizardSplash name={machine.name} onContinue={() => onContinue()} />
@@ -70,7 +85,10 @@ const Wizard = ({ machine, onClose, save, error }) => {
           name={machine.name}
           error={error}
           lastStep={isLastStep}
-          {...getStepData()}
+          steps={steps}
+          fiatCurrency={locale.fiatCurrency}
+          options={options}
+          schema={schema()}
           onContinue={onContinue}
         />
       )}

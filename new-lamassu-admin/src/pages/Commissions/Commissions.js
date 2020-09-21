@@ -51,6 +51,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   )
 
   const commission = config && !R.isEmpty(config) ? config : defaults
+  const commissionOverrides = commission.overrides ?? []
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
@@ -95,8 +96,8 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           initialValues={overridesDefaults}
           save={saveOverrides}
           validationSchema={OverridesSchema}
-          data={commission.overrides ?? []}
-          elements={overrides(data, currency)}
+          data={commissionOverrides}
+          elements={overrides(data, currency, commissionOverrides)}
           setEditing={onEditingOverrides}
           forceDisable={isEditingDefault}
         />

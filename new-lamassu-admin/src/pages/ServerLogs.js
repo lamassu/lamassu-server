@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
@@ -87,6 +87,8 @@ const SUPPORT_LOGS = gql`
 const Logs = () => {
   const classes = useStyles()
 
+  const tableEl = useRef()
+
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
@@ -108,6 +110,12 @@ const Logs = () => {
     R.map(R.path(['logLevel'])),
     R.path(['serverLogs'])
   )
+
+  const handleLogLevelChange = logLevel => {
+    if (tableEl.current) tableEl.current.scrollTo(0, 0)
+
+    setLogLevel(logLevel)
+  }
 
   return (
     <>
@@ -141,7 +149,7 @@ const Logs = () => {
       <div className={classes.headerLine2}>
         {data && (
           <Select
-            onSelectedItemChange={setLogLevel}
+            onSelectedItemChange={handleLogLevelChange}
             label="Level"
             items={getLogLevels(data)}
             default={SHOW_ALL}
@@ -156,7 +164,7 @@ const Logs = () => {
         </div>
       </div>
       <div className={classes.wrapper}>
-        <div className={classes.serverTableWrapper}>
+        <div ref={tableEl} className={classes.serverTableWrapper}>
           <Table className={classes.table}>
             <TableHead>
               <TableRow header>
