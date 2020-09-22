@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
@@ -17,6 +17,19 @@ const SingleFieldEditableNumber = ({
   section,
   className
 }) => {
+  const [saving, setSaving] = useState(false)
+
+  const innerSave = async (section, value) => {
+    if (saving) return
+
+    setSaving(true)
+
+    // no response means the save failed
+    await save(section, value)
+
+    setSaving(false)
+  }
+
   const {
     save,
     data,
@@ -38,7 +51,7 @@ const SingleFieldEditableNumber = ({
       enableReinitialize
       initialValues={{ [name]: (data && data[name]) ?? '' }}
       validationSchema={schema}
-      onSubmit={it => save(section, schema.cast(it))}
+      onSubmit={it => innerSave(section, schema.cast(it))}
       onReset={() => {
         setEditing(name, false)
       }}>

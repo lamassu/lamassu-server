@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
@@ -38,6 +38,8 @@ const SAVE_CONFIG = gql`
 `
 
 const Commissions = ({ name: SCREEN_KEY }) => {
+  const [isEditingDefault, setEditingDefault] = useState(false)
+  const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
@@ -61,6 +63,9 @@ const Commissions = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config } })
   }
 
+  const onEditingDefault = (it, editing) => setEditingDefault(editing)
+  const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
+
   return (
     <>
       <TitleSection title="Commissions" />
@@ -76,6 +81,8 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           validationSchema={schema}
           data={R.of(commission)}
           elements={mainFields(currency)}
+          setEditing={onEditingDefault}
+          forceDisable={isEditingOverrides}
         />
       </Section>
       <Section>
@@ -91,6 +98,8 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           validationSchema={OverridesSchema}
           data={commissionOverrides}
           elements={overrides(data, currency, commissionOverrides)}
+          setEditing={onEditingOverrides}
+          forceDisable={isEditingDefault}
         />
       </Section>
     </>

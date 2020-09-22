@@ -54,8 +54,13 @@ const ETable = ({
 }) => {
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const innerSave = async value => {
+    if (saving) return
+
+    setSaving(true)
+
     const it = validationSchema.cast(value)
     const index = R.findIndex(R.propEq('id', it.id))(data)
     const list = index !== -1 ? R.update(index, it, data) : R.prepend(it, data)
@@ -63,11 +68,16 @@ const ETable = ({
     if (!R.equals(data[index], it)) {
       // no response means the save failed
       const response = await save({ [name]: list }, it)
-      if (!response) return
+      if (!response) {
+        setSaving(false)
+        return
+      }
     }
 
     setAdding(false)
     setEditingId(null)
+    setEditing && setEditing(false)
+    setSaving(false)
   }
 
   const onDelete = id => {
@@ -86,7 +96,10 @@ const ETable = ({
     setEditing && setEditing(it, true)
   }
 
-  const addField = () => setAdding(true)
+  const addField = () => {
+    setAdding(true)
+    setEditing && setEditing(true, true)
+  }
 
   const widthIfEditNull =
     enableDelete || enableToggle ? ACTION_COL_SIZE : ACTION_COL_SIZE * 2
@@ -128,10 +141,8 @@ const ETable = ({
   return (
     <TableCtx.Provider value={ctxValue}>
       <div className={classes.wrapper}>
-        {showButtonOnEmpty && (
-          <AddButton disabled={!canAdd} onClick={addField}>
-            {createText}
-          </AddButton>
+        {showButtonOnEmpty && canAdd && (
+          <AddButton onClick={addField}>{createText}</AddButton>
         )}
         {showTable && (
           <>
@@ -185,7 +196,9 @@ const ETable = ({
                           lastOfGroup={isLastOfGroup}
                           editing={editingId === it.id}
                           disabled={
-                            forceDisable || (editingId && editingId !== it.id)
+                            forceDisable ||
+                            (editingId && editingId !== it.id) ||
+                            adding
                           }
                         />
                       </Form>

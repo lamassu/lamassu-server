@@ -26,13 +26,13 @@ const sizes = {
 }
 const width = R.sum(R.values(sizes)) + channelSize
 
-const Row = ({ namespace }) => {
+const Row = ({ namespace, forceDisable }) => {
   const { data: rawData, save: rawSave } = useContext(NotificationsCtx)
 
   const save = R.compose(rawSave(null), toNamespace(namespace))
   const data = fromNamespace(namespace)(rawData)
 
-  const disabled = !data || !data.active
+  const disabled = forceDisable || !data || !data.active
 
   const Cell = ({ name, disabled }) => {
     const value = !!(data && data[name])
@@ -58,7 +58,7 @@ const Row = ({ namespace }) => {
       <Cell name="transactions" disabled={disabled} />
       <Cell name="compliance" disabled={disabled} />
       <Cell name="errors" disabled={disabled} />
-      <Cell name="active" />
+      <Cell name="active" disabled={forceDisable} />
     </Tr>
   )
 }
@@ -68,7 +68,7 @@ const useStyles = makeStyles({
     width
   }
 })
-const Setup = () => {
+const Setup = ({ forceDisable }) => {
   const classes = useStyles()
   return (
     <Table className={classes.mainTable}>
@@ -81,8 +81,8 @@ const Setup = () => {
         ))}
       </THead>
       <TBody>
-        <Row namespace="email" />
-        <Row namespace="sms" />
+        <Row namespace="email" forceDisable={forceDisable} />
+        <Row namespace="sms" forceDisable={forceDisable} />
       </TBody>
     </Table>
   )

@@ -95,7 +95,7 @@ const Notifications = ({ name: SCREEN_KEY }) => {
       <TitleSection title="Notifications" />
 
       <Section title="Setup" error={error && !section}>
-        <Setup />
+        <Setup forceDisable={!!editingKey} />
       </Section>
 
       <Section title="Transaction alerts" error={error && section === 'tx'}>
