@@ -12,7 +12,7 @@ import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
-import { Info2, Info3, Label2, Label3 } from 'src/components/typography'
+import { H4, Info2, Info3, Label2, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
@@ -191,8 +191,8 @@ const TermsConditions = () => {
 
   return (
     <>
-      <div className={classes.header}>
-        <Info2>Terms &amp; Conditions</Info2>
+      <div className={classes.rowWrapper}>
+        <H4>Terms &amp; Conditions</H4>
       </div>
       <div className={classes.section}>
         <div className={classes.enable}>

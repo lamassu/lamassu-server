@@ -77,6 +77,22 @@ const contactInfoStyles = {
     display: 'flex',
     flexDirection: 'row',
     paddingLeft: 4
+  },
+  rowWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    position: 'relative',
+    flex: 'wrap'
+  },
+  transparentButton: {
+    '& > *': {
+      margin: 'auto 12px'
+    },
+    '& button': {
+      border: 'none',
+      backgroundColor: 'transparent',
+      cursor: 'pointer'
+    }
   }
 }
 

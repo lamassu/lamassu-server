@@ -13,14 +13,7 @@ import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import { TextInput, NumberInput } from 'src/components/inputs/formik'
-import {
-  P,
-  Info2,
-  Info3,
-  Label1,
-  Label2,
-  Label3
-} from 'src/components/typography'
+import { P, H4, Info3, Label1, Label2, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 import { fontSize5 } from 'src/styling/variables'
@@ -174,7 +167,7 @@ const ContactInfo = () => {
               locale.country
             ).formatInternational()
           : '',
-      component: TextInput
+      component: NumberInput
     },
     {
       name: 'email',
@@ -214,26 +207,26 @@ const ContactInfo = () => {
 
   return (
     <>
-      <div className={classes.header}>
-        <Info2>Contact information</Info2>
+      <div className={classes.rowWrapper}>
+        <H4>Contact information</H4>
+      </div>
+      <div className={classes.rowWrapper}>
+        <P>Info card enabled?</P>
+        <div className={classes.switch}>
+          <Switch
+            checked={info.active}
+            onChange={event =>
+              save({
+                active: event.target.checked
+              })
+            }
+          />
+          <Label2>{info.active ? 'Yes' : 'No'}</Label2>
+        </div>
       </div>
       <div className={classes.section}>
-        <div className={classes.switchRow}>
-          <P>Info card enabled?</P>
-          <div className={classes.switch}>
-            <Switch
-              checked={info.active}
-              onChange={event =>
-                save({
-                  active: event.target.checked
-                })
-              }
-            />
-            <Label2>{info.active ? 'Yes' : 'No'}</Label2>
-          </div>
-        </div>
-        <div className={classes.header}>
-          <Info2>Info card</Info2>
+        <div className={classes.rowWrapper}>
+          <H4>Info card</H4>
           {!editing && (
             <div className={classes.transparentButton}>
               <button onClick={() => setEditing(true)}>

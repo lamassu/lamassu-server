@@ -24,8 +24,8 @@ export default {
     alignItems: 'center',
     justifyContent: 'end'
   },
-  billInput:{
-    width:'100%'
+  billInput: {
+    width: '100%'
   },
   suffix: {
     paddingLeft: spacer * 2
