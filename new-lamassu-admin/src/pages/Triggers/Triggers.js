@@ -1,14 +1,17 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
-import Title from 'src/components/Title'
+import Tooltip from 'src/components/Tooltip'
 import { Link } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
-import { fromNamespace, namespaces } from 'src/utils/config'
+import { Switch } from 'src/components/inputs'
+import TitleSection from 'src/components/layout/TitleSection'
+import { P, Label2 } from 'src/components/typography'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { mainStyles } from './Triggers.styles'
 import Wizard from './Wizard'
@@ -36,6 +39,10 @@ const Triggers = () => {
   const { data } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
 
+  const complianceConfig =
+    data?.config && fromNamespace('compliance')(data.config)
+  const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
+
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
     onError: () => setError(true),
@@ -46,6 +53,11 @@ const Triggers = () => {
     const toSave = R.concat([{ id: v4(), ...rawConfig }])(triggers)
     setError(false)
     return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
+  }
+
+  const addressReuseSave = rawConfig => {
+    const config = toNamespace('compliance')(rawConfig)
+    return saveConfig({ variables: { config } })
   }
 
   const save = config => {
@@ -61,16 +73,33 @@ const Triggers = () => {
 
   return (
     <>
-      <div className={classes.titleWrapper}>
-        <div className={classes.titleAndButtonsContainer}>
-          <Title>Compliance Triggers</Title>
-        </div>
-        <div className={classes.headerLabels}>
+      <TitleSection title="Compliance Triggers">
+        <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" justifyContent="end" mr={3}>
+            <P>Reject reused addresses</P>
+            <Switch
+              checked={rejectAddressReuse}
+              onChange={event => {
+                addressReuseSave({ rejectAddressReuse: event.target.checked })
+              }}
+              value={rejectAddressReuse}
+            />
+            <Label2 className={classes.switchLabel}>
+              {rejectAddressReuse ? 'On' : 'Off'}
+            </Label2>
+            <Tooltip width={304}>
+              <P>
+                The "Reject reused addresses" option means that all addresses
+                that are used once will be automatically rejected if there's an
+                attempt to use them again on a new transaction.
+              </P>
+            </Tooltip>
+          </Box>
           <Link color="primary" onClick={() => setWizard(true)}>
             + Add new trigger
           </Link>
-        </div>
-      </div>
+        </Box>
+      </TitleSection>
       <EditableTable
         data={triggers}
         name="triggers"
