@@ -9,6 +9,7 @@ const useStyles = makeStyles({
     border: 'none',
     backgroundColor: 'transparent',
     marginTop: 4,
+    outline: 'none',
     cursor: 'pointer'
   },
   popoverContent: ({ width }) => ({
@@ -33,18 +34,19 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
 
   return (
     <ClickAwayListener onClickAway={handleCloseHelpPopper}>
-      <button
-        className={classes.transparentButton}
-        onClick={handleOpenHelpPopper}>
-        <Icon />
+      <div>
+        <button
+          className={classes.transparentButton}
+          onClick={handleOpenHelpPopper}>
+          <Icon />
+        </button>
         <Popper
           open={helpPopperOpen}
           anchorEl={helpPopperAnchorEl}
-          placement="bottom"
-          onClose={handleCloseHelpPopper}>
+          placement="bottom">
           <div className={classes.popoverContent}>{children}</div>
         </Popper>
-      </button>
+      </div>
     </ClickAwayListener>
   )
 })
