@@ -261,6 +261,7 @@ const requirementOptions = [
   { display: 'ID data', code: 'idCardData' },
   { display: 'Customer camera', code: 'facephoto' },
   { display: 'Sanctions', code: 'sanctions' },
+  { display: 'US SSN', code: 'us-ssn' },
   // { display: 'Super user', code: 'superuser' },
   { display: 'Suspend', code: 'suspend' },
   { display: 'Block', code: 'block' }

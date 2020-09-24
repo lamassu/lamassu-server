@@ -74,7 +74,7 @@ const Field = ({
 }
 
 const GET_CONFIG = gql`
-  {
+  query getData {
     config
   }
 `
@@ -90,36 +90,25 @@ const styles = R.merge(globalStyles, termsConditionsStyles)
 const useTermsConditionsStyles = makeStyles(styles)
 
 const TermsConditions = () => {
-  const [showOnScreen, setShowOnScreen] = useState(false)
-  const [formData, setFormData] = useState(null)
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: data => {
-      const termsAndConditions = fromNamespace(
-        namespaces.TERMS_CONDITIONS,
-        data.saveConfig
-      )
-      setFormData(termsAndConditions)
-      setShowOnScreen(termsAndConditions.active)
+    onCompleted: () => {
       setError(null)
       setEditing(false)
     },
+    refetchQueries: () => ['getData'],
     onError: e => setError(e)
   })
 
   const classes = useTermsConditionsStyles()
 
-  useQuery(GET_CONFIG, {
-    onCompleted: data => {
-      const termsAndConditions = fromNamespace(
-        namespaces.TERMS_CONDITIONS,
-        data.config
-      )
-      setFormData(termsAndConditions ?? {})
-      setShowOnScreen(termsAndConditions?.active ?? false)
-    }
-  })
+  const { data } = useQuery(GET_CONFIG)
+
+  const termsAndConditions =
+    data?.config && fromNamespace(namespaces.TERMS_CONDITIONS, data.config)
+  const formData = termsAndConditions ?? {}
+  const showOnScreen = termsAndConditions?.active ?? false
 
   const save = it => {
     setError(null)

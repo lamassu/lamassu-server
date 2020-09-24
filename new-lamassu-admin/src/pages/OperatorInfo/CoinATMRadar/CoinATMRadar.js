@@ -1,8 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-import * as R from 'ramda'
-import React, { useState, memo } from 'react'
+import React, { memo } from 'react'
 
 import Tooltip from 'src/components/Tooltip'
 import { Switch } from 'src/components/inputs'
@@ -13,14 +12,8 @@ import { mainStyles } from './CoinATMRadar.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-const initialValues = {
-  active: false,
-  commissions: false,
-  limitsAndVerification: false
-}
-
 const GET_CONFIG = gql`
-  {
+  query getData {
     config
   }
 `
@@ -50,29 +43,12 @@ const Row = memo(({ title, disabled = false, checked, save, label }) => {
 })
 
 const CoinATMRadar = memo(() => {
-  const [coinAtmRadarConfig, setCoinAtmRadarConfig] = useState(null)
-
   const classes = useStyles()
 
-  const { refetch: getCoinAtmRadarConfig } = useQuery(GET_CONFIG, {
-    onCompleted: configResponse => {
-      const response = fromNamespace(
-        namespaces.COIN_ATM_RADAR,
-        configResponse.config
-      )
-      const values = R.merge(initialValues, response)
-      setCoinAtmRadarConfig(values)
-    }
-  })
+  const { data } = useQuery(GET_CONFIG)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: configResponse => {
-      setCoinAtmRadarConfig(
-        fromNamespace(namespaces.COIN_ATM_RADAR, configResponse.saveConfig)
-      )
-
-      getCoinAtmRadarConfig()
-    }
+    refetchQueries: ['getData']
   })
 
   const save = it =>
@@ -80,6 +56,8 @@ const CoinATMRadar = memo(() => {
       variables: { config: toNamespace(namespaces.COIN_ATM_RADAR, it) }
     })
 
+  const coinAtmRadarConfig =
+    data?.config && fromNamespace(namespaces.COIN_ATM_RADAR, data.config)
   if (!coinAtmRadarConfig) return null
 
   return (

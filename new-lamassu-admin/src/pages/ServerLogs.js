@@ -60,7 +60,7 @@ const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
 
-const NUM_LOG_RESULTS = 1000
+const NUM_LOG_RESULTS = 500
 
 const GET_DATA = gql`
   query ServerData($limit: Int) {
