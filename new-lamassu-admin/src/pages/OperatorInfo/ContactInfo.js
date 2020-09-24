@@ -88,7 +88,7 @@ const Field = ({ editing, field, displayValue, ...props }) => {
 }
 
 const GET_CONFIG = gql`
-  {
+  query getData {
     config
   }
 `
@@ -104,24 +104,18 @@ const styles = R.merge(globalStyles, contactInfoStyles)
 const contactUseStyles = makeStyles(styles)
 
 const ContactInfo = () => {
+  const classes = contactUseStyles()
+
   const [editing, setEditing] = useState(false)
-  const [info, setInfo] = useState(null)
-  const [locale, setLocale] = useState(null)
   const [error, setError] = useState(null)
+
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: data => {
-      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.saveConfig))
-      setEditing(false)
-    },
+    onCompleted: () => setEditing(false),
+    refetchQueries: () => ['getData'],
     onError: e => setError(e)
   })
 
-  useQuery(GET_CONFIG, {
-    onCompleted: data => {
-      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.config))
-      setLocale(fromNamespace(namespaces.LOCALE, data.config))
-    }
-  })
+  const { data } = useQuery(GET_CONFIG)
 
   const save = it => {
     return saveConfig({
@@ -129,7 +123,9 @@ const ContactInfo = () => {
     })
   }
 
-  const classes = contactUseStyles()
+  const info =
+    data?.config && fromNamespace(namespaces.OPERATOR_INFO, data.config)
+  const locale = data?.config && fromNamespace(namespaces.LOCALE, data.config)
 
   if (!info) return null
 

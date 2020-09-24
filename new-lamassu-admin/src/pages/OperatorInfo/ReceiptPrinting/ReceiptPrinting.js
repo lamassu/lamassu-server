@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState, memo } from 'react'
+import React, { memo } from 'react'
 
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
 import { Switch } from 'src/components/inputs'
@@ -13,20 +13,8 @@ import { mainStyles } from './ReceiptPrinting.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-const initialValues = {
-  active: 'off',
-  operatorWebsite: false,
-  operatorEmail: false,
-  operatorPhone: false,
-  companyNumber: false,
-  machineLocation: false,
-  customerNameOrPhoneNumber: false,
-  exchangeRate: false,
-  addressQRCode: false
-}
-
 const GET_CONFIG = gql`
-  {
+  query getData {
     config
   }
 `
@@ -38,26 +26,12 @@ const SAVE_CONFIG = gql`
 `
 
 const ReceiptPrinting = memo(() => {
-  const [receiptPrintingConfig, setReceiptPrintingConfig] = useState(null)
-
   const classes = useStyles()
 
-  const { refetch: getReceiptPrintingConfig } = useQuery(GET_CONFIG, {
-    onCompleted: configResponse => {
-      const response = fromNamespace(namespaces.RECEIPT, configResponse.config)
-      const values = R.merge(initialValues, response)
-      setReceiptPrintingConfig(values)
-    }
-  })
+  const { data } = useQuery(GET_CONFIG)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: configResponse => {
-      setReceiptPrintingConfig(
-        fromNamespace(namespaces.RECEIPT, configResponse.saveConfig)
-      )
-
-      getReceiptPrintingConfig()
-    }
+    refetchQueries: () => ['getData']
   })
 
   const save = it =>
@@ -65,6 +39,8 @@ const ReceiptPrinting = memo(() => {
       variables: { config: toNamespace(namespaces.RECEIPT, it) }
     })
 
+  const receiptPrintingConfig =
+    data?.config && fromNamespace(namespaces.RECEIPT, data.config)
   if (!receiptPrintingConfig) return null
 
   return (

@@ -13,11 +13,11 @@ import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import { mainStyles } from './Triggers.styles'
+import styles from './Triggers.styles'
 import Wizard from './Wizard'
 import { Schema, getElements, sortBy, fromServer, toServer } from './helper'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(styles)
 
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject) {

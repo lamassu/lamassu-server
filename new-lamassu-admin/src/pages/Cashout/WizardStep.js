@@ -39,10 +39,10 @@ const WizardStep = ({
     <div className={classes.content}>
       <div className={classes.titleDiv}>
         <Info2 className={classes.title}>{name}</Info2>
-        <Stepper steps={3} currentStep={step} />
+        <Stepper steps={4} currentStep={step} />
       </div>
 
-      {!lastStep && (
+      {step <= 2 && (
         <Formik
           onSubmit={onContinue}
           initialValues={{ top: '', bottom: '' }}
@@ -85,6 +85,43 @@ const WizardStep = ({
                 width="148"
                 height="196"
                 src={cassetesArtworks[step]}></img>
+            </div>
+
+            <Button className={classes.submit} type="submit">
+              {label}
+            </Button>
+          </Form>
+        </Formik>
+      )}
+
+      {step === 3 && (
+        <Formik
+          onSubmit={onContinue}
+          initialValues={{ zeroConfLimit: '' }}
+          enableReinitialize
+          validationSchema={steps[step - 1].schema}>
+          <Form>
+            <div className={classes.thirdStepHeader}>
+              <div className={classes.step}>
+                <H4 className={classes.edit}>Edit 0-conf Limit</H4>
+
+                <Label1>Choose a limit</Label1>
+                <div className={classes.bill}>
+                  <Field
+                    className={classes.billInput}
+                    type="text"
+                    size="lg"
+                    autoFocus={true}
+                    component={NumberInput}
+                    fullWidth
+                    decimalPlaces={0}
+                    name={steps[step - 1].type}
+                  />
+                  <Info1 noMargin className={classes.suffix}>
+                    {fiatCurrency}
+                  </Info1>
+                </div>
+              </div>
             </div>
 
             <Button className={classes.submit} type="submit">
