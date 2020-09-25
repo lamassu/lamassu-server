@@ -11,7 +11,7 @@ import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { toUnit } from 'src/utils/coin'
+import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
@@ -111,7 +111,7 @@ const Transactions = () => {
     },
     {
       header: 'Address',
-      view: R.path(['toAddress']),
+      view: it => formatCryptoAddress(it.cryptoCode, it.toAddress),
       className: classes.overflowTd,
       size: 'sm',
       width: 140

@@ -22,6 +22,7 @@ import {
 } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { primaryColor } from 'src/styling/variables'
+import { formatCryptoAddress } from 'src/utils/coin'
 
 import styles from './Funding.styles'
 
@@ -50,7 +51,8 @@ const GET_FUNDING = gql`
   }
 `
 
-const formatAddress = (address = '') => address.replace(/(.{4})/g, '$1 ')
+const formatAddress = (cryptoCode = '', address = '') =>
+  formatCryptoAddress(cryptoCode, address).replace(/(.{4})/g, '$1 ')
 const sumReducer = (acc, value) => acc.plus(value)
 const formatNumber = it => new BigNumber(it).toFormat(2)
 
@@ -202,7 +204,10 @@ const Funding = () => {
                 <Mono className={classes.address}>
                   <strong>
                     <CopyToClipboard buttonClassname={classes.copyToClipboard}>
-                      {formatAddress(selected.fundingAddress)}
+                      {formatAddress(
+                        selected.cryptoCode,
+                        selected.fundingAddress
+                      )}
                     </CopyToClipboard>
                   </strong>
                 </Mono>
