@@ -183,10 +183,10 @@ const TermsConditions = () => {
     text: Yup.string().required(),
     acceptButtonText: Yup.string()
       .required()
-      .max(15, 'Too long'),
+      .max(50, 'Too long'),
     cancelButtonText: Yup.string()
       .required()
-      .max(15, 'Too long')
+      .max(50, 'Too long')
   })
 
   return (
