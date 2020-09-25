@@ -52,7 +52,7 @@ const ReceiptPrinting = memo(() => {
         <P>Share information?</P>
         <div className={classes.switchWrapper}>
           <Switch
-            checked={receiptPrintingConfig.active}
+            checked={receiptPrintingConfig.active || false}
             onChange={event =>
               saveConfig({
                 variables: {

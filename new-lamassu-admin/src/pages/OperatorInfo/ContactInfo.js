@@ -143,7 +143,7 @@ const ContactInfo = () => {
       .email('Please enter a valid email address')
       .required(),
     website: Yup.string(),
-    companyNumber: Yup.number()
+    companyNumber: Yup.string()
   })
 
   const fields = [
@@ -181,7 +181,7 @@ const ContactInfo = () => {
       name: 'companyNumber',
       label: 'Company number',
       value: info.companyNumber ?? '',
-      component: NumberInput
+      component: TextInput
     }
   ]
 
@@ -194,7 +194,7 @@ const ContactInfo = () => {
     initialValues: {
       active: info.active,
       name: findValue('name'),
-      phone: info.phone ?? '',
+      phone: findValue('phone'),
       email: findValue('email'),
       website: findValue('website'),
       companyNumber: findValue('companyNumber')
@@ -210,7 +210,7 @@ const ContactInfo = () => {
         <P>Info card enabled?</P>
         <div className={classes.switch}>
           <Switch
-            checked={info.active}
+            checked={info.active || false}
             onChange={event =>
               save({
                 active: event.target.checked
