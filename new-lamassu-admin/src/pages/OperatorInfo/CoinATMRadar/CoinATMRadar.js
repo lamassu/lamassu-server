@@ -51,6 +51,8 @@ const CoinATMRadar = memo(() => {
     refetchQueries: ['getData']
   })
 
+  const classes = useStyles()
+
   const save = it =>
     saveConfig({
       variables: { config: toNamespace(namespaces.COIN_ATM_RADAR, it) }
@@ -81,7 +83,7 @@ const CoinATMRadar = memo(() => {
         </div>
         <Row
           title={'Share information?'}
-          checked={coinAtmRadarConfig.active}
+          checked={coinAtmRadarConfig.active || false}
           save={value => save({ active: value })}
           label={coinAtmRadarConfig.active ? 'Yes' : 'No'}
         />
@@ -89,13 +91,13 @@ const CoinATMRadar = memo(() => {
         <Row
           title={'Commissions'}
           disabled={!coinAtmRadarConfig.active}
-          checked={coinAtmRadarConfig.commissions}
+          checked={coinAtmRadarConfig.commissions || false}
           save={value => save({ commissions: value })}
         />
         <Row
           title={'Limits and verification'}
           disabled={!coinAtmRadarConfig.active}
-          checked={coinAtmRadarConfig.limitsAndVerification}
+          checked={coinAtmRadarConfig.limitsAndVerification || false}
           save={value => save({ limitsAndVerification: value })}
         />
       </div>

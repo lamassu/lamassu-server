@@ -110,19 +110,10 @@ const TermsConditions = () => {
   const formData = termsAndConditions ?? {}
   const showOnScreen = termsAndConditions?.active ?? false
 
-  const save = it => {
-    setError(null)
-    return saveConfig({
+  const save = it =>
+    saveConfig({
       variables: { config: toNamespace(namespaces.TERMS_CONDITIONS, it) }
     })
-  }
-
-  const handleEnable = () => {
-    const s = !showOnScreen
-    save({ active: s })
-  }
-
-  if (!formData) return null
 
   const fields = [
     {
@@ -186,7 +177,14 @@ const TermsConditions = () => {
       <div className={classes.section}>
         <div className={classes.enable}>
           <span>Show on screen</span>
-          <Switch checked={showOnScreen} onChange={handleEnable} value="show" />
+          <Switch
+            checked={showOnScreen}
+            onChange={event =>
+              save({
+                active: event.target.checked
+              })
+            }
+          />
           <Label2>{showOnScreen ? 'Yes' : 'No'}</Label2>
         </div>
         <div className={classes.header}>
@@ -200,6 +198,7 @@ const TermsConditions = () => {
           )}
         </div>
         <Formik
+          enableReinitialize
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={values => save(values)}
