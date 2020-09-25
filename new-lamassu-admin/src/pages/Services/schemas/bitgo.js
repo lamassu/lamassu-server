@@ -30,52 +30,52 @@ export default {
       face: true
     },
     {
-      code: 'btcWalletId',
+      code: 'BTCWalletId',
       display: 'BTC Wallet ID',
       component: TextInput
     },
     {
-      code: 'btcWalletPassphrase',
+      code: 'BTCWalletPassphrase',
       display: 'BTC Wallet Passphrase',
       component: SecretInput
     },
     {
-      code: 'ltcWalletId',
+      code: 'LTCWalletId',
       display: 'LTC Wallet ID',
       component: TextInput
     },
     {
-      code: 'ltcWalletPassphrase',
+      code: 'LTCWalletPassphrase',
       display: 'LTC Wallet Passphrase',
       component: SecretInput
     },
     {
-      code: 'zecWalletId',
+      code: 'ZECWalletId',
       display: 'ZEC Wallet ID',
       component: TextInput
     },
     {
-      code: 'zecWalletPassphrase',
+      code: 'ZECWalletPassphrase',
       display: 'ZEC Wallet Passphrase',
       component: SecretInput
     },
     {
-      code: 'bchWalletId',
+      code: 'BCHWalletId',
       display: 'BCH Wallet ID',
       component: TextInput
     },
     {
-      code: 'bchWalletPassphrase',
+      code: 'BCHWalletPassphrase',
       display: 'BCH Wallet Passphrase',
       component: SecretInput
     },
     {
-      code: 'dashWalletId',
+      code: 'DASHWalletId',
       display: 'DASH Wallet ID',
       component: TextInput
     },
     {
-      code: 'dashWalletPassphrase',
+      code: 'DASHWalletPassphrase',
       display: 'DASH Wallet Passphrase',
       component: SecretInput
     }
@@ -84,38 +84,38 @@ export default {
     token: Yup.string()
       .max(100, 'Too long')
       .required('Required'),
-    btcWalletId: Yup.string().max(100, 'Too long'),
-    btcWalletPassphrase: Yup.string()
+    BTCWalletId: Yup.string().max(100, 'Too long'),
+    BTCWalletPassphrase: Yup.string()
       .max(100, 'Too long')
-      .when('btcWalletId', {
+      .when('BTCWalletId', {
         is: isDefined,
         then: Yup.string().required()
       }),
-    ltcWalletId: Yup.string().max(100, 'Too long'),
-    ltcWalletPassphrase: Yup.string()
+    LTCWalletId: Yup.string().max(100, 'Too long'),
+    LTCWalletPassphrase: Yup.string()
       .max(100, 'Too long')
-      .when('ltcWalletId', {
+      .when('LTCWalletId', {
         is: isDefined,
         then: Yup.string().required()
       }),
-    zecWalletId: Yup.string().max(100, 'Too long'),
-    zecWalletPassphrase: Yup.string()
+    ZECWalletId: Yup.string().max(100, 'Too long'),
+    ZECWalletPassphrase: Yup.string()
       .max(100, 'Too long')
-      .when('zecWalletId', {
+      .when('ZECWalletId', {
         is: isDefined,
         then: Yup.string().required()
       }),
-    bchWalletId: Yup.string().max(100, 'Too long'),
-    bchWalletPassphrase: Yup.string()
+    BCHWalletId: Yup.string().max(100, 'Too long'),
+    BCHWalletPassphrase: Yup.string()
       .max(100, 'Too long')
-      .when('bchWalletId', {
+      .when('BCHWalletId', {
         is: isDefined,
         then: Yup.string().required()
       }),
-    dashWalletId: Yup.string().max(100, 'Too long'),
-    dashWalletPassphrase: Yup.string()
+    DASHWalletId: Yup.string().max(100, 'Too long'),
+    DASHWalletPassphrase: Yup.string()
       .max(100, 'Too long')
-      .when('dashWalletId', {
+      .when('DASHWalletId', {
         is: isDefined,
         then: Yup.string().required()
       }),
