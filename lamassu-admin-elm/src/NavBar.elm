@@ -255,8 +255,9 @@ view route invalidGroups =
                 , configLink "operatorInfo" "Operator Info"
                 , configLink "fudgeFactor" "Fudge Factor"
                 ]
-            , ll ( "Third Party Services", AccountCat, AccountRoute "bitgo", True )
-                [ ( "BitGo", AccountRoute "bitgo", True )
+            , ll ( "Third Party Services", AccountCat, AccountRoute "Cryptx", True )
+                [ ( "CryptX", AccountRoute "cryptx", True )
+                , ( "BitGo", AccountRoute "bitgo", True )
                 , ( "Bitstamp", AccountRoute "bitstamp", True )
                 , ( "Blockcypher", AccountRoute "blockcypher", True )
                 , ( "Infura", AccountRoute "infura", True )
