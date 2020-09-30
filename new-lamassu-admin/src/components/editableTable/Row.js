@@ -43,13 +43,14 @@ const ActionCol = ({ disabled, editing }) => {
       {editing && (
         <Td textAlign="center" width={actionColSize}>
           <Link
-            className={classes.cancelButton}
-            color="secondary"
-            onClick={resetForm}>
-            Cancel
-          </Link>
-          <Link color="primary" onClick={submitForm}>
+            className={classes.saveButton}
+            type="submit"
+            color="primary"
+            onClick={submitForm}>
             Save
+          </Link>
+          <Link color="secondary" onClick={resetForm}>
+            Cancel
           </Link>
         </Td>
       )}
