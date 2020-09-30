@@ -59,14 +59,14 @@ const BooleanPropertiesTable = memo(
               <H4>{title}</H4>
               {editing ? (
                 <div className={classes.rightAligned}>
-                  <Link onClick={innerCancel} color="secondary">
-                    Cancel
+                  <Link type="submit" color="primary">
+                    Save
                   </Link>
                   <Link
                     className={classes.rightLink}
-                    type="submit"
-                    color="primary">
-                    Save
+                    onClick={innerCancel}
+                    color="secondary">
+                    Cancel
                   </Link>
                 </div>
               ) : (

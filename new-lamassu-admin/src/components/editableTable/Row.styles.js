@@ -1,7 +1,7 @@
 import { bySize, bold } from 'src/styling/helpers'
 
 export default {
-  cancelButton: {
+  saveButton: {
     marginRight: 20
   },
   lastOfGroup: {
