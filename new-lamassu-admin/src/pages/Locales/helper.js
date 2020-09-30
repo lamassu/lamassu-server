@@ -73,7 +73,7 @@ const allFields = (getData, auxElements = []) => {
       view: getView(currencyData, 'code'),
       input: Autocomplete,
       inputProps: {
-        options: currencyData,
+        options: currencyData?.filter(c => c.code !== ''),
         valueProp: 'code',
         getLabel: R.path(['code'])
       }
