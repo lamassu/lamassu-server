@@ -8,6 +8,8 @@ import React, { useState } from 'react'
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import { Status } from 'src/components/Status'
 import ActionButton from 'src/components/buttons/ActionButton'
+import { ReactComponent as EditReversedIcon } from 'src/styling/icons/button/edit/white.svg'
+import { ReactComponent as EditIcon } from 'src/styling/icons/button/edit/zodiac.svg'
 import { ReactComponent as LinkIcon } from 'src/styling/icons/button/link/zodiac.svg'
 import { ReactComponent as RebootReversedIcon } from 'src/styling/icons/button/reboot/white.svg'
 import { ReactComponent as RebootIcon } from 'src/styling/icons/button/reboot/zodiac.svg'
@@ -19,8 +21,12 @@ import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zo
 import { labelStyles, machineDetailsStyles } from './MachineDetailsCard.styles'
 
 const MACHINE_ACTION = gql`
-  mutation MachineAction($deviceId: ID!, $action: MachineAction!) {
-    machineAction(deviceId: $deviceId, action: $action) {
+  mutation MachineAction(
+    $deviceId: ID!
+    $action: MachineAction!
+    $newName: String
+  ) {
+    machineAction(deviceId: $deviceId, action: $action, newName: $newName) {
       deviceId
     }
   }
@@ -63,11 +69,16 @@ const Item = ({ children, ...props }) => (
 
 const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
   const [action, setAction] = useState('')
-  const [dialogOpen, setOpen] = useState(false)
+  const [renameActionDialogOpen, setRenameActionDialogOpen] = useState(false)
+  const [confirmActionDialogOpen, setConfirmActionDialogOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useMDStyles()
 
-  const confirmDialog = action => setAction(action) || setOpen(true)
+  const confirmActionDialog = action =>
+    setAction(action) || setConfirmActionDialogOpen(true)
+
+  const renameActionDialog = () =>
+    setAction('Rename') || setRenameActionDialogOpen(true)
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
     onError: ({ message }) => {
@@ -77,7 +88,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
     onCompleted: () => {
       // TODO: custom onActionSuccess needs to be passed down from the machinestatus table
       onActionSuccess ? onActionSuccess() : window.location.reload()
-      setOpen(false)
+      setConfirmActionDialogOpen(false)
     }
   })
 
@@ -121,7 +132,29 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
           className={classes.separator}
         />
         <ConfirmDialog
-          open={dialogOpen}
+          open={renameActionDialogOpen}
+          title={`Rename this machine?`}
+          initialValue={machine.name}
+          errorMessage={errorMessage}
+          confirmationMessage={`Write the new name for this machine`}
+          saveButtonAlwaysEnabled={true}
+          onConfirmed={value => {
+            setErrorMessage(null)
+            machineAction({
+              variables: {
+                deviceId: machine.deviceId,
+                action: `${action}`.toLowerCase(),
+                newName: value
+              }
+            })
+          }}
+          onDissmised={() => {
+            setRenameActionDialogOpen(false)
+            setErrorMessage(null)
+          }}
+        />
+        <ConfirmDialog
+          open={confirmActionDialogOpen}
           title={`${action} this machine?`}
           errorMessage={errorMessage}
           toBeConfirmed={machine.name}
@@ -135,7 +168,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
             })
           }}
           onDissmised={() => {
-            setOpen(false)
+            setConfirmActionDialogOpen(false)
             setErrorMessage(null)
           }}
         />
@@ -145,10 +178,6 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
               <Label>Machine Model</Label>
               <span>{machine.model}</span>
             </Item>
-            {/* <Item>
-              <Label>Address</Label>
-              <span>{machine.machineLocation}</span>
-            </Item> */}
             <Item xs={4}>
               <Label>Paired at</Label>
               <span>
@@ -161,12 +190,21 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
               <Label>Actions</Label>
               <div className={classes.stack}>
                 <ActionButton
+                  className={classes.mr}
+                  disabled={loading}
+                  color="primary"
+                  Icon={EditIcon}
+                  InverseIcon={EditReversedIcon}
+                  onClick={() => renameActionDialog()}>
+                  Rename
+                </ActionButton>
+                <ActionButton
                   color="primary"
                   className={classes.mr}
                   Icon={UnpairIcon}
                   InverseIcon={UnpairReversedIcon}
                   disabled={loading}
-                  onClick={() => confirmDialog('Unpair')}>
+                  onClick={() => confirmActionDialog('Unpair')}>
                   Unpair
                 </ActionButton>
                 <ActionButton
@@ -175,7 +213,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   Icon={RebootIcon}
                   InverseIcon={RebootReversedIcon}
                   disabled={loading}
-                  onClick={() => confirmDialog('Reboot')}>
+                  onClick={() => confirmActionDialog('Reboot')}>
                   Reboot
                 </ActionButton>
                 <ActionButton
@@ -184,7 +222,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   color="primary"
                   Icon={ShutdownIcon}
                   InverseIcon={ShutdownReversedIcon}
-                  onClick={() => confirmDialog('Shutdown')}>
+                  onClick={() => confirmActionDialog('Shutdown')}>
                   Shutdown
                 </ActionButton>
               </div>

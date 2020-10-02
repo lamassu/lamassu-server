@@ -59,12 +59,15 @@ export const ConfirmDialog = memo(
     errorMessage = 'This action requires confirmation',
     open,
     toBeConfirmed,
+    saveButtonAlwaysEnabled = false,
+    confirmationMessage = `Write '${toBeConfirmed}' to confirm this action`,
     onConfirmed,
     onDissmised,
+    initialValue = '',
     ...props
   }) => {
     const classes = useStyles()
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState(initialValue)
     const [error, setError] = useState(false)
     const handleChange = event => setValue(event.target.value)
 
@@ -73,6 +76,9 @@ export const ConfirmDialog = memo(
       setError(false)
       onDissmised()
     }
+
+    const isOnErrorState =
+      (!saveButtonAlwaysEnabled && toBeConfirmed !== value) || value === ''
 
     return (
       <Dialog open={open} aria-labelledby="form-dialog-title" {...props}>
@@ -93,7 +99,7 @@ export const ConfirmDialog = memo(
         )}
         <DialogContent className={classes.dialogContent}>
           <TextInput
-            label={`Write '${toBeConfirmed}' to confirm this action`}
+            label={confirmationMessage}
             name="confirm-input"
             autoFocus
             id="confirm-input"
@@ -105,14 +111,14 @@ export const ConfirmDialog = memo(
             error={error}
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            onBlur={() => setError(toBeConfirmed !== value)}
+            onBlur={() => setError(isOnErrorState)}
           />
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <Button
             color="green"
-            disabled={toBeConfirmed !== value}
-            onClick={onConfirmed}>
+            disabled={isOnErrorState}
+            onClick={() => onConfirmed(value)}>
             Confirm
           </Button>
         </DialogActions>
