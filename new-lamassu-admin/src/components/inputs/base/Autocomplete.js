@@ -89,7 +89,6 @@ const Autocomplete = ({
             size={size}
             fullWidth={fullWidth}
             textAlign={textAlign}
-            autoFocus={autoFocus}
           />
         )
       }}
