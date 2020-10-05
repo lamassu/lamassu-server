@@ -117,7 +117,7 @@ const getRequirementText = config => {
       return 'asked to scan a ID'
     case 'facephoto':
       return 'asked to have a photo taken'
-    case 'us-ssn':
+    case 'usSsn':
       return 'asked to input his social security number'
     case 'sanctions':
       return 'matched against the OFAC sanctions list'
