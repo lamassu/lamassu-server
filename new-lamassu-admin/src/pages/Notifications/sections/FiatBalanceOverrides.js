@@ -7,6 +7,7 @@ import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
 
 import NotificationsCtx from '../NotificationsContext'
+import { transformNumber } from '../helper'
 
 const CASSETTE_1_KEY = 'cassette1'
 const CASSETTE_2_KEY = 'cassette2'
@@ -38,20 +39,34 @@ const FiatBalanceOverrides = ({ section }) => {
     [CASSETTE_2_KEY]: ''
   }
 
+  const notesMin = 0
   const notesMax = 9999999
-  const validationSchema = Yup.object().shape({
-    [MACHINE_KEY]: Yup.string().required(),
-    [CASSETTE_1_KEY]: Yup.number()
-      .integer()
-      .min(0)
-      .max(notesMax)
-      .required(),
-    [CASSETTE_2_KEY]: Yup.number()
-      .integer()
-      .min(0)
-      .max(notesMax)
-      .required()
-  })
+  const validationSchema = Yup.object().shape(
+    {
+      [MACHINE_KEY]: Yup.string().required(),
+      [CASSETTE_1_KEY]: Yup.number()
+        .when(CASSETTE_2_KEY, {
+          is: CASSETTE_2_KEY => !CASSETTE_2_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(notesMax)
+        .nullable(),
+      [CASSETTE_2_KEY]: Yup.number()
+        .when(CASSETTE_1_KEY, {
+          is: CASSETTE_1_KEY => !CASSETTE_1_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(notesMax)
+        .nullable()
+    },
+    [CASSETTE_1_KEY, CASSETTE_2_KEY]
+  )
 
   const viewMachine = it =>
     R.compose(R.path(['name']), R.find(R.propEq('deviceId', it)))(machines)

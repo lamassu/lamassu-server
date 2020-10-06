@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 
 import NotificationsCtx from '../NotificationsContext'
+import { transformNumber } from '../helper'
 
 import Header from './EditHeader'
 import EditableNumber from './EditableNumber'
@@ -43,10 +44,11 @@ const SingleFieldEditableNumber = ({
 
   const schema = Yup.object().shape({
     [name]: Yup.number()
+      .transform(transformNumber)
       .integer()
       .min(min)
       .max(max)
-      .required()
+      .nullable()
   })
 
   return (
