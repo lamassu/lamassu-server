@@ -7,6 +7,7 @@ import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
 import NotificationsCtx from '../NotificationsContext'
+import { transformNumber } from '../helper'
 
 const HIGH_BALANCE_KEY = 'highBalance'
 const LOW_BALANCE_KEY = 'lowBalance'
@@ -51,20 +52,34 @@ const CryptoBalanceOverrides = ({ section }) => {
     [HIGH_BALANCE_KEY]: ''
   }
 
+  const notesMin = 0
   const currencyMax = 9999999
-  const validationSchema = Yup.object().shape({
-    [CRYPTOCURRENCY_KEY]: Yup.string().required(),
-    [LOW_BALANCE_KEY]: Yup.number()
-      .integer()
-      .min(0)
-      .max(currencyMax)
-      .required(),
-    [HIGH_BALANCE_KEY]: Yup.number()
-      .integer()
-      .min(0)
-      .max(currencyMax)
-      .required()
-  })
+  const validationSchema = Yup.object().shape(
+    {
+      [CRYPTOCURRENCY_KEY]: Yup.string().required(),
+      [LOW_BALANCE_KEY]: Yup.number()
+        .when(HIGH_BALANCE_KEY, {
+          is: HIGH_BALANCE_KEY => !HIGH_BALANCE_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(currencyMax)
+        .nullable(),
+      [HIGH_BALANCE_KEY]: Yup.number()
+        .when(LOW_BALANCE_KEY, {
+          is: LOW_BALANCE_KEY => !LOW_BALANCE_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(currencyMax)
+        .nullable()
+    },
+    [LOW_BALANCE_KEY, HIGH_BALANCE_KEY]
+  )
 
   const viewCrypto = it =>
     R.compose(

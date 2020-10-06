@@ -10,6 +10,7 @@ import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
 import NotificationsCtx from '../NotificationsContext'
 import Header from '../components/EditHeader'
 import EditableNumber from '../components/EditableNumber'
+import { transformNumber } from '../helper'
 
 import styles from './FiatBalanceAlerts.styles.js'
 
@@ -19,6 +20,7 @@ const NAME = 'fiatBalanceAlerts'
 
 const FiatBalance = ({
   section,
+  min = 0,
   max = Number.MAX_SAFE_INTEGER,
   fieldWidth = 80
 }) => {
@@ -31,15 +33,17 @@ const FiatBalance = ({
 
   const schema = Yup.object().shape({
     fiatBalanceCassette1: Yup.number()
+      .transform(transformNumber)
       .integer()
-      .min(0)
+      .min(min)
       .max(max)
-      .required(),
+      .nullable(),
     fiatBalanceCassette2: Yup.number()
+      .transform(transformNumber)
       .integer()
-      .min(0)
+      .min(min)
       .max(max)
-      .required()
+      .nullable()
   })
 
   const fiatBalanceCassette1Percent =
