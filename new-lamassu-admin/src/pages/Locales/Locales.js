@@ -10,9 +10,8 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
+import Wizard from 'src/pages/Wallet/Wizard'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
-
-import Wizard from '../Wallet/Wizard'
 
 import { styles } from './Locales.styles'
 import {
@@ -132,7 +131,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
   }
 
   const save = config => {
-    console.log(config)
     setDataToSave(null)
     setError(false)
     saveConfig({ variables: { config } })
@@ -144,8 +142,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
   }
 
   const enableCoin = it => {
-    if (!it) return
-
     const namespaced = fromNamespace(it)(wallets)
     if (!namespaced?.active) return setWizard(it)
   }
@@ -200,7 +196,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
       {wizard && (
         <Wizard
           coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
-          onClose={() => setWizard(false)}
+          onClose={v => {
+            console.log(v)
+            setWizard(false)
+          }}
           save={rawConfig => save(toNamespace(namespaces.WALLETS)(rawConfig))}
           error={error}
           cryptoCurrencies={cryptoCurrencies}

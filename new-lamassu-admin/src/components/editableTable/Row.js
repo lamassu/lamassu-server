@@ -176,7 +176,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
     enableToggle,
     rowSize,
     stripeWhen,
-    focusOnEditWhen
+    focusOnEditWhen = () => true
   } = useContext(TableCtx)
 
   const classes = useStyles()
