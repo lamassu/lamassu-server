@@ -106,7 +106,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const handleSave = it => {
     const newConfig = toNamespace(SCREEN_KEY)(it.locale[0])
 
-    if (newConfig.locale_fiatCurrency !== config.fiatCurrency)
+    if (
+      config.fiatCurrency &&
+      newConfig.locale_fiatCurrency !== config.fiatCurrency
+    )
       setDataToSave(newConfig)
     else save(newConfig)
   }
