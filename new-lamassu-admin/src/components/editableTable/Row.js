@@ -102,7 +102,7 @@ const ECol = ({
     textAlign,
     suffix,
     SuffixComponent = TL2,
-    view = it => (!it ? '-' : it.toString()),
+    view = it => it?.toString(),
     inputProps = {}
   } = config
 
