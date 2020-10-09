@@ -35,15 +35,15 @@ const machineDetailsStyles = {
   list: {
     padding: 0,
     margin: 0,
-    listStyle: 'none',
-    '& > li': {
-      height: spacer * 3,
-      marginBottom: spacer * 1.5,
-      '& > a, & > a:visited': {
-        color: primaryColor,
-        textDecoration: 'none'
-      }
-    }
+    listStyle: 'none'
+  },
+  item: {
+    height: spacer * 3,
+    marginBottom: spacer * 1.5
+  },
+  link: {
+    color: primaryColor,
+    textDecoration: 'none'
   },
   divider: {
     margin: '0 1rem'
