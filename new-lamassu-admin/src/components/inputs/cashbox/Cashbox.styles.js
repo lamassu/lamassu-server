@@ -44,16 +44,15 @@ const cashboxStyles = {
 
 const gridStyles = {
   row: {
-    height: 36,
-    width: 183,
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2,1fr)',
-    gridTemplateRows: '1fr',
-    gridColumnGap: 18,
-    gridRowGap: 0
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  innerRow: {
+    display: 'flex',
+    justifyContent: 'flex-start'
   },
   col2: {
-    width: 117
+    marginLeft: 16
   },
   noMarginText: {
     marginTop: 0,
@@ -61,6 +60,9 @@ const gridStyles = {
   },
   link: {
     marginTop: spacer
+  },
+  chip: {
+    margin: [[0, 0, 0, 7]]
   }
 }
 
