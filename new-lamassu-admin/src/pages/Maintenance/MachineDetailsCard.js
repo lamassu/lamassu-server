@@ -101,7 +101,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
               <Label>Statuses</Label>
               <ul className={classes.list}>
                 {machine.statuses.map((status, index) => (
-                  <li key={index}>
+                  <li className={classes.item} key={index}>
                     <Status status={status} />
                   </li>
                 ))}
@@ -113,8 +113,9 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                 {machine.statuses
                   .map(article)
                   .map(({ label, article }, index) => (
-                    <li key={index}>
+                    <li className={classes.item} key={index}>
                       <a
+                        className={classes.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         href={article}>
