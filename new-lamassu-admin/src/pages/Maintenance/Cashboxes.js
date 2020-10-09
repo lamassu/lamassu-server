@@ -1,22 +1,31 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import React from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
+import { CashOut } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
+import { fromNamespace } from 'src/utils/config'
+
+import styles from './Cashboxes.styles.js'
+
+const useStyles = makeStyles(styles)
 
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
   cassette1: Yup.number()
     .required('Required')
     .integer()
-    .min(0),
+    .min(0)
+    .max(500),
   cassette2: Yup.number()
     .required('Required')
     .integer()
     .min(0)
+    .max(500)
 })
 
 const GET_MACHINES_AND_CONFIG = gql`
@@ -52,6 +61,8 @@ const RESET_CASHOUT_BILLS = gql`
 `
 
 const Cashboxes = () => {
+  const classes = useStyles()
+
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
   const [resetCashOut] = useMutation(RESET_CASHOUT_BILLS, {
@@ -61,6 +72,10 @@ const Cashboxes = () => {
       alert(JSON.stringify(errorMessage))
     }
   })
+
+  const cashout = data?.config && fromNamespace('cashOut')(data.config)
+  const locale = data?.config && fromNamespace('locale')(data.config)
+  const fiatCurrency = locale?.fiatCurrency
 
   const onSave = (...[, { id, cassette1, cassette2 }]) => {
     return resetCashOut({
@@ -72,6 +87,8 @@ const Cashboxes = () => {
       }
     })
   }
+
+  const getDenomination = id => fromNamespace(id)(cashout)
 
   const elements = [
     {
@@ -86,6 +103,14 @@ const Cashboxes = () => {
       header: 'Cash-out 1',
       width: 265,
       textAlign: 'right',
+      view: (value, { id }) => (
+        <CashOut
+          className={classes.cashbox}
+          denomination={getDenomination(id)?.bottom}
+          currency={{ code: fiatCurrency }}
+          notes={value}
+        />
+      ),
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
@@ -96,6 +121,14 @@ const Cashboxes = () => {
       header: 'Cash-out 2',
       width: 265,
       textAlign: 'right',
+      view: (value, { id }) => (
+        <CashOut
+          className={classes.cashbox}
+          denomination={getDenomination(id)?.top}
+          currency={{ code: fiatCurrency }}
+          notes={value}
+        />
+      ),
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
