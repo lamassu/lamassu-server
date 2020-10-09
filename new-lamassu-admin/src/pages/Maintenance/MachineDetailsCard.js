@@ -40,6 +40,7 @@ const supportArtices = [
     article:
       'https://support.lamassu.is/hc/en-us/categories/115000075249-Troubleshooting'
   }
+  // TODO add Stuck and Fully Functional statuses articles for the new-admins
 ]
 
 const article = ({ code: status }) =>
@@ -86,7 +87,6 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
       setErrorMessage(errorMessage)
     },
     onCompleted: () => {
-      // TODO: custom onActionSuccess needs to be passed down from the machinestatus table
       onActionSuccess ? onActionSuccess() : window.location.reload()
       setConfirmActionDialogOpen(false)
     }
