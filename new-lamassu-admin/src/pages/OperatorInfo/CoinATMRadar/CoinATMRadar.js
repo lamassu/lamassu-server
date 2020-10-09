@@ -51,8 +51,6 @@ const CoinATMRadar = memo(() => {
     refetchQueries: ['getData']
   })
 
-  const classes = useStyles()
-
   const save = it =>
     saveConfig({
       variables: { config: toNamespace(namespaces.COIN_ATM_RADAR, it) }
