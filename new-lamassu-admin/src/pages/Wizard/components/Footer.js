@@ -1,23 +1,12 @@
 import { makeStyles, Drawer, Grid } from '@material-ui/core'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import classnames from 'classnames'
-import * as R from 'ramda'
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
 
 import Modal from 'src/components/Modal'
 import Stepper from 'src/components/Stepper'
 import { Button, Link } from 'src/components/buttons'
 import { P, H2, Info2 } from 'src/components/typography'
 import { spacer } from 'src/styling/variables'
-
-const getStepperProps = (current, steps) => ({
-  steps: R.length(steps),
-  currentStep: R.compose(
-    R.add(1),
-    R.findIndex(R.propEq('namespace', current))
-  )(steps)
-})
 
 const useStyles = makeStyles(() => ({
   drawer: {
@@ -47,15 +36,9 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-function Footer({ next, current, steps: collection, path, tag, p }) {
+function Footer({ currentStep, steps, subtitle, text, exImage, open, start }) {
   const classes = useStyles()
-  const history = useHistory()
-  const [open, setOpen] = useState(true)
   const [fullExample, setFullExample] = useState(false)
-
-  const handleClick = () => history.push(`${path}/${next}`)
-  const handleClickAway = () => setOpen(false)
-  const { currentStep, steps } = getStepperProps(current, collection)
 
   const wrapperClassNames = {
     [classes.wrapper]: true,
@@ -63,14 +46,40 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
   }
 
   return (
-    <ClickAwayListener onClickAway={handleClickAway}>
-      <Drawer
-        onClick={() => setOpen(true)}
-        anchor={'bottom'}
-        open={true}
-        variant={'persistent'}
-        classes={{ paperAnchorDockedBottom: classes.drawer }}>
-        <div className={classnames(wrapperClassNames)}>
+    <Drawer
+      anchor={'bottom'}
+      open={true}
+      variant={'persistent'}
+      classes={{ paperAnchorDockedBottom: classes.drawer }}>
+      <div className={classnames(wrapperClassNames)}>
+        <Grid container direction="row" justify="center" alignItems="baseline">
+          <Grid
+            item
+            xs={5}
+            container
+            direction={open ? 'column' : 'row'}
+            justify="flex-start"
+            alignItems="baseline">
+            <H2 className={classes.title}>Setup Lamassu Admin</H2>
+            <Info2 className={classes.subtitle}>{subtitle}</Info2>
+            {open && <P>{text}</P>}
+          </Grid>
+          <Grid
+            item
+            xs={4}
+            container
+            direction="column"
+            justify="flex-start"
+            alignItems="flex-end"
+            spacing={5}>
+            <Grid item xs={12}>
+              {steps && currentStep && (
+                <Stepper currentStep={currentStep} steps={steps} />
+              )}
+            </Grid>
+          </Grid>
+        </Grid>
+        {open && (
           <Grid
             container
             direction="row"
@@ -80,12 +89,15 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
               item
               xs={5}
               container
-              direction={open ? 'column' : 'row'}
+              direction="column"
               justify="flex-start"
-              alignItems="baseline">
-              <H2 className={classes.title}>Setup Lamassu Admin</H2>
-              <Info2 className={classes.subtitle}>{tag}</Info2>
-              {open && <P>{p}</P>}
+              alignItems="flex-start">
+              <Link
+                onClick={() => {
+                  setFullExample(true)
+                }}>
+                See full example
+              </Link>
             </Grid>
             <Grid
               item
@@ -95,68 +107,28 @@ function Footer({ next, current, steps: collection, path, tag, p }) {
               justify="flex-start"
               alignItems="flex-end"
               spacing={5}>
-              <Grid item xs={12}>
-                {steps && currentStep && (
-                  <Stepper {...{ currentStep, steps }}></Stepper>
-                )}
+              <Grid item>
+                <Button size="lg" onClick={start}>
+                  Get Started
+                </Button>
               </Grid>
             </Grid>
           </Grid>
-          {open && (
-            <Grid
-              container
-              direction="row"
-              justify="center"
-              alignItems="baseline">
-              <Grid
-                item
-                xs={5}
-                container
-                direction="column"
-                justify="flex-start"
-                alignItems="flex-start">
-                <Link
-                  onClick={() => {
-                    setFullExample(true)
-                  }}>
-                  See full example
-                </Link>
-              </Grid>
-              <Grid
-                item
-                xs={4}
-                container
-                direction="column"
-                justify="flex-start"
-                alignItems="flex-end"
-                spacing={5}>
-                <Grid item>
-                  <Button size="lg" disabled={!next} onClick={handleClick}>
-                    Continue
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
-          )}
-        </div>
-        <Modal
-          closeOnEscape={true}
-          closeOnBackdropClick={true}
-          className={classes.modal}
-          xl={true}
-          width={1152 + 120 + 56}
-          handleClose={() => {
-            setFullExample(false)
-          }}
-          open={fullExample}>
-          <img
-            width={1152}
-            src={`/fullexample.${current}.png`}
-            alt={`${current} configuration example`}
-          />
-        </Modal>
-      </Drawer>
-    </ClickAwayListener>
+        )}
+      </div>
+      <Modal
+        closeOnEscape={true}
+        closeOnBackdropClick={true}
+        className={classes.modal}
+        xl={true}
+        width={1152 + 120 + 56}
+        handleClose={() => {
+          setFullExample(false)
+        }}
+        open={fullExample}>
+        <img width={1152} src={exImage} alt="" />
+      </Modal>
+    </Drawer>
   )
 }
 

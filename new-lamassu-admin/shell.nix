@@ -1,13 +1,13 @@
 with import (fetchTarball {
-  name = "nixpkgs-19.09";
-  url = https://github.com/NixOS/nixpkgs-channels/archive/d5291756487d70bc336e33512a9baf9fa1788faf.tar.gz;
-  sha256 = "0mhqhq21y5vrr1f30qd2bvydv4bbbslvyzclhw0kdxmkgg3z4c92";
+  name = "nixpkgs-20.09";
+  url = https://github.com/NixOS/nixpkgs/archive/0b8799ecaaf0dc6b4c11583a3c96ca5b40fcfdfb.tar.gz;
+  sha256 = "11m4aig6cv0zi3gbq2xn9by29cfvnsxgzf9qsvz67qr0yq29ryyz";
 }) {};
 
 stdenv.mkDerivation {
     name = "node";
     buildInputs = [
-        nodejs-12_x
+        nodejs-14_x
     ];
     shellHook = ''
         export PATH="$PWD/node_modules/.bin/:$PATH"

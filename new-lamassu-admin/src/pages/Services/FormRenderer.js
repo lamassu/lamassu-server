@@ -1,4 +1,5 @@
 import { makeStyles, Grid } from '@material-ui/core'
+import classnames from 'classnames'
 import { Formik, Form, FastField } from 'formik'
 import * as R from 'ramda'
 import React from 'react'
@@ -27,6 +28,7 @@ const FormRenderer = ({
   value,
   save,
   buttonLabel = 'Save changes',
+  buttonClass,
   xs = 12
 }) => {
   const classes = useStyles()
@@ -58,7 +60,9 @@ const FormRenderer = ({
             </Grid>
           ))}
         </Grid>
-        <Button className={classes.button} type="submit">
+        <Button
+          className={classnames(classes.button, buttonClass)}
+          type="submit">
           {buttonLabel}
         </Button>
       </Form>

@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { Dialog, DialogContent, SvgIcon, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import classnames from 'classnames'
 import { Form, Formik, FastField } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
@@ -11,12 +10,9 @@ import * as Yup from 'yup'
 import Title from 'src/components/Title'
 import { Button } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
-import Sidebar from 'src/components/layout/Sidebar'
+import Sidebar, { Stepper } from 'src/components/layout/Sidebar'
 import { Info2, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
-import { ReactComponent as CompleteStageIconZodiac } from 'src/styling/icons/stage/zodiac/complete.svg'
-import { ReactComponent as CurrentStageIconZodiac } from 'src/styling/icons/stage/zodiac/current.svg'
-import { ReactComponent as EmptyStageIconZodiac } from 'src/styling/icons/stage/zodiac/empty.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 import { primaryColor } from 'src/styling/variables'
 
@@ -126,35 +122,6 @@ const steps = [
   }
 ]
 
-const renderStepper = (step, it, idx, classes) => {
-  const active = step === idx
-  const past = idx < step
-  const future = idx > step
-
-  return (
-    <div className={classes.item}>
-      <span
-        className={classnames({
-          [classes.itemText]: true,
-          [classes.itemTextActive]: active,
-          [classes.itemTextPast]: past
-        })}>
-        {it.label}
-      </span>
-      {active && <CurrentStageIconZodiac />}
-      {past && <CompleteStageIconZodiac />}
-      {future && <EmptyStageIconZodiac />}
-      {idx < steps.length - 1 && (
-        <div
-          className={classnames({
-            [classes.stepperPath]: true,
-            [classes.stepperPast]: past
-          })}></div>
-      )}
-    </div>
-  )
-}
-
 const AddMachine = memo(({ close }) => {
   const classes = useStyles()
   const [qrCode, setQrCode] = useState(null)
@@ -179,7 +146,9 @@ const AddMachine = memo(({ close }) => {
           </div>
           <div className={classes.contentDiv}>
             <Sidebar>
-              {steps.map((it, idx) => renderStepper(step, it, idx, classes))}
+              {steps.map((it, idx) => (
+                <Stepper step={step} it={it} idx={idx} steps={steps} />
+              ))}
             </Sidebar>
             <div className={classes.contentWrapper}>
               <Component

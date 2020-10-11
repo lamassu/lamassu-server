@@ -1,4 +1,4 @@
-import { ApolloProvider } from '@apollo/react-hooks'
+import { ApolloProvider, useQuery } from '@apollo/react-hooks'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import {
   StylesProvider,
@@ -6,12 +6,14 @@ import {
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
-import { setAutoFreeze } from 'immer'
+import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
+import Wizard from 'src/pages/Wizard'
+import { getWizardStep } from 'src/pages/Wizard/helper'
 import client from 'src/utils/apollo'
 
 import Header from './components/layout/Header'
@@ -24,9 +26,6 @@ if (process.env.NODE_ENV !== 'production') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render')
   whyDidYouRender(React)
 }
-
-// disable immer autofreeze for performance
-setAutoFreeze(false)
 
 const jss = create({
   plugins: [extendJss(), ...jssPreset().plugins]
@@ -54,22 +53,49 @@ const useStyles = makeStyles({
   }
 })
 
-const App = () => {
-  const classes = useStyles()
+const GET_DATA = gql`
+  query getData {
+    config
+    accounts
+    cryptoCurrencies {
+      code
+      display
+    }
+  }
+`
 
+const Main = () => {
+  const classes = useStyles()
+  const { data, loading } = useQuery(GET_DATA, {
+    notifyOnNetworkStatusChange: true
+  })
+
+  if (loading) {
+    return <></>
+  }
+
+  const wizardStep = getWizardStep(data?.config, data?.cryptoCurrencies)
+
+  return (
+    <div className={classes.root}>
+      <Router>
+        {wizardStep && <Wizard wizardStep={wizardStep} />}
+        <Header tree={tree} />
+        <main className={classes.wrapper}>
+          <Routes />
+        </main>
+      </Router>
+    </div>
+  )
+}
+
+const App = () => {
   return (
     <ApolloProvider client={client}>
       <StylesProvider jss={jss}>
         <MuiThemeProvider theme={theme}>
           <CssBaseline />
-          <div className={classes.root}>
-            <Router>
-              <Header tree={tree} />
-              <main className={classes.wrapper}>
-                <Routes />
-              </main>
-            </Router>
-          </div>
+          <Main />
         </MuiThemeProvider>
       </StylesProvider>
     </ApolloProvider>

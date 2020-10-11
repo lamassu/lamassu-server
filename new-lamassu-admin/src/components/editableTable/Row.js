@@ -33,6 +33,7 @@ const ActionCol = ({ disabled, editing }) => {
     enableToggle,
     onToggle,
     toggleWidth,
+    forceAdd,
     actionColSize
   } = useContext(TableCtx)
 
@@ -49,9 +50,11 @@ const ActionCol = ({ disabled, editing }) => {
             onClick={submitForm}>
             Save
           </Link>
-          <Link color="secondary" onClick={resetForm}>
-            Cancel
-          </Link>
+          {!forceAdd && (
+            <Link color="secondary" onClick={resetForm}>
+              Cancel
+            </Link>
+          )}
         </Td>
       )}
       {!editing && enableEdit && (

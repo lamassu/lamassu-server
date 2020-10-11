@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -38,10 +38,7 @@ const pages = [
   CRYPTO_BALANCE_ALERTS
 ]
 
-const N = ({ dispatch, namespace }) => {
-  useEffect(() => {
-    dispatch({ type: 'wizard/SET_STEP', payload: namespace })
-  }, [dispatch, namespace])
+const N = () => {
   const [selected, setSelected] = useState(EMAIL)
   const classes = useStyles()
 

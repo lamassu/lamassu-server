@@ -1,14 +1,15 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
-import { Link } from 'src/components/buttons'
+import { Link, Button } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { P, H4 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schema from 'src/pages/Services/schemas'
-import styles from 'src/pages/Wizard/Radio.styles'
+
+import styles from './Shared.styles'
 
 const useStyles = makeStyles({
   ...styles,
@@ -25,7 +26,7 @@ const GET_CONFIG = gql`
   }
 `
 const SAVE_ACCOUNTS = gql`
-  mutation Save($accounts: JSONObject) {
+  mutation SaveAccountsBC($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
   }
 `
@@ -41,23 +42,22 @@ const options = [
   }
 ]
 
-const Blockcypher = () => {
+const Blockcypher = ({ addData }) => {
+  const classes = useStyles()
+
   const { data } = useQuery(GET_CONFIG)
+  const [saveConfig] = useMutation(SAVE_ACCOUNTS, {
+    onCompleted: () => addData({ zeroConf: 'blockcypher' })
+  })
+
+  const [selected, setSelected] = useState(null)
+  const [error, setError] = useState(false)
+
   const accounts = data?.accounts ?? []
 
-  const classes = useStyles()
-  const [saveConfig] = useMutation(SAVE_ACCOUNTS)
-  const [currentCode, setCurrentCode] = useState('disable')
-
-  useEffect(() => {
-    if (!accounts?.blockcypher) return
-    schema.blockcypher.validationSchema.isValidSync(accounts.blockcypher) &&
-      setCurrentCode('enable')
-  }, [accounts])
-
-  const handleRadio = cashoutOrNot => {
-    setCurrentCode(cashoutOrNot)
-    cashoutOrNot === 'disable' && save({})
+  const onSelect = e => {
+    setSelected(e.target.value)
+    setError(false)
   }
 
   const save = blockcypher => {
@@ -67,7 +67,7 @@ const Blockcypher = () => {
 
   return (
     <>
-      <H4>Blockcypher</H4>
+      <H4 className={error && classes.error}>Blockcypher</H4>
       <P>
         If you are enabling cash-out services,{' '}
         <Link>
@@ -84,17 +84,26 @@ const Blockcypher = () => {
         labelClassName={classes.radioLabel}
         className={classes.radioGroup}
         options={options}
-        value={currentCode}
-        onChange={event => handleRadio(event.target.value)}
+        value={selected}
+        onChange={onSelect}
       />
       <div className={classes.mdForm}>
-        {currentCode === 'enable' && (
+        {selected === 'disable' && (
+          <Button
+            size="lg"
+            onClick={() => addData({ zeroConf: 'all-zero-conf' })}
+            className={classes.button}>
+            Continue
+          </Button>
+        )}
+        {selected === 'enable' && (
           <FormRenderer
             value={accounts.blockcypher}
             save={save}
             elements={schema.blockcypher.elements}
             validationSchema={schema.blockcypher.validationSchema}
-            buttonLabel={'Save'}
+            buttonLabel={'Continue'}
+            buttonClass={classes.formButton}
           />
         )}
       </div>

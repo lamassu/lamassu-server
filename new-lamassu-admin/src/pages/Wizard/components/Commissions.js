@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
@@ -16,7 +16,6 @@ const useStyles = makeStyles(styles)
 const GET_DATA = gql`
   query getData {
     config
-    accounts
   }
 `
 const SAVE_CONFIG = gql`
@@ -25,31 +24,17 @@ const SAVE_CONFIG = gql`
   }
 `
 
-function Commissions({ dispatch, namespace }) {
+function Commissions({ isActive, doContinue }) {
   const classes = useStyles()
-  const { data, refetch } = useQuery(GET_DATA)
+  const { data } = useQuery(GET_DATA)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+    onCompleted: doContinue
   })
 
-  useEffect(() => {
-    dispatch({ type: 'wizard/SET_STEP', payload: namespace })
-  }, [dispatch, namespace])
-
-  const config = data?.config && fromNamespace(namespace)(data.config)
-  const values = config && !R.isEmpty(config) ? config : defaults
-
   const save = it => {
-    const config = toNamespace(namespace)(it[namespace][0])
+    const config = toNamespace('commissions')(it.commissions[0])
     return saveConfig({ variables: { config } })
-      .then(() => refetch())
-      .then(({ data }) => {
-        return dispatch({
-          type: 'wizard/VALIDATE_STEP',
-          payload: { accounts: data.accounts, config: data.config }
-        })
-      })
   }
 
   const currency = R.path(['fiatCurrency'])(
@@ -65,11 +50,12 @@ function Commissions({ dispatch, namespace }) {
           rowSize="lg"
           titleLg
           name="commissions"
-          outerEditingId={1}
+          initialValues={defaults}
           enableEdit
+          forceAdd={isActive}
           save={save}
           validationSchema={schema}
-          data={R.of({ ...values, id: 1 })}
+          data={[]}
           elements={mainFields(currency)}
         />
       </Section>
