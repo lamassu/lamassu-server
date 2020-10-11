@@ -140,6 +140,9 @@ const Funding = () => {
     )
   }
 
+  const pendingTotal = getPendingTotal(fundingResponse?.funding || [])
+  const signIfPositive = num => (num >= 0 ? '+' : '')
+
   return (
     <>
       <div>
@@ -163,7 +166,7 @@ const Funding = () => {
                 {fundingResponse.funding[0].fiatCode}
               </Info1>
               <Label1 className={classes.totalPending}>
-                (+{getPendingTotal(fundingResponse.funding)} pending)
+                ({signIfPositive(pendingTotal)} {pendingTotal} pending)
               </Label1>
             </div>
           )}
@@ -184,7 +187,9 @@ const Funding = () => {
                   {`${selected.confirmedBalance} ${selected.cryptoCode}`}
                 </Info1>
                 <Info2 inline noMargin className={classes.leftSpacer}>
-                  {`(+ ${selected.pending} pending)`}
+                  {`(${signIfPositive(selected.pending)} ${
+                    selected.pending
+                  } pending)`}
                 </Info2>
               </div>
 
@@ -195,7 +200,9 @@ const Funding = () => {
                   }`}
                 </Info3>
                 <Label3 inline noMargin className={classes.leftSpacer}>
-                  {`(+${formatNumber(selected.fiatPending)} pending)`}
+                  {`(${signIfPositive(selected.fiatPending)} ${formatNumber(
+                    selected.fiatPending
+                  )} pending)`}
                 </Label3>
               </div>
 
