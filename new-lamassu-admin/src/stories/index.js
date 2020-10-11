@@ -13,17 +13,11 @@ import extendJss from 'jss-plugin-extend'
 import React from 'react'
 
 import { ActionButton, Button, Link } from 'src/components/buttons'
-import {
-  Radio,
-  TextInput,
-  Switch,
-  CashIn,
-  CashOut
-} from 'src/components/inputs'
+import { TextInput, Switch, CashIn, CashOut } from 'src/components/inputs'
 import { ReactComponent as AuthorizeIconReversed } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 
-import ConfirmDialog from '../components/ConfirmDialog'
+// import ConfirmDialog from '../components/ConfirmDialog'
 import {
   H1,
   H2,
@@ -169,21 +163,6 @@ story.add('Checkbox', () => (
   </Wrapper>
 ))
 
-story.add('ConfirmDialog', () => (
-  <Wrapper>
-    <ConfirmDialog
-      open={boolean('open', true)}
-      onDissmised={() => {
-        window.alert('dissmised')
-      }}
-      onConfirmed={() => {
-        window.alert('confirmed')
-      }}
-      toBeConfirmed="there-is-no-fate"
-    />
-  </Wrapper>
-))
-
 story.add('Cashbox', () => (
   <Wrapper>
     <div>
@@ -210,8 +189,6 @@ story.add('Cashbox', () => (
     </div>
   </Wrapper>
 ))
-
-story.add('Radio', () => <Radio label="Hehe" />)
 
 const typographyStory = storiesOf('Typography', module)
 typographyStory.add('H1', () => <H1>Hehehe</H1>)

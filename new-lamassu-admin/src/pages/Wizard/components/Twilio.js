@@ -1,23 +1,18 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
+import InfoMessage from 'src/components/InfoMessage'
 import Tooltip from 'src/components/Tooltip'
-import { IconButton } from 'src/components/buttons'
+import { Button } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
-import { H1, Label1, H4, P } from 'src/components/typography'
-import addMachineStyles from 'src/pages/AddMachine/styles'
-import {
-  styles as globalStyles,
-  contactInfoStyles
-} from 'src/pages/OperatorInfo/OperatorInfo.styles'
+import { H1, H4, P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import twilio from 'src/pages/Services/schemas/twilio'
-import styles from 'src/pages/Wizard/Radio.styles'
-import { ReactComponent as HelpIcon } from 'src/styling/icons/action/help/zodiac.svg'
-import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+
+import styles from './Wallet/Shared.styles'
 
 const GET_CONFIG = gql`
   {
@@ -34,23 +29,32 @@ const SAVE_ACCOUNTS = gql`
 
 const useStyles = makeStyles({
   ...styles,
-  ...globalStyles,
-  ...contactInfoStyles,
-  ...addMachineStyles,
   content: {
-    width: 820,
-    flex: 0
+    width: 820
   },
   radioLabel: {
     ...styles.radioLabel,
     width: 280
+  },
+  wrapper: {
+    width: 1200,
+    height: 100,
+    margin: [[0, 'auto']]
+  },
+  title: {
+    marginLeft: 8,
+    marginBottom: 5
+  },
+  info: {
+    marginTop: 20,
+    marginBottom: 20
   }
 })
 
 const options = [
   {
     code: 'enable',
-    display: 'Yes, I will add two-way machines'
+    display: 'Yes, I will'
   },
   {
     code: 'disable',
@@ -58,85 +62,89 @@ const options = [
   }
 ]
 
-function Twilio({ dispatch, namespace }) {
+function Twilio({ doContinue }) {
+  const classes = useStyles()
+  const [selected, setSelected] = useState(null)
+  const [error, setError] = useState(false)
+
   const { data, refetch } = useQuery(GET_CONFIG)
-  const [saveAccounts] = useMutation(SAVE_ACCOUNTS)
+  const [saveAccounts] = useMutation(SAVE_ACCOUNTS, {
+    onCompleted: doContinue
+  })
+
   const accounts = data?.accounts ?? []
 
-  const [enable, setEnable] = useState('disable')
-
-  useEffect(() => {
-    if (!accounts?.twilio) return
-    twilio.validationSchema.isValidSync(accounts.twilio) && setEnable('enable')
-  }, [accounts])
-
-  const handleRadio = enableOrNot => {
-    setEnable(enableOrNot)
-    enableOrNot === 'disable' && save({})
-    enableOrNot === 'enable' && save({ enable: true, ...accounts?.twilio })
+  const onSelect = e => {
+    setSelected(e.target.value)
+    setError(false)
   }
 
-  useEffect(() => {
-    dispatch({ type: 'wizard/SET_STEP', payload: namespace })
-  }, [dispatch, namespace])
-  const classes = useStyles()
+  const clickContinue = () => {
+    if (!selected) return setError(true)
+    doContinue()
+  }
 
   const save = twilio => {
     const accounts = { twilio }
-    return saveAccounts({ variables: { accounts } })
-      .then(() => refetch())
-      .then(({ data }) => {
-        return dispatch({
-          type: 'wizard/VALIDATE_STEP',
-          payload: { accounts: data.accounts, config: data.config }
-        })
-      })
+    return saveAccounts({ variables: { accounts } }).then(() => refetch())
+  }
+
+  const titleClasses = {
+    [classes.title]: true,
+    [classes.error]: error
   }
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.content}>
         <H1>Twilio (SMS service)</H1>
-        <H4>
-          Will you setup a two way machine?
-          <Tooltip width={304} enableClick Button={IconButton} Icon={HelpIcon}>
+        <Box display="flex" alignItems="end">
+          <H4 noMargin className={classnames(titleClasses)}>
+            Will you setup a two way machine or compliance?
+          </H4>
+          <Tooltip width={304}>
             <P>
               Two-way machines allow your customers not only to buy (cash-in)
               but also sell cryptocurrencies (cash-out).
             </P>
             <P>
-              To get your admin up and running, you’ll only need an SMS service
-              for cash-out transactions. If you’re using one-way machines,
-              select “No” to skip this step for now. You can later set it up
-              within the Lamassu Admin.
+              You’ll need an SMS service for cash-out transactions and for any
+              complaince triggers
             </P>
           </Tooltip>
-        </H4>
+        </Box>
 
         <RadioGroup
           labelClassName={classes.radioLabel}
           className={classes.radioGroup}
           options={options}
-          value={enable}
-          onChange={event => handleRadio(event.target.value)}
+          value={selected}
+          onChange={onSelect}
         />
 
-        <div className={classnames(classes.section, classes.infoMessage)}>
-          <WarningIcon />
-          <Label1>
-            Before configuring Twilio, create an account and phone number to use
-            the Admin.
-          </Label1>
-        </div>
-        {enable === 'enable' && (
-          <FormRenderer
-            xs={6}
-            save={save}
-            value={accounts.twilio}
-            elements={twilio.elements}
-            validationSchema={twilio.validationSchema}
-            buttonLabel={'Save'}
-          />
+        <InfoMessage className={classes.info}>
+          Before configuring Twilio, create an account and phone number to use
+          the Admin.
+        </InfoMessage>
+
+        {selected === 'enable' && (
+          <>
+            <H4 noMargin>Enter credentials</H4>
+            <FormRenderer
+              xs={6}
+              save={save}
+              value={accounts.twilio}
+              elements={twilio.elements}
+              validationSchema={twilio.validationSchema}
+              buttonLabel={'Continue'}
+              buttonClass={classes.formButton}
+            />
+          </>
+        )}
+        {selected !== 'enable' && (
+          <Button size="lg" onClick={clickContinue} className={classes.button}>
+            Continue
+          </Button>
         )}
       </div>
     </div>

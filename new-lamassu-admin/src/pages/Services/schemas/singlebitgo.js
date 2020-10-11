@@ -1,10 +1,10 @@
+import * as Yup from 'yup'
+
 import {
   TextInput,
   SecretInput,
   Autocomplete
 } from 'src/components/inputs/formik'
-
-import bitgo from './bitgo'
 
 export default code => ({
   code: 'bitgo',
@@ -28,15 +28,28 @@ export default code => ({
       face: true
     },
     {
-      code: `${code.toLowerCase()}WalletId`,
-      display: `${code.toUpperCase()} Wallet ID`,
+      code: `${code}WalletId`,
+      display: `${code} Wallet ID`,
       component: TextInput
     },
     {
-      code: `${code.toLowerCase()}WalletPassphrase`,
-      display: `${code.toUpperCase()} Wallet Passphrase`,
+      code: `${code}WalletPassphrase`,
+      display: `${code} Wallet Passphrase`,
       component: SecretInput
     }
   ],
-  validationSchema: bitgo.validationSchema
+  validationSchema: Yup.object().shape({
+    token: Yup.string()
+      .max(100, 'Too long')
+      .required('Required'),
+    environment: Yup.string()
+      .matches(/(prod|test)/)
+      .required('Required'),
+    [`${code}WalletId`]: Yup.string()
+      .max(100, 'Too long')
+      .required('Required'),
+    [`${code}WalletPassphrase`]: Yup.string()
+      .max(100, 'Too long')
+      .required('Required')
+  })
 })

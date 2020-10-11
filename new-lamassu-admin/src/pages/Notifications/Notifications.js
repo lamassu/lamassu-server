@@ -38,7 +38,6 @@ const SAVE_CONFIG = gql`
 
 const FIELDS_WIDTH = 130
 
-// TODO: what about 'onlySetup' 'onlyFiat'?
 const Notifications = ({
   name: SCREEN_KEY,
   displaySetup = true,

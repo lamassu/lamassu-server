@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik } from 'formik'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { v4 } from 'uuid'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
@@ -51,12 +51,13 @@ const ETable = ({
   groupBy,
   sortBy,
   createText = 'Add override',
-  outerEditingId = null
+  forceAdd = false
 }) => {
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  useEffect(() => setAdding(forceAdd), [forceAdd])
   const innerSave = async value => {
     if (saving) return
 
@@ -88,7 +89,6 @@ const ETable = ({
 
   const onReset = () => {
     setAdding(false)
-    setEditingId(outerEditingId)
     setEditing && setEditing(false)
   }
 
@@ -136,6 +136,7 @@ const ETable = ({
     toggleWidth,
     actionColSize,
     stripeWhen,
+    forceAdd,
     DEFAULT_COL_SIZE
   }
 
