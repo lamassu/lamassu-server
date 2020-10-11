@@ -50,7 +50,9 @@ const Triggers = () => {
   })
 
   const add = rawConfig => {
-    const toSave = R.concat([{ id: v4(), ...rawConfig }])(triggers)
+    const toSave = R.concat([{ id: v4(), direction: 'both', ...rawConfig }])(
+      triggers
+    )
     setError(false)
     return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
   }
@@ -73,9 +75,13 @@ const Triggers = () => {
 
   return (
     <>
-      <TitleSection title="Compliance Triggers">
+      <TitleSection title="Compliance Triggers" className={classes.tableWidth}>
         <Box display="flex" alignItems="center">
-          <Box display="flex" alignItems="center" justifyContent="end" mr={3}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="end"
+            mr="-5px">
             <P>Reject reused addresses</P>
             <Switch
               checked={rejectAddressReuse}
@@ -95,11 +101,17 @@ const Triggers = () => {
               </P>
             </Tooltip>
           </Box>
-          <Link color="primary" onClick={() => setWizard(true)}>
-            + Add new trigger
-          </Link>
         </Box>
       </TitleSection>
+      <Box
+        marginBottom={2}
+        className={classes.tableWidth}
+        display="flex"
+        justifyContent="end">
+        <Link color="primary" onClick={() => setWizard(true)}>
+          + Add new trigger
+        </Link>
+      </Box>
       <EditableTable
         data={triggers}
         name="triggers"

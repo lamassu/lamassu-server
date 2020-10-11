@@ -10,9 +10,9 @@ import { Button } from 'src/components/buttons'
 import { H5, Info3 } from 'src/components/typography'
 import { comet } from 'src/styling/variables'
 
-import { txDirection, type, requirements } from './helper'
+import { type, requirements } from './helper'
 
-const LAST_STEP = 3
+const LAST_STEP = 2
 
 const styles = {
   stepper: {
@@ -43,11 +43,11 @@ const useStyles = makeStyles(styles)
 
 const getStep = step => {
   switch (step) {
+    // case 1:
+    //   return txDirection
     case 1:
-      return txDirection
-    case 2:
       return type
-    case 3:
+    case 2:
       return requirements
     default:
       return Fragment
@@ -56,11 +56,11 @@ const getStep = step => {
 
 const getText = (step, config, currency) => {
   switch (step) {
+    // case 1:
+    //   return `In ${getDirectionText(config)} transactions`
     case 1:
-      return `In ${getDirectionText(config)} transactions`
+      return `If the user ${getTypeText(config, currency)}`
     case 2:
-      return `if the user ${getTypeText(config, currency)}`
-    case 3:
       return `the user will be ${getRequirementText(config)}.`
     default:
       return ''
@@ -71,18 +71,18 @@ const orUnderline = value => {
   return R.isEmpty(value) || R.isNil(value) ? '⎼⎼⎼⎼⎼ ' : value
 }
 
-const getDirectionText = config => {
-  switch (config.direction) {
-    case 'both':
-      return 'both cash-in and cash-out'
-    case 'cashIn':
-      return 'cash-in'
-    case 'cashOut':
-      return 'cash-out'
-    default:
-      return orUnderline(null)
-  }
-}
+// const getDirectionText = config => {
+//   switch (config.direction) {
+//     case 'both':
+//       return 'both cash-in and cash-out'
+//     case 'cashIn':
+//       return 'cash-in'
+//     case 'cashOut':
+//       return 'cash-out'
+//     default:
+//       return orUnderline(null)
+//   }
+// }
 
 const getTypeText = (config, currency) => {
   switch (config.triggerType) {

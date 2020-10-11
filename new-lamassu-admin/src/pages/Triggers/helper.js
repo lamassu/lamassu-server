@@ -7,8 +7,8 @@ import * as Yup from 'yup'
 
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info2 } from 'src/components/typography'
-import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
-import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+// import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+// import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { errorColor } from 'src/styling/variables'
 
 const useStyles = makeStyles({
@@ -68,7 +68,7 @@ const useStyles = makeStyles({
   }
 })
 
-const direction = Yup.string().required('Required')
+// const direction = Yup.string().required('Required')
 const triggerType = Yup.string().required('Required')
 const threshold = Yup.object().shape({
   threshold: Yup.number(),
@@ -82,95 +82,95 @@ const requirement = Yup.object().shape({
 const Schema = Yup.object().shape({
   triggerType,
   requirement,
-  threshold,
-  direction
+  threshold
+  // direction
 })
 
-// Direction
-const directionSchema = Yup.object().shape({ direction })
+// Direction V2 only
+// const directionSchema = Yup.object().shape({ direction })
 
-const directionOptions = [
-  {
-    display: 'Both',
-    code: 'both'
-  },
-  {
-    display: 'Only cash-in',
-    code: 'cashIn'
-  },
-  {
-    display: 'Only cash-out',
-    code: 'cashOut'
-  }
-]
+// const directionOptions = [
+//   {
+//     display: 'Both',
+//     code: 'both'
+//   },
+//   {
+//     display: 'Only cash-in',
+//     code: 'cashIn'
+//   },
+//   {
+//     display: 'Only cash-out',
+//     code: 'cashOut'
+//   }
+// ]
 
-const directionOptions2 = [
-  {
-    display: (
-      <>
-        <TxInIcon /> in
-      </>
-    ),
-    code: 'cashIn'
-  },
-  {
-    display: (
-      <>
-        <TxOutIcon /> out
-      </>
-    ),
-    code: 'cashOut'
-  },
-  {
-    display: (
-      <>
-        <Box display="flex">
-          <Box mr={0.25}>
-            <TxOutIcon />
-          </Box>
-          <Box>
-            <TxInIcon />
-          </Box>
-        </Box>
-      </>
-    ),
-    code: 'both'
-  }
-]
+// const directionOptions2 = [
+//   {
+//     display: (
+//       <>
+//         <TxInIcon /> in
+//       </>
+//     ),
+//     code: 'cashIn'
+//   },
+//   {
+//     display: (
+//       <>
+//         <TxOutIcon /> out
+//       </>
+//     ),
+//     code: 'cashOut'
+//   },
+//   {
+//     display: (
+//       <>
+//         <Box display="flex">
+//           <Box mr={0.25}>
+//             <TxOutIcon />
+//           </Box>
+//           <Box>
+//             <TxInIcon />
+//           </Box>
+//         </Box>
+//       </>
+//     ),
+//     code: 'both'
+//   }
+// ]
 
-const Direction = () => {
-  const classes = useStyles()
-  const { errors } = useFormikContext()
+// const Direction = () => {
+//   const classes = useStyles()
+//   const { errors } = useFormikContext()
 
-  const titleClass = {
-    [classes.error]: errors.direction
-  }
+//   const titleClass = {
+//     [classes.error]: errors.direction
+//   }
 
-  return (
-    <>
-      <Box display="flex" alignItems="center">
-        <H4 className={classnames(titleClass)}>
-          In which type of transactions will it trigger?
-        </H4>
-      </Box>
-      <Field
-        component={RadioGroup}
-        name="direction"
-        options={directionOptions}
-        labelClassName={classes.radioLabel}
-        radioClassName={classes.radio}
-        className={classes.radioGroup}
-      />
-    </>
-  )
-}
+//   return (
+//     <>
+//       <Box display="flex" alignItems="center">
+//         <H4 className={classnames(titleClass)}>
+//           In which type of transactions will it trigger?
+//         </H4>
+//       </Box>
+//       <Field
+//         component={RadioGroup}
+//         name="direction"
+//         options={directionOptions}
+//         labelClassName={classes.radioLabel}
+//         radioClassName={classes.radio}
+//         className={classes.radioGroup}
+//       />
+//     </>
+//   )
+// }
 
-const txDirection = {
-  schema: directionSchema,
-  options: directionOptions,
-  Component: Direction,
-  initialValues: { direction: '' }
-}
+// const txDirection = {
+//   schema: directionSchema,
+//   options: directionOptions,
+//   Component: Direction,
+//   initialValues: { direction: '' }
+// }
 
 // TYPE
 const typeSchema = Yup.object().shape({
@@ -317,20 +317,20 @@ const getView = (data, code, compare) => it => {
   return R.compose(R.prop(code), R.find(R.propEq(compare ?? 'code', it)))(data)
 }
 
-const DirectionDisplay = ({ code }) => {
-  const classes = useStyles()
-  const displayName = getView(directionOptions, 'display')(code)
-  const showCashIn = code === 'cashIn' || code === 'both'
-  const showCashOut = code === 'cashOut' || code === 'both'
+// const DirectionDisplay = ({ code }) => {
+//   const classes = useStyles()
+//   const displayName = getView(directionOptions, 'display')(code)
+//   const showCashIn = code === 'cashIn' || code === 'both'
+//   const showCashOut = code === 'cashOut' || code === 'both'
 
-  return (
-    <div>
-      {showCashOut && <TxOutIcon className={classes.directionIcon} />}
-      {showCashIn && <TxInIcon className={classes.directionIcon} />}
-      <span className={classes.directionName}>{displayName}</span>
-    </div>
-  )
-}
+//   return (
+//     <div>
+//       {showCashOut && <TxOutIcon className={classes.directionIcon} />}
+//       {showCashIn && <TxInIcon className={classes.directionIcon} />}
+//       <span className={classes.directionName}>{displayName}</span>
+//     </div>
+//   )
+// }
 
 const RequirementInput = () => {
   const { values } = useFormikContext()
@@ -505,19 +505,19 @@ const getElements = (currency, classes) => [
     textAlign: 'right',
     input: () => <ThresholdInput currency={currency} />,
     view: (it, config) => <ThresholdView config={config} currency={currency} />
-  },
-  {
-    name: 'direction',
-    size: 'sm',
-    width: 282,
-    view: it => <DirectionDisplay code={it} />,
-    input: RadioGroup,
-    inputProps: {
-      labelClassName: classes.tableRadioLabel,
-      className: classes.tableRadioGroup,
-      options: directionOptions2
-    }
   }
+  // {
+  //   name: 'direction',
+  //   size: 'sm',
+  //   width: 282,
+  //   view: it => <DirectionDisplay code={it} />,
+  //   input: RadioGroup,
+  //   inputProps: {
+  //     labelClassName: classes.tableRadioLabel,
+  //     className: classes.tableRadioGroup,
+  //     options: directionOptions2
+  //   }
+  // }
 ]
 
 const triggerOrder = R.map(R.prop('code'))(typeOptions)
@@ -555,7 +555,7 @@ const toServer = triggers =>
 export {
   Schema,
   getElements,
-  txDirection,
+  // txDirection,
   type,
   requirements,
   sortBy,
