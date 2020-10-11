@@ -9,5 +9,8 @@ export default {
   },
   tableRadioLabel: {
     marginRight: 0
+  },
+  tableWidth: {
+    width: 918
   }
 }
