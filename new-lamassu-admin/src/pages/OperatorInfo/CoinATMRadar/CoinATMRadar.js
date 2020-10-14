@@ -81,7 +81,7 @@ const CoinATMRadar = memo(() => {
         </div>
         <Row
           title={'Share information?'}
-          checked={coinAtmRadarConfig.active || false}
+          checked={coinAtmRadarConfig.active}
           save={value => save({ active: value })}
           label={coinAtmRadarConfig.active ? 'Yes' : 'No'}
         />
@@ -89,13 +89,13 @@ const CoinATMRadar = memo(() => {
         <Row
           title={'Commissions'}
           disabled={!coinAtmRadarConfig.active}
-          checked={coinAtmRadarConfig.commissions || false}
+          checked={coinAtmRadarConfig.commissions}
           save={value => save({ commissions: value })}
         />
         <Row
           title={'Limits and verification'}
           disabled={!coinAtmRadarConfig.active}
-          checked={coinAtmRadarConfig.limitsAndVerification || false}
+          checked={coinAtmRadarConfig.limitsAndVerification}
           save={value => save({ limitsAndVerification: value })}
         />
       </div>
