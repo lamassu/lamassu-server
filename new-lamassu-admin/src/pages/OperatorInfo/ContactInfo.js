@@ -210,7 +210,7 @@ const ContactInfo = () => {
         <P>Info card enabled?</P>
         <div className={classes.switch}>
           <Switch
-            checked={info.active || false}
+            checked={info.active}
             onChange={event =>
               save({
                 active: event.target.checked
