@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Dialog, DialogContent, SvgIcon, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import { Form, Formik, FastField } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
@@ -14,6 +15,9 @@ import { TextInput } from 'src/components/inputs/formik'
 import Sidebar from 'src/components/layout/Sidebar'
 import { Info2, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { ReactComponent as CompleteStageIconZodiac } from 'src/styling/icons/stage/zodiac/complete.svg'
+import { ReactComponent as CurrentStageIconZodiac } from 'src/styling/icons/stage/zodiac/current.svg'
+import { ReactComponent as EmptyStageIconZodiac } from 'src/styling/icons/stage/zodiac/empty.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 import { primaryColor } from 'src/styling/variables'
 
@@ -83,7 +87,6 @@ const validationSchema = Yup.object().shape({
 const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
   const [register] = useMutation(SAVE_CONFIG, {
     onCompleted: ({ createPairingTotem }) => {
-      console.log(createPairingTotem)
       setQrCode(createPairingTotem)
       nextStep()
     },
