@@ -5,15 +5,14 @@ import { Form, Formik, FastField } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import * as R from 'ramda'
-import React, { memo, useEffect } from 'react'
-import { useSetState, useCounter, useBoolean, useLifecycles } from 'react-use'
+import React, { memo, useState } from 'react'
 import * as Yup from 'yup'
 
 import Title from 'src/components/Title'
 import { Button } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
 import Sidebar from 'src/components/layout/Sidebar'
-import { Info2, P, Info3 } from 'src/components/typography'
+import { Info2, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 import { primaryColor } from 'src/styling/variables'
@@ -38,31 +37,11 @@ const useStyles = makeStyles(styles)
 
 const getSize = R.compose(R.length, R.pathOr([], ['machines']))
 
-function usePairDevice({ name, count }) {
-  const [on, toggle] = useBoolean(false)
-  const { data, stopPolling, startPolling } = useQuery(GET_MACHINES)
-  const size = getSize(data)
+const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
+  const { data } = useQuery(GET_MACHINES, { pollInterval: 10000 })
 
-  useLifecycles(() => startPolling(10000), stopPolling)
-  useEffect(() =>
-    size > count && data?.machines?.some(m => m.name === name)
-      ? toggle(true)
-      : undefined
-  )
-
-  return [on]
-}
-
-const QrCodeComponent = ({ classes, payload, close, onPaired }) => {
-  const { qrcode, count, name } = payload
-  const [paired] = usePairDevice({ name, count })
-
-  useEffect(() => {
-    if (paired) {
-      onPaired(name)
-      setTimeout(() => close(), 3000)
-    }
-  }, [close, name, onPaired, paired])
+  const addedMachine = data?.machines?.find(m => m.name === name)
+  if (getSize(data) > count && addedMachine) onPaired(addedMachine)
 
   return (
     <>
@@ -71,7 +50,7 @@ const QrCodeComponent = ({ classes, payload, close, onPaired }) => {
       </Info2>
       <div className={classes.qrCodeWrapper}>
         <div>
-          <QRCode size={240} fgColor={primaryColor} value={qrcode} />
+          <QRCode size={240} fgColor={primaryColor} value={qrCode} />
         </div>
         <div className={classes.qrTextWrapper}>
           <div className={classes.qrCodeWrapper}>
@@ -85,7 +64,6 @@ const QrCodeComponent = ({ classes, payload, close, onPaired }) => {
               machine.
             </P>
           </div>
-          {paired && <Info3>✓ Machine has been successfully paired</Info3>}
         </div>
       </div>
     </>
@@ -102,10 +80,11 @@ const validationSchema = Yup.object().shape({
     .max(50, 'Too long')
 })
 
-const MachineNameComponent = ({ nextStep, classes, setPayload }) => {
+const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
   const [register] = useMutation(SAVE_CONFIG, {
     onCompleted: ({ createPairingTotem }) => {
-      setPayload({ qrcode: createPairingTotem })
+      console.log(createPairingTotem)
+      setQrCode(createPairingTotem)
       nextStep()
     },
     onError: e => console.log(e)
@@ -120,7 +99,7 @@ const MachineNameComponent = ({ nextStep, classes, setPayload }) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={({ name }) => {
-          setPayload({ name })
+          setName(name)
           register({ variables: { name } })
         }}>
         <Form className={classes.form}>
@@ -183,13 +162,13 @@ const renderStepper = (step, it, idx, classes) => {
 const AddMachine = memo(({ close, onPaired }) => {
   const classes = useStyles()
   const { data } = useQuery(GET_MACHINES)
-  const [payload, setPayload] = useSetState({ qrcode: '', name: '', count: 0 })
-  const [step, { inc }] = useCounter(0, steps.length, 0)
+  const [qrCode, setQrCode] = useState('')
+  const [name, setName] = useState('')
+  const [step, setStep] = useState(0)
   const count = getSize(data)
 
-  useEffect(() => setPayload({ count }), [count, setPayload])
-
   const Component = steps[step].component
+
   return (
     <div>
       <Dialog
@@ -214,10 +193,13 @@ const AddMachine = memo(({ close, onPaired }) => {
               <div className={classes.contentWrapper}>
                 <Component
                   classes={classes}
-                  nextStep={() => inc(1)}
-                  close={close}
+                  nextStep={() => setStep(1)}
+                  count={count}
                   onPaired={onPaired}
-                  {...{ payload, setPayload }}
+                  qrCode={qrCode}
+                  setQrCode={setQrCode}
+                  name={name}
+                  setName={setName}
                 />
               </div>
             </div>

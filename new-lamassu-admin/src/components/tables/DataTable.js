@@ -92,6 +92,7 @@ const DataTable = ({
   Details,
   className,
   expandable,
+  shouldStartExpanded,
   onClick,
   ...props
 }) => {
@@ -128,7 +129,10 @@ const DataTable = ({
             elements={elements}
             data={data[index]}
             Details={Details}
-            expanded={index === expanded}
+            expanded={
+              index === expanded ||
+              (shouldStartExpanded && shouldStartExpanded(data[index]))
+            }
             expandRow={expandRow}
             expandable={expandable}
             onClick={onClick}

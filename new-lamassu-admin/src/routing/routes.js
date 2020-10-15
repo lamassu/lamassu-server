@@ -57,7 +57,7 @@ const tree = [
       {
         key: 'machine-status',
         label: 'Machine Status',
-        route: '/maintenance/machine-status',
+        route: '/maintenance/machine-status/:id',
         component: MachineStatus
       },
       {
