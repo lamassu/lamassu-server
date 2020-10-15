@@ -196,10 +196,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
       {wizard && (
         <Wizard
           coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
-          onClose={v => {
-            console.log(v)
-            setWizard(false)
-          }}
+          onClose={() => setWizard(false)}
           save={rawConfig => save(toNamespace(namespaces.WALLETS)(rawConfig))}
           error={error}
           cryptoCurrencies={cryptoCurrencies}

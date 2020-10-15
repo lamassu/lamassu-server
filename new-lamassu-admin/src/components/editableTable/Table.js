@@ -46,7 +46,8 @@ const ETable = ({
   disableAdd,
   initialValues,
   setEditing,
-  focusOnEditWhen,
+  shouldOverrideEdit,
+  editOverride,
   stripeWhen,
   disableRowEdit,
   groupBy,
@@ -93,6 +94,7 @@ const ETable = ({
   }
 
   const onEdit = it => {
+    if (shouldOverrideEdit && shouldOverrideEdit(it)) return editOverride(it)
     setEditingId(it)
     setEditing && setEditing(it, true)
   }
@@ -136,7 +138,6 @@ const ETable = ({
     toggleWidth,
     actionColSize,
     stripeWhen,
-    focusOnEditWhen,
     DEFAULT_COL_SIZE
   }
 

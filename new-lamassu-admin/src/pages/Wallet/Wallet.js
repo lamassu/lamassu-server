@@ -56,9 +56,9 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
 
-  const onEdit = id => {
-    const namespaced = fromNamespace(id)(config)
-    if (!WalletSchema.isValidSync(namespaced)) return setWizard(id)
+  const shouldOverrideEdit = it => {
+    const namespaced = fromNamespace(it)(config)
+    return !WalletSchema.isValidSync(namespaced)
   }
 
   return (
@@ -70,8 +70,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         data={config}
         stripeWhen={it => !WalletSchema.isValidSync(it)}
         enableEdit
-        setEditing={onEdit}
-        focusOnEditWhen={it => WalletSchema.isValidSync(it)}
+        shouldOverrideEdit={shouldOverrideEdit}
+        editOverride={setWizard}
         editWidth={174}
         save={save}
         validationSchema={WalletSchema}
