@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
+import { useParams } from 'react-router-dom'
 
 import { MainStatus } from 'src/components/Status'
 import Title from 'src/components/Title'
@@ -40,8 +41,10 @@ const useStyles = makeStyles(mainStyles)
 
 const MachineStatus = () => {
   const classes = useStyles()
-
+  const { id: machineId } = useParams()
   const { data: machinesResponse } = useQuery(GET_MACHINES)
+
+  const shouldStartExpanded = machine => machine.deviceId === machineId
 
   const elements = [
     {
@@ -95,6 +98,7 @@ const MachineStatus = () => {
         elements={elements}
         data={R.path(['machines'])(machinesResponse)}
         Details={MachineDetailsRow}
+        shouldStartExpanded={shouldStartExpanded}
         expandable
       />
     </>

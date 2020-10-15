@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { memo, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 
 import { Link } from 'src/components/buttons'
 import { H4 } from 'src/components/typography'
@@ -38,9 +38,14 @@ const Subheader = ({ item, classes }) => {
 const Header = memo(({ tree }) => {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState()
+
+  const history = useHistory()
   const classes = useStyles()
 
-  const onPaired = _name => {}
+  const onPaired = machine => {
+    setOpen(false)
+    history.push(`/maintenance/machine-status/${machine.deviceId}`)
+  }
 
   return (
     <header>
