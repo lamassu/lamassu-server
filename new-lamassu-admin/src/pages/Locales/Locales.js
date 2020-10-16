@@ -11,6 +11,7 @@ import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
 import Wizard from 'src/pages/Wallet/Wizard'
+import { WalletSchema } from 'src/pages/Wallet/helper'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { styles } from './Locales.styles'
@@ -142,8 +143,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
   }
 
   const enableCoin = it => {
+    if (!it) return
+
     const namespaced = fromNamespace(it)(wallets)
-    if (!namespaced?.active) return setWizard(it)
+    if (!WalletSchema.isValidSync(namespaced)) return setWizard(it)
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
