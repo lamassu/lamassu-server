@@ -91,6 +91,7 @@ const ETable = ({
 
   const onReset = () => {
     setAdding(false)
+    setEditingId(null)
     setEditing && setEditing(false)
   }
 

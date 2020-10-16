@@ -59,7 +59,7 @@ const STEPS = [
   {
     id: 'wallet',
     Component: Wallet,
-    exImage: '/fullexample.wallet.png',
+    exImage: '/assets/wizard/fullexample.wallet.png',
     subtitle: 'Wallet settings',
     text: `Your wallet settings are the first step for this wizard. We'll start
           by setting one of cryptocurrency to get you up and running, but you
@@ -68,7 +68,7 @@ const STEPS = [
   {
     id: 'locale',
     Component: Locale,
-    exImage: '/fullexample.locale.png',
+    exImage: '/assets/wizard/fullexample.locale.png',
     subtitle: 'Locales',
     text: `From the Locales page, you can define some important default settings
           of your machines. These values will be the default values of all
@@ -80,7 +80,7 @@ const STEPS = [
   {
     id: 'twilio',
     Component: Twilio,
-    exImage: '/fullexample.twilio.png',
+    exImage: '/assets/wizard/fullexample.twilio.png',
     subtitle: 'Twilio (SMS service)',
     text: (
       <>
@@ -95,7 +95,7 @@ const STEPS = [
   {
     id: 'commissions',
     Component: Commissions,
-    exImage: '/fullexample.commissions.png',
+    exImage: '/assets/wizard/fullexample.commissions.png',
     subtitle: 'Commissions',
     text: `From the Commissions page, you can define all the commissions of your
           machines. The values set here will be default values of all machines
@@ -107,7 +107,7 @@ const STEPS = [
   // {
   //   id: 'notifications',
   //   Component: Notifications,
-  //   exImage: '/fullexample.notifications.png',
+  //   exImage: '/assets/wizard/fullexample.notifications.png',
   //   subtitle: 'Notifications',
   //   text: `Your notification settings will allow customize what notifications you
   //         get and where. You can later override all default balance alerts setup
@@ -116,7 +116,7 @@ const STEPS = [
   // {
   //   id: 'operatorInfo',
   //   Component: WizardOperatorInfo,
-  //   exImage: '/fullexample.operatorinfo.png',
+  //   exImage: '/assets/wizard/fullexample.operatorinfo.png',
   //   subtitle: 'Operator info',
   //   text: `Your contact information is important for your customer to be able
   //         to contact you in case there’s a problem with one of your machines.
