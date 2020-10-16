@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import settingsLoader from '../../lib/settings-loader'
+import settingsLoader from '../../lib/admin/settings-loader'
 
 test('simple merge', t => {
   const fieldCode = 'testCode'

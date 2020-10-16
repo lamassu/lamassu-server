@@ -1,5 +1,5 @@
 const db = require('./db')
-const settingsLoader = require('../lib/settings-loader')
+const settingsLoader = require('../lib/admin/settings-loader')
 const machineLoader = require('../lib/machine-loader')
 const { saveConfig, saveAccounts } = require('../lib/new-settings-loader')
 const { migrate } = require('../lib/config-migration')

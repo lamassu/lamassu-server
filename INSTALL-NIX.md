@@ -42,11 +42,10 @@ Notes:
   
 ## Set up database
 
-Important: lamassu-migrate currently gripes about a QueryResultError. Ignore this, it works anyway. Also, ignore Debug lines from lamassu-apply-defaults.
+Important: lamassu-migrate currently gripes about a QueryResultError. Ignore this, it works anyway.
 
 ```
 node bin/lamassu-migrate
-node bin/lamassu-apply-defaults
 ```
 
 ## Register admin user
