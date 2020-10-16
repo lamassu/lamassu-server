@@ -1,6 +1,6 @@
 import typographyStyles from 'src/components/typography/styles'
 import baseStyles from 'src/pages/Logs.styles'
-import { zircon, primaryColor, fontSize4 } from 'src/styling/variables'
+import { zircon, comet, primaryColor, fontSize4 } from 'src/styling/variables'
 
 const { label1 } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer } = baseStyles
@@ -80,5 +80,26 @@ export default {
   },
   customerName: {
     marginBottom: 32
+  },
+  icon: {
+    marginRight: 11
+  },
+  name: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  value: {
+    height: 16
+  },
+  label: {
+    marginBottom: 4,
+    color: comet
+  },
+  idIcon: {
+    marginRight: 10
+  },
+  subpageButton: {
+    marginLeft: 16
   }
 }
