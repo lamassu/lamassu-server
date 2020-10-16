@@ -66,9 +66,7 @@ const GET_DATA = gql`
 
 const Main = () => {
   const classes = useStyles()
-  const { data, loading } = useQuery(GET_DATA, {
-    notifyOnNetworkStatusChange: true
-  })
+  const { data, loading } = useQuery(GET_DATA)
 
   if (loading) {
     return <></>
@@ -79,7 +77,7 @@ const Main = () => {
   return (
     <div className={classes.root}>
       <Router>
-        {wizardStep && <Wizard wizardStep={wizardStep} />}
+        {wizardStep > 0 && <Wizard wizardStep={wizardStep} />}
         <Header tree={tree} />
         <main className={classes.wrapper}>
           <Routes />
