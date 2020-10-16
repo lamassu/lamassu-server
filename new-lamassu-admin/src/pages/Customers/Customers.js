@@ -4,10 +4,13 @@ import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { fromNamespace, namespaces } from 'src/utils/config'
+
 import CustomersList from './CustomersList'
 
 const GET_CUSTOMERS = gql`
   {
+    config
     customers {
       id
       name
@@ -18,6 +21,7 @@ const GET_CUSTOMERS = gql`
       lastTxFiat
       lastTxFiatCode
       lastTxClass
+      authorizedOverride
     }
   }
 `
@@ -29,6 +33,8 @@ const Customers = () => {
   const handleCustomerClicked = customer =>
     history.push(`/compliance/customer/${customer.id}`)
 
+  const configData = R.path(['config'])(customersResponse) ?? []
+  const locale = configData && fromNamespace(namespaces.LOCALE, configData)
   const customersData = R.sortWith([R.descend(R.prop('lastActive'))])(
     R.path(['customers'])(customersResponse) ?? []
   )
@@ -36,6 +42,7 @@ const Customers = () => {
   return (
     <CustomersList
       data={customersData}
+      locale={locale}
       onClick={handleCustomerClicked}
       loading={loading}
     />

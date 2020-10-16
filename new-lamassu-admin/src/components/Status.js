@@ -9,6 +9,8 @@ import {
   secondaryColorDarker as spring4,
   inputFontWeight,
   spring3,
+  zircon,
+  primaryColor,
   smallestFontSize,
   inputFontFamily,
   spacer,
@@ -18,13 +20,15 @@ import {
 const colors = {
   error: tomato,
   warning: pumpkin,
-  success: spring4
+  success: spring4,
+  neutral: primaryColor
 }
 
 const backgroundColors = {
   error: mistyRose,
   warning: linen,
-  success: spring3
+  success: spring3,
+  neutral: zircon
 }
 
 const useStyles = makeStyles({
