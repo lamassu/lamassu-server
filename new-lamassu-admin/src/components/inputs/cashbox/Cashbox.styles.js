@@ -45,7 +45,7 @@ const cashboxStyles = {
 const gridStyles = {
   row: {
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-start'
   },
   innerRow: {
     display: 'flex',
