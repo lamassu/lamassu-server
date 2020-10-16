@@ -16,17 +16,15 @@ if (!name) {
   process.exit(2)
 }
 
-login.generateOTP(name)
-.then(otp => {
+login.generateOTP(name).then(otp => {
   if (domain === 'localhost') {
-    console.log(`https://${domain}:8070?otp=${otp}`)
+    console.log(`https://${domain}:3000/register?otp=${otp}`)
   } else {
-    console.log(`https://${domain}?otp=${otp}`)
+    console.log(`https://${domain}/register?otp=${otp}`)
   }
 
   process.exit(0)
-})
-.catch(err => {
+}).catch(err => {
   console.log('Error: %s', err)
   process.exit(3)
 })

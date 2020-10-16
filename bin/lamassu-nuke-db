@@ -17,7 +17,6 @@ EOF
 
       rm -f "/etc/lamassu/.migrate"
       lamassu-migrate
-      lamassu-apply-defaults
       echo "Done."
     ;;
     * )

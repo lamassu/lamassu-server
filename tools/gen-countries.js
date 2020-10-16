@@ -1,7 +1,8 @@
 const fs = require('fs')
 const _ = require('lodash/fp')
 
-const rawCountries = require('../raw-countries.json')
+// Countries: https://github.com/mledoze/countries
+const rawCountries = require('./raw-countries.json')
 
 const topCodes = ['US', 'GB', 'CA', 'AU']
 

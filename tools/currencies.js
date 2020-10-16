@@ -1,7 +1,7 @@
 // Pull latest from: http://www.currency-iso.org/en/home/tables/table-a1.html
 // Convert to JSON at: http://www.csvjson.com/csv2json
 
-const currencies = require('../currencies.json')
+const currencies = require('../data/currencies.json')
 
 function goodCurrency (currency) {
   const code = currency.code
