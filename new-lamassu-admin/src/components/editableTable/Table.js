@@ -46,6 +46,8 @@ const ETable = ({
   disableAdd,
   initialValues,
   setEditing,
+  shouldOverrideEdit,
+  editOverride,
   stripeWhen,
   disableRowEdit,
   groupBy,
@@ -93,6 +95,7 @@ const ETable = ({
   }
 
   const onEdit = it => {
+    if (shouldOverrideEdit && shouldOverrideEdit(it)) return editOverride(it)
     setEditingId(it)
     setEditing && setEditing(it, true)
   }
