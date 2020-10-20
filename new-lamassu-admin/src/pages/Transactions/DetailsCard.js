@@ -33,7 +33,6 @@ const getCashOutStatus = it => {
 }
 
 const getCashInStatus = it => {
-  console.log(it)
   if (it.operatorCompleted) return 'Cancelled'
   if (it.hasError) return 'Error'
   if (it.sendConfirmed) return 'Sent'

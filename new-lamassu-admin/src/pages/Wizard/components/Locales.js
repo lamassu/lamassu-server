@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React from 'react'
 
 import { Table as EditableTable } from 'src/components/editableTable'
@@ -13,6 +14,8 @@ import {
   LocaleSchema as schema
 } from 'src/pages/Locales/helper'
 import { toNamespace } from 'src/utils/config'
+
+import { getConfiguredCoins } from '../helper'
 
 const useStyles = makeStyles(styles)
 
@@ -62,6 +65,11 @@ function Locales({ isActive, doContinue }) {
     return saveConfig({ variables: { config } })
   }
 
+  const cryptoCurrencies = getConfiguredCoins(
+    data?.config || {},
+    data?.cryptoCurrencies || []
+  )
+
   return (
     <div className={classes.wrapper}>
       <TitleSection title="Locales" />
@@ -77,7 +85,7 @@ function Locales({ isActive, doContinue }) {
           save={save}
           validationSchema={schema}
           data={[]}
-          elements={mainFields(data)}
+          elements={mainFields(R.merge(data, { cryptoCurrencies }))}
         />
       </Section>
     </div>

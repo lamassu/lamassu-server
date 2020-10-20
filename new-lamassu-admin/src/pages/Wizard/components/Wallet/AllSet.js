@@ -39,7 +39,6 @@ const SAVE_CONFIG = gql`
 
 const AllSet = ({ data: currentData, doContinue }) => {
   const classes = useStyles()
-  console.log(currentData)
 
   const { data } = useQuery(GET_INFO)
   const [saveConfig] = useMutation(SAVE_CONFIG, {

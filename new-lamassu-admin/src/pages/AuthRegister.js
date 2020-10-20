@@ -20,7 +20,7 @@ const AuthRegister = () => {
     customHandler: (err, res) => {
       if (err) return
       if (res) {
-        history.push('/')
+        history.push('/wizard', { fromAuthRegister: true })
       }
     }
   })

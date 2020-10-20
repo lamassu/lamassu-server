@@ -52,7 +52,6 @@ const getOverridesFields = (getData, currency, auxElements) => {
   )
 
   const suggestionFilter = (it, cryptoData) => {
-    console.log(it)
     if (!it?.machine) return cryptoData
 
     return R.differenceWith(

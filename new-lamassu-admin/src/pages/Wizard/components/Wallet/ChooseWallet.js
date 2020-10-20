@@ -95,13 +95,28 @@ const ChooseWallet = ({ data: currentData, addData }) => {
         onChange={onSelect}
       />
       {isLocalHosted(selected) && (
-        <div className={classes.infoMessage}>
-          <WarningIcon />
-          <Info3>
-            To setup {selected} please read our instructions from our support
-            article.
-          </Info3>
-        </div>
+        <>
+          <div className={classes.infoMessage}>
+            <WarningIcon />
+            <Info3>
+              To set up {selected} please read the node wallet instructions from
+              our support portal.
+            </Info3>
+          </div>
+          <a
+            className={classes.actionButtonLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://support.lamassu.is/hc/en-us/articles/115001209552-Setting-up-your-node-wallets">
+            <ActionButton
+              className={classes.actionButton}
+              color="primary"
+              Icon={LinkIcon}
+              InverseIcon={InverseLinkIcon}>
+              Support article
+            </ActionButton>
+          </a>
+        </>
       )}
       {!isConfigurable(selected) && (
         <Button size="lg" onClick={submit} className={classes.button}>
