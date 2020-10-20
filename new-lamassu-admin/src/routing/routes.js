@@ -1,7 +1,14 @@
 import * as R from 'ramda'
-import React from 'react'
-import { Route, Redirect, Switch } from 'react-router-dom'
+import React, { useContext } from 'react'
+import {
+  Route,
+  Redirect,
+  Switch,
+  useHistory,
+  useLocation
+} from 'react-router-dom'
 
+import { AppContext } from 'src/App'
 import AuthRegister from 'src/pages/AuthRegister'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
@@ -154,17 +161,34 @@ const leafRoutes = R.compose(R.flatten, map)(tree)
 const parentRoutes = R.filter(R.has('children'))(tree)
 const flattened = R.concat(leafRoutes, parentRoutes)
 
-const Routes = () => (
-  <Switch>
-    <Route exact path="/" />
-    <Route path="/register" component={AuthRegister} />
-    <Route path="/wizard" component={Wizard}></Route>
-    {flattened.map(({ route, component: Page, key }) => (
-      <Route path={route} key={key}>
-        <Page name={key} />
-      </Route>
-    ))}
-  </Switch>
-)
+const Routes = () => {
+  const history = useHistory()
+  const location = useLocation()
+  const { wizardTested } = useContext(AppContext)
 
+  const dontTriggerPages = ['/404', '/register', '/wizard']
+
+  if (!wizardTested && !R.contains(location.pathname)(dontTriggerPages)) {
+    history.push('/wizard')
+  }
+
+  return (
+    <Switch>
+      <Route exact path="/">
+        <Redirect to={{ pathname: '/transactions' }} />
+      </Route>
+      <Route path="/wizard" component={Wizard} />
+      <Route path="/register" component={AuthRegister} />
+      {flattened.map(({ route, component: Page, key }) => (
+        <Route path={route} key={key}>
+          <Page name={key} />
+        </Route>
+      ))}
+      <Route path="/404" />
+      <Route path="*">
+        <Redirect to={{ pathname: '/404' }} />
+      </Route>
+    </Switch>
+  )
+}
 export { tree, Routes }

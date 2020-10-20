@@ -101,7 +101,7 @@ const Mailgun = () => {
       <div className={classes.infoMessage}>
         <WarningIcon />
         <Info3>
-          To get email notifications, you’ll need to setup Mailgun. Check out
+          To get email notifications, you’ll need to set up Mailgun. Check out
           our article on how to set it up.
         </Info3>
       </div>

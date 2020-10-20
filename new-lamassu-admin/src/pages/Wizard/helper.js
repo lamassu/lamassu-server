@@ -14,6 +14,13 @@ import Twilio from './components/Twilio'
 import Wallet from './components/Wallet/Wallet'
 import Welcome from './components/Welcome'
 
+const getConfiguredCoins = (config, crypto) => {
+  const wallet = fromNamespace(namespaces.WALLETS, config)
+  return R.filter(it =>
+    WalletSchema.isValidSync(fromNamespace(it.code, wallet))
+  )(crypto)
+}
+
 const hasValidWallet = (config, crypto) => {
   const wallet = fromNamespace(namespaces.WALLETS, config)
   const coins = R.map(it => fromNamespace(it.code, wallet))(crypto)
@@ -61,9 +68,9 @@ const STEPS = [
     Component: Wallet,
     exImage: '/assets/wizard/fullexample.wallet.png',
     subtitle: 'Wallet settings',
-    text: `Your wallet settings are the first step for this wizard. We'll start
-          by setting one of cryptocurrency to get you up and running, but you
-          can later setup as many cryptocurrencies as you want.`
+    text: `Your wallet settings are the first step for this wizard. 
+    We'll start by setting up one of cryptocurrencies to get you up and running,
+    but you can later set up as many as you want.`
   },
   {
     id: 'locale',
@@ -125,4 +132,4 @@ const STEPS = [
   // }
 ]
 
-export { getWizardStep, STEPS }
+export { getWizardStep, STEPS, getConfiguredCoins }

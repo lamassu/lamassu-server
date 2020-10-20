@@ -1,4 +1,3 @@
-import { ApolloProvider, useQuery } from '@apollo/react-hooks'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import {
   StylesProvider,
@@ -6,15 +5,12 @@ import {
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
-import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import React, { createContext, useState } from 'react'
+import { useLocation, BrowserRouter as Router } from 'react-router-dom'
 
-import Wizard from 'src/pages/Wizard'
-import { getWizardStep } from 'src/pages/Wizard/helper'
-import client from 'src/utils/apollo'
+import ApolloProvider from 'src/utils/apollo'
 
 import Header from './components/layout/Header'
 import { tree, Routes } from './routing/routes'
@@ -53,51 +49,42 @@ const useStyles = makeStyles({
   }
 })
 
-const GET_DATA = gql`
-  query getData {
-    config
-    accounts
-    cryptoCurrencies {
-      code
-      display
-    }
-  }
-`
+const AppContext = createContext()
 
 const Main = () => {
   const classes = useStyles()
-  const { data, loading } = useQuery(GET_DATA)
+  const location = useLocation()
 
-  if (loading) {
-    return <></>
-  }
-
-  const wizardStep = getWizardStep(data?.config, data?.cryptoCurrencies)
+  const is404 = location.pathname === '/404'
 
   return (
     <div className={classes.root}>
-      <Router>
-        {wizardStep > 0 && <Wizard wizardStep={wizardStep} />}
-        <Header tree={tree} />
-        <main className={classes.wrapper}>
-          <Routes />
-        </main>
-      </Router>
+      {!is404 && <Header tree={tree} />}
+      <main className={classes.wrapper}>
+        <Routes />
+      </main>
     </div>
   )
 }
 
 const App = () => {
+  const [wizardTested, setWizardTested] = useState(false)
+
   return (
-    <ApolloProvider client={client}>
-      <StylesProvider jss={jss}>
-        <MuiThemeProvider theme={theme}>
-          <CssBaseline />
-          <Main />
-        </MuiThemeProvider>
-      </StylesProvider>
-    </ApolloProvider>
+    <AppContext.Provider value={{ wizardTested, setWizardTested }}>
+      <Router>
+        <ApolloProvider>
+          <StylesProvider jss={jss}>
+            <MuiThemeProvider theme={theme}>
+              <CssBaseline />
+              <Main />
+            </MuiThemeProvider>
+          </StylesProvider>
+        </ApolloProvider>
+      </Router>
+    </AppContext.Provider>
   )
 }
 
 export default App
+export { AppContext }

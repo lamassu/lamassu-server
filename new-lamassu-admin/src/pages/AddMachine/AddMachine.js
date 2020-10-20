@@ -87,6 +87,9 @@ const validationSchema = Yup.object().shape({
 const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
   const [register] = useMutation(SAVE_CONFIG, {
     onCompleted: ({ createPairingTotem }) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`totem: "${createPairingTotem}" `)
+      }
       setQrCode(createPairingTotem)
       nextStep()
     },

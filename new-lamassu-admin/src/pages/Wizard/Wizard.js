@@ -1,11 +1,15 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Dialog, DialogContent } from '@material-ui/core'
 import classnames from 'classnames'
-import React, { useState } from 'react'
+import gql from 'graphql-tag'
+import React, { useState, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 
+import { AppContext } from 'src/App'
+import { getWizardStep, STEPS } from 'src/pages/Wizard/helper'
 import { backgroundColor } from 'src/styling/variables'
 
 import Footer from './components/Footer'
-import { STEPS } from './helper'
 
 const useStyles = makeStyles({
   wrapper: {
@@ -26,11 +30,41 @@ const useStyles = makeStyles({
   }
 })
 
-const Wizard = ({ wizardStep }) => {
-  const [step, setStep] = useState(0)
+const GET_DATA = gql`
+  query getData {
+    config
+    accounts
+    cryptoCurrencies {
+      code
+      display
+    }
+  }
+`
+
+const Wizard = ({ fromAuthRegister }) => {
   const classes = useStyles()
+  const { data, loading } = useQuery(GET_DATA)
+  const history = useHistory()
+  const { setWizardTested } = useContext(AppContext)
+
+  const [step, setStep] = useState(0)
   const [open, setOpen] = useState(true)
+
   const [footerExp, setFooterExp] = useState(false)
+
+  if (loading) {
+    return <></>
+  }
+
+  const wizardStep = getWizardStep(data?.config, data?.cryptoCurrencies)
+
+  const shouldGoBack =
+    history.length && !history.location.state?.fromAuthRegister
+
+  if (wizardStep === 0) {
+    setWizardTested(true)
+    shouldGoBack ? history.goBack() : history.push('/')
+  }
 
   const isWelcome = step === 0
   const classNames = {
@@ -44,13 +78,17 @@ const Wizard = ({ wizardStep }) => {
   }
 
   const doContinue = () => {
-    if (step >= STEPS.length - 1) return setOpen(false)
+    if (step >= STEPS.length - 1) {
+      setOpen(false)
+      history.push('/')
+    }
 
     const nextStep = step === 0 && wizardStep ? wizardStep : step + 1
 
     setFooterExp(true)
     setStep(nextStep)
   }
+
   const current = STEPS[step]
 
   return (
