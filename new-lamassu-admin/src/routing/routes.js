@@ -22,6 +22,7 @@ import Notifications from 'src/pages/Notifications/Notifications'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
+import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
@@ -151,6 +152,22 @@ const tree = [
         key: 'customer',
         route: '/compliance/customer/:id',
         component: CustomerProfile
+      }
+    ]
+  },
+  {
+    key: 'system',
+    label: 'System',
+    route: '/system',
+    get component() {
+      return () => <Redirect to={this.children[0].route} />
+    },
+    children: [
+      {
+        key: 'token-management',
+        label: 'Token Management',
+        route: '/system/token-management',
+        component: TokenManagement
       }
     ]
   }
