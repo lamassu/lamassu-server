@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -6,19 +6,28 @@ import * as R from 'ramda'
 import React from 'react'
 
 import Title from 'src/components/Title'
-// import DataTable from 'src/components/tables/DataTable'
-import { Table as EditableTable } from 'src/components/editableTable'
+import { IconButton } from 'src/components/buttons'
+import DataTable from 'src/components/tables/DataTable'
+import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 
 import { mainStyles } from './TokenManagement.styles'
 
 const useStyles = makeStyles(mainStyles)
 
 const GET_USER_TOKENS = gql`
-  {
+  query userTokens {
     userTokens {
       token
       name
       created
+    }
+  }
+`
+
+const REVOKE_USER_TOKEN = gql`
+  mutation revokeToken($token: String!) {
+    revokeToken(token: $token) {
+      token
     }
   }
 `
@@ -28,59 +37,59 @@ const Tokens = () => {
 
   const { data: tknResponse } = useQuery(GET_USER_TOKENS)
 
+  const [revokeToken] = useMutation(REVOKE_USER_TOKEN, {
+    onCompleted: () => console.log('passed'),
+    onError: () => console.log('failed'),
+    refetchQueries: () => ['userTokens']
+  })
+
   const elements = [
     {
-      name: 'name',
       header: 'Name',
-      width: 312,
+      width: 257,
       textAlign: 'center',
-      size: 'sm'
+      size: 'sm',
+      view: t => t.name
     },
     {
-      name: 'token',
       header: 'Token',
-      width: 520,
+      width: 505,
       textAlign: 'center',
-      size: 'sm'
+      size: 'sm',
+      view: t => t.token
     },
     {
-      name: 'created',
       header: 'Date (UTC)',
-      width: 140,
+      width: 145,
       textAlign: 'right',
       size: 'sm',
-      view: t => moment.utc(t).format('YYYY-MM-DD')
+      view: t => moment.utc(t.created).format('YYYY-MM-DD')
     },
     {
-      name: 'created',
       header: 'Time (UTC)',
-      width: 140,
+      width: 145,
       textAlign: 'right',
       size: 'sm',
-      view: t => moment.utc(t).format('HH:mm:ss')
+      view: t => moment.utc(t.created).format('HH:mm:ss')
+    },
+    {
+      header: '',
+      width: 80,
+      textAlign: 'center',
+      size: 'sm',
+      view: t => (
+        <IconButton
+          onClick={() => {
+            revokeToken({ variables: { token: t.token } })
+          }}>
+          <DeleteIcon />
+        </IconButton>
+      )
     }
   ]
 
   return (
     <>
-      {console.log(tknResponse)}
-      <div className={classes.titleWrapper}>
-        <div className={classes.titleAndButtonsContainer}>
-          <Title>Token Management</Title>
-        </div>
-      </div>
-      <EditableTable
-        name="tokenList"
-        elements={elements}
-        data={R.path(['userTokens'])(tknResponse)}
-        enableDelete
-      />
-    </>
-  )
-
-  /* return (
-    <>
-      {console.log(tknResponse)}
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <Title>Token Management</Title>
@@ -91,7 +100,7 @@ const Tokens = () => {
         data={R.path(['userTokens'])(tknResponse)}
       />
     </>
-  ) */
+  )
 }
 
 export default Tokens
