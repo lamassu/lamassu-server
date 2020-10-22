@@ -128,6 +128,9 @@ const Popover = ({
     arrow: {
       enabled: true,
       element: arrowRef
+    },
+    computeStyle: {
+      gpuAcceleration: false
     }
   })
 

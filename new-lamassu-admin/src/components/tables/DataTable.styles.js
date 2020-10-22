@@ -2,6 +2,7 @@ import { zircon } from 'src/styling/variables'
 
 export default {
   expandButton: {
+    outline: 'none',
     border: 'none',
     backgroundColor: 'transparent',
     cursor: 'pointer',

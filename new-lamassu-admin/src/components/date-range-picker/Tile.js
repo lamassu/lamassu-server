@@ -22,6 +22,7 @@ const styles = {
     overflow: 'hidden'
   },
   button: {
+    outline: 'none',
     extend: label1,
     border: 'none',
     cursor: 'pointer',

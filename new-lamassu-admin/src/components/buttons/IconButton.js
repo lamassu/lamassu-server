@@ -7,8 +7,8 @@ const styles = {
     height: size
   }),
   root: {
-    '&svg': {
-      viewbox: null
+    '& svg': {
+      flex: 1
     },
     '&:hover': {
       backgroundColor: 'inherit'

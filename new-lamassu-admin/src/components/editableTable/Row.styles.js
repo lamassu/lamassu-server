@@ -7,11 +7,12 @@ export default {
   lastOfGroup: {
     marginBottom: 24
   },
-  extraPaddingLeft: {
-    paddingLeft: 35
+  extraPadding: {
+    paddingLeft: 35,
+    paddingRight: 30
   },
   extraPaddingRight: {
-    paddingRight: 45
+    paddingRight: 39
   },
   withSuffix: ({ textAlign }) => {
     const justifyContent = textAlign === 'right' ? 'end' : textAlign
