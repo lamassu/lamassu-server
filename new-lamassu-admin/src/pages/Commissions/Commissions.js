@@ -51,7 +51,12 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   )
 
   const commission = config && !R.isEmpty(config) ? config : defaults
-  const commissionOverrides = commission.overrides ?? []
+  const commissionOverrides = commission?.overrides ?? []
+
+  const orderedCommissionsOverrides = R.sortWith([
+    R.ascend(it => (R.propEq('machine', 'ALL_MACHINES')(it) ? 0 : 1)),
+    R.ascend(R.prop('machine'))
+  ])(commissionOverrides)
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
@@ -96,8 +101,8 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           initialValues={overridesDefaults}
           save={saveOverrides}
           validationSchema={OverridesSchema}
-          data={commissionOverrides}
-          elements={overrides(data, currency, commissionOverrides)}
+          data={orderedCommissionsOverrides}
+          elements={overrides(data, currency, orderedCommissionsOverrides)}
           setEditing={onEditingOverrides}
           forceDisable={isEditingDefault}
         />

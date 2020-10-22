@@ -38,6 +38,12 @@ const allFields = (getData, enableCoin, auxElements = []) => {
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
   const cryptoData = getData(['cryptoCurrencies'])
+
+  const findSuggestion = it => {
+    const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
+    return machine ? [machine] : []
+  }
+
   return [
     {
       name: 'machine',
@@ -47,9 +53,7 @@ const allFields = (getData, enableCoin, auxElements = []) => {
       input: Autocomplete,
       inputProps: {
         options: it =>
-          R.concat(it?.machine ? [it.machine] : [])(
-            suggestionFilter(machineData)
-          ),
+          R.concat(findSuggestion(it))(suggestionFilter(machineData)),
         valueProp: 'deviceId',
         getLabel: R.path(['name'])
       }

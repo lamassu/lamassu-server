@@ -57,7 +57,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     return R.differenceWith(
       (x, y) => x.code === y && !it?.cryptoCurrencies.includes(x.code),
       cryptoData,
-      overridenMachineCoins[it?.machine]
+      overridenMachineCoins[it?.machine] ?? []
     )
   }
 
@@ -84,7 +84,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
       inputProps: {
-        options: it => suggestionFilter(it, cryptoData),
+        options: (...[, it]) => suggestionFilter(it, cryptoData),
         valueProp: 'code',
         getLabel: R.path(['code']),
         multiple: true

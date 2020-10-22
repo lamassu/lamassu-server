@@ -107,7 +107,7 @@ const Triggers = () => {
         marginBottom={2}
         className={classes.tableWidth}
         display="flex"
-        justifyContent="end">
+        justifyContent="flex-end">
         {!loading && !R.isEmpty(triggers) && (
           <Link color="primary" onClick={() => setWizard(true)}>
             + Add new trigger

@@ -18,7 +18,7 @@ if (!name) {
 
 login.generateOTP(name).then(otp => {
   if (domain === 'localhost') {
-    console.log(`https://${domain}:3000/register?otp=${otp}`)
+    console.log(`https://${domain}:3001/register?otp=${otp}`)
   } else {
     console.log(`https://${domain}/register?otp=${otp}`)
   }

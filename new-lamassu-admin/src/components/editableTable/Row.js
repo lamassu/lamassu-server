@@ -88,13 +88,7 @@ const ActionCol = ({ disabled, editing }) => {
   )
 }
 
-const ECol = ({
-  editing,
-  focus,
-  config,
-  extraPaddingRight,
-  extraPaddingLeft
-}) => {
+const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
   const {
     name,
     bypassField,
@@ -134,7 +128,7 @@ const ECol = ({
     <Td
       className={{
         [classes.extraPaddingRight]: extraPaddingRight,
-        [classes.extraPaddingLeft]: extraPaddingLeft,
+        [classes.extraPadding]: extraPadding,
         [classes.withSuffix]: suffix
       }}
       width={width}
@@ -189,7 +183,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
   const innerElements = shouldStripe ? groupStriped(elements) : elements
   const [toSHeader] = R.partition(R.has('doubleHeader'))(elements)
 
-  const extraPaddingLeftIndex = toSHeader?.length
+  const extraPaddingIndex = toSHeader?.length
     ? R.indexOf(toSHeader[0], elements)
     : -1
 
@@ -219,7 +213,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
             editing={editing}
             focus={idx === elementToFocusIndex && editing}
             extraPaddingRight={extraPaddingRightIndex === idx}
-            extraPaddingLeft={extraPaddingLeftIndex === idx}
+            extraPadding={extraPaddingIndex === idx}
           />
         )
       })}
