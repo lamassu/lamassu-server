@@ -14,7 +14,7 @@ import styles from './CustomersList.styles'
 
 const useStyles = makeStyles(styles)
 
-const CustomersList = ({ data, onClick }) => {
+const CustomersList = ({ data, onClick, loading }) => {
   const classes = useStyles()
 
   const elements = [
@@ -75,7 +75,13 @@ const CustomersList = ({ data, onClick }) => {
           { label: 'Cash-out', icon: <TxOutIcon /> }
         ]}
       />
-      <DataTable elements={elements} data={data} onClick={onClick} />
+      <DataTable
+        loading={loading}
+        emptyText="No customers so far"
+        elements={elements}
+        data={data}
+        onClick={onClick}
+      />
     </>
   )
 }

@@ -15,7 +15,7 @@ import mainStyles from '../CustomersList.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-const TransactionsList = ({ data }) => {
+const TransactionsList = ({ data, loading }) => {
   const classes = useStyles()
   const hasData = !(R.isEmpty(data) || R.isNil(data))
 
@@ -82,7 +82,9 @@ const TransactionsList = ({ data }) => {
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <H4>
-            {hasData
+            {loading
+              ? 'Loading'
+              : hasData
               ? 'All transactions from this customer'
               : 'No transactions so far'}
           </H4>

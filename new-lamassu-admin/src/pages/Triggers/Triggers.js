@@ -6,11 +6,11 @@ import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
 import Tooltip from 'src/components/Tooltip'
-import { Link } from 'src/components/buttons'
+import { Link, Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
-import { P, Label2 } from 'src/components/typography'
+import { P, Label2, H2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import styles from './Triggers.styles'
@@ -36,7 +36,7 @@ const Triggers = () => {
   const [wizard, setWizard] = useState(false)
   const [error, setError] = useState(false)
 
-  const { data } = useQuery(GET_INFO)
+  const { data, loading } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
 
   const complianceConfig =
@@ -108,9 +108,11 @@ const Triggers = () => {
         className={classes.tableWidth}
         display="flex"
         justifyContent="end">
-        <Link color="primary" onClick={() => setWizard(true)}>
-          + Add new trigger
-        </Link>
+        {!loading && !R.isEmpty(triggers) && (
+          <Link color="primary" onClick={() => setWizard(true)}>
+            + Add new trigger
+          </Link>
+        )}
       </Box>
       <EditableTable
         data={triggers}
@@ -130,6 +132,14 @@ const Triggers = () => {
           save={add}
           onClose={() => setWizard(null)}
         />
+      )}
+      {!loading && R.isEmpty(triggers) && (
+        <Box display="flex" alignItems="center" flexDirection="column" mt={15}>
+          <H2>
+            It seems there are no active compliance triggers on your network
+          </H2>
+          <Button onClick={() => setWizard(true)}>Add first trigger</Button>
+        </Box>
       )}
     </>
   )
