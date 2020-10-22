@@ -24,7 +24,7 @@ const GET_CUSTOMERS = gql`
 
 const Customers = () => {
   const history = useHistory()
-  const { data: customersResponse } = useQuery(GET_CUSTOMERS)
+  const { data: customersResponse, loading } = useQuery(GET_CUSTOMERS)
 
   const handleCustomerClicked = customer =>
     history.push(`/compliance/customer/${customer.id}`)
@@ -33,7 +33,13 @@ const Customers = () => {
     R.path(['customers'])(customersResponse) ?? []
   )
 
-  return <CustomersList data={customersData} onClick={handleCustomerClicked} />
+  return (
+    <CustomersList
+      data={customersData}
+      onClick={handleCustomerClicked}
+      loading={loading}
+    />
+  )
 }
 
 export default Customers

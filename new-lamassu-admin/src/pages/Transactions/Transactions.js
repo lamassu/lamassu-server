@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -54,7 +54,7 @@ const GET_TRANSACTIONS = gql`
 const Transactions = () => {
   const classes = useStyles()
 
-  const { data: txResponse } = useQuery(GET_TRANSACTIONS, {
+  const { data: txResponse, loading } = useQuery(GET_TRANSACTIONS, {
     variables: {
       limit: NUM_LOG_RESULTS
     }
@@ -160,6 +160,8 @@ const Transactions = () => {
         </div>
       </div>
       <DataTable
+        loading={loading}
+        emptyText="No transactions so far"
         elements={elements}
         data={R.path(['transactions'])(txResponse)}
         Details={DetailsRow}

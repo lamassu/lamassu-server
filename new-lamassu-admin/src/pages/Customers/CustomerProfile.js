@@ -92,7 +92,7 @@ const CustomerProfile = memo(() => {
   const history = useHistory()
   const { id: customerId } = useParams()
 
-  const { data: customerResponse, refetch: getCustomer } = useQuery(
+  const { data: customerResponse, refetch: getCustomer, loading } = useQuery(
     GET_CUSTOMER,
     {
       variables: { customerId }
@@ -171,7 +171,7 @@ const CustomerProfile = memo(() => {
           />
         </Box>
       </div>
-      <TransactionsList data={sortedTransactions} />
+      <TransactionsList data={sortedTransactions} loading={loading} />
     </>
   )
 })

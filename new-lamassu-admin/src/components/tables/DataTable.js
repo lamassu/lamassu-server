@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -17,6 +17,7 @@ import {
   Td,
   Th
 } from 'src/components/fake-table/Table'
+import { H4 } from 'src/components/typography'
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from 'src/styling/icons/action/expand/open.svg'
 
@@ -94,6 +95,8 @@ const DataTable = ({
   expandable,
   shouldStartExpanded,
   onClick,
+  loading,
+  emptyText,
   ...props
 }) => {
   const [expanded, setExpanded] = useState(null)
@@ -143,38 +146,42 @@ const DataTable = ({
   }
 
   return (
-    <Table className={classes.table}>
-      <THead>
-        {elements.map(({ width, className, textAlign, header }, idx) => (
-          <Th
-            key={idx}
-            width={width}
-            className={className}
-            textAlign={textAlign}>
-            {header}
-          </Th>
-        ))}
-        {expandable && <Th width={expWidth}></Th>}
-      </THead>
-      <TBody className={classes.body}>
-        <AutoSizer disableWidth>
-          {({ height }) => (
-            <List
-              // this has to be in a style because of how the component works
-              style={{ overflow: 'inherit', outline: 'none' }}
-              {...props}
-              height={height}
+    <Box display="flex" flex="1" flexDirection="column">
+      <Table className={classes.table}>
+        <THead>
+          {elements.map(({ width, className, textAlign, header }, idx) => (
+            <Th
+              key={idx}
               width={width}
-              rowCount={data.length}
-              rowHeight={cache.rowHeight}
-              rowRenderer={rowRenderer}
-              overscanRowCount={50}
-              deferredMeasurementCache={cache}
-            />
-          )}
-        </AutoSizer>
-      </TBody>
-    </Table>
+              className={className}
+              textAlign={textAlign}>
+              {header}
+            </Th>
+          ))}
+          {expandable && <Th width={expWidth}></Th>}
+        </THead>
+        <TBody className={classes.body}>
+          {loading && <H4>Loading...</H4>}
+          {!loading && R.isEmpty(data) && <H4>{emptyText}</H4>}
+          <AutoSizer disableWidth>
+            {({ height }) => (
+              <List
+                // this has to be in a style because of how the component works
+                style={{ overflow: 'inherit', outline: 'none' }}
+                {...props}
+                height={height}
+                width={width}
+                rowCount={data.length}
+                rowHeight={cache.rowHeight}
+                rowRenderer={rowRenderer}
+                overscanRowCount={50}
+                deferredMeasurementCache={cache}
+              />
+            )}
+          </AutoSizer>
+        </TBody>
+      </Table>
+    </Box>
   )
 }
 
