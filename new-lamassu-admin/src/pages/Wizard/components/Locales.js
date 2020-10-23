@@ -85,7 +85,7 @@ function Locales({ isActive, doContinue }) {
           save={save}
           validationSchema={schema}
           data={[]}
-          elements={mainFields(R.merge(data, { cryptoCurrencies }))}
+          elements={mainFields(R.merge(data, { cryptoCurrencies }), () => {})}
         />
       </Section>
     </div>
