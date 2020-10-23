@@ -1,5 +1,4 @@
 import { makeStyles, Box } from '@material-ui/core'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
@@ -10,6 +9,7 @@ import { ReactComponent as LawIconInverse } from 'src/styling/icons/circle butto
 import { ReactComponent as LawIcon } from 'src/styling/icons/circle buttons/law/zodiac.svg'
 
 import mainStyles from '../CustomersList.styles'
+import { getFormattedPhone, getName } from '../helper'
 
 import FrontCameraPhoto from './FrontCameraPhoto'
 
@@ -22,13 +22,7 @@ const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
     {
       header: 'Phone number',
       size: 172,
-      value:
-        customer.phone && locale.country
-          ? parsePhoneNumberFromString(
-              customer.phone,
-              locale.country
-            ).formatInternational()
-          : ''
+      value: getFormattedPhone(customer.phone, locale.country)
     },
     {
       header: 'ID number',
@@ -42,6 +36,8 @@ const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
     }
   ]
 
+  const name = getName(customer)
+
   return (
     <Box display="flex">
       <FrontCameraPhoto
@@ -51,7 +47,9 @@ const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
         <div className={classes.name}>
           <IdIcon className={classes.idIcon} />
           <H2 noMargin>
-            {R.path(['name'])(customer) ?? R.path(['phone'])(customer)}
+            {name.length
+              ? name
+              : getFormattedPhone(R.path(['phone'])(customer), locale.country)}
           </H2>
           <SubpageButton
             className={classes.subpageButton}

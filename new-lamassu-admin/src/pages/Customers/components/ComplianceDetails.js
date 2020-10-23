@@ -1,6 +1,5 @@
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -23,6 +22,8 @@ const useStyles = makeStyles(complianceDetailsStyles)
 
 const imageWidth = 165
 const imageHeight = 45
+const popupImageWidth = 360
+const popupImageHeight = 240
 
 const Photo = ({ show, src }) => {
   const classes = useStyles({ width: imageWidth })
@@ -30,7 +31,13 @@ const Photo = ({ show, src }) => {
   return (
     <>
       {show ? (
-        <ImagePopper src={src} width={imageWidth} height={imageHeight} />
+        <ImagePopper
+          src={src}
+          width={imageWidth}
+          height={imageHeight}
+          popupWidth={popupImageWidth}
+          popupHeight={popupImageHeight}
+        />
       ) : (
         <div className={classes.photoWrapper}>
           <CrossedCameraIcon />
@@ -42,14 +49,6 @@ const Photo = ({ show, src }) => {
 
 const ComplianceDetails = ({ customer, locale, updateCustomer }) => {
   const classes = useStyles({ width: imageWidth })
-
-  const phone =
-    customer.phone && locale.country
-      ? parsePhoneNumberFromString(
-          customer.phone,
-          locale.country
-        ).formatInternational()
-      : ''
 
   const sanctions = R.path(['sanctions'])(customer)
   const sanctionsAt = R.path(['sanctionsAt'])(customer)
@@ -66,15 +65,6 @@ const ComplianceDetails = ({ customer, locale, updateCustomer }) => {
         <IdDataCard customerData={customer} updateCustomer={updateCustomer} />
         <Box className={classes.complianceDetailsGrid}>
           <Box className={classes.firstColumn}>
-            <PropertyCard
-              title={'Phone nº'}
-              state={R.path(['smsOverride'])(customer)}
-              authorize={() =>
-                updateCustomer({ smsOverride: OVERRIDE_AUTHORIZED })
-              }
-              reject={() => updateCustomer({ smsOverride: OVERRIDE_REJECTED })}>
-              <Field label={'Phone'} display={phone} />
-            </PropertyCard>
             <PropertyCard
               title={'ID photo'}
               state={R.path(['idCardPhotoOverride'])(customer)}

@@ -24,6 +24,7 @@ import {
   TransactionsList,
   ComplianceDetails
 } from './components'
+import { getFormattedPhone, getName } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -32,7 +33,6 @@ const GET_CUSTOMER = gql`
     config
     customer(customerId: $customerId) {
       id
-      name
       authorizedOverride
       frontCameraPath
       frontCameraOverride
@@ -131,7 +131,7 @@ const CustomerProfile = memo(() => {
   const sortedTransactions = R.sort(R.descend(R.prop('cryptoAtoms')))(
     rawTransactions
   )
-
+  const name = getName(customerData)
   const blocked =
     R.path(['authorizedOverride'])(customerData) === OVERRIDE_REJECTED
 
@@ -148,7 +148,12 @@ const CustomerProfile = memo(() => {
           Customers
         </Label1>
         <Label2 noMargin className={classes.labelLink}>
-          {R.path(['name'])(customerData) ?? R.path(['phone'])(customerData)}
+          {name.length
+            ? name
+            : getFormattedPhone(
+                R.path(['phone'])(customerData),
+                locale.country
+              )}
         </Label2>
       </Breadcrumbs>
       <div>

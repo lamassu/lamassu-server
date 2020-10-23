@@ -11,42 +11,49 @@ import imagePopperStyles from './ImagePopper.styles'
 
 const useStyles = makeStyles(imagePopperStyles)
 
-const ImagePopper = memo(({ className, width, height, src }) => {
-  const classes = useStyles({ width, height })
-  const [popperAnchorEl, setPopperAnchorEl] = useState(null)
+const ImagePopper = memo(
+  ({ className, width, height, popupWidth, popupHeight, src }) => {
+    const classes = useStyles({
+      width,
+      height,
+      popupWidth,
+      popupHeight
+    })
+    const [popperAnchorEl, setPopperAnchorEl] = useState(null)
 
-  const handleOpenPopper = event => {
-    setPopperAnchorEl(popperAnchorEl ? null : event.currentTarget)
+    const handleOpenPopper = event => {
+      setPopperAnchorEl(popperAnchorEl ? null : event.currentTarget)
+    }
+
+    const handleClosePopper = () => {
+      setPopperAnchorEl(null)
+    }
+
+    const popperOpen = Boolean(popperAnchorEl)
+
+    const Image = ({ className }) => (
+      <img className={classnames(className)} src={src} alt="" />
+    )
+
+    return (
+      <ClickAwayListener onClickAway={handleClosePopper}>
+        <div className={classnames(classes.row, className)}>
+          <Image className={classes.image} />
+          <FeatureButton
+            Icon={ZoomIcon}
+            InverseIcon={ZoomIconInverse}
+            className={classes.button}
+            onClick={handleOpenPopper}
+          />
+          <Popper open={popperOpen} anchorEl={popperAnchorEl} placement="top">
+            <div className={classes.popoverContent}>
+              <Image className={classes.popupImage} />
+            </div>
+          </Popper>
+        </div>
+      </ClickAwayListener>
+    )
   }
-
-  const handleClosePopper = () => {
-    setPopperAnchorEl(null)
-  }
-
-  const popperOpen = Boolean(popperAnchorEl)
-
-  const Image = ({ className }) => (
-    <img className={classnames(className)} src={src} alt="" />
-  )
-
-  return (
-    <ClickAwayListener onClickAway={handleClosePopper}>
-      <div className={classnames(classes.row, className)}>
-        <Image className={classes.unzoomedImg} />
-        <FeatureButton
-          Icon={ZoomIcon}
-          InverseIcon={ZoomIconInverse}
-          className={classes.button}
-          onClick={handleOpenPopper}
-        />
-        <Popper open={popperOpen} anchorEl={popperAnchorEl} placement="top">
-          <div className={classes.popoverContent}>
-            <Image />
-          </div>
-        </Popper>
-      </div>
-    </ClickAwayListener>
-  )
-})
+)
 
 export default ImagePopper

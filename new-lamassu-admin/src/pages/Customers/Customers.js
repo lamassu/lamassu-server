@@ -13,7 +13,7 @@ const GET_CUSTOMERS = gql`
     config
     customers {
       id
-      name
+      idCardData
       phone
       totalTxs
       totalSpent
@@ -22,6 +22,7 @@ const GET_CUSTOMERS = gql`
       lastTxFiatCode
       lastTxClass
       authorizedOverride
+      daysSuspended
     }
   }
 `

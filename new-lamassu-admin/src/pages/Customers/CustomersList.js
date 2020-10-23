@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
@@ -12,38 +11,23 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { ifNotNull } from 'src/utils/nullCheck'
 
 import styles from './CustomersList.styles'
+import { getAuthorizedStatus, getFormattedPhone, getName } from './helper'
 
 const useStyles = makeStyles(styles)
-
-const CUSTOMER_VERIFIED = 'verified'
-const CUSTOMER_BLOCKED = 'blocked'
 
 const CustomersList = ({ data, locale, onClick, loading }) => {
   const classes = useStyles()
 
-  const getAuthorizedStatus = authorizedOverride =>
-    authorizedOverride === CUSTOMER_VERIFIED
-      ? { label: 'Authorized', type: 'success' }
-      : authorizedOverride === CUSTOMER_BLOCKED
-      ? { label: 'Blocked', type: 'error' }
-      : { label: 'Suspended', type: 'warning' }
-
   const elements = [
-    {
-      header: 'Name',
-      width: 241,
-      view: R.path(['name'])
-    },
     {
       header: 'Phone',
       width: 172,
-      view: it =>
-        it.phone && locale.country
-          ? parsePhoneNumberFromString(
-              it.phone,
-              locale.country
-            ).formatInternational()
-          : ''
+      view: it => getFormattedPhone(it.phone, locale.country)
+    },
+    {
+      header: 'Name',
+      width: 241,
+      view: getName
     },
     {
       header: 'Total TXs',
@@ -84,9 +68,7 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
     {
       header: 'Status',
       width: 188,
-      view: it => (
-        <MainStatus statuses={[getAuthorizedStatus(it.authorizedOverride)]} />
-      )
+      view: it => <MainStatus statuses={[getAuthorizedStatus(it)]} />
     }
   ]
 
