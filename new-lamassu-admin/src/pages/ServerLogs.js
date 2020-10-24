@@ -112,6 +112,7 @@ const Logs = () => {
   const getLogLevels = R.compose(
     R.prepend(SHOW_ALL),
     R.uniq,
+    R.concat(['error', 'info', 'debug']),
     R.map(R.path(['logLevel'])),
     R.path(['serverLogs'])
   )

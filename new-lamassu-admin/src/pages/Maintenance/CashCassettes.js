@@ -88,7 +88,8 @@ const CashCassettes = () => {
     })
   }
 
-  const getDenomination = id => fromNamespace(id)(cashout)
+  const getCashoutSettings = id => fromNamespace(id)(cashout)
+  const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const elements = [
     {
@@ -102,10 +103,11 @@ const CashCassettes = () => {
       name: 'cassette1',
       header: 'Cash-out 1',
       width: 265,
+      stripe: true,
       view: (value, { id }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getDenomination(id)?.bottom}
+          denomination={getCashoutSettings(id)?.bottom}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -119,10 +121,11 @@ const CashCassettes = () => {
       name: 'cassette2',
       header: 'Cash-out 2',
       width: 265,
+      stripe: true,
       view: (value, { id }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getDenomination(id)?.top}
+          denomination={getCashoutSettings(id)?.top}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -141,6 +144,8 @@ const CashCassettes = () => {
       <EditableTable
         name="cashboxes"
         enableEdit
+        stripeWhen={isCashOutDisabled}
+        disableRowEdit={isCashOutDisabled}
         elements={elements}
         data={data && data.machines}
         save={onSave}
