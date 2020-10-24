@@ -3,8 +3,11 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import Modal from 'src/components/Modal'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
+import FormRenderer from 'src/pages/Services/FormRenderer'
+import schemas from 'src/pages/Services/schemas'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import Wizard from './Wizard'
@@ -13,6 +16,13 @@ import { WalletSchema, getElements } from './helper'
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
     saveConfig(config: $config)
+    saveAccounts(accounts: $accounts)
+  }
+`
+
+// TODO: should I use the save config and send the config as it is when saving an account?
+const SAVE_ACCOUNT = gql`
+  mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
   }
 `
@@ -35,6 +45,7 @@ const GET_INFO = gql`
 `
 
 const Wallet = ({ name: SCREEN_KEY }) => {
+  const [editingSchema, setEditingSchema] = useState(null)
   const [wizard, setWizard] = useState(false)
   const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
@@ -42,6 +53,11 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
     onError: () => setError(true),
+    refetchQueries: () => ['getData']
+  })
+
+  const [saveAccount] = useMutation(SAVE_ACCOUNT, {
+    onCompleted: () => setEditingSchema(null),
     refetchQueries: () => ['getData']
   })
 
@@ -55,6 +71,12 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
+
+  const enableThirdPartyService = it => {
+    if (!it) return
+
+    if (!accounts[it]) return setEditingSchema(schemas[it])
+  }
 
   const shouldOverrideEdit = it => {
     const namespaced = fromNamespace(it)(config)
@@ -75,7 +97,11 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         editWidth={174}
         save={save}
         validationSchema={WalletSchema}
-        elements={getElements(cryptoCurrencies, accountsConfig)}
+        elements={getElements(
+          cryptoCurrencies,
+          accountsConfig,
+          enableThirdPartyService
+        )}
       />
       {wizard && (
         <Wizard
@@ -88,6 +114,24 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           accounts={accounts}
           accountsConfig={accountsConfig}
         />
+      )}
+      {editingSchema && (
+        <Modal
+          title={`Edit ${editingSchema.name}`}
+          width={478}
+          handleClose={() => setEditingSchema(null)}
+          open={true}>
+          <FormRenderer
+            save={it =>
+              saveAccount({
+                variables: { accounts: { [editingSchema.code]: it } }
+              })
+            }
+            elements={editingSchema.elements}
+            validationSchema={editingSchema.validationSchema}
+            value={accounts[editingSchema.code]}
+          />
+        </Modal>
       )}
     </>
   )

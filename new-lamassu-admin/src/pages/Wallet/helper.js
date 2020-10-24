@@ -13,7 +13,12 @@ const WalletSchema = Yup.object().shape({
   zeroConf: Yup.string().required('Required')
 })
 
-const getElements = (cryptoCurrencies, accounts, wizard = false) => {
+const getElements = (
+  cryptoCurrencies,
+  accounts,
+  enableThirdPartyService,
+  wizard = false
+) => {
   const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it =>
     R.compose(
@@ -32,6 +37,8 @@ const getElements = (cryptoCurrencies, accounts, wizard = false) => {
   const getOptions = R.curry((option, it) =>
     filterCoins(it)(filterOptions(option))
   )
+
+  const onChange = (prev, curr) => enableThirdPartyService(curr)
 
   return [
     {
@@ -53,7 +60,8 @@ const getElements = (cryptoCurrencies, accounts, wizard = false) => {
         options: getOptions('ticker'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        optionsLimit: null
+        optionsLimit: null,
+        onChange
       }
     },
     {
@@ -67,7 +75,8 @@ const getElements = (cryptoCurrencies, accounts, wizard = false) => {
         options: getOptions('wallet'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        optionsLimit: null
+        optionsLimit: null,
+        onChange
       }
     },
     {
@@ -81,7 +90,8 @@ const getElements = (cryptoCurrencies, accounts, wizard = false) => {
         options: getOptions('exchange'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        optionsLimit: null
+        optionsLimit: null,
+        onChange
       }
     },
     {
@@ -95,7 +105,8 @@ const getElements = (cryptoCurrencies, accounts, wizard = false) => {
         options: getOptions('zeroConf'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        optionsLimit: null
+        optionsLimit: null,
+        onChange
       }
     }
   ]
