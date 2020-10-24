@@ -4,13 +4,11 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { Button, ActionButton } from 'src/components/buttons'
+import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H4, Info3 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schema from 'src/pages/Services/schemas'
-import { ReactComponent as InverseLinkIcon } from 'src/styling/icons/action/external link/white.svg'
-import { ReactComponent as LinkIcon } from 'src/styling/icons/action/external link/zodiac.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
 import styles from './Shared.styles'
@@ -102,24 +100,15 @@ const ChooseExchange = ({ data: currentData, addData }) => {
           <div className={classes.infoMessage}>
             <WarningIcon />
             <Info3>
-              Make sure you set up {selected} to enter the necessary information
-              below. Please follow the instructions on our support page if you
-              haven’t.
+              Make sure you set up {schema[selected].name} to enter the
+              necessary information below. Please follow the instructions on our
+              support page if you haven’t.
             </Info3>
           </div>
-          <ActionButton
-            className={classes.actionButton}
-            color="primary"
-            Icon={LinkIcon}
-            InverseIcon={InverseLinkIcon}>
-            <a
-              className={classes.actionButtonLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              href={supportArticles[selected]}>
-              {selected} trading
-            </a>
-          </ActionButton>
+          <SupportLinkButton
+            link={supportArticles[selected]}
+            label={`${schema[selected].name} trading`}
+          />
 
           <H4 noMargin>Enter exchange information</H4>
           <FormRenderer

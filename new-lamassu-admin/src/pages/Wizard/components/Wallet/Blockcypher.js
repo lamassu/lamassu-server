@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
-import { Link, Button } from 'src/components/buttons'
+import { SupportLinkButton, Button } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { P, H4 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
@@ -69,17 +69,12 @@ const Blockcypher = ({ addData }) => {
     <>
       <H4 className={error && classes.error}>Blockcypher</H4>
       <P>
-        If you are enabling cash-out services,{' '}
-        <Link>
-          <a
-            className={classes.actionButtonLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://support.lamassu.is/hc/en-us/articles/115001209472-Blockcypher">
-            create a Blockcypher account.
-          </a>
-        </Link>
+        If you are enabling cash-out services, create a Blockcypher account.
       </P>
+      <SupportLinkButton
+        link="https://support.lamassu.is/hc/en-us/articles/115001209472-Blockcypher"
+        label="Configuring Blockcypher"
+      />
       <RadioGroup
         labelClassName={classes.radioLabel}
         className={classes.radioGroup}

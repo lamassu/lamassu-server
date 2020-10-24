@@ -10,7 +10,7 @@ import { NumberInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { fromNamespace } from 'src/utils/config'
 
-import styles from './Cashboxes.styles.js'
+import styles from './CashCassettes.styles.js'
 
 const useStyles = makeStyles(styles)
 
@@ -60,7 +60,7 @@ const RESET_CASHOUT_BILLS = gql`
   }
 `
 
-const Cashboxes = () => {
+const CashCassettes = () => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
@@ -136,7 +136,7 @@ const Cashboxes = () => {
 
   return (
     <>
-      <TitleSection title="Cashboxes" />
+      <TitleSection title="Cash Cassettes" />
 
       <EditableTable
         name="cashboxes"
@@ -150,4 +150,4 @@ const Cashboxes = () => {
   )
 }
 
-export default Cashboxes
+export default CashCassettes

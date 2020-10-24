@@ -6,6 +6,7 @@ import IDButton from './IDButton'
 import IconButton from './IconButton'
 import Link from './Link'
 import SimpleButton from './SimpleButton'
+import SupportLinkButton from './SupportLinkButton'
 
 export {
   Button,
@@ -15,5 +16,6 @@ export {
   FeatureButton,
   IconButton,
   IDButton,
-  AddButton
+  AddButton,
+  SupportLinkButton
 }

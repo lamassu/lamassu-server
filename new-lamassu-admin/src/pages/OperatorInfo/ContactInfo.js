@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
 import gql from 'graphql-tag'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
@@ -12,7 +11,7 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
-import { TextInput, NumberInput } from 'src/components/inputs/formik'
+import { TextInput } from 'src/components/inputs/formik'
 import { P, H4, Info3, Label1, Label2, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
@@ -125,20 +124,13 @@ const ContactInfo = ({ wizard }) => {
 
   const info =
     data?.config && fromNamespace(namespaces.OPERATOR_INFO, data.config)
-  const locale = data?.config && fromNamespace(namespaces.LOCALE, data.config)
 
   if (!info) return null
 
   const validationSchema = Yup.object().shape({
     active: Yup.boolean(),
     name: Yup.string(),
-    phone: Yup.string().test(
-      'phone',
-      'Please enter a valid phone number',
-      function(phone) {
-        return parsePhoneNumberFromString(phone, locale.country).isValid()
-      }
-    ),
+    phone: Yup.string(),
     email: Yup.string()
       .email('Please enter a valid email address')
       .required(),
@@ -156,14 +148,8 @@ const ContactInfo = ({ wizard }) => {
     {
       name: 'phone',
       label: 'Phone number',
-      value:
-        info.phone && locale.country
-          ? parsePhoneNumberFromString(
-              info.phone,
-              locale.country
-            ).formatInternational()
-          : '',
-      component: NumberInput
+      value: info.phone,
+      component: TextInput
     },
     {
       name: 'email',

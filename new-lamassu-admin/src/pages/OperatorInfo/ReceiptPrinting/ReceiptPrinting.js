@@ -49,7 +49,7 @@ const ReceiptPrinting = memo(({ wizard }) => {
         <H4>Receipt options</H4>
       </div>
       <div className={classes.rowWrapper}>
-        <P>Share information?</P>
+        <P>Enable receipt printing?</P>
         <div className={classes.switchWrapper}>
           <Switch
             checked={receiptPrintingConfig.active}
@@ -71,7 +71,7 @@ const ReceiptPrinting = memo(({ wizard }) => {
       </div>
       <BooleanPropertiesTable
         editing={wizard}
-        title={'Visible on the receipt (optionals)'}
+        title={'Visible on the receipt (options)'}
         data={receiptPrintingConfig}
         elements={[
           {

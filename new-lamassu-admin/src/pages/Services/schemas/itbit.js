@@ -5,8 +5,8 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 export default {
   code: 'itbit',
-  name: 'Itbit',
-  title: 'Itbit (Exchange)',
+  name: 'itBit',
+  title: 'itBit (Exchange)',
   elements: [
     {
       code: 'userId',

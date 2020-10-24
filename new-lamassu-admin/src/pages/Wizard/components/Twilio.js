@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 import InfoMessage from 'src/components/InfoMessage'
 import Tooltip from 'src/components/Tooltip'
-import { Button } from 'src/components/buttons'
+import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H1, H4, P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
@@ -109,7 +109,7 @@ function Twilio({ doContinue }) {
             </P>
             <P>
               You’ll need an SMS service for cash-out transactions and for any
-              complaince triggers
+              compliance triggers
             </P>
           </Tooltip>
         </Box>
@@ -123,9 +123,12 @@ function Twilio({ doContinue }) {
         />
 
         <InfoMessage className={classes.info}>
-          Before configuring Twilio, create an account and phone number to use
-          the Admin.
+          To set up Twilio please read the instructions from our support portal.
         </InfoMessage>
+        <SupportLinkButton
+          link="https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS"
+          label="Twilio for SMS"
+        />
 
         {selected === 'enable' && (
           <>
