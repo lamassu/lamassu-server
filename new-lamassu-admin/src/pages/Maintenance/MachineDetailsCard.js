@@ -87,8 +87,9 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
       setErrorMessage(errorMessage)
     },
     onCompleted: () => {
-      onActionSuccess ? onActionSuccess() : window.location.reload()
-      setConfirmActionDialogOpen(false)
+      onActionSuccess && onActionSuccess()
+      renameActionDialogOpen && setConfirmActionDialogOpen(false)
+      confirmActionDialogOpen && setRenameActionDialogOpen(false)
     }
   })
 

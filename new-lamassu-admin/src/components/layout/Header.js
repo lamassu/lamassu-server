@@ -44,7 +44,7 @@ const Header = memo(({ tree }) => {
 
   const onPaired = machine => {
     setOpen(false)
-    history.push(`/maintenance/machine-status/${machine.deviceId}`)
+    history.push('/maintenance/machine-status', { id: machine.deviceId })
   }
 
   return (

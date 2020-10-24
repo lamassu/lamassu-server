@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import { MainStatus } from 'src/components/Status'
 import Title from 'src/components/Title'
@@ -41,10 +41,9 @@ const useStyles = makeStyles(mainStyles)
 
 const MachineStatus = () => {
   const classes = useStyles()
-  const { id: machineId } = useParams()
-  const { data: machinesResponse } = useQuery(GET_MACHINES)
-
-  const shouldStartExpanded = machine => machine.deviceId === machineId
+  const { state } = useLocation()
+  const addedMachineId = state?.id
+  const { data: machinesResponse, refetch } = useQuery(GET_MACHINES)
 
   const elements = [
     {
@@ -77,6 +76,15 @@ const MachineStatus = () => {
     }
   ]
 
+  const machines = R.path(['machines'])(machinesResponse) ?? []
+  const expandedIndex = R.findIndex(R.propEq('deviceId', addedMachineId))(
+    machines
+  )
+
+  const InnerMachineDetailsRow = ({ it }) => (
+    <MachineDetailsRow it={it} onActionSuccess={refetch} />
+  )
+
   return (
     <>
       <div className={classes.titleWrapper}>
@@ -96,9 +104,9 @@ const MachineStatus = () => {
       </div>
       <DataTable
         elements={elements}
-        data={R.path(['machines'])(machinesResponse)}
-        Details={MachineDetailsRow}
-        shouldStartExpanded={shouldStartExpanded}
+        data={machines}
+        Details={InnerMachineDetailsRow}
+        initialExpanded={expandedIndex}
         expandable
       />
     </>

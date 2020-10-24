@@ -1,7 +1,7 @@
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   AutoSizer,
   List,
@@ -93,13 +93,15 @@ const DataTable = ({
   Details,
   className,
   expandable,
-  shouldStartExpanded,
+  initialExpanded,
   onClick,
   loading,
   emptyText,
   ...props
 }) => {
-  const [expanded, setExpanded] = useState(null)
+  const [expanded, setExpanded] = useState(initialExpanded)
+
+  useEffect(() => setExpanded(initialExpanded), [initialExpanded])
 
   const coreWidth = R.compose(R.sum, R.map(R.prop('width')))(elements)
   const expWidth = 1200 - coreWidth
@@ -132,10 +134,7 @@ const DataTable = ({
             elements={elements}
             data={data[index]}
             Details={Details}
-            expanded={
-              index === expanded ||
-              (shouldStartExpanded && shouldStartExpanded(data[index]))
-            }
+            expanded={index === expanded}
             expandRow={expandRow}
             expandable={expandable}
             onClick={onClick}
