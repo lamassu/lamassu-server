@@ -65,7 +65,7 @@ const AllSet = ({ data: currentData, doContinue }) => {
     <>
       <H4 className={error && classes.error}>All set</H4>
       <P>
-        This are your wallet settings. You can later edit these and add
+        These are your wallet settings. You can later edit these and add
         additional coins.
       </P>
       <EditableTable

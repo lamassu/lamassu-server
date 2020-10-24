@@ -95,9 +95,9 @@ const Triggers = () => {
             </Label2>
             <Tooltip width={304}>
               <P>
-                The "Reject reused addresses" option means that all addresses
-                that are used once will be automatically rejected if there's an
-                attempt to use them again on a new transaction.
+                This option requires a user to scan a different cryptocurrency
+                address if they attempt to scan one that had been previously
+                used for a transaction in your network
               </P>
             </Tooltip>
           </Box>

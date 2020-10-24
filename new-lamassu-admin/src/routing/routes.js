@@ -16,7 +16,7 @@ import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
 import MachineLogs from 'src/pages/MachineLogs'
-import Cashboxes from 'src/pages/Maintenance/Cashboxes'
+import CashCassettes from 'src/pages/Maintenance/CashCassettes'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
@@ -44,10 +44,10 @@ const tree = [
     },
     children: [
       {
-        key: 'cashboxes',
-        label: 'Cashboxes',
-        route: '/maintenance/cashboxes',
-        component: Cashboxes
+        key: 'cash_cassettes',
+        label: 'Cash Cassettes',
+        route: '/maintenance/cash-cassettes',
+        component: CashCassettes
       },
       {
         key: 'funding',
@@ -57,7 +57,7 @@ const tree = [
       },
       {
         key: 'logs',
-        label: 'Machine logs',
+        label: 'Machine Logs',
         route: '/maintenance/logs',
         component: MachineLogs
       },

@@ -133,20 +133,20 @@ const WizardStep = ({
 
       {lastStep && (
         <div className={classes.disclaimer}>
-          <Info2 className={classes.title}>Cashout Bill Count</Info2>
+          <Info2 className={classes.title}>Cash-out Bill Count</Info2>
           <P>
             <WarningIcon className={classes.disclaimerIcon} />
-            When enabling cash out, your bill count will be automatically set to
-            zero. Make sure you physically put cash inside the cashboxes to
+            When enabling cash-out, your bill count will be automatically set to
+            zero. Make sure you physically put cash inside the cash cassettes to
             allow the machine to dispense it to your users. If you already did,
-            make sure you set the correct cash out bill count for this machine
-            on your Cashboxes tab under Maintenance.
+            make sure you set the correct cash-out bill count for this machine
+            on your Cash Cassettes tab under Maintenance.
           </P>
 
           <Info2 className={classes.title}>Default Commissions</Info2>
           <P>
             <WarningIcon className={classes.disclaimerIcon} />
-            When enabling cash out, default commissions will be set. To change
+            When enabling cash-out, default commissions will be set. To change
             commissions for this machine, please go to the Commissions tab under
             Settings where you can set exceptions for each of the available
             cryptocurrencies.

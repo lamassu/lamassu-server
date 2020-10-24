@@ -58,7 +58,7 @@ const DetailsRow = ({ it: tx }) => {
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
-  const commission = fiat * commissionPercentage
+  const commission = Number(fiat * commissionPercentage).toFixed(2)
   const exchangeRate = Number(fiat / crypto).toFixed(3)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
 

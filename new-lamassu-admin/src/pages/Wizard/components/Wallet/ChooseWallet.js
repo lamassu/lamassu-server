@@ -4,14 +4,12 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { Button, ActionButton } from 'src/components/buttons'
+import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H4, Info3 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schema from 'src/pages/Services/schemas'
 import bitgo from 'src/pages/Services/schemas/singlebitgo'
-import { ReactComponent as InverseLinkIcon } from 'src/styling/icons/action/external link/white.svg'
-import { ReactComponent as LinkIcon } from 'src/styling/icons/action/external link/zodiac.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
 import styles from './Shared.styles'
@@ -103,19 +101,10 @@ const ChooseWallet = ({ data: currentData, addData }) => {
               our support portal.
             </Info3>
           </div>
-          <a
-            className={classes.actionButtonLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://support.lamassu.is/hc/en-us/articles/115001209552-Setting-up-your-node-wallets">
-            <ActionButton
-              className={classes.actionButton}
-              color="primary"
-              Icon={LinkIcon}
-              InverseIcon={InverseLinkIcon}>
-              Support article
-            </ActionButton>
-          </a>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/115001209552-Setting-up-your-node-wallets"
+            label="Support article"
+          />
         </>
       )}
       {!isConfigurable(selected) && (
@@ -133,19 +122,10 @@ const ChooseWallet = ({ data: currentData, addData }) => {
               page if you haven’t.
             </Info3>
           </div>
-          <a
-            className={classes.actionButtonLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://support.lamassu.is/hc/en-us/articles/360024455592-Setting-up-BitGo">
-            <ActionButton
-              className={classes.actionButton}
-              color="primary"
-              Icon={LinkIcon}
-              InverseIcon={InverseLinkIcon}>
-              Support article
-            </ActionButton>
-          </a>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/360024455592-Setting-up-BitGo"
+            label="Support article"
+          />
           <H4 noMargin>Enter wallet information</H4>
           <FormRenderer
             value={accounts.bitgo}

@@ -20,13 +20,13 @@ export default {
     },
     {
       code: 'fromNumber',
-      display: 'From Number',
+      display: 'Twilio Number (international format)',
       component: TextInputFormik,
       face: true
     },
     {
       code: 'toNumber',
-      display: 'To Number',
+      display: 'Notifications Number (international format)',
       component: TextInputFormik,
       face: true
     }
