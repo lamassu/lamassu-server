@@ -198,6 +198,7 @@ const ETable = ({
                       validationSchema={validationSchema}
                       onSubmit={innerSave}>
                       <Form>
+                        <PromptWhenDirty />
                         <ERow
                           lastOfGroup={isLastOfGroup}
                           editing={editingId === it.id}
