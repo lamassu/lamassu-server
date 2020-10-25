@@ -32,7 +32,6 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
 
   return (
     <PropertyCard
-      // className={classes.idCardPhotoCard}
       title={'ID photo'}
       state={R.path(['idCardPhotoOverride'])(customerData)}
       authorize={() =>
@@ -51,13 +50,6 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
         ) : (
           <CrossedCameraIcon />
         )}
-        {/* <Field
-          className={classes.field}
-          label={'Expiration date'}
-          display={moment
-            .utc(R.path(['idCardDataExpiration'])(customerData))
-            .format('YYYY-MM-D')}
-        /> */}
       </Box>
     </PropertyCard>
   )
