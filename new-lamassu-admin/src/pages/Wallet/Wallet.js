@@ -20,7 +20,6 @@ const SAVE_CONFIG = gql`
   }
 `
 
-// TODO: should I use the save config and send the config as it is when saving an account?
 const SAVE_ACCOUNT = gql`
   mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
