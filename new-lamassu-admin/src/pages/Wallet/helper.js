@@ -60,8 +60,7 @@ const getElements = (
         options: getOptions('ticker'),
         valueProp: 'code',
         getLabel: R.path(['display']),
-        optionsLimit: null,
-        onChange
+        optionsLimit: null
       }
     },
     {
