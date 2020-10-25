@@ -1,5 +1,4 @@
 import { makeStyles, Box } from '@material-ui/core'
-// import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
@@ -10,8 +9,6 @@ import {
 } from 'src/pages/Customers/components/propertyCard'
 import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
 import { URI } from 'src/utils/apollo'
-
-// import Field from './Field'
 
 const useStyles = makeStyles({
   idCardPhotoCard: {
