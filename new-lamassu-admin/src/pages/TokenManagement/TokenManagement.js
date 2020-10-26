@@ -1,26 +1,22 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
-import Title from 'src/components/Title'
 import { IconButton } from 'src/components/buttons'
+import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
-import * as browserOS from 'src/utils/browser-os'
-
-import { mainStyles } from './TokenManagement.styles'
-
-const useStyles = makeStyles(mainStyles)
 
 const GET_USER_TOKENS = gql`
-  query userTokens($browser: String!, $os: String!) {
-    userTokens(browser: $browser, os: $os) {
+  query userTokens {
+    userTokens {
       token
       name
       created
+      user_agent
+      ip_address
     }
   }
 `
@@ -34,16 +30,7 @@ const REVOKE_USER_TOKEN = gql`
 `
 
 const Tokens = () => {
-  const classes = useStyles()
-
-  const userAgent = browserOS.getInformation(navigator.userAgent)
-
-  const { data: tknResponse } = useQuery(GET_USER_TOKENS, {
-    variables: {
-      browser: `${userAgent.browser}`,
-      os: `${userAgent.OS}`
-    }
-  })
+  const { data: tknResponse } = useQuery(GET_USER_TOKENS)
 
   const [revokeToken] = useMutation(REVOKE_USER_TOKEN, {
     refetchQueries: () => ['userTokens']
@@ -96,11 +83,7 @@ const Tokens = () => {
 
   return (
     <>
-      <div className={classes.titleWrapper}>
-        <div className={classes.titleAndButtonsContainer}>
-          <Title>Token Management</Title>
-        </div>
-      </div>
+      <TitleSection title="Token Management" />
       <DataTable
         elements={elements}
         data={R.path(['userTokens'])(tknResponse)}
