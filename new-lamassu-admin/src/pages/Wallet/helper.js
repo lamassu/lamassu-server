@@ -16,7 +16,7 @@ const WalletSchema = Yup.object().shape({
 const getElements = (
   cryptoCurrencies,
   accounts,
-  enableThirdPartyService,
+  configureThirdPartyService,
   wizard = false
 ) => {
   const widthAdjust = wizard ? 11 : 0
@@ -38,7 +38,8 @@ const getElements = (
     filterCoins(it)(filterOptions(option))
   )
 
-  const onChange = (prev, curr) => enableThirdPartyService(curr)
+  const onChange = (prev, curr, cancel) =>
+    configureThirdPartyService(curr, cancel)
 
   return [
     {

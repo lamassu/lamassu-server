@@ -45,6 +45,9 @@ const GET_INFO = gql`
 
 const Wallet = ({ name: SCREEN_KEY }) => {
   const [editingSchema, setEditingSchema] = useState(null)
+  const [cancelServiceConfiguration, setCancelServiceConfiguration] = useState(
+    null
+  )
   const [wizard, setWizard] = useState(false)
   const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
@@ -71,10 +74,13 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
 
-  const enableThirdPartyService = it => {
+  const configureThirdPartyService = (it, cancel) => {
     if (!it) return
 
-    if (!accounts[it]) return setEditingSchema(schemas[it])
+    if (!accounts[it]) {
+      setEditingSchema(schemas[it])
+      setCancelServiceConfiguration(() => () => cancel())
+    }
   }
 
   const shouldOverrideEdit = it => {
@@ -99,7 +105,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         elements={getElements(
           cryptoCurrencies,
           accountsConfig,
-          enableThirdPartyService
+          configureThirdPartyService
         )}
       />
       {wizard && (
@@ -118,7 +124,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         <Modal
           title={`Edit ${editingSchema.name}`}
           width={478}
-          handleClose={() => setEditingSchema(null)}
+          handleClose={() => {
+            cancelServiceConfiguration && cancelServiceConfiguration()
+            setEditingSchema(null)
+          }}
           open={true}>
           <FormRenderer
             save={it =>
