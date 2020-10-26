@@ -9,14 +9,15 @@ import Title from 'src/components/Title'
 import { IconButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
+import * as browserOS from 'src/utils/browser-os'
 
 import { mainStyles } from './TokenManagement.styles'
 
 const useStyles = makeStyles(mainStyles)
 
 const GET_USER_TOKENS = gql`
-  query userTokens {
-    userTokens {
+  query userTokens($browser: String!, $os: String!) {
+    userTokens(browser: $browser, os: $os) {
       token
       name
       created
@@ -35,11 +36,16 @@ const REVOKE_USER_TOKEN = gql`
 const Tokens = () => {
   const classes = useStyles()
 
-  const { data: tknResponse } = useQuery(GET_USER_TOKENS)
+  const userAgent = browserOS.getInformation(navigator.userAgent)
+
+  const { data: tknResponse } = useQuery(GET_USER_TOKENS, {
+    variables: {
+      browser: `${userAgent.browser}`,
+      os: `${userAgent.OS}`
+    }
+  })
 
   const [revokeToken] = useMutation(REVOKE_USER_TOKEN, {
-    onCompleted: () => console.log('passed'),
-    onError: () => console.log('failed'),
     refetchQueries: () => ['userTokens']
   })
 
