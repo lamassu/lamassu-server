@@ -23,7 +23,7 @@ const useStyles = makeStyles(styles)
 const groupByCode = R.groupBy(obj => obj.cryptoCode)
 
 const DELETE_ROW = gql`
-  mutation DeleteBlacklistRow($cryptoCode: String, $address: String) {
+  mutation DeleteBlacklistRow($cryptoCode: String!, $address: String!) {
     deleteBlacklistRow(cryptoCode: $cryptoCode, address: $address) {
       cryptoCode
       address
