@@ -36,15 +36,15 @@ export default {
   validationSchema: Yup.object().shape({
     userId: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     walletId: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     clientKey: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     clientSecret: Yup.string()
       .max(100, 'Too long')
-      .required('Required')
+      .required()
   })
 }

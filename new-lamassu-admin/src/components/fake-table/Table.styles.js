@@ -7,7 +7,8 @@ import {
   spacer,
   white,
   tableDoubleHeaderHeight,
-  offColor
+  offColor,
+  errorColor
 } from 'src/styling/variables'
 
 const { tl2, p, label1 } = typographyStyles
@@ -97,5 +98,9 @@ export default {
   },
   actionCol: {
     marginLeft: 'auto'
+  },
+  errorContent: {
+    padding: [[12, 0, 12, 24]],
+    color: errorColor
   }
 }

@@ -81,7 +81,7 @@ const initialValues = {
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .required()
-    .max(50, 'Too long')
+    .max(50)
 })
 
 const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {

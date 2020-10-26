@@ -30,12 +30,12 @@ export default {
   validationSchema: Yup.object().shape({
     apiKey: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     apiSecret: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     endpoint: Yup.string()
       .max(100, 'Too long')
-      .required('Required')
+      .required()
   })
 }

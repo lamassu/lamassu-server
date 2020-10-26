@@ -68,14 +68,14 @@ const useStyles = makeStyles({
   }
 })
 
-// const direction = Yup.string().required('Required')
-const triggerType = Yup.string().required('Required')
+// const direction = Yup.string().required()
+const triggerType = Yup.string().required()
 const threshold = Yup.object().shape({
   threshold: Yup.number(),
   thresholdDays: Yup.number()
 })
 const requirement = Yup.object().shape({
-  requirement: Yup.string().required('Required'),
+  requirement: Yup.string().required(),
   suspensionDays: Yup.number()
 })
 

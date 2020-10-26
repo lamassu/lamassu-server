@@ -32,12 +32,12 @@ export default {
   validationSchema: Yup.object().shape({
     clientId: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     key: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     secret: Yup.string()
       .max(100, 'Too long')
-      .required('Required')
+      .required()
   })
 }

@@ -43,8 +43,12 @@ const FiatBalanceOverrides = ({ section }) => {
   const notesMax = 9999999
   const validationSchema = Yup.object().shape(
     {
-      [MACHINE_KEY]: Yup.string().required(),
+      [MACHINE_KEY]: Yup.string()
+        .label('Machine')
+        .nullable()
+        .required(),
       [CASSETTE_1_KEY]: Yup.number()
+        .label('Cassette 1 (top)')
         .when(CASSETTE_2_KEY, {
           is: CASSETTE_2_KEY => !CASSETTE_2_KEY,
           then: Yup.number().required()
@@ -55,6 +59,7 @@ const FiatBalanceOverrides = ({ section }) => {
         .max(notesMax)
         .nullable(),
       [CASSETTE_2_KEY]: Yup.number()
+        .label('Cassette 1 (bottom)')
         .when(CASSETTE_1_KEY, {
           is: CASSETTE_1_KEY => !CASSETTE_1_KEY,
           then: Yup.number().required()

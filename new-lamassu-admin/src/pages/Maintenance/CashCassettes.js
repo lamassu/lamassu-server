@@ -15,14 +15,16 @@ import styles from './CashCassettes.styles.js'
 const useStyles = makeStyles(styles)
 
 const ValidationSchema = Yup.object().shape({
-  name: Yup.string().required('Required'),
+  name: Yup.string().required(),
   cassette1: Yup.number()
-    .required('Required')
+    .label('Cassette 1 (top)')
+    .required()
     .integer()
     .min(0)
     .max(500),
   cassette2: Yup.number()
-    .required('Required')
+    .label('Cassette 2 (bottom)')
+    .required()
     .integer()
     .min(0)
     .max(500)

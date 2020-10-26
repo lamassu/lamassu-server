@@ -3,8 +3,6 @@ import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
-const LANGUAGE_SELECTION_LIMIT = 4
-
 const getFields = (getData, names, configureCoin, auxElements = []) => {
   return R.filter(
     it => R.includes(it.name, names),
@@ -92,8 +90,7 @@ const allFields = (getData, configureCoin, auxElements = []) => {
         options: languageData,
         valueProp: 'code',
         getLabel: R.path(['display']),
-        multiple: true,
-        limit: LANGUAGE_SELECTION_LIMIT
+        multiple: true
       }
     },
     {
@@ -137,17 +134,34 @@ const overrides = (auxData, auxElements, configureCoin) => {
 }
 
 const LocaleSchema = Yup.object().shape({
-  country: Yup.string().required('Required'),
-  fiatCurrency: Yup.string().required('Required'),
-  languages: Yup.array().required('Required'),
-  cryptoCurrencies: Yup.array().required('Required')
+  country: Yup.string()
+    .label('Country')
+    .required(),
+  fiatCurrency: Yup.string()
+    .label('Fiat Currency')
+    .required(),
+  languages: Yup.array()
+    .label('Languages')
+    .required()
+    .max(4),
+  cryptoCurrencies: Yup.array()
+    .label('Crypto Currencies')
+    .required()
 })
 
 const OverridesSchema = Yup.object().shape({
-  machine: Yup.string().required('Required'),
-  country: Yup.string().required('Required'),
-  languages: Yup.array().required('Required'),
-  cryptoCurrencies: Yup.array().required('Required')
+  machine: Yup.string()
+    .label('Machine')
+    .required(),
+  country: Yup.string()
+    .label('Country')
+    .required(),
+  languages: Yup.array()
+    .label('Languages')
+    .required(),
+  cryptoCurrencies: Yup.array()
+    .label('Crypto Currencies')
+    .required()
 })
 
 const localeDefaults = {

@@ -25,10 +25,10 @@ export default {
   validationSchema: Yup.object().shape({
     token: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     confidenceFactor: Yup.number()
       .integer('Please input a positive integer')
       .positive('Please input a positive integer')
-      .required('Required')
+      .required()
   })
 }

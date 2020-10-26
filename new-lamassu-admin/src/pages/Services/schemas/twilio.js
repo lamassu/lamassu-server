@@ -34,15 +34,15 @@ export default {
   validationSchema: Yup.object().shape({
     accountSid: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     authToken: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     fromNumber: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     toNumber: Yup.string()
       .max(100, 'Too long')
-      .required('Required')
+      .required()
   })
 }

@@ -56,8 +56,12 @@ const CryptoBalanceOverrides = ({ section }) => {
   const currencyMax = 9999999
   const validationSchema = Yup.object().shape(
     {
-      [CRYPTOCURRENCY_KEY]: Yup.string().required(),
+      [CRYPTOCURRENCY_KEY]: Yup.string()
+        .label('Cryptocurrency')
+        .nullable()
+        .required(),
       [LOW_BALANCE_KEY]: Yup.number()
+        .label('Low Balance')
         .when(HIGH_BALANCE_KEY, {
           is: HIGH_BALANCE_KEY => !HIGH_BALANCE_KEY,
           then: Yup.number().required()
@@ -68,6 +72,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         .max(currencyMax)
         .nullable(),
       [HIGH_BALANCE_KEY]: Yup.number()
+        .label('High Balance')
         .when(LOW_BALANCE_KEY, {
           is: LOW_BALANCE_KEY => !LOW_BALANCE_KEY,
           then: Yup.number().required()
