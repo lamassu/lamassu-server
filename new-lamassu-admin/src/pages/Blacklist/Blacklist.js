@@ -1,13 +1,18 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { Box } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import Tooltip from 'src/components/Tooltip'
 import { Link } from 'src/components/buttons'
+import { Switch } from 'src/components/inputs'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
+import { H4, Label2, P } from 'src/components/typography'
+import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import styles from './Blacklist.styles'
 import BlackListModal from './BlacklistModal'
@@ -68,26 +73,10 @@ const Blacklist = () => {
     code: 'BTC',
     display: 'Bitcoin'
   })
-  const classes = useStyles()
-
-  const blacklistData = R.path(['blacklist'])(blacklistResponse) ?? []
-  const availableCurrencies =
-    R.path(['cryptoCurrencies'], blacklistResponse) ?? []
-
-  const formattedData = groupByCode(blacklistData)
-
-  const onClickSidebarItem = e => {
-    setClickedItem({ code: e.code, display: e.display })
-  }
-
   const [deleteEntry] = useMutation(DELETE_ROW, {
     onError: () => console.error('Error while deleting row'),
     refetchQueries: () => ['getBlacklistData']
   })
-
-  const handleDeleteEntry = (cryptoCode, address) => {
-    deleteEntry({ variables: { cryptoCode, address } })
-  }
 
   const [addEntry] = useMutation(ADD_ROW, {
     onError: () => console.error('Error while adding row'),
@@ -97,6 +86,32 @@ const Blacklist = () => {
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
   })
+
+  const classes = useStyles()
+
+  const blacklistData = R.path(['blacklist'])(blacklistResponse) ?? []
+  const availableCurrencies =
+    R.path(['cryptoCurrencies'], blacklistResponse) ?? []
+
+  const formattedData = groupByCode(blacklistData)
+
+  const complianceConfig =
+    configData?.config && fromNamespace('compliance')(configData.config)
+
+  const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
+
+  const addressReuseSave = rawConfig => {
+    const config = toNamespace('compliance')(rawConfig)
+    return saveConfig({ variables: { config } })
+  }
+
+  const onClickSidebarItem = e => {
+    setClickedItem({ code: e.code, display: e.display })
+  }
+
+  const handleDeleteEntry = (cryptoCode, address) => {
+    deleteEntry({ variables: { cryptoCode, address } })
+  }
 
   const isSelected = it => clickedItem.code === it.code
 
@@ -119,12 +134,39 @@ const Blacklist = () => {
           onClick={onClickSidebarItem}
         />
         <div className={classes.content}>
+          <Box display="flex" justifyContent="space-between" mb={3}>
+            <H4 noMargin className={classes.subtitle}>
+              {clickedItem.display
+                ? `${clickedItem.display} blacklisted addresses`
+                : ''}{' '}
+            </H4>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="end"
+              mr="-5px">
+              <P>Reject reused addresses</P>
+              <Switch
+                checked={rejectAddressReuse}
+                onChange={event => {
+                  addressReuseSave({ rejectAddressReuse: event.target.checked })
+                }}
+                value={rejectAddressReuse}
+              />
+              <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
+              <Tooltip width={304}>
+                <P>
+                  The "Reject reused addresses" option means that all addresses
+                  that are used once will be automatically rejected if there's
+                  an attempt to use them again on a new transaction.
+                </P>
+              </Tooltip>
+            </Box>
+          </Box>
           <BlacklistTable
             data={formattedData}
             selectedCoin={clickedItem}
             handleDeleteEntry={handleDeleteEntry}
-            saveConfig={saveConfig}
-            configData={configData}
           />
         </div>
       </Grid>
