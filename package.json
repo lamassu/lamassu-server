@@ -67,6 +67,7 @@
     "socket.io-client": "^2.0.3",
     "talisman": "^0.20.0",
     "twilio": "^3.6.1",
+    "ua-parser-js": "^0.7.22",
     "uuid": "^3.1.0",
     "web3": "^0.20.6",
     "winston": "^2.4.2",
