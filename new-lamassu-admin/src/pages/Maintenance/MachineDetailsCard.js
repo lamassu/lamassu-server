@@ -88,8 +88,8 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
     },
     onCompleted: () => {
       onActionSuccess && onActionSuccess()
-      renameActionDialogOpen && setConfirmActionDialogOpen(false)
-      confirmActionDialogOpen && setRenameActionDialogOpen(false)
+      setConfirmActionDialogOpen(false)
+      setRenameActionDialogOpen(false)
     }
   })
 
