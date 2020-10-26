@@ -5,14 +5,14 @@ import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
 const LANGUAGE_SELECTION_LIMIT = 4
 
-const getFields = (getData, names, enableCoin, auxElements = []) => {
+const getFields = (getData, names, configureCoin, auxElements = []) => {
   return R.filter(
     it => R.includes(it.name, names),
-    allFields(getData, enableCoin, auxElements)
+    allFields(getData, configureCoin, auxElements)
   )
 }
 
-const allFields = (getData, enableCoin, auxElements = []) => {
+const allFields = (getData, configureCoin, auxElements = []) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -108,29 +108,30 @@ const allFields = (getData, enableCoin, auxElements = []) => {
         getLabel: R.path(['code']),
         multiple: true,
         optionsLimit: null,
-        onChange: (prev, curr) => enableCoin(R.difference(curr, prev)[0])
+        onChange: (prev, curr, cancel) =>
+          configureCoin(R.difference(curr, prev)[0], prev, cancel)
       }
     }
   ]
 }
 
-const mainFields = (auxData, enableCoin) => {
+const mainFields = (auxData, configureCoin) => {
   const getData = R.path(R.__, auxData)
 
   return getFields(
     getData,
     ['country', 'fiatCurrency', 'languages', 'cryptoCurrencies'],
-    enableCoin
+    configureCoin
   )
 }
 
-const overrides = (auxData, auxElements, enableCoin) => {
+const overrides = (auxData, auxElements, configureCoin) => {
   const getData = R.path(R.__, auxData)
 
   return getFields(
     getData,
     ['machine', 'country', 'languages', 'cryptoCurrencies'],
-    enableCoin,
+    configureCoin,
     auxElements
   )
 }

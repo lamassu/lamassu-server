@@ -99,6 +99,9 @@ const FiatCurrencyChangeAlert = ({ open, close, save }) => {
 
 const Locales = ({ name: SCREEN_KEY }) => {
   const [wizard, setWizard] = useState(false)
+  const [cancelCryptoConfiguration, setCancelCryptoConfiguration] = useState(
+    null
+  )
   const [error, setError] = useState(false)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
@@ -142,11 +145,14 @@ const Locales = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config } })
   }
 
-  const enableCoin = it => {
+  const configureCoin = (it, prev, cancel) => {
     if (!it) return
 
     const namespaced = fromNamespace(it)(wallets)
-    if (!WalletSchema.isValidSync(namespaced)) return setWizard(it)
+    if (!WalletSchema.isValidSync(namespaced)) {
+      setCancelCryptoConfiguration(() => () => cancel())
+      setWizard(it)
+    }
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
@@ -170,7 +176,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={handleSave}
           validationSchema={LocaleSchema}
           data={R.of(locale)}
-          elements={mainFields(data, enableCoin)}
+          elements={mainFields(data, configureCoin)}
           setEditing={onEditingDefault}
           forceDisable={isEditingOverrides}
         />
@@ -187,7 +193,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={saveOverrides}
           validationSchema={OverridesSchema}
           data={localeOverrides ?? []}
-          elements={overrides(data, localeOverrides, enableCoin)}
+          elements={overrides(data, localeOverrides, configureCoin)}
           disableAdd={R.compose(R.isEmpty, R.difference)(
             data?.machines.map(m => m.deviceId) ?? [],
             localeOverrides?.map(o => o.machine) ?? []
@@ -199,8 +205,14 @@ const Locales = ({ name: SCREEN_KEY }) => {
       {wizard && (
         <Wizard
           coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
-          onClose={() => setWizard(false)}
-          save={rawConfig => save(toNamespace(namespaces.WALLETS)(rawConfig))}
+          onClose={() => {
+            cancelCryptoConfiguration && cancelCryptoConfiguration()
+            setWizard(false)
+          }}
+          save={rawConfig => {
+            save(toNamespace(namespaces.WALLETS)(rawConfig))
+            setCancelCryptoConfiguration(null)
+          }}
           error={error}
           cryptoCurrencies={cryptoCurrencies}
           userAccounts={data?.config?.accounts}
