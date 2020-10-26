@@ -7,10 +7,10 @@ const filterClass = type => R.filter(it => it.class === type)
 const filterCoins = ({ id }) => R.filter(it => R.contains(id)(it.cryptos))
 
 const WalletSchema = Yup.object().shape({
-  ticker: Yup.string().required('Required'),
-  wallet: Yup.string().required('Required'),
-  exchange: Yup.string().required('Required'),
-  zeroConf: Yup.string().required('Required')
+  ticker: Yup.string().required(),
+  wallet: Yup.string().required(),
+  exchange: Yup.string().required(),
+  zeroConf: Yup.string().required()
 })
 
 const getElements = (

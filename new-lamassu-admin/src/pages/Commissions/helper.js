@@ -204,42 +204,55 @@ const percentMax = 100
 const currencyMax = 9999999
 const schema = Yup.object().shape({
   cashIn: Yup.number()
+    .label('Cash-in')
     .min(0)
     .max(percentMax)
-    .required('Required'),
+    .required(),
   cashOut: Yup.number()
+    .label('Cash-out')
     .min(0)
     .max(percentMax)
-    .required('Required'),
+    .required(),
   fixedFee: Yup.number()
+    .label('Fixed Fee')
     .min(0)
     .max(currencyMax)
-    .required('Required'),
+    .required(),
   minimumTx: Yup.number()
+    .label('Minimum Tx')
     .min(0)
     .max(currencyMax)
-    .required('Required')
+    .required()
 })
 
 const OverridesSchema = Yup.object().shape({
-  machine: Yup.string().required('Required'),
-  cryptoCurrencies: Yup.array().required('Required'),
+  machine: Yup.string()
+    .nullable()
+    .label('Machine')
+    .required(),
+  cryptoCurrencies: Yup.array()
+    .label('Crypto Currencies')
+    .required(),
   cashIn: Yup.number()
+    .label('Cash-in')
     .min(0)
     .max(percentMax)
-    .required('Required'),
+    .required(),
   cashOut: Yup.number()
+    .label('Cash-out')
     .min(0)
     .max(percentMax)
-    .required('Required'),
+    .required(),
   fixedFee: Yup.number()
+    .label('Fixed Fee')
     .min(0)
     .max(currencyMax)
-    .required('Required'),
+    .required(),
   minimumTx: Yup.number()
+    .label('Minimum Tx')
     .min(0)
     .max(currencyMax)
-    .required('Required')
+    .required()
 })
 
 const defaults = {

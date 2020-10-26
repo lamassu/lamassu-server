@@ -41,15 +41,15 @@ export default code => ({
   validationSchema: Yup.object().shape({
     token: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     environment: Yup.string()
       .matches(/(prod|test)/)
-      .required('Required'),
+      .required(),
     [`${code}WalletId`]: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     [`${code}WalletPassphrase`]: Yup.string()
       .max(100, 'Too long')
-      .required('Required')
+      .required()
   })
 })

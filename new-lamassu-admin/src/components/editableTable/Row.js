@@ -165,7 +165,7 @@ const groupStriped = elements => {
 }
 
 const ERow = ({ editing, disabled, lastOfGroup }) => {
-  const { errors } = useFormikContext()
+  const { touched, errors, values } = useFormikContext()
   const {
     elements,
     enableEdit,
@@ -177,7 +177,6 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
 
   const classes = useStyles()
 
-  const { values } = useFormikContext()
   const shouldStripe = stripeWhen && stripeWhen(values) && !editing
 
   const innerElements = shouldStripe ? groupStriped(elements) : elements
@@ -199,12 +198,14 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
     [classes.lastOfGroup]: lastOfGroup
   }
 
+  const touchedErrors = R.pick(R.keys(touched), errors)
+
   return (
     <Tr
       className={classnames(classNames)}
       size={rowSize}
-      error={errors && errors.length}
-      errorMessage={errors && errors.toString()}>
+      error={touchedErrors && R.keys(touchedErrors).length > 0}
+      errorMessage={touchedErrors && R.values(touchedErrors).join(', ')}>
       {innerElements.map((it, idx) => {
         return (
           <ECol

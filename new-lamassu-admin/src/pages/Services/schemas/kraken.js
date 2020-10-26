@@ -24,9 +24,9 @@ export default {
   validationSchema: Yup.object().shape({
     apiKey: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     privateKey: Yup.string()
       .max(100, 'Too long')
-      .required('Required')
+      .required()
   })
 }

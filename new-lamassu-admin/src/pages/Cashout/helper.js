@@ -5,15 +5,18 @@ import { NumberInput } from 'src/components/inputs/formik'
 const currencyMax = 999999999
 const DenominationsSchema = Yup.object().shape({
   top: Yup.number()
-    .required('Required')
+    .label('Cassette 1 (Top)')
+    .required()
     .min(0)
     .max(currencyMax),
   bottom: Yup.number()
-    .required('Required')
+    .label('Cassette 2 (Bottom)')
+    .required()
     .min(0)
     .max(currencyMax),
   zeroConfLimit: Yup.number()
-    .required('Required')
+    .label('0-conf Limit')
+    .required()
     .min(0)
     .max(currencyMax)
 })

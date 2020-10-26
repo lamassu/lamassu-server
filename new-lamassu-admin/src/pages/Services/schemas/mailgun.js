@@ -33,17 +33,17 @@ export default {
   validationSchema: Yup.object().shape({
     apiKey: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     domain: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     fromEmail: Yup.string()
       .max(100, 'Too long')
       .email('Please input a valid email address')
-      .required('Required'),
+      .required(),
     toEmail: Yup.string()
       .max(100, 'Too long')
       .email('Please input a valid email address')
-      .required('Required')
+      .required()
   })
 }

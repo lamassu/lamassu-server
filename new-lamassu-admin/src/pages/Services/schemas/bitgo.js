@@ -83,7 +83,7 @@ export default {
   validationSchema: Yup.object().shape({
     token: Yup.string()
       .max(100, 'Too long')
-      .required('Required'),
+      .required(),
     BTCWalletId: Yup.string().max(100, 'Too long'),
     BTCWalletPassphrase: Yup.string()
       .max(100, 'Too long')
@@ -121,6 +121,6 @@ export default {
       }),
     environment: Yup.string()
       .matches(/(prod|test)/)
-      .required('Required')
+      .required()
   })
 }
