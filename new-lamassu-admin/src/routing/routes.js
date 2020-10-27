@@ -25,6 +25,7 @@ import Services from 'src/pages/Services/Services'
 import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
+import UserManagement from 'src/pages/UserManagement/UserManagement'
 import WalletSettings from 'src/pages/Wallet/Wallet'
 import Wizard from 'src/pages/Wizard'
 import { namespaces } from 'src/utils/config'
@@ -163,6 +164,12 @@ const tree = [
       return () => <Redirect to={this.children[0].route} />
     },
     children: [
+      {
+        key: 'user-management',
+        label: 'User Management',
+        route: '/system/user-management',
+        component: UserManagement
+      },
       {
         key: 'token-management',
         label: 'Token Management',
