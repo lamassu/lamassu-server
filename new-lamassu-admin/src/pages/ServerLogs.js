@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -8,7 +8,6 @@ import React, { useState, useRef } from 'react'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
 import Uptime from 'src/components/Uptime'
-import { SimpleButton } from 'src/components/buttons'
 import { Select } from 'src/components/inputs'
 import {
   Table,
@@ -18,10 +17,8 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Label1, Info3 } from 'src/components/typography'
+import { Info3 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
-import { ReactComponent as WhiteShareIcon } from 'src/styling/icons/circle buttons/share/white.svg'
-import { ReactComponent as ShareIcon } from 'src/styling/icons/circle buttons/share/zodiac.svg'
 import { offColor } from 'src/styling/variables'
 
 import logsStyles from './Logs.styles'
@@ -78,13 +75,6 @@ const GET_DATA = gql`
     }
   }
 `
-const SUPPORT_LOGS = gql`
-  mutation ServerSupportLogs {
-    serverSupportLogs {
-      id
-    }
-  }
-`
 
 const Logs = () => {
   const classes = useStyles()
@@ -103,11 +93,6 @@ const Logs = () => {
 
   const serverVersion = data?.serverVersion
   const processStates = data?.uptime ?? []
-
-  const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
-    onError: () => setSaveMessage('Failure saving snapshot'),
-    onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
-  })
 
   const getLogLevels = R.compose(
     R.prepend(SHOW_ALL),
@@ -136,14 +121,6 @@ const Logs = () => {
                 logs={data.serverLogs}
                 getTimestamp={log => log.timestamp}
               />
-              <SimpleButton
-                className={classes.shareButton}
-                disabled={loading}
-                Icon={ShareIcon}
-                InverseIcon={WhiteShareIcon}
-                onClick={sendSnapshot}>
-                <Label1>Share with Lamassu</Label1>
-              </SimpleButton>
               <Info3>{saveMessage}</Info3>
             </div>
           )}

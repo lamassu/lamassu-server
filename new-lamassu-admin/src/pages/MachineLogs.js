@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -7,7 +7,6 @@ import React, { useState } from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
-import { SimpleButton } from 'src/components/buttons'
 import Sidebar from 'src/components/layout/Sidebar'
 import {
   Table,
@@ -17,9 +16,7 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Label1, Info3 } from 'src/components/typography'
-import { ReactComponent as WhiteShareIcon } from 'src/styling/icons/circle buttons/share/white.svg'
-import { ReactComponent as ShareIcon } from 'src/styling/icons/circle buttons/share/zodiac.svg'
+import { Info3 } from 'src/components/typography'
 
 import styles from './Logs.styles'
 
@@ -52,14 +49,6 @@ const GET_MACHINE_LOGS = gql`
   }
 `
 
-const SUPPORT_LOGS = gql`
-  mutation SupportLogs($deviceId: ID!) {
-    machineSupportLogs(deviceId: $deviceId) {
-      id
-    }
-  }
-`
-
 const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
@@ -73,12 +62,6 @@ const Logs = () => {
   const deviceId = selected?.deviceId
 
   const { data: machineResponse } = useQuery(GET_MACHINES)
-
-  const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
-    variables: { deviceId },
-    onError: () => setSaveMessage('Failure saving snapshot'),
-    onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
-  })
 
   const { data: logsResponse } = useQuery(GET_MACHINE_LOGS, {
     variables: { deviceId, limit: NUM_LOG_RESULTS },
@@ -108,14 +91,6 @@ const Logs = () => {
                 args={{ deviceId }}
                 getLogs={logs => R.path(['machineLogs'])(logs)}
               />
-              <SimpleButton
-                className={classes.shareButton}
-                disabled={loading}
-                Icon={ShareIcon}
-                InverseIcon={WhiteShareIcon}
-                onClick={sendSnapshot}>
-                <Label1>Share with Lamassu</Label1>
-              </SimpleButton>
               <Info3>{saveMessage}</Info3>
             </div>
           )}
