@@ -1,15 +1,15 @@
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
-import Slide from '@material-ui/core/Slide'
 import {
   StylesProvider,
   jssPreset,
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
+import { axios } from '@use-hooks/axios'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import {
   useLocation,
   useHistory,
@@ -17,15 +17,14 @@ import {
 } from 'react-router-dom'
 
 import AppContext from 'src/AppContext'
+import Header from 'src/components/layout/Header'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
-import ApolloProvider from 'src/utils/apollo'
-
-import Header from '../components/layout/Header'
-import { tree, hasSidebar, Routes, getParent } from '../routing/routes'
-import global from '../styling/global'
-import theme from '../styling/theme'
-import { backgroundColor, mainWidth } from '../styling/variables'
+import ApolloProvider from 'src/pazuz/apollo/Provider'
+import { tree, hasSidebar, Routes, getParent } from 'src/pazuz/routing/routes'
+import global from 'src/styling/global'
+import theme from 'src/styling/theme'
+import { backgroundColor, mainWidth } from 'src/styling/variables'
 
 if (process.env.NODE_ENV !== 'production') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render')
@@ -74,7 +73,7 @@ const Main = () => {
   const classes = useStyles()
   const location = useLocation()
   const history = useHistory()
-  const { wizardTested } = useContext(AppContext)
+  const { wizardTested, userData } = useContext(AppContext)
 
   const route = location.pathname
 
@@ -93,20 +92,12 @@ const Main = () => {
 
   return (
     <div className={classes.root}>
-      {!is404 && wizardTested && <Header tree={tree} />}
+      {!is404 && wizardTested && userData && (
+        <Header tree={tree} user={userData} />
+      )}
       <main className={classes.wrapper}>
         {sidebar && !is404 && wizardTested && (
-          <Slide
-            direction="left"
-            in={true}
-            mountOnEnter
-            unmountOnExit
-            children={
-              <div>
-                <TitleSection title={parent.title}></TitleSection>
-              </div>
-            }
-          />
+          <TitleSection title={parent.title}></TitleSection>
         )}
 
         <Grid container className={classes.grid}>
@@ -129,19 +120,47 @@ const Main = () => {
 
 const App = () => {
   const [wizardTested, setWizardTested] = useState(false)
+  const [userData, setUserData] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const url =
+    process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
+
+  useEffect(() => {
+    getUserData()
+  }, [])
+
+  const getUserData = () => {
+    axios({
+      method: 'GET',
+      url: `${url}/user-data`,
+      withCredentials: true
+    })
+      .then(res => {
+        setLoading(false)
+        if (res.status === 200) setUserData(res.data.user)
+      })
+      .catch(err => {
+        setLoading(false)
+        if (err.status === 403) setUserData(null)
+      })
+  }
 
   return (
-    <AppContext.Provider value={{ wizardTested, setWizardTested }}>
-      <Router>
-        <ApolloProvider>
-          <StylesProvider jss={jss}>
-            <MuiThemeProvider theme={theme}>
-              <CssBaseline />
-              <Main />
-            </MuiThemeProvider>
-          </StylesProvider>
-        </ApolloProvider>
-      </Router>
+    <AppContext.Provider
+      value={{ wizardTested, setWizardTested, userData, setUserData }}>
+      {!loading && (
+        <Router>
+          <ApolloProvider>
+            <StylesProvider jss={jss}>
+              <MuiThemeProvider theme={theme}>
+                <CssBaseline />
+                <Main />
+              </MuiThemeProvider>
+            </StylesProvider>
+          </ApolloProvider>
+        </Router>
+      )}
     </AppContext.Provider>
   )
 }
