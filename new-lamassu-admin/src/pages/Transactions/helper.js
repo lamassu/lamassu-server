@@ -14,7 +14,7 @@ const getCashInStatus = it => {
 }
 
 const getStatus = it => {
-  if (it.class === 'cashOut') {
+  if (it.txClass === 'cashOut') {
     return getCashOutStatus(it)
   }
   return getCashInStatus(it)
