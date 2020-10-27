@@ -6,9 +6,10 @@ import {
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
+import { axios } from '@use-hooks/axios'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import {
   useLocation,
   useHistory,
@@ -74,7 +75,7 @@ const Main = () => {
   const classes = useStyles()
   const location = useLocation()
   const history = useHistory()
-  const { wizardTested } = useContext(AppContext)
+  const { wizardTested, userData } = useContext(AppContext)
 
   const route = location.pathname
 
@@ -93,7 +94,9 @@ const Main = () => {
 
   return (
     <div className={classes.root}>
-      {!is404 && wizardTested && <Header tree={tree} />}
+      {!is404 && wizardTested && userData && (
+        <Header tree={tree} user={userData} />
+      )}
       <main className={classes.wrapper}>
         {sidebar && !is404 && wizardTested && (
           <TitleSection title={parent.title}></TitleSection>
@@ -119,19 +122,47 @@ const Main = () => {
 
 const App = () => {
   const [wizardTested, setWizardTested] = useState(false)
+  const [userData, setUserData] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const url =
+    process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
+
+  useEffect(() => {
+    getUserData()
+  }, [])
+
+  const getUserData = () => {
+    axios({
+      method: 'GET',
+      url: `${url}/user-data`,
+      withCredentials: true
+    })
+      .then(res => {
+        setLoading(false)
+        if (res.status === 200) setUserData(res.data.user)
+      })
+      .catch(err => {
+        setLoading(false)
+        if (err.status === 403) setUserData(null)
+      })
+  }
 
   return (
-    <AppContext.Provider value={{ wizardTested, setWizardTested }}>
-      <Router>
-        <ApolloProvider>
-          <StylesProvider jss={jss}>
-            <MuiThemeProvider theme={theme}>
-              <CssBaseline />
-              <Main />
-            </MuiThemeProvider>
-          </StylesProvider>
-        </ApolloProvider>
-      </Router>
+    <AppContext.Provider
+      value={{ wizardTested, setWizardTested, userData, setUserData }}>
+      {!loading && (
+        <Router>
+          <ApolloProvider>
+            <StylesProvider jss={jss}>
+              <MuiThemeProvider theme={theme}>
+                <CssBaseline />
+                <Main />
+              </MuiThemeProvider>
+            </StylesProvider>
+          </ApolloProvider>
+        </Router>
+      )}
     </AppContext.Provider>
   )
 }

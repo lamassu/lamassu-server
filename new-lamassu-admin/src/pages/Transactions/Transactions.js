@@ -24,13 +24,13 @@ const useStyles = makeStyles(mainStyles)
 const NUM_LOG_RESULTS = 1000
 
 const GET_TRANSACTIONS_CSV = gql`
-  query transactions($limit: Int, $from: Date, $until: Date) {
+  query transactions($limit: Int, $from: DateTime, $until: DateTime) {
     transactionsCsv(limit: $limit, from: $from, until: $until)
   }
 `
 
 const GET_TRANSACTIONS = gql`
-  query transactions($limit: Int, $from: Date, $until: Date) {
+  query transactions($limit: Int, $from: DateTime, $until: DateTime) {
     transactions(limit: $limit, from: $from, until: $until) {
       id
       txClass

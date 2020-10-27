@@ -4,6 +4,7 @@ import Popper from '@material-ui/core/Popper'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
 
@@ -56,7 +57,7 @@ const Subheader = ({ item, classes }) => {
   )
 }
 
-const Header = memo(({ tree }) => {
+const Header = memo(({ tree, user }) => {
   const [open, setOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [active, setActive] = useState()
@@ -103,24 +104,35 @@ const Header = memo(({ tree }) => {
           </div>
           <nav className={classes.nav}>
             <ul className={classes.ul}>
-              {tree.map((it, idx) => (
-                <NavLink
-                  key={idx}
-                  to={it.route || it.children[0].route}
-                  isActive={match => {
-                    if (!match) return false
-                    setActive(it)
-                    return true
-                  }}
-                  className={classnames(classes.link, classes.whiteLink)}
-                  activeClassName={classes.activeLink}>
-                  <li className={classes.li}>
-                    <span className={classes.forceSize} forcesize={it.label}>
-                      {it.label}
-                    </span>
-                  </li>
-                </NavLink>
-              ))}
+              {tree.map((it, idx) => {
+                if (
+                  !R.includes(
+                    user.role,
+                    it.allowedRoles.map(v => {
+                      return v.key
+                    })
+                  )
+                )
+                  return <></>
+                return (
+                  <NavLink
+                    key={idx}
+                    to={it.route || it.children[0].route}
+                    isActive={match => {
+                      if (!match) return false
+                      setActive(it)
+                      return true
+                    }}
+                    className={classnames(classes.link, classes.whiteLink)}
+                    activeClassName={classes.activeLink}>
+                    <li className={classes.li}>
+                      <span className={classes.forceSize} forcesize={it.label}>
+                        {it.label}
+                      </span>
+                    </li>
+                  </NavLink>
+                )
+              })}
             </ul>
           </nav>
           <div className={classes.actionButtonsContainer}>
