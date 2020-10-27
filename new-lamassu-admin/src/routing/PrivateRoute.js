@@ -1,27 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 
-const isAuthenticated = () => {
-  return localStorage.getItem('loggedIn')
-}
+import { AppContext } from 'src/App'
 
-const PrivateRoute = ({ children, ...rest }) => {
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        isAuthenticated() ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: '/login'
-            }}
-          />
-        )
-      }
-    />
-  )
+import { isLoggedIn } from './utils'
+
+const PrivateRoute = ({ ...rest }) => {
+  const { userData } = useContext(AppContext)
+
+  return isLoggedIn(userData) ? <Route {...rest} /> : <Redirect to="/login" />
 }
 
 export default PrivateRoute

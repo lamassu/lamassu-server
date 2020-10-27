@@ -60,13 +60,13 @@ const formatDate = date => {
 const NUM_LOG_RESULTS = 500
 
 const GET_CSV = gql`
-  query ServerData($limit: Int, $from: Date, $until: Date) {
+  query ServerData($limit: Int, $from: DateTime, $until: DateTime) {
     serverLogsCsv(limit: $limit, from: $from, until: $until)
   }
 `
 
 const GET_DATA = gql`
-  query ServerData($limit: Int, $from: Date, $until: Date) {
+  query ServerData($limit: Int, $from: DateTime, $until: DateTime) {
     serverVersion
     uptime {
       name

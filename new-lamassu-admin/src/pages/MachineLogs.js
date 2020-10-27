@@ -34,7 +34,12 @@ const GET_MACHINES = gql`
 const NUM_LOG_RESULTS = 500
 
 const GET_MACHINE_LOGS_CSV = gql`
-  query MachineLogs($deviceId: ID!, $limit: Int, $from: Date, $until: Date) {
+  query MachineLogs(
+    $deviceId: ID!
+    $limit: Int
+    $from: DateTime
+    $until: DateTime
+  ) {
     machineLogsCsv(
       deviceId: $deviceId
       limit: $limit
@@ -45,7 +50,12 @@ const GET_MACHINE_LOGS_CSV = gql`
 `
 
 const GET_MACHINE_LOGS = gql`
-  query MachineLogs($deviceId: ID!, $limit: Int, $from: Date, $until: Date) {
+  query MachineLogs(
+    $deviceId: ID!
+    $limit: Int
+    $from: DateTime
+    $until: DateTime
+  ) {
     machineLogs(
       deviceId: $deviceId
       limit: $limit
