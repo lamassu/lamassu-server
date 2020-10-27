@@ -15,6 +15,7 @@ import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
+import { getStatus } from './helper'
 
 const useStyles = makeStyles(mainStyles)
 
@@ -118,17 +119,16 @@ const Transactions = () => {
     },
     {
       header: 'Date (UTC)',
-      view: it => moment.utc(it.created).format('YYYY-MM-DD'),
+      view: it => moment.utc(it.created).format('YYYY-MM-DD HH:mm:ss'),
       textAlign: 'right',
       size: 'sm',
-      width: 140
+      width: 200
     },
     {
-      header: 'Time (UTC)',
-      view: it => moment.utc(it.created).format('HH:mm:ss'),
-      textAlign: 'right',
+      header: 'Status',
+      view: it => getStatus(it),
       size: 'sm',
-      width: 140
+      width: 80
     }
   ]
 
