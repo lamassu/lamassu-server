@@ -19,33 +19,12 @@ import { onlyFirstToUpper } from 'src/utils/string'
 
 import CopyToClipboard from './CopyToClipboard'
 import styles from './DetailsCard.styles'
+import { getStatus } from './helper'
 
 const useStyles = makeStyles(styles)
 
 const formatAddress = (cryptoCode = '', address = '') =>
   formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
-
-const getCashOutStatus = it => {
-  if (it.hasError) return 'Error'
-  if (it.dispense) return 'Success'
-  if (it.expired) return 'Expired'
-  return 'Pending'
-}
-
-const getCashInStatus = it => {
-  if (it.operatorCompleted) return 'Cancelled'
-  if (it.hasError) return 'Error'
-  if (it.sendConfirmed) return 'Sent'
-  if (it.expired) return 'Expired'
-  return 'Pending'
-}
-
-const getStatus = it => {
-  if (it.class === 'cashOut') {
-    return getCashOutStatus(it)
-  }
-  return getCashInStatus(it)
-}
 
 const Label = ({ children }) => {
   const classes = useStyles()
