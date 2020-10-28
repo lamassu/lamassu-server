@@ -6,7 +6,7 @@ import React, { useState, memo } from 'react'
 import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs/formik'
 import { Table, TableBody, TableRow, TableCell } from 'src/components/table'
 import { H4 } from 'src/components/typography'
@@ -70,11 +70,11 @@ const BooleanPropertiesTable = memo(
                   </Link>
                 </div>
               ) : (
-                <div className={classes.transparentButton}>
-                  <button disabled={disabled} onClick={() => setEditing(true)}>
-                    {disabled ? <EditIconDisabled /> : <EditIcon />}
-                  </button>
-                </div>
+                <IconButton
+                  className={classes.transparentButton}
+                  onClick={() => setEditing(true)}>
+                  {disabled ? <EditIconDisabled /> : <EditIcon />}
+                </IconButton>
               )}
             </div>
             <PromptWhenDirty />

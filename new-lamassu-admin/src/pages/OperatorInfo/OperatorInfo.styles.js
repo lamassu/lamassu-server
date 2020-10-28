@@ -7,16 +7,18 @@ const { p } = typographyStyles
 const styles = {
   header: {
     display: 'flex',
-    '& > p': {
-      marginTop: 0
+    alignItems: 'center',
+    position: 'relative',
+    flex: 'wrap'
+  },
+  transparentButton: {
+    '& > *': {
+      margin: 'auto 12px'
     },
-    '& > div': {
-      marginLeft: 20,
-      '& > button': {
-        border: 'none',
-        backgroundColor: 'transparent',
-        cursor: 'pointer'
-      }
+    '& button': {
+      border: 'none',
+      backgroundColor: 'transparent',
+      cursor: 'pointer'
     }
   },
   section: {

@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
 import { H4, Info2, Info3, Label2, Label3 } from 'src/components/typography'
@@ -190,11 +190,11 @@ const TermsConditions = () => {
         <div className={classes.header}>
           <Info2>Info card</Info2>
           {!editing && (
-            <div className={classes.transparentButton}>
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            </div>
+            <IconButton
+              className={classes.transparentButton}
+              onClick={() => setEditing(true)}>
+              <EditIcon />
+            </IconButton>
           )}
         </div>
         <Formik
