@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import { TextInput } from 'src/components/inputs/formik'
 import { P, H4, Info3, Label1, Label2, Label3 } from 'src/components/typography'
@@ -210,11 +210,11 @@ const ContactInfo = ({ wizard }) => {
         <div className={classes.rowWrapper}>
           <H4>Info card</H4>
           {!editing && (
-            <div className={classes.transparentButton}>
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            </div>
+            <IconButton
+              className={classes.transparentButton}
+              onClick={() => setEditing(true)}>
+              <EditIcon />
+            </IconButton>
           )}
         </div>
         <Formik
