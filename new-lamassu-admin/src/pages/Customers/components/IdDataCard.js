@@ -15,6 +15,7 @@ import Field from './Field'
 const IdDataCard = memo(({ customerData, updateCustomer }) => {
   const idData = R.path(['idCardData'])(customerData)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
+  const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
 
   const elements = [
@@ -23,12 +24,17 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
       display: `${R.path(['firstName'])(idData)} ${R.path(['lastName'])(
         idData
       )}`,
-      size: 160
+      size: 190
     },
     {
       header: 'ID number',
       display: R.path(['documentNumber'])(idData),
-      size: 190
+      size: 160
+    },
+    {
+      header: 'Birth Date',
+      display: ifNotNull(rawDob, moment.utc(rawDob).format('YYYY-MM-D')),
+      size: 110
     },
     {
       header: 'Age',
@@ -36,17 +42,17 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
         rawDob,
         moment.utc().diff(moment.utc(rawDob).format('YYYY-MM-D'), 'years')
       ),
-      size: 70
+      size: 50
     },
     {
       header: 'Gender',
       display: R.path(['gender'])(idData),
-      size: 100
+      size: 80
     },
     {
-      header: 'Country',
-      display: R.path(['country'])(idData),
-      size: 140
+      header: country === 'Canada' ? 'Province' : 'State',
+      display: R.path(['state'])(idData),
+      size: 120
     },
     {
       header: 'Expiration Date',
