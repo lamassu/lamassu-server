@@ -34,6 +34,9 @@ export default {
     flexDirection: 'row',
     color: comet
   },
+  tl2: {
+    color: comet
+  },
   white: {
     color: white
   },
