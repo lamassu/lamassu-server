@@ -16,6 +16,7 @@ import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
 import MachineLogs from 'src/pages/MachineLogs'
+import Machines from 'src/pages/Machines'
 import CashCassettes from 'src/pages/Maintenance/CashCassettes'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
@@ -29,6 +30,12 @@ import Wizard from 'src/pages/Wizard'
 import { namespaces } from 'src/utils/config'
 
 const tree = [
+  {
+    key: 'machines',
+    label: 'Machines',
+    route: '/machines',
+    component: Machines
+  },
   {
     key: 'transactions',
     label: 'Transactions',
