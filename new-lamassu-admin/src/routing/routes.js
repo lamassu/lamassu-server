@@ -21,6 +21,7 @@ import ConfigMigration from 'src/pages/ConfigMigration'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
+import Coupons from 'src/pages/LoyaltyPanel/CouponCodes'
 import MachineLogs from 'src/pages/MachineLogs'
 import CashCassettes from 'src/pages/Maintenance/CashCassettes'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
@@ -207,6 +208,12 @@ const tree = [
         label: 'Blacklist',
         route: '/compliance/blacklist',
         component: Blacklist
+      },
+      {
+        key: 'discount-coupons',
+        label: 'Discount Coupons',
+        route: '/compliance/loyalty/coupons',
+        component: Coupons
       },
       {
         key: 'customer',
