@@ -33,14 +33,14 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
     },
     {
       header: 'Birth Date',
-      display: ifNotNull(rawDob, moment.utc(rawDob).format('YYYY-MM-D')),
+      display: ifNotNull(rawDob, moment.utc(rawDob).format('YYYY-MM-DD')),
       size: 110
     },
     {
       header: 'Age',
       display: ifNotNull(
         rawDob,
-        moment.utc().diff(moment.utc(rawDob).format('YYYY-MM-D'), 'years')
+        moment.utc().diff(moment.utc(rawDob).format('YYYY-MM-DD'), 'years')
       ),
       size: 50
     },
@@ -58,7 +58,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
       header: 'Expiration Date',
       display: ifNotNull(
         rawExpirationDate,
-        moment.utc(rawExpirationDate).format('YYYY-MM-D')
+        moment.utc(rawExpirationDate).format('YYYY-MM-DD')
       )
     }
   ]
