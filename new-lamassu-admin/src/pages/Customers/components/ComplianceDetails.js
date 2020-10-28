@@ -47,7 +47,7 @@ const Photo = ({ show, src }) => {
   )
 }
 
-const ComplianceDetails = ({ customer, locale, updateCustomer }) => {
+const ComplianceDetails = ({ customer, updateCustomer }) => {
   const classes = useStyles({ width: imageWidth })
 
   const sanctions = R.path(['sanctions'])(customer)

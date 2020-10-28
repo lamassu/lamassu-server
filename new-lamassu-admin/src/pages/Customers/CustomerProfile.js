@@ -73,7 +73,6 @@ const SET_CUSTOMER = gql`
   mutation setCustomer($customerId: ID!, $customerInput: CustomerInput) {
     setCustomer(customerId: $customerId, customerInput: $customerInput) {
       id
-      name
       authorizedOverride
       frontCameraPath
       frontCameraOverride
@@ -194,7 +193,6 @@ const CustomerProfile = memo(() => {
       {showCompliance && (
         <ComplianceDetails
           customer={customerData}
-          locale={locale}
           updateCustomer={updateCustomer}
         />
       )}
