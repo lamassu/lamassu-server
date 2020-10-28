@@ -1,4 +1,10 @@
-import { spacer, fontPrimary, primaryColor, white } from 'src/styling/variables'
+import {
+  spacer,
+  fontPrimary,
+  primaryColor,
+  white,
+  comet
+} from 'src/styling/variables'
 
 export default {
   grid: {
@@ -25,7 +31,8 @@ export default {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    color: comet
   },
   white: {
     color: white

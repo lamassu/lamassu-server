@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/react-hooks'
-import { Box } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
@@ -8,7 +7,7 @@ import React from 'react'
 
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
-import { H4 } from 'src/components/typography'
+import { TL1 } from 'src/components/typography'
 
 import styles from './Machines.styles'
 
@@ -46,11 +45,14 @@ const Machines = () => {
           displayName={it => it.name}
         />
         <div className={classes.content}>
-          <Box display="flex" justifyContent="space-between" mb={3}>
-            <H4 noMargin className={classes.subtitle}>
-              {'Content'}
-            </H4>
-          </Box>
+          <TL1 className={classes.subtitle}>{'Details'}</TL1>
+          <p>Here be details</p>
+          <TL1 className={classes.subtitle}>{'Cashboxes (cassettes?)'}</TL1>
+          <p>Here be cash cassette details</p>
+          <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
+          <p>Here be latest transactions</p>
+          <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
+          <p>Here be commissions</p>
         </div>
       </Grid>
     </>

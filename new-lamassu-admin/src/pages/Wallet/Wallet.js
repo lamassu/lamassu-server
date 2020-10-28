@@ -81,6 +81,9 @@ const Wallet = ({ name: SCREEN_KEY }) => {
     const namespaced = fromNamespace(it)(config)
     return !WalletSchema.isValidSync(namespaced)
   }
+  console.log(
+    getElements(cryptoCurrencies, accountsConfig, enableThirdPartyService)
+  )
 
   return (
     <>
