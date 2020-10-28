@@ -101,13 +101,13 @@ const CashCassettes = () => {
     },
     {
       name: 'cassette1',
-      header: 'Cash-out 1',
+      header: 'Cassette 1 (Top)',
       width: 265,
       stripe: true,
       view: (value, { id }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.bottom}
+          denomination={getCashoutSettings(id)?.top}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -119,13 +119,13 @@ const CashCassettes = () => {
     },
     {
       name: 'cassette2',
-      header: 'Cash-out 2',
+      header: 'Cassette 2 (Bottom)',
       width: 265,
       stripe: true,
       view: (value, { id }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.top}
+          denomination={getCashoutSettings(id)?.bottom}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
