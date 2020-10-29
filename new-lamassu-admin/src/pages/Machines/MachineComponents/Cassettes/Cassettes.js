@@ -6,7 +6,7 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut } from 'src/components/inputs/cashbox/Cashbox'
 import { fromNamespace } from 'src/utils/config'
 
-import styles from './Cassettes.styles.js'
+import styles from './Cassettes.styles'
 
 const useStyles = makeStyles(styles)
 
@@ -41,10 +41,10 @@ const CashCassettes = ({ machine, config }) => {
       header: 'Cash-out 1',
       width: 265,
       stripe: true,
-      view: (value, { id }) => (
+      view: (value, { deviceId }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.bottom}
+          denomination={getCashoutSettings(deviceId)?.bottom}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -55,14 +55,16 @@ const CashCassettes = ({ machine, config }) => {
       header: 'Cash-out 2',
       width: 265,
       stripe: true,
-      view: (value, { id }) => (
-        <CashOut
-          className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.top}
-          currency={{ code: fiatCurrency }}
-          notes={value}
-        />
-      )
+      view: (value, { deviceId }) => {
+        return (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(deviceId)?.top}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        )
+      }
     }
   ]
 
