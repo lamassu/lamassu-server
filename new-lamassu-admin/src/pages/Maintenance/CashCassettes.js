@@ -29,7 +29,7 @@ const ValidationSchema = Yup.object().shape({
 })
 
 const GET_MACHINES_AND_CONFIG = gql`
-  {
+  query getData {
     machines {
       name
       id: deviceId
@@ -66,6 +66,7 @@ const CashCassettes = () => {
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
   const [resetCashOut] = useMutation(RESET_CASHOUT_BILLS, {
+    refetchQueries: () => ['getData'],
     onError: ({ graphQLErrors, message }) => {
       const errorMessage = graphQLErrors[0] ? graphQLErrors[0].message : message
       // TODO new-admin : this should not be final
