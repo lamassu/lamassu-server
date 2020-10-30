@@ -69,17 +69,9 @@ const Item = ({ children, ...props }) => (
 )
 
 const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
-  const [action, setAction] = useState('')
-  const [renameActionDialogOpen, setRenameActionDialogOpen] = useState(false)
-  const [confirmActionDialogOpen, setConfirmActionDialogOpen] = useState(false)
+  const [action, setAction] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useMDStyles()
-
-  const confirmActionDialog = action =>
-    setAction(action) || setConfirmActionDialogOpen(true)
-
-  const renameActionDialog = () =>
-    setAction('Rename') || setRenameActionDialogOpen(true)
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
     onError: ({ message }) => {
@@ -88,10 +80,11 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
     },
     onCompleted: () => {
       onActionSuccess && onActionSuccess()
-      setConfirmActionDialogOpen(false)
-      setRenameActionDialogOpen(false)
+      setAction(null)
     }
   })
+
+  const confirmDialogOpen = Boolean(action)
 
   return (
     <>
@@ -134,43 +127,25 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
           className={classes.separator}
         />
         <ConfirmDialog
-          open={renameActionDialogOpen}
-          title={`Rename this machine?`}
-          initialValue={machine.name}
+          open={confirmDialogOpen}
+          title={`${action?.command} this machine?`}
           errorMessage={errorMessage}
-          confirmationMessage={`Write the new name for this machine`}
-          saveButtonAlwaysEnabled={true}
+          toBeConfirmed={machine.name}
+          message={action?.message}
+          confirmationMessage={action?.confirmationMessage}
+          saveButtonAlwaysEnabled={action?.command === 'Rename'}
           onConfirmed={value => {
             setErrorMessage(null)
             machineAction({
               variables: {
                 deviceId: machine.deviceId,
-                action: `${action}`.toLowerCase(),
-                newName: value
+                action: `${action?.command}`.toLowerCase(),
+                ...(action?.command === 'Rename' && { newName: value })
               }
             })
           }}
           onDissmised={() => {
-            setRenameActionDialogOpen(false)
-            setErrorMessage(null)
-          }}
-        />
-        <ConfirmDialog
-          open={confirmActionDialogOpen}
-          title={`${action} this machine?`}
-          errorMessage={errorMessage}
-          toBeConfirmed={machine.name}
-          onConfirmed={() => {
-            setErrorMessage(null)
-            machineAction({
-              variables: {
-                deviceId: machine.deviceId,
-                action: `${action}`.toLowerCase()
-              }
-            })
-          }}
-          onDissmised={() => {
-            setConfirmActionDialogOpen(false)
+            setAction(null)
             setErrorMessage(null)
           }}
         />
@@ -197,7 +172,12 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   color="primary"
                   Icon={EditIcon}
                   InverseIcon={EditReversedIcon}
-                  onClick={() => renameActionDialog()}>
+                  onClick={() =>
+                    setAction({
+                      command: 'Rename',
+                      confirmationMessage: 'Write the new name for this machine'
+                    })
+                  }>
                   Rename
                 </ActionButton>
                 <ActionButton
@@ -206,7 +186,11 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   Icon={UnpairIcon}
                   InverseIcon={UnpairReversedIcon}
                   disabled={loading}
-                  onClick={() => confirmActionDialog('Unpair')}>
+                  onClick={() =>
+                    setAction({
+                      command: 'Unpair'
+                    })
+                  }>
                   Unpair
                 </ActionButton>
                 <ActionButton
@@ -215,7 +199,11 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   Icon={RebootIcon}
                   InverseIcon={RebootReversedIcon}
                   disabled={loading}
-                  onClick={() => confirmActionDialog('Reboot')}>
+                  onClick={() =>
+                    setAction({
+                      command: 'Reboot'
+                    })
+                  }>
                   Reboot
                 </ActionButton>
                 <ActionButton
@@ -224,7 +212,13 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   color="primary"
                   Icon={ShutdownIcon}
                   InverseIcon={ShutdownReversedIcon}
-                  onClick={() => confirmActionDialog('Shutdown')}>
+                  onClick={() =>
+                    setAction({
+                      command: 'Shutdown',
+                      message:
+                        'In order to bring it back online, the machine will need to be visited and its power reset.'
+                    })
+                  }>
                   Shutdown
                 </ActionButton>
               </div>

@@ -8,7 +8,7 @@ import React, { memo, useState } from 'react'
 
 import { Button, IconButton } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs'
-import { H4 } from 'src/components/typography'
+import { H4, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { spacer } from 'src/styling/variables'
 
@@ -60,6 +60,7 @@ export const ConfirmDialog = memo(
     open,
     toBeConfirmed,
     saveButtonAlwaysEnabled = false,
+    message,
     confirmationMessage = `Write '${toBeConfirmed}' to confirm this action`,
     onConfirmed,
     onDissmised,
@@ -98,6 +99,7 @@ export const ConfirmDialog = memo(
           </DialogTitle>
         )}
         <DialogContent className={classes.dialogContent}>
+          {message && <P>{message}</P>}
           <TextInput
             label={confirmationMessage}
             name="confirm-input"
