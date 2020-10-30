@@ -33,6 +33,17 @@ const GET_MACHINES = gql`
 
 const NUM_LOG_RESULTS = 500
 
+const GET_MACHINE_LOGS_CSV = gql`
+  query MachineLogs($deviceId: ID!, $limit: Int, $from: Date, $until: Date) {
+    machineLogsCsv(
+      deviceId: $deviceId
+      limit: $limit
+      from: $from
+      until: $until
+    )
+  }
+`
+
 const GET_MACHINE_LOGS = gql`
   query MachineLogs($deviceId: ID!, $limit: Int, $from: Date, $until: Date) {
     machineLogs(
@@ -87,9 +98,9 @@ const Logs = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="machine-logs"
-                query={GET_MACHINE_LOGS}
+                query={GET_MACHINE_LOGS_CSV}
                 args={{ deviceId }}
-                getLogs={logs => R.path(['machineLogs'])(logs)}
+                getLogs={logs => R.path(['machineLogsCsv'])(logs)}
               />
               <Info3>{saveMessage}</Info3>
             </div>

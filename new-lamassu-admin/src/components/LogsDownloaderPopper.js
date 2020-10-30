@@ -185,8 +185,7 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
       return moment(date).format('YYYY-MM-DD_HH-mm')
     }
 
-    const text = logs.map(it => JSON.stringify(it)).join('\n')
-    const blob = new window.Blob([text], {
+    const blob = new window.Blob([logs], {
       type: 'text/plain;charset=utf-8'
     })
 
