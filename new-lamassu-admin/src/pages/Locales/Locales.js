@@ -102,13 +102,11 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const [cancelCryptoConfiguration, setCancelCryptoConfiguration] = useState(
     null
   )
-  const [error, setError] = useState(false)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    onError: () => setError(true),
     refetchQueries: () => ['getData']
   })
 
@@ -130,14 +128,14 @@ const Locales = ({ name: SCREEN_KEY }) => {
       config.fiatCurrency &&
       newConfig.locale_fiatCurrency !== config.fiatCurrency
     )
-      setDataToSave(newConfig)
-    else save(newConfig)
+      return setDataToSave(newConfig)
+
+    return save(newConfig)
   }
 
   const save = config => {
     setDataToSave(null)
-    setError(false)
-    saveConfig({ variables: { config } })
+    return saveConfig({ variables: { config } })
   }
 
   const saveOverrides = it => {
@@ -169,6 +167,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
       <Section>
         <EditableTable
           title="Default settings"
+          error={error?.message}
           titleLg
           name="locale"
           enableEdit
@@ -183,6 +182,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
       </Section>
       <Section>
         <EditableTable
+          error={error?.message}
           title="Overrides"
           titleLg
           name="overrides"
@@ -213,7 +213,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
             save(toNamespace(namespaces.WALLETS)(rawConfig))
             setCancelCryptoConfiguration(null)
           }}
-          error={error}
+          error={error?.message}
           cryptoCurrencies={cryptoCurrencies}
           userAccounts={data?.config?.accounts}
           accounts={accounts}

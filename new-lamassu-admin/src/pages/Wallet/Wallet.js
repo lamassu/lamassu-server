@@ -49,12 +49,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
     null
   )
   const [wizard, setWizard] = useState(false)
-  const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    onError: () => setError(true),
     refetchQueries: () => ['getData']
   })
 
@@ -65,7 +63,6 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setError(false)
     return saveConfig({ variables: { config, accounts } })
   }
 
@@ -90,11 +87,12 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <TitleSection title="Wallet Settings" error={error} />
+      <TitleSection title="Wallet Settings" />
       <EditableTable
         name="test"
         namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
         data={config}
+        error={error?.message}
         stripeWhen={it => !WalletSchema.isValidSync(it)}
         enableEdit
         shouldOverrideEdit={shouldOverrideEdit}
@@ -113,7 +111,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
           onClose={() => setWizard(false)}
           save={save}
-          error={error}
+          error={error?.message}
           cryptoCurrencies={cryptoCurrencies}
           userAccounts={data?.config?.accounts}
           accounts={accounts}
