@@ -41,7 +41,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
   })
 
@@ -76,6 +76,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
       <TitleSection title="Commissions" />
       <Section>
         <EditableTable
+          error={error?.message}
           title="Default setup"
           rowSize="lg"
           titleLg
@@ -92,6 +93,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
       </Section>
       <Section>
         <EditableTable
+          error={error?.message}
           title="Overrides"
           titleLg
           name="overrides"

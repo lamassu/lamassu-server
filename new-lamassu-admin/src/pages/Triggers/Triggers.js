@@ -34,7 +34,6 @@ const GET_INFO = gql`
 const Triggers = () => {
   const classes = useStyles()
   const [wizard, setWizard] = useState(false)
-  const [error, setError] = useState(false)
 
   const { data, loading } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
@@ -43,9 +42,8 @@ const Triggers = () => {
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    onError: () => setError(true),
     refetchQueries: () => ['getData']
   })
 
@@ -53,7 +51,6 @@ const Triggers = () => {
     const toSave = R.concat([{ id: v4(), direction: 'both', ...rawConfig }])(
       triggers
     )
-    setError(false)
     return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
   }
 
@@ -63,7 +60,6 @@ const Triggers = () => {
   }
 
   const save = config => {
-    setError(false)
     return saveConfig({
       variables: { config: { triggers: toServer(config.triggers) } }
     })
@@ -121,6 +117,7 @@ const Triggers = () => {
         sortBy={sortBy}
         groupBy="triggerType"
         enableDelete
+        error={error?.message}
         save={save}
         validationSchema={Schema}
         elements={getElements(currency, classes)}
@@ -128,7 +125,7 @@ const Triggers = () => {
       {wizard && (
         <Wizard
           currency={currency}
-          error={error}
+          error={error?.message}
           save={add}
           onClose={() => setWizard(null)}
         />

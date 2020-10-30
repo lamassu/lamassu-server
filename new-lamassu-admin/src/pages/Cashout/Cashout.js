@@ -48,18 +48,15 @@ const GET_INFO = gql`
 const CashOut = ({ name: SCREEN_KEY }) => {
   const classes = useStyles()
   const [wizard, setWizard] = useState(false)
-  const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    onError: () => setError(true),
     refetchQueries: () => ['getData']
   })
 
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setError(false)
     return saveConfig({ variables: { config, accounts } })
   }
 
@@ -76,7 +73,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <TitleSection title="Cash-out" error={error}>
+      <TitleSection title="Cash-out">
         <div className={classes.fudgeFactor}>
           <P>Transaction fudge factor</P>
           <Switch
@@ -102,7 +99,6 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         </div>
       </TitleSection>
       <EditableTable
-        name="test"
         namespaces={R.map(R.path(['deviceId']))(machines)}
         data={config}
         stripeWhen={it => !DenominationsSchema.isValidSync(it)}
@@ -112,6 +108,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         toggleWidth={109}
         onToggle={onToggle}
         save={save}
+        error={error?.message}
         validationSchema={DenominationsSchema}
         disableRowEdit={R.compose(R.not, R.path(['active']))}
         elements={getElements(machines, locale)}
@@ -121,7 +118,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           machine={R.find(R.propEq('deviceId', wizard))(machines)}
           onClose={() => setWizard(false)}
           save={save}
-          error={error}
+          error={error?.message}
           locale={locale}
         />
       )}

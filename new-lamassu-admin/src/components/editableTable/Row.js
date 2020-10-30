@@ -34,10 +34,15 @@ const ActionCol = ({ disabled, editing }) => {
     onToggle,
     toggleWidth,
     forceAdd,
+    clearError,
     actionColSize
   } = useContext(TableCtx)
 
   const disableEdit = disabled || (disableRowEdit && disableRowEdit(values))
+  const cancel = () => {
+    clearError()
+    resetForm()
+  }
 
   return (
     <>
@@ -51,7 +56,7 @@ const ActionCol = ({ disabled, editing }) => {
             Save
           </Link>
           {!forceAdd && (
-            <Link color="secondary" onClick={resetForm}>
+            <Link color="secondary" onClick={cancel}>
               Cancel
             </Link>
           )}
@@ -170,6 +175,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
     elements,
     enableEdit,
     enableDelete,
+    error,
     enableToggle,
     rowSize,
     stripeWhen
@@ -199,13 +205,18 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
   }
 
   const touchedErrors = R.pick(R.keys(touched), errors)
+  const hasTouchedErrors = touchedErrors && R.keys(touchedErrors).length > 0
+  const hasErrors = hasTouchedErrors || !!error
+
+  const errorMessage =
+    error || (touchedErrors && R.values(touchedErrors).join(', '))
 
   return (
     <Tr
       className={classnames(classNames)}
       size={rowSize}
-      error={touchedErrors && R.keys(touchedErrors).length > 0}
-      errorMessage={touchedErrors && R.values(touchedErrors).join(', ')}>
+      error={editing && hasErrors}
+      errorMessage={errorMessage}>
       {innerElements.map((it, idx) => {
         return (
           <ECol

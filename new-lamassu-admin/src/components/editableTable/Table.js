@@ -32,6 +32,7 @@ const ETable = ({
   elements = [],
   data = [],
   save,
+  error: externalError,
   rowSize = 'md',
   validationSchema,
   enableCreate,
@@ -58,8 +59,14 @@ const ETable = ({
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
 
-  useEffect(() => setAdding(forceAdd), [forceAdd])
+  useEffect(() => setError(externalError), [externalError])
+  useEffect(() => {
+    setError(null)
+    setAdding(forceAdd)
+  }, [forceAdd])
+
   const innerSave = async value => {
     if (saving) return
 
@@ -70,9 +77,9 @@ const ETable = ({
     const list = index !== -1 ? R.update(index, it, data) : R.prepend(it, data)
 
     if (!R.equals(data[index], it)) {
-      // no response means the save failed
-      const response = await save({ [name]: list }, it)
-      if (!response) {
+      try {
+        await save({ [name]: list }, it)
+      } catch (err) {
         setSaving(false)
         return
       }
@@ -98,11 +105,13 @@ const ETable = ({
   const onEdit = it => {
     if (shouldOverrideEdit && shouldOverrideEdit(it)) return editOverride(it)
     setEditingId(it)
+    setError(null)
     setEditing && setEditing(it, true)
   }
 
   const addField = () => {
     setAdding(true)
+    setError(null)
     setEditing && setEditing(true, true)
   }
 
@@ -129,6 +138,8 @@ const ETable = ({
     elements,
     enableEdit,
     onEdit,
+    clearError: () => setError(null),
+    error: error,
     disableRowEdit,
     editWidth,
     enableDelete,

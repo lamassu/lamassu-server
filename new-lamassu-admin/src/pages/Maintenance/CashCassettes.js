@@ -67,13 +67,8 @@ const CashCassettes = () => {
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
-  const [resetCashOut] = useMutation(RESET_CASHOUT_BILLS, {
-    refetchQueries: () => ['getData'],
-    onError: ({ graphQLErrors, message }) => {
-      const errorMessage = graphQLErrors[0] ? graphQLErrors[0].message : message
-      // TODO new-admin : this should not be final
-      alert(JSON.stringify(errorMessage))
-    }
+  const [resetCashOut, { error }] = useMutation(RESET_CASHOUT_BILLS, {
+    refetchQueries: () => ['getData']
   })
 
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
@@ -145,6 +140,7 @@ const CashCassettes = () => {
       <TitleSection title="Cash Cassettes" />
 
       <EditableTable
+        error={error?.message}
         name="cashboxes"
         enableEdit
         stripeWhen={isCashOutDisabled}
