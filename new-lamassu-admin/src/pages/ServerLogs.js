@@ -59,6 +59,12 @@ const formatDate = date => {
 
 const NUM_LOG_RESULTS = 500
 
+const GET_CSV = gql`
+  query ServerData($limit: Int, $from: Date, $until: Date) {
+    serverLogsCsv(limit: $limit, from: $from, until: $until)
+  }
+`
+
 const GET_DATA = gql`
   query ServerData($limit: Int, $from: Date, $until: Date) {
     serverVersion
@@ -118,9 +124,9 @@ const Logs = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="server-logs"
-                query={GET_DATA}
+                query={GET_CSV}
                 logs={data.serverLogs}
-                getLogs={logs => R.path(['serverLogs'])(logs)}
+                getLogs={logs => R.path(['serverLogsCsv'])(logs)}
               />
               <Info3>{saveMessage}</Info3>
             </div>

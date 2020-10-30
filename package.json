@@ -36,6 +36,7 @@
     "graphql-type-json": "^0.3.1",
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
+    "json-2-csv": "^3.7.8",
     "kraken-api": "github:DeX3/npm-kraken-api",
     "libphonenumber-js": "^1.7.38",
     "lnd-async": "^1.8.0",

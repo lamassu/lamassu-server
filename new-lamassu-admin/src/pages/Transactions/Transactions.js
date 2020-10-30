@@ -21,6 +21,12 @@ const useStyles = makeStyles(mainStyles)
 
 const NUM_LOG_RESULTS = 1000
 
+const GET_TRANSACTIONS_CSV = gql`
+  query transactions($limit: Int, $from: Date, $until: Date) {
+    transactionsCsv(limit: $limit, from: $from, until: $until)
+  }
+`
+
 const GET_TRANSACTIONS = gql`
   query transactions($limit: Int, $from: Date, $until: Date) {
     transactions(limit: $limit, from: $from, until: $until) {
@@ -142,8 +148,8 @@ const Transactions = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="transactions"
-                query={GET_TRANSACTIONS}
-                getLogs={logs => R.path(['transactions'])(logs)}
+                query={GET_TRANSACTIONS_CSV}
+                getLogs={logs => R.path(['transactionsCsv'])(logs)}
               />
             </div>
           )}
