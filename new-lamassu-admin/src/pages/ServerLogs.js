@@ -60,14 +60,14 @@ const formatDate = date => {
 const NUM_LOG_RESULTS = 500
 
 const GET_DATA = gql`
-  query ServerData($limit: Int) {
+  query ServerData($limit: Int, $from: Date, $until: Date) {
     serverVersion
     uptime {
       name
       state
       uptime
     }
-    serverLogs(limit: $limit) {
+    serverLogs(limit: $limit, from: $from, until: $until) {
       logLevel
       id
       timestamp
@@ -118,8 +118,9 @@ const Logs = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="server-logs"
+                query={GET_DATA}
                 logs={data.serverLogs}
-                getTimestamp={log => log.timestamp}
+                getLogs={logs => R.path(['serverLogs'])(logs)}
               />
               <Info3>{saveMessage}</Info3>
             </div>
