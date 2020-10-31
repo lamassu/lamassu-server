@@ -1,10 +1,10 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -53,12 +53,21 @@ const GET_TRANSACTIONS = gql`
 const Transactions = ({ id }) => {
   const classes = useStyles()
 
-  const { data: txResponse, loading } = useQuery(GET_TRANSACTIONS, {
-    variables: {
-      limit: NUM_LOG_RESULTS,
-      id
+  const [getTx, { data: txResponse, loading }] = useLazyQuery(
+    GET_TRANSACTIONS,
+    {
+      variables: {
+        limit: NUM_LOG_RESULTS,
+        id
+      }
     }
-  })
+  )
+
+  useEffect(() => {
+    if (id !== null) {
+      getTx()
+    }
+  }, [getTx, id])
 
   const formatCustomerName = customer => {
     const { firstName, lastName } = customer
