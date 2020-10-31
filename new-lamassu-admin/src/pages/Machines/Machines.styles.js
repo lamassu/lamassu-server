@@ -15,7 +15,8 @@ export default {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    marginLeft: spacer * 6
+    marginLeft: spacer * 6,
+    maxWidth: 900
   },
   footer: {
     margin: [['auto', 0, spacer * 3, 'auto']]

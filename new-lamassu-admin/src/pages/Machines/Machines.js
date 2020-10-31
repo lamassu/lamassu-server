@@ -11,6 +11,7 @@ import { TL1 } from 'src/components/typography'
 
 import Cassettes from './MachineComponents/Cassettes'
 import Details from './MachineComponents/Details'
+import Transactions from './MachineComponents/Transactions'
 import styles from './Machines.styles'
 
 const useStyles = makeStyles(styles)
@@ -76,7 +77,7 @@ const Machines = () => {
           <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
           <Cassettes machine={machineInfo} config={data?.config ?? false} />
           <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
-          <p>Here be latest transactions</p>
+          <Transactions id={machineInfo?.deviceId ?? null} />
           <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
           <p>Here be commissions</p>
         </div>
