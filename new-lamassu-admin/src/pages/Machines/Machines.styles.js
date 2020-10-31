@@ -36,7 +36,8 @@ export default {
     color: comet
   },
   tl2: {
-    color: comet
+    color: comet,
+    marginTop: 0
   },
   white: {
     color: white
@@ -53,7 +54,8 @@ export default {
     justifyContent: 'space-around'
   },
   rowItem: {
-    flex: 1
+    flex: 1,
+    marginBottom: spacer * 2
   },
   detailItem: {
     marginBottom: spacer * 4
