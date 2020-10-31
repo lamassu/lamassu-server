@@ -49,59 +49,34 @@ const Details = ({ data, onActionSuccess }) => {
   const classes = useStyles()
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around'
-        }}>
-        <div style={{ flex: 1 }}>
-          {' '}
-          <Label4 className={classes.tl2}>Actions</Label4>
-          {data.name && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row'
-              }}>
-              <ActionButton
-                style={{ marginRight: 'auto' }}
-                color="primary"
-                className={classes.mr}
-                Icon={UnpairIcon}
-                InverseIcon={UnpairReversedIcon}
-                onClick={() => confirmActionDialog('Unpair')}>
-                Unpair
-              </ActionButton>
-              <ActionButton
-                style={{ marginRight: 'auto' }}
-                color="primary"
-                className={classes.mr}
-                Icon={RebootIcon}
-                InverseIcon={RebootReversedIcon}
-                onClick={() => confirmActionDialog('Reboot')}>
-                Reboot
-              </ActionButton>
-              <ActionButton
-                style={{ marginRight: 'auto' }}
-                className={classes.inlineChip}
-                color="primary"
-                Icon={ShutdownIcon}
-                InverseIcon={ShutdownReversedIcon}
-                onClick={() => confirmActionDialog('Shutdown')}>
-                Shutdown
-              </ActionButton>
-            </div>
-          )}
-        </div>
-        <div style={{ flex: 1 }}>
+      <div className={classes.row}>
+        <div className={classes.rowItem}>
           {' '}
           <Label4 className={classes.tl2}>Status</Label4>
           {data && data.statuses ? <Status status={data.statuses[0]} /> : null}
           {/*           <Label4 className={classes.tl2}>Machine model</Label4>
-          <P>{data.model}</P> */}
+              <P>{data.model}</P> */}
         </div>
-        <div style={{ flex: 1 }}>
+        <div className={classes.rowItem}>
+          <Label4 className={classes.tl2}>Machine model</Label4>
+          <P>{data.model}</P>
+        </div>
+        <div className={classes.rowItem}>
+          {' '}
+          <Label4 className={classes.tl2}>Software version</Label4>
+          <P>{data.version}</P>
+        </div>
+
+        <div className={classes.rowItem}>
+          {' '}
+          <Label4 className={classes.tl2}>Paired at</Label4>
+          <P>
+            {data.pairedAt
+              ? moment(data.pairedAt).format('YYYY-MM-DD HH:mm:ss')
+              : ''}
+          </P>
+        </div>
+        <div className={classes.rowItem}>
           {' '}
           <Label4 className={classes.tl2}>Last ping</Label4>
           <P>
@@ -111,30 +86,38 @@ const Details = ({ data, onActionSuccess }) => {
           </P>
         </div>
       </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around'
-        }}>
-        <div style={{ flex: 1 }}>
-          <Label4 className={classes.tl2}>Machine model</Label4>
-          <P>{data.model}</P>
-        </div>
-        <div style={{ flex: 1 }}>
+      <div className={classes.row}>
+        <div className={classes.rowItem}>
           {' '}
-          <Label4 className={classes.tl2}>Software version</Label4>
-          <P>{data.version}</P>
-        </div>
-
-        <div style={{ flex: 1 }}>
-          {' '}
-          <Label4 className={classes.tl2}>Paired at</Label4>
-          <P>
-            {data.pairedAt
-              ? moment(data.pairedAt).format('YYYY-MM-DD HH:mm:ss')
-              : ''}
-          </P>
+          <Label4 className={classes.tl2}>Actions</Label4>
+          {data.name && (
+            <div className={classes.actionButtonsContainer}>
+              <ActionButton
+                color="primary"
+                className={classes.actionButton}
+                Icon={UnpairIcon}
+                InverseIcon={UnpairReversedIcon}
+                onClick={() => confirmActionDialog('Unpair')}>
+                Unpair
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.actionButton}
+                Icon={RebootIcon}
+                InverseIcon={RebootReversedIcon}
+                onClick={() => confirmActionDialog('Reboot')}>
+                Reboot
+              </ActionButton>
+              <ActionButton
+                className={classes.actionButton}
+                color="primary"
+                Icon={ShutdownIcon}
+                InverseIcon={ShutdownReversedIcon}
+                onClick={() => confirmActionDialog('Shutdown')}>
+                Shutdown
+              </ActionButton>
+            </div>
+          )}
         </div>
       </div>
       <ConfirmDialog
