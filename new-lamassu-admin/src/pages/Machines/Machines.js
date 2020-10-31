@@ -10,6 +10,7 @@ import TitleSection from 'src/components/layout/TitleSection'
 import { TL1 } from 'src/components/typography'
 
 import Cassettes from './MachineComponents/Cassettes'
+import Commissions from './MachineComponents/Commissions'
 import Details from './MachineComponents/Details'
 import Transactions from './MachineComponents/Transactions'
 import styles from './Machines.styles'
@@ -58,6 +59,10 @@ const Machines = () => {
     }
   }, [data, loading, touched])
 
+  /*
+    const isId = R.either(R.propEq('machine', 'ALL_MACHINES'), R.propEq('machine', 'e139c9021251ecf9c5280379b885983901b3dad14963cf38b6d7c1fb33faf72e'))
+    R.filter(isId)(data.overrides)
+  */
   return (
     <>
       <TitleSection title="Machine details page" />
@@ -79,7 +84,10 @@ const Machines = () => {
           <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
           <Transactions id={machineInfo?.deviceId ?? null} />
           <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
-          <p>Here be commissions</p>
+          <Commissions
+            name={'commissions'}
+            id={machineInfo?.deviceId ?? null}
+          />
         </div>
       </Grid>
     </>
