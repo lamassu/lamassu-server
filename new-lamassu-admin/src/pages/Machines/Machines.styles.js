@@ -46,5 +46,23 @@ export default {
   },
   addressRow: {
     marginLeft: 8
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  rowItem: {
+    flex: 1
+  },
+  detailItem: {
+    marginBottom: spacer * 4
+  },
+  actionButtonsContainer: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  actionButton: {
+    marginRight: 8
   }
 }

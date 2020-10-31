@@ -77,17 +77,25 @@ const Machines = () => {
           }}
         />
         <div className={classes.content}>
-          <TL1 className={classes.subtitle}>{'Details'}</TL1>
-          <Details data={machineInfo} onActionSuccess={refetch} />
-          <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
-          <Cassettes machine={machineInfo} config={data?.config ?? false} />
-          <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
-          <Transactions id={machineInfo?.deviceId ?? null} />
-          <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
-          <Commissions
-            name={'commissions'}
-            id={machineInfo?.deviceId ?? null}
-          />
+          <div className={classes.detailItem}>
+            <TL1 className={classes.subtitle}>{'Details'}</TL1>
+            <Details data={machineInfo} onActionSuccess={refetch} />
+          </div>
+          <div className={classes.detailItem}>
+            <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
+            <Cassettes machine={machineInfo} config={data?.config ?? false} />
+          </div>
+          <div className={classes.detailItem}>
+            <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
+            <Transactions id={machineInfo?.deviceId ?? null} />
+          </div>
+          <div className={classes.detailItem}>
+            <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
+            <Commissions
+              name={'commissions'}
+              id={machineInfo?.deviceId ?? null}
+            />
+          </div>
         </div>
       </Grid>
     </>
