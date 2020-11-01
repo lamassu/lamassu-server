@@ -1,10 +1,11 @@
+/* eslint-disable */
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -52,6 +53,9 @@ const GET_TRANSACTIONS = gql`
 
 const Transactions = ({ id }) => {
   const classes = useStyles()
+
+  const [extraHeight, setExtraHeight] = useState(0)
+  const [clickedId, setClickedId] = useState('')
 
   const [getTx, { data: txResponse, loading }] = useLazyQuery(
     GET_TRANSACTIONS,
@@ -140,9 +144,21 @@ const Transactions = ({ id }) => {
     }
   ]
 
+  const handleClick = e => {
+    if (clickedId === e.id) {
+      setClickedId('')
+      setExtraHeight(0)
+    } else {
+      setClickedId(e.id)
+      setExtraHeight(310)
+    }
+  }
+
   return (
     <>
       <DataTable
+        extraHeight={extraHeight}
+        onClick={handleClick}
         loading={loading || id === null}
         emptyText="No transactions so far"
         elements={elements}
