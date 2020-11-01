@@ -85,7 +85,7 @@ const Machines = () => {
             <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
             <Cassettes machine={machineInfo} config={data?.config ?? false} />
           </div>
-          <div className={classes.detailItem}>
+          <div className={classes.transactionsItem}>
             <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
             <Transactions id={machineInfo?.deviceId ?? null} />
           </div>

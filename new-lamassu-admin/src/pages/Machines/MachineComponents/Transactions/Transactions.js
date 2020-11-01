@@ -6,11 +6,11 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect } from 'react'
 
-import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 
+import DataTable from './DataTable'
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
 import { getStatus } from './helper'

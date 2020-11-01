@@ -60,6 +60,9 @@ export default {
   detailItem: {
     marginBottom: spacer * 4
   },
+  transactionsItem: {
+    marginBottom: -spacer * 4
+  },
   actionButtonsContainer: {
     display: 'flex',
     flexDirection: 'row'
