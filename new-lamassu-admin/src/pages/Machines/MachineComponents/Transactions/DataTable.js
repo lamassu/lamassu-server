@@ -97,6 +97,7 @@ const DataTable = ({
   onClick,
   loading,
   emptyText,
+  extraHeight,
   ...props
 }) => {
   const [expanded, setExpanded] = useState(initialExpanded)
@@ -168,7 +169,7 @@ const DataTable = ({
                 // this has to be in a style because of how the component works
                 style={{ overflow: 'inherit', outline: 'none' }}
                 {...props}
-                height={data.length * 62}
+                height={data.length * 62 + extraHeight}
                 width={width}
                 rowCount={data.length}
                 rowHeight={cache.rowHeight}
