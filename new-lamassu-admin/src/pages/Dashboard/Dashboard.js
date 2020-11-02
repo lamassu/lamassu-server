@@ -6,7 +6,9 @@ import TitleSection from 'src/components/layout/TitleSection'
 
 import Alerts from './Alerts'
 import styles from './Dashboard.styles'
+import Footer from './Footer'
 import SystemPerformance from './SystemPerformance'
+import SystemStatus from './SystemStatus'
 
 const useStyles = makeStyles(styles)
 
@@ -27,15 +29,18 @@ const Dashboard = () => {
           <Grid item xs={6}>
             <Grid item style={{ marginBottom: 16 }}>
               <div className={classes.card}>
-                <Alerts />{' '}
+                <Alerts />
               </div>
             </Grid>
             <Grid item>
-              <div className={classes.card}>2 </div>
+              <div className={classes.card}>
+                <SystemStatus />
+              </div>
             </Grid>
           </Grid>
         </Grid>
       </div>
+      <Footer></Footer>
     </>
   )
 }
