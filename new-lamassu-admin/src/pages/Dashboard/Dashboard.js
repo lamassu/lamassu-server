@@ -4,8 +4,10 @@ import React from 'react'
 
 import TitleSection from 'src/components/layout/TitleSection'
 
+import Alerts from './Alerts'
 import styles from './Dashboard.styles'
 import SystemPerformance from './SystemPerformance'
+
 const useStyles = makeStyles(styles)
 
 const Dashboard = () => {
@@ -14,22 +16,23 @@ const Dashboard = () => {
     <>
       <TitleSection title="Dashboard" />
       <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs>
-            <div className={classes.card}>
-              <SystemPerformance />
-            </div>
+        <Grid container>
+          <Grid item xs={6}>
+            <Grid item style={{ marginRight: 24 }}>
+              <div className={classes.card}>
+                <SystemPerformance />
+              </div>
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <div className={classes.card}>asdasdasd</div>
-          </Grid>
-        </Grid>
-        <Grid container spacing={3}>
-          <Grid item xs>
-            <div className={classes.card}>asdasdasd</div>
-          </Grid>
-          <Grid item xs>
-            <div className={classes.card}>asdasdasd</div>
+          <Grid item xs={6}>
+            <Grid item style={{ marginBottom: 16 }}>
+              <div className={classes.card}>
+                <Alerts />{' '}
+              </div>
+            </Grid>
+            <Grid item>
+              <div className={classes.card}>2 </div>
+            </Grid>
           </Grid>
         </Grid>
       </div>
