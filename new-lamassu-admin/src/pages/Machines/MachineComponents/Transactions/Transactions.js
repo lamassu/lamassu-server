@@ -21,8 +21,8 @@ const useStyles = makeStyles(mainStyles)
 const NUM_LOG_RESULTS = 5
 
 const GET_TRANSACTIONS = gql`
-  query transactionsById($limit: Int, $from: Date, $until: Date, $id: String) {
-    transactionsById(limit: $limit, from: $from, until: $until, id: $id) {
+  query transactions($limit: Int, $from: Date, $until: Date, $id: String) {
+    transactions(limit: $limit, from: $from, until: $until, id: $id) {
       id
       txClass
       txHash
@@ -162,7 +162,7 @@ const Transactions = ({ id }) => {
         loading={loading || id === null}
         emptyText="No transactions so far"
         elements={elements}
-        data={R.path(['transactionsById'])(txResponse)}
+        data={R.path(['transactions'])(txResponse)}
         Details={DetailsRow}
         expandable
       />
