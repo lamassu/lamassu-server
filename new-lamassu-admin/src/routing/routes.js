@@ -13,6 +13,7 @@ import AuthRegister from 'src/pages/AuthRegister'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
+import Dashboard from 'src/pages/Dashboard'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
 import MachineLogs from 'src/pages/MachineLogs'
@@ -30,6 +31,12 @@ import Wizard from 'src/pages/Wizard'
 import { namespaces } from 'src/utils/config'
 
 const tree = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    route: '/dashboard',
+    component: Dashboard
+  },
   {
     key: 'machines',
     label: 'Machines',
