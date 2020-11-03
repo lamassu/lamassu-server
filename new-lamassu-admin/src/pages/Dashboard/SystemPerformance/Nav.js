@@ -8,12 +8,17 @@ import { H4 } from 'src/components/typography'
 import styles from './SystemPerformance.styles'
 const useStyles = makeStyles(styles)
 
-const Nav = () => {
+const Nav = ({ handleSetRange }) => {
   const classes = useStyles()
   const [clickedItem, setClickedItem] = useState('Day')
 
   const isSelected = innerText => {
     return innerText === clickedItem
+  }
+
+  const handleClick = range => {
+    setClickedItem(range)
+    handleSetRange(range)
   }
 
   return (
@@ -23,7 +28,7 @@ const Nav = () => {
       </div>
 
       <Button
-        onClick={e => setClickedItem(e.target.innerText)}
+        onClick={e => handleClick(e.target.innerText)}
         size="small"
         disableRipple
         disableFocusRipple
@@ -33,7 +38,7 @@ const Nav = () => {
         All time
       </Button>
       <Button
-        onClick={e => setClickedItem(e.target.innerText)}
+        onClick={e => handleClick(e.target.innerText)}
         size="small"
         disableRipple
         disableFocusRipple
@@ -43,7 +48,7 @@ const Nav = () => {
         6 months
       </Button>
       <Button
-        onClick={e => setClickedItem(e.target.innerText)}
+        onClick={e => handleClick(e.target.innerText)}
         size="small"
         disableRipple
         disableFocusRipple
@@ -53,7 +58,7 @@ const Nav = () => {
         Month
       </Button>
       <Button
-        onClick={e => setClickedItem(e.target.innerText)}
+        onClick={e => handleClick(e.target.innerText)}
         size="small"
         disableRipple
         disableFocusRipple
@@ -67,7 +72,7 @@ const Nav = () => {
         disableRipple
         disableFocusRipple
         className={isSelected('Day') ? classes.highlightedLabel : classes.label}
-        onClick={e => setClickedItem(e.target.innerText)}>
+        onClick={e => handleClick(e.target.innerText)}>
         Day
       </Button>
     </div>

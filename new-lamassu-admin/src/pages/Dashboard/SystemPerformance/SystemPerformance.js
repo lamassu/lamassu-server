@@ -1,8 +1,7 @@
-/* eslint-disable*/
-
 import Grid from '@material-ui/core/Grid'
+import moment from 'moment'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Label1, Label2 } from 'src/components/typography/index'
 
@@ -12,6 +11,16 @@ import Nav from './Nav'
 const isNotProp = R.curry(R.compose(R.isNil, R.prop))
 const getFiats = R.map(R.prop('fiat'))
 const getProps = propName => R.map(R.prop(propName))
+const today = moment().endOf('day')
+const lastWeek = moment()
+  .endOf('day')
+  .subtract(1, 'week')
+const lastMonth = moment()
+  .endOf('day')
+  .subtract(1, 'month')
+const last6months = moment()
+  .endOf('day')
+  .subtract(6, 'month')
 
 const data = {
   transactions: [
@@ -29,7 +38,7 @@ const data = {
       fiat: '110.00000',
       cashInFee: '1.00000',
       commissionPercentage: '0.01000',
-      created: '2020-10-29T21:15:55.864Z',
+      created: '2020-10-28T21:15:55.864Z',
       txClass: 'cashOut',
       error: null
     },
@@ -101,7 +110,7 @@ const data = {
       fiat: '10.00000',
       cashInFee: '1.00000',
       commissionPercentage: '0.01000',
-      created: '2020-10-29T21:08:12.690Z',
+      created: '2020-08-29T21:08:12.690Z',
       txClass: 'cashIn',
       error: null
     },
@@ -110,16 +119,16 @@ const data = {
       fiat: '250.00000',
       cashInFee: '1.00000',
       commissionPercentage: '0.01000',
-      created: '2020-10-29T21:07:47.075Z',
+      created: '2020-10-27T21:07:47.075Z',
       txClass: 'cashIn',
-      error: 'Insufficient Funds Error'
+      error: null
     },
     {
       fiatCode: 'USD',
       fiat: '100.00000',
       cashInFee: '1.00000',
       commissionPercentage: '0.01000',
-      created: '2020-10-29T19:03:55.581Z',
+      created: '2020-11-03T09:03:55.581Z',
       txClass: 'cashIn',
       error: null
     },
@@ -128,7 +137,7 @@ const data = {
       fiat: '999.00000',
       cashInFee: '1.00000',
       commissionPercentage: '0.11000',
-      created: '2020-10-19T16:31:28.076Z',
+      created: '2019-10-19T16:31:28.076Z',
       txClass: 'cashIn',
       error: null
     }
@@ -139,20 +148,53 @@ const data = {
 }
 
 const SystemPerformance = () => {
+  const [selectedRange, setSelectedRange] = useState('Day')
+  const [transactionsToShow, setTransactionsToShow] = useState([])
+  useEffect(() => {
+    const isInRange = t => {
+      switch (selectedRange) {
+        case 'Day':
+          return (
+            t.error === null &&
+            moment(t.created).isBetween(moment().startOf('day'), today)
+          )
+        case 'Week':
+          return (
+            t.error === null && moment(t.created).isBetween(lastWeek, today)
+          )
+        case 'Month':
+          return (
+            t.error === null && moment(t.created).isBetween(lastMonth, today)
+          )
+        case '6 months':
+          return (
+            t.error === null && moment(t.created).isBetween(last6months, today)
+          )
+        default:
+          return t.error === null && true
+      }
+    }
+    setTransactionsToShow(R.filter(isInRange, data.transactions))
+  }, [selectedRange])
+
+  const handleSetRange = range => {
+    setSelectedRange(range)
+  }
+
   const getNumTransactions = () => {
-    return R.length(R.filter(isNotProp('error'), data.transactions))
+    return R.length(R.filter(isNotProp('error'), transactionsToShow))
   }
 
   const getFiatVolume = () => {
-    return R.sum(getFiats(R.filter(isNotProp('error'), data.transactions)))
+    return R.sum(getFiats(R.filter(isNotProp('error'), transactionsToShow)))
   }
 
   const getProfit = () => {
     const cashInFees = R.sum(
-      getProps('cashInFee')(R.filter(isNotProp('error'), data.transactions))
+      getProps('cashInFee')(R.filter(isNotProp('error'), transactionsToShow))
     )
     let commissionFees = 0
-    data.transactions.forEach(t => {
+    transactionsToShow.forEach(t => {
       if (t.error === null) {
         commissionFees +=
           Number.parseFloat(t.commissionPercentage) * Number.parseFloat(t.fiat)
@@ -167,7 +209,7 @@ const SystemPerformance = () => {
       cashOut: 0,
       length: 0
     }
-    data.transactions.forEach(t => {
+    transactionsToShow.forEach(t => {
       if (t.error === null) {
         switch (t.txClass) {
           case 'cashIn':
@@ -191,7 +233,7 @@ const SystemPerformance = () => {
 
   return (
     <>
-      <Nav />
+      <Nav handleSetRange={handleSetRange} />
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <InfoWithLabel info={getNumTransactions()} label={'transactions'} />
@@ -204,12 +246,13 @@ const SystemPerformance = () => {
         </Grid>
         {/* todo new customers */}
       </Grid>
-      <Grid container>
+      <Grid container style={{ marginTop: 30 }}>
         <Grid item xs={12}>
           <Label2>Transactions</Label2>
+          <p>graph goes here</p>
         </Grid>
       </Grid>
-      <Grid container>
+      <Grid container style={{ marginTop: 30 }}>
         <Grid item xs={8}>
           <Label2>Profit from commissions</Label2>
           {`${getProfit()} ${data.config.locale_fiatCurrency}`}
