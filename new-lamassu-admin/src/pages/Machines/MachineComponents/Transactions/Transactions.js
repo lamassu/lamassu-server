@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
