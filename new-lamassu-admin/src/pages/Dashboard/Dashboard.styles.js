@@ -26,5 +26,8 @@ export default {
     '&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  actionButton: {
+    marginTop: -4
   }
 }

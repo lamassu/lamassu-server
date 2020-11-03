@@ -1,3 +1,5 @@
+/* eslint-disable*/
+
 import typographyStyles from 'src/components/typography/styles'
 import {
   white,
