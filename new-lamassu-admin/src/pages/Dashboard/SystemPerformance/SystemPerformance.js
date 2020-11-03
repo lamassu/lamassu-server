@@ -1,4 +1,6 @@
+import { useQuery } from '@apollo/react-hooks'
 import Grid from '@material-ui/core/Grid'
+import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
@@ -13,138 +15,31 @@ const getFiats = R.map(R.prop('fiat'))
 const getProps = propName => R.map(R.prop(propName))
 
 const getDateDaysAgo = (days = 0) => {
-  return moment().subtract('day', days)
+  return moment().subtract(days, 'day')
 }
 const now = moment()
 
-const data = {
-  transactions: [
-    {
-      fiatCode: 'USD',
-      fiat: '140.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:17:05.664Z',
-      txClass: 'cashIn',
-      error: 'Insufficient Funds Error'
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '110.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-28T21:15:55.864Z',
-      txClass: 'cashOut',
-      error: null
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '150.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:15:33.970Z',
-      txClass: 'cashIn',
-      error: 'Insufficient Funds Error'
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '200.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:15:16.910Z',
-      txClass: 'cashIn',
-      error: 'Insufficient Funds Error'
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '100.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:15:00.565Z',
-      txClass: 'cashIn',
-      error: null
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '12.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:14:40.358Z',
-      txClass: 'cashIn',
-      error: null
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '10.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:14:08.669Z',
-      txClass: 'cashIn',
-      error: null
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '400.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:11:55.241Z',
-      txClass: 'cashIn',
-      error: 'Insufficient Funds Error'
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '500.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-29T21:10:50.386Z',
-      txClass: 'cashIn',
-      error: 'Insufficient Funds Error'
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '10.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-08-29T21:08:12.690Z',
-      txClass: 'cashIn',
-      error: null
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '250.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-10-20T21:07:47.075Z',
-      txClass: 'cashIn',
-      error: null
-    },
-    {
-      fiatCode: 'USD',
-      fiat: '100.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.01000',
-      created: '2020-11-03T09:03:55.581Z',
-      txClass: 'cashIn',
-      error: null
-    },
-    {
-      fiatCode: 'EUR',
-      fiat: '999.00000',
-      cashInFee: '1.00000',
-      commissionPercentage: '0.11000',
-      created: '2019-10-19T16:31:28.076Z',
-      txClass: 'cashIn',
-      error: null
+const GET_DATA = gql`
+  query getData {
+    transactions {
+      fiatCode
+      fiat
+      cashInFee
+      commissionPercentage
+      created
+      txClass
+      error
     }
-  ],
-  config: {
-    locale_fiatCurrency: 'USD'
+    config
   }
-}
+`
 
 const SystemPerformance = () => {
   const [selectedRange, setSelectedRange] = useState('24 hours')
   const [transactionsToShow, setTransactionsToShow] = useState([])
+
+  const { data, loading } = useQuery(GET_DATA)
+
   useEffect(() => {
     const isInRange = t => {
       switch (selectedRange) {
@@ -172,8 +67,8 @@ const SystemPerformance = () => {
           return t.error === null && true
       }
     }
-    setTransactionsToShow(R.filter(isInRange, data.transactions))
-  }, [selectedRange])
+    setTransactionsToShow(R.filter(isInRange, data?.transactions ?? []))
+  }, [data, selectedRange])
 
   const handleSetRange = range => {
     setSelectedRange(range)
@@ -224,51 +119,64 @@ const SystemPerformance = () => {
       }
     })
     return {
-      cashIn: Math.round((directions.cashIn / directions.length) * 100),
-      cashOut: Math.round((directions.cashOut / directions.length) * 100)
+      cashIn:
+        directions.length > 0
+          ? Math.round((directions.cashIn / directions.length) * 100)
+          : 0,
+      cashOut:
+        directions.length > 0
+          ? Math.round((directions.cashOut / directions.length) * 100)
+          : 0
     }
   }
 
   return (
     <>
       <Nav handleSetRange={handleSetRange} />
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-          <InfoWithLabel info={getNumTransactions()} label={'transactions'} />
-        </Grid>
-        <Grid item xs={3}>
-          <InfoWithLabel
-            info={getFiatVolume()}
-            label={`${data.config.locale_fiatCurrency} volume`}
-          />
-        </Grid>
-        {/* todo new customers */}
-      </Grid>
-      <Grid container style={{ marginTop: 30 }}>
-        <Grid item xs={12}>
-          <Label2>Transactions</Label2>
-          <p>graph goes here</p>
-        </Grid>
-      </Grid>
-      <Grid container style={{ marginTop: 30 }}>
-        <Grid item xs={8}>
-          <Label2>Profit from commissions</Label2>
-          {`${getProfit()} ${data.config.locale_fiatCurrency}`}
-        </Grid>
-        <Grid item xs={4}>
-          <Label2>Direction</Label2>
-          <Grid container>
-            <Grid item xs={6}>
-              <Label1>CashIn: </Label1>
-              {` ${getDirectionPercent().cashIn}%`}
+      {!loading && (
+        <>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              <InfoWithLabel
+                info={getNumTransactions()}
+                label={'transactions'}
+              />
             </Grid>
-            <Grid item xs={6}>
-              <Label1>CashOut: </Label1>
-              {` ${getDirectionPercent().cashOut}%`}
+            <Grid item xs={3}>
+              <InfoWithLabel
+                info={getFiatVolume()}
+                label={`${data.config.locale_fiatCurrency} volume`}
+              />
+            </Grid>
+            {/* todo new customers */}
+          </Grid>
+          <Grid container style={{ marginTop: 30 }}>
+            <Grid item xs={12}>
+              <Label2>Transactions</Label2>
+              <p>graph goes here</p>
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
+          <Grid container style={{ marginTop: 30 }}>
+            <Grid item xs={8}>
+              <Label2>Profit from commissions</Label2>
+              {`${getProfit()} ${data.config.locale_fiatCurrency}`}
+            </Grid>
+            <Grid item xs={4}>
+              <Label2>Direction</Label2>
+              <Grid container>
+                <Grid item xs={6}>
+                  <Label1>CashIn: </Label1>
+                  {` ${getDirectionPercent().cashIn}%`}
+                </Grid>
+                <Grid item xs={6}>
+                  <Label1>CashOut: </Label1>
+                  {` ${getDirectionPercent().cashOut}%`}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </>
+      )}
     </>
   )
 }
