@@ -15,13 +15,15 @@ const gridClasses = makeStyles(gridStyles)
 
 const Cashbox = ({ percent = 0, cashOut = false, className }) => {
   const classes = cashboxClasses({ percent, cashOut })
+  const threshold = 51
+
   return (
     <div className={classnames(className, classes.cashbox)}>
       <div className={classes.emptyPart}>
-        {percent <= 50 && <Label2>{percent.toFixed(0)}%</Label2>}
+        {percent <= threshold && <Label2>{percent.toFixed(0)}%</Label2>}
       </div>
       <div className={classes.fullPart}>
-        {percent > 50 && <Label2>{percent.toFixed(0)}%</Label2>}
+        {percent > threshold && <Label2>{percent.toFixed(0)}%</Label2>}
       </div>
     </div>
   )
