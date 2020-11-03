@@ -11,16 +11,11 @@ import Nav from './Nav'
 const isNotProp = R.curry(R.compose(R.isNil, R.prop))
 const getFiats = R.map(R.prop('fiat'))
 const getProps = propName => R.map(R.prop(propName))
-const today = moment().endOf('day')
-const lastWeek = moment()
-  .endOf('day')
-  .subtract(1, 'week')
-const lastMonth = moment()
-  .endOf('day')
-  .subtract(1, 'month')
-const last6months = moment()
-  .endOf('day')
-  .subtract(6, 'month')
+
+const getDateDaysAgo = (days = 0) => {
+  return moment().subtract('day', days)
+}
+const now = moment()
 
 const data = {
   transactions: [
@@ -119,7 +114,7 @@ const data = {
       fiat: '250.00000',
       cashInFee: '1.00000',
       commissionPercentage: '0.01000',
-      created: '2020-10-27T21:07:47.075Z',
+      created: '2020-10-20T21:07:47.075Z',
       txClass: 'cashIn',
       error: null
     },
@@ -148,27 +143,30 @@ const data = {
 }
 
 const SystemPerformance = () => {
-  const [selectedRange, setSelectedRange] = useState('Day')
+  const [selectedRange, setSelectedRange] = useState('24 hours')
   const [transactionsToShow, setTransactionsToShow] = useState([])
   useEffect(() => {
     const isInRange = t => {
       switch (selectedRange) {
-        case 'Day':
+        case '24 hours':
           return (
             t.error === null &&
-            moment(t.created).isBetween(moment().startOf('day'), today)
+            moment(t.created).isBetween(getDateDaysAgo(1), now)
           )
-        case 'Week':
+        case '7 days':
           return (
-            t.error === null && moment(t.created).isBetween(lastWeek, today)
+            t.error === null &&
+            moment(t.created).isBetween(getDateDaysAgo(7), now)
           )
-        case 'Month':
+        case '30 days':
           return (
-            t.error === null && moment(t.created).isBetween(lastMonth, today)
+            t.error === null &&
+            moment(t.created).isBetween(getDateDaysAgo(30), now)
           )
-        case '6 months':
+        case '180 days':
           return (
-            t.error === null && moment(t.created).isBetween(last6months, today)
+            t.error === null &&
+            moment(t.created).isBetween(getDateDaysAgo(180), now)
           )
         default:
           return t.error === null && true

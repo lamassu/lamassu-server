@@ -10,7 +10,7 @@ const useStyles = makeStyles(styles)
 
 const Nav = ({ handleSetRange }) => {
   const classes = useStyles()
-  const [clickedItem, setClickedItem] = useState('Day')
+  const [clickedItem, setClickedItem] = useState('24 hours')
 
   const isSelected = innerText => {
     return innerText === clickedItem
@@ -43,9 +43,9 @@ const Nav = ({ handleSetRange }) => {
         disableRipple
         disableFocusRipple
         className={
-          isSelected('6 months') ? classes.highlightedLabel : classes.label
+          isSelected('180 days') ? classes.highlightedLabel : classes.label
         }>
-        6 months
+        180 days
       </Button>
       <Button
         onClick={e => handleClick(e.target.innerText)}
@@ -53,9 +53,9 @@ const Nav = ({ handleSetRange }) => {
         disableRipple
         disableFocusRipple
         className={
-          isSelected('Month') ? classes.highlightedLabel : classes.label
+          isSelected('30 days') ? classes.highlightedLabel : classes.label
         }>
-        Month
+        30 days
       </Button>
       <Button
         onClick={e => handleClick(e.target.innerText)}
@@ -63,17 +63,19 @@ const Nav = ({ handleSetRange }) => {
         disableRipple
         disableFocusRipple
         className={
-          isSelected('Week') ? classes.highlightedLabel : classes.label
+          isSelected('7 days') ? classes.highlightedLabel : classes.label
         }>
-        Week
+        7 days
       </Button>
       <Button
         size="small"
         disableRipple
         disableFocusRipple
-        className={isSelected('Day') ? classes.highlightedLabel : classes.label}
+        className={
+          isSelected('24 hours') ? classes.highlightedLabel : classes.label
+        }
         onClick={e => handleClick(e.target.innerText)}>
-        Day
+        24 hours
       </Button>
     </div>
   )
