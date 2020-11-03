@@ -27,14 +27,18 @@ const cashboxStyles = {
   emptyPart: {
     backgroundColor: 'white',
     height: ({ percent }) => `${100 - percent}%`,
+    position: 'relative',
     '& > p': {
       color: colorPicker,
-      display: 'inline-block'
+      display: 'inline-block',
+      position: 'absolute',
+      margin: 0,
+      bottom: 0,
+      right: 0
     }
   },
   fullPart: {
     backgroundColor: colorPicker,
-    height: ({ percent }) => `${percent}%`,
     '& > p': {
       color: 'white',
       display: 'inline'
