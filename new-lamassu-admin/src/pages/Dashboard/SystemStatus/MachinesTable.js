@@ -40,20 +40,31 @@ const HeaderCell = withStyles({
   }
 })(TableCell)
 
-const MachinesTable = ({ machines }) => {
+const MachinesTable = ({ machines, handleExpandTable, showAllItems }) => {
   const classes = useStyles()
   // number of machines from the machines prop to render
   const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
   const [showExpandButton, setShowExpandButton] = useState(false)
-  const [showLessButton, setShowLessButton] = useState(false)
 
   useEffect(() => {
-    if (machines.length > numToRender) {
+    if (machines.length > numToRender && !showAllItems) {
       setShowExpandButton(true)
     }
-  }, [machines, numToRender])
+    if (showAllItems) {
+      setNumToRender(machines.length)
+    } else {
+      setNumToRender(NUM_TO_RENDER)
+    }
+  }, [machines, numToRender, showAllItems])
 
-  machines = [...machines, ...machines, ...machines]
+  machines = [
+    ...machines,
+    ...machines,
+    ...machines,
+    ...machines,
+    ...machines,
+    ...machines
+  ]
 
   const getPercent = (notes, capacity = 500) => {
     return Math.round((notes / capacity) * 100)
@@ -69,20 +80,14 @@ const MachinesTable = ({ machines }) => {
 
   const onExpand = () => {
     setShowExpandButton(false)
-    setShowLessButton(true)
+    handleExpandTable('expand')
     setNumToRender(machines.length)
-  }
-
-  const onShrink = () => {
-    setShowLessButton(false)
-    setShowExpandButton(true)
-    setNumToRender(NUM_TO_RENDER)
   }
 
   return (
     <>
       <TableContainer className={classes.table}>
-        <Table stickyHeader>
+        <Table>
           <TableHead>
             <TableRow>
               <HeaderCell>
@@ -154,20 +159,6 @@ const MachinesTable = ({ machines }) => {
               disableFocusRipple
               className={classes.button}>
               {`Show all (${machines.length})`}
-            </Button>
-          </Label1>
-        </>
-      )}
-      {showLessButton && (
-        <>
-          <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
-            <Button
-              onClick={onShrink}
-              size="small"
-              disableRipple
-              disableFocusRipple
-              className={classes.button}>
-              {`Show less`}
             </Button>
           </Label1>
         </>

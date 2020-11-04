@@ -36,6 +36,16 @@ export default {
     marginLeft: 2
   },
   table: {
-    maxHeight: 250
+    maxHeight: 440,
+    '&::-webkit-scrollbar': {
+      width: 7
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: offColor,
+      borderRadius: 5
+    }
+  },
+  tableBody: {
+    overflow: 'auto'
   }
 }

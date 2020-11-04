@@ -48,5 +48,15 @@ export default {
       extend: label1,
       marginLeft: 6
     }
+  },
+  button: {
+    color: primaryColor,
+    minHeight: 0,
+    minWidth: 0,
+    padding: 0,
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   }
 }

@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks'
+import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-import React from 'react'
+import React, { useState } from 'react'
 
 import ActionButton from 'src/components/buttons/ActionButton'
 import { H4, TL2, Label1 } from 'src/components/typography'
@@ -45,6 +46,20 @@ const parseUptime = time => {
 const SystemStatus = () => {
   const classes = useStyles()
   const { data, loading } = useQuery(GET_DATA)
+  const [showAllItems, setShowAllItems] = useState(false)
+
+  const handleExpandTable = type => {
+    switch (type) {
+      case 'expand':
+        setShowAllItems(true)
+        break
+      case 'shrink':
+        setShowAllItems(false)
+        break
+      default:
+        break
+    }
+  }
 
   // placeholder data
   if (data) {
@@ -55,7 +70,23 @@ const SystemStatus = () => {
 
   return (
     <>
-      <H4>System status</H4>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <H4>System status</H4>
+        {showAllItems && (
+          <>
+            <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
+              <Button
+                onClick={() => handleExpandTable('shrink')}
+                size="small"
+                disableRipple
+                disableFocusRipple
+                className={classes.button}>
+                {`Show less`}
+              </Button>
+            </Label1>
+          </>
+        )}
+      </div>
       {!loading && (
         <>
           <Grid container spacing={1}>
@@ -80,7 +111,11 @@ const SystemStatus = () => {
           </Grid>
           <Grid container spacing={1} style={{ marginTop: 23 }}>
             <Grid item xs={12}>
-              <MachinesTable machines={data?.machines ?? []} />
+              <MachinesTable
+                handleExpandTable={handleExpandTable}
+                showAllItems={showAllItems}
+                machines={data?.machines ?? []}
+              />
             </Grid>
           </Grid>
         </>
