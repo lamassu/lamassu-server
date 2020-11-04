@@ -66,7 +66,7 @@ const SystemStatus = () => {
               <Label1 style={{ display: 'inline' }}> System up time</Label1>
             </Grid>
             <Grid item xs={4}>
-              <TL2 style={{ display: 'inline' }}>{data.serverVersion}</TL2>
+              <TL2 style={{ display: 'inline' }}>{data?.serverVersion}</TL2>
               <Label1 style={{ display: 'inline' }}> server version</Label1>
             </Grid>
             <Grid item xs={4}>

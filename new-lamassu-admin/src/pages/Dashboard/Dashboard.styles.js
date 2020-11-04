@@ -4,7 +4,8 @@ const { label1 } = typographyStyles
 
 export default {
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    marginBottom: 108
   },
   footer: {
     margin: [['auto', 0, spacer * 3, 'auto']]

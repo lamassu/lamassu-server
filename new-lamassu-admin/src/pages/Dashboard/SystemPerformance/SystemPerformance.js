@@ -145,7 +145,7 @@ const SystemPerformance = () => {
             <Grid item xs={3}>
               <InfoWithLabel
                 info={getFiatVolume()}
-                label={`${data.config.locale_fiatCurrency} volume`}
+                label={`${data?.config.locale_fiatCurrency} volume`}
               />
             </Grid>
             {/* todo new customers */}
@@ -159,7 +159,7 @@ const SystemPerformance = () => {
           <Grid container style={{ marginTop: 30 }}>
             <Grid item xs={8}>
               <Label2>Profit from commissions</Label2>
-              {`${getProfit()} ${data.config.locale_fiatCurrency}`}
+              {`${getProfit()} ${data?.config.locale_fiatCurrency}`}
             </Grid>
             <Grid item xs={4}>
               <Label2>Direction</Label2>
