@@ -52,11 +52,11 @@ const SystemStatus = ({ buttonNames, resizeAlerts }) => {
     switch (type) {
       case 'expand':
         setShowAllItems(true)
-        resizeAlerts('expand')
+        resizeAlerts('shrink')
         break
       case 'shrink':
         setShowAllItems(false)
-        resizeAlerts('shrink')
+        resizeAlerts('expand')
         break
       default:
         break

@@ -26,12 +26,12 @@ const Dashboard = () => {
   const resizeAlerts = type => {
     switch (type) {
       case 'expand':
-        setButtonNames({ alerts: 'Show alerts', systemStatus: 'Show less' })
-        setShrunk({ ...shrunk, alerts: true })
-        break
-      case 'shrink':
         setButtonNames({ alerts: 'Show less', systemStatus: 'Show less' })
         setShrunk({ ...shrunk, alerts: false })
+        break
+      case 'shrink':
+        setButtonNames({ alerts: 'Show alerts', systemStatus: 'Show less' })
+        setShrunk({ ...shrunk, alerts: true })
         break
       default:
         break
