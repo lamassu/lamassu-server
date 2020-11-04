@@ -21,6 +21,8 @@ import {
 // percentage threshold where below this number the text turns red
 const PERCENTAGE_THRESHOLD = 20
 
+// number of machines to render on page load
+const NUM_TO_RENDER = 3
 const useStyles = makeStyles({
   label: {
     margin: 0,
@@ -52,22 +54,23 @@ const useStyles = makeStyles({
 
 const StyledCell = withStyles({
   root: {
-    borderBottom: '4px solid white'
+    borderBottom: '4px solid white',
+    padding: 0,
+    paddingLeft: 15
   }
 })(TableCell)
 
 const MachinesTable = ({ machines }) => {
   // number of machines from the machines prop to render
-  const [numRendered, setNumRendered] = useState(3)
+  const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
   const [showExpandButton, setShowExpandButton] = useState(false)
   const [showLessButton, setShowLessButton] = useState(false)
 
   useEffect(() => {
-    console.log('running effect')
-    if (machines.length > numRendered) {
+    if (machines.length > numToRender) {
       setShowExpandButton(true)
     }
-  }, [machines, numRendered])
+  }, [machines, numToRender])
 
   machines = [...machines, ...machines]
   const classes = useStyles()
@@ -86,13 +89,13 @@ const MachinesTable = ({ machines }) => {
   const onExpand = () => {
     setShowExpandButton(false)
     setShowLessButton(true)
-    setNumRendered(machines.length)
+    setNumToRender(machines.length)
   }
 
   const onShrink = () => {
     setShowLessButton(false)
     setShowExpandButton(true)
-    setNumRendered(3)
+    setNumToRender(NUM_TO_RENDER)
   }
 
   return (
@@ -132,12 +135,12 @@ const MachinesTable = ({ machines }) => {
           </TableHead>
           <TableBody>
             {machines.map((machine, idx) => {
-              if (idx < numRendered) {
+              if (idx < numToRender) {
                 return (
                   <TableRow
                     key={machine.deviceId + idx}
                     className={classes.row}>
-                    <StyledCell padding="none" align="left">
+                    <StyledCell align="left">
                       <TL2>{machine.name}</TL2>
                     </StyledCell>
 

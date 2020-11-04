@@ -78,7 +78,7 @@ const SystemStatus = () => {
               </ActionButton>
             </Grid>
           </Grid>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} style={{ marginTop: 23 }}>
             <Grid item xs={12}>
               <MachinesTable machines={data?.machines ?? []} />
             </Grid>
