@@ -43,7 +43,7 @@ const parseUptime = time => {
   return `${Math.floor(time / 60 / 60 / 24)}d`
 }
 
-const SystemStatus = () => {
+const SystemStatus = ({ buttonNames, resizeAlerts }) => {
   const classes = useStyles()
   const { data, loading } = useQuery(GET_DATA)
   const [showAllItems, setShowAllItems] = useState(false)
@@ -52,9 +52,11 @@ const SystemStatus = () => {
     switch (type) {
       case 'expand':
         setShowAllItems(true)
+        resizeAlerts('expand')
         break
       case 'shrink':
         setShowAllItems(false)
+        resizeAlerts('shrink')
         break
       default:
         break
@@ -81,7 +83,7 @@ const SystemStatus = () => {
                 disableRipple
                 disableFocusRipple
                 className={classes.button}>
-                {`Show less`}
+                {buttonNames.systemStatus}
               </Button>
             </Label1>
           </>
