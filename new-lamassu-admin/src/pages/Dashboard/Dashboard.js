@@ -53,7 +53,7 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </div>
-      <Footer></Footer>
+      <Footer />
     </>
   )
 }

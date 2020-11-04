@@ -8,49 +8,20 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import React, { useState, useEffect } from 'react'
 
+import { Status } from 'src/components/Status'
 import { Label2, TL2, Label1 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import {
-  backgroundColor,
-  offColor,
-  errorColor,
-  primaryColor
-} from 'src/styling/variables'
 
-// percentage threshold where below this number the text turns red
+import styles from './MachinesTable.styles'
+
+// percentage threshold where below this number the text in the cash cassettes percentage turns red
 const PERCENTAGE_THRESHOLD = 20
 
-// number of machines to render on page load
+// number of machines in the table to render on page load
 const NUM_TO_RENDER = 3
-const useStyles = makeStyles({
-  label: {
-    margin: 0,
-    color: offColor
-  },
-  row: {
-    backgroundColor: backgroundColor,
-    borderBottom: 'none'
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    whiteSpace: 'pre'
-  },
-  error: {
-    color: errorColor
-  },
-  button: {
-    color: primaryColor,
-    minHeight: 0,
-    minWidth: 0,
-    padding: 0,
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  }
-})
+
+const useStyles = makeStyles(styles)
 
 const StyledCell = withStyles({
   root: {
@@ -110,7 +81,7 @@ const MachinesTable = ({ machines }) => {
                 </div>
               </StyledCell>
               <StyledCell>
-                <div className={classes.header}>
+                <div className={`${classes.header} ${classes.statusHeader}`}>
                   <Label2 className={classes.label}>Status</Label2>
                 </div>
               </StyledCell>
@@ -143,8 +114,9 @@ const MachinesTable = ({ machines }) => {
                     <StyledCell align="left">
                       <TL2>{machine.name}</TL2>
                     </StyledCell>
-
-                    <StyledCell>{machine.statuses[0].label}</StyledCell>
+                    <StyledCell>
+                      <Status status={machine.statuses[0]} />
+                    </StyledCell>
                     <StyledCell align="left">
                       {makePercentageText(machine.cashbox)}
                     </StyledCell>
