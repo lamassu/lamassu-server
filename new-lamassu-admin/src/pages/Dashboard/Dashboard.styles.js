@@ -1,4 +1,7 @@
+import typographyStyles from 'src/components/typography/styles'
 import { spacer, white, primaryColor } from 'src/styling/variables'
+const { label1 } = typographyStyles
+
 export default {
   root: {
     flexGrow: 1
@@ -29,5 +32,20 @@ export default {
   },
   actionButton: {
     marginTop: -4
+  },
+  headerLabels: {
+    display: 'flex',
+    flexDirection: 'row',
+    '& div': {
+      display: 'flex',
+      alignItems: 'center'
+    },
+    '& > div:first-child': {
+      marginRight: 24
+    },
+    '& span': {
+      extend: label1,
+      marginLeft: 6
+    }
   }
 }
