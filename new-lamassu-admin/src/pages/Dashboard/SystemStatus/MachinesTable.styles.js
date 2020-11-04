@@ -34,5 +34,8 @@ export default {
   },
   statusHeader: {
     marginLeft: 2
+  },
+  table: {
+    maxHeight: 250
   }
 }

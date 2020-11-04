@@ -31,7 +31,17 @@ const StyledCell = withStyles({
   }
 })(TableCell)
 
+const HeaderCell = withStyles({
+  root: {
+    borderBottom: '4px solid white',
+    padding: 0,
+    paddingLeft: 15,
+    backgroundColor: 'white'
+  }
+})(TableCell)
+
 const MachinesTable = ({ machines }) => {
+  const classes = useStyles()
   // number of machines from the machines prop to render
   const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
   const [showExpandButton, setShowExpandButton] = useState(false)
@@ -43,8 +53,8 @@ const MachinesTable = ({ machines }) => {
     }
   }, [machines, numToRender])
 
-  machines = [...machines, ...machines]
-  const classes = useStyles()
+  machines = [...machines, ...machines, ...machines]
+
   const getPercent = (notes, capacity = 500) => {
     return Math.round((notes / capacity) * 100)
   }
@@ -71,37 +81,37 @@ const MachinesTable = ({ machines }) => {
 
   return (
     <>
-      <TableContainer>
-        <Table>
+      <TableContainer className={classes.table}>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <StyledCell>
+              <HeaderCell>
                 <div className={classes.header}>
                   <Label2 className={classes.label}>Machines</Label2>
                 </div>
-              </StyledCell>
-              <StyledCell>
+              </HeaderCell>
+              <HeaderCell>
                 <div className={`${classes.header} ${classes.statusHeader}`}>
                   <Label2 className={classes.label}>Status</Label2>
                 </div>
-              </StyledCell>
-              <StyledCell>
+              </HeaderCell>
+              <HeaderCell>
                 <div className={classes.header}>
                   <TxInIcon />
                 </div>
-              </StyledCell>
-              <StyledCell>
+              </HeaderCell>
+              <HeaderCell>
                 <div className={classes.header}>
                   <TxOutIcon />
                   <Label2 className={classes.label}> 1</Label2>
                 </div>
-              </StyledCell>
-              <StyledCell>
+              </HeaderCell>
+              <HeaderCell>
                 <div className={classes.header}>
                   <TxOutIcon />
                   <Label2 className={classes.label}> 2</Label2>
                 </div>
-              </StyledCell>
+              </HeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
