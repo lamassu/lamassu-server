@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core/styles'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { createContext, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { useLocation, BrowserRouter as Router } from 'react-router-dom'
 
 import ApolloProvider from 'src/utils/apollo'
@@ -54,12 +54,13 @@ const AppContext = createContext()
 const Main = () => {
   const classes = useStyles()
   const location = useLocation()
+  const { wizardTested } = useContext(AppContext)
 
   const is404 = location.pathname === '/404'
 
   return (
     <div className={classes.root}>
-      {!is404 && <Header tree={tree} />}
+      {!is404 && wizardTested && <Header tree={tree} />}
       <main className={classes.wrapper}>
         <Routes />
       </main>
