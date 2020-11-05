@@ -4,22 +4,27 @@ import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import Chip from 'src/components/Chip'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
+import SearchBox from 'src/components/SearchBox'
 import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
+import { P } from 'src/components/typography'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { ReactComponent as CustomerLinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { formatDate } from 'src/utils/timezones'
 
 import DetailsRow from './DetailsCard'
-import { mainStyles } from './Transactions.styles'
-import { getStatus } from './helper'
+import { mainStyles, chipStyles } from './Transactions.styles'
+import { getStatus /*, getStatusProperties */ } from './helper'
 
 const useStyles = makeStyles(mainStyles)
+const useChipStyles = makeStyles(chipStyles)
 
 const NUM_LOG_RESULTS = 1000
 
@@ -35,9 +40,40 @@ const GET_TRANSACTIONS_CSV = gql`
   }
 `
 
+const GET_TRANSACTION_FILTERS = gql`
+  query filters {
+    transactionFilters {
+      type
+      value
+    }
+  }
+`
+
 const GET_TRANSACTIONS = gql`
-  query transactions($limit: Int, $from: DateTime, $until: DateTime) {
-    transactions(limit: $limit, from: $from, until: $until) {
+  query transactions(
+    $limit: Int
+    $from: DateTime
+    $until: DateTime
+    $txClass: String
+    $machineName: String
+    $customerName: String
+    $fiatCode: String
+    $cryptoCode: String
+    $toAddress: String
+    $status: String
+  ) {
+    transactions(
+      limit: $limit
+      from: $from
+      until: $until
+      txClass: $txClass
+      machineName: $machineName
+      customerName: $customerName
+      fiatCode: $fiatCode
+      cryptoCode: $cryptoCode
+      toAddress: $toAddress
+      status: $status
+    ) {
       id
       txClass
       txHash
@@ -72,12 +108,23 @@ const GET_TRANSACTIONS = gql`
 const Transactions = () => {
   const classes = useStyles()
   const history = useHistory()
-  const { data: txResponse, loading } = useQuery(GET_TRANSACTIONS, {
-    variables: {
-      limit: NUM_LOG_RESULTS
-    },
-    pollInterval: 10000
-  })
+  const chipClasses = useChipStyles()
+
+  const [filters, setFilters] = useState([])
+  const { data: filtersResponse, loading: loadingFilters } = useQuery(
+    GET_TRANSACTION_FILTERS
+  )
+  const [filteredTransactions, setFilteredTransactions] = useState([])
+  const [variables, setVariables] = useState({ limit: NUM_LOG_RESULTS })
+  const { data: txResponse, loading: loadingTransactions, refetch } = useQuery(
+    GET_TRANSACTIONS,
+    {
+      variables,
+      onCompleted: data =>
+        setFilteredTransactions(R.path(['transactions'])(data)),
+      pollInterval: 10000
+    }
+  )
 
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
@@ -167,11 +214,51 @@ const Transactions = () => {
     }
   ]
 
+  const onFilterChange = filters => {
+    const filtersObject = R.compose(
+      R.mergeAll,
+      R.map(f => ({
+        [f.type]: f.value
+      }))
+    )(filters)
+
+    setFilters(filters)
+
+    setVariables({
+      limit: NUM_LOG_RESULTS,
+      txClass: filtersObject.type,
+      machineName: filtersObject.machine,
+      customerName: filtersObject.customer,
+      fiatCode: filtersObject.fiat,
+      cryptoCode: filtersObject.crypto,
+      toAddress: filtersObject.address,
+      status: filtersObject.status
+    })
+
+    refetch && refetch()
+  }
+
+  const onFilterDelete = filter =>
+    setFilters(
+      R.filter(f => !R.whereEq(R.pick(['type', 'value'], f), filter))(filters)
+    )
+
+  const filterOptions = R.path(['transactionFilters'])(filtersResponse)
+
   return (
     <>
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <Title>Transactions</Title>
+          <div className={classes.buttonsWrapper}>
+            <SearchBox
+              loading={loadingFilters}
+              filters={filters}
+              options={filterOptions}
+              inputPlaceholder={'Search Transactions'}
+              onChange={onFilterChange}
+            />
+          </div>
           {txResponse && (
             <div className={classes.buttonsWrapper}>
               <LogsDowloaderPopover
@@ -194,11 +281,33 @@ const Transactions = () => {
           </div>
         </div>
       </div>
+      {filters.length > 0 && (
+        <>
+          <P className={classes.text}>{'Filters:'}</P>
+          <div>
+            {filters.map((f, idx) => (
+              <Chip
+                key={idx}
+                classes={chipClasses}
+                label={`${f.type}: ${f.value}`}
+                onDelete={() => onFilterDelete(f)}
+                deleteIcon={<CloseIcon className={classes.button} />}
+              />
+            ))}
+            <Chip
+              classes={chipClasses}
+              label={`Delete filters`}
+              onDelete={() => setFilters([])}
+              deleteIcon={<CloseIcon className={classes.button} />}
+            />
+          </div>
+        </>
+      )}
       <DataTable
-        loading={loading && configLoading}
+        loading={loadingTransactions && configLoading}
         emptyText="No transactions so far"
         elements={elements}
-        data={R.path(['transactions'])(txResponse)}
+        data={filteredTransactions}
         Details={DetailsRow}
         expandable
         rowSize="sm"
