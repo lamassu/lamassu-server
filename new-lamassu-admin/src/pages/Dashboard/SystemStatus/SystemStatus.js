@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import ActionButton from 'src/components/buttons/ActionButton'
 import { H4, TL2, Label1 } from 'src/components/typography'
@@ -13,6 +13,9 @@ import styles from '../Dashboard.styles'
 import MachinesTable from './MachinesTable'
 
 const useStyles = makeStyles(styles)
+
+// number of machines in the table to render on page load
+const NUM_TO_RENDER = 1
 
 const GET_DATA = gql`
   query getData {
@@ -43,24 +46,41 @@ const parseUptime = time => {
   return `${Math.floor(time / 60 / 60 / 24)}d`
 }
 
-const SystemStatus = ({ buttonNames, resizeAlerts }) => {
+const SystemStatus = ({ cardState, setRightSideState }) => {
   const classes = useStyles()
   const { data, loading } = useQuery(GET_DATA)
   const [showAllItems, setShowAllItems] = useState(false)
+  const [showExpandButton, setShowExpandButton] = useState(false)
+  const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
 
-  const handleExpandTable = type => {
-    switch (type) {
-      case 'expand':
-        setShowAllItems(true)
-        resizeAlerts('shrink')
-        break
-      case 'shrink':
-        setShowAllItems(false)
-        resizeAlerts('expand')
-        break
-      default:
-        break
+  useEffect(() => {
+    if (showAllItems) {
+      setShowExpandButton(false)
+    } else if (data && data?.machines.length > numToRender) {
+      setShowExpandButton(true)
     }
+    if (cardState.cardSize === 'small' || cardState.cardSize === 'default') {
+      setShowAllItems(false)
+      setNumToRender(NUM_TO_RENDER)
+    }
+  }, [cardState.cardSize, data, numToRender, showAllItems])
+
+  const reset = () => {
+    setShowAllItems(false)
+    setNumToRender(NUM_TO_RENDER)
+    setRightSideState({
+      systemStatus: { cardSize: 'default', buttonName: 'Show less' },
+      alerts: { cardSize: 'default', buttonName: 'Show less' }
+    })
+  }
+
+  const showAllClick = () => {
+    setShowExpandButton(false)
+    setShowAllItems(true)
+    setRightSideState({
+      systemStatus: { cardSize: 'big', buttonName: 'Show less' },
+      alerts: { cardSize: 'small', buttonName: 'Show alerts' }
+    })
   }
 
   // placeholder data
@@ -69,27 +89,26 @@ const SystemStatus = ({ buttonNames, resizeAlerts }) => {
   }
 
   const uptime = data?.uptime ?? [{}]
-
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <H4>System status</H4>
-        {showAllItems && (
+        {(showAllItems || cardState.cardSize === 'small') && (
           <>
             <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
               <Button
-                onClick={() => handleExpandTable('shrink')}
+                onClick={reset}
                 size="small"
                 disableRipple
                 disableFocusRipple
                 className={classes.button}>
-                {buttonNames.systemStatus}
+                {cardState.buttonName}
               </Button>
             </Label1>
           </>
         )}
       </div>
-      {!loading && (
+      {!loading && cardState.cardSize !== 'small' && (
         <>
           <Grid container spacing={1}>
             <Grid item xs={4}>
@@ -114,10 +133,23 @@ const SystemStatus = ({ buttonNames, resizeAlerts }) => {
           <Grid container spacing={1} style={{ marginTop: 23 }}>
             <Grid item xs={12}>
               <MachinesTable
-                handleExpandTable={handleExpandTable}
-                showAllItems={showAllItems}
+                numToRender={numToRender}
                 machines={data?.machines ?? []}
               />
+              {showExpandButton && (
+                <>
+                  <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
+                    <Button
+                      onClick={showAllClick}
+                      size="small"
+                      disableRipple
+                      disableFocusRipple
+                      className={classes.button}>
+                      {`Show all (${data.machines.length})`}
+                    </Button>
+                  </Label1>
+                </>
+              )}
             </Grid>
           </Grid>
         </>

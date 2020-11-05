@@ -17,40 +17,19 @@ const useStyles = makeStyles(styles)
 const Dashboard = () => {
   const classes = useStyles()
 
-  const [buttonNames, setButtonNames] = useState({
-    alerts: 'Show less',
-    systemStatus: 'Show less'
+  const [rightSide, setRightSide] = useState({
+    alerts: {
+      cardSize: 'default',
+      buttonName: 'Show less'
+    },
+    systemStatus: {
+      cardSize: 'default',
+      buttonName: 'Show less'
+    }
   })
-  const [shrunk, setShrunk] = useState({ alerts: false, systemStatus: false })
 
-  const resizeAlerts = type => {
-    switch (type) {
-      case 'expand':
-        setButtonNames({ alerts: 'Show less', systemStatus: 'Show less' })
-        setShrunk({ ...shrunk, alerts: false })
-        break
-      case 'shrink':
-        setButtonNames({ alerts: 'Show alerts', systemStatus: 'Show less' })
-        setShrunk({ ...shrunk, alerts: true })
-        break
-      default:
-        break
-    }
-  }
-
-  const resizeSystemStatus = type => {
-    switch (type) {
-      case 'expand':
-        setButtonNames({ alerts: 'Show less', systemStatus: 'Show machines' })
-        setShrunk({ ...shrunk, systemStatus: true })
-        break
-      case 'shrink':
-        setButtonNames({ alerts: 'Show less', systemStatus: 'Show less' })
-        setShrunk({ ...shrunk, systemStatus: false })
-        break
-      default:
-        break
-    }
+  const setRightSideState = newState => {
+    setRightSide(newState)
   }
 
   return (
@@ -80,18 +59,16 @@ const Dashboard = () => {
             <Grid item style={{ marginBottom: 16 }}>
               <div className={classes.card}>
                 <Alerts
-                  shrunk={shrunk.alerts}
-                  buttonNames={buttonNames}
-                  resizeSystemStatus={resizeSystemStatus}
+                  cardState={rightSide.alerts}
+                  setRightSideState={setRightSideState}
                 />
               </div>
             </Grid>
             <Grid item>
               <div className={classes.card}>
                 <SystemStatus
-                  shrunk={shrunk.systemStatus}
-                  buttonNames={buttonNames}
-                  resizeAlerts={resizeAlerts}
+                  cardState={rightSide.systemStatus}
+                  setRightSideState={setRightSideState}
                 />
               </div>
             </Grid>

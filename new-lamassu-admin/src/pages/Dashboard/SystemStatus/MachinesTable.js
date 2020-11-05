@@ -1,15 +1,14 @@
 import { makeStyles, withStyles } from '@material-ui/core'
-import Button from '@material-ui/core/Button'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 import { Status } from 'src/components/Status'
-import { Label2, TL2, Label1 } from 'src/components/typography'
+import { Label2, TL2 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -17,9 +16,6 @@ import styles from './MachinesTable.styles'
 
 // percentage threshold where below this number the text in the cash cassettes percentage turns red
 const PERCENTAGE_THRESHOLD = 20
-
-// number of machines in the table to render on page load
-const NUM_TO_RENDER = 3
 
 const useStyles = makeStyles(styles)
 
@@ -40,31 +36,8 @@ const HeaderCell = withStyles({
   }
 })(TableCell)
 
-const MachinesTable = ({ machines, handleExpandTable, showAllItems }) => {
+const MachinesTable = ({ machines, numToRender }) => {
   const classes = useStyles()
-  // number of machines from the machines prop to render
-  const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
-  const [showExpandButton, setShowExpandButton] = useState(false)
-
-  useEffect(() => {
-    if (machines.length > numToRender && !showAllItems) {
-      setShowExpandButton(true)
-    }
-    if (showAllItems) {
-      setNumToRender(machines.length)
-    } else {
-      setNumToRender(NUM_TO_RENDER)
-    }
-  }, [machines, numToRender, showAllItems])
-
-  machines = [
-    ...machines,
-    ...machines,
-    ...machines,
-    ...machines,
-    ...machines,
-    ...machines
-  ]
 
   const getPercent = (notes, capacity = 500) => {
     return Math.round((notes / capacity) * 100)
@@ -77,13 +50,6 @@ const MachinesTable = ({ machines, handleExpandTable, showAllItems }) => {
     }
     return <TL2>{`${percent}%`}</TL2>
   }
-
-  const onExpand = () => {
-    setShowExpandButton(false)
-    handleExpandTable('expand')
-    setNumToRender(machines.length)
-  }
-
   return (
     <>
       <TableContainer className={classes.table}>
@@ -149,20 +115,6 @@ const MachinesTable = ({ machines, handleExpandTable, showAllItems }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {showExpandButton && (
-        <>
-          <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
-            <Button
-              onClick={onExpand}
-              size="small"
-              disableRipple
-              disableFocusRipple
-              className={classes.button}>
-              {`Show all (${machines.length})`}
-            </Button>
-          </Label1>
-        </>
-      )}
     </>
   )
 }
