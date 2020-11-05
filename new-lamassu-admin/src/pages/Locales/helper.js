@@ -3,14 +3,14 @@ import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
-const getFields = (getData, names, configureCoin, auxElements = []) => {
+const getFields = (getData, names, onChange, auxElements = []) => {
   return R.filter(
     it => R.includes(it.name, names),
-    allFields(getData, configureCoin, auxElements)
+    allFields(getData, onChange, auxElements)
   )
 }
 
-const allFields = (getData, configureCoin, auxElements = []) => {
+const allFields = (getData, onChange, auxElements = []) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -105,8 +105,7 @@ const allFields = (getData, configureCoin, auxElements = []) => {
         getLabel: R.path(['code']),
         multiple: true,
         optionsLimit: null,
-        onChange: (prev, curr, cancel) =>
-          configureCoin(R.difference(curr, prev)[0], prev, cancel)
+        onChange
       }
     }
   ]

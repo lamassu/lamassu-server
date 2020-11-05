@@ -99,9 +99,7 @@ const FiatCurrencyChangeAlert = ({ open, close, save }) => {
 
 const Locales = ({ name: SCREEN_KEY }) => {
   const [wizard, setWizard] = useState(false)
-  const [cancelCryptoConfiguration, setCancelCryptoConfiguration] = useState(
-    null
-  )
+  const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
@@ -143,18 +141,29 @@ const Locales = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config } })
   }
 
-  const configureCoin = (it, prev, cancel) => {
-    if (!it) return
+  const onChangeCoin = (prev, curr, setValue) => {
+    const coin = R.difference(curr, prev)[0]
+    if (!coin) return setValue(curr)
 
-    const namespaced = fromNamespace(it)(wallets)
+    const namespaced = fromNamespace(coin)(wallets)
     if (!WalletSchema.isValidSync(namespaced)) {
-      setCancelCryptoConfiguration(() => () => cancel())
-      setWizard(it)
+      setOnChangeFunction(() => () => setValue(curr))
+      setWizard(coin)
+      return
     }
+
+    setValue(curr)
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
+
+  const wizardSave = it =>
+    save(toNamespace(namespaces.WALLETS)(it)).then(it => {
+      onChangeFunction()
+      setOnChangeFunction(null)
+      return it
+    })
 
   return (
     <>
@@ -175,7 +184,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={handleSave}
           validationSchema={LocaleSchema}
           data={R.of(locale)}
-          elements={mainFields(data, configureCoin)}
+          elements={mainFields(data, onChangeCoin)}
           setEditing={onEditingDefault}
           forceDisable={isEditingOverrides}
         />
@@ -193,7 +202,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={saveOverrides}
           validationSchema={OverridesSchema}
           data={localeOverrides ?? []}
-          elements={overrides(data, localeOverrides, configureCoin)}
+          elements={overrides(data, localeOverrides, onChangeCoin)}
           disableAdd={R.compose(R.isEmpty, R.difference)(
             data?.machines.map(m => m.deviceId) ?? [],
             localeOverrides?.map(o => o.machine) ?? []
@@ -205,14 +214,8 @@ const Locales = ({ name: SCREEN_KEY }) => {
       {wizard && (
         <Wizard
           coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
-          onClose={() => {
-            cancelCryptoConfiguration && cancelCryptoConfiguration()
-            setWizard(false)
-          }}
-          save={rawConfig => {
-            save(toNamespace(namespaces.WALLETS)(rawConfig))
-            setCancelCryptoConfiguration(null)
-          }}
+          onClose={() => setWizard(false)}
+          save={wizardSave}
           error={error?.message}
           cryptoCurrencies={cryptoCurrencies}
           userAccounts={data?.config?.accounts}

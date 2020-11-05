@@ -20,11 +20,13 @@ const AutocompleteFormik = ({ options, onChange, ...props }) => {
     onBlur && onBlur(event)
   }
 
+  const onChangeHandler = value => setFieldValue(name, value)
+
   return (
     <Autocomplete
       name={name}
       onChange={(event, item) => {
-        onChange && onChange(value, item, () => setFieldValue(name, value))
+        if (onChange) return onChange(value, item, onChangeHandler)
         setFieldValue(name, item)
       }}
       onBlur={innerOnBlur}

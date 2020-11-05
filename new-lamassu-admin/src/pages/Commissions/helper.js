@@ -12,6 +12,11 @@ const ALL_MACHINES = {
   deviceId: 'ALL_MACHINES'
 }
 
+const ALL_COINS = {
+  display: 'All Coins',
+  code: 'ALL_COINS'
+}
+
 const cashInAndOutHeaderStyle = { marginLeft: 6 }
 
 const cashInHeader = (
@@ -28,41 +33,39 @@ const cashOutHeader = (
   </div>
 )
 
+const getView = (data, code, compare) => it => {
+  if (!data) return ''
+
+  return R.compose(R.prop(code), R.find(R.propEq(compare ?? 'code', it)))(data)
+}
+
+const displayCodeArray = data => it => {
+  if (!it) return it
+
+  return R.compose(R.join(', '), R.map(getView(data, 'display')))(it)
+}
+
+const onCryptoChange = (prev, curr, setValue) => {
+  const hasAllCoins = R.includes(ALL_COINS.code)(curr)
+  const hadAllCoins = R.includes(ALL_COINS.code)(prev)
+
+  if (hasAllCoins && hadAllCoins && R.length(curr) > 1) {
+    return setValue(R.reject(R.equals(ALL_COINS.code))(curr))
+  }
+
+  if (hasAllCoins && !hadAllCoins) {
+    return setValue([ALL_COINS.code])
+  }
+
+  setValue(curr)
+}
+
 const getOverridesFields = (getData, currency, auxElements) => {
-  const getView = (data, code, compare) => it => {
-    if (!data) return ''
-
-    return R.compose(
-      R.prop(code),
-      R.find(R.propEq(compare ?? 'code', it))
-    )(data)
-  }
-
-  const displayCodeArray = data => it => {
-    if (!it) return it
-
-    return R.compose(R.join(', '), R.map(getView(data, 'code')))(it)
-  }
-
-  var overridenMachineCoins = R.reduceBy(
-    (acc, { cryptoCurrencies }) => acc.concat(cryptoCurrencies),
-    [],
-    R.prop('machine'),
-    auxElements
-  )
-
-  const suggestionFilter = (it, cryptoData) => {
-    if (!it?.machine) return cryptoData
-
-    return R.differenceWith(
-      (x, y) => x.code === y && !it?.cryptoCurrencies.includes(x.code),
-      cryptoData,
-      overridenMachineCoins[it?.machine] ?? []
-    )
-  }
-
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
-  const cryptoData = getData(['cryptoCurrencies'])
+  const rawCryptos = getData(['cryptoCurrencies'])
+  const cryptoData = [ALL_COINS].concat(
+    R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
+  )
 
   return [
     {
@@ -84,10 +87,11 @@ const getOverridesFields = (getData, currency, auxElements) => {
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
       inputProps: {
-        options: (...[, it]) => suggestionFilter(it, cryptoData),
+        options: cryptoData,
         valueProp: 'code',
-        getLabel: R.path(['code']),
-        multiple: true
+        getLabel: R.path(['display']),
+        multiple: true,
+        onChange: onCryptoChange
       }
     },
     {
@@ -225,35 +229,94 @@ const schema = Yup.object().shape({
     .required()
 })
 
-const OverridesSchema = Yup.object().shape({
-  machine: Yup.string()
-    .nullable()
-    .label('Machine')
-    .required(),
-  cryptoCurrencies: Yup.array()
-    .label('Crypto Currencies')
-    .required(),
-  cashIn: Yup.number()
-    .label('Cash-in')
-    .min(0)
-    .max(percentMax)
-    .required(),
-  cashOut: Yup.number()
-    .label('Cash-out')
-    .min(0)
-    .max(percentMax)
-    .required(),
-  fixedFee: Yup.number()
-    .label('Fixed Fee')
-    .min(0)
-    .max(currencyMax)
-    .required(),
-  minimumTx: Yup.number()
-    .label('Minimum Tx')
-    .min(0)
-    .max(currencyMax)
-    .required()
-})
+const getAlreadyUsed = (id, machine, values) => {
+  const getCrypto = R.prop('cryptoCurrencies')
+  const getMachineId = R.prop('machine')
+
+  const filteredOverrides = R.filter(R.propEq('machine', machine))(values)
+  const originalValue = R.find(R.propEq('id', id))(values)
+
+  const originalCryptos = getCrypto(originalValue)
+  const originalMachineId = getMachineId(originalValue)
+
+  const alreadyUsed = R.compose(
+    R.uniq,
+    R.flatten,
+    R.map(getCrypto)
+  )(filteredOverrides)
+
+  if (machine !== originalMachineId) return alreadyUsed ?? []
+
+  return R.difference(alreadyUsed, originalCryptos)
+}
+
+const getOverridesSchema = (values, rawData) => {
+  const getData = R.path(R.__, rawData)
+  const machineData = [ALL_MACHINES].concat(getData(['machines']))
+  const rawCryptos = getData(['cryptoCurrencies'])
+  const cryptoData = [ALL_COINS].concat(
+    R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
+  )
+
+  return Yup.object().shape({
+    machine: Yup.string()
+      .nullable()
+      .label('Machine')
+      .required(),
+    cryptoCurrencies: Yup.array()
+      .test({
+        test() {
+          const { id, machine, cryptoCurrencies } = this.parent
+          const alreadyUsed = getAlreadyUsed(id, machine, values)
+
+          const isAllMachines = machine === ALL_MACHINES.deviceId
+          const isAllCoins = R.includes(ALL_COINS.code, cryptoCurrencies)
+          if (isAllMachines && isAllCoins) {
+            return this.createError({
+              message: `All machines and all coins should be configured in the default setup table`
+            })
+          }
+
+          const repeated = R.intersection(alreadyUsed, cryptoCurrencies)
+          if (!R.isEmpty(repeated)) {
+            const codes = displayCodeArray(cryptoData)(repeated)
+            const machineView = getView(
+              machineData,
+              'name',
+              'deviceId'
+            )(machine)
+
+            const message = `${codes} already overriden for machine: ${machineView}`
+
+            return this.createError({ message })
+          }
+          return true
+        }
+      })
+      .label('Crypto Currencies')
+      .required(),
+    cashIn: Yup.number()
+      .label('Cash-in')
+      .min(0)
+      .max(percentMax)
+      .required(),
+    cashOut: Yup.number()
+      .label('Cash-out')
+      .min(0)
+      .max(percentMax)
+      .required(),
+    fixedFee: Yup.number()
+      .label('Fixed Fee')
+      .min(0)
+      .max(currencyMax)
+      .required(),
+    minimumTx: Yup.number()
+      .label('Minimum Tx')
+      .min(0)
+      .max(currencyMax)
+      .required()
+  })
+}
 
 const defaults = {
   cashIn: '',
@@ -271,11 +334,23 @@ const overridesDefaults = {
   minimumTx: ''
 }
 
+const getOrder = ({ machine, cryptoCurrencies }) => {
+  const isAllMachines = machine === ALL_MACHINES.deviceId
+  const isAllCoins = R.contains(ALL_COINS.code, cryptoCurrencies)
+
+  if (isAllMachines && isAllCoins) return 0
+  if (isAllMachines) return 1
+  if (isAllCoins) return 2
+
+  return 3
+}
+
 export {
   mainFields,
   overrides,
   schema,
-  OverridesSchema,
+  getOverridesSchema,
   defaults,
-  overridesDefaults
+  overridesDefaults,
+  getOrder
 }

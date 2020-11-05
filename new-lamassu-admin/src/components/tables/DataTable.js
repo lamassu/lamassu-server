@@ -168,7 +168,7 @@ const DataTable = ({
                 // this has to be in a style because of how the component works
                 style={{ overflow: 'inherit', outline: 'none' }}
                 {...props}
-                height={height}
+                height={loading ? 0 : height}
                 width={width}
                 rowCount={data.length}
                 rowHeight={cache.rowHeight}
