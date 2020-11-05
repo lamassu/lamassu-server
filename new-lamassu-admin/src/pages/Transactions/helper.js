@@ -20,4 +20,12 @@ const getStatus = it => {
   return getCashInStatus(it)
 }
 
-export { getStatus }
+const getStatusProperties = status => ({
+  hasError: status === 'Error' || null,
+  dispense: status === 'Success' || null,
+  expired: status === 'Expired' || null,
+  operatorCompleted: status === 'Cancelled' || null,
+  sendConfirmed: status === 'Sent' || null
+})
+
+export { getStatus, getStatusProperties }
