@@ -9,7 +9,7 @@ import styles from '../Dashboard.styles'
 
 import AlertsTable from './AlertsTable'
 
-const NUM_TO_RENDER = 1
+const NUM_TO_RENDER = 3
 
 const data = {
   alerts: [
@@ -32,6 +32,7 @@ const Alerts = ({ cardState, setRightSideState }) => {
   useEffect(() => {
     if (showAllItems) {
       setShowExpandButton(false)
+      setNumToRender(data?.alerts.length)
     } else if (data && data?.alerts.length > numToRender) {
       setShowExpandButton(true)
     }
@@ -66,7 +67,9 @@ const Alerts = ({ cardState, setRightSideState }) => {
           display: 'flex',
           justifyContent: 'space-between'
         }}>
-        <H4 className={classes.h4}>{'Alerts (6)'}</H4>
+        <H4 className={classes.h4}>{`Alerts ${
+          data ? `(${data.alerts.length})` : 0
+        }`}</H4>
         {(showAllItems || cardState.cardSize === 'small') && (
           <>
             <Label1

@@ -14,7 +14,7 @@ import styles from './MachinesTable.styles'
 const useStyles = makeStyles(styles)
 
 // number of machines in the table to render on page load
-const NUM_TO_RENDER = 1
+const NUM_TO_RENDER = 3
 
 const GET_DATA = gql`
   query getData {
@@ -51,10 +51,6 @@ const SystemStatus = ({ cardState, setRightSideState }) => {
   const [showAllItems, setShowAllItems] = useState(false)
   const [showExpandButton, setShowExpandButton] = useState(false)
   const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
-
-  if (!loading && data.machines.length < 20) {
-    data.machines = [...data.machines, ...data.machines]
-  }
 
   useEffect(() => {
     if (showAllItems) {

@@ -55,5 +55,10 @@ export default {
     textAlign: 'center',
     marginBottom: 0,
     marginTop: 0
+  },
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: backgroundColor
+    }
   }
 }
