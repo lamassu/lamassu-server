@@ -47,5 +47,8 @@ export default {
   },
   tableBody: {
     overflow: 'auto'
+  },
+  h4: {
+    marginTop: 0
   }
 }

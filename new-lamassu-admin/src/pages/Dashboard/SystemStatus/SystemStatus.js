@@ -8,9 +8,8 @@ import React, { useState, useEffect } from 'react'
 import ActionButton from 'src/components/buttons/ActionButton'
 import { H4, TL2, Label1 } from 'src/components/typography'
 
-import styles from '../Dashboard.styles'
-
 import MachinesTable from './MachinesTable'
+import styles from './MachinesTable.styles'
 
 const useStyles = makeStyles(styles)
 
@@ -53,9 +52,14 @@ const SystemStatus = ({ cardState, setRightSideState }) => {
   const [showExpandButton, setShowExpandButton] = useState(false)
   const [numToRender, setNumToRender] = useState(NUM_TO_RENDER)
 
+  if (!loading && data.machines.length < 20) {
+    data.machines = [...data.machines, ...data.machines]
+  }
+
   useEffect(() => {
     if (showAllItems) {
       setShowExpandButton(false)
+      setNumToRender(data?.machines.length)
     } else if (data && data?.machines.length > numToRender) {
       setShowExpandButton(true)
     }
@@ -92,10 +96,15 @@ const SystemStatus = ({ cardState, setRightSideState }) => {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <H4>System status</H4>
+        <H4 className={classes.h4}>System status</H4>
         {(showAllItems || cardState.cardSize === 'small') && (
           <>
-            <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
+            <Label1
+              style={{
+                textAlign: 'center',
+                marginBottom: 0,
+                marginTop: 0
+              }}>
               <Button
                 onClick={reset}
                 size="small"

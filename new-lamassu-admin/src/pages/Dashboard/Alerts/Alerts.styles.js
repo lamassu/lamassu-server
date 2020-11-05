@@ -47,5 +47,13 @@ export default {
   },
   tableBody: {
     overflow: 'auto'
+  },
+  h4: {
+    marginTop: 0
+  },
+  buttonLabel: {
+    textAlign: 'center',
+    marginBottom: 0,
+    marginTop: 0
   }
 }

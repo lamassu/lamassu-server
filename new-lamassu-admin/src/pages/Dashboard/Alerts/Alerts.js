@@ -42,12 +42,12 @@ const Alerts = ({ cardState, setRightSideState }) => {
   }, [cardState.cardSize, numToRender, showAllItems])
 
   const reset = () => {
-    setShowAllItems(false)
-    setNumToRender(NUM_TO_RENDER)
     setRightSideState({
       systemStatus: { cardSize: 'default', buttonName: 'Show less' },
       alerts: { cardSize: 'default', buttonName: 'Show less' }
     })
+    setShowAllItems(false)
+    setNumToRender(NUM_TO_RENDER)
   }
 
   const showAllClick = () => {
@@ -61,11 +61,20 @@ const Alerts = ({ cardState, setRightSideState }) => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <H4>{'Alerts (6)'}</H4>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}>
+        <H4 className={classes.h4}>{'Alerts (6)'}</H4>
         {(showAllItems || cardState.cardSize === 'small') && (
           <>
-            <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
+            <Label1
+              style={{
+                textAlign: 'center',
+                marginBottom: 0,
+                marginTop: 0
+              }}>
               <Button
                 onClick={reset}
                 size="small"
