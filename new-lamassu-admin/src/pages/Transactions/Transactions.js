@@ -7,6 +7,7 @@ import * as R from 'ramda'
 import React from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
+import SearchBox from 'src/components/SearchBox'
 import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -143,6 +144,9 @@ const Transactions = () => {
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <Title>Transactions</Title>
+          <div className={classes.buttonsWrapper}>
+            <SearchBox placeholder={'Search Transactions'} />
+          </div>
           {txResponse && (
             <div className={classes.buttonsWrapper}>
               <LogsDowloaderPopover
