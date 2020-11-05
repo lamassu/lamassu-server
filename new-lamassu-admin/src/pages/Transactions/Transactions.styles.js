@@ -1,6 +1,15 @@
 import typographyStyles from 'src/components/typography/styles'
 import baseStyles from 'src/pages/Logs.styles'
-import { offColor, white } from 'src/styling/variables'
+import {
+  offColor,
+  white,
+  primaryColor,
+  zircon,
+  smallestFontSize,
+  inputFontFamily,
+  inputFontWeight,
+  spacer
+} from 'src/styling/variables'
 
 const { label1, mono, p } = typographyStyles
 const { titleWrapper, titleAndButtonsContainer, buttonsWrapper } = baseStyles
@@ -64,6 +73,10 @@ const mainStyles = {
   titleWrapper,
   titleAndButtonsContainer,
   buttonsWrapper,
+  text: {
+    marginTop: 0,
+    marginBottom: 0
+  },
   headerLabels: {
     display: 'flex',
     flexDirection: 'row',
@@ -102,7 +115,35 @@ const mainStyles = {
     marginLeft: 10,
     paddingLeft: 5,
     paddingRight: 5
+  },
+  button: {
+    width: 8,
+    height: 8,
+    marginLeft: 8
   }
 }
 
-export { cpcStyles, detailsRowStyles, labelStyles, mainStyles }
+const chipStyles = {
+  root: {
+    borderRadius: spacer / 2,
+    marginTop: spacer / 2,
+    marginRight: spacer / 4,
+    marginBottom: spacer / 2,
+    marginLeft: spacer / 4,
+    height: spacer * 3,
+    backgroundColor: zircon,
+    '&:hover, &:focus, &:active': {
+      backgroundColor: zircon
+    }
+  },
+  label: {
+    fontSize: smallestFontSize,
+    fontWeight: inputFontWeight,
+    fontFamily: inputFontFamily,
+    paddingRight: spacer / 2,
+    paddingLeft: spacer / 2,
+    color: primaryColor
+  }
+}
+
+export { cpcStyles, detailsRowStyles, labelStyles, mainStyles, chipStyles }

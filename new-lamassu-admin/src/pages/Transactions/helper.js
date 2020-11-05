@@ -24,4 +24,12 @@ const getStatusDetails = it => {
   return it.hasError ? it.hasError : null
 }
 
-export { getStatus, getStatusDetails }
+const getStatusProperties = status => ({
+  hasError: status === 'Error' || null,
+  dispense: status === 'Success' || null,
+  expired: status === 'Expired' || null,
+  operatorCompleted: status === 'Cancelled' || null,
+  sendConfirmed: status === 'Sent' || null
+})
+
+export { getStatus, getStatusProperties, getStatusDetails }
