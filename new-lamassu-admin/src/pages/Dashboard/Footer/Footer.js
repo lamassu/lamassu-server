@@ -1,7 +1,15 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
+import gql from 'graphql-tag'
 import React from 'react'
 
 import { white } from 'src/styling/variables'
+
+const GET_DATA = gql`
+  query getData {
+    rates
+  }
+`
 
 const useStyles = makeStyles({
   footer: {
@@ -18,7 +26,11 @@ const useStyles = makeStyles({
   }
 })
 const Footer = () => {
+  const { data, loading } = useQuery(GET_DATA)
+
   const classes = useStyles()
+
+  console.log(data, loading)
 
   return (
     <>
