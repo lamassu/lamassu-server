@@ -195,10 +195,13 @@ const ETable = ({
                 )}
                 {innerData.map((it, idx) => {
                   const nextElement = innerData[idx + 1]
+
+                  const canGroup = !!groupBy && nextElement
+                  const isFunction = R.type(groupBy) === 'Function'
+                  const groupFunction = isFunction ? groupBy : R.prop(groupBy)
+
                   const isLastOfGroup =
-                    groupBy &&
-                    nextElement &&
-                    nextElement[groupBy] !== it[groupBy]
+                    canGroup && groupFunction(it) !== groupFunction(nextElement)
 
                   return (
                     <Formik

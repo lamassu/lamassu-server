@@ -45,9 +45,7 @@ const GET_INFO = gql`
 
 const Wallet = ({ name: SCREEN_KEY }) => {
   const [editingSchema, setEditingSchema] = useState(null)
-  const [cancelServiceConfiguration, setCancelServiceConfiguration] = useState(
-    null
-  )
+  const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [wizard, setWizard] = useState(false)
   const { data } = useQuery(GET_INFO)
 
@@ -71,19 +69,31 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
 
-  const configureThirdPartyService = (it, cancel) => {
-    if (!it) return
+  const onChange = (previous, current, setValue) => {
+    if (!current) return setValue(current)
 
-    if (!accounts[it]) {
-      setEditingSchema(schemas[it])
-      setCancelServiceConfiguration(() => () => cancel())
+    if (!accounts[current] && schemas[current]) {
+      setEditingSchema(schemas[current])
+      setOnChangeFunction(() => () => setValue(current))
+      return
     }
+
+    setValue(current)
   }
 
   const shouldOverrideEdit = it => {
     const namespaced = fromNamespace(it)(config)
     return !WalletSchema.isValidSync(namespaced)
   }
+
+  const wizardSave = it =>
+    saveAccount({
+      variables: { accounts: { [editingSchema.code]: it } }
+    }).then(it => {
+      onChangeFunction()
+      setOnChangeFunction(null)
+      return it
+    })
 
   return (
     <>
@@ -100,11 +110,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         editWidth={174}
         save={save}
         validationSchema={WalletSchema}
-        elements={getElements(
-          cryptoCurrencies,
-          accountsConfig,
-          configureThirdPartyService
-        )}
+        elements={getElements(cryptoCurrencies, accountsConfig, onChange)}
       />
       {wizard && (
         <Wizard
@@ -122,17 +128,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         <Modal
           title={`Edit ${editingSchema.name}`}
           width={478}
-          handleClose={() => {
-            cancelServiceConfiguration && cancelServiceConfiguration()
-            setEditingSchema(null)
-          }}
+          handleClose={() => setEditingSchema(null)}
           open={true}>
           <FormRenderer
-            save={it =>
-              saveAccount({
-                variables: { accounts: { [editingSchema.code]: it } }
-              })
-            }
+            save={wizardSave}
             elements={editingSchema.elements}
             validationSchema={editingSchema.validationSchema}
             value={accounts[editingSchema.code]}

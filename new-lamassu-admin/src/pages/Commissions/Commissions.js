@@ -12,9 +12,10 @@ import {
   mainFields,
   overrides,
   schema,
-  OverridesSchema,
+  getOverridesSchema,
   defaults,
-  overridesDefaults
+  overridesDefaults,
+  getOrder
 } from './helper'
 
 const GET_DATA = gql`
@@ -54,7 +55,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const commissionOverrides = commission?.overrides ?? []
 
   const orderedCommissionsOverrides = R.sortWith([
-    R.ascend(it => (R.propEq('machine', 'ALL_MACHINES')(it) ? 0 : 1)),
+    R.ascend(getOrder),
     R.ascend(R.prop('machine'))
   ])(commissionOverrides)
 
@@ -100,9 +101,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           enableDelete
           enableEdit
           enableCreate
+          groupBy={getOrder}
           initialValues={overridesDefaults}
           save={saveOverrides}
-          validationSchema={OverridesSchema}
+          validationSchema={getOverridesSchema(
+            orderedCommissionsOverrides,
+            data
+          )}
           data={orderedCommissionsOverrides}
           elements={overrides(data, currency, orderedCommissionsOverrides)}
           setEditing={onEditingOverrides}
