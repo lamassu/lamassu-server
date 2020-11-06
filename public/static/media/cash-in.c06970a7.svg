@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="12px" viewBox="0 0 10 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="Styleguide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon/direction/cash-in" transform="translate(-1.000000, 0.000000)" fill="#16D6D3">
+            <path d="M3.99134364,0.321790399 L10.1430099,4.40569595 C11.0271728,4.99266501 11.2660914,6.1822461 10.6766494,7.06269968 C10.5357408,7.27317585 10.3543728,7.45378298 10.1430099,7.59410043 L3.99134364,11.678006 C3.10718075,12.264975 1.91258801,12.0270588 1.32314609,11.1466052 C1.11243854,10.8318699 1,10.4620686 1,10.0838037 L1,1.91599264 C1,0.857819122 1.86143307,0 2.92406462,0 C3.30392305,0 3.67528233,0.11196683 3.99134364,0.321790399 Z" id="Path-3"></path>
+        </g>
+    </g>
+</svg>

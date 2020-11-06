@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="16px" viewBox="0 0 22 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="icon/ID/card/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <polygon id="Stroke-1" stroke="#FFFFFF" stroke-width="1.6" points="0 16 22 16 22 0 0 0"></polygon>
+        <line x1="11.7857143" y1="4" x2="18.8571429" y2="4" id="Stroke-3" stroke="#FFFFFF" stroke-width="1.6"></line>
+        <line x1="11.7857143" y1="7.2" x2="18.8571429" y2="7.2" id="Stroke-4" stroke="#FFFFFF" stroke-width="1.6"></line>
+        <polygon id="Stroke-5" stroke="#FFFFFF" stroke-width="1.6" points="3.14285714 11.2 8.64285714 11.2 8.64285714 4 3.14285714 4"></polygon>
+    </g>
+</svg>
