@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
-    <desc>Created with Sketch.</desc>
-    <g id="icon/stage/spring/complete" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <circle id="Oval" stroke="#48F694" stroke-width="2" transform="translate(9.000000, 9.000000) rotate(-270.000000) translate(-9.000000, -9.000000) " cx="9" cy="9" r="8"></circle>
-        <path d="M7.80983711,12 C7.54819546,12 7.28655382,11.9032616 7.08725647,11.710772 L5.29971255,9.98428824 C4.90009582,9.59832189 4.90009582,8.97445811 5.29971255,8.58849175 C5.69932929,8.2025254 6.34525711,8.2025254 6.74487384,8.58849175 L7.80983711,9.61707728 L11.2551262,6.28947477 C11.6547429,5.90350841 12.3016927,5.90350841 12.7002874,6.28947477 C13.0999042,6.674454 13.0999042,7.2993049 12.7002874,7.68527125 L8.53241776,11.710772 C8.33312041,11.9032616 8.07147876,12 7.80983711,12" id="Path" fill="#48F694"></path>
-    </g>
-</svg>

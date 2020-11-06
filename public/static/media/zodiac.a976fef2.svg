@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="icon/button/add/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11.5384615,6 C11.5384615,9.05815385 9.05815385,11.5384615 6,11.5384615 C2.94184615,11.5384615 0.461538462,9.05815385 0.461538462,6 C0.461538462,2.94184615 2.94184615,0.461538462 6,0.461538462 C9.05815385,0.461538462 11.5384615,2.94184615 11.5384615,6 Z" id="Stroke-1" stroke="#1B2559"></path>
+        <line x1="6" y1="3.69230769" x2="6" y2="8.30769231" id="Stroke-3" stroke="#1B2559"></line>
+        <line x1="3.69230769" y1="6" x2="8.30769231" y2="6" id="Stroke-5" stroke="#1B2559"></line>
+    </g>
+</svg>
