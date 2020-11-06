@@ -71,7 +71,7 @@ const Footer = () => {
     const localeFiatCurrency = data.config.locale_fiatCurrency
 
     return (
-      <Grid key={key} item xs={2} style={{ marginBottom: 18 }}>
+      <Grid key={key} item xs={3} style={{ marginBottom: 18 }}>
         <Label2 className={classes.label}>
           {data.cryptoCurrencies[idx].display}
         </Label2>

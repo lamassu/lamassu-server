@@ -70,10 +70,8 @@ export default {
     height: 88
   },
   content: {
-    // width: 1200,
-    // margin: '0 auto'
-    marginLeft: 50,
-    marginRight: 50
+    width: 1200,
+    margin: '0 auto'
   },
   headerLabels: {
     whiteSpace: 'pre',
