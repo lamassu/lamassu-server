@@ -12,6 +12,10 @@ export default {
   label: {
     color: offColor
   },
+  tickerLabel: {
+    color: offColor,
+    marginTop: -5
+  },
   row: {
     backgroundColor: backgroundColor,
     borderBottom: 'none'
@@ -62,13 +66,17 @@ export default {
     bottom: 0,
     width: '100vw',
     backgroundColor: white,
-    textAlign: 'left'
+    textAlign: 'left',
+    height: 88
   },
   content: {
-    width: 1200,
-    margin: '0 auto'
+    // width: 1200,
+    // margin: '0 auto'
+    marginLeft: 50,
+    marginRight: 50
   },
   headerLabels: {
+    whiteSpace: 'pre',
     display: 'flex',
     flexDirection: 'row',
     '& div': {
@@ -81,6 +89,7 @@ export default {
     '& span': {
       extend: label1,
       marginLeft: 6
-    }
+    },
+    marginTop: -20
   }
 }
