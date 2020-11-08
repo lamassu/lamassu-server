@@ -29,11 +29,11 @@ function Welcome({ doContinue }) {
 
   return (
     <div className={classes.welcome}>
-      <H1 className={classes.title}>Welcome to Lamassu Admin</H1>
+      <H1 className={classes.title}>Welcome to the Lamassu Admin</H1>
       <P className={classes.getStarted}>
-        To get started, we’ve put together wizard that will
+        To get you started, we’ve put together a wizard that will
         <br />
-        help set up you need before start adding machines.
+        help set up what you need before pairing your machines.
       </P>
       <Button size="xl" onClick={doContinue}>
         Get started
