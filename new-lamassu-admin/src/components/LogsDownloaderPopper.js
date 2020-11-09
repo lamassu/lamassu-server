@@ -192,8 +192,10 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
     FileSaver.saveAs(
       blob,
       selectedRadio === ALL
-        ? `${formatDateFile(new Date())}_${name}`
-        : `${formatDateFile(range.from)}_${formatDateFile(range.until)}_${name}`
+        ? `${formatDateFile(new Date())}_${name}.csv`
+        : `${formatDateFile(range.from)}_${formatDateFile(
+            range.until
+          )}_${name}.csv`
     )
   }
 
