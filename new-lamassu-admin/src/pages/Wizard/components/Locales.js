@@ -70,6 +70,8 @@ function Locales({ isActive, doContinue }) {
     data?.cryptoCurrencies || []
   )
 
+  const onChangeCoin = (prev, curr, setValue) => setValue(curr)
+
   return (
     <div className={classes.wrapper}>
       <TitleSection title="Locales" />
@@ -85,7 +87,10 @@ function Locales({ isActive, doContinue }) {
           save={save}
           validationSchema={schema}
           data={[]}
-          elements={mainFields(R.merge(data, { cryptoCurrencies }), () => {})}
+          elements={mainFields(
+            R.merge(data, { cryptoCurrencies }),
+            onChangeCoin
+          )}
         />
       </Section>
     </div>

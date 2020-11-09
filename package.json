@@ -36,7 +36,7 @@
     "graphql-type-json": "^0.3.1",
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
-    "json-2-csv": "^3.7.8",
+    "json2csv": "^5.0.3",
     "kraken-api": "github:DeX3/npm-kraken-api",
     "libphonenumber-js": "^1.7.38",
     "lnd-async": "^1.8.0",
@@ -92,7 +92,6 @@
     "lamassu-cancel": "./bin/lamassu-cancel",
     "lamassu-nuke-db": "./bin/lamassu-nuke-db",
     "lamassu-coins": "./bin/lamassu-coins",
-    "lamassu-update": "./bin/lamassu-update",
     "lamassu-ofac-update": "./bin/lamassu-ofac-update",
     "lamassu-send-coins": "./bin/lamassu-send-coins",
     "lamassu-update-to-mnemonic": "./bin/lamassu-update-to-mnemonic",
@@ -115,7 +114,9 @@
     "watch": "concurrently \"npm:server\" \"npm:admin-server\" \"npm:graphql-server\""
   },
   "nodemonConfig": {
-    "ignore": ["new-lamassu-admin/*"]
+    "ignore": [
+      "new-lamassu-admin/*"
+    ]
   },
   "devDependencies": {
     "ava": "3.8.2",
