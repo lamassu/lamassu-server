@@ -6,6 +6,7 @@ import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
 
 import { Label1, Label2 } from 'src/components/typography/index'
+import { fromNamespace } from 'src/utils/config'
 
 import InfoWithLabel from './InfoWithLabel'
 import Nav from './Nav'
@@ -30,6 +31,11 @@ const GET_DATA = gql`
       txClass
       error
     }
+    btcRates {
+      code
+      name
+      rate
+    }
     config
   }
 `
@@ -39,6 +45,8 @@ const SystemPerformance = () => {
   const [transactionsToShow, setTransactionsToShow] = useState([])
 
   const { data, loading } = useQuery(GET_DATA)
+
+  const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
 
   useEffect(() => {
     const isInRange = t => {
@@ -67,8 +75,19 @@ const SystemPerformance = () => {
           return t.error === null && true
       }
     }
-    setTransactionsToShow(R.filter(isInRange, data?.transactions ?? []))
-  }, [data, selectedRange])
+
+    const convertFiatToLocale = item => {
+      if (item.fiatCode === fiatLocale) return item
+      const itemRate = R.find(R.propEq('code', item.fiatCode))(data.btcRates)
+      const localeRate = R.find(R.propEq('code', fiatLocale))(data.btcRates)
+      const multiplier = localeRate.rate / itemRate.rate
+      return { ...item, fiat: parseFloat(item.fiat) * multiplier }
+    }
+
+    setTransactionsToShow(
+      R.map(convertFiatToLocale)(R.filter(isInRange, data?.transactions ?? []))
+    )
+  }, [data, fiatLocale, selectedRange])
 
   const handleSetRange = range => {
     setSelectedRange(range)
@@ -79,7 +98,13 @@ const SystemPerformance = () => {
   }
 
   const getFiatVolume = () => {
-    return R.sum(getFiats(R.filter(isNotProp('error'), transactionsToShow)))
+    // for explanation check https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+    return +(
+      Math.round(
+        R.sum(getFiats(R.filter(isNotProp('error'), transactionsToShow))) +
+          'e+2'
+      ) + 'e-2'
+    )
   }
 
   const getProfit = () => {
@@ -93,7 +118,7 @@ const SystemPerformance = () => {
           Number.parseFloat(t.commissionPercentage) * Number.parseFloat(t.fiat)
       }
     })
-    return commissionFees + cashInFees
+    return +(Math.round(commissionFees + cashInFees + 'e+2') + 'e-2')
   }
 
   const getDirectionPercent = () => {
