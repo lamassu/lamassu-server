@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react'
 import { Label1, Label2 } from 'src/components/typography/index'
 import { fromNamespace } from 'src/utils/config'
 
+import Scatterplot from './Graphs/Scatterplot'
 import InfoWithLabel from './InfoWithLabel'
 import Nav from './Nav'
 
@@ -155,6 +156,12 @@ const SystemPerformance = () => {
     }
   }
 
+  const makeScatterplotData = () => {
+    return data.transactions.map(t => {
+      return [t.fiat, t.created]
+    })
+  }
+
   return (
     <>
       <Nav handleSetRange={handleSetRange} />
@@ -178,7 +185,7 @@ const SystemPerformance = () => {
           <Grid container style={{ marginTop: 30 }}>
             <Grid item xs={12}>
               <Label2>Transactions</Label2>
-              <p>graph goes here</p>
+              <Scatterplot data={makeScatterplotData()} />
             </Grid>
           </Grid>
           <Grid container style={{ marginTop: 30 }}>
