@@ -6,8 +6,10 @@ import moment from 'moment'
 import { backgroundColor, spacer, primaryColor } from 'src/styling/variables'
 
 const data = [
-  [0, '2020-11-10T18:00:00.000Z'],
-  [200, '2020-11-10T23:59:59.999Z']
+  [0, '2020-11-10T00:00:00.000Z'],
+  [1000, '2020-11-10T00:00:00.000Z'],
+  [0, '2020-11-10T23:59:59.999Z'],
+  [1000, '2020-11-10T23:59:59.999Z']
 ]
 
 const RefScatterplot = () => {
@@ -107,6 +109,10 @@ const RefScatterplot = () => {
 
     g.append('g')
       .attr('class', 'axis axis--y')
+      .style('font-size', '13px')
+      .style('color', '#5f668a')
+      .style('font-family', 'MuseoSans')
+      .style('margin-top', '11px')
       .call(
         d3
           .axisLeft(y)
@@ -115,7 +121,7 @@ const RefScatterplot = () => {
       )
       .call(g => g.select('.domain').remove())
       .selectAll('text')
-      .attr('dy', '-0.6em')
+      .attr('dy', '-0.40em')
       .attr('dx', '3em')
 
     svg
@@ -131,7 +137,7 @@ const RefScatterplot = () => {
         return y(d[0])
       })
       .attr('r', 4)
-      .attr('transform', 'translate(' + 0 + ',' + 16 + ')')
+      .attr('transform', 'translate(' + 0 + ',' + 15 + ')')
       .style('fill', '#69b3a2')
   }
 
