@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react'
 import { Label1, Label2 } from 'src/components/typography/index'
 import { fromNamespace } from 'src/utils/config'
 
-import Scatterplot from './Graphs/Scatterplot'
+import Scatterplot from './Graphs/RefScatterplot'
 import InfoWithLabel from './InfoWithLabel'
 import Nav from './Nav'
 

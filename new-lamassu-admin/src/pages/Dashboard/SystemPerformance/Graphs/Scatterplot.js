@@ -45,7 +45,8 @@ const Scatterplot = ({ data: realData }) => {
             scale={x}
             numTicks={6}
           />
-          <YAxis transform={`translate(0, 0)`} scale={y} numTicks={6} />
+          <g>{axisLeft(y)}</g>
+          {/* <YAxis transform={`translate(0, 0)`} scale={y} numTicks={6} /> */}
           <RenderCircles data={data} scale={{ x, y }} />
         </g>
       </svg>

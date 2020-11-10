@@ -10,7 +10,6 @@ import styles from './Dashboard.styles'
 import Footer from './Footer'
 import LeftSide from './LeftSide'
 import RightSide from './RightSide'
-
 const useStyles = makeStyles(styles)
 
 const Dashboard = () => {
