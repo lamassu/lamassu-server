@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
@@ -13,6 +13,7 @@ import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit, formatCryptoAddress } from 'src/utils/coin'
+import { startCase } from 'src/utils/string'
 
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
@@ -62,10 +63,14 @@ const GET_TRANSACTIONS = gql`
 const Transactions = () => {
   const classes = useStyles()
 
+  const getTransactions = R.path(['transactions'])
+
+  const [filteredTransactions, setFilteredTransactions] = useState([])
   const { data: txResponse, loading } = useQuery(GET_TRANSACTIONS, {
     variables: {
       limit: NUM_LOG_RESULTS
-    }
+    },
+    onCompleted: data => setFilteredTransactions(getTransactions(data))
   })
 
   const formatCustomerName = customer => {
@@ -139,13 +144,47 @@ const Transactions = () => {
     }
   ]
 
+  const searchElements = [
+    {
+      type: 'Type',
+      view: R.compose(startCase, R.path(['txClass']))
+    },
+    {
+      type: 'Machine',
+      view: R.path(['machineName'])
+    },
+    {
+      type: 'Customer',
+      view: getCustomerDisplayName
+    },
+    {
+      type: 'Fiat',
+      view: R.path(['fiatCode'])
+    },
+    {
+      type: 'Crypto',
+      view: R.path(['cryptoCode'])
+    },
+    {
+      type: 'Status',
+      view: getStatus
+    }
+  ]
+
+  const onFilterChange = filtered => setFilteredTransactions(filtered)
+
   return (
     <>
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <Title>Transactions</Title>
           <div className={classes.buttonsWrapper}>
-            <SearchBox placeholder={'Search Transactions'} />
+            <SearchBox
+              elements={searchElements}
+              data={getTransactions(txResponse)}
+              inputPlaceholder={'Search Transactions'}
+              onChange={onFilterChange}
+            />
           </div>
           {txResponse && (
             <div className={classes.buttonsWrapper}>
@@ -173,7 +212,7 @@ const Transactions = () => {
         loading={loading}
         emptyText="No transactions so far"
         elements={elements}
-        data={R.path(['transactions'])(txResponse)}
+        data={filteredTransactions}
         Details={DetailsRow}
         expandable
       />

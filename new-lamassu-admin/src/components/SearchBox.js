@@ -3,6 +3,7 @@ import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import MAutocomplete from '@material-ui/lab/Autocomplete'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 
 import { P } from 'src/components/typography'
@@ -14,11 +15,11 @@ const useStyles = makeStyles(styles)
 
 const SearchBox = memo(
   ({
-    options,
-    getOptionLabel,
-    getOptionType,
-    inputPlaceholder,
+    elements = [],
+    data = [],
+    inputPlaceholder = '',
     size,
+    onChange,
     ...props
   }) => {
     const classes = useStyles({ size })
@@ -30,19 +31,24 @@ const SearchBox = memo(
       [classes.inputWithPopup]: popupOpen
     }
 
+    const getOptions = R.compose(
+      R.uniq,
+      R.map(it => ({
+        value: it[0].view(it[1]),
+        ...it[0]
+      })),
+      R.xprod
+    )
+
     return (
       <MAutocomplete
         classes={{ option: classes.autocomplete }}
-        options={options}
-        getOptionLabel={it => getOptionLabel && getOptionLabel(it)}
+        options={getOptions(elements, data)}
+        getOptionLabel={it => it.value}
         renderOption={it => (
           <div className={classes.item}>
-            <P className={classes.itemLabel}>
-              {getOptionLabel && getOptionLabel(it)}
-            </P>
-            <P className={classes.itemType}>
-              {getOptionType && getOptionType(it)}
-            </P>
+            <P className={classes.itemLabel}>{it.value}</P>
+            <P className={classes.itemType}>{it.type}</P>
           </div>
         )}
         autoHighlight
@@ -74,6 +80,13 @@ const SearchBox = memo(
         }}
         onOpen={() => setPopupOpen(true)}
         onClose={() => setPopupOpen(false)}
+        onChange={(_, filter) =>
+          onChange(
+            filter
+              ? R.filter(it => R.equals(filter.view(it), filter.value), data)
+              : data
+          )
+        }
         {...props}
       />
     )
