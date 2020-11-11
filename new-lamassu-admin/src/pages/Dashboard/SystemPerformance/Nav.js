@@ -1,4 +1,4 @@
-import Button from '@material-ui/core/Button'
+// import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { useState } from 'react'
@@ -26,43 +26,43 @@ const Nav = ({ handleSetRange }) => {
       <div className={classes.titleAndButtonsContainer}>
         <H4 className={classes.h4}>{'System performance'}</H4>
       </div>
-      <div>
-        <Button
+      <div style={{ display: 'flex' }}>
+        <div
           onClick={e => handleClick(e.target.innerText)}
           size="small"
           disableRipple
           disableFocusRipple
           className={
             isSelected('Month')
-              ? classnames(classes.highlightedLabel, classes.navButton)
+              ? classnames(classes.newHighlightedLabel, classes.navButton)
               : classnames(classes.label, classes.navButton)
           }>
           Month
-        </Button>
-        <Button
+        </div>
+        <div
           onClick={e => handleClick(e.target.innerText)}
           size="small"
           disableRipple
           disableFocusRipple
           className={
             isSelected('Week')
-              ? classnames(classes.highlightedLabel, classes.navButton)
+              ? classnames(classes.newHighlightedLabel, classes.navButton)
               : classnames(classes.label, classes.navButton)
           }>
           Week
-        </Button>
-        <Button
+        </div>
+        <div
           size="small"
           disableRipple
           disableFocusRipple
           className={
             isSelected('Day')
-              ? classnames(classes.highlightedLabel, classes.navButton)
+              ? classnames(classes.newHighlightedLabel, classes.navButton)
               : classnames(classes.label, classes.navButton)
           }
           onClick={e => handleClick(e.target.innerText)}>
           Day
-        </Button>
+        </div>
       </div>
     </div>
   )

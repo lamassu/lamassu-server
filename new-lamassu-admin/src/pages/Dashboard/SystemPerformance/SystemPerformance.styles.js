@@ -21,26 +21,30 @@ export default {
     marginRight: spacer * 8
   },
   label: {
+    cursor: 'pointer',
     minHeight: 0,
     minWidth: 0,
     padding: 0,
     color: offColor,
     textTransform: 'none',
+    borderBottom: `2px solid transparent`,
+    display: 'inline-block',
+    lineHeight: 1.5,
     '&:hover': {
       backgroundColor: 'transparent'
     }
   },
-  highlightedLabel: {
+  newHighlightedLabel: {
+    cursor: 'pointer',
+    borderRadius: 0,
     minHeight: 0,
     minWidth: 0,
-    padding: 0,
     textTransform: 'none',
-    color: primaryColor,
-    fontWeight: 'bold',
-    textDecoration: 'underline',
+    borderBottom: `2px solid ${primaryColor}`,
+    display: 'inline-block',
+    lineHeight: 1.5,
     '&:hover': {
-      backgroundColor: 'transparent',
-      textDecoration: 'underline'
+      backgroundColor: 'transparent'
     }
   },
   navButton: {
