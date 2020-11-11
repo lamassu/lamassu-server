@@ -156,12 +156,6 @@ const SystemPerformance = () => {
     }
   }
 
-  const makeScatterplotData = () => {
-    return data.transactions.map(t => {
-      return [t.fiat, t.created]
-    })
-  }
-
   return (
     <>
       <Nav handleSetRange={handleSetRange} />
@@ -185,7 +179,10 @@ const SystemPerformance = () => {
           <Grid container style={{ marginTop: 30 }}>
             <Grid item xs={12}>
               <Label2>Transactions</Label2>
-              <Scatterplot data={makeScatterplotData()} />
+              <Scatterplot
+                timeFrame={selectedRange}
+                data={transactionsToShow}
+              />
             </Grid>
           </Grid>
           <Grid container style={{ marginTop: 30 }}>
