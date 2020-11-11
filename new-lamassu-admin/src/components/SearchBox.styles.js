@@ -1,6 +1,6 @@
 import baseButtonStyles from 'src/components/buttons/BaseButton.styles'
 import { bySize, bold } from 'src/styling/helpers'
-import { zircon, comet } from 'src/styling/variables'
+import { zircon, comet, primaryColor } from 'src/styling/variables'
 
 const { baseButton } = baseButtonStyles
 
@@ -9,6 +9,7 @@ const searchBoxHeight = 32
 const popupBorderRadiusFocus = baseButton.height / 4
 
 const hoverColor = 'rgba(0, 0, 0, 0.08)'
+const boxShadow = `0 4px 4px 0 ${hoverColor}`
 
 export default {
   size: ({ size }) => ({
@@ -25,7 +26,8 @@ export default {
     display: 'flex',
     flexDirection: 'column',
     borderRadius: [[0, 0, popupBorderRadiusFocus, popupBorderRadiusFocus]],
-    backgroundColor: zircon
+    backgroundColor: zircon,
+    boxShadow
   },
   separator: {
     width: '88%',
@@ -61,10 +63,12 @@ export default {
     alignItems: 'center',
     height: searchBoxHeight,
     borderRadius: searchBoxBorderRadius,
-    backgroundColor: zircon
+    backgroundColor: zircon,
+    color: primaryColor
   },
   inputWithPopup: {
-    borderRadius: [[popupBorderRadiusFocus, popupBorderRadiusFocus, 0, 0]]
+    borderRadius: [[popupBorderRadiusFocus, popupBorderRadiusFocus, 0, 0]],
+    boxShadow
   },
   iconButton: {
     marginRight: 12
