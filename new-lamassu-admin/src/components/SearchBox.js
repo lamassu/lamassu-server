@@ -54,6 +54,9 @@ const SearchBox = memo(
         autoHighlight
         disableClearable
         clearOnEscape
+        multiple
+        filterSelectedOptions
+        getOptionSelected={(option, value) => option.type === value.type}
         PaperComponent={({ children }) => (
           <Paper elevation={0} className={classes.popup}>
             <div className={classes.separator} />
@@ -80,13 +83,13 @@ const SearchBox = memo(
         }}
         onOpen={() => setPopupOpen(true)}
         onClose={() => setPopupOpen(false)}
-        onChange={(_, filter) =>
-          onChange(
-            filter
-              ? R.filter(it => R.equals(filter.view(it), filter.value), data)
-              : data
+        onChange={(_, filters) => {
+          const predicates = R.map(
+            f => it => R.equals(f.view(it), f.value),
+            filters
           )
-        }
+          onChange(filters ? R.filter(R.allPass(predicates), data) : data)
+        }}
         {...props}
       />
     )
