@@ -42,5 +42,8 @@ export default {
       backgroundColor: 'transparent',
       textDecoration: 'underline'
     }
+  },
+  navButton: {
+    marginLeft: 24
   }
 }

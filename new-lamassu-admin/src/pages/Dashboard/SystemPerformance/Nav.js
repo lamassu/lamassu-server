@@ -26,34 +26,44 @@ const Nav = ({ handleSetRange }) => {
       <div className={classes.titleAndButtonsContainer}>
         <H4 className={classes.h4}>{'System performance'}</H4>
       </div>
-      <Button
-        onClick={e => handleClick(e.target.innerText)}
-        size="small"
-        disableRipple
-        disableFocusRipple
-        className={
-          isSelected('Month') ? classes.highlightedLabel : classes.label
-        }>
-        Month
-      </Button>
-      <Button
-        onClick={e => handleClick(e.target.innerText)}
-        size="small"
-        disableRipple
-        disableFocusRipple
-        className={
-          isSelected('Week') ? classes.highlightedLabel : classes.label
-        }>
-        Week
-      </Button>
-      <Button
-        size="small"
-        disableRipple
-        disableFocusRipple
-        className={isSelected('Day') ? classes.highlightedLabel : classes.label}
-        onClick={e => handleClick(e.target.innerText)}>
-        Day
-      </Button>
+      <div>
+        <Button
+          onClick={e => handleClick(e.target.innerText)}
+          size="small"
+          disableRipple
+          disableFocusRipple
+          className={
+            isSelected('Month')
+              ? classnames(classes.highlightedLabel, classes.navButton)
+              : classnames(classes.label, classes.navButton)
+          }>
+          Month
+        </Button>
+        <Button
+          onClick={e => handleClick(e.target.innerText)}
+          size="small"
+          disableRipple
+          disableFocusRipple
+          className={
+            isSelected('Week')
+              ? classnames(classes.highlightedLabel, classes.navButton)
+              : classnames(classes.label, classes.navButton)
+          }>
+          Week
+        </Button>
+        <Button
+          size="small"
+          disableRipple
+          disableFocusRipple
+          className={
+            isSelected('Day')
+              ? classnames(classes.highlightedLabel, classes.navButton)
+              : classnames(classes.label, classes.navButton)
+          }
+          onClick={e => handleClick(e.target.innerText)}>
+          Day
+        </Button>
+      </div>
     </div>
   )
 }

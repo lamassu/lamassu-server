@@ -1,10 +1,9 @@
-/* eslint-disable */
-
 import * as d3 from 'd3'
-import React, { useEffect, useRef } from 'react'
 import moment from 'moment'
-import { backgroundColor, java, neon } from 'src/styling/variables'
 import * as R from 'ramda'
+import React, { useEffect, useRef, useCallback } from 'react'
+
+import { backgroundColor, java, neon } from 'src/styling/variables'
 
 const RefScatterplot = ({ data: realData, timeFrame }) => {
   const svgRef = useRef()
@@ -12,8 +11,8 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
   realData = [
     ...realData,
     {
-      created: new Date('2020-11-05T12:00:00.000Z'),
-      fiat: 0,
+      created: new Date('2020-11-05T00:00:00.000Z'),
+      fiat: 100,
       txClass: 'cashOut'
     }
   ]
@@ -21,84 +20,74 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
   const cashIns = R.filter(R.propEq('txClass', 'cashIn'))(realData)
   const cashOuts = R.filter(R.propEq('txClass', 'cashOut'))(realData)
 
-  const findMaxY = () => {
-    let maxY = Object.keys(realData).reduce(
-      (acc, curr) =>
-        acc.fiat
-          ? realData[curr].fiat > acc.fiat
-            ? realData[curr]
-            : acc
-          : realData[curr],
-      {}
-    ).fiat
-
-    maxY = 100 * Math.ceil(maxY / 100)
-
-    if (maxY < 100) {
-      return 100
-    } else if (maxY % 1000 === 0) {
-      return maxY + 100
-    }
-    return maxY
-  }
-
-  const findXRange = () => {
-    let min = +Infinity
-    let max = -Infinity
-    realData.forEach(t => {
-      let timestamp = +new Date(t.created)
-      if (timestamp >= max) {
-        max = timestamp
-      }
-      if (timestamp <= min) {
-        min = timestamp
-      }
-    })
-    return [min, max]
-  }
-
-  const findXAxisSettings = () => {
-    let res = {
-      nice: null,
-      ticks: 4,
-      subtractDays: 1,
-      timeFormat: '%H:%M',
-      timeRange: [0, 500]
-    }
-    switch (timeFrame) {
-      case 'Day':
-        return res
-      case 'Week':
-        return {
-          ...res,
-          nice: 7,
-          ticks: 7,
-          subtractDays: 7,
-          timeFormat: '%d',
-          timeRange: [50, 500]
-        }
-      case 'Month':
-        return {
-          ...res,
-          nice: 6,
-          ticks: 6,
-          subtractDays: 30,
-          timeFormat: '%b %d',
-          timeRange: [50, 500]
-        }
-      default:
-        return res
-    }
-  }
-
-  const drawGraph = () => {
+  const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
-    const margin = { top: 25, right: 0, bottom: 25, left: 0 }
-    const width = 540 - margin.left - margin.right
+    const margin = { top: 25, right: 0, bottom: 25, left: 15 }
+    const width = 555 - margin.left - margin.right
     const height = 150 - margin.top - margin.bottom
 
+    // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
+    // (this is because the Y axis looks best with multiples of 100)
+    const findMaxY = () => {
+      let maxY = Object.keys(realData).reduce(
+        (acc, curr) =>
+          acc.fiat
+            ? realData[curr].fiat > acc.fiat
+              ? realData[curr]
+              : acc
+            : realData[curr],
+        {}
+      ).fiat
+
+      maxY = 100 * Math.ceil(maxY / 100)
+
+      if (maxY < 100) {
+        return 100
+      } else if (maxY % 1000 === 0) {
+        return maxY + 100
+      }
+      return maxY
+    }
+
+    // changes values of arguments in some d3 function calls to make the graph labels look good according to the selected time frame
+    const findXAxisSettings = () => {
+      const res = {
+        nice: null,
+        ticks: 4,
+        subtractDays: 1,
+        timeFormat: '%H:%M',
+        timeRange: [0, 500]
+      }
+      switch (timeFrame) {
+        case 'Day':
+          return res
+        case 'Week':
+          return {
+            ...res,
+            nice: 7,
+            ticks: 7,
+            subtractDays: 7,
+            timeFormat: '%d',
+            timeRange: [50, 500]
+          }
+        case 'Month':
+          return {
+            ...res,
+            nice: 6,
+            ticks: 6,
+            subtractDays: 30,
+            timeFormat: '%b %d',
+            timeRange: [50, 500]
+          }
+        default:
+          return res
+      }
+    }
+
+    // sets width of the graph
     svg.attr('width', width)
 
+    // background color for the graph
     svg
       .append('rect')
       .attr('x', 0)
@@ -108,6 +97,7 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
       .attr('fill', backgroundColor)
       .attr('transform', `translate(${0},${margin.top})`)
 
+    // declare g variable where more svg components will be attached
     const g = svg
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`)
@@ -117,6 +107,7 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
     const maxY = findMaxY()
     const xAxisSettings = findXAxisSettings()
 
+    // y and x scales
     const y = d3
       .scaleLinear()
       .range([height, 0])
@@ -136,27 +127,22 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
       .range(xAxisSettings.timeRange)
       .nice(xAxisSettings.nice)
 
-    const make_y_gridlines = () => {
+    // horizontal gridlines
+    const makeYGridlines = () => {
       return d3.axisLeft(y).ticks(4)
     }
-
     g.append('g')
-      .attr('class', `grid`)
-      .attr('transform', 'translate(0,' + height + ')')
-
-    g.append('g')
-      .attr('class', `grid`)
       .style('color', '#eef1ff')
       .call(
-        make_y_gridlines()
+        makeYGridlines()
           .tickSize(-width)
           .tickFormat('')
       )
       .call(g => g.select('.domain').remove())
 
     /* X AXIS */
+    // this one is for the labels at the bottom
     g.append('g')
-      .attr('class', `axis axis--x`)
       .attr('transform', 'translate(0,' + height + ')')
       .style('font-size', '13px')
       .style('color', '#5f668a')
@@ -171,11 +157,10 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
         // .tickFormat(d3.timeFormat('%H:%M'))
       )
       .selectAll('text')
-      //.attr('dx', '4em')
+      // .attr('dx', '4em')
       .attr('dy', '1.5em')
-
+    // this is for the x axis line. It is the same color as the horizontal grid lines
     g.append('g')
-      .attr('class', `axis axis--x`)
       .attr('transform', 'translate(0,' + height + ')')
       .style('color', '#eef1ff')
       .call(
@@ -186,12 +171,11 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
           .tickFormat('')
       )
       .selectAll('text')
-      //.attr('dx', '4em')
       .attr('dy', '1.5em')
     /* ******************** */
 
+    // Y axis
     g.append('g')
-      .attr('class', 'axis axis--y')
       .style('font-size', '13px')
       .style('color', '#5f668a')
       .style('font-family', 'MuseoSans')
@@ -221,7 +205,7 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
         return y(d.fiat)
       })
       .attr('r', 4)
-      .attr('transform', 'translate(' + 0 + ',' + 15 + ')')
+      .attr('transform', 'translate(' + margin.left + ',' + 15 + ')')
       .style('fill', java)
     svg
       .append('g')
@@ -236,11 +220,11 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
         return y(d.fiat)
       })
       .attr('r', 4)
-      .attr('transform', 'translate(' + 0 + ',' + 15 + ')')
+      .attr('transform', 'translate(' + margin.left + ',' + 15 + ')')
       .style('fill', neon)
 
     /* ************************** */
-  }
+  }, [cashIns, cashOuts, realData, timeFrame])
 
   useEffect(() => {
     // first we clear old chart DOM elements on component update
