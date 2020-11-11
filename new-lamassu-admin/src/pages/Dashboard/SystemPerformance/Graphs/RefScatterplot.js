@@ -66,9 +66,9 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
       timeRange: [0, 500]
     }
     switch (timeFrame) {
-      case '24 hours':
+      case 'Day':
         return res
-      case '7 days':
+      case 'Week':
         return {
           ...res,
           nice: 7,
@@ -77,52 +77,13 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
           timeFormat: '%d',
           timeRange: [50, 500]
         }
-      case '30 days':
+      case 'Month':
         return {
           ...res,
           nice: 6,
           ticks: 6,
           subtractDays: 30,
           timeFormat: '%b %d',
-          timeRange: [50, 500]
-        }
-      case '180 days':
-        return {
-          ...res,
-          nice: 6,
-          ticks: 6,
-          subtractDays: 180,
-          timeFormat: '%b',
-          timeRange: [50, 500]
-        }
-      case 'All time':
-        const xRange = findXRange()
-        let timeFormat = '%b'
-        let daysToSubtract = Math.ceil(
-          (xRange[1] - xRange[0]) / 1000 / 60 / 60 / 24
-        )
-
-        // daysToSubtract = 1000
-
-        if (daysToSubtract <= 30) {
-          daysToSubtract = 30
-          timeFormat = '%b %d'
-        } else if (daysToSubtract <= 180) {
-          daysToSubtract = 180
-          timeFormat = '%b'
-        } else if (daysToSubtract <= 365) {
-          daysToSubtract = 365
-          timeFormat = '%b %y'
-        } else {
-          daysToSubtract = Math.ceil(daysToSubtract / 365) * 365
-          timeFormat = '%b %y'
-        }
-        return {
-          ...res,
-          nice: 6,
-          ticks: 6,
-          subtractDays: daysToSubtract,
-          timeFormat,
           timeRange: [50, 500]
         }
       default:

@@ -10,7 +10,7 @@ const useStyles = makeStyles(styles)
 
 const Nav = ({ handleSetRange }) => {
   const classes = useStyles()
-  const [clickedItem, setClickedItem] = useState('24 hours')
+  const [clickedItem, setClickedItem] = useState('Day')
 
   const isSelected = innerText => {
     return innerText === clickedItem
@@ -26,16 +26,15 @@ const Nav = ({ handleSetRange }) => {
       <div className={classes.titleAndButtonsContainer}>
         <H4 className={classes.h4}>{'System performance'}</H4>
       </div>
-
       <Button
         onClick={e => handleClick(e.target.innerText)}
         size="small"
         disableRipple
         disableFocusRipple
         className={
-          isSelected('All time') ? classes.highlightedLabel : classes.label
+          isSelected('Month') ? classes.highlightedLabel : classes.label
         }>
-        All time
+        Month
       </Button>
       <Button
         onClick={e => handleClick(e.target.innerText)}
@@ -43,39 +42,17 @@ const Nav = ({ handleSetRange }) => {
         disableRipple
         disableFocusRipple
         className={
-          isSelected('180 days') ? classes.highlightedLabel : classes.label
+          isSelected('Week') ? classes.highlightedLabel : classes.label
         }>
-        180 days
-      </Button>
-      <Button
-        onClick={e => handleClick(e.target.innerText)}
-        size="small"
-        disableRipple
-        disableFocusRipple
-        className={
-          isSelected('30 days') ? classes.highlightedLabel : classes.label
-        }>
-        30 days
-      </Button>
-      <Button
-        onClick={e => handleClick(e.target.innerText)}
-        size="small"
-        disableRipple
-        disableFocusRipple
-        className={
-          isSelected('7 days') ? classes.highlightedLabel : classes.label
-        }>
-        7 days
+        Week
       </Button>
       <Button
         size="small"
         disableRipple
         disableFocusRipple
-        className={
-          isSelected('24 hours') ? classes.highlightedLabel : classes.label
-        }
+        className={isSelected('Day') ? classes.highlightedLabel : classes.label}
         onClick={e => handleClick(e.target.innerText)}>
-        24 hours
+        Day
       </Button>
     </div>
   )

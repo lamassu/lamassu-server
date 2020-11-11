@@ -42,7 +42,7 @@ const GET_DATA = gql`
 `
 
 const SystemPerformance = () => {
-  const [selectedRange, setSelectedRange] = useState('24 hours')
+  const [selectedRange, setSelectedRange] = useState('Day')
   const [transactionsToShow, setTransactionsToShow] = useState([])
 
   const { data, loading } = useQuery(GET_DATA)
@@ -52,25 +52,20 @@ const SystemPerformance = () => {
   useEffect(() => {
     const isInRange = t => {
       switch (selectedRange) {
-        case '24 hours':
+        case 'Day':
           return (
             t.error === null &&
             moment(t.created).isBetween(getDateDaysAgo(1), now)
           )
-        case '7 days':
+        case 'Week':
           return (
             t.error === null &&
             moment(t.created).isBetween(getDateDaysAgo(7), now)
           )
-        case '30 days':
+        case 'Month':
           return (
             t.error === null &&
             moment(t.created).isBetween(getDateDaysAgo(30), now)
-          )
-        case '180 days':
-          return (
-            t.error === null &&
-            moment(t.created).isBetween(getDateDaysAgo(180), now)
           )
         default:
           return t.error === null && true
