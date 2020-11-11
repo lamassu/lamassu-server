@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import MAutocomplete from '@material-ui/lab/Autocomplete'
 import classnames from 'classnames'
 import * as R from 'ramda'
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 
 import { P } from 'src/components/typography'
 import { ReactComponent as SearchIcon } from 'src/styling/icons/circle buttons/search/zodiac.svg'
@@ -15,6 +15,7 @@ const useStyles = makeStyles(styles)
 
 const SearchBox = memo(
   ({
+    value = [],
     elements = [],
     data = [],
     inputPlaceholder = '',
@@ -40,9 +41,22 @@ const SearchBox = memo(
       R.xprod
     )
 
+    const innerOnChange = filters => {
+      const predicates = R.map(
+        f => it => R.equals(f.view(it), f.value),
+        filters
+      )
+
+      onChange(filters ? R.filter(R.allPass(predicates), data) : data, filters)
+    }
+
+    // eslint-disable-next-line
+    useEffect(() => innerOnChange(value), [value])
+
     return (
       <MAutocomplete
         classes={{ option: classes.autocomplete }}
+        value={value}
         options={getOptions(elements, data)}
         getOptionLabel={it => it.value}
         renderOption={it => (
@@ -83,13 +97,7 @@ const SearchBox = memo(
         }}
         onOpen={() => setPopupOpen(true)}
         onClose={() => setPopupOpen(false)}
-        onChange={(_, filters) => {
-          const predicates = R.map(
-            f => it => R.equals(f.view(it), f.value),
-            filters
-          )
-          onChange(filters ? R.filter(R.allPass(predicates), data) : data)
-        }}
+        onChange={(_, filters) => innerOnChange(filters)}
         {...props}
       />
     )

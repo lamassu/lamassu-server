@@ -6,20 +6,24 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import Chip from 'src/components/Chip'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
 import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
+import { P } from 'src/components/typography'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 import { startCase } from 'src/utils/string'
 
 import DetailsRow from './DetailsCard'
-import { mainStyles } from './Transactions.styles'
+import { mainStyles, chipStyles } from './Transactions.styles'
 import { getStatus } from './helper'
 
 const useStyles = makeStyles(mainStyles)
+const useChipStyles = makeStyles(chipStyles)
 
 const NUM_LOG_RESULTS = 1000
 
@@ -62,9 +66,11 @@ const GET_TRANSACTIONS = gql`
 
 const Transactions = () => {
   const classes = useStyles()
+  const chipClasses = useChipStyles()
 
   const getTransactions = R.path(['transactions'])
 
+  const [filters, setFilters] = useState([])
   const [filteredTransactions, setFilteredTransactions] = useState([])
   const { data: txResponse, loading } = useQuery(GET_TRANSACTIONS, {
     variables: {
@@ -171,7 +177,15 @@ const Transactions = () => {
     }
   ]
 
-  const onFilterChange = filtered => setFilteredTransactions(filtered)
+  const onFilterChange = (data, filters) => {
+    setFilters(filters)
+    setFilteredTransactions(data)
+  }
+
+  const onFilterDelete = filter =>
+    setFilters(
+      R.filter(f => !R.whereEq(R.pick(['type', 'value'], f), filter))(filters)
+    )
 
   return (
     <>
@@ -180,6 +194,7 @@ const Transactions = () => {
           <Title>Transactions</Title>
           <div className={classes.buttonsWrapper}>
             <SearchBox
+              value={filters}
               elements={searchElements}
               data={getTransactions(txResponse)}
               inputPlaceholder={'Search Transactions'}
@@ -208,6 +223,21 @@ const Transactions = () => {
           </div>
         </div>
       </div>
+      {filters.length > 0 && (
+        <>
+          <P className={classes.text}>{'Filters:'}</P>
+          <div>
+            {filters.map(f => (
+              <Chip
+                classes={chipClasses}
+                label={`${f.type}: ${f.value}`}
+                onDelete={() => onFilterDelete(f)}
+                deleteIcon={<CloseIcon className={chipClasses.button} />}
+              />
+            ))}
+          </div>
+        </>
+      )}
       <DataTable
         loading={loading}
         emptyText="No transactions so far"
