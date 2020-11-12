@@ -29,9 +29,6 @@ const Nav = ({ handleSetRange }) => {
       <div style={{ display: 'flex' }}>
         <div
           onClick={e => handleClick(e.target.innerText)}
-          size="small"
-          disableRipple
-          disableFocusRipple
           className={
             isSelected('Month')
               ? classnames(classes.newHighlightedLabel, classes.navButton)
@@ -41,9 +38,6 @@ const Nav = ({ handleSetRange }) => {
         </div>
         <div
           onClick={e => handleClick(e.target.innerText)}
-          size="small"
-          disableRipple
-          disableFocusRipple
           className={
             isSelected('Week')
               ? classnames(classes.newHighlightedLabel, classes.navButton)
@@ -52,9 +46,6 @@ const Nav = ({ handleSetRange }) => {
           Week
         </div>
         <div
-          size="small"
-          disableRipple
-          disableFocusRipple
           className={
             isSelected('Day')
               ? classnames(classes.newHighlightedLabel, classes.navButton)

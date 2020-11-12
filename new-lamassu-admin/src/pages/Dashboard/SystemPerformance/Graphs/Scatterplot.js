@@ -16,8 +16,6 @@ const width = 510 - marginLeft - marginRight
 const height = 141 - marginTop - marginBottom
 
 const Scatterplot = ({ data: realData }) => {
-  // console.log(moment().add(-1, 'day'), moment())
-
   const x = scaleTime()
     .domain([
       moment()

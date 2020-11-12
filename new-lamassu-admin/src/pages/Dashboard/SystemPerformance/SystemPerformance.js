@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react'
 import { Label1, Label2 } from 'src/components/typography/index'
 import { fromNamespace } from 'src/utils/config'
 
+import LineChart from './Graphs/RefLineChart'
 import Scatterplot from './Graphs/RefScatterplot'
 import InfoWithLabel from './InfoWithLabel'
 import Nav from './Nav'
@@ -184,6 +185,7 @@ const SystemPerformance = () => {
             <Grid item xs={8}>
               <Label2>Profit from commissions</Label2>
               {`${getProfit()} ${data?.config.locale_fiatCurrency}`}
+              <LineChart timeFrame={selectedRange} data={transactionsToShow} />
             </Grid>
             <Grid item xs={4}>
               <Label2>Direction</Label2>
