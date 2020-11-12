@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as d3 from 'd3'
-import moment from 'moment'
+// import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useRef, useCallback } from 'react'
 
@@ -8,15 +8,6 @@ import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 
 const RefLineChart = ({ data: realData, timeFrame }) => {
   const svgRef = useRef()
-
-  /*   realData = [
-    ...realData,
-    {
-      created: new Date('2020-11-05T00:00:00.000Z'),
-      fiat: 100,
-      txClass: 'cashOut'
-    }
-  ] */
 
   const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
@@ -33,6 +24,38 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
         Number.parseFloat(tx.commissionPercentage) * Number.parseFloat(tx.fiat)
       return commission + cashInFee
     }
+
+    const massageData = () => {
+      const methods = {
+        day: function(obj) {
+          return new Date(obj.created).toISOString().substring(0, 10)
+        },
+        hour: function(obj) {
+          return new Date(obj.created).toISOString().substring(0, 13)
+        }
+      }
+
+      const method = timeFrame === 'Day' ? 'hour' : 'day'
+      const f = methods[method]
+      const groupedTx = R.values(R.groupBy(f)(realData))
+      const aggregatedTX = groupedTx.map(list => {
+        let temp = { ...list[0], profit: transactionProfit(list[0]) }
+        if (list.length > 1) {
+          for (let i = 1; i < list.length; i++) {
+            temp.profit += transactionProfit(list[i])
+          }
+        }
+        return temp
+      })
+
+      return aggregatedTX
+    }
+
+    /* Important step to make the graph look good!
+       This function groups transactions by either day or hour depending on the time grame
+       This makes the line look smooth and not all wonky when there are many transactions in a given time
+    */
+    const data = massageData()
 
     const findXAxisSettings = () => {
       const res = {
@@ -56,6 +79,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
             timeRange: [-25, 350]
           }
         case 'Month':
+          massageData('day')
           return {
             ...res,
             nice: null,
@@ -86,27 +110,24 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`)
 
-    const xRange = d3.extent(realData, t => t.created)
-    const yRange = d3.extent(realData, transactionProfit)
+    const xDomain = d3.extent(data, t => t.created)
+    const yDomain = d3.extent(data, t => t.profit)
     const xAxisSettings = findXAxisSettings()
-
-    console.log(xRange, yRange)
-
     const y = d3
       .scaleLinear()
       .range([height, 0])
-      .domain(d3.extent(realData, transactionProfit))
+      .domain([0, yDomain[1]])
       .nice(3)
     const x = d3
       .scaleTime()
-      .domain([new Date(xRange[0]), new Date(xRange[1])])
+      .domain([new Date(xDomain[0]), new Date(xDomain[1])])
 
       .range(xAxisSettings.timeRange)
       .nice(xAxisSettings.nice)
 
     const line = d3
       .line()
-      .curve(d3.curveCatmullRom.alpha(0.5))
+      // .curve(d3.curveCatmullRom.alpha(0.5))
       .x(function(d) {
         return x(new Date(d.created))
       })
@@ -125,14 +146,15 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       })
 
     g.append('path')
-      .datum(realData)
+      .datum(data)
       .attr('d', line)
       .attr('stroke', primaryColor)
       .attr('stroke-width', '3')
+      .attr('stroke-linejoin', 'round')
       .style('fill', 'none')
 
     g.append('path')
-      .datum(realData)
+      .datum(data)
       .attr('fill', zircon)
       .attr('d', area)
   }, [realData, timeFrame])
@@ -143,7 +165,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .selectAll('*')
       .remove()
     drawGraph()
-  }, [drawGraph])
+  }, [drawGraph, realData])
 
   return (
     <>

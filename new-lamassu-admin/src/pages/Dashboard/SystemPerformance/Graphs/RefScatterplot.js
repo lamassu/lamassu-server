@@ -29,18 +29,8 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
     // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
     // (this is because the Y axis looks best with multiples of 100)
     const findMaxY = () => {
-      let maxY = Object.keys(realData).reduce(
-        (acc, curr) =>
-          acc.fiat
-            ? realData[curr].fiat > acc.fiat
-              ? realData[curr]
-              : acc
-            : realData[curr],
-        {}
-      ).fiat
-
+      let maxY = d3.max(realData, t => parseFloat(t.fiat))
       maxY = 100 * Math.ceil(maxY / 100)
-
       if (maxY < 100) {
         return 100
       } else if (maxY % 1000 === 0) {
