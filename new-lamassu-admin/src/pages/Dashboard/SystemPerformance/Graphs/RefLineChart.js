@@ -9,6 +9,12 @@ import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 const RefLineChart = ({ data: realData, timeFrame }) => {
   const svgRef = useRef()
 
+  // this variable will flip to true if there's no data points or the profit is zero
+  // this will force the line graph to touch the x axis instead of centering,
+  // centering is bad because it gives the impression that there could be negative values
+  // so, if this is true the y domain should be [0, 0.1]
+  let zeroProfit = false
+
   const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
     const margin = { top: 0, right: 0, bottom: 0, left: 0 }
@@ -38,7 +44,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       const method = timeFrame === 'Day' ? 'hour' : 'day'
       const f = methods[method]
       const groupedTx = R.values(R.groupBy(f)(realData))
-      const aggregatedTX = groupedTx.map(list => {
+      let aggregatedTX = groupedTx.map(list => {
         let temp = { ...list[0], profit: transactionProfit(list[0]) }
         if (list.length > 1) {
           for (let i = 1; i < list.length; i++) {
@@ -47,6 +53,21 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
         }
         return temp
       })
+
+      // if no point exists, then create a (0,0) point
+      if (aggregatedTX.length === 0) {
+        zeroProfit = true
+        aggregatedTX = [{ created: new Date().toISOString(), profit: 0 }]
+      }
+      // create point on the left if only one point exists, otherwise line won't be drawn
+      if (aggregatedTX.length === 1) {
+        let temp = { ...aggregatedTX[0] }
+        let date = new Date(temp.created)
+        date.setHours(date.getHours() - 1)
+        temp.created = date.toISOString()
+        aggregatedTX = [...aggregatedTX, temp]
+      }
+      console.log(aggregatedTX)
 
       return aggregatedTX
     }
@@ -111,7 +132,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .attr('transform', `translate(${margin.left},${margin.top})`)
 
     const xDomain = d3.extent(data, t => t.created)
-    const yDomain = d3.extent(data, t => t.profit)
+    const yDomain = zeroProfit ? [0, 0.1] : d3.extent(data, t => t.profit)
     const xAxisSettings = findXAxisSettings()
     const y = d3
       .scaleLinear()
@@ -132,7 +153,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
         return x(new Date(d.created))
       })
       .y(function(d) {
-        return y(transactionProfit(d))
+        return y(d.profit)
       })
 
     const area = d3
@@ -142,14 +163,14 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       })
       .y0(height)
       .y1(function(d) {
-        return y(transactionProfit(d))
+        return y(d.profit)
       })
 
     g.append('path')
       .datum(data)
       .attr('d', line)
       .attr('stroke', primaryColor)
-      .attr('stroke-width', '3')
+      .attr('stroke-width', zeroProfit ? '2' : '3')
       .attr('stroke-linejoin', 'round')
       .style('fill', 'none')
 
