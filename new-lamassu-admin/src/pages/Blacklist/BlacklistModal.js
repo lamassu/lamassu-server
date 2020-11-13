@@ -1,10 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { Formik, Form, Field } from 'formik'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
+import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { Link } from 'src/components/buttons'
-import { TextInput } from 'src/components/inputs'
+import { TextInput } from 'src/components/inputs/formik'
 import { H3 } from 'src/components/typography'
 
 import styles from './Blacklist.styles'
@@ -13,28 +15,8 @@ const useStyles = makeStyles(styles)
 const BlackListModal = ({ onClose, selectedCoin, addToBlacklist }) => {
   const classes = useStyles()
 
-  const [addressField, setAddressField] = useState('')
-  const [invalidAddress, setInvalidAddress] = useState(false)
-
-  const handleChange = event => {
-    if (event.target.value === '') {
-      setInvalidAddress(false)
-    }
-    setAddressField(event.target.value)
-  }
-
-  const handleAddToBlacklist = () => {
-    if (addressField.trim() === '') {
-      setInvalidAddress(true)
-    } else {
-      addToBlacklist(selectedCoin.code, addressField.trim())
-    }
-  }
-
-  const handleClose = () => {
-    setAddressField('')
-    setInvalidAddress(false)
-    onClose()
+  const handleAddToBlacklist = address => {
+    addToBlacklist(selectedCoin.code, address)
   }
 
   const placeholderAddress = {
@@ -51,29 +33,41 @@ const BlackListModal = ({ onClose, selectedCoin, addToBlacklist }) => {
       closeOnBackdropClick={true}
       width={676}
       height={200}
-      handleClose={handleClose}
+      handleClose={onClose}
       open={true}>
-      <H3>
-        {selectedCoin.display
-          ? `Blacklist ${R.toLower(selectedCoin.display)} address`
-          : ''}
-      </H3>
-      <TextInput
-        error={invalidAddress}
-        label="Paste new address to blacklist here"
-        name="address-to-block-input"
-        autoFocus
-        id="address-to-block-input"
-        type="text"
-        size="sm"
-        fullWidth
-        InputLabelProps={{ shrink: true }}
-        placeholder={`ex: ${placeholderAddress[selectedCoin.code]}`} // "ex: 0x309abbd2f85ead2fcbb5323e963550c88c8a569aca4e088e9020a03fd04bf4bd"
-        onChange={handleChange}
-        value={addressField}
-      />
+      <Formik
+        initialValues={{
+          address: ''
+        }}
+        validationSchema={Yup.object({
+          address: Yup.string()
+            .trim()
+            .required('An address is required')
+        })}
+        onSubmit={({ address }, { resetForm }) => {
+          handleAddToBlacklist(address)
+          resetForm()
+        }}>
+        <Form id="address-form">
+          <H3>
+            {selectedCoin.display
+              ? `Blacklist ${R.toLower(selectedCoin.display)} address`
+              : ''}
+          </H3>
+          <Field
+            name="address"
+            fullWidth
+            autoComplete="off"
+            label="Paste new address to blacklist here"
+            placeholder={`ex: ${placeholderAddress[selectedCoin.code]}`}
+            component={TextInput}
+          />
+        </Form>
+      </Formik>
       <div className={classes.footer}>
-        <Link onClick={handleAddToBlacklist}>Blacklist address</Link>
+        <Link type="submit" form="address-form">
+          Blacklist address
+        </Link>
       </div>
     </Modal>
   )

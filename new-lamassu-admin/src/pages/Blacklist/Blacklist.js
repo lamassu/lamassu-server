@@ -80,6 +80,7 @@ const Blacklist = () => {
 
   const [addEntry] = useMutation(ADD_ROW, {
     onError: () => console.error('Error while adding row'),
+    onCompleted: () => setShowModal(false),
     refetchQueries: () => ['getBlacklistData']
   })
 
