@@ -38,7 +38,6 @@ const Triggers = () => {
 
   const { data, loading } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
-  console.log(triggers)
   const complianceConfig =
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
