@@ -53,9 +53,7 @@ const BlacklistTable = ({ data, selectedCoin, handleDeleteEntry }) => {
     : data[R.keys(data)[0]]
 
   return (
-    <>
-      <DataTable data={dataToShow} elements={elements} name="blacklistTable" />
-    </>
+    <DataTable data={dataToShow} elements={elements} name="blacklistTable" />
   )
 }
 

@@ -113,8 +113,6 @@ const Blacklist = () => {
     deleteEntry({ variables: { cryptoCode, address } })
   }
 
-  const isSelected = it => clickedItem.code === it.code
-
   const toggleModal = () => setShowModal(!showModal)
 
   const addToBlacklist = (cryptoCode, address) => {
@@ -129,7 +127,7 @@ const Blacklist = () => {
       <Grid container className={classes.grid}>
         <Sidebar
           data={availableCurrencies}
-          isSelected={isSelected}
+          isSelected={R.propEq('code', clickedItem.code)}
           displayName={it => it.display}
           onClick={onClickSidebarItem}
         />
@@ -170,12 +168,13 @@ const Blacklist = () => {
           />
         </div>
       </Grid>
-      <BlackListModal
-        showModal={showModal}
-        toggleModal={toggleModal}
-        selectedCoin={clickedItem}
-        addToBlacklist={addToBlacklist}
-      />
+      {showModal && (
+        <BlackListModal
+          onClose={() => setShowModal(false)}
+          selectedCoin={clickedItem}
+          addToBlacklist={addToBlacklist}
+        />
+      )}
     </>
   )
 }
