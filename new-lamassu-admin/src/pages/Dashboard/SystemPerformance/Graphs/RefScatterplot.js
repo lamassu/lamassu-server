@@ -8,14 +8,14 @@ import { backgroundColor, java, neon } from 'src/styling/variables'
 const RefScatterplot = ({ data: realData, timeFrame }) => {
   const svgRef = useRef()
 
-  realData = [
+  /*   realData = [
     ...realData,
     {
       created: new Date('2020-11-05T00:00:00.000Z'),
       fiat: 100,
       txClass: 'cashOut'
     }
-  ]
+  ] */
 
   const cashIns = R.filter(R.propEq('txClass', 'cashIn'))(realData)
   const cashOuts = R.filter(R.propEq('txClass', 'cashOut'))(realData)
