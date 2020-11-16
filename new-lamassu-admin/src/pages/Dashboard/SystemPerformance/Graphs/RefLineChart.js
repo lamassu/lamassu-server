@@ -119,11 +119,12 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
 
     const xDomain = d3.extent(data, t => t.created)
     const yDomain = zeroProfit ? [0, 0.1] : [0, d3.max(data, t => t.profit)]
+
     const y = d3
       .scaleLinear()
-      .range([height, 0])
-      // I add 200 to the chart so that the percentage increase and profit labels are not drawn over the line. Theyre the same color so it would look bad
-      .domain([0, yDomain[1] === 0.1 ? yDomain[1] : yDomain[1] + 200])
+      // 30 is a margin so that the labels and the percentage change label can fit and not overlay the line path
+      .range([height, 30])
+      .domain([0, yDomain[1]])
     const x = d3
       .scaleTime()
       .domain([new Date(xDomain[0]), new Date(xDomain[1])])

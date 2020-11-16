@@ -103,7 +103,7 @@ const Footer = () => {
     <>
       <div className={classes.footer}>
         <div className={classes.content}>
-          {!loading && (
+          {!loading && data && (
             <>
               <Grid container spacing={1}>
                 {R.keys(data.rates.withCommissions).map(key =>

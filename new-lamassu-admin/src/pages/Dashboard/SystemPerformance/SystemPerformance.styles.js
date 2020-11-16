@@ -1,4 +1,13 @@
-import { offColor, spacer, primaryColor } from 'src/styling/variables'
+import {
+  offColor,
+  spacer,
+  primaryColor,
+  fontSize3,
+  fontSecondary,
+  fontColor,
+  secondaryColorDarker,
+  linkSecondaryColor
+} from 'src/styling/variables'
 
 export default {
   titleWrapper: {
@@ -49,5 +58,23 @@ export default {
   },
   navButton: {
     marginLeft: 24
+  },
+  profitLabel: {
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 700,
+    color: fontColor
+  },
+  percentUp: {
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 700,
+    color: secondaryColorDarker
+  },
+  percentDown: {
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 700,
+    color: linkSecondaryColor
   }
 }
