@@ -10,6 +10,7 @@ import {
 
 import { AppContext } from 'src/App'
 import AuthRegister from 'src/pages/AuthRegister'
+import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
@@ -147,6 +148,12 @@ const tree = [
         label: 'Customers',
         route: '/compliance/customers',
         component: Customers
+      },
+      {
+        key: 'blacklist',
+        label: 'Blacklist',
+        route: '/compliance/blacklist',
+        component: Blacklist
       },
       {
         key: 'customer',
