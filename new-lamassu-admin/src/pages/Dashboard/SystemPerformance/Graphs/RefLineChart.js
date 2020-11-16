@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import * as R from 'ramda'
-import React, { useEffect, useRef, useCallback } from 'react'
+import React, { useEffect, useRef, useCallback, useState } from 'react'
 
 import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 
@@ -11,7 +11,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
   // this will force the line graph to touch the x axis instead of centering,
   // centering is bad because it gives the impression that there could be negative values
   // so, if this is true the y domain should be [0, 0.1]
-  let zeroProfit = false
+  const [zeroProfit, setZeroProfit] = useState(false)
 
   const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
@@ -54,8 +54,10 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
 
       // if no point exists, then create a (0,0) point
       if (aggregatedTX.length === 0) {
-        zeroProfit = true
+        setZeroProfit(true)
         aggregatedTX = [{ created: new Date().toISOString(), profit: 0 }]
+      } else {
+        setZeroProfit(false)
       }
       // create point on the left if only one point exists, otherwise line won't be drawn
       if (aggregatedTX.length === 1) {
@@ -65,7 +67,6 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
         temp.created = date.toISOString()
         aggregatedTX = [...aggregatedTX, temp]
       }
-      console.log(aggregatedTX)
       return aggregatedTX
     }
 
@@ -121,7 +122,8 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
     const y = d3
       .scaleLinear()
       .range([height, 0])
-      .domain([0, yDomain[1]])
+      // I add 200 to the chart so that the percentage increase and profit labels are not drawn over the line. Theyre the same color so it would look bad
+      .domain([0, yDomain[1] === 0.1 ? yDomain[1] : yDomain[1] + 200])
     const x = d3
       .scaleTime()
       .domain([new Date(xDomain[0]), new Date(xDomain[1])])
@@ -159,7 +161,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .attr('stroke-width', '2')
       .attr('stroke-linejoin', 'round')
       .attr('stroke', primaryColor)
-  }, [realData, timeFrame])
+  }, [realData, timeFrame, zeroProfit])
 
   useEffect(() => {
     // first we clear old chart DOM elements on component update

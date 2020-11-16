@@ -1,3 +1,7 @@
+/* eslint-disable */
+import { makeStyles } from '@material-ui/core/styles'
+import styles from './SystemPerformance.styles'
+
 import { useQuery } from '@apollo/react-hooks'
 import Grid from '@material-ui/core/Grid'
 import gql from 'graphql-tag'
@@ -16,54 +20,79 @@ import Nav from './Nav'
 const isNotProp = R.curry(R.compose(R.isNil, R.prop))
 const getFiats = R.map(R.prop('fiat'))
 const getProps = propName => R.map(R.prop(propName))
-
+const useStyles = makeStyles(styles)
 const getDateDaysAgo = (days = 0) => {
   return moment().subtract(days, 'day')
 }
-const now = moment()
+
+// const now = moment()
 
 const GET_DATA = gql`
-  query getData {
-    transactions {
-      fiatCode
-      fiat
-      cashInFee
-      commissionPercentage
-      created
-      txClass
-      error
-    }
-    btcRates {
-      code
-      name
-      rate
-    }
-    config
+query getData {
+  transactions {
+    fiatCode
+    fiat
+    cashInFee
+    commissionPercentage
+    created
+    txClass
+    error
   }
+  btcRates {
+    code
+    name
+    rate
+  }
+  config
+}
 `
 
+const currentTime = new Date()
+
 const SystemPerformance = () => {
+  const classes = useStyles()
+
   const [selectedRange, setSelectedRange] = useState('Day')
   const [transactionsToShow, setTransactionsToShow] = useState([])
-
+  const [transactionsLastTimePeriod, setTransactionsLastTimePeriod] = useState([])
+  
   const { data, loading } = useQuery(GET_DATA)
 
   const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
 
   useEffect(() => {
-    const isInRange = t => {
+    const isInRange = (getLastTimePeriod = false) => t => {
+      const now = moment(currentTime)
       switch (selectedRange) {
         case 'Day':
+          if(getLastTimePeriod) {
+            return (
+              t.error === null &&
+              moment(t.created).isBetween(getDateDaysAgo(2), now.subtract(25, "hours"))
+            )
+          }
           return (
             t.error === null &&
             moment(t.created).isBetween(getDateDaysAgo(1), now)
           )
         case 'Week':
+          if(getLastTimePeriod) {
+            return (
+              t.error === null &&
+              moment(t.created).isBetween(getDateDaysAgo(14), now.subtract(24 * 7 + 1, "hours"))
+            )
+          }
           return (
             t.error === null &&
             moment(t.created).isBetween(getDateDaysAgo(7), now)
           )
         case 'Month':
+          if(getLastTimePeriod) {
+            return (
+              t.error === null &&
+              moment(t.created).isBetween(getDateDaysAgo(60), now.subtract(24 * 30 + 1, "hours"))
+            )
+          }
           return (
             t.error === null &&
             moment(t.created).isBetween(getDateDaysAgo(30), now)
@@ -81,9 +110,8 @@ const SystemPerformance = () => {
       return { ...item, fiat: parseFloat(item.fiat) * multiplier }
     }
 
-    setTransactionsToShow(
-      R.map(convertFiatToLocale)(R.filter(isInRange, data?.transactions ?? []))
-    )
+    setTransactionsToShow(R.map(convertFiatToLocale)(R.filter(isInRange(false), data?.transactions ?? [])))
+    setTransactionsLastTimePeriod(R.map(convertFiatToLocale)(R.filter(isInRange(true), data?.transactions ?? [])))
   }, [data, fiatLocale, selectedRange])
 
   const handleSetRange = range => {
@@ -104,18 +132,27 @@ const SystemPerformance = () => {
     )
   }
 
-  const getProfit = () => {
+  const getProfit = (transactions = transactionsToShow) => {
     const cashInFees = R.sum(
-      getProps('cashInFee')(R.filter(isNotProp('error'), transactionsToShow))
+      getProps('cashInFee')(R.filter(isNotProp('error'), transactions))
     )
     let commissionFees = 0
-    transactionsToShow.forEach(t => {
+    transactions.forEach(t => {
       if (t.error === null) {
         commissionFees +=
           Number.parseFloat(t.commissionPercentage) * Number.parseFloat(t.fiat)
       }
     })
     return +(Math.round(commissionFees + cashInFees + 'e+2') + 'e-2')
+  }
+
+  const getPercentChange = () => {
+    const thisTimePeriodProfit = getProfit(transactionsToShow)
+    const previousTimePeriodProfit = getProfit(transactionsLastTimePeriod)
+    if(previousTimePeriodProfit === 0) {
+      return 100
+    }
+    return Math.round(100 * (thisTimePeriodProfit - previousTimePeriodProfit) / Math.abs(previousTimePeriodProfit))
   }
 
   const getDirectionPercent = () => {
@@ -184,7 +221,12 @@ const SystemPerformance = () => {
           <Grid container style={{ marginTop: 30 }}>
             <Grid item xs={8}>
               <Label2>Profit from commissions</Label2>
+              <div style={{display: "flex", justifyContent: "space-between", margin: "0 26px -30px 16px", position: "relative"}}>
               {`${getProfit()} ${data?.config.locale_fiatCurrency}`}
+              <div className={classes.percentChangeLabel}>
+              {`${getPercentChange()}%`}
+              </div>
+              </div>
               <LineChart timeFrame={selectedRange} data={transactionsToShow} />
             </Grid>
             <Grid item xs={4}>
