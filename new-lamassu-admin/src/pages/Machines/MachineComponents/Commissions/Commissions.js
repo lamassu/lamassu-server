@@ -64,7 +64,9 @@ const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
 
     // second, get overrides for all machines
     const isId = id => R.propEq('machine', id)
-    const generalOverrides = R.filter(isId('ALL_MACHINES'))(config.overrides)
+    const generalOverrides = config.overrides
+      ? R.filter(isId('ALL_MACHINES'))(config.overrides)
+      : []
 
     const overrideInfo = o => {
       commissions[o.cryptoCurrencies[0]].cashIn = o.cashIn
@@ -75,7 +77,9 @@ const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
     R.forEach(overrideInfo)(generalOverrides)
 
     // third, get overrides for this machine
-    const machineOverrides = R.filter(isId(deviceId))(config.overrides)
+    const machineOverrides = config.overrides
+      ? R.filter(isId(deviceId))(config.overrides)
+      : []
     R.forEach(overrideInfo)(machineOverrides)
 
     // in the end, the machine specific overrides overwrite the less general ALL_MACHINE overrides or the general overrides

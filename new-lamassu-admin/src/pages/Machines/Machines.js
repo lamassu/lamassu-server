@@ -55,7 +55,7 @@ const Machines = () => {
   // Only runs if user hasnt touched the sidebar yet
   useEffect(() => {
     if (!loading && data && data.machines && !touched) {
-      setSelectedMachine(data.machines[0].name ?? '')
+      setSelectedMachine(R.path('machines', 0, 'name')(data) ?? '')
     }
   }, [data, loading, touched])
 

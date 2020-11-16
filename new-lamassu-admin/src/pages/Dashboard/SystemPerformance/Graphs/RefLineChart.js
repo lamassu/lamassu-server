@@ -67,8 +67,6 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
         temp.created = date.toISOString()
         aggregatedTX = [...aggregatedTX, temp]
       }
-      console.log(aggregatedTX)
-
       return aggregatedTX
     }
 
