@@ -88,6 +88,30 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .attr('fill', backgroundColor)
       .attr('transform', `translate(${0},${margin.top})`)
 
+    // gradient color for the graph (creates the "url", the color is applied by calling the url, in the area color fill )
+    svg
+      .append('linearGradient')
+      .attr('id', 'area-gradient')
+      .attr('gradientUnits', 'userSpaceOnUse')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', 0)
+      .attr('y2', '100%')
+      .selectAll('stop')
+      .data([
+        { offset: '0%', color: zircon },
+        { offset: '25%', color: zircon },
+        { offset: '100%', color: backgroundColor }
+      ])
+      .enter()
+      .append('stop')
+      .attr('offset', function(d) {
+        return d.offset
+      })
+      .attr('stop-color', function(d) {
+        return d.color
+      })
+
     const g = svg
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`)
@@ -122,11 +146,12 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
         return y(d.profit)
       })
 
+    // area color fill
     g.append('path')
       .datum(data)
       .attr('d', area)
-      .attr('fill', zircon)
-
+      .attr('fill', 'url(#area-gradient)')
+    // draw the line
     g.append('path')
       .datum(data)
       .attr('d', line)
