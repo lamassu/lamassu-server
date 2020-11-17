@@ -12,6 +12,7 @@ import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import CommissionsDetails from './components/CommissionsDetails'
 import CommissionsList from './components/CommissionsList'
+import { removeCoinFromOverride } from './helper.js'
 
 const GET_DATA = gql`
   query getData {
@@ -45,6 +46,7 @@ const styles = {
   colorLabel: {
     display: 'flex',
     flexDirection: 'row',
+    alignSelf: 'flex-end',
     alignItems: 'center',
     marginLeft: 'auto',
     '& div': {
@@ -72,7 +74,8 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const localeConfig =
     data?.config && fromNamespace(namespaces.LOCALE)(data.config)
 
-  const currency = R.path(['fiatCurrency'])(localeConfig)
+  const currency = R.prop('fiatCurrency')(localeConfig)
+  const overrides = R.prop('overrides')(config)
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
@@ -81,6 +84,28 @@ const Commissions = ({ name: SCREEN_KEY }) => {
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
+    return saveConfig({ variables: { config } })
+  }
+
+  const saveOverridesFromList = it => (_, override) => {
+    const cryptoOverriden = R.path(['cryptoCurrencies', 0], override)
+
+    const machineOverrides = R.map(removeCoinFromOverride(cryptoOverriden))(
+      R.filter(
+        c =>
+          c.machine === override.machine &&
+          !c.cryptoCurrencies.every(c => c === cryptoOverriden)
+      )(it)
+    )
+
+    const overrides = machineOverrides.concat(
+      R.filter(c => c.machine !== override.machine)(it)
+    )
+
+    const config = {
+      commissions_overrides: R.prepend(override, overrides)
+    }
+
     return saveConfig({ variables: { config } })
   }
 
@@ -119,6 +144,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           currency={currency}
           data={data}
           error={error}
+          saveOverrides={saveOverridesFromList(overrides)}
         />
       )}
     </>
