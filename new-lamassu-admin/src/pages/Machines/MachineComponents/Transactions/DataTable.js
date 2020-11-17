@@ -105,7 +105,7 @@ const DataTable = ({
   useEffect(() => setExpanded(initialExpanded), [initialExpanded])
 
   const coreWidth = R.compose(R.sum, R.map(R.prop('width')))(elements)
-  const expWidth = 1200 - coreWidth
+  const expWidth = 1000 - coreWidth
   const width = coreWidth + (expandable ? expWidth : 0)
 
   const classes = useStyles({ width })

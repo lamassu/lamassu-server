@@ -1,20 +1,22 @@
 import { useQuery } from '@apollo/react-hooks'
+import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
-import Sidebar from 'src/components/layout/Sidebar'
-import TitleSection from 'src/components/layout/TitleSection'
-import { TL1 } from 'src/components/typography'
+import { TL1, TL2, Label3 } from 'src/components/typography'
 
 import Cassettes from './MachineComponents/Cassettes'
 import Commissions from './MachineComponents/Commissions'
 import Details from './MachineComponents/Details'
+import Overview from './MachineComponents/Overview'
 import Transactions from './MachineComponents/Transactions'
+import Sidebar from './MachineSidebar'
 import styles from './Machines.styles'
-
 const useStyles = makeStyles(styles)
 
 const getMachineInfo = R.compose(R.find, R.propEq('name'))
@@ -45,58 +47,76 @@ const getMachines = R.path(['machines'])
 
 const Machines = () => {
   const { data, refetch, loading } = useQuery(GET_INFO)
+  const location = useLocation()
   const [selectedMachine, setSelectedMachine] = useState('')
-  const [touched, setTouched] = useState(false)
   const classes = useStyles()
+
   const machines = getMachines(data) ?? []
   const machineInfo = getMachineInfo(selectedMachine)(machines) ?? {}
 
   // pre-selects first machine from the list, if there is a machine configured.
-  // Only runs if user hasnt touched the sidebar yet
   useEffect(() => {
-    if (!loading && data && data.machines && !touched) {
-      setSelectedMachine(R.path(['machines', 0, 'name'])(data) ?? '')
+    if (!loading && data && data.machines) {
+      if (location.state && location.state.selectedMachine) {
+        setSelectedMachine(location.state.selectedMachine)
+      } else {
+        setSelectedMachine(R.path(['machines', 0, 'name'])(data) ?? '')
+      }
     }
-  }, [data, loading, touched])
+  }, [loading, data, location.state])
 
-  /*
-    const isId = R.either(R.propEq('machine', 'ALL_MACHINES'), R.propEq('machine', 'e139c9021251ecf9c5280379b885983901b3dad14963cf38b6d7c1fb33faf72e'))
-    R.filter(isId)(data.overrides)
-  */
   return (
     <>
-      <TitleSection title="Machine details page" />
       <Grid container className={classes.grid}>
-        <Sidebar
-          data={machines}
-          isSelected={it => it.name === selectedMachine}
-          displayName={it => it.name}
-          onClick={it => {
-            setTouched(true)
-            setSelectedMachine(it.name)
-          }}
-        />
-        <div className={classes.content}>
-          <div className={classes.detailItem}>
-            <TL1 className={classes.subtitle}>{'Details'}</TL1>
-            <Details data={machineInfo} onActionSuccess={refetch} />
-          </div>
-          <div className={classes.detailItem}>
-            <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
-            <Cassettes machine={machineInfo} config={data?.config ?? false} />
-          </div>
-          <div className={classes.transactionsItem}>
-            <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
-            <Transactions id={machineInfo?.deviceId ?? null} />
-          </div>
-          <div className={classes.detailItem}>
-            <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
-            <Commissions
-              name={'commissions'}
-              id={machineInfo?.deviceId ?? null}
+        <Grid item xs={3}>
+          <Grid item xs={12}>
+            <div style={{ marginTop: 32 }}>
+              <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                  <Label3 className={classes.subtitle}>Dashboard</Label3>
+                </Link>
+                <TL2 className={classes.subtitle}>{selectedMachine}</TL2>
+              </Breadcrumbs>
+              <Overview data={machineInfo} onActionSuccess={refetch} />
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <Sidebar
+              isSelected={R.equals(selectedMachine)}
+              selectItem={setSelectedMachine}
+              data={machines}
+              getText={R.prop('name')}
+              getKey={R.prop('deviceId')}
             />
+          </Grid>
+        </Grid>
+        <Grid item xs={9}>
+          <div className={classes.content}>
+            <div className={classes.detailItem} style={{ marginTop: 24 }}>
+              <TL1 className={classes.subtitle}>{'Details'}</TL1>
+              <Details data={machineInfo} />
+            </div>
+            <div className={classes.detailItem}>
+              <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
+              <Cassettes
+                refetchData={refetch}
+                machine={machineInfo}
+                config={data?.config ?? false}
+              />
+            </div>
+            <div className={classes.transactionsItem}>
+              <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
+              <Transactions id={machineInfo?.deviceId ?? null} />
+            </div>
+            <div className={classes.detailItem}>
+              <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
+              <Commissions
+                name={'commissions'}
+                id={machineInfo?.deviceId ?? null}
+              />
+            </div>
           </div>
-        </div>
+        </Grid>
       </Grid>
     </>
   )

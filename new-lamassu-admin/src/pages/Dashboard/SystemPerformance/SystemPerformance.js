@@ -6,11 +6,12 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
 
-import { Label1, Label2 } from 'src/components/typography/index'
+import { Label2 } from 'src/components/typography/index'
 import { ReactComponent as TriangleDown } from 'src/styling/icons/arrow/triangle_down.svg'
 import { ReactComponent as TriangleUp } from 'src/styling/icons/arrow/triangle_up.svg'
 import { fromNamespace } from 'src/utils/config'
 
+import PercentageChart from './Graphs/PercentageChart'
 import LineChart from './Graphs/RefLineChart'
 import Scatterplot from './Graphs/RefScatterplot'
 import InfoWithLabel from './InfoWithLabel'
@@ -21,8 +22,11 @@ const isNotProp = R.curry(R.compose(R.isNil, R.prop))
 const getFiats = R.map(R.prop('fiat'))
 const getProps = propName => R.map(R.prop(propName))
 const useStyles = makeStyles(styles)
-const getDateDaysAgo = (days = 0) => {
-  return moment().subtract(days, 'day')
+const getDateSecondsAgo = (seconds = 0, startDate = null) => {
+  if (startDate) {
+    return moment(startDate).subtract(seconds, 'second')
+  }
+  return moment().subtract(seconds, 'second')
 }
 
 // const now = moment()
@@ -47,8 +51,6 @@ const GET_DATA = gql`
   }
 `
 
-const currentTime = new Date()
-
 const SystemPerformance = () => {
   const classes = useStyles()
 
@@ -64,49 +66,55 @@ const SystemPerformance = () => {
 
   useEffect(() => {
     const isInRange = (getLastTimePeriod = false) => t => {
-      const now = moment(currentTime)
+      const now = moment()
       switch (selectedRange) {
         case 'Day':
           if (getLastTimePeriod) {
             return (
               t.error === null &&
               moment(t.created).isBetween(
-                getDateDaysAgo(2),
-                now.subtract(25, 'hours')
+                getDateSecondsAgo(2 * 24 * 3600, now),
+                getDateSecondsAgo(24 * 3600, now)
               )
             )
           }
           return (
             t.error === null &&
-            moment(t.created).isBetween(getDateDaysAgo(1), now)
+            moment(t.created).isBetween(getDateSecondsAgo(24 * 3600, now), now)
           )
         case 'Week':
           if (getLastTimePeriod) {
             return (
               t.error === null &&
               moment(t.created).isBetween(
-                getDateDaysAgo(14),
-                now.subtract(24 * 7 + 1, 'hours')
+                getDateSecondsAgo(14 * 24 * 3600, now),
+                getDateSecondsAgo(7 * 24 * 3600, now)
               )
             )
           }
           return (
             t.error === null &&
-            moment(t.created).isBetween(getDateDaysAgo(7), now)
+            moment(t.created).isBetween(
+              getDateSecondsAgo(7 * 24 * 3600, now),
+              now
+            )
           )
         case 'Month':
           if (getLastTimePeriod) {
             return (
               t.error === null &&
               moment(t.created).isBetween(
-                getDateDaysAgo(60),
-                now.subtract(24 * 30 + 1, 'hours')
+                getDateSecondsAgo(60 * 24 * 3600, now),
+                getDateSecondsAgo(30 * 24 * 3600, now)
               )
             )
           }
           return (
             t.error === null &&
-            moment(t.created).isBetween(getDateDaysAgo(30), now)
+            moment(t.created).isBetween(
+              getDateSecondsAgo(30 * 24 * 3600, now),
+              now
+            )
           )
         default:
           return t.error === null && true
@@ -272,13 +280,8 @@ const SystemPerformance = () => {
             <Grid item xs={4}>
               <Label2>Direction</Label2>
               <Grid container>
-                <Grid item xs={6}>
-                  <Label1>CashIn: </Label1>
-                  {` ${getDirectionPercent().cashIn}%`}
-                </Grid>
-                <Grid item xs={6}>
-                  <Label1>CashOut: </Label1>
-                  {` ${getDirectionPercent().cashOut}%`}
+                <Grid item xs>
+                  <PercentageChart data={getDirectionPercent()} />
                 </Grid>
               </Grid>
             </Grid>

@@ -7,10 +7,8 @@ import { backgroundColor, java, neon } from 'src/styling/variables'
 
 const RefScatterplot = ({ data: realData, timeFrame }) => {
   const svgRef = useRef()
-
   const cashIns = R.filter(R.propEq('txClass', 'cashIn'))(realData)
   const cashOuts = R.filter(R.propEq('txClass', 'cashOut'))(realData)
-
   const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
     const margin = { top: 25, right: 0, bottom: 25, left: 15 }
@@ -20,6 +18,9 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
     // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
     // (this is because the Y axis looks best with multiples of 100)
     const findMaxY = () => {
+      if (realData.length === 0) {
+        return 100
+      }
       let maxY = d3.max(realData, t => parseFloat(t.fiat))
       maxY = 100 * Math.ceil(maxY / 100)
       if (maxY < 100) {
@@ -37,7 +38,7 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
         ticks: 4,
         subtractDays: 1,
         timeFormat: '%H:%M',
-        timeRange: [0, 500]
+        timeRange: [50, 500]
       }
       switch (timeFrame) {
         case 'Day':
@@ -48,7 +49,7 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
             nice: 7,
             ticks: 7,
             subtractDays: 7,
-            timeFormat: '%d',
+            timeFormat: '%a %d',
             timeRange: [50, 500]
           }
         case 'Month':
@@ -98,12 +99,9 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
       .scaleTime()
       .domain([
         moment()
-          .endOf('day')
           .add(-xAxisSettings.subtractDays, 'day')
           .valueOf(),
-        moment()
-          .endOf('day')
-          .valueOf()
+        moment().valueOf()
       ])
       .range(xAxisSettings.timeRange)
       .nice(xAxisSettings.nice)
