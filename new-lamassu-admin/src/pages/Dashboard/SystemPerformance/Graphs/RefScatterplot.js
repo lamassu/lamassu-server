@@ -2,7 +2,6 @@ import * as d3 from 'd3'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useRef, useCallback } from 'react'
-
 import { backgroundColor, java, neon } from 'src/styling/variables'
 
 const RefScatterplot = ({ data: realData, timeFrame }) => {

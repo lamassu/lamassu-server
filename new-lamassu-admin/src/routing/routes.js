@@ -52,6 +52,18 @@ const useStyles = makeStyles({
 
 const tree = [
   {
+    key: 'dashboard',
+    label: 'Dashboard',
+    route: '/dashboard',
+    component: Dashboard
+  },
+  {
+    key: 'machines',
+    label: 'Machines',
+    route: '/machines',
+    component: Machines
+  },
+  {
     key: 'transactions',
     label: 'Transactions',
     route: '/transactions',

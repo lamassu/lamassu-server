@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React from 'react'
-
 import { cardState as cardState_ } from 'src/components/CollapsibleCard'
 // import ActionButton from 'src/components/buttons/ActionButton'
 import { H4, TL2, Label1 } from 'src/components/typography'

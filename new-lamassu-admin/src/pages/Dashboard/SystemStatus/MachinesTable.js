@@ -8,7 +8,6 @@ import TableRow from '@material-ui/core/TableRow'
 import classnames from 'classnames'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-
 import { Status } from 'src/components/Status'
 import { Label2, TL2 } from 'src/components/typography'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'

@@ -2,7 +2,6 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React from 'react'
-
 import TitleSection from 'src/components/layout/TitleSection'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
