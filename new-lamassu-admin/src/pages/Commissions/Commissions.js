@@ -1,22 +1,17 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { Table as EditableTable } from 'src/components/editableTable'
-import Section from 'src/components/layout/Section'
+import { SubpageButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
+import { ReactComponent as ExeceptionViewIcon } from 'src/styling/icons/circle buttons/exception-view/white.svg'
+import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import {
-  mainFields,
-  overrides,
-  schema,
-  getOverridesSchema,
-  defaults,
-  overridesDefaults,
-  getOrder
-} from './helper'
+import CommissionsDetails from './components/CommissionsDetails'
+import CommissionsList from './components/CommissionsList'
 
 const GET_DATA = gql`
   query getData {
@@ -38,26 +33,46 @@ const SAVE_CONFIG = gql`
   }
 `
 
+const styles = {
+  titleWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  subpageButton: {
+    marginLeft: 12
+  },
+  colorLabel: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 'auto',
+    '& div': {
+      width: 12,
+      height: 12,
+      borderRadius: 3,
+      marginRight: 8,
+      backgroundColor: '#44e188'
+    }
+  }
+}
+
+const useStyles = makeStyles(styles)
+
 const Commissions = ({ name: SCREEN_KEY }) => {
-  const [isEditingDefault, setEditingDefault] = useState(false)
-  const [isEditingOverrides, setEditingOverrides] = useState(false)
+  const classes = useStyles()
+
+  const [showMachines, setShowMachines] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData']
   })
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
-  )
+  const localeConfig =
+    data?.config && fromNamespace(namespaces.LOCALE)(data.config)
 
-  const commission = config && !R.isEmpty(config) ? config : defaults
-  const commissionOverrides = commission?.overrides ?? []
-
-  const orderedCommissionsOverrides = R.sortWith([
-    R.ascend(getOrder),
-    R.ascend(R.prop('machine'))
-  ])(commissionOverrides)
+  const currency = R.path(['fiatCurrency'])(localeConfig)
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
@@ -69,51 +84,43 @@ const Commissions = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config } })
   }
 
-  const onEditingDefault = (it, editing) => setEditingDefault(editing)
-  const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
-
   return (
     <>
-      <TitleSection title="Commissions" />
-      <Section>
-        <EditableTable
-          error={error?.message}
-          title="Default setup"
-          rowSize="lg"
-          titleLg
-          name="commissions"
-          enableEdit
-          initialValues={commission}
+      <Box className={classes.titleWrapper}>
+        <TitleSection title="Commissions" />
+        <SubpageButton
+          className={classes.subpageButton}
+          Icon={ListingViewIcon}
+          InverseIcon={ExeceptionViewIcon}
+          toggle={setShowMachines}>
+          List view
+        </SubpageButton>
+        {showMachines && (
+          <div className={classes.colorLabel}>
+            <div className={classes.greenSquare} />
+            <span>Override value</span>
+          </div>
+        )}
+      </Box>
+      {!showMachines && (
+        <CommissionsDetails
+          config={config}
+          currency={currency}
+          data={data}
+          error={error}
           save={save}
-          validationSchema={schema}
-          data={R.of(commission)}
-          elements={mainFields(currency)}
-          setEditing={onEditingDefault}
-          forceDisable={isEditingOverrides}
+          saveOverrides={saveOverrides}
         />
-      </Section>
-      <Section>
-        <EditableTable
-          error={error?.message}
-          title="Overrides"
-          titleLg
-          name="overrides"
-          enableDelete
-          enableEdit
-          enableCreate
-          groupBy={getOrder}
-          initialValues={overridesDefaults}
-          save={saveOverrides}
-          validationSchema={getOverridesSchema(
-            orderedCommissionsOverrides,
-            data
-          )}
-          data={orderedCommissionsOverrides}
-          elements={overrides(data, currency, orderedCommissionsOverrides)}
-          setEditing={onEditingOverrides}
-          forceDisable={isEditingDefault}
+      )}
+      {showMachines && (
+        <CommissionsList
+          config={config}
+          localeConfig={localeConfig}
+          currency={currency}
+          data={data}
+          error={error}
         />
-      </Section>
+      )}
     </>
   )
 }

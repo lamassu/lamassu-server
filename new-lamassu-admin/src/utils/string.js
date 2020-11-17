@@ -26,4 +26,4 @@ const startCase = R.compose(
   splitOnUpper
 )
 
-export { startCase, onlyFirstToUpper, formatLong }
+export { startCase, toFirstUpper, onlyFirstToUpper, formatLong }

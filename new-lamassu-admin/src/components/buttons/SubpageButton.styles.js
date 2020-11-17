@@ -25,13 +25,11 @@ export default {
     }
   },
   buttonIcon: {
-    '& svg': {
-      width: 16,
-      height: 16,
-      overflow: 'visible',
-      '& g': {
-        strokeWidth: 1.8
-      }
+    width: 16,
+    height: 16,
+    overflow: 'visible',
+    '& g': {
+      strokeWidth: 1.8
     }
   },
   buttonIconActiveLeft: {
