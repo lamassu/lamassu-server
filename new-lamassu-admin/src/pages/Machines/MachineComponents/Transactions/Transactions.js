@@ -20,7 +20,7 @@ const useStyles = makeStyles(mainStyles)
 const NUM_LOG_RESULTS = 5
 
 const GET_TRANSACTIONS = gql`
-  query transactions($limit: Int, $from: Date, $until: Date, $id: String) {
+  query transactions($limit: Int, $from: Date, $until: Date, $id: ID) {
     transactions(limit: $limit, from: $from, until: $until, id: $id) {
       id
       txClass
@@ -66,6 +66,10 @@ const Transactions = ({ id }) => {
     }
   )
 
+  if (!loading && txResponse) {
+    txResponse.transactions = txResponse.transactions.splice(0, 5)
+  }
+
   useEffect(() => {
     if (id !== null) {
       getTx()
@@ -92,13 +96,6 @@ const Transactions = ({ id }) => {
       view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />)
     },
     {
-      header: 'Machine',
-      name: 'machineName',
-      width: 180,
-      size: 'sm',
-      view: R.path(['machineName'])
-    },
-    {
       header: 'Customer',
       width: 162,
       size: 'sm',
@@ -113,7 +110,7 @@ const Transactions = ({ id }) => {
     },
     {
       header: 'Crypto',
-      width: 144,
+      width: 164,
       textAlign: 'right',
       size: 'sm',
       view: it =>
@@ -126,14 +123,15 @@ const Transactions = ({ id }) => {
       view: it => formatCryptoAddress(it.cryptoCode, it.toAddress),
       className: classes.overflowTd,
       size: 'sm',
-      width: 140
+      textAlign: 'left',
+      width: 170
     },
     {
       header: 'Date (UTC)',
-      view: it => moment.utc(it.created).format('YYYY-MM-DD HH:mm:ss'),
-      textAlign: 'right',
+      view: it => moment.utc(it.created).format('YYYY-MM-DD'),
+      textAlign: 'left',
       size: 'sm',
-      width: 200
+      width: 150
     },
     {
       header: 'Status',
@@ -161,7 +159,8 @@ const Transactions = ({ id }) => {
         loading={loading || id === null}
         emptyText="No transactions so far"
         elements={elements}
-        data={R.path(['transactions'])(txResponse)}
+        // need to splice because back end query could return double NUM_LOG_RESULTS because it doesnt merge the txIn and the txOut results before applying the limit
+        data={R.path(['transactions'])(txResponse)} // .splice(0,NUM_LOG_RESULTS)}
         Details={DetailsRow}
         expandable
       />

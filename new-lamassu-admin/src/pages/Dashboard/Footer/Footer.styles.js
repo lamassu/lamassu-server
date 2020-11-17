@@ -67,11 +67,14 @@ export default {
     width: '100vw',
     backgroundColor: white,
     textAlign: 'left',
-    height: 88
+    height: 88,
+    boxShadow: '0px -1px 10px 0px rgba(50, 50, 50, 0.1)'
   },
   content: {
     width: 1200,
-    margin: '0 auto'
+    margin: '0 auto',
+    backgroundColor: white,
+    marginTop: 4
   },
   headerLabels: {
     whiteSpace: 'pre',

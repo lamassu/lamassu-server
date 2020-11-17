@@ -1,9 +1,12 @@
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
+import gql from 'graphql-tag'
 import React from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut } from 'src/components/inputs/cashbox/Cashbox'
+import { NumberInput } from 'src/components/inputs/formik'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './Cassettes.styles'
@@ -24,7 +27,27 @@ const ValidationSchema = Yup.object().shape({
     .max(500)
 })
 
-const CashCassettes = ({ machine, config }) => {
+const RESET_CASHOUT_BILLS = gql`
+  mutation MachineAction(
+    $deviceId: ID!
+    $action: MachineAction!
+    $cassette1: Int!
+    $cassette2: Int!
+  ) {
+    machineAction(
+      deviceId: $deviceId
+      action: $action
+      cassette1: $cassette1
+      cassette2: $cassette2
+    ) {
+      deviceId
+      cassette1
+      cassette2
+    }
+  }
+`
+
+const CashCassettes = ({ machine, config, refetchData }) => {
   const data = { machine, config }
   const classes = useStyles()
 
@@ -32,8 +55,9 @@ const CashCassettes = ({ machine, config }) => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
 
-  const getCashoutSettings = id => fromNamespace(id)(cashout)
-  // const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
+  const getCashoutSettings = deviceId => fromNamespace(deviceId)(cashout)
+  const isCashOutDisabled = ({ deviceId }) =>
+    !getCashoutSettings(deviceId).active
 
   const elements = [
     {
@@ -48,7 +72,11 @@ const CashCassettes = ({ machine, config }) => {
           currency={{ code: fiatCurrency }}
           notes={value}
         />
-      )
+      ),
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'cassette2',
@@ -64,17 +92,41 @@ const CashCassettes = ({ machine, config }) => {
             notes={value}
           />
         )
+      },
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
       }
     }
   ]
+
+  const [resetCashOut, { error }] = useMutation(RESET_CASHOUT_BILLS, {
+    refetchQueries: () => refetchData()
+  })
+
+  const onSave = (...[, { deviceId, cassette1, cassette2 }]) => {
+    return resetCashOut({
+      variables: {
+        action: 'resetCashOutBills',
+        deviceId: deviceId,
+        cassette1,
+        cassette2
+      }
+    })
+  }
 
   return (
     <>
       {machine.name && (
         <EditableTable
+          error={error?.message}
+          stripeWhen={isCashOutDisabled}
+          disableRowEdit={isCashOutDisabled}
           name="cashboxes"
           elements={elements}
+          enableEdit
           data={[machine] || []}
+          save={onSave}
           validationSchema={ValidationSchema}
         />
       )}

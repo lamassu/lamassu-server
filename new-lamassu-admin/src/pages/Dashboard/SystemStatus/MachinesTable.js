@@ -6,10 +6,11 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 
 import { Status } from 'src/components/Status'
 import { Label2, TL2 } from 'src/components/typography'
-import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+// import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
 import styles from './MachinesTable.styles'
@@ -38,7 +39,7 @@ const HeaderCell = withStyles({
 
 const MachinesTable = ({ machines, numToRender }) => {
   const classes = useStyles()
-
+  const history = useHistory()
   const getPercent = (notes, capacity = 500) => {
     return Math.round((notes / capacity) * 100)
   }
@@ -50,6 +51,11 @@ const MachinesTable = ({ machines, numToRender }) => {
     }
     return <TL2>{`${percent}%`}</TL2>
   }
+
+  const redirect = name => {
+    return history.push('/machines', { selectedMachine: name })
+  }
+
   return (
     <>
       <TableContainer className={classes.table}>
@@ -66,11 +72,11 @@ const MachinesTable = ({ machines, numToRender }) => {
                   <Label2 className={classes.label}>Status</Label2>
                 </div>
               </HeaderCell>
-              <HeaderCell>
+              {/*               <HeaderCell>
                 <div className={classes.header}>
                   <TxInIcon />
                 </div>
-              </HeaderCell>
+              </HeaderCell> */}
               <HeaderCell>
                 <div className={classes.header}>
                   <TxOutIcon />
@@ -90,6 +96,8 @@ const MachinesTable = ({ machines, numToRender }) => {
               if (idx < numToRender) {
                 return (
                   <TableRow
+                    onClick={() => redirect(machine.name)}
+                    style={{ cursor: 'pointer' }}
                     key={machine.deviceId + idx}
                     className={classes.row}>
                     <StyledCell align="left">
@@ -98,9 +106,9 @@ const MachinesTable = ({ machines, numToRender }) => {
                     <StyledCell>
                       <Status status={machine.statuses[0]} />
                     </StyledCell>
-                    <StyledCell align="left">
+                    {/*                     <StyledCell align="left">
                       {makePercentageText(machine.cashbox)}
-                    </StyledCell>
+                    </StyledCell> */}
                     <StyledCell align="left">
                       {makePercentageText(machine.cassette1)}
                     </StyledCell>

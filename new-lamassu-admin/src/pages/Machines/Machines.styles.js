@@ -35,7 +35,7 @@ export default {
     flexDirection: 'row',
     color: comet
   },
-  tl2: {
+  label3: {
     color: comet,
     marginTop: 0
   },
