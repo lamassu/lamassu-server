@@ -2,12 +2,11 @@ import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import React from 'react'
-import * as Yup from 'yup'
-
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput } from 'src/components/inputs/formik'
 import { fromNamespace } from 'src/utils/config'
+import * as Yup from 'yup'
 
 import styles from './Cassettes.styles'
 

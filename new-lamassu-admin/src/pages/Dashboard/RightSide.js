@@ -2,7 +2,6 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
-
 import CollapsibleCard, { cardState } from 'src/components/CollapsibleCard'
 import { H4, Label1 } from 'src/components/typography'
 

@@ -8,7 +8,6 @@ import {
   CellMeasurer,
   CellMeasurerCache
 } from 'react-virtualized'
-
 import {
   Table,
   TBody,

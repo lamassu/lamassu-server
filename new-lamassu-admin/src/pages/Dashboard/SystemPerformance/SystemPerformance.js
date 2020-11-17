@@ -6,7 +6,6 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-
 import { Label2 } from 'src/components/typography/index'
 import { ReactComponent as TriangleDown } from 'src/styling/icons/arrow/triangle_down.svg'
 import { ReactComponent as TriangleUp } from 'src/styling/icons/arrow/triangle_up.svg'

@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import moment from 'moment'
 import React from 'react'
-
 import { Label3, P } from 'src/components/typography'
 
 import styles from '../Machines.styles'
