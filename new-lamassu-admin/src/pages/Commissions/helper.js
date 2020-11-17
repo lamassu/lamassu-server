@@ -1,9 +1,12 @@
+import * as _ from 'lodash/fp'
 import * as R from 'ramda'
 import React from 'react'
+import { v4 } from 'uuid'
 import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import TextInput from 'src/components/inputs/formik/TextInput.js'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -16,6 +19,17 @@ const ALL_COINS = {
   display: 'All Coins',
   code: 'ALL_COINS'
 }
+
+const SHOW_ALL = 'Show all'
+
+const ORDER_OPTIONS = [
+  'Machine name',
+  'Cryptocurrency',
+  'Cash-in',
+  'Cash-out',
+  'Fixed Fee',
+  'Minimum Tx'
+]
 
 const cashInAndOutHeaderStyle = { marginLeft: 6 }
 
@@ -345,6 +359,223 @@ const getOrder = ({ machine, cryptoCurrencies }) => {
   return 3
 }
 
+const createCommissions = (cryptoCode, deviceId, isDefault, config) => {
+  return {
+    minimumTx: config.minimumTx,
+    fixedFee: config.fixedFee,
+    cashOut: config.cashOut,
+    cashIn: config.cashIn,
+    machine: deviceId,
+    cryptoCurrencies: [cryptoCode],
+    default: isDefault,
+    id: v4()
+  }
+}
+
+const getCommissions = (cryptoCode, deviceId, config) => {
+  const overrides = R.prop('overrides', config)
+
+  if (overrides && !R.isEmpty(overrides)) {
+    const specificOverride = R.find(
+      it =>
+        it.machine === deviceId && _.includes(cryptoCode)(it.cryptoCurrencies)
+    )(overrides)
+
+    if (specificOverride !== undefined)
+      return createCommissions(cryptoCode, deviceId, false, specificOverride)
+
+    const machineOverride = R.find(
+      it =>
+        it.machine === deviceId && _.includes('ALL_COINS')(it.cryptoCurrencies)
+    )(overrides)
+
+    if (machineOverride !== undefined)
+      return createCommissions(cryptoCode, deviceId, false, machineOverride)
+
+    const coinOverride = R.find(
+      it =>
+        it.machine === 'ALL_MACHINES' &&
+        _.includes(cryptoCode)(it.cryptoCurrencies)
+    )(overrides)
+
+    if (coinOverride !== undefined)
+      return createCommissions(cryptoCode, deviceId, false, coinOverride)
+  }
+
+  return createCommissions(cryptoCode, deviceId, true, config)
+}
+
+const getMachineCoins = (deviceId, localeConfig) => {
+  const machineCoins = R.prop('cryptoCurrencies', localeConfig)
+
+  const overrides = R.prop('overrides', localeConfig)
+
+  if (!R.isEmpty(overrides)) {
+    const override = R.find(it => it.machine === deviceId)(overrides)
+
+    if (override !== undefined) return R.prop('cryptoCurrencies', override)
+  }
+  return machineCoins
+}
+
+const getListCommissionsSchema = () => {
+  return Yup.object().shape({
+    machine: Yup.string()
+      .label('Machine')
+      .required(),
+    cryptoCurrencies: Yup.array()
+      .label('Crypto Currency')
+      .required(),
+    cashIn: Yup.number()
+      .label('Cash-in')
+      .min(0)
+      .max(percentMax)
+      .required(),
+    cashOut: Yup.number()
+      .label('Cash-out')
+      .min(0)
+      .max(percentMax)
+      .required(),
+    fixedFee: Yup.number()
+      .label('Fixed Fee')
+      .min(0)
+      .max(currencyMax)
+      .required(),
+    minimumTx: Yup.number()
+      .label('Minimum Tx')
+      .min(0)
+      .max(currencyMax)
+      .required()
+  })
+}
+
+const getTextStyle = (obj, isEditing) => {
+  return { color: obj.default ? '#1b2559' : '#44e188' }
+}
+
+const commissionsList = (auxData, currency, auxElements) => {
+  const getData = R.path(R.__, auxData)
+
+  return getListCommissionsFields(getData, currency, defaults)
+}
+
+const getListCommissionsFields = (getData, currency, defaults) => {
+  const machineData = [ALL_MACHINES].concat(getData(['machines']))
+  // const rawCryptos = getData(['cryptoCurrencies'])
+  // const cryptoData = R.map(it => ({ display: it.code, code: it.code }))(
+  //   rawCryptos ?? []
+  // )
+
+  return [
+    {
+      name: 'machine',
+      width: 196,
+      size: 'sm',
+      view: getView(machineData, 'name', 'deviceId'),
+      input: TextInput,
+      editable: false,
+      inputProps: {
+        valueProp: 'deviceId',
+        getLabel: R.path(['name'])
+      }
+    },
+    {
+      name: 'cryptoCurrencies',
+      display: 'Crypto Currency',
+      width: 280,
+      view: R.prop(0),
+      size: 'sm',
+      input: TextInput,
+      editable: false
+    },
+    {
+      header: cashInHeader,
+      name: 'cashIn',
+      display: 'Cash-in',
+      width: 130,
+      input: NumberInput,
+      textAlign: 'right',
+      suffix: '%',
+      textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 3
+      }
+    },
+    {
+      header: cashOutHeader,
+      name: 'cashOut',
+      display: 'Cash-out',
+      width: 130,
+      input: NumberInput,
+      textAlign: 'right',
+      greenText: true,
+      suffix: '%',
+      textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 3
+      }
+    },
+    {
+      name: 'fixedFee',
+      display: 'Fixed fee',
+      width: 144,
+      input: NumberInput,
+      doubleHeader: 'Cash-in only',
+      textAlign: 'right',
+      suffix: currency,
+      textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 2
+      }
+    },
+    {
+      name: 'minimumTx',
+      display: 'Minimun Tx',
+      width: 144,
+      input: NumberInput,
+      doubleHeader: 'Cash-in only',
+      textAlign: 'right',
+      suffix: currency,
+      textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 2
+      }
+    }
+  ]
+}
+
+const filterCommissions = (coinFilter, machineFilter, machines) =>
+  R.compose(
+    R.filter(byMachine(machineFilter, machines)),
+    R.filter(byCoin(coinFilter))
+  )
+
+const byMachine = (filter, machines) => it =>
+  (filter === SHOW_ALL) |
+  (filter === getView(machines, 'name', 'deviceId')(it.machine))
+
+const byCoin = filter => it =>
+  (filter === SHOW_ALL) | (filter === it.cryptoCurrencies[0])
+
+const sortCommissionsBy = (prop, machines) => {
+  switch (prop) {
+    case ORDER_OPTIONS[1]:
+      return R.sortBy(R.path(['cryptoCurrencies', 0]))
+    case ORDER_OPTIONS[2]:
+      return R.sortBy(R.prop('cashIn'))
+    case ORDER_OPTIONS[3]:
+      return R.sortBy(R.prop('cashOut'))
+    case ORDER_OPTIONS[4]:
+      return R.sortBy(R.prop('fixedFee'))
+    case ORDER_OPTIONS[5]:
+      return R.sortBy(R.prop('minimumTx'))
+    default:
+      return R.sortBy(
+        R.compose(getView(machines, 'name', 'deviceId'), R.prop('machine'))
+      )
+  }
+}
+
 export {
   mainFields,
   overrides,
@@ -352,5 +583,16 @@ export {
   getOverridesSchema,
   defaults,
   overridesDefaults,
-  getOrder
+  getOrder,
+  getCommissions,
+  getMachineCoins,
+  getListCommissionsSchema,
+  commissionsList,
+  getView,
+  byMachine,
+  byCoin,
+  sortCommissionsBy,
+  filterCommissions,
+  SHOW_ALL,
+  ORDER_OPTIONS
 }

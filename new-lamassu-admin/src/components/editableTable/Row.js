@@ -105,6 +105,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     textAlign,
     suffix,
     SuffixComponent = TL2,
+    textStyle = it => {},
     view = it => it?.toString(),
     inputProps = {}
   } = config
@@ -144,9 +145,17 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
         <Field name={name} component={input} {...innerProps} />
       )}
       {isEditing && !isField && <config.input name={name} />}
-      {!isEditing && values && <>{view(values[name], values)}</>}
+      {!isEditing && values && (
+        <div style={textStyle(values, isEditing)}>
+          {view(values[name], values)}
+        </div>
+      )}
       {suffix && (
-        <SuffixComponent className={classes.suffix}>{suffix}</SuffixComponent>
+        <SuffixComponent
+          className={classes.suffix}
+          style={isEditing ? {} : textStyle(values, isEditing)}>
+          {suffix}
+        </SuffixComponent>
       )}
     </Td>
   )
