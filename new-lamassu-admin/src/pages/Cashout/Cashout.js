@@ -89,7 +89,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           <Tooltip width={304}>
             <P>
               Automatically accept customer deposits as complete if their
-              received amount is 10 crypto atoms or less.
+              received amount is 100 crypto atoms or less.
             </P>
             <P>
               (Crypto atoms are the smallest unit in each cryptocurrency. E.g.,
