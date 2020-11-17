@@ -114,8 +114,6 @@ const Blacklist = () => {
     deleteEntry({ variables: { cryptoCode, address } })
   }
 
-  const toggleModal = () => setShowModal(!showModal)
-
   const addToBlacklist = (cryptoCode, address) => {
     addEntry({ variables: { cryptoCode, address } })
   }
@@ -123,7 +121,7 @@ const Blacklist = () => {
   return (
     <>
       <TitleSection title="Blacklisted addresses">
-        <Link onClick={toggleModal}>Blacklist new addresses</Link>
+        <Link onClick={() => setShowModal(false)}>Blacklist new addresses</Link>
       </TitleSection>
       <Grid container className={classes.grid}>
         <Sidebar
