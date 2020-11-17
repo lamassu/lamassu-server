@@ -90,6 +90,7 @@ const CommissionsList = memo(
             error={error?.message}
             name="comissionsList"
             enableEdit
+            save={saveOverrides}
             initialValues={overridesDefaults}
             validationSchema={getListCommissionsSchema()}
             data={R.compose(

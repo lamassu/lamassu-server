@@ -576,6 +576,11 @@ const sortCommissionsBy = (prop, machines) => {
   }
 }
 
+const removeCoinFromOverride = crypto => override =>
+  R.mergeRight(override, {
+    cryptoCurrencies: R.without([crypto], override.cryptoCurrencies)
+  })
+
 export {
   mainFields,
   overrides,
@@ -593,6 +598,7 @@ export {
   byCoin,
   sortCommissionsBy,
   filterCommissions,
+  removeCoinFromOverride,
   SHOW_ALL,
   ORDER_OPTIONS
 }
