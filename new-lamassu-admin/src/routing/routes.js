@@ -1,3 +1,5 @@
+import Fade from '@material-ui/core/Fade'
+import Slide from '@material-ui/core/Slide'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 import {
@@ -244,6 +246,8 @@ const getParent = route =>
 const Routes = () => {
   const history = useHistory()
   const location = useLocation()
+  const action = history.action
+
   const { wizardTested } = useContext(AppContext)
 
   const dontTriggerPages = ['/404', '/register', '/wizard']
@@ -251,6 +255,11 @@ const Routes = () => {
   if (!wizardTested && !R.contains(location.pathname)(dontTriggerPages)) {
     history.push('/wizard')
   }
+
+  const Transition =
+    action === 'PUSH' && location.pathname !== '/transactions' ? Slide : Fade
+
+  // const props = Transition === Slide ? { direction: 'right' } : {}
 
   return (
     <Switch>
@@ -261,7 +270,15 @@ const Routes = () => {
       <Route path="/register" component={AuthRegister} />
       {flattened.map(({ route, component: Page, key }) => (
         <Route path={route} key={key}>
-          <Page name={key} />
+          <Transition
+            direction="left"
+            in={location.pathname === route}
+            mountOnEnter
+            unmountOnExit>
+            <div>
+              <Page name={key} action={action} />
+            </div>
+          </Transition>
         </Route>
       ))}
       <Route path="/404" />
