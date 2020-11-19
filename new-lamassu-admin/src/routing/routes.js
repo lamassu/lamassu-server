@@ -1,5 +1,6 @@
 import Fade from '@material-ui/core/Fade'
 import Slide from '@material-ui/core/Slide'
+import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 import {
@@ -34,6 +35,14 @@ import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
 import Wizard from 'src/pages/Wizard'
 import { namespaces } from 'src/utils/config'
+
+const useStyles = makeStyles({
+  wrapper: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column'
+  }
+})
 
 const tree = [
   {
@@ -244,6 +253,8 @@ const getParent = route =>
   )(flattened)
 
 const Routes = () => {
+  const classes = useStyles()
+
   const history = useHistory()
   const location = useLocation()
   const action = history.action
@@ -256,10 +267,18 @@ const Routes = () => {
     history.push('/wizard')
   }
 
-  const Transition =
-    action === 'PUSH' && location.pathname !== '/transactions' ? Slide : Fade
+  const Transition = action === 'PUSH' && location.state ? Slide : Fade
 
-  // const props = Transition === Slide ? { direction: 'right' } : {}
+  const transitionProps =
+    Transition === Slide
+      ? {
+          direction:
+            R.findIndex(R.propEq('route', location.state.prev))(leafRoutes) >
+            R.findIndex(R.propEq('route', location.pathname))(leafRoutes)
+              ? 'right'
+              : 'left'
+        }
+      : { timeout: 400 }
 
   return (
     <Switch>
@@ -271,14 +290,17 @@ const Routes = () => {
       {flattened.map(({ route, component: Page, key }) => (
         <Route path={route} key={key}>
           <Transition
-            direction="left"
+            className={classes.wrapper}
+            {...transitionProps}
             in={location.pathname === route}
             mountOnEnter
-            unmountOnExit>
-            <div>
-              <Page name={key} action={action} />
-            </div>
-          </Transition>
+            unmountOnExit
+            children={
+              <div>
+                <Page name={key} />
+              </div>
+            }
+          />
         </Route>
       ))}
       <Route path="/404" />
