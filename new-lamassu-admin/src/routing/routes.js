@@ -257,7 +257,6 @@ const Routes = () => {
 
   const history = useHistory()
   const location = useLocation()
-  const action = history.action
 
   const { wizardTested } = useContext(AppContext)
 
@@ -267,7 +266,7 @@ const Routes = () => {
     history.push('/wizard')
   }
 
-  const Transition = action === 'PUSH' && location.state ? Slide : Fade
+  const Transition = history.action === 'PUSH' && location.state ? Slide : Fade
 
   const transitionProps =
     Transition === Slide
