@@ -20,13 +20,7 @@ import TitleSection from 'src/components/layout/TitleSection'
 import ApolloProvider from 'src/utils/apollo'
 
 import Header from './components/layout/Header'
-import {
-  getTitle,
-  tree,
-  hasSidebar,
-  Routes,
-  getSidebarData
-} from './routing/routes'
+import { tree, hasSidebar, Routes, getParent } from './routing/routes'
 import global from './styling/global'
 import theme from './styling/theme'
 import { backgroundColor, mainWidth } from './styling/variables'
@@ -84,9 +78,8 @@ const Main = () => {
 
   const route = location.pathname
 
-  const title = getTitle(route)
   const sidebar = hasSidebar(route)
-  const sidebarData = sidebar ? getSidebarData(route) : []
+  const parent = sidebar ? getParent(route) : {}
 
   const is404 = location.pathname === '/404'
 
@@ -102,14 +95,14 @@ const Main = () => {
     <div className={classes.root}>
       {!is404 && wizardTested && <Header tree={tree} />}
       <main className={classes.wrapper}>
-        {title && !is404 && wizardTested && (
-          <TitleSection title={title}></TitleSection>
+        {sidebar && !is404 && wizardTested && (
+          <TitleSection title={parent.title}></TitleSection>
         )}
 
         <Grid container className={classes.grid}>
           {sidebar && !is404 && wizardTested && (
             <Sidebar
-              data={sidebarData}
+              data={parent.children}
               isSelected={isSelected}
               displayName={it => it.label}
               onClick={onClick}
