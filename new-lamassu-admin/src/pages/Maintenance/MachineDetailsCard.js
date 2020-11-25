@@ -128,19 +128,19 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
         />
         <ConfirmDialog
           open={confirmDialogOpen}
-          title={`${action?.command} this machine?`}
+          title={`${action?.humanReadable} this machine?`}
           errorMessage={errorMessage}
           toBeConfirmed={machine.name}
           message={action?.message}
           confirmationMessage={action?.confirmationMessage}
-          saveButtonAlwaysEnabled={action?.command === 'Rename'}
+          saveButtonAlwaysEnabled={action?.command === 'rename'}
           onConfirmed={value => {
             setErrorMessage(null)
             machineAction({
               variables: {
                 deviceId: machine.deviceId,
-                action: `${action?.command}`.toLowerCase(),
-                ...(action?.command === 'Rename' && { newName: value })
+                action: `${action?.command}`,
+                ...(action?.command === 'rename' && { newName: value })
               }
             })
           }}
@@ -174,7 +174,8 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   InverseIcon={EditReversedIcon}
                   onClick={() =>
                     setAction({
-                      command: 'Rename',
+                      command: 'rename',
+                      humanReadable: 'Rename',
                       confirmationMessage: 'Write the new name for this machine'
                     })
                   }>
@@ -188,7 +189,8 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   disabled={loading}
                   onClick={() =>
                     setAction({
-                      command: 'Unpair'
+                      command: 'unpair',
+                      humanReadable: 'Unpair'
                     })
                   }>
                   Unpair
@@ -201,25 +203,41 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   disabled={loading}
                   onClick={() =>
                     setAction({
-                      command: 'Reboot'
+                      command: 'reboot',
+                      humanReadable: 'Reboot'
                     })
                   }>
                   Reboot
                 </ActionButton>
                 <ActionButton
-                  className={classes.inlineChip}
+                  className={classes.mr}
                   disabled={loading}
                   color="primary"
                   Icon={ShutdownIcon}
                   InverseIcon={ShutdownReversedIcon}
                   onClick={() =>
                     setAction({
-                      command: 'Shutdown',
+                      command: 'shutdown',
+                      humanReadable: 'Shutdown',
                       message:
                         'In order to bring it back online, the machine will need to be visited and its power reset.'
                     })
                   }>
                   Shutdown
+                </ActionButton>
+                <ActionButton
+                  color="primary"
+                  className={classes.inlineChip}
+                  Icon={RebootIcon}
+                  InverseIcon={RebootReversedIcon}
+                  disabled={loading}
+                  onClick={() =>
+                    setAction({
+                      command: 'restartServices',
+                      humanReadable: 'Restart services for'
+                    })
+                  }>
+                  Restart Services
                 </ActionButton>
               </div>
             </Item>
