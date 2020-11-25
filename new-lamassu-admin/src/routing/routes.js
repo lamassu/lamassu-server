@@ -128,32 +128,32 @@ const tree = [
         key: namespaces.OPERATOR_INFO,
         label: 'Operator Info',
         route: '/settings/operator-info',
+        title: 'Operator Information',
+        get component() {
+          return () => <Redirect to={this.children[0].route} />
+        },
         children: [
           {
             key: 'contact-info',
             label: 'Contact information',
-            title: 'Operator information',
             route: '/settings/operator-info/contact-info',
             component: ContactInfo
           },
           {
             key: 'receipt-printing',
             label: 'Receipt',
-            title: 'Operator information',
             route: '/settings/operator-info/receipt-printing',
             component: ReceiptPrinting
           },
           {
             key: 'coin-atm-radar',
             label: 'Coin ATM Radar',
-            title: 'Operator information',
             route: '/settings/operator-info/coin-atm-radar',
             component: CoinAtmRadar
           },
           {
             key: 'terms-conditions',
             label: 'Terms & Conditions',
-            title: 'Operator information',
             route: '/settings/operator-info/terms-conditions',
             component: TermsConditions
           }
@@ -214,31 +214,32 @@ const tree = [
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
 const mappedRoutes = R.compose(R.flatten, map)(tree)
-const parentRoutes = R.filter(R.has('children'))(tree).concat(
-  R.filter(R.has('children'))(mappedRoutes)
+const parentRoutes = R.filter(R.has('children'))(mappedRoutes).concat(
+  R.filter(R.has('children'))(tree)
 )
 const leafRoutes = R.compose(R.flatten, map)(mappedRoutes)
-const thirdLevelRoutes = R.compose(
-  R.flatten,
-  R.map(R.prop('children')),
-  R.filter(R.has('children'))
-)(mappedRoutes)
+
 const flattened = R.concat(leafRoutes, parentRoutes)
 
-const getTitle = route =>
-  R.prop('title', R.find(R.propEq('route', route))(flattened))
-
-const hasSidebar = route => R.any(r => r.route === route, thirdLevelRoutes)
-
-const getSidebarData = route => {
-  const parentRoute = R.dropLast(
-    1,
-    R.dropLastWhile(x => x !== '/', route)
+const hasSidebar = route =>
+  R.any(r => r.route === route)(
+    R.compose(
+      R.flatten,
+      R.map(R.prop('children')),
+      R.filter(R.has('children'))
+    )(mappedRoutes)
   )
-  const parent = R.find(R.propEq('route', parentRoute))(flattened)
 
-  return parent?.children
-}
+const getParent = route =>
+  R.find(
+    R.propEq(
+      'route',
+      R.dropLast(
+        1,
+        R.dropLastWhile(x => x !== '/', route)
+      )
+    )
+  )(flattened)
 
 const Routes = () => {
   const history = useHistory()
@@ -256,9 +257,6 @@ const Routes = () => {
       <Route exact path="/">
         <Redirect to={{ pathname: '/transactions' }} />
       </Route>
-      <Route exact path="/settings/operator-info">
-        <Redirect to={{ pathname: '/settings/operator-info/contact-info' }} />
-      </Route>
       <Route path="/wizard" component={Wizard} />
       <Route path="/register" component={AuthRegister} />
       {flattened.map(({ route, component: Page, key }) => (
@@ -273,4 +271,4 @@ const Routes = () => {
     </Switch>
   )
 }
-export { getTitle, tree, getSidebarData, hasSidebar, Routes }
+export { tree, getParent, hasSidebar, Routes }
