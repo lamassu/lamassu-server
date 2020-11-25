@@ -79,7 +79,6 @@ const Header = memo(({ tree }) => {
               ))}
             </ul>
             <ActionButton
-              className={classes.mr}
               color="secondary"
               Icon={AddIcon}
               InverseIcon={AddIconReverse}
