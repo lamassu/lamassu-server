@@ -410,7 +410,7 @@ const getMachineCoins = (deviceId, localeConfig) => {
 
   const overrides = R.prop('overrides', localeConfig)
 
-  if (!R.isEmpty(overrides)) {
+  if (overrides && !R.isEmpty(overrides)) {
     const override = R.find(it => it.machine === deviceId)(overrides)
 
     if (override !== undefined) return R.prop('cryptoCurrencies', override)
@@ -473,11 +473,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       size: 'sm',
       view: getView(machineData, 'name', 'deviceId'),
       input: TextInput,
-      editable: false,
-      inputProps: {
-        valueProp: 'deviceId',
-        getLabel: R.path(['name'])
-      }
+      editable: false
     },
     {
       name: 'cryptoCurrencies',
@@ -485,7 +481,6 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       width: 280,
       view: R.prop(0),
       size: 'sm',
-      input: TextInput,
       editable: false
     },
     {
