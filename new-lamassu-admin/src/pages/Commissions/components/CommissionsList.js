@@ -60,6 +60,11 @@ const CommissionsList = memo(
       getCommissions(cryptoCode, deviceId, config)
     )(machinesCoinsTuples)
 
+    const tableData = R.compose(
+      sortCommissionsBy(orderProp, machines),
+      filterCommissions(coinFilter, machineFilter, machines)
+    )(commissions)
+
     return (
       <div>
         <div className={classes.headerLine}>
@@ -93,10 +98,7 @@ const CommissionsList = memo(
             save={saveOverrides}
             initialValues={overridesDefaults}
             validationSchema={getListCommissionsSchema()}
-            data={R.compose(
-              sortCommissionsBy(orderProp, machines),
-              filterCommissions(coinFilter, machineFilter, machines)
-            )(commissions)}
+            data={tableData}
             elements={commissionsList(data, currency)}
           />
         </div>
