@@ -11,7 +11,6 @@ import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import CommissionsDetails from './components/CommissionsDetails'
 import CommissionsList from './components/CommissionsList'
-import { removeCoinFromOverride } from './helper.js'
 
 const GET_DATA = gql`
   query getData {
@@ -32,6 +31,10 @@ const SAVE_CONFIG = gql`
     saveConfig(config: $config)
   }
 `
+const removeCoinFromOverride = crypto => override =>
+  R.mergeRight(override, {
+    cryptoCurrencies: R.without([crypto], override.cryptoCurrencies)
+  })
 
 const Commissions = ({ name: SCREEN_KEY }) => {
   const [showMachines, setShowMachines] = useState(false)
