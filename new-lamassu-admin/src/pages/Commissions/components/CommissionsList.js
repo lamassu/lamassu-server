@@ -15,10 +15,10 @@ const styles = {
   headerLine: {
     display: 'flex',
     justifyContent: '',
-    marginBottom: 24,
-    '& div': {
-      marginRight: 24
-    }
+    marginBottom: 24
+  },
+  select: {
+    marginRight: 24
   },
   tableWrapper: {
     flex: 1,
@@ -139,6 +139,7 @@ const CommissionsList = memo(
       <div>
         <div className={classes.headerLine}>
           <Select
+            className={classes.select}
             onSelectedItemChange={setMachineFilter}
             label="Machines"
             default={SHOW_ALL}
@@ -146,6 +147,7 @@ const CommissionsList = memo(
             selectedItem={machineFilter}
           />
           <Select
+            className={classes.select}
             onSelectedItemChange={setCoinFilter}
             label="Cryptocurrency"
             default={SHOW_ALL}

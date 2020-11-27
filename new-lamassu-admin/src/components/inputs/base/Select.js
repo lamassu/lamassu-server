@@ -9,7 +9,7 @@ import styles from './Select.styles'
 
 const useStyles = makeStyles(styles)
 
-function Select({ label, items, ...props }) {
+function Select({ className, label, items, ...props }) {
   const classes = useStyles()
 
   const {
