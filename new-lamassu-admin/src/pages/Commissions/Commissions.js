@@ -1,13 +1,12 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { SubpageButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import { ReactComponent as ExeceptionViewIcon } from 'src/styling/icons/circle buttons/exception-view/white.svg'
 import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
+import { ReactComponent as OverrideLabelIcon } from 'src/styling/icons/status/spring2.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import CommissionsDetails from './components/CommissionsDetails'
@@ -34,36 +33,7 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const styles = {
-  titleWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row'
-  },
-  subpageButton: {
-    marginLeft: 12
-  },
-  colorLabel: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-    marginLeft: 'auto',
-    '& div': {
-      width: 12,
-      height: 12,
-      borderRadius: 3,
-      marginRight: 8,
-      backgroundColor: '#44e188'
-    }
-  }
-}
-
-const useStyles = makeStyles(styles)
-
 const Commissions = ({ name: SCREEN_KEY }) => {
-  const classes = useStyles()
-
   const [showMachines, setShowMachines] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
@@ -109,24 +79,28 @@ const Commissions = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config } })
   }
 
+  const labels = showMachines
+    ? [
+        {
+          label: 'Override value',
+          icon: <OverrideLabelIcon />
+        }
+      ]
+    : []
+
   return (
     <>
-      <Box className={classes.titleWrapper}>
-        <TitleSection title="Commissions" />
-        <SubpageButton
-          className={classes.subpageButton}
-          Icon={ListingViewIcon}
-          InverseIcon={ExeceptionViewIcon}
-          toggle={setShowMachines}>
-          List view
-        </SubpageButton>
-        {showMachines && (
-          <div className={classes.colorLabel}>
-            <div className={classes.greenSquare} />
-            <span>Override value</span>
-          </div>
-        )}
-      </Box>
+      <TitleSection
+        title="Commissions"
+        labels={labels}
+        button={{
+          text: 'List view',
+          icon: ListingViewIcon,
+          inverseIcon: ExeceptionViewIcon,
+          toggle: setShowMachines
+        }}
+      />
+
       {!showMachines && (
         <CommissionsDetails
           config={config}

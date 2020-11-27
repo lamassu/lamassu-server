@@ -4,13 +4,21 @@ import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Title from 'src/components/Title'
+import { SubpageButton } from 'src/components/buttons'
 import { Label1 } from 'src/components/typography'
 
 import styles from './TitleSection.styles'
 
 const useStyles = makeStyles(styles)
 
-const TitleSection = ({ className, title, error, labels, children }) => {
+const TitleSection = ({
+  className,
+  title,
+  error,
+  labels,
+  button,
+  children
+}) => {
   const classes = useStyles()
   return (
     <div className={classnames(classes.titleWrapper, className)}>
@@ -18,6 +26,15 @@ const TitleSection = ({ className, title, error, labels, children }) => {
         <Title>{title}</Title>
         {error && (
           <ErrorMessage className={classes.error}>Failed to save</ErrorMessage>
+        )}
+        {button && (
+          <SubpageButton
+            className={classes.subpageButton}
+            Icon={button.icon}
+            InverseIcon={button.inverseIcon}
+            toggle={button.toggle}>
+            {button.text}
+          </SubpageButton>
         )}
       </div>
       <Box display="flex" flexDirection="row">
