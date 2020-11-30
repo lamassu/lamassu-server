@@ -6,7 +6,6 @@ import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-import TextInput from 'src/components/inputs/formik/TextInput.js'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -448,7 +447,6 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       width: 196,
       size: 'sm',
       view: getView(machineData, 'name', 'deviceId'),
-      input: TextInput,
       editable: false
     },
     {
