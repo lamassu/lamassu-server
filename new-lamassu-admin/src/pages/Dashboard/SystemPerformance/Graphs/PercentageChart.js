@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import React from 'react'
-
 import { ReactComponent as CashIn } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as CashOut } from 'src/styling/icons/direction/cash-out.svg'
 import {
