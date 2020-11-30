@@ -51,9 +51,8 @@ const styles = {
   statusHeader: {
     marginLeft: 2
   },
-  /*   // temporary class, until alerts are enabled. Delete this table class and uncomment the other one
-  table: {
-    height: 463,
+  /*   table: {
+    maxHeight: 440,
     '&::-webkit-scrollbar': {
       width: 7
     },
@@ -62,8 +61,10 @@ const styles = {
       borderRadius: 5
     }
   }, */
+  // temporary, when notifications are enabled delete this one and decomment above
   table: {
-    maxHeight: 440,
+    maxHeight: 465,
+    minHeight: 465,
     '&::-webkit-scrollbar': {
       width: 7
     },

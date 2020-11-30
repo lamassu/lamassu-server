@@ -1,6 +1,6 @@
 import { zircon } from 'src/styling/variables'
 
-export default {
+const styles = {
   expandButton: {
     outline: 'none',
     border: 'none',
@@ -41,3 +41,5 @@ export default {
     flexDirection: 'column'
   })
 }
+
+export default styles
