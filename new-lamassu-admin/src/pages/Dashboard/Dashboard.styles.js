@@ -2,7 +2,7 @@ import typographyStyles from 'src/components/typography/styles'
 import { spacer, white, primaryColor } from 'src/styling/variables'
 const { label1 } = typographyStyles
 
-export default {
+const styles = {
   root: {
     flexGrow: 1,
     marginBottom: 108
@@ -60,3 +60,5 @@ export default {
     }
   }
 }
+
+export default styles

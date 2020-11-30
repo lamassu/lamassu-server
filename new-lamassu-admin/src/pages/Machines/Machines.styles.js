@@ -6,7 +6,7 @@ import {
   comet
 } from 'src/styling/variables'
 
-export default {
+const styles = {
   grid: {
     flex: 1,
     height: '100%'
@@ -71,3 +71,5 @@ export default {
     marginRight: 8
   }
 }
+
+export default styles

@@ -5,7 +5,7 @@ import {
   primaryColor
 } from 'src/styling/variables'
 
-export default {
+const styles = {
   label: {
     margin: 0,
     color: offColor
@@ -35,8 +35,20 @@ export default {
   statusHeader: {
     marginLeft: 2
   },
-  table: {
+  /*   table: {
     maxHeight: 440,
+    '&::-webkit-scrollbar': {
+      width: 7
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: offColor,
+      borderRadius: 5
+    }
+  }, */
+  // temporary, when notifications are enabled delete this one and decomment above
+  table: {
+    maxHeight: 465,
+    minHeight: 465,
     '&::-webkit-scrollbar': {
       width: 7
     },
@@ -52,3 +64,5 @@ export default {
     marginTop: 0
   }
 }
+
+export default styles

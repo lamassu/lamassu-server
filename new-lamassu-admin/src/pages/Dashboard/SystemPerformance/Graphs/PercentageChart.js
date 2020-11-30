@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core'
-import Slider from '@material-ui/core/Slider'
 import React from 'react'
 
 import { ReactComponent as CashIn } from 'src/styling/icons/direction/cash-in.svg'
@@ -38,10 +37,8 @@ const useStyles = makeStyles(styles)
 
 const PercentageChart = () => {
   const classes = useStyles()
-  const [value, setValue] = React.useState(50)
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
+
+  const value = 50
 
   const buildPercentageView = (value, direction) => {
     switch (direction) {
@@ -72,24 +69,15 @@ const PercentageChart = () => {
 
   return (
     <>
-      <Slider
-        value={value}
-        onChange={handleChange}
-        aria-labelledby="continuous-slider"
-      />
       <div className={classes.wrapper}>
         <div
           className={classes.percentageBox}
           style={{ width: `${value}%`, marginRight: 4 }}>
-          {/*           <CashIn />
-          <span className={classes.label}>{` ${value}%`}</span> */}
           {buildPercentageView(value, 'cashIn')}
         </div>
         <div
           className={classes.percentageBox}
           style={{ width: `${100 - value}%` }}>
-          {/*           <CashOut />
-          <span className={classes.label}>{` ${100 - value}%`}</span> */}
           {buildPercentageView(100 - value, 'cashOut')}
         </div>
       </div>

@@ -4,11 +4,12 @@ import {
   offColor,
   errorColor,
   primaryColor,
-  white
+  white,
+  spacer
 } from 'src/styling/variables'
 const { label1 } = typographyStyles
 
-export default {
+const styles = {
   label: {
     color: offColor
   },
@@ -67,7 +68,7 @@ export default {
     width: '100vw',
     backgroundColor: white,
     textAlign: 'left',
-    height: 88,
+    height: spacer * 12,
     boxShadow: '0px -1px 10px 0px rgba(50, 50, 50, 0.1)'
   },
   content: {
@@ -92,5 +93,11 @@ export default {
       marginLeft: 6
     },
     marginTop: -20
+  },
+  footerContainer: {
+    marginLeft: spacer * 5,
+    marginBottom: spacer * 2
   }
 }
+
+export default styles
