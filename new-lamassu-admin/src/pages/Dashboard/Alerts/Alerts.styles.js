@@ -5,7 +5,7 @@ import {
   primaryColor
 } from 'src/styling/variables'
 
-export default {
+const styles = {
   label: {
     margin: 0,
     color: offColor
@@ -62,3 +62,4 @@ export default {
     }
   }
 }
+export default styles

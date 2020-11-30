@@ -51,18 +51,18 @@ const useStyles = makeStyles({
 })
 
 const tree = [
-  {
+  /*   {
     key: 'dashboard',
     label: 'Dashboard',
     route: '/dashboard',
     component: Dashboard
-  },
-  {
+  }, */
+  /*   {
     key: 'machines',
     label: 'Machines',
     route: '/machines',
     component: Machines
-  },
+  }, */
   {
     key: 'transactions',
     label: 'Transactions',
@@ -315,6 +315,8 @@ const Routes = () => {
       <Route exact path="/">
         <Redirect to={{ pathname: '/transactions' }} />
       </Route>
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/machines" component={Machines} />
       <Route path="/wizard" component={Wizard} />
       <Route path="/register" component={AuthRegister} />
       <Route path="/configmigration" component={ConfigMigration} />

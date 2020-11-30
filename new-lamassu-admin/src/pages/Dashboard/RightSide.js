@@ -2,7 +2,7 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
 
-import Alerts from './Alerts'
+// import Alerts from './Alerts'
 import styles from './Dashboard.styles'
 import SystemStatus from './SystemStatus'
 const useStyles = makeStyles(styles)
@@ -28,14 +28,14 @@ const RightSide = () => {
   return (
     <>
       <Grid item xs={6}>
-        <Grid item style={{ marginBottom: 16 }}>
+        {/*         <Grid item style={{ marginBottom: 16 }}>
           <div className={classes.card}>
             <Alerts
               cardState={rightSideState.alerts}
               setRightSideState={setRightSideState}
             />
           </div>
-        </Grid>
+        </Grid> */}
         <Grid item>
           <div className={classes.card}>
             <SystemStatus

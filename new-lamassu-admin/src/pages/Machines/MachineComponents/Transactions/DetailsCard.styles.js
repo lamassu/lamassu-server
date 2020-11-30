@@ -3,7 +3,7 @@ import { offColor } from 'src/styling/variables'
 
 const { p } = typographyStyles
 
-export default {
+const styles = {
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -82,3 +82,5 @@ export default {
     width: 215
   }
 }
+
+export default styles

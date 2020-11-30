@@ -9,7 +9,7 @@ import {
   linkSecondaryColor
 } from 'src/styling/variables'
 
-export default {
+const styles = {
   titleWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -78,3 +78,5 @@ export default {
     color: linkSecondaryColor
   }
 }
+
+export default styles

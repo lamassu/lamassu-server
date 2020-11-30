@@ -20,7 +20,7 @@ if (version === 8) {
   subheaderHeight = spacer * 7
 }
 
-export default {
+const styles = {
   header: {
     backgroundColor: primaryColor,
     color: white,
@@ -164,5 +164,10 @@ export default {
     '& > svg': {
       marginRight: 16
     }
+  },
+  logoLink: {
+    cursor: 'pointer'
   }
 }
+
+export default styles
