@@ -4,7 +4,6 @@ import { useSelect } from 'downshift'
 import React from 'react'
 
 import { ReactComponent as Arrowdown } from 'src/styling/icons/action/arrow/regular.svg'
-import { toFirstUpper } from 'src/utils/string'
 
 import styles from './Select.styles'
 
@@ -35,19 +34,17 @@ function Select({ label, items, ...props }) {
   }
 
   return (
-    <div className={classnames(selectClassNames)}>
-      <label {...getLabelProps()}>{toFirstUpper(label)}</label>
+    <div className={classnames(selectClassNames, className)}>
+      <label {...getLabelProps()}>{label}</label>
       <button {...getToggleButtonProps()}>
-        <span className={classes.selectedItem}>
-          {toFirstUpper(selectedItem)}
-        </span>
+        <span className={classes.selectedItem}>{selectedItem.display}</span>
         <Arrowdown />
       </button>
       <ul {...getMenuProps()}>
         {isOpen &&
-          items.map((item, index) => (
-            <li key={`${item}${index}`} {...getItemProps({ item, index })}>
-              <span>{toFirstUpper(item)}</span>
+          items.map(({ code, display }, index) => (
+            <li key={`${code}${index}`} {...getItemProps({ code, index })}>
+              <span>{display}</span>
             </li>
           ))}
       </ul>
