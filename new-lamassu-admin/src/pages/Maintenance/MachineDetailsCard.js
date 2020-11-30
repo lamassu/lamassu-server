@@ -128,7 +128,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
         />
         <ConfirmDialog
           open={confirmDialogOpen}
-          title={`${action?.humanReadable} this machine?`}
+          title={`${action?.display} this machine?`}
           errorMessage={errorMessage}
           toBeConfirmed={machine.name}
           message={action?.message}
@@ -175,7 +175,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   onClick={() =>
                     setAction({
                       command: 'rename',
-                      humanReadable: 'Rename',
+                      display: 'Rename',
                       confirmationMessage: 'Write the new name for this machine'
                     })
                   }>
@@ -190,7 +190,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   onClick={() =>
                     setAction({
                       command: 'unpair',
-                      humanReadable: 'Unpair'
+                      display: 'Unpair'
                     })
                   }>
                   Unpair
@@ -204,7 +204,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   onClick={() =>
                     setAction({
                       command: 'reboot',
-                      humanReadable: 'Reboot'
+                      display: 'Reboot'
                     })
                   }>
                   Reboot
@@ -218,7 +218,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   onClick={() =>
                     setAction({
                       command: 'shutdown',
-                      humanReadable: 'Shutdown',
+                      display: 'Shutdown',
                       message:
                         'In order to bring it back online, the machine will need to be visited and its power reset.'
                     })
@@ -234,7 +234,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   onClick={() =>
                     setAction({
                       command: 'restartServices',
-                      humanReadable: 'Restart services for'
+                      display: 'Restart services for'
                     })
                   }>
                   Restart Services
