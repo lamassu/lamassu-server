@@ -86,12 +86,12 @@ const CoinATMRadar = memo(() => {
           label={coinAtmRadarConfig.active ? 'Yes' : 'No'}
         />
         <H4>{'Machine info'}</H4>
-        {/*         <Row
+        <Row
           title={'Commissions'}
           disabled={!coinAtmRadarConfig.active}
           checked={coinAtmRadarConfig.commissions}
           save={value => save({ commissions: value })}
-        /> */}
+        />
         <Row
           title={'Limits and verification'}
           disabled={!coinAtmRadarConfig.active}
