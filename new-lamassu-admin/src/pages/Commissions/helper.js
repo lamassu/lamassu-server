@@ -513,38 +513,6 @@ const getListCommissionsFields = (getData, currency, defaults) => {
   ]
 }
 
-const filterCommissions = (coinFilter, machineFilter, machines) =>
-  R.compose(
-    R.filter(byMachine(machineFilter, machines)),
-    R.filter(byCoin(coinFilter))
-  )
-
-const byMachine = (filter, machines) => it =>
-  (filter === SHOW_ALL) |
-  (filter === getView(machines, 'name', 'deviceId')(it.machine))
-
-const byCoin = filter => it =>
-  (filter === SHOW_ALL) | (filter === it.cryptoCurrencies[0])
-
-const sortCommissionsBy = (prop, machines) => {
-  switch (prop) {
-    case ORDER_OPTIONS[1]:
-      return R.sortBy(R.path(['cryptoCurrencies', 0]))
-    case ORDER_OPTIONS[2]:
-      return R.sortBy(R.prop('cashIn'))
-    case ORDER_OPTIONS[3]:
-      return R.sortBy(R.prop('cashOut'))
-    case ORDER_OPTIONS[4]:
-      return R.sortBy(R.prop('fixedFee'))
-    case ORDER_OPTIONS[5]:
-      return R.sortBy(R.prop('minimumTx'))
-    default:
-      return R.sortBy(
-        R.compose(getView(machines, 'name', 'deviceId'), R.prop('machine'))
-      )
-  }
-}
-
 export {
   mainFields,
   overrides,
