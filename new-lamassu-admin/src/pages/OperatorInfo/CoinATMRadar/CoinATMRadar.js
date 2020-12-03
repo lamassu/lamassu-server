@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React, { memo } from 'react'
 
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'

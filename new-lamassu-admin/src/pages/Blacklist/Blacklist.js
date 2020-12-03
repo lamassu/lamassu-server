@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import Sidebar from 'src/components/layout/Sidebar'
