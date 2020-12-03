@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
 import InfoMessage from 'src/components/InfoMessage'
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H1, H4, P } from 'src/components/typography'

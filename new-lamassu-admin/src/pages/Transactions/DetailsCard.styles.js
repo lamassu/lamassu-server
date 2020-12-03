@@ -32,7 +32,7 @@ export default {
   txIcon: {
     marginRight: 10
   },
-  popover: {
+  clipboardPopover: {
     height: 164,
     width: 215
   },

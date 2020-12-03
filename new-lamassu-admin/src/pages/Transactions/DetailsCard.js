@@ -1,10 +1,11 @@
-import { makeStyles, Box, Tooltip } from '@material-ui/core'
+import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React, { memo } from 'react'
 
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { IDButton } from 'src/components/buttons'
-import { Label1 } from 'src/components/typography'
+import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
 import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
 import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone/white.svg'
@@ -53,7 +54,12 @@ const DetailsRow = ({ it: tx }) => {
     )
   }
 
-  console.log(tx)
+  const errorElements = (
+    <>
+      <Label>Transaction status</Label>
+      <span className={classes.bold}>{getStatus(tx)}</span>
+    </>
+  )
 
   return (
     <div className={classes.wrapper}>
@@ -82,7 +88,7 @@ const DetailsRow = ({ it: tx }) => {
             )}
             {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
               <IDButton
-                popoverClassname={classes.popover}
+                popoverClassname={classes.clipboardPopover}
                 className={classes.idButton}
                 name="card"
                 Icon={CardIdIcon}
@@ -186,10 +192,13 @@ const DetailsRow = ({ it: tx }) => {
       </div>
       <div className={classes.lastRow}>
         <div>
-          <Label>Transaction status</Label>
-          <Tooltip disableFocusListener title={getStatusDetails(tx)}>
-            <span className={classes.bold}>{getStatus(tx)}</span>
-          </Tooltip>
+          {getStatusDetails(tx) ? (
+            <HoverableTooltip parentElements={errorElements} width={200}>
+              <P>{getStatusDetails(tx)}</P>
+            </HoverableTooltip>
+          ) : (
+            errorElements
+          )}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { Link, Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'

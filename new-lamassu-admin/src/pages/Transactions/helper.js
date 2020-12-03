@@ -6,10 +6,7 @@ const getCashOutStatus = it => {
 }
 
 const getCashOutStatusDetails = it => {
-  if (it.hasError) return it.hasError
-  if (it.dispense) return ''
-  if (it.expired) return ''
-  return 'Pending'
+  return it.hasError ? it.hasError : null
 }
 
 const getCashInStatus = it => {
@@ -21,11 +18,7 @@ const getCashInStatus = it => {
 }
 
 const getCashInStatusDetails = it => {
-  if (it.operatorCompleted) return ''
-  if (it.hasError) return it.hasError
-  if (it.sendConfirmed) return ''
-  if (it.expired) return ''
-  return 'Pending'
+  return it.hasError ? it.hasError : null
 }
 
 const getStatus = it => {

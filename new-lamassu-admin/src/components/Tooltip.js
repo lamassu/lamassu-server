@@ -51,4 +51,35 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
   )
 })
 
-export default Tooltip
+const HoverableTooltip = memo(({ parentElements, children, width }) => {
+  const classes = useStyles({ width })
+  const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
+
+  const handleOpenHelpPopper = event => {
+    setHelpPopperAnchorEl(helpPopperAnchorEl ? null : event.currentTarget)
+  }
+
+  const handleCloseHelpPopper = () => {
+    setHelpPopperAnchorEl(null)
+  }
+
+  const helpPopperOpen = Boolean(helpPopperAnchorEl)
+
+  return (
+    <div>
+      <div
+        onMouseEnter={handleOpenHelpPopper}
+        onMouseLeave={handleCloseHelpPopper}>
+        {parentElements}
+      </div>
+      <Popper
+        open={helpPopperOpen}
+        anchorEl={helpPopperAnchorEl}
+        placement="bottom">
+        <div className={classes.popoverContent}>{children}</div>
+      </Popper>
+    </div>
+  )
+})
+
+export { Tooltip, HoverableTooltip }
