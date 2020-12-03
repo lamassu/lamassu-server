@@ -1,4 +1,4 @@
-import { makeStyles, Box } from '@material-ui/core'
+import { makeStyles, Box, Tooltip } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React, { memo } from 'react'
@@ -19,7 +19,7 @@ import { onlyFirstToUpper } from 'src/utils/string'
 
 import CopyToClipboard from './CopyToClipboard'
 import styles from './DetailsCard.styles'
-import { getStatus } from './helper'
+import { getStatus, getStatusDetails } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -52,6 +52,8 @@ const DetailsRow = ({ it: tx }) => {
       'DD-MM-YYYY'
     )
   }
+
+  console.log(tx)
 
   return (
     <div className={classes.wrapper}>
@@ -185,7 +187,9 @@ const DetailsRow = ({ it: tx }) => {
       <div className={classes.lastRow}>
         <div>
           <Label>Transaction status</Label>
-          <span className={classes.bold}>{getStatus(tx)}</span>
+          <Tooltip disableFocusListener title={getStatusDetails(tx)}>
+            <span className={classes.bold}>{getStatus(tx)}</span>
+          </Tooltip>
         </div>
       </div>
     </div>
