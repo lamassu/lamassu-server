@@ -70,8 +70,8 @@ const FiatBalance = ({
         setEditing(CASH_IN_KEY, false)
         setEditing(CASH_OUT_KEY, false)
       }}>
-      <>
-        <Form className={classes.form}>
+      <div className={classes.formWrapper}>
+        <Form>
           <PromptWhenDirty />
           <Header
             title="Cash in (Full)"
@@ -80,23 +80,24 @@ const FiatBalance = ({
             setEditing={it => setEditing(CASH_IN_KEY, it)}
           />
           <div className={classes.wrapper}>
-            <div className={classes.first}>
-              <div className={classes.row}>
-                <div className={classes.col2}>
-                  <EditableNumber
-                    label="Alert me over"
-                    name="cashInAlertThreshold"
-                    editing={isEditing(CASH_IN_KEY)}
-                    displayValue={x => (x === '' ? '-' : x)}
-                    decoration="notes"
-                    width={fieldWidth}
-                  />
-                </div>
+            <div className={classes.row}>
+              <div className={classes.col2}>
+                <EditableNumber
+                  label="Alert me over"
+                  name="cashInAlertThreshold"
+                  editing={isEditing(CASH_IN_KEY)}
+                  displayValue={x => (x === '' ? '-' : x)}
+                  decoration="notes"
+                  width={fieldWidth}
+                />
               </div>
             </div>
           </div>
         </Form>
-        <Form className={classes.form}>
+
+        <div className={classes.vertSeparator} />
+
+        <Form>
           <PromptWhenDirty />
           <Header
             title="Cash out (Empty)"
@@ -137,7 +138,7 @@ const FiatBalance = ({
             </div>
           </div>
         </Form>
-      </>
+      </div>
     </Formik>
   )
 }
