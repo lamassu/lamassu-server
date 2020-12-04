@@ -16,6 +16,12 @@ const useStyles = makeStyles(styles)
 
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
+  cashbox: Yup.number()
+    .label('Cashbox')
+    .required()
+    .integer()
+    .min(0)
+    .max(1000),
   cassette1: Yup.number()
     .label('Cassette 1 (top)')
     .required()
@@ -43,20 +49,23 @@ const GET_MACHINES_AND_CONFIG = gql`
   }
 `
 
-const RESET_CASHOUT_BILLS = gql`
+const SET_CASSETTE_BILLS = gql`
   mutation MachineAction(
     $deviceId: ID!
     $action: MachineAction!
+    $cashbox: Int!
     $cassette1: Int!
     $cassette2: Int!
   ) {
     machineAction(
       deviceId: $deviceId
       action: $action
+      cashbox: $cashbox
       cassette1: $cassette1
       cassette2: $cassette2
     ) {
       deviceId
+      cashbox
       cassette1
       cassette2
     }
@@ -68,9 +77,7 @@ const CashCassettes = () => {
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
-  console.log(data)
-
-  const [resetCashOut, { error }] = useMutation(RESET_CASHOUT_BILLS, {
+  const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
 
@@ -78,11 +85,13 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
 
-  const onSave = (...[, { id, cassette1, cassette2 }]) => {
-    return resetCashOut({
+  const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
+    console.log(cashbox)
+    return setCassetteBills({
       variables: {
-        action: 'resetCashOutBills',
+        action: 'setCassetteBills',
         deviceId: id,
+        cashbox,
         cassette1,
         cassette2
       }
