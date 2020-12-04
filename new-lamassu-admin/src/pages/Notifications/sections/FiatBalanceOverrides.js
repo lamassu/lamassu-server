@@ -9,6 +9,7 @@ import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
+const CASHBOX_KEY = 'cashbox'
 const CASSETTE_1_KEY = 'fiatBalanceCassette1'
 const CASSETTE_2_KEY = 'fiatBalanceCassette2'
 const MACHINE_KEY = 'machine'
@@ -35,6 +36,7 @@ const FiatBalanceOverrides = ({ section }) => {
 
   const initialValues = {
     [MACHINE_KEY]: null,
+    [CASHBOX_KEY]: '',
     [CASSETTE_1_KEY]: '',
     [CASSETTE_2_KEY]: ''
   }
@@ -47,10 +49,22 @@ const FiatBalanceOverrides = ({ section }) => {
         .label('Machine')
         .nullable()
         .required(),
+      [CASHBOX_KEY]: Yup.number()
+        .label('Cashbox')
+        .when([CASSETTE_1_KEY, CASSETTE_2_KEY], {
+          is: (CASSETTE_1_KEY, CASSETTE_2_KEY) =>
+            !CASSETTE_1_KEY && !CASSETTE_2_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(notesMax)
+        .nullable(),
       [CASSETTE_1_KEY]: Yup.number()
         .label('Cassette 1 (top)')
-        .when(CASSETTE_2_KEY, {
-          is: CASSETTE_2_KEY => !CASSETTE_2_KEY,
+        .when([CASHBOX_KEY, CASSETTE_2_KEY], {
+          is: (CASHBOX_KEY, CASSETTE_2_KEY) => !CASHBOX_KEY && !CASSETTE_2_KEY,
           then: Yup.number().required()
         })
         .transform(transformNumber)
@@ -60,8 +74,8 @@ const FiatBalanceOverrides = ({ section }) => {
         .nullable(),
       [CASSETTE_2_KEY]: Yup.number()
         .label('Cassette 1 (bottom)')
-        .when(CASSETTE_1_KEY, {
-          is: CASSETTE_1_KEY => !CASSETTE_1_KEY,
+        .when([CASHBOX_KEY, CASSETTE_1_KEY], {
+          is: (CASHBOX_KEY, CASSETTE_1_KEY) => !CASHBOX_KEY && !CASSETTE_1_KEY,
           then: Yup.number().required()
         })
         .transform(transformNumber)
@@ -70,7 +84,11 @@ const FiatBalanceOverrides = ({ section }) => {
         .max(notesMax)
         .nullable()
     },
-    [CASSETTE_1_KEY, CASSETTE_2_KEY]
+    [
+      [CASHBOX_KEY, CASSETTE_1_KEY],
+      [CASHBOX_KEY, CASSETTE_2_KEY],
+      [CASSETTE_1_KEY, CASSETTE_2_KEY]
+    ]
   )
 
   const viewMachine = it =>
@@ -87,6 +105,18 @@ const FiatBalanceOverrides = ({ section }) => {
         options: it => R.concat(suggestions, findSuggestion(it)),
         valueProp: 'deviceId',
         getLabel: R.path(['name'])
+      }
+    },
+    {
+      name: CASHBOX_KEY,
+      display: 'Cashbox',
+      width: 155,
+      textAlign: 'right',
+      bold: true,
+      input: NumberInput,
+      suffix: 'notes',
+      inputProps: {
+        decimalPlaces: 0
       }
     },
     {
