@@ -31,7 +31,7 @@ const FiatBalance = ({
   const classes = useStyles()
 
   const schema = Yup.object().shape({
-    fiatBalanceCashbox: Yup.number()
+    cashInAlertThreshold: Yup.number()
       .transform(transformNumber)
       .integer()
       .min(min)
@@ -60,7 +60,7 @@ const FiatBalance = ({
     <Formik
       enableReinitialize
       initialValues={{
-        fiatBalanceCashbox: data?.fiatBalanceCashbox ?? '',
+        cashInAlertThreshold: data?.cashInAlertThreshold ?? '',
         fiatBalanceCassette1: data?.fiatBalanceCassette1 ?? '',
         fiatBalanceCassette2: data?.fiatBalanceCassette2 ?? ''
       }}
@@ -85,7 +85,7 @@ const FiatBalance = ({
                 <div className={classes.col2}>
                   <EditableNumber
                     label="Alert me over"
-                    name="fiatBalanceCashbox"
+                    name="cashInAlertThreshold"
                     editing={isEditing(CASH_IN_KEY)}
                     displayValue={x => (x === '' ? '-' : x)}
                     decoration="notes"
