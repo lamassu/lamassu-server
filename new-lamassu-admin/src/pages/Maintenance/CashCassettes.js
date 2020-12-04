@@ -86,7 +86,6 @@ const CashCassettes = () => {
   const fiatCurrency = locale?.fiatCurrency
 
   const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
-    console.log(cashbox)
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
@@ -115,11 +114,7 @@ const CashCassettes = () => {
       width: 240,
       stripe: true,
       view: value => (
-        <CashIn
-          currency={{ code: fiatCurrency }}
-          notes={value}
-          total={999999}
-        />
+        <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
       input: NumberInput,
       inputProps: {
