@@ -10,12 +10,14 @@ import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
+const CASHBOX_KEY = 'cashbox'
 const CASSETTE_1_KEY = 'fillingPercentageCassette1'
 const CASSETTE_2_KEY = 'fillingPercentageCassette2'
 const CASSETTE_3_KEY = 'fillingPercentageCassette3'
 const CASSETTE_4_KEY = 'fillingPercentageCassette4'
 const MACHINE_KEY = 'machine'
 const NAME = 'fiatBalanceOverrides'
+const DEFAULT_NUMBER_OF_CASSETTES = 2
 
 const CASSETTE_LIST = [
   CASSETTE_1_KEY,
@@ -60,15 +62,19 @@ const FiatBalanceOverrides = ({ config, section }) => {
 
   const initialValues = {
     [MACHINE_KEY]: null,
+    [CASHBOX_KEY]: '',
     [CASSETTE_1_KEY]: '',
     [CASSETTE_2_KEY]: '',
     [CASSETTE_3_KEY]: '',
     [CASSETTE_4_KEY]: ''
   }
 
+  const notesMin = 0
+  const notesMax = 9999999
+
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines),
-    2
+    DEFAULT_NUMBER_OF_CASSETTES
   )
 
   const percentMin = 0
@@ -79,6 +85,13 @@ const FiatBalanceOverrides = ({ config, section }) => {
         .label('Machine')
         .nullable()
         .required(),
+      [CASHBOX_KEY]: Yup.number()
+        .label('Cash box')
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(notesMax)
+        .nullable(),
       [CASSETTE_1_KEY]: Yup.number()
         .label('Cassette 1')
         .transform(transformNumber)
@@ -133,6 +146,18 @@ const FiatBalanceOverrides = ({ config, section }) => {
         options: it => R.concat(suggestions, findSuggestion(it)),
         valueProp: 'deviceId',
         labelProp: 'name'
+      }
+    },
+    {
+      name: CASHBOX_KEY,
+      display: 'Cashbox',
+      width: 155,
+      textAlign: 'right',
+      bold: true,
+      input: NumberInput,
+      suffix: 'notes',
+      inputProps: {
+        decimalPlaces: 0
       }
     }
   ]

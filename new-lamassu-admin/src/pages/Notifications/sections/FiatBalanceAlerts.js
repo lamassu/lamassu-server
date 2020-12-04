@@ -93,7 +93,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
           <Form className={classes.form}>
             <PromptWhenDirty />
             <Header
-              title="Cash box (Full)"
+              title="Cash box"
               editing={isEditing(CASH_IN_KEY)}
               disabled={isDisabled(CASH_IN_KEY)}
               setEditing={it => setEditing(CASH_IN_KEY, it)}
