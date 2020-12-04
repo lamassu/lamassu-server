@@ -5,7 +5,7 @@ import React from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
-import { CashOut } from 'src/components/inputs/cashbox/Cashbox'
+import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { fromNamespace } from 'src/utils/config'
@@ -35,6 +35,7 @@ const GET_MACHINES_AND_CONFIG = gql`
     machines {
       name
       id: deviceId
+      cashbox
       cassette1
       cassette2
     }
@@ -67,6 +68,8 @@ const CashCassettes = () => {
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
+  console.log(data)
+
   const [resetCashOut, { error }] = useMutation(RESET_CASHOUT_BILLS, {
     refetchQueries: () => ['getData']
   })
@@ -96,6 +99,23 @@ const CashCassettes = () => {
       width: 254,
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
+    },
+    {
+      name: 'cashbox',
+      header: 'Cashbox',
+      width: 240,
+      stripe: true,
+      view: value => (
+        <CashIn
+          currency={{ code: fiatCurrency }}
+          notes={value}
+          total={999999}
+        />
+      ),
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
     },
     {
       name: 'cassette1',

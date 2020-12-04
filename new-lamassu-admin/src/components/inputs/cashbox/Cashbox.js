@@ -31,19 +31,19 @@ const Cashbox = ({ percent = 0, cashOut = false, className }) => {
 
 // https://support.lamassu.is/hc/en-us/articles/360025595552-Installing-the-Sintra-Forte
 // Sintra and Sintra Forte can have up to 500 notes per cashOut box and up to 1000 per cashIn box
-const CashIn = ({ capacity = 1000, notes = 0, total = 0 }) => {
-  const percent = (100 * notes) / capacity
+const CashIn = ({ currency, notes, total }) => {
   const classes = gridClasses()
   return (
     <>
       <div className={classes.row}>
-        <div>
-          <Cashbox percent={percent} />
-        </div>
         <div className={classes.col2}>
-          <div>
+          <div className={classes.innerRow}>
             <Info2 className={classes.noMarginText}>{notes} notes</Info2>
-            <Label1 className={classes.noMarginText}>{total}</Label1>
+          </div>
+          <div className={classes.innerRow}>
+            <Label1 className={classes.noMarginText}>
+              {total} {currency.code}
+            </Label1>
           </div>
         </div>
       </div>
