@@ -20,6 +20,8 @@ const useStyles = makeStyles(styles)
 const CASH_IN_KEY = 'fiatBalanceAlertsCashIn'
 const CASH_OUT_KEY = 'fiatBalanceAlertsCashOut'
 const DEFAULT_NUMBER_OF_CASSETTES = 2
+const notesMin = 0
+const notesMax = 9999999
 
 const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
   const {
@@ -38,11 +40,11 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
   )
 
   const schema = Yup.object().shape({
-    fillingPercentageCashbox: Yup.number()
+    cashInAlertThreshold: Yup.number()
       .transform(transformNumber)
       .integer()
-      .min(min)
-      .max(max)
+      .min(notesMin)
+      .max(notesMax)
       .nullable(),
     fillingPercentageCassette1: Yup.number()
       .transform(transformNumber)
@@ -76,7 +78,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
       validateOnChange={false}
       enableReinitialize
       initialValues={{
-        fillingPercentageCashbox: data?.fillingPercentageCashbox ?? '',
+        cashInAlertThreshold: data?.cashInAlertThreshold ?? '',
         fillingPercentageCassette1: data?.fillingPercentageCassette1 ?? '',
         fillingPercentageCassette2: data?.fillingPercentageCassette2 ?? '',
         fillingPercentageCassette3: data?.fillingPercentageCassette3 ?? '',
@@ -104,10 +106,10 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                   <div className={classes.col2}>
                     <EditableNumber
                       label="Alert me over"
-                      name="fillingPercentageCashbox"
+                      name="cashInAlertThreshold"
                       editing={isEditing(CASH_IN_KEY)}
                       displayValue={x => (x === '' ? '-' : x)}
-                      decoration="%"
+                      decoration="notes"
                       width={fieldWidth}
                     />
                   </div>
