@@ -16,7 +16,8 @@ import styles from './FiatBalanceAlerts.styles.js'
 
 const useStyles = makeStyles(styles)
 
-const NAME = 'fiatBalanceAlerts'
+const CASH_IN_KEY = 'fiatBalanceAlertsCashIn'
+const CASH_OUT_KEY = 'fiatBalanceAlertsCashOut'
 
 const FiatBalance = ({
   section,
@@ -29,9 +30,13 @@ const FiatBalance = ({
   )
   const classes = useStyles()
 
-  const editing = isEditing(NAME)
-
   const schema = Yup.object().shape({
+    fiatBalanceCashbox: Yup.number()
+      .transform(transformNumber)
+      .integer()
+      .min(min)
+      .max(max)
+      .nullable(),
     fiatBalanceCassette1: Yup.number()
       .transform(transformNumber)
       .integer()
@@ -55,32 +60,75 @@ const FiatBalance = ({
     <Formik
       enableReinitialize
       initialValues={{
+        fiatBalanceCashbox: data?.fiatBalanceCashbox ?? '',
         fiatBalanceCassette1: data?.fiatBalanceCassette1 ?? '',
         fiatBalanceCassette2: data?.fiatBalanceCassette2 ?? ''
       }}
       validationSchema={schema}
       onSubmit={it => save(section, schema.cast(it))}
       onReset={() => {
-        setEditing(NAME, false)
+        setEditing(CASH_IN_KEY, false)
+        setEditing(CASH_OUT_KEY, false)
       }}>
-      <Form className={classes.form}>
-        <PromptWhenDirty />
-        <Header
-          title="Cash out (Empty)"
-          editing={editing}
-          disabled={isDisabled(NAME)}
-          setEditing={it => setEditing(NAME, it)}
-        />
-        <div className={classes.wrapper}>
-          <div className={classes.first}>
+      <>
+        <Form className={classes.form}>
+          <PromptWhenDirty />
+          <Header
+            title="Cash in (Full)"
+            editing={isEditing(CASH_IN_KEY)}
+            disabled={isDisabled(CASH_IN_KEY)}
+            setEditing={it => setEditing(CASH_IN_KEY, it)}
+          />
+          <div className={classes.wrapper}>
+            <div className={classes.first}>
+              <div className={classes.row}>
+                <div className={classes.col2}>
+                  <EditableNumber
+                    label="Alert me over"
+                    name="fiatBalanceCashbox"
+                    editing={isEditing(CASH_IN_KEY)}
+                    displayValue={x => (x === '' ? '-' : x)}
+                    decoration="notes"
+                    width={fieldWidth}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Form>
+        <Form className={classes.form}>
+          <PromptWhenDirty />
+          <Header
+            title="Cash out (Empty)"
+            editing={isEditing(CASH_OUT_KEY)}
+            disabled={isDisabled(CASH_OUT_KEY)}
+            setEditing={it => setEditing(CASH_OUT_KEY, it)}
+          />
+          <div className={classes.wrapper}>
+            <div className={classes.first}>
+              <div className={classes.row}>
+                <Cashbox percent={fiatBalanceCassette1Percent} cashOut />
+                <div className={classes.col2}>
+                  <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
+                  <EditableNumber
+                    label="Alert me under"
+                    name="fiatBalanceCassette1"
+                    editing={isEditing(CASH_OUT_KEY)}
+                    displayValue={x => (x === '' ? '-' : x)}
+                    decoration="notes"
+                    width={fieldWidth}
+                  />
+                </div>
+              </div>
+            </div>
             <div className={classes.row}>
-              <Cashbox percent={fiatBalanceCassette1Percent} cashOut />
+              <Cashbox percent={fiatBalanceCassette2Percent} cashOut />
               <div className={classes.col2}>
-                <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
+                <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
                 <EditableNumber
                   label="Alert me under"
-                  name="fiatBalanceCassette1"
-                  editing={editing}
+                  name="fiatBalanceCassette2"
+                  editing={isEditing(CASH_OUT_KEY)}
                   displayValue={x => (x === '' ? '-' : x)}
                   decoration="notes"
                   width={fieldWidth}
@@ -88,22 +136,8 @@ const FiatBalance = ({
               </div>
             </div>
           </div>
-          <div className={classes.row}>
-            <Cashbox percent={fiatBalanceCassette2Percent} cashOut />
-            <div className={classes.col2}>
-              <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
-              <EditableNumber
-                label="Alert me under"
-                name="fiatBalanceCassette2"
-                editing={editing}
-                displayValue={x => (x === '' ? '-' : x)}
-                decoration="notes"
-                width={fieldWidth}
-              />
-            </div>
-          </div>
-        </div>
-      </Form>
+        </Form>
+      </>
     </Formik>
   )
 }
