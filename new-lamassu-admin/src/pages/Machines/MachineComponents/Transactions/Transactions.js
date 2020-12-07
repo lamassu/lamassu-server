@@ -6,22 +6,26 @@ import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
 
+import DetailsRow from 'src/pages/Transactions/DetailsCard'
+import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
+import { getStatus } from 'src/pages/Transactions/helper'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 
 import DataTable from './DataTable'
-import DetailsRow from './DetailsCard'
-import { mainStyles } from './Transactions.styles'
-import { getStatus } from './helper'
-
 const useStyles = makeStyles(mainStyles)
 
 const NUM_LOG_RESULTS = 5
 
 const GET_TRANSACTIONS = gql`
-  query transactions($limit: Int, $from: Date, $until: Date, $id: ID) {
-    transactions(limit: $limit, from: $from, until: $until, id: $id) {
+  query transactions($limit: Int, $from: Date, $until: Date, $deviceId: ID) {
+    transactions(
+      limit: $limit
+      from: $from
+      until: $until
+      deviceId: $deviceId
+    ) {
       id
       txClass
       txHash
@@ -61,7 +65,7 @@ const Transactions = ({ id }) => {
     {
       variables: {
         limit: NUM_LOG_RESULTS,
-        id
+        deviceId: id
       }
     }
   )

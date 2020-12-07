@@ -1,20 +1,21 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
+import BigNumber from 'bignumber.js'
+import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { Label2 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { white, spacer } from 'src/styling/variables'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './Footer.styles'
 const GET_DATA = gql`
   query getData {
-    rates
+    cryptoRates
     cryptoCurrencies {
       code
       display
@@ -26,23 +27,20 @@ const GET_DATA = gql`
     }
   }
 `
+BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_UP })
 
 const useStyles = makeStyles(styles)
 const Footer = () => {
   const { data, loading } = useQuery(GET_DATA)
   const [expanded, setExpanded] = useState(false)
-  const [canExpand, setCanExpand] = useState(false)
   const [delayedExpand, setDelayedExpand] = useState(null)
-  const classes = useStyles()
 
-  useEffect(() => {
-    if (data && data.rates && data.rates.withCommissions) {
-      const numItems = R.keys(data.rates.withCommissions).length
-      if (numItems > 4) {
-        setCanExpand(true)
-      }
-    }
-  }, [data])
+  const classes = useStyles({
+    bigFooter: R.keys(data?.cryptoRates?.withCommissions).length < 8,
+    expanded
+  })
+
+  const canExpand = R.keys(data?.cryptoRates.withCommissions ?? []).length > 4
 
   const wallets = fromNamespace('wallets')(data?.config)
 
@@ -56,49 +54,51 @@ const Footer = () => {
     const tickerName = data.accountsConfig[tickerIdx].display
 
     const cashInNoCommission = parseFloat(
-      R.path(['rates', 'withoutCommissions', key, 'cashIn'])(data)
+      R.path(['cryptoRates', 'withoutCommissions', key, 'cashIn'])(data)
     )
     const cashOutNoCommission = parseFloat(
-      R.path(['rates', 'withoutCommissions', key, 'cashOut'])(data)
+      R.path(['cryptoRates', 'withoutCommissions', key, 'cashOut'])(data)
     )
 
-    // check https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
-    // to see reason for this implementation. It makes 1.005 round to 1.01 and not 1
-    // const monetaryValue = +(Math.round(askBidAvg + 'e+2') + 'e-2')
-    const avgOfAskBid = +(
-      Math.round((cashInNoCommission + cashOutNoCommission) / 2 + 'e+2') + 'e-2'
+    const avgOfAskBid = new BigNumber(
+      (cashInNoCommission + cashOutNoCommission) / 2
     )
-    const cashIn = +(
-      Math.round(
-        parseFloat(R.path(['rates', 'withCommissions', key, 'cashIn'])(data)) +
-          'e+2'
-      ) + 'e-2'
+      .decimalPlaces(2)
+      .toNumber()
+    const cashIn = new BigNumber(
+      parseFloat(
+        R.path(['cryptoRates', 'withCommissions', key, 'cashIn'])(data)
+      )
     )
-    const cashOut = +(
-      Math.round(
-        parseFloat(R.path(['rates', 'withCommissions', key, 'cashOut'])(data)) +
-          'e+2'
-      ) + 'e-2'
+      .decimalPlaces(2)
+      .toNumber()
+    const cashOut = new BigNumber(
+      parseFloat(
+        R.path(['cryptoRates', 'withCommissions', key, 'cashOut'])(data)
+      )
     )
+      .decimalPlaces(2)
+      .toNumber()
 
     const localeFiatCurrency = data.config.locale_fiatCurrency
+    const localeLanguage = data.config.locale_languages[0]
 
     return (
-      <Grid key={key} item xs={3} style={{ marginBottom: 18 }}>
+      <Grid key={key} item xs={3} className={classes.footerItemContainer}>
         <Label2 className={classes.label}>
           {data.cryptoCurrencies[idx].display}
         </Label2>
         <div className={classes.headerLabels}>
-          <div>
+          <div className={classes.headerLabel}>
             <TxInIcon />
             <Label2>{` ${cashIn.toLocaleString(
-              'en-US'
+              localeLanguage
             )} ${localeFiatCurrency}`}</Label2>
           </div>
-          <div>
+          <div className={classnames(classes.headerLabel, classes.txOutMargin)}>
             <TxOutIcon />
             <Label2>{` ${cashOut.toLocaleString(
-              'en-US'
+              localeLanguage
             )} ${localeFiatCurrency}`}</Label2>
           </div>
         </div>
@@ -106,70 +106,38 @@ const Footer = () => {
           className={
             classes.tickerLabel
           }>{`${tickerName}: ${avgOfAskBid.toLocaleString(
-          'en-US'
+          localeLanguage
         )} ${localeFiatCurrency}`}</Label2>
       </Grid>
     )
   }
 
-  const makeFooterExpandedClass = () => {
-    return {
-      height:
-        R.keys(data.rates.withCommissions).length < 8
-          ? spacer * 12 * 2 + spacer * 2
-          : spacer * 12 * 3 + spacer * 3,
-      maxHeight: '50vh',
-      position: 'fixed',
-      left: 0,
-      bottom: 0,
-      width: '100vw',
-      backgroundColor: white,
-      textAlign: 'left'
-    }
-  }
-
-  const expand = () => {
-    if (canExpand) {
-      setExpanded(true)
-    }
-  }
-
-  const shrink = () => {
-    setExpanded(false)
-  }
   const handleMouseEnter = () => {
-    setDelayedExpand(
-      setTimeout(() => {
-        expand()
-      }, 300)
-    )
+    setDelayedExpand(setTimeout(() => canExpand && setExpanded(true), 300))
   }
 
   const handleMouseLeave = () => {
     clearTimeout(delayedExpand)
-    shrink()
+    setExpanded(false)
   }
 
   return (
-    <>
-      <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={classes.footer}
-        style={expanded ? makeFooterExpandedClass() : null}>
-        <div className={classes.content}>
-          {!loading && data && (
-            <Grid container spacing={1}>
-              <Grid container className={classes.footerContainer}>
-                {R.keys(data.rates.withCommissions).map(key =>
-                  renderFooterItem(key)
-                )}
-              </Grid>
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={classes.footer}>
+      <div className={classes.content}>
+        {!loading && data && (
+          <Grid container spacing={1}>
+            <Grid container className={classes.footerContainer}>
+              {R.keys(data.cryptoRates.withCommissions).map(key =>
+                renderFooterItem(key)
+              )}
             </Grid>
-          )}
-        </div>
+          </Grid>
+        )}
       </div>
-    </>
+    </div>
   )
 }
 

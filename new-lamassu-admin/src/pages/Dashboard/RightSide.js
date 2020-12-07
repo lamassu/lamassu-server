@@ -1,49 +1,88 @@
+import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
 
+import CollapsibleCard, { cardState } from 'src/components/CollapsibleCard'
+import { H4, Label1 } from 'src/components/typography'
+
 // import Alerts from './Alerts'
 import styles from './Dashboard.styles'
 import SystemStatus from './SystemStatus'
+
 const useStyles = makeStyles(styles)
 
-const RightSide = () => {
+const ShrunkCard = ({ title, buttonName, onUnshrink }) => {
   const classes = useStyles()
+  return (
+    <div className={classes.container}>
+      <H4 className={classes.h4}>{title}</H4>
+      <>
+        <Label1 className={classes.upperButtonLabel}>
+          <Button
+            onClick={onUnshrink}
+            size="small"
+            disableRipple
+            disableFocusRipple
+            className={classes.button}>
+            {buttonName}
+          </Button>
+        </Label1>
+      </>
+    </div>
+  )
+}
 
-  const [rightSideState, setRightSide] = useState({
-    alerts: {
-      cardSize: 'default',
-      buttonName: 'Show less'
-    },
-    systemStatus: {
-      cardSize: 'default',
-      buttonName: 'Show less'
-    }
-  })
+const RightSide = () => {
+  // const classes = useStyles()
+  const [systemStatusSize, setSystemStatusSize] = useState(cardState.DEFAULT)
+  // const [alertsSize, setAlertsSize] = useState(cardState.DEFAULT)
 
-  const setRightSideState = newState => {
-    setRightSide(newState)
+  const onReset = () => {
+    // setAlertsSize(cardState.DEFAULT)
+    setSystemStatusSize(cardState.DEFAULT)
   }
 
   return (
     <>
       <Grid item xs={6}>
-        {/*         <Grid item style={{ marginBottom: 16 }}>
-          <div className={classes.card}>
-            <Alerts
-              cardState={rightSideState.alerts}
-              setRightSideState={setRightSideState}
+        {/*         <CollapsibleCard
+          className={classes.alertsCard}
+          state={alertsSize}
+          shrunkComponent={
+            <ShrunkCard
+              title={'Alerts'}
+              buttonName={'Show alerts'}
+              onUnshrink={onReset}
             />
-          </div>
-        </Grid> */}
-        <Grid item>
-          <div className={classes.card}>
-            <SystemStatus
-              cardState={rightSideState.systemStatus}
-              setRightSideState={setRightSideState}
+          }>
+          <Alerts
+            onExpand={() => {
+              setAlertsSize(cardState.EXPANDED)
+              setSystemStatusSize(cardState.SHRUNK)
+            }}
+            onReset={onReset}
+            size={alertsSize}
+          />
+        </CollapsibleCard> */}
+        <CollapsibleCard
+          state={systemStatusSize}
+          shrunkComponent={
+            <ShrunkCard
+              title={'System status'}
+              buttonName={'Show machines'}
+              onUnshrink={onReset}
             />
-          </div>
-        </Grid>
+          }>
+          <SystemStatus
+            onExpand={() => {
+              setSystemStatusSize(cardState.EXPANDED)
+              // setAlertsSize(cardState.SHRUNK)
+            }}
+            onReset={onReset}
+            size={systemStatusSize}
+          />
+        </CollapsibleCard>
       </Grid>
     </>
   )

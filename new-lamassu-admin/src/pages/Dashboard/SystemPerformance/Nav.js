@@ -1,21 +1,20 @@
-// import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { H4 } from 'src/components/typography'
 
 import styles from './SystemPerformance.styles'
+
 const useStyles = makeStyles(styles)
+const ranges = ['Month', 'Week', 'Day']
 
 const Nav = ({ handleSetRange }) => {
   const classes = useStyles()
   const [clickedItem, setClickedItem] = useState('Day')
 
-  const isSelected = innerText => {
-    return innerText === clickedItem
-  }
-
+  const isSelected = R.equals(clickedItem)
   const handleClick = range => {
     setClickedItem(range)
     handleSetRange(range)
@@ -26,34 +25,21 @@ const Nav = ({ handleSetRange }) => {
       <div className={classes.titleAndButtonsContainer}>
         <H4 className={classes.h4}>{'System performance'}</H4>
       </div>
-      <div style={{ display: 'flex' }}>
-        <div
-          onClick={e => handleClick(e.target.innerText)}
-          className={
-            isSelected('Month')
-              ? classnames(classes.newHighlightedLabel, classes.navButton)
-              : classnames(classes.label, classes.navButton)
-          }>
-          Month
-        </div>
-        <div
-          onClick={e => handleClick(e.target.innerText)}
-          className={
-            isSelected('Week')
-              ? classnames(classes.newHighlightedLabel, classes.navButton)
-              : classnames(classes.label, classes.navButton)
-          }>
-          Week
-        </div>
-        <div
-          className={
-            isSelected('Day')
-              ? classnames(classes.newHighlightedLabel, classes.navButton)
-              : classnames(classes.label, classes.navButton)
-          }
-          onClick={e => handleClick(e.target.innerText)}>
-          Day
-        </div>
+      <div className={classes.navContainer}>
+        {ranges.map((it, idx) => {
+          return (
+            <div
+              key={idx}
+              onClick={e => handleClick(e.target.innerText)}
+              className={
+                isSelected(it)
+                  ? classnames(classes.newHighlightedLabel, classes.navButton)
+                  : classnames(classes.label, classes.navButton)
+              }>
+              {it}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

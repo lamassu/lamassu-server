@@ -108,6 +108,13 @@ export default createMuiTheme({
           color: fontColor
         }
       }
+    },
+    MuiListItem: {
+      root: {
+        '&:nth-of-type(odd)': {
+          backgroundColor: backgroundColor
+        }
+      }
     }
   }
 })

@@ -5,6 +5,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import classnames from 'classnames'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -57,73 +58,70 @@ const MachinesTable = ({ machines, numToRender }) => {
   }
 
   return (
-    <>
-      <TableContainer className={classes.table}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <HeaderCell>
-                <div className={classes.header}>
-                  <Label2 className={classes.label}>Machines</Label2>
-                </div>
-              </HeaderCell>
-              <HeaderCell>
-                <div className={`${classes.header} ${classes.statusHeader}`}>
-                  <Label2 className={classes.label}>Status</Label2>
-                </div>
-              </HeaderCell>
-              {/*               <HeaderCell>
+    <TableContainer className={classes.table}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <HeaderCell>
+              <div className={classes.header}>
+                <Label2 className={classes.label}>Machines</Label2>
+              </div>
+            </HeaderCell>
+            <HeaderCell>
+              <div className={`${classes.header} ${classes.statusHeader}`}>
+                <Label2 className={classes.label}>Status</Label2>
+              </div>
+            </HeaderCell>
+            {/*               <HeaderCell>
                 <div className={classes.header}>
                   <TxInIcon />
                 </div>
               </HeaderCell> */}
-              <HeaderCell>
-                <div className={classes.header}>
-                  <TxOutIcon />
-                  <Label2 className={classes.label}> 1</Label2>
-                </div>
-              </HeaderCell>
-              <HeaderCell>
-                <div className={classes.header}>
-                  <TxOutIcon />
-                  <Label2 className={classes.label}> 2</Label2>
-                </div>
-              </HeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {machines.map((machine, idx) => {
-              if (idx < numToRender) {
-                return (
-                  <TableRow
-                    onClick={() => redirect(machine.name)}
-                    style={{ cursor: 'pointer' }}
-                    key={machine.deviceId + idx}
-                    className={classes.row}>
-                    <StyledCell align="left">
-                      <TL2>{machine.name}</TL2>
-                    </StyledCell>
-                    <StyledCell>
-                      <Status status={machine.statuses[0]} />
-                    </StyledCell>
-                    {/*                     <StyledCell align="left">
+            <HeaderCell>
+              <div className={classes.header}>
+                <TxOutIcon />
+                <Label2 className={classes.label}> 1</Label2>
+              </div>
+            </HeaderCell>
+            <HeaderCell>
+              <div className={classes.header}>
+                <TxOutIcon />
+                <Label2 className={classes.label}> 2</Label2>
+              </div>
+            </HeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {machines.map((machine, idx) => {
+            if (idx < numToRender) {
+              return (
+                <TableRow
+                  onClick={() => redirect(machine.name)}
+                  className={classnames(classes.row, classes.clickableRow)}
+                  key={machine.deviceId + idx}>
+                  <StyledCell align="left">
+                    <TL2>{machine.name}</TL2>
+                  </StyledCell>
+                  <StyledCell>
+                    <Status status={machine.statuses[0]} />
+                  </StyledCell>
+                  {/*                     <StyledCell align="left">
                       {makePercentageText(machine.cashbox)}
                     </StyledCell> */}
-                    <StyledCell align="left">
-                      {makePercentageText(machine.cassette1)}
-                    </StyledCell>
-                    <StyledCell align="left">
-                      {makePercentageText(machine.cassette2)}
-                    </StyledCell>
-                  </TableRow>
-                )
-              }
-              return null
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+                  <StyledCell align="left">
+                    {makePercentageText(machine.cassette1)}
+                  </StyledCell>
+                  <StyledCell align="left">
+                    {makePercentageText(machine.cassette2)}
+                  </StyledCell>
+                </TableRow>
+              )
+            }
+            return null
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
   )
 }
 

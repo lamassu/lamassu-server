@@ -30,6 +30,25 @@ const MACHINE_ACTION = gql`
   }
 `
 
+const makeLastPing = lastPing => {
+  if (!lastPing) return null
+  const now = moment()
+  const secondsAgo = now.diff(lastPing, 'seconds')
+  if (secondsAgo < 60) {
+    return `${secondsAgo} ${secondsAgo === 1 ? 'second' : 'seconds'} ago`
+  }
+  if (secondsAgo < 3600) {
+    const minutes = Math.round(secondsAgo / 60)
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`
+  }
+  if (secondsAgo < 3600 * 24) {
+    const hours = Math.round(secondsAgo / 3600)
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`
+  }
+  const days = Math.round(secondsAgo / 3600 / 24)
+  return `${days} ${days === 1 ? 'day' : 'days'} ago`
+}
+
 const Overview = ({ data, onActionSuccess }) => {
   const [action, setAction] = useState('')
   const [confirmActionDialogOpen, setConfirmActionDialogOpen] = useState(false)
@@ -50,24 +69,6 @@ const Overview = ({ data, onActionSuccess }) => {
   const confirmActionDialog = action =>
     setAction(action) || setConfirmActionDialogOpen(true)
 
-  const makeLastPing = () => {
-    const now = moment()
-    const secondsAgo = now.diff(data.lastPing, 'seconds')
-    if (secondsAgo < 60) {
-      return `${secondsAgo} ${secondsAgo === 1 ? 'second' : 'seconds'} ago`
-    }
-    if (secondsAgo < 3600) {
-      const minutes = Math.round(secondsAgo / 60)
-      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`
-    }
-    if (secondsAgo < 3600 * 24) {
-      const hours = Math.round(secondsAgo / 3600)
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`
-    }
-    const days = Math.round(secondsAgo / 3600 / 24)
-    return `${days} ${days === 1 ? 'day' : 'days'} ago`
-  }
-
   return (
     <>
       <div className={classes.row}>
@@ -84,7 +85,7 @@ const Overview = ({ data, onActionSuccess }) => {
       <div className={classes.row}>
         <div className={classes.rowItem}>
           <Label3 className={classes.label3}>Last ping</Label3>
-          <P>{data.lastPing ? makeLastPing() : ''}</P>
+          <P>{makeLastPing(data.lastPing)}</P>
         </div>
       </div>
       <div className={classes.row}>

@@ -17,11 +17,10 @@ import {
   Td,
   Th
 } from 'src/components/fake-table/Table'
+import styles from 'src/components/tables/DataTable.styles'
 import { H4 } from 'src/components/typography'
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from 'src/styling/icons/action/expand/open.svg'
-
-import styles from './DataTable.styles'
 
 const useStyles = makeStyles(styles)
 

@@ -7,20 +7,18 @@ import SystemPerformance from './SystemPerformance'
 
 const useStyles = makeStyles(styles)
 
-const RightSide = () => {
+const LeftSide = () => {
   const classes = useStyles()
 
   return (
-    <>
-      <Grid item xs={6}>
-        <Grid item style={{ marginRight: 24 }}>
-          <div className={classes.card}>
-            <SystemPerformance />
-          </div>
-        </Grid>
+    <Grid item xs={6}>
+      <Grid item className={classes.leftSideMargin}>
+        <div className={classes.card}>
+          <SystemPerformance />
+        </div>
       </Grid>
-    </>
+    </Grid>
   )
 }
 
-export default RightSide
+export default LeftSide

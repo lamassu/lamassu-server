@@ -3,6 +3,21 @@ import { spacer, white, primaryColor } from 'src/styling/variables'
 const { label1 } = typographyStyles
 
 const styles = {
+  headerLabels: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  headerLabelContainerMargin: {
+    marginRight: 24
+  },
+  headerLabelContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  headerLabelSpan: {
+    extend: label1,
+    marginLeft: 6
+  },
   root: {
     flexGrow: 1,
     marginBottom: 108
@@ -17,37 +32,12 @@ const styles = {
     padding: 24,
     backgroundColor: white
   },
-  h4: {
-    margin: 0,
-    marginRight: spacer * 8
+  leftSideMargin: {
+    marginRight: 24
   },
-  label: {
-    color: primaryColor,
-    minHeight: 0,
-    minWidth: 0,
-    padding: 0,
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  },
-  actionButton: {
-    marginTop: -4
-  },
-  headerLabels: {
+  container: {
     display: 'flex',
-    flexDirection: 'row',
-    '& div': {
-      display: 'flex',
-      alignItems: 'center'
-    },
-    '& > div:first-child': {
-      marginRight: 24
-    },
-    '& span': {
-      extend: label1,
-      marginLeft: 6
-    }
+    justifyContent: 'space-between'
   },
   button: {
     color: primaryColor,
@@ -58,6 +48,15 @@ const styles = {
     '&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  upperButtonLabel: {
+    textAlign: 'center',
+    marginBottom: 0,
+    marginTop: 16,
+    marginLeft: spacer
+  },
+  alertsCard: {
+    marginBottom: 16
   }
 }
 

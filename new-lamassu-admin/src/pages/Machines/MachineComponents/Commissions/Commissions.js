@@ -86,17 +86,15 @@ const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
     return R.values(commissions)
   }
 
-  getMachineCommissions()
+  const machineCommissions = getMachineCommissions()
 
   return (
-    <>
-      <EditableTable
-        name="overrides"
-        save={saveOverrides}
-        data={getMachineCommissions()}
-        elements={overrides(currency)}
-      />
-    </>
+    <EditableTable
+      name="overrides"
+      save={saveOverrides}
+      data={machineCommissions}
+      elements={overrides(currency)}
+    />
   )
 }
 

@@ -1,17 +1,35 @@
 import * as d3 from 'd3'
 import * as R from 'ramda'
-import React, { useEffect, useRef, useCallback, useState } from 'react'
+import React, { useEffect, useRef, useCallback } from 'react'
 
 import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 
+const transactionProfit = tx => {
+  const cashInFee = tx.cashInFee ? Number.parseFloat(tx.cashInFee) : 0
+  const commission =
+    Number.parseFloat(tx.commissionPercentage) * Number.parseFloat(tx.fiat)
+  return commission + cashInFee
+}
+
+const mockPoint = tx => {
+  const date = new Date(tx.created)
+  date.setHours(date.getHours() - 1)
+  return { created: date.toISOString(), profit: tx.profit }
+}
+
+// if we're viewing transactions for the past day, then we group by hour. If not, we group by day
+const formatDay = ({ created }) =>
+  new Date(created).toISOString().substring(0, 10)
+const formatHour = ({ created }) =>
+  new Date(created).toISOString().substring(0, 13)
+
+const reducer = (acc, tx) => {
+  const currentProfit = acc.profit || 0
+  return { ...tx, profit: currentProfit + transactionProfit(tx) }
+}
+
 const RefLineChart = ({ data: realData, timeFrame }) => {
   const svgRef = useRef()
-
-  // this variable will flip to true if there's no data points or the profit is zero
-  // this will force the line graph to touch the x axis instead of centering,
-  // centering is bad because it gives the impression that there could be negative values
-  // so, if this is true the y domain should be [0, 0.1]
-  const [zeroProfit, setZeroProfit] = useState(false)
 
   const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
@@ -19,62 +37,30 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
     const width = 336 - margin.left - margin.right
     const height = 128 - margin.top - margin.bottom
 
-    const transactionProfit = tx => {
-      let cashInFee = 0
-      if (tx.cashInFee) {
-        cashInFee = Number.parseFloat(tx.cashInFee)
-      }
-      const commission =
-        Number.parseFloat(tx.commissionPercentage) * Number.parseFloat(tx.fiat)
-      return commission + cashInFee
-    }
-
     const massageData = () => {
-      const methods = {
-        day: function(obj) {
-          return new Date(obj.created).toISOString().substring(0, 10)
-        },
-        hour: function(obj) {
-          return new Date(obj.created).toISOString().substring(0, 13)
-        }
-      }
+      // if we're viewing transactions for the past day, then we group by hour. If not, we group by day
+      const method = timeFrame === 'Day' ? formatHour : formatDay
 
-      const method = timeFrame === 'Day' ? 'hour' : 'day'
-      const f = methods[method]
-      const groupedTx = R.values(R.groupBy(f)(realData))
-      let aggregatedTX = groupedTx.map(list => {
-        const temp = { ...list[0], profit: transactionProfit(list[0]) }
-        if (list.length > 1) {
-          for (let i = 1; i < list.length; i++) {
-            temp.profit += transactionProfit(list[i])
-          }
-        }
-        return temp
-      })
-
-      // if no point exists, then create a (0,0) point
+      const aggregatedTX = R.values(R.reduceBy(reducer, [], method, realData))
+      // if no point exists, then return 2 points at y = 0
       if (aggregatedTX.length === 0) {
-        setZeroProfit(true)
-        aggregatedTX = [{ created: new Date().toISOString(), profit: 0 }]
-      } else {
-        setZeroProfit(false)
+        const mockPoint1 = { created: new Date().toISOString(), profit: 0 }
+        const mockPoint2 = mockPoint(mockPoint1)
+        return [[mockPoint1, mockPoint2], true]
       }
-      // create point on the left if only one point exists, otherwise line won't be drawn
+      // if only one point exists, create point on the left - otherwise the line won't be drawn
       if (aggregatedTX.length === 1) {
-        const temp = { ...aggregatedTX[0] }
-        const date = new Date(temp.created)
-        date.setHours(date.getHours() - 1)
-        temp.created = date.toISOString()
-        aggregatedTX = [...aggregatedTX, temp]
+        return [R.append(mockPoint(aggregatedTX[0]), aggregatedTX), false]
       }
-      return aggregatedTX
+      // the boolean value is for zeroProfit. It makes the line render at y = 0 instead of y = 50% of container height
+      return [aggregatedTX, false]
     }
 
     /* Important step to make the graph look good!
-       This function groups transactions by either day or hour depending on the time grame
+       This function groups transactions by either day or hour depending on the time frame
        This makes the line look smooth and not all wonky when there are many transactions in a given time
     */
-    const data = massageData()
+    const [data, zeroProfit] = massageData()
 
     // sets width of the graph
     svg.attr('width', width)
@@ -162,7 +148,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .attr('stroke-width', '2')
       .attr('stroke-linejoin', 'round')
       .attr('stroke', primaryColor)
-  }, [realData, timeFrame, zeroProfit])
+  }, [realData, timeFrame])
 
   useEffect(() => {
     // first we clear old chart DOM elements on component update
