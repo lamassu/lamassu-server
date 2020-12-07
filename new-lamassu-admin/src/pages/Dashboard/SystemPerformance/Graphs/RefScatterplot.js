@@ -18,21 +18,17 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
     // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
     // (this is because the Y axis looks best with multiples of 100)
     const findMaxY = () => {
-      if (realData.length === 0) {
-        return 100
-      }
-      let maxY = d3.max(realData, t => parseFloat(t.fiat))
-      maxY = 100 * Math.ceil(maxY / 100)
-      if (maxY < 100) {
-        return 100
-      } else if (maxY % 1000 === 0) {
-        return maxY + 100
-      }
+      if (realData.length === 0) return 100
+      const maxvalueTx =
+        100 * Math.ceil(d3.max(realData, t => parseFloat(t.fiat)) / 100)
+      const maxY = Math.max(100, maxvalueTx)
+      if (maxY % 1000 === 0) return maxY + 100
       return maxY
     }
 
     // changes values of arguments in some d3 function calls to make the graph labels look good according to the selected time frame
     const findXAxisSettings = () => {
+      // case 'Day' or default
       const res = {
         nice: null,
         ticks: 4,
@@ -41,11 +37,8 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
         timeRange: [50, 500]
       }
       switch (timeFrame) {
-        case 'Day':
-          return res
         case 'Week':
           return {
-            ...res,
             nice: 7,
             ticks: 7,
             subtractDays: 7,
@@ -54,7 +47,6 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
           }
         case 'Month':
           return {
-            ...res,
             nice: 6,
             ticks: 6,
             subtractDays: 30,
@@ -133,10 +125,8 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
           .ticks(xAxisSettings.ticks)
           .tickSize(0)
           .tickFormat(d3.timeFormat(xAxisSettings.timeFormat))
-        // .tickFormat(d3.timeFormat('%H:%M'))
       )
       .selectAll('text')
-      // .attr('dx', '4em')
       .attr('dy', '1.5em')
     // this is for the x axis line. It is the same color as the horizontal grid lines
     g.append('g')

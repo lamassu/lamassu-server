@@ -5,8 +5,8 @@ import {
   fontSize3,
   fontSecondary,
   fontColor,
-  secondaryColorDarker,
-  linkSecondaryColor
+  spring4,
+  tomato
 } from 'src/styling/variables'
 
 const styles = {
@@ -59,6 +59,9 @@ const styles = {
   navButton: {
     marginLeft: 24
   },
+  navContainer: {
+    display: 'flex'
+  },
   profitLabel: {
     fontSize: fontSize3,
     fontFamily: fontSecondary,
@@ -69,13 +72,24 @@ const styles = {
     fontSize: fontSize3,
     fontFamily: fontSecondary,
     fontWeight: 700,
-    color: secondaryColorDarker
+    color: spring4,
+    height: 10
   },
   percentDown: {
     fontSize: fontSize3,
     fontFamily: fontSecondary,
     fontWeight: 700,
-    color: linkSecondaryColor
+    color: tomato,
+    height: 13
+  },
+  profitContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: '0 26px -30px 16px',
+    position: 'relative'
+  },
+  gridContainer: {
+    marginTop: 30
   }
 }
 

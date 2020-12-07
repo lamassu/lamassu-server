@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
 import React from 'react'
 
 import { ReactComponent as CashIn } from 'src/styling/icons/direction/cash-in.svg'
@@ -30,58 +31,46 @@ const styles = {
     fontFamily: fontSecondary,
     fontWeight: 700,
     color: fontColor
-  }
+  },
+  cashIn: ({ value }) => ({
+    width: `${value}%`,
+    marginRight: 4
+  }),
+  cashOut: ({ value }) => ({
+    width: `${100 - value}%`
+  })
 }
 
 const useStyles = makeStyles(styles)
 
-const PercentageChart = () => {
-  const classes = useStyles()
-
-  const value = 50
+const PercentageChart = ({ cashIn, cashOut }) => {
+  const value = cashIn || cashOut !== 0 ? cashIn : 50
+  const classes = useStyles({ value })
 
   const buildPercentageView = (value, direction) => {
-    switch (direction) {
-      case 'cashIn':
-        if (value > 20) {
-          return (
-            <>
-              <CashIn />
-              <span className={classes.label}>{` ${value}%`}</span>
-            </>
-          )
-        }
-        return null
-      case 'cashOut':
-        if (value > 20) {
-          return (
-            <>
-              <CashOut />
-              <span className={classes.label}>{` ${value}%`}</span>
-            </>
-          )
-        }
-        return null
-      default:
-        return null
+    const Operation = direction === 'cashIn' ? CashIn : CashOut
+    if (value > 25) {
+      return (
+        <>
+          <Operation />
+          {value > 25 && <span className={classes.label}>{` ${value}%`}</span>}
+        </>
+      )
+    }
+    if (value >= 10) {
+      return <Operation />
     }
   }
 
   return (
-    <>
-      <div className={classes.wrapper}>
-        <div
-          className={classes.percentageBox}
-          style={{ width: `${value}%`, marginRight: 4 }}>
-          {buildPercentageView(value, 'cashIn')}
-        </div>
-        <div
-          className={classes.percentageBox}
-          style={{ width: `${100 - value}%` }}>
-          {buildPercentageView(100 - value, 'cashOut')}
-        </div>
+    <div className={classes.wrapper}>
+      <div className={classnames(classes.percentageBox, classes.cashIn)}>
+        {buildPercentageView(value, 'cashIn')}
       </div>
-    </>
+      <div className={classnames(classes.percentageBox, classes.cashOut)}>
+        {buildPercentageView(100 - value, 'cashOut')}
+      </div>
+    </div>
   )
 }
 

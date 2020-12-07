@@ -1,11 +1,15 @@
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import { makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 
+import styles from './Machines.styles'
+const useStyles = makeStyles(styles)
 const MachineSidebar = ({ data, getText, getKey, isSelected, selectItem }) => {
+  const classes = useStyles()
   return (
-    <List style={{ height: 400, overflowY: 'auto' }}>
+    <List className={classes.sidebarContainer}>
       {data.map((item, idx) => {
         return (
           <ListItem
@@ -20,8 +24,6 @@ const MachineSidebar = ({ data, getText, getKey, isSelected, selectItem }) => {
       })}
     </List>
   )
-
-  /*   return data.map(item => <button key={getKey(item)}>{getText(item)}</button>) */
 }
 
 export default MachineSidebar

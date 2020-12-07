@@ -1,7 +1,7 @@
 import * as sanctuary from 'sanctuary'
 
 const checkOnlyDev = () => {
-  if (!process.env.NODE_ENV === 'production') return false
+  if (process.env.NODE_ENV !== 'production') return false
 
   return (
     process.env.NODE_ENV === 'development' &&

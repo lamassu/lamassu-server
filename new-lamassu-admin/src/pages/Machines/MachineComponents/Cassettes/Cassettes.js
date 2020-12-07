@@ -115,23 +115,19 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     })
   }
 
-  return (
-    <>
-      {machine.name && (
-        <EditableTable
-          error={error?.message}
-          stripeWhen={isCashOutDisabled}
-          disableRowEdit={isCashOutDisabled}
-          name="cashboxes"
-          elements={elements}
-          enableEdit
-          data={[machine] || []}
-          save={onSave}
-          validationSchema={ValidationSchema}
-        />
-      )}
-    </>
-  )
+  return machine.name ? (
+    <EditableTable
+      error={error?.message}
+      stripeWhen={isCashOutDisabled}
+      disableRowEdit={isCashOutDisabled}
+      name="cashboxes"
+      elements={elements}
+      enableEdit
+      data={[machine] || []}
+      save={onSave}
+      validationSchema={ValidationSchema}
+    />
+  ) : null
 }
 
 export default CashCassettes

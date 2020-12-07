@@ -69,6 +69,19 @@ const styles = {
   },
   actionButton: {
     marginRight: 8
+  },
+  breadcrumbsContainer: {
+    marginTop: 32
+  },
+  breadcrumbLink: {
+    textDecoration: 'none'
+  },
+  detailsMargin: {
+    marginTop: 24
+  },
+  sidebarContainer: {
+    height: 400,
+    overflowY: 'auto'
   }
 }
 

@@ -1,5 +1,6 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import React from 'react'
 
 import TitleSection from 'src/components/layout/TitleSection'
@@ -19,13 +20,17 @@ const Dashboard = () => {
     <>
       <TitleSection title="Dashboard">
         <div className={classes.headerLabels}>
-          <div>
+          <div
+            className={classnames(
+              classes.headerLabelContainer,
+              classes.headerLabelContainerMargin
+            )}>
             <TxOutIcon />
-            <span>Cash-out</span>
+            <span className={classes.headerLabelSpan}>Cash-out</span>
           </div>
-          <div>
+          <div className={classes.headerLabelContainer}>
             <TxInIcon />
-            <span>Cash-in</span>
+            <span className={classes.headerLabelSpan}>Cash-in</span>
           </div>
         </div>
       </TitleSection>

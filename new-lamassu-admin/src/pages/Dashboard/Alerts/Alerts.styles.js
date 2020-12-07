@@ -6,6 +6,15 @@ import {
 } from 'src/styling/variables'
 
 const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  centerLabel: {
+    textAlign: 'center',
+    marginBottom: 0,
+    marginTop: 0
+  },
   label: {
     margin: 0,
     color: offColor
