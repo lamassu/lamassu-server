@@ -141,7 +141,14 @@ const tree = [
         route: '/settings/operator-info',
         title: 'Operator Information',
         get component() {
-          return () => <Redirect to={this.children[0].route} />
+          return () => (
+            <Redirect
+              to={{
+                pathname: this.children[0].route,
+                state: { prev: this.state?.prev }
+              }}
+            />
+          )
         },
         children: [
           {
@@ -266,7 +273,7 @@ const Routes = () => {
     history.push('/wizard')
   }
 
-  const Transition = history.action === 'PUSH' && location.state ? Slide : Fade
+  const Transition = location.state ? Slide : Fade
 
   const transitionProps =
     Transition === Slide
