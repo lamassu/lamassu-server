@@ -21,6 +21,7 @@ exports.up = function (next) {
     CREATE TABLE IF NOT EXISTS "notifications" (
         "id" uuid NOT NULL PRIMARY KEY,
         "type" notification_type NOT NULL,
+        "detail" TEXT,
         "device_id" TEXT NOT NULL,
         "message" TEXT NOT NULL,
         "created" time with time zone NOT NULL,
