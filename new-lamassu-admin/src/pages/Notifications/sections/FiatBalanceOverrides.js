@@ -9,8 +9,8 @@ import Autocomplete from 'src/components/inputs/formik/Autocomplete'
 import NotificationsCtx from '../NotificationsContext'
 import { transformNumber } from '../helper'
 
-const CASSETTE_1_KEY = 'cassette1'
-const CASSETTE_2_KEY = 'cassette2'
+const CASSETTE_1_KEY = 'fiatBalanceCassette1'
+const CASSETTE_2_KEY = 'fiatBalanceCassette2'
 const MACHINE_KEY = 'machine'
 const NAME = 'fiatBalanceOverrides'
 
