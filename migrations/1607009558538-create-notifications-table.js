@@ -22,10 +22,11 @@ exports.up = function (next) {
         "id" uuid NOT NULL PRIMARY KEY,
         "type" notification_type NOT NULL,
         "detail" TEXT,
-        "device_id" TEXT NOT NULL,
+        "device_id" TEXT,
         "message" TEXT NOT NULL,
-        "created" time with time zone NOT NULL,
+        "created" TIMESTAMP WITH TIME ZONE NOT NULL,
         "read" BOOLEAN NOT NULL DEFAULT 'false',
+        "valid" BOOLEAN NOT NULL DEFAULT 'true',
         CONSTRAINT fk_devices
             FOREIGN KEY(device_id)
                 REFERENCES devices(device_id)
