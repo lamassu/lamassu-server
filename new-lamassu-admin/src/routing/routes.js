@@ -13,7 +13,6 @@ import {
 } from 'react-router-dom'
 
 import { AppContext } from 'src/App'
-// import AuthRegister from 'src/pages/AuthRegister'
 import Login from 'src/pages/Authentication/Login'
 import Register from 'src/pages/Authentication/Register'
 import Reset2FA from 'src/pages/Authentication/Reset2FA'
@@ -21,7 +20,7 @@ import ResetPassword from 'src/pages/Authentication/ResetPassword'
 import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
-import ConfigMigration from 'src/pages/ConfigMigration'
+// import ConfigMigration from 'src/pages/ConfigMigration'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Dashboard from 'src/pages/Dashboard'
 import Funding from 'src/pages/Funding'
@@ -38,6 +37,7 @@ import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
+// import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import SessionManagement from 'src/pages/SessionManagement/SessionManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
@@ -247,6 +247,7 @@ const tree = [
         key: 'promo-codes',
         label: 'Promo Codes',
         route: '/compliance/loyalty/codes',
+        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: PromoCodes
       },
       {
@@ -402,7 +403,7 @@ const Routes = () => {
       <Route path="/resetpassword" component={ResetPassword} />
       <Route path="/reset2fa" component={Reset2FA} />
       {getFilteredRoutes().map(({ route, component: Page, key }) => (
-        <Route path={route} key={key}>
+        <PrivateRoute path={route} key={key}>
           <Transition
             className={classes.wrapper}
             {...transitionProps}
@@ -417,7 +418,7 @@ const Routes = () => {
               </div>
             }
           />
-        </Route>
+        </PrivateRoute>
       ))}
       <Route path="/404" />
       <Route path="*">

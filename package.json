@@ -37,6 +37,7 @@
     "futoin-hkdf": "^1.0.2",
     "got": "^7.1.0",
     "graphql-iso-date": "^3.6.1",
+    "graphql-tools": "^7.0.2",
     "graphql-type-json": "^0.3.1",
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",

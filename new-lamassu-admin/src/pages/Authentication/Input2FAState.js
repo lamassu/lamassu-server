@@ -1,5 +1,6 @@
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import axios from 'axios'
+import gql from 'graphql-tag'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -10,10 +11,33 @@ import { H2, P } from 'src/components/typography'
 
 import styles from './Login.styles'
 
-const url =
-  process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
-
 const useStyles = makeStyles(styles)
+
+const INPUT_2FA = gql`
+  mutation input2FA(
+    $username: String!
+    $password: String!
+    $code: String!
+    $rememberMe: Boolean!
+  ) {
+    input2FA(
+      username: $username
+      password: $password
+      code: $code
+      rememberMe: $rememberMe
+    )
+  }
+`
+
+const GET_USER_DATA = gql`
+  {
+    userData {
+      id
+      username
+      role
+    }
+  }
+`
 
 const Input2FAState = ({
   twoFAField,
@@ -33,53 +57,25 @@ const Input2FAState = ({
     setInvalidToken(false)
   }
 
-  const handle2FA = () => {
-    axios({
-      method: 'POST',
-      url: `${url}/api/login/2fa`,
-      data: {
-        username: clientField,
-        password: passwordField,
-        rememberMe: rememberMeField,
-        twoFACode: twoFAField
-      },
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res) {
-          const status = res.status
-          if (status === 200) {
-            getUserData()
-            history.push('/')
-          }
-        }
-      })
-      .catch(err => {
-        if (err.response && err.response.data) {
-          if (err.response.status === 403) {
-            onTwoFAChange('')
-            setInvalidToken(true)
-          }
-        }
-      })
-  }
+  const [input2FA, { error: mutationError }] = useMutation(INPUT_2FA, {
+    onCompleted: ({ input2FA: success }) => {
+      success ? getUserData() : setInvalidToken(true)
+    }
+  })
 
-  const getUserData = () => {
-    axios({
-      method: 'GET',
-      url: `${url}/user-data`,
-      withCredentials: true
-    })
-      .then(res => {
-        if (res.status === 200) setUserData(res.data.user)
-      })
-      .catch(err => {
-        if (err.status === 403) setUserData(null)
-      })
+  const [getUserData, { error: queryError }] = useLazyQuery(GET_USER_DATA, {
+    onCompleted: ({ userData }) => {
+      setUserData(userData)
+      history.push('/')
+    }
+  })
+
+  const getErrorMsg = () => {
+    if (mutationError || queryError) return 'Internal server error'
+    if (twoFAField.length !== 6 && invalidToken)
+      return 'The code should have 6 characters!'
+    if (invalidToken) return 'Code is invalid. Please try again.'
+    return null
   }
 
   return (
@@ -93,16 +89,26 @@ const Input2FAState = ({
         onChange={handle2FAChange}
         numInputs={6}
         error={invalidToken}
+        shouldAutoFocus
       />
       <div className={classes.twofaFooter}>
-        {invalidToken && (
-          <P className={classes.errorMessage}>
-            Code is invalid. Please try again.
-          </P>
+        {getErrorMsg() && (
+          <P className={classes.errorMessage}>{getErrorMsg()}</P>
         )}
         <Button
           onClick={() => {
-            handle2FA()
+            if (twoFAField.length !== 6) {
+              setInvalidToken(true)
+              return
+            }
+            input2FA({
+              variables: {
+                username: clientField,
+                password: passwordField,
+                code: twoFAField,
+                rememberMe: rememberMeField
+              }
+            })
           }}
           buttonClassName={classes.loginButton}>
           Login

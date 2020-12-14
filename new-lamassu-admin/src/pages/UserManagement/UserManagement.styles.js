@@ -9,7 +9,9 @@ import {
 
 const styles = {
   footer: {
-    margin: [['auto', 0, spacer * 3, 'auto']]
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 3, 0]]
   },
   modalTitle: {
     marginTop: -5,
@@ -42,9 +44,8 @@ const styles = {
   },
   copyToClipboard: {
     marginLeft: 'auto',
-    paddingTop: 6,
-    paddingLeft: 15,
-    marginRight: -11
+    paddingTop: 7,
+    marginRight: -5
   },
   chip: {
     backgroundColor: subheaderColor,
@@ -63,10 +64,12 @@ const styles = {
   },
   addressWrapper: {
     backgroundColor: subheaderColor,
-    marginTop: 8
+    marginTop: 8,
+    height: 35
   },
   address: {
-    margin: `${spacer * 1.5}px ${spacer * 3}px`
+    margin: `0px ${spacer * 2}px 0px ${spacer * 2}px`,
+    paddingRight: -15
   },
   errorMessage: {
     fontFamily: fontSecondary,
@@ -75,6 +78,33 @@ const styles = {
   codeContainer: {
     marginTop: 15,
     marginBottom: 15
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  },
+  submit: {
+    margin: [['auto', 0, 0, 'auto']]
+  },
+  error: {
+    color: errorColor
+  },
+  link: {
+    position: 'absolute',
+    top: 10,
+    left: 0,
+    bottom: '-20px',
+    right: '-20px',
+    whiteSpace: 'nowrap',
+    overflowX: 'auto',
+    width: '92.5%'
+  },
+  test1: {
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+    position: 'relative'
   }
 }
 
