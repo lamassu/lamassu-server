@@ -1,4 +1,5 @@
 import CssBaseline from '@material-ui/core/CssBaseline'
+import Grid from '@material-ui/core/Grid'
 import {
   StylesProvider,
   jssPreset,
@@ -8,12 +9,18 @@ import {
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
 import React, { createContext, useContext, useState } from 'react'
-import { useLocation, BrowserRouter as Router } from 'react-router-dom'
+import {
+  useLocation,
+  useHistory,
+  BrowserRouter as Router
+} from 'react-router-dom'
 
+import Sidebar from 'src/components/layout/Sidebar'
+import TitleSection from 'src/components/layout/TitleSection'
 import ApolloProvider from 'src/utils/apollo'
 
 import Header from './components/layout/Header'
-import { tree, Routes } from './routing/routes'
+import { tree, hasSidebar, Routes, getParent } from './routing/routes'
 import global from './styling/global'
 import theme from './styling/theme'
 import { backgroundColor, mainWidth } from './styling/variables'
@@ -46,6 +53,18 @@ const useStyles = makeStyles({
     flex: 1,
     display: 'flex',
     flexDirection
+  },
+  grid: {
+    flex: 1,
+    height: '100%'
+  },
+  contentWithSidebar: {
+    flex: 1,
+    marginLeft: 48,
+    paddingTop: 15
+  },
+  contentWithoutSidebar: {
+    width: mainWidth
   }
 })
 
@@ -54,15 +73,45 @@ const AppContext = createContext()
 const Main = () => {
   const classes = useStyles()
   const location = useLocation()
+  const history = useHistory()
   const { wizardTested } = useContext(AppContext)
 
+  const route = location.pathname
+
+  const sidebar = hasSidebar(route)
+  const parent = sidebar ? getParent(route) : {}
+
   const is404 = location.pathname === '/404'
+
+  const isSelected = it => location.pathname === it.route
+
+  const onClick = it => history.push(it.route)
+
+  const contentClassName = sidebar
+    ? classes.contentWithSidebar
+    : classes.contentWithoutSidebar
 
   return (
     <div className={classes.root}>
       {!is404 && wizardTested && <Header tree={tree} />}
       <main className={classes.wrapper}>
-        <Routes />
+        {sidebar && !is404 && wizardTested && (
+          <TitleSection title={parent.title}></TitleSection>
+        )}
+
+        <Grid container className={classes.grid}>
+          {sidebar && !is404 && wizardTested && (
+            <Sidebar
+              data={parent.children}
+              isSelected={isSelected}
+              displayName={it => it.label}
+              onClick={onClick}
+            />
+          )}
+          <div className={contentClassName}>
+            <Routes />
+          </div>
+        </Grid>
       </main>
     </div>
   )

@@ -20,7 +20,10 @@ import MachineLogs from 'src/pages/MachineLogs'
 import CashCassettes from 'src/pages/Maintenance/CashCassettes'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
-import OperatorInfo from 'src/pages/OperatorInfo/OperatorInfo'
+import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
+import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
+import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
+import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
 import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
@@ -125,7 +128,36 @@ const tree = [
         key: namespaces.OPERATOR_INFO,
         label: 'Operator Info',
         route: '/settings/operator-info',
-        component: OperatorInfo
+        title: 'Operator Information',
+        get component() {
+          return () => <Redirect to={this.children[0].route} />
+        },
+        children: [
+          {
+            key: 'contact-info',
+            label: 'Contact information',
+            route: '/settings/operator-info/contact-info',
+            component: ContactInfo
+          },
+          {
+            key: 'receipt-printing',
+            label: 'Receipt',
+            route: '/settings/operator-info/receipt-printing',
+            component: ReceiptPrinting
+          },
+          {
+            key: 'coin-atm-radar',
+            label: 'Coin ATM Radar',
+            route: '/settings/operator-info/coin-atm-radar',
+            component: CoinAtmRadar
+          },
+          {
+            key: 'terms-conditions',
+            label: 'Terms & Conditions',
+            route: '/settings/operator-info/terms-conditions',
+            component: TermsConditions
+          }
+        ]
       }
     ]
   },
@@ -181,9 +213,33 @@ const tree = [
 ]
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
-const leafRoutes = R.compose(R.flatten, map)(tree)
-const parentRoutes = R.filter(R.has('children'))(tree)
+const mappedRoutes = R.compose(R.flatten, map)(tree)
+const parentRoutes = R.filter(R.has('children'))(mappedRoutes).concat(
+  R.filter(R.has('children'))(tree)
+)
+const leafRoutes = R.compose(R.flatten, map)(mappedRoutes)
+
 const flattened = R.concat(leafRoutes, parentRoutes)
+
+const hasSidebar = route =>
+  R.any(r => r.route === route)(
+    R.compose(
+      R.flatten,
+      R.map(R.prop('children')),
+      R.filter(R.has('children'))
+    )(mappedRoutes)
+  )
+
+const getParent = route =>
+  R.find(
+    R.propEq(
+      'route',
+      R.dropLast(
+        1,
+        R.dropLastWhile(x => x !== '/', route)
+      )
+    )
+  )(flattened)
 
 const Routes = () => {
   const history = useHistory()
@@ -215,4 +271,4 @@ const Routes = () => {
     </Switch>
   )
 }
-export { tree, Routes }
+export { tree, getParent, hasSidebar, Routes }

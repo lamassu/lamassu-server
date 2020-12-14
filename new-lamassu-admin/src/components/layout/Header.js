@@ -3,9 +3,11 @@ import classnames from 'classnames'
 import React, { memo, useState } from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
 
-import { Link } from 'src/components/buttons'
+import ActionButton from 'src/components/buttons/ActionButton'
 import { H4 } from 'src/components/typography'
 import AddMachine from 'src/pages/AddMachine'
+import { ReactComponent as AddIconReverse } from 'src/styling/icons/button/add/white.svg'
+import { ReactComponent as AddIcon } from 'src/styling/icons/button/add/zodiac.svg'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import styles from './Header.styles'
@@ -76,9 +78,13 @@ const Header = memo(({ tree }) => {
                 </NavLink>
               ))}
             </ul>
-            <Link color="action" onClick={() => setOpen(true)}>
-              Add Machine
-            </Link>
+            <ActionButton
+              color="secondary"
+              Icon={AddIcon}
+              InverseIcon={AddIconReverse}
+              onClick={() => setOpen(true)}>
+              Add machine
+            </ActionButton>
           </nav>
         </div>
       </div>
