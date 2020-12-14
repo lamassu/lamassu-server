@@ -22,7 +22,7 @@ const Reset2FAModal = ({ showModal, toggleModal, reset2FAURL, user }) => {
         <Modal
           closeOnBackdropClick={true}
           width={600}
-          height={215}
+          height={275}
           handleClose={handleClose}
           open={true}>
           <H2 className={classes.modalTitle}>Reset 2FA for {user.username}</H2>

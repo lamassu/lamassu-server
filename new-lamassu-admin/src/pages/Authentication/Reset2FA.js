@@ -150,6 +150,7 @@ const Reset2FA = () => {
                       onChange={handle2FAChange}
                       numInputs={6}
                       error={invalidToken}
+                      shouldAutoFocus
                     />
                   </div>
                   <div className={classes.twofaFooter}>

@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import axios from 'axios'
 import React, { useState } from 'react'
+import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
@@ -15,6 +16,12 @@ const url =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
 const useStyles = makeStyles(styles)
+
+const schema = Yup.object().shape({
+  email: Yup.string()
+    .email()
+    .required()
+})
 
 const CreateUserModal = ({ showModal, toggleModal }) => {
   const classes = useStyles()
@@ -54,13 +61,27 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
     toggleModal()
   }
 
+  const validateNewUser = () => {
+    const username = usernameField.trim()
+
+    schema
+      .isValid({ email: username })
+      .then(valid => {
+        if (!valid) {
+          setInvalidUser(true)
+          return
+        }
+        handleCreateUser()
+      })
+      .catch(err => {
+        console.log(err)
+        setInvalidUser(true)
+      })
+  }
+
   const handleCreateUser = () => {
     const username = usernameField.trim()
 
-    if (username === '') {
-      setInvalidUser(true)
-      return
-    }
     axios({
       method: 'POST',
       url: `${url}/api/createuser`,
@@ -122,7 +143,7 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
             labelClassName={classes.radioLabel}
           />
           <div className={classes.footer}>
-            <Button onClick={handleCreateUser}>Finish</Button>
+            <Button onClick={validateNewUser}>Finish</Button>
           </div>
         </Modal>
       )}
@@ -130,7 +151,7 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
         <Modal
           closeOnBackdropClick={true}
           width={600}
-          height={215}
+          height={275}
           handleClose={handleClose}
           open={true}>
           <H2 className={classes.modalTitle}>Creating {usernameField}...</H2>

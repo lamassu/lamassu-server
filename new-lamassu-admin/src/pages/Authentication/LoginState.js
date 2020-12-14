@@ -82,7 +82,6 @@ const LoginState = ({
         className={classes.input}
         error={invalidLogin}
         name="client-name"
-        autoFocus
         id="client-name"
         type="text"
         size="lg"

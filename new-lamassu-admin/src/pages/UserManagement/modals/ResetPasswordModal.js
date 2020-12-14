@@ -27,7 +27,7 @@ const ResetPasswordModal = ({
         <Modal
           closeOnBackdropClick={true}
           width={600}
-          height={215}
+          height={275}
           handleClose={handleClose}
           open={true}>
           <H2 className={classes.modalTitle}>

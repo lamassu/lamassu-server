@@ -29,7 +29,7 @@ const EnableUserModal = ({
         <Modal
           closeOnBackdropClick={true}
           width={600}
-          height={275}
+          height={300}
           handleClose={handleClose}
           open={true}>
           {!user.enabled && (

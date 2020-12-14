@@ -93,6 +93,7 @@ const Input2FAState = ({
         onChange={handle2FAChange}
         numInputs={6}
         error={invalidToken}
+        shouldAutoFocus
       />
       <div className={classes.twofaFooter}>
         {invalidToken && (
