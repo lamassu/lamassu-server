@@ -1,28 +1,48 @@
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import axios from 'axios'
+import classnames from 'classnames'
+import { Field, Form, Formik } from 'formik'
+import gql from 'graphql-tag'
 import React, { useState } from 'react'
+import * as Yup from 'yup'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
-import { RadioGroup } from 'src/components/inputs'
-import { TextInput } from 'src/components/inputs/base'
+import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import { H1, H2, H3, Info3, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 
 import styles from '../UserManagement.styles'
 
-const url =
-  process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
-
 const useStyles = makeStyles(styles)
+
+const CREATE_USER = gql`
+  mutation createRegisterToken($username: String!, $role: String!) {
+    createRegisterToken(username: $username, role: $role) {
+      token
+      expire
+    }
+  }
+`
+
+const validationSchema = Yup.object().shape({
+  username: Yup.string()
+    .email('Username field should be in an email format!')
+    .required('Username field is required!'),
+  role: Yup.string().required('Role field is required!')
+})
+
+const initialValues = {
+  username: '',
+  role: ''
+}
 
 const CreateUserModal = ({ showModal, toggleModal }) => {
   const classes = useStyles()
 
   const [usernameField, setUsernameField] = useState('')
-  const [roleField, setRoleField] = useState('')
   const [createUserURL, setCreateUserURL] = useState(null)
-  const [invalidUser, setInvalidUser] = useState(false)
 
   const radioOptions = [
     {
@@ -35,59 +55,27 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
     }
   ]
 
-  const handleUsernameChange = event => {
-    if (event.target.value === '') {
-      setInvalidUser(false)
-    }
-    setUsernameField(event.target.value)
-  }
-
-  const handleRoleChange = event => {
-    setRoleField(event.target.value)
-  }
-
   const handleClose = () => {
-    setUsernameField('')
-    setRoleField('')
-    setInvalidUser(false)
     setCreateUserURL(null)
     toggleModal()
   }
 
-  const handleCreateUser = () => {
-    const username = usernameField.trim()
-
-    if (username === '') {
-      setInvalidUser(true)
-      return
+  const [createUser, { error }] = useMutation(CREATE_USER, {
+    onCompleted: ({ createRegisterToken: token }) => {
+      setCreateUserURL(`https://localhost:3001/register?t=${token.token}`)
     }
-    axios({
-      method: 'POST',
-      url: `${url}/api/createuser`,
-      data: {
-        username: username,
-        role: roleField
-      },
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res) {
-          const status = res.status
-          const message = res.data.message
-          if (status === 200 && message) setInvalidUser(true)
-          if (status === 200 && !message) {
-            const token = res.data.token
-            setCreateUserURL(`https://localhost:3001/register?t=${token.token}`)
-          }
-        }
-      })
-      .catch(err => {
-        if (err) console.log('error')
-      })
+  })
+
+  const roleClass = (formikErrors, formikTouched) => ({
+    [classes.error]: formikErrors.role && formikTouched.role
+  })
+
+  const getErrorMsg = (formikErrors, formikTouched) => {
+    if (!formikErrors || !formikTouched) return null
+    if (error) return 'Internal server error'
+    if (formikErrors.username && formikTouched.username)
+      return formikErrors.username
+    return null
   }
 
   return (
@@ -99,38 +87,60 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
           height={400}
           handleClose={handleClose}
           open={true}>
-          <H1 className={classes.modalTitle}>Create new user</H1>
-          <H3 className={classes.modalLabel1}>User login</H3>
-          <TextInput
-            error={invalidUser}
-            name="username"
-            autoFocus
-            id="username"
-            type="text"
-            size="lg"
-            width={338}
-            onChange={handleUsernameChange}
-            value={usernameField}
-          />
-          <H3 className={classes.modalLabel2}>Role</H3>
-          <RadioGroup
-            name="userrole"
-            value={roleField}
-            options={radioOptions}
-            onChange={handleRoleChange}
-            className={classes.radioGroup}
-            labelClassName={classes.radioLabel}
-          />
-          <div className={classes.footer}>
-            <Button onClick={handleCreateUser}>Finish</Button>
-          </div>
+          <Formik
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            onSubmit={values => {
+              setUsernameField(values.username)
+              createUser({
+                variables: { username: values.username, role: values.role }
+              })
+            }}>
+            {({ errors, touched }) => (
+              <Form id="register-user-form" className={classes.form}>
+                <H1 className={classes.modalTitle}>Create new user</H1>
+                <Field
+                  component={TextInput}
+                  name="username"
+                  width={338}
+                  autoFocus
+                  label="User login"
+                />
+                <H3
+                  className={classnames(
+                    roleClass(errors, touched),
+                    classes.modalLabel2
+                  )}>
+                  Role
+                </H3>
+                <Field
+                  component={RadioGroup}
+                  name="role"
+                  labelClassName={classes.radioLabel}
+                  className={classes.radioGroup}
+                  options={radioOptions}
+                />
+                <div className={classes.footer}>
+                  {getErrorMsg(errors, touched) && (
+                    <ErrorMessage>{getErrorMsg(errors, touched)}</ErrorMessage>
+                  )}
+                  <Button
+                    type="submit"
+                    form="register-user-form"
+                    className={classes.submit}>
+                    Finish
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </Modal>
       )}
       {showModal && createUserURL && (
         <Modal
           closeOnBackdropClick={true}
           width={600}
-          height={215}
+          height={275}
           handleClose={handleClose}
           open={true}>
           <H2 className={classes.modalTitle}>Creating {usernameField}...</H2>

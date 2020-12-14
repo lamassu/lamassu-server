@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 
 import Modal from 'src/components/Modal'
-import { H2, Info3, Mono } from 'src/components/typography'
+import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 
 import styles from '../UserManagement.styles'
@@ -26,20 +26,23 @@ const ResetPasswordModal = ({
       {showModal && (
         <Modal
           closeOnBackdropClick={true}
-          width={600}
-          height={215}
+          width={500}
+          height={180}
           handleClose={handleClose}
           open={true}>
-          <H2 className={classes.modalTitle}>
+          <Info2 className={classes.modalTitle}>
             Reset password for {user.username}
-          </H2>
-          <Info3 className={classes.info}>
+          </Info2>
+          <P className={classes.info}>
             Safely share this link with {user.username} for a password reset.
-          </Info3>
+          </P>
           <div className={classes.addressWrapper}>
             <Mono className={classes.address}>
               <strong>
-                <CopyToClipboard buttonClassname={classes.copyToClipboard}>
+                <CopyToClipboard
+                  className={classes.link}
+                  buttonClassname={classes.copyToClipboard}
+                  wrapperClassname={classes.test1}>
                   {resetPasswordURL}
                 </CopyToClipboard>
               </strong>

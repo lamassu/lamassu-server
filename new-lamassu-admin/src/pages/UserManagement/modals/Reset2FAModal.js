@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 
 import Modal from 'src/components/Modal'
-import { H2, Info3, Mono } from 'src/components/typography'
+import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 
 import styles from '../UserManagement.styles'
@@ -21,19 +21,24 @@ const Reset2FAModal = ({ showModal, toggleModal, reset2FAURL, user }) => {
       {showModal && (
         <Modal
           closeOnBackdropClick={true}
-          width={600}
-          height={215}
+          width={500}
+          height={200}
           handleClose={handleClose}
           open={true}>
-          <H2 className={classes.modalTitle}>Reset 2FA for {user.username}</H2>
-          <Info3 className={classes.info}>
+          <Info2 className={classes.modalTitle}>
+            Reset 2FA for {user.username}
+          </Info2>
+          <P className={classes.info}>
             Safely share this link with {user.username} for a two-factor
             authentication reset.
-          </Info3>
+          </P>
           <div className={classes.addressWrapper}>
             <Mono className={classes.address}>
               <strong>
-                <CopyToClipboard buttonClassname={classes.copyToClipboard}>
+                <CopyToClipboard
+                  className={classes.link}
+                  buttonClassname={classes.copyToClipboard}
+                  wrapperClassname={classes.test1}>
                   {reset2FAURL}
                 </CopyToClipboard>
               </strong>

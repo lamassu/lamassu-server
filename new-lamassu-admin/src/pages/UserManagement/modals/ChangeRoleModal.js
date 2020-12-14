@@ -3,7 +3,7 @@ import React from 'react'
 
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
-import { H2, Info3 } from 'src/components/typography'
+import { Info2, P } from 'src/components/typography'
 
 import styles from '../UserManagement.styles'
 
@@ -28,18 +28,21 @@ const ChangeRoleModal = ({
       {showModal && (
         <Modal
           closeOnBackdropClick={true}
-          width={600}
-          height={275}
+          width={450}
+          height={250}
           handleClose={handleClose}
           open={true}>
-          <H2 className={classes.modalTitle}>Change {user.username}'s role?</H2>
-          <Info3 className={classes.info}>
+          <Info2 className={classes.modalTitle}>
+            Change {user.username}'s role?
+          </Info2>
+          <P className={classes.info}>
             You are about to alter {user.username}'s role. This will change this
             user's permission to access certain resources.
-          </Info3>
-          <Info3 className={classes.info}>Do you wish to proceed?</Info3>
+          </P>
+          <P className={classes.info}>Do you wish to proceed?</P>
           <div className={classes.footer}>
             <Button
+              className={classes.submit}
               onClick={() => {
                 setAction(() =>
                   confirm.bind(null, {
@@ -52,7 +55,7 @@ const ChangeRoleModal = ({
                 inputConfirmToggle()
                 handleClose()
               }}>
-              Finish
+              Confirm
             </Button>
           </div>
         </Modal>

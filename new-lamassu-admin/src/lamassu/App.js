@@ -9,7 +9,7 @@ import {
 import { axios } from '@use-hooks/axios'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   useLocation,
   useHistory,

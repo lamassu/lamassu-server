@@ -3,7 +3,7 @@ import React from 'react'
 
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
-import { H2, Info3 } from 'src/components/typography'
+import { Info2, P } from 'src/components/typography'
 
 import styles from '../UserManagement.styles'
 
@@ -28,34 +28,39 @@ const EnableUserModal = ({
       {showModal && (
         <Modal
           closeOnBackdropClick={true}
-          width={600}
+          width={450}
           height={275}
           handleClose={handleClose}
           open={true}>
           {!user.enabled && (
             <>
-              <H2 className={classes.modalTitle}>Enable {user.username}?</H2>
-              <Info3 className={classes.info}>
+              <Info2 className={classes.modalTitle}>
+                Enable {user.username}?
+              </Info2>
+              <P className={classes.info}>
                 You are about to enable {user.username} into the system,
                 activating previous eligible sessions and grant permissions to
                 access the system.
-              </Info3>
-              <Info3 className={classes.info}>Do you wish to proceed?</Info3>
+              </P>
+              <P className={classes.info}>Do you wish to proceed?</P>
             </>
           )}
           {user.enabled && (
             <>
-              <H2 className={classes.modalTitle}>Disable {user.username}?</H2>
-              <Info3 className={classes.info}>
+              <Info2 className={classes.modalTitle}>
+                Disable {user.username}?
+              </Info2>
+              <P className={classes.info}>
                 You are about to disable {user.username} from the system,
                 deactivating previous eligible sessions and removing permissions
                 to access the system.
-              </Info3>
-              <Info3 className={classes.info}>Do you wish to proceed?</Info3>
+              </P>
+              <P className={classes.info}>Do you wish to proceed?</P>
             </>
           )}
           <div className={classes.footer}>
             <Button
+              className={classes.submit}
               onClick={() => {
                 if (user.role === 'superuser') {
                   setAction(() =>
@@ -75,7 +80,7 @@ const EnableUserModal = ({
                 }
                 handleClose()
               }}>
-              Finish
+              Confirm
             </Button>
           </div>
         </Modal>

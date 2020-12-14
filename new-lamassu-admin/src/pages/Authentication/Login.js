@@ -17,7 +17,6 @@ const Login = () => {
         direction="column"
         alignItems="center"
         justify="center"
-        style={{ minHeight: '100vh' }}
         className={classes.welcomeBackground}>
         <Grid>
           <LoginCard />
