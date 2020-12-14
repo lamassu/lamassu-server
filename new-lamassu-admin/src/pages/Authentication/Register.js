@@ -1,103 +1,97 @@
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Grid } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
-import axios from 'axios'
-import React, { useState, useEffect } from 'react'
+import { Field, Form, Formik } from 'formik'
+import gql from 'graphql-tag'
+import React, { useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
+import * as Yup from 'yup'
 
 import { Button } from 'src/components/buttons'
-import { TextInput } from 'src/components/inputs/base'
+import { SecretInput } from 'src/components/inputs/formik'
 import { H2, Label2, P } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import styles from './Login.styles'
 
-const useQuery = () => new URLSearchParams(useLocation().search)
+const QueryParams = () => new URLSearchParams(useLocation().search)
 const useStyles = makeStyles(styles)
 
-const url =
-  process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
+const VALIDATE_REGISTER_LINK = gql`
+  query validateRegisterLink($token: String!) {
+    validateRegisterLink(token: $token) {
+      username
+      role
+    }
+  }
+`
+
+const REGISTER = gql`
+  mutation register($username: String!, $password: String!, $role: String!) {
+    register(username: $username, password: $password, role: $role)
+  }
+`
+
+const validationSchema = Yup.object().shape({
+  password: Yup.string()
+    .required('A password is required')
+    .test(
+      'len',
+      'Your password must contain more than 8 characters',
+      val => val.length >= 8
+    ),
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref('password'), null],
+    'Passwords must match'
+  )
+})
+
+const initialValues = {
+  password: '',
+  confirmPassword: ''
+}
 
 const Register = () => {
   const classes = useStyles()
   const history = useHistory()
-  const query = useQuery()
-  const [passwordField, setPasswordField] = useState('')
-  const [confirmPasswordField, setConfirmPasswordField] = useState('')
-  const [invalidPassword, setInvalidPassword] = useState(false)
+  const token = QueryParams().get('t')
   const [username, setUsername] = useState(null)
   const [role, setRole] = useState(null)
   const [isLoading, setLoading] = useState(true)
   const [wasSuccessful, setSuccess] = useState(false)
 
-  useEffect(() => {
-    validateQuery()
-  }, [])
-
-  const validateQuery = () => {
-    axios({
-      url: `${url}/api/register?t=${query.get('t')}`,
-      method: 'GET',
-      options: {
-        withCredentials: true
+  const { error: queryError } = useQuery(VALIDATE_REGISTER_LINK, {
+    variables: { token: token },
+    onCompleted: ({ validateRegisterLink: info }) => {
+      setLoading(false)
+      if (!info) {
+        setSuccess(false)
+      } else {
+        setSuccess(true)
+        setUsername(info.username)
+        setRole(info.role)
       }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res && res.status === 200) {
-          setLoading(false)
-          if (res.data === 'The link has expired') setSuccess(false)
-          else {
-            setSuccess(true)
-            setUsername(res.data.username)
-            setRole(res.data.role)
-          }
-        }
-      })
-      .catch(err => {
-        console.log(err)
-        history.push('/')
-      })
-  }
+    },
+    onError: () => {
+      setLoading(false)
+      setSuccess(false)
+    }
+  })
 
-  const handleRegister = () => {
-    if (!isValidPassword()) return setInvalidPassword(true)
-    axios({
-      url: `${url}/api/register`,
-      method: 'POST',
-      data: {
-        username: username,
-        password: passwordField,
-        role: role
-      },
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res && res.status === 200) {
-          history.push('/wizard', { fromAuthRegister: true })
-        }
-      })
-      .catch(err => {
-        console.log(err)
-        history.push('/')
-      })
-  }
+  const [register, { error: mutationError }] = useMutation(REGISTER, {
+    onCompleted: ({ register: success }) => {
+      if (success) history.push('/wizard', { fromAuthRegister: true })
+    }
+  })
 
-  const isValidPassword = () => {
-    return passwordField === confirmPasswordField
-  }
-
-  const handlePasswordChange = event => {
-    setInvalidPassword(false)
-    setPasswordField(event.target.value)
-  }
-
-  const handleConfirmPasswordChange = event => {
-    setInvalidPassword(false)
-    setConfirmPasswordField(event.target.value)
+  const getErrorMsg = (formikErrors, formikTouched) => {
+    if (!formikErrors || !formikTouched) return null
+    if (queryError || mutationError) return 'Internal server error'
+    if (formikErrors.password && formikTouched.password)
+      return formikErrors.password
+    if (formikErrors.confirmPassword && formikTouched.confirmPassword)
+      return formikErrors.confirmPassword
+    return null
   }
 
   return (
@@ -107,7 +101,6 @@ const Register = () => {
       direction="column"
       alignItems="center"
       justify="center"
-      style={{ minHeight: '100vh' }}
       className={classes.welcomeBackground}>
       <Grid>
         <div>
@@ -118,49 +111,52 @@ const Register = () => {
                 <H2 className={classes.title}>Lamassu Admin</H2>
               </div>
               {!isLoading && wasSuccessful && (
-                <>
-                  <Label2 className={classes.inputLabel}>
-                    Insert a password
-                  </Label2>
-                  <TextInput
-                    className={classes.input}
-                    error={invalidPassword}
-                    name="new-password"
-                    autoFocus
-                    id="new-password"
-                    type="password"
-                    size="lg"
-                    onChange={handlePasswordChange}
-                    value={passwordField}
-                  />
-                  <Label2 className={classes.inputLabel}>
-                    Confirm password
-                  </Label2>
-                  <TextInput
-                    className={classes.input}
-                    error={invalidPassword}
-                    name="confirm-password"
-                    id="confirm-password"
-                    type="password"
-                    size="lg"
-                    onChange={handleConfirmPasswordChange}
-                    value={confirmPasswordField}
-                  />
-                  <div className={classes.footer}>
-                    {invalidPassword && (
-                      <P className={classes.errorMessage}>
-                        Passwords do not match!
-                      </P>
-                    )}
-                    <Button
-                      onClick={() => {
-                        handleRegister()
-                      }}
-                      buttonClassName={classes.loginButton}>
-                      Done
-                    </Button>
-                  </div>
-                </>
+                <Formik
+                  validationSchema={validationSchema}
+                  initialValues={initialValues}
+                  onSubmit={values => {
+                    register({
+                      variables: {
+                        username: username,
+                        password: values.password,
+                        role: role
+                      }
+                    })
+                  }}>
+                  {({ errors, touched }) => (
+                    <Form id="register-form">
+                      <Field
+                        name="password"
+                        label="Insert a password"
+                        autoFocus
+                        component={SecretInput}
+                        size="lg"
+                        fullWidth
+                        className={classes.input}
+                      />
+                      <Field
+                        name="confirmPassword"
+                        label="Confirm your password"
+                        component={SecretInput}
+                        size="lg"
+                        fullWidth
+                      />
+                      <div className={classes.footer}>
+                        {getErrorMsg(errors, touched) && (
+                          <P className={classes.errorMessage}>
+                            {getErrorMsg(errors, touched)}
+                          </P>
+                        )}
+                        <Button
+                          type="submit"
+                          form="register-form"
+                          buttonClassName={classes.loginButton}>
+                          Done
+                        </Button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
               )}
               {!isLoading && !wasSuccessful && (
                 <>

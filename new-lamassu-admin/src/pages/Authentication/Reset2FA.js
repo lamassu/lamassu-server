@@ -1,8 +1,9 @@
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Grid } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
-import axios from 'axios'
+import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 
 import { ActionButton, Button } from 'src/components/buttons'
@@ -13,16 +14,29 @@ import { primaryColor } from 'src/styling/variables'
 
 import styles from './Login.styles'
 
-const useQuery = () => new URLSearchParams(useLocation().search)
+const QueryParams = () => new URLSearchParams(useLocation().search)
 const useStyles = makeStyles(styles)
 
-const url =
-  process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
+const VALIDATE_RESET_2FA_LINK = gql`
+  query validateReset2FALink($token: String!) {
+    validateReset2FALink(token: $token) {
+      user_id
+      secret
+      otpauth
+    }
+  }
+`
+
+const RESET_2FA = gql`
+  mutation reset2FA($userID: ID!, $secret: String!, $code: String!) {
+    reset2FA(userID: $userID, secret: $secret, code: $code)
+  }
+`
 
 const Reset2FA = () => {
   const classes = useStyles()
   const history = useHistory()
-  const query = useQuery()
+  const token = QueryParams().get('t')
   const [userID, setUserID] = useState(null)
   const [isLoading, setLoading] = useState(true)
   const [wasSuccessful, setSuccess] = useState(false)
@@ -38,61 +52,37 @@ const Reset2FA = () => {
     setInvalidToken(false)
   }
 
-  useEffect(() => {
-    validateQuery()
-  }, [])
-
-  const validateQuery = () => {
-    axios({
-      url: `${url}/api/reset2fa?t=${query.get('t')}`,
-      method: 'GET',
-      options: {
-        withCredentials: true
+  const { error: queryError } = useQuery(VALIDATE_RESET_2FA_LINK, {
+    variables: { token: token },
+    onCompleted: ({ validateReset2FALink: info }) => {
+      setLoading(false)
+      if (!info) {
+        setSuccess(false)
+      } else {
+        setUserID(info.user_id)
+        setSecret(info.secret)
+        setOtpauth(info.otpauth)
+        setSuccess(true)
       }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res && res.status === 200) {
-          setLoading(false)
-          if (res.data === 'The link has expired') setSuccess(false)
-          else {
-            setUserID(res.data.userID)
-            setSecret(res.data.secret)
-            setOtpauth(res.data.otpauth)
-            setSuccess(true)
-          }
-        }
-      })
-      .catch(err => {
-        console.log(err)
-        history.push('/')
-      })
-  }
+    },
+    onError: () => {
+      setLoading(false)
+      setSuccess(false)
+    }
+  })
 
-  const handle2FAReset = () => {
-    axios({
-      url: `${url}/api/update2fa`,
-      method: 'POST',
-      data: {
-        userID: userID,
-        secret: secret,
-        code: twoFAConfirmation
-      },
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res && res.status === 200) {
-          history.push('/')
-        }
-      })
-      .catch(err => {
-        console.log(err)
-        setInvalidToken(true)
-      })
+  const [reset2FA, { error: mutationError }] = useMutation(RESET_2FA, {
+    onCompleted: ({ reset2FA: success }) => {
+      success ? history.push('/') : setInvalidToken(true)
+    }
+  })
+
+  const getErrorMsg = () => {
+    if (mutationError || queryError) return 'Internal server error'
+    if (twoFAConfirmation.length !== 6 && invalidToken)
+      return 'The code should have 6 characters!'
+    if (invalidToken) return 'Code is invalid. Please try again.'
+    return null
   }
 
   return (
@@ -102,7 +92,6 @@ const Reset2FA = () => {
       direction="column"
       alignItems="center"
       justify="center"
-      style={{ minHeight: '100vh' }}
       className={classes.welcomeBackground}>
       <Grid>
         <div>
@@ -118,8 +107,7 @@ const Reset2FA = () => {
                     <Label2 className={classes.info2}>
                       To finish this process, please scan the following QR code
                       or insert the secret further below on an authentication
-                      app of your choice, preferably Google Authenticator or
-                      Authy.
+                      app of your choice, such Google Authenticator or Authy.
                     </Label2>
                   </div>
                   <div className={classes.qrCodeWrapper}>
@@ -150,17 +138,26 @@ const Reset2FA = () => {
                       onChange={handle2FAChange}
                       numInputs={6}
                       error={invalidToken}
+                      shouldAutoFocus
                     />
                   </div>
                   <div className={classes.twofaFooter}>
-                    {invalidToken && (
-                      <P className={classes.errorMessage}>
-                        Code is invalid. Please try again.
-                      </P>
+                    {getErrorMsg() && (
+                      <P className={classes.errorMessage}>{getErrorMsg()}</P>
                     )}
                     <Button
                       onClick={() => {
-                        handle2FAReset()
+                        if (twoFAConfirmation.length !== 6) {
+                          setInvalidToken(true)
+                          return
+                        }
+                        reset2FA({
+                          variables: {
+                            userID: userID,
+                            secret: secret,
+                            code: twoFAConfirmation
+                          }
+                        })
                       }}
                       buttonClassName={classes.loginButton}>
                       Done

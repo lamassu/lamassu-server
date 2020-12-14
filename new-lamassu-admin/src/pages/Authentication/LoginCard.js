@@ -52,11 +52,8 @@ const LoginCard = () => {
       case STATES.LOGIN:
         return (
           <LoginState
-            clientField={clientField}
             onClientChange={onClientChange}
-            passwordField={passwordField}
             onPasswordChange={onPasswordChange}
-            rememberMeField={rememberMeField}
             onRememberMeChange={onRememberMeChange}
             STATES={STATES}
             handleLoginState={handleLoginState}

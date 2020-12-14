@@ -1,7 +1,8 @@
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import axios from 'axios'
+import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { ActionButton, Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
@@ -10,8 +11,30 @@ import { primaryColor } from 'src/styling/variables'
 
 import styles from './Login.styles'
 
-const url =
-  process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
+const SETUP_2FA = gql`
+  mutation setup2FA(
+    $username: String!
+    $password: String!
+    $secret: String!
+    $codeConfirmation: String!
+  ) {
+    setup2FA(
+      username: $username
+      password: $password
+      secret: $secret
+      codeConfirmation: $codeConfirmation
+    )
+  }
+`
+
+const GET_2FA_SECRET = gql`
+  query get2FASecret($username: String!, $password: String!) {
+    get2FASecret(username: $username, password: $password) {
+      secret
+      otpauth
+    }
+  }
+`
 
 const useStyles = makeStyles(styles)
 
@@ -35,72 +58,26 @@ const Setup2FAState = ({
     setInvalidToken(false)
   }
 
-  useEffect(() => {
-    get2FASecret()
-  }, [])
+  const { error: queryError } = useQuery(GET_2FA_SECRET, {
+    variables: { username: clientField, password: passwordField },
+    onCompleted: ({ get2FASecret }) => {
+      setSecret(get2FASecret.secret)
+      setOtpauth(get2FASecret.otpauth)
+    }
+  })
 
-  const get2FASecret = () => {
-    axios({
-      method: 'POST',
-      url: `${url}/api/login/2fa/setup`,
-      data: {
-        username: clientField,
-        password: passwordField
-      },
-      options: {
-        withCredentials: true
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res) {
-          setSecret(res.data.secret)
-          setOtpauth(res.data.otpauth)
-        }
-      })
-      .catch(err => {
-        if (err.response && err.response.data) {
-          if (err.response.status === 403) {
-            handleLoginState(STATES.LOGIN)
-          }
-        }
-      })
-  }
+  const [setup2FA, { error: mutationError }] = useMutation(SETUP_2FA, {
+    onCompleted: ({ setup2FA: success }) => {
+      success ? handleLoginState(STATES.LOGIN) : setInvalidToken(true)
+    }
+  })
 
-  const save2FASecret = () => {
-    axios({
-      method: 'POST',
-      url: `${url}/api/login/2fa/save`,
-      data: {
-        username: clientField,
-        password: passwordField,
-        secret: secret,
-        code: twoFAConfirmation
-      },
-      options: {
-        withCredentials: true
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((res, err) => {
-        if (err) console.log(err)
-        if (res) {
-          const status = res.status
-          if (status === 200) handleLoginState(STATES.LOGIN)
-        }
-      })
-      .catch(err => {
-        if (err.response && err.response.data) {
-          if (err.response.status === 403) {
-            setInvalidToken(true)
-          }
-        }
-      })
+  const getErrorMsg = () => {
+    if (mutationError || queryError) return 'Internal server error'
+    if (twoFAConfirmation.length !== 6 && invalidToken)
+      return 'The code should have 6 characters!'
+    if (invalidToken) return 'Code is invalid. Please try again.'
+    return null
   }
 
   return (
@@ -116,7 +93,7 @@ const Setup2FAState = ({
             <Label2 className={classes.info2}>
               To finish this process, please scan the following QR code or
               insert the secret further below on an authentication app of your
-              choice, preferably Google Authenticator or Authy.
+              choice, such as Google Authenticator or Authy.
             </Label2>
           </div>
           <div className={classes.qrCodeWrapper}>
@@ -144,17 +121,27 @@ const Setup2FAState = ({
               onChange={handle2FAChange}
               numInputs={6}
               error={invalidToken}
+              shouldAutoFocus
             />
           </div>
           <div className={classes.twofaFooter}>
-            {invalidToken && (
-              <P className={classes.errorMessage}>
-                Code is invalid. Please try again.
-              </P>
+            {getErrorMsg() && (
+              <P className={classes.errorMessage}>{getErrorMsg()}</P>
             )}
             <Button
               onClick={() => {
-                save2FASecret()
+                if (twoFAConfirmation.length !== 6) {
+                  setInvalidToken(true)
+                  return
+                }
+                setup2FA({
+                  variables: {
+                    username: clientField,
+                    password: passwordField,
+                    secret: secret,
+                    codeConfirmation: twoFAConfirmation
+                  }
+                })
               }}
               buttonClassName={classes.loginButton}>
               Done
@@ -162,16 +149,7 @@ const Setup2FAState = ({
           </div>
         </>
       ) : (
-        // TODO: should maybe show a spinner here?
-        <div className={classes.twofaFooter}>
-          <Button
-            onClick={() => {
-              console.log('response should be arriving soon')
-            }}
-            buttonClassName={classes.loginButton}>
-            Generate Two Factor Authentication Secret
-          </Button>
-        </div>
+        <div></div>
       )}
     </>
   )

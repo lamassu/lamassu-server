@@ -38,6 +38,7 @@ import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
+// import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import SessionManagement from 'src/pages/SessionManagement/SessionManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
@@ -247,6 +248,7 @@ const tree = [
         key: 'promo-codes',
         label: 'Promo Codes',
         route: '/compliance/loyalty/codes',
+        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: PromoCodes
       },
       {
@@ -397,12 +399,12 @@ const Routes = () => {
       <PrivateRoute path="/machines" component={Machines} />
       <PrivateRoute path="/wizard" component={Wizard} />
       <Route path="/register" component={Register} />
+      {/* <Route path="/configmigration" component={ConfigMigration} /> */}
       <PublicRoute path="/login" restricted component={Login} />
       <Route path="/resetpassword" component={ResetPassword} />
       <Route path="/reset2fa" component={Reset2FA} />
-      {/* <Route path="/configmigration" component={ConfigMigration} /> */}
       {getFilteredRoutes().map(({ route, component: Page, key }) => (
-        <Route path={route} key={key}>
+        <PrivateRoute path={route} key={key}>
           <Transition
             className={classes.wrapper}
             {...transitionProps}
@@ -417,7 +419,7 @@ const Routes = () => {
               </div>
             }
           />
-        </Route>
+        </PrivateRoute>
       ))}
       <Route path="/404" />
       <Route path="*">

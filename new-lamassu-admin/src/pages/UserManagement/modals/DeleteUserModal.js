@@ -3,7 +3,7 @@ import React from 'react'
 
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
-import { H2, Info3 } from 'src/components/typography'
+import { Info2, P } from 'src/components/typography'
 
 import styles from '../UserManagement.styles'
 
@@ -32,16 +32,17 @@ const DeleteUserModal = ({
           height={275}
           handleClose={handleClose}
           open={true}>
-          <H2 className={classes.modalTitle}>Delete {user.username}?</H2>
-          <Info3 className={classes.info}>
+          <Info2 className={classes.modalTitle}>Delete {user.username}?</Info2>
+          <P className={classes.info}>
             You are about to delete {user.username}. This will remove existent
             sessions and revoke this user's permissions to access the system.
-          </Info3>
-          <Info3 className={classes.info}>
+          </P>
+          <P className={classes.info}>
             This is a <b>PERMANENT</b> operation. Do you wish to proceed?
-          </Info3>
+          </P>
           <div className={classes.footer}>
             <Button
+              className={classes.submit}
               onClick={() => {
                 if (user.role === 'superuser') {
                   setAction(() =>
@@ -61,7 +62,7 @@ const DeleteUserModal = ({
                 }
                 handleClose()
               }}>
-              Finish
+              Confirm
             </Button>
           </div>
         </Modal>

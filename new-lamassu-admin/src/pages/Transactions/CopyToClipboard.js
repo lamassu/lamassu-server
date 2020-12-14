@@ -16,6 +16,7 @@ const CopyToClipboard = ({
   className,
   buttonClassname,
   children,
+  wrapperClassname,
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -38,7 +39,7 @@ const CopyToClipboard = ({
   const id = open ? 'simple-popper' : undefined
 
   return (
-    <div className={classes.wrapper}>
+    <div className={classnames(classes.wrapper, wrapperClassname)}>
       {children && (
         <>
           <div className={classnames(classes.address, className)}>

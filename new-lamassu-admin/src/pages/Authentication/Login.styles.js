@@ -35,6 +35,7 @@ const styles = {
     marginBottom: 30
   },
   rememberMeWrapper: {
+    marginTop: 35,
     display: 'flex',
     flexDirection: 'row'
   },
@@ -61,15 +62,14 @@ const styles = {
     background: 'url(/wizard-background.svg) no-repeat center center fixed',
     backgroundColor: backgroundColor,
     backgroundSize: 'cover',
-    // filter: 'blur(4px)',
-    // pointerEvents: 'none',
     height: '100vh',
     width: '100vw',
     position: 'relative',
     left: '50%',
     right: '50%',
     marginLeft: '-50vw',
-    marginRight: '-50vw'
+    marginRight: '-50vw',
+    minHeight: '100vh'
   },
   info: {
     fontFamily: fontSecondary,
@@ -115,6 +115,12 @@ const styles = {
   },
   confirm2FAInput: {
     marginTop: 25
+  },
+  confirmPassword: {
+    marginTop: 25
+  },
+  error: {
+    color: errorColor
   }
 }
 

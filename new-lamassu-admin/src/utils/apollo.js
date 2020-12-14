@@ -7,7 +7,7 @@ import { HttpLink } from 'apollo-link-http'
 import React, { useContext } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { AppContext } from 'src/App'
+import AppContext from 'src/AppContext'
 
 const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''

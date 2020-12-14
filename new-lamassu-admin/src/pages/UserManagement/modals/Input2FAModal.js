@@ -1,18 +1,22 @@
+import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import axios from 'axios'
+import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
-import { H2, Info3, P } from 'src/components/typography'
+import { Info2, P } from 'src/components/typography'
 
 import styles from '../UserManagement.styles'
 
-const url =
-  process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
-
 const useStyles = makeStyles(styles)
+
+const CONFIRM_2FA = gql`
+  query confirm2FA($code: String!) {
+    confirm2FA(code: $code)
+  }
+`
 
 const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
   const classes = useStyles()
@@ -31,32 +35,23 @@ const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
     toggleModal()
   }
 
-  const handleActionConfirm = () => {
-    axios({
-      method: 'POST',
-      url: `${url}/api/confirm2fa`,
-      data: {
-        code: twoFACode
-      },
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
+  const [confirm2FA, { error: queryError }] = useLazyQuery(CONFIRM_2FA, {
+    onCompleted: ({ confirm2FA: success }) => {
+      if (!success) {
+        setInvalidCode(true)
+      } else {
+        action()
+        handleClose()
       }
-    })
-      .then((res, err) => {
-        if (err) return
-        if (res) {
-          const status = res.status
-          if (status === 200) {
-            action()
-            handleClose()
-          }
-        }
-      })
-      .catch(err => {
-        const errStatus = err.response.status
-        if (errStatus === 401) setInvalidCode(true)
-      })
+    }
+  })
+
+  const getErrorMsg = () => {
+    if (queryError) return 'Internal server error'
+    if (twoFACode.length !== 6 && invalidCode)
+      return 'The code should have 6 characters!'
+    if (invalidCode) return 'Code is invalid. Please try again.'
+    return null
   }
 
   return (
@@ -64,15 +59,15 @@ const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
       {showModal && (
         <Modal
           closeOnBackdropClick={true}
-          width={600}
-          height={400}
+          width={500}
+          height={350}
           handleClose={handleClose}
           open={true}>
-          <H2 className={classes.modalTitle}>Confirm action</H2>
-          <Info3 className={classes.info}>
-            Please confirm this action by placing your two-factor authentication
-            code below.
-          </Info3>
+          <Info2 className={classes.modalTitle}>Confirm action</Info2>
+          <P className={classes.info}>
+            To make changes on this user, please confirm this action by entering
+            your two-factor authentication code below.
+          </P>
           <CodeInput
             name="2fa"
             value={twoFACode}
@@ -82,13 +77,21 @@ const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
             containerStyle={classes.codeContainer}
             shouldAutoFocus
           />
-          {invalidCode && (
-            <P className={classes.errorMessage}>
-              Code is invalid. Please try again.
-            </P>
+          {getErrorMsg() && (
+            <P className={classes.errorMessage}>{getErrorMsg()}</P>
           )}
           <div className={classes.footer}>
-            <Button onClick={handleActionConfirm}>Finish</Button>
+            <Button
+              className={classes.submit}
+              onClick={() => {
+                if (twoFACode.length !== 6) {
+                  setInvalidCode(true)
+                  return
+                }
+                confirm2FA({ variables: { code: twoFACode } })
+              }}>
+              Confirm
+            </Button>
           </div>
         </Modal>
       )}
