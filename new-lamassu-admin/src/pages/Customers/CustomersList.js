@@ -11,7 +11,11 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { ifNotNull } from 'src/utils/nullCheck'
 
 import styles from './CustomersList.styles'
-import { getAuthorizedStatus, getFormattedPhone, getName } from './helper'
+import {
+  getAuthorizedStatus,
+  getName
+  /* getFormattedPhone */
+} from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -22,7 +26,7 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
     {
       header: 'Phone',
       width: 172,
-      view: it => getFormattedPhone(it.phone, locale.country)
+      view: it => it.phone // getFormattedPhone(it.phone, locale.country)
     },
     {
       header: 'Name',
