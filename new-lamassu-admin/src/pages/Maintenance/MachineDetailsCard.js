@@ -1,9 +1,9 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { Grid, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import { Status } from 'src/components/Status'
@@ -32,6 +32,16 @@ const MACHINE_ACTION = gql`
   }
 `
 
+const MACHINE = gql`
+  query getMachine($deviceId: ID!) {
+    machine(deviceId: $deviceId) {
+      latestEvent {
+        note
+      }
+    }
+  }
+`
+
 const supportArtices = [
   {
     // Default article for non-maped statuses
@@ -42,6 +52,24 @@ const supportArtices = [
   }
   // TODO add Stuck and Fully Functional statuses articles for the new-admins
 ]
+
+const isStaticState = machineState => {
+  if (!machineState) {
+    return true
+  }
+  const staticStates = [
+    'chooseCoin',
+    'idle',
+    'pendingIdle',
+    'dualIdle',
+    'networkDown',
+    'unpaired',
+    'maintenance',
+    'virgin',
+    'wifiList'
+  ]
+  return staticStates.includes(machineState)
+}
 
 const article = ({ code: status }) =>
   supportArtices.find(({ code: article }) => article === status)
@@ -69,9 +97,49 @@ const Item = ({ children, ...props }) => (
 )
 
 const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
-  const [action, setAction] = useState(null)
+  const [action, setAction] = useState({ command: null })
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useMDStyles()
+
+  const [
+    fetchMachineEvents,
+    { loading: loadingEvents, data: machineEventsLazy }
+  ] = useLazyQuery(MACHINE, {
+    variables: {
+      deviceId: machine.deviceId
+    }
+  })
+
+  useEffect(() => {
+    if (action.command === 'restartServices') {
+      fetchMachineEvents()
+    }
+  }, [action.command, fetchMachineEvents])
+
+  useEffect(() => {
+    if (machineEventsLazy && action.command === 'restartServices') {
+      const state = JSON.parse(
+        machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}'
+      ).state
+      if (!isStaticState(state)) {
+        setAction(action => ({
+          ...action,
+          message: (
+            <span className={classes.warning}>
+              A user may be in the middle of a transaction and they could lose
+              their funds if you continue.
+            </span>
+          )
+        }))
+      } else {
+        // clear message from object when state goes from not static to static
+        setAction(action => ({
+          ...action,
+          message: null
+        }))
+      }
+    }
+  }, [action.command, classes.warning, machineEventsLazy])
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
     onError: ({ message }) => {
@@ -80,11 +148,12 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
     },
     onCompleted: () => {
       onActionSuccess && onActionSuccess()
-      setAction(null)
+      setAction({ command: null })
     }
   })
 
-  const confirmDialogOpen = Boolean(action)
+  const confirmDialogOpen = Boolean(action.command)
+  const disabled = !!(action?.command === 'restartServices' && loadingEvents)
 
   return (
     <>
@@ -127,6 +196,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
           className={classes.separator}
         />
         <ConfirmDialog
+          disabled={disabled}
           open={confirmDialogOpen}
           title={`${action?.display} this machine?`}
           errorMessage={errorMessage}
@@ -145,7 +215,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
             })
           }}
           onDissmised={() => {
-            setAction(null)
+            setAction({ command: null })
             setErrorMessage(null)
           }}
         />

@@ -4,7 +4,13 @@ import {
   detailsRowStyles,
   labelStyles
 } from 'src/pages/Transactions/Transactions.styles'
-import { spacer, comet, primaryColor, fontSize4 } from 'src/styling/variables'
+import {
+  spacer,
+  comet,
+  primaryColor,
+  fontSize4,
+  errorColor
+} from 'src/styling/variables'
 
 const machineDetailsStyles = {
   ...detailsRowStyles,
@@ -58,6 +64,9 @@ const machineDetailsStyles = {
     marginRight: 60,
     marginLeft: 'auto',
     background: fade(comet, 0.5)
+  },
+  warning: {
+    color: errorColor
   }
 }
 

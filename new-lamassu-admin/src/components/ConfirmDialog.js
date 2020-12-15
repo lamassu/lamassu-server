@@ -65,6 +65,7 @@ export const ConfirmDialog = memo(
     onConfirmed,
     onDissmised,
     initialValue = '',
+    disabled = false,
     ...props
   }) => {
     const classes = useStyles()
@@ -101,6 +102,7 @@ export const ConfirmDialog = memo(
         <DialogContent className={classes.dialogContent}>
           {message && <P>{message}</P>}
           <TextInput
+            disabled={disabled}
             label={confirmationMessage}
             name="confirm-input"
             autoFocus
