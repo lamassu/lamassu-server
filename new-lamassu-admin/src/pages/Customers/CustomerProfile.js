@@ -24,7 +24,7 @@ import {
   TransactionsList,
   ComplianceDetails
 } from './components'
-import { getFormattedPhone, getName } from './helper'
+import { /*  getFormattedPhone,  */ getName } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -147,12 +147,13 @@ const CustomerProfile = memo(() => {
           Customers
         </Label1>
         <Label2 noMargin className={classes.labelLink}>
-          {name.length
+          {name.length ? name : R.path(['phone'])(customerData)}
+          {/*           {name.length
             ? name
             : getFormattedPhone(
                 R.path(['phone'])(customerData),
                 locale.country
-              )}
+              )} */}
         </Label2>
       </Breadcrumbs>
       <div>

@@ -9,7 +9,7 @@ import { ReactComponent as LawIconInverse } from 'src/styling/icons/circle butto
 import { ReactComponent as LawIcon } from 'src/styling/icons/circle buttons/law/zodiac.svg'
 
 import mainStyles from '../CustomersList.styles'
-import { getFormattedPhone, getName } from '../helper'
+import { /* getFormattedPhone, */ getName } from '../helper'
 
 import FrontCameraPhoto from './FrontCameraPhoto'
 
@@ -22,7 +22,7 @@ const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
     {
       header: 'Phone number',
       size: 172,
-      value: getFormattedPhone(customer.phone, locale.country)
+      value: customer.phone // getFormattedPhone(customer.phone, locale.country)
     },
     {
       header: 'ID number',
@@ -47,9 +47,8 @@ const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
         <div className={classes.name}>
           <IdIcon className={classes.idIcon} />
           <H2 noMargin>
-            {name.length
-              ? name
-              : getFormattedPhone(R.path(['phone'])(customer), locale.country)}
+            {name.length ? name : R.path(['phone'])(customer)}
+            {/* getFormattedPhone(R.path(['phone'])(customer), locale.country)} */}
           </H2>
           <SubpageButton
             className={classes.subpageButton}
