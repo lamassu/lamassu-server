@@ -3,7 +3,7 @@ import { Grid, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import moment from 'moment'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import { Status } from 'src/components/Status'
@@ -96,50 +96,36 @@ const Item = ({ children, ...props }) => (
   </Grid>
 )
 
+const getState = machineEventsLazy =>
+  JSON.parse(machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}')
+    .state
+
 const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
   const [action, setAction] = useState({ command: null })
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useMDStyles()
 
-  const [
-    fetchMachineEvents,
-    { loading: loadingEvents, data: machineEventsLazy }
-  ] = useLazyQuery(MACHINE, {
-    variables: {
-      deviceId: machine.deviceId
-    }
-  })
+  const warningMessage = (
+    <span className={classes.warning}>
+      A user may be in the middle of a transaction and they could lose their
+      funds if you continue.
+    </span>
+  )
 
-  useEffect(() => {
-    if (action.command === 'restartServices') {
-      fetchMachineEvents()
-    }
-  }, [action.command, fetchMachineEvents])
-
-  useEffect(() => {
-    if (machineEventsLazy && action.command === 'restartServices') {
-      const state = JSON.parse(
-        machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}'
-      ).state
-      if (!isStaticState(state)) {
-        setAction(action => ({
-          ...action,
-          message: (
-            <span className={classes.warning}>
-              A user may be in the middle of a transaction and they could lose
-              their funds if you continue.
-            </span>
-          )
-        }))
-      } else {
-        // clear message from object when state goes from not static to static
-        setAction(action => ({
-          ...action,
-          message: null
-        }))
+  const [fetchMachineEvents, { loading: loadingEvents }] = useLazyQuery(
+    MACHINE,
+    {
+      variables: {
+        deviceId: machine.deviceId
+      },
+      onCompleted: machineEventsLazy => {
+        const message = !isStaticState(getState(machineEventsLazy))
+          ? warningMessage
+          : null
+        setAction(action => ({ ...action, message }))
       }
     }
-  }, [action.command, classes.warning, machineEventsLazy])
+  )
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
     onError: ({ message }) => {
@@ -301,12 +287,13 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   Icon={RebootIcon}
                   InverseIcon={RebootReversedIcon}
                   disabled={loading}
-                  onClick={() =>
+                  onClick={() => {
+                    fetchMachineEvents()
                     setAction({
                       command: 'restartServices',
                       display: 'Restart services for'
                     })
-                  }>
+                  }}>
                   Restart Services
                 </ActionButton>
               </div>
