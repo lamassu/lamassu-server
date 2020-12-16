@@ -5,20 +5,12 @@ const getCashOutStatus = it => {
   return 'Pending'
 }
 
-const getCashOutStatusDetails = it => {
-  return it.hasError ? it.hasError : null
-}
-
 const getCashInStatus = it => {
   if (it.operatorCompleted) return 'Cancelled'
   if (it.hasError) return 'Error'
   if (it.sendConfirmed) return 'Sent'
   if (it.expired) return 'Expired'
   return 'Pending'
-}
-
-const getCashInStatusDetails = it => {
-  return it.hasError ? it.hasError : null
 }
 
 const getStatus = it => {
@@ -29,9 +21,7 @@ const getStatus = it => {
 }
 
 const getStatusDetails = it => {
-  return it.txClass === 'cashOut'
-    ? getCashOutStatusDetails(it)
-    : getCashInStatusDetails(it)
+  return it.hasError ? it.hasError : null
 }
 
 export { getStatus, getStatusDetails }
