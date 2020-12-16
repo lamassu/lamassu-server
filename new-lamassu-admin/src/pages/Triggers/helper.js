@@ -76,7 +76,10 @@ const threshold = Yup.object().shape({
 })
 const requirement = Yup.object().shape({
   requirement: Yup.string().required(),
-  suspensionDays: Yup.number()
+  suspensionDays: Yup.number().when('requirement', {
+    is: 'suspend',
+    then: Yup.number().required()
+  })
 })
 
 const Schema = Yup.object().shape({
