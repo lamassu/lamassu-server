@@ -8,6 +8,7 @@ import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { primaryColor, secondaryColorDark } from 'src/styling/variables'
 
 const ALL_MACHINES = {
   name: 'All Machines',
@@ -363,32 +364,33 @@ const createCommissions = (cryptoCode, deviceId, isDefault, config) => {
 const getCommissions = (cryptoCode, deviceId, config) => {
   const overrides = R.prop('overrides', config)
 
-  if (overrides && !R.isEmpty(overrides)) {
-    const specificOverride = R.find(
-      it =>
-        it.machine === deviceId && _.includes(cryptoCode)(it.cryptoCurrencies)
-    )(overrides)
-
-    if (specificOverride !== undefined)
-      return createCommissions(cryptoCode, deviceId, false, specificOverride)
-
-    const machineOverride = R.find(
-      it =>
-        it.machine === deviceId && _.includes('ALL_COINS')(it.cryptoCurrencies)
-    )(overrides)
-
-    if (machineOverride !== undefined)
-      return createCommissions(cryptoCode, deviceId, false, machineOverride)
-
-    const coinOverride = R.find(
-      it =>
-        it.machine === 'ALL_MACHINES' &&
-        _.includes(cryptoCode)(it.cryptoCurrencies)
-    )(overrides)
-
-    if (coinOverride !== undefined)
-      return createCommissions(cryptoCode, deviceId, false, coinOverride)
+  if (!overrides && R.isEmpty(overrides)) {
+    return createCommissions(cryptoCode, deviceId, true, config)
   }
+
+  const specificOverride = R.find(
+    it => it.machine === deviceId && _.includes(cryptoCode)(it.cryptoCurrencies)
+  )(overrides)
+
+  if (specificOverride !== undefined)
+    return createCommissions(cryptoCode, deviceId, false, specificOverride)
+
+  const machineOverride = R.find(
+    it =>
+      it.machine === deviceId && _.includes('ALL_COINS')(it.cryptoCurrencies)
+  )(overrides)
+
+  if (machineOverride !== undefined)
+    return createCommissions(cryptoCode, deviceId, false, machineOverride)
+
+  const coinOverride = R.find(
+    it =>
+      it.machine === 'ALL_MACHINES' &&
+      _.includes(cryptoCode)(it.cryptoCurrencies)
+  )(overrides)
+
+  if (coinOverride !== undefined)
+    return createCommissions(cryptoCode, deviceId, false, coinOverride)
 
   return createCommissions(cryptoCode, deviceId, true, config)
 }
@@ -425,7 +427,7 @@ const getListCommissionsSchema = () => {
 }
 
 const getTextStyle = (obj, isEditing) => {
-  return { color: obj.default ? '#1b2559' : '#44e188' }
+  return { color: obj.default ? primaryColor : secondaryColorDark }
 }
 
 const commissionsList = (auxData, currency, auxElements) => {
@@ -436,10 +438,6 @@ const commissionsList = (auxData, currency, auxElements) => {
 
 const getListCommissionsFields = (getData, currency, defaults) => {
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
-  // const rawCryptos = getData(['cryptoCurrencies'])
-  // const cryptoData = R.map(it => ({ display: it.code, code: it.code }))(
-  //   rawCryptos ?? []
-  // )
 
   return [
     {

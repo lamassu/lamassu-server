@@ -20,7 +20,7 @@ import {
 import { Info3 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
 import { offColor } from 'src/styling/variables'
-import { toFirstUpper } from 'src/utils/string'
+import { startCase } from 'src/utils/string'
 
 import logsStyles from './Logs.styles'
 
@@ -112,7 +112,7 @@ const Logs = () => {
     R.concat(defaultLogLevels),
     R.map(it => ({
       code: R.path(['logLevel'])(it),
-      display: toFirstUpper(R.path(['logLevel'])(it))
+      display: startCase(R.path(['logLevel'])(it))
     })),
     R.path(['serverLogs'])
   )
