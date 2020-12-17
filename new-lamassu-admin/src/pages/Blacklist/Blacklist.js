@@ -121,7 +121,7 @@ const Blacklist = () => {
   return (
     <>
       <TitleSection title="Blacklisted addresses">
-        <Link onClick={() => setShowModal(false)}>Blacklist new addresses</Link>
+        <Link onClick={() => setShowModal(true)}>Blacklist new addresses</Link>
       </TitleSection>
       <Grid container className={classes.grid}>
         <Sidebar
