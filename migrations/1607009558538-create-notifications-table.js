@@ -1,8 +1,6 @@
 var db = require('./db')
 
-function singleQuotify(item) {
-  return "'" + item + "'"
-}
+const singleQuotify = (item) => `'${item}'`
 
 var types = [
   'highValueTransaction',
@@ -18,20 +16,17 @@ exports.up = function (next) {
   const sql = [
     `
     CREATE TYPE notification_type AS ENUM ${'(' + types + ')'};
-    CREATE TABLE IF NOT EXISTS "notifications" (
+    CREATE TABLE "notifications" (
         "id" uuid NOT NULL PRIMARY KEY,
         "type" notification_type NOT NULL,
-        "detail" TEXT,
-        "device_id" TEXT,
+        "detail" JSONB,
         "message" TEXT NOT NULL,
-        "created" TIMESTAMP WITH TIME ZONE NOT NULL,
+        "created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "read" BOOLEAN NOT NULL DEFAULT 'false',
         "valid" BOOLEAN NOT NULL DEFAULT 'true',
-        CONSTRAINT fk_devices
-            FOREIGN KEY(device_id)
-                REFERENCES devices(device_id)
-                ON DELETE CASCADE
+        "modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE INDEX ON notifications (valid);
     CREATE INDEX ON notifications (read);`
   ]
 

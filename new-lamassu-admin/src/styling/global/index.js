@@ -11,6 +11,18 @@ export default {
       width: fill,
       minHeight: fill
     },
+    '.root-notifcenter-open': {
+      // for when notification center is open
+      overflowY: 'scroll',
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0
+    },
+    '.body-notifcenter-open': {
+      // for when notification center is open
+      overflow: 'hidden'
+    },
     html: {
       height: fill
     },

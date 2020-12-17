@@ -5,6 +5,7 @@ import {
   spacer,
   white,
   primaryColor,
+  secondaryColor,
   placeholderColor,
   subheaderColor,
   fontColor
@@ -21,6 +22,9 @@ if (version === 8) {
 }
 
 const styles = {
+  headerContainer: {
+    position: 'relative'
+  },
   header: {
     backgroundColor: primaryColor,
     color: white,
@@ -80,27 +84,6 @@ const styles = {
     border: 'none',
     color: white,
     backgroundColor: 'transparent'
-    // '&:hover': {
-    //   color: white
-    // },
-    // '&:hover::after': {
-    //   width: '50%',
-    //   marginLeft: '-25%'
-    // },
-    // position: 'relative',
-    // '&:after': {
-    //   content: '""',
-    //   display: 'block',
-    //   background: white,
-    //   width: 0,
-    //   height: 4,
-    //   left: '50%',
-    //   marginLeft: 0,
-    //   bottom: -8,
-    //   position: 'absolute',
-    //   borderRadius: 1000,
-    //   transition: [['all', '0.2s', 'cubic-bezier(0.95, 0.1, 0.45, 0.94)']]
-    // }
   },
   forceSize: {
     display: 'inline-block',
@@ -167,6 +150,35 @@ const styles = {
   },
   logoLink: {
     cursor: 'pointer'
+  },
+  actionButtonsContainer: {
+    zIndex: 1,
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'space-between',
+    minWidth: 200,
+    transform: 'translateZ(0)'
+  },
+  notificationIcon: {
+    marginTop: spacer / 2,
+    cursor: 'pointer',
+    background: 'transparent',
+    boxShadow: '0px 0px 0px transparent',
+    border: '0px solid transparent',
+    textShadow: '0px 0px 0px transparent',
+    outline: 'none'
+  },
+  hasUnread: {
+    position: 'absolute',
+    top: 5,
+    left: 185,
+    width: '9px',
+    height: '9px',
+    backgroundColor: secondaryColor,
+    borderRadius: '50%'
+  },
+  popper: {
+    zIndex: 1
   }
 }
 
