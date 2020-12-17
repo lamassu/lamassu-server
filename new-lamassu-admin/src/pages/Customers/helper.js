@@ -11,9 +11,10 @@ const getAuthorizedStatus = it =>
     : { label: 'Authorized', type: 'success' }
 
 const getFormattedPhone = (phone, country) => {
-  return phone && country
-    ? parsePhoneNumberFromString(phone, country).formatInternational()
-    : ''
+  const phoneNumber =
+    phone && country ? parsePhoneNumberFromString(phone, country) : null
+
+  return phoneNumber ? phoneNumber.formatInternational() : phone
 }
 
 const getName = it => {
