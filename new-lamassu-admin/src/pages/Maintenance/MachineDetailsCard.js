@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { Grid, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
@@ -32,6 +32,16 @@ const MACHINE_ACTION = gql`
   }
 `
 
+const MACHINE = gql`
+  query getMachine($deviceId: ID!) {
+    machine(deviceId: $deviceId) {
+      latestEvent {
+        note
+      }
+    }
+  }
+`
+
 const supportArtices = [
   {
     // Default article for non-maped statuses
@@ -42,6 +52,24 @@ const supportArtices = [
   }
   // TODO add Stuck and Fully Functional statuses articles for the new-admins
 ]
+
+const isStaticState = machineState => {
+  if (!machineState) {
+    return true
+  }
+  const staticStates = [
+    'chooseCoin',
+    'idle',
+    'pendingIdle',
+    'dualIdle',
+    'networkDown',
+    'unpaired',
+    'maintenance',
+    'virgin',
+    'wifiList'
+  ]
+  return staticStates.includes(machineState)
+}
 
 const article = ({ code: status }) =>
   supportArtices.find(({ code: article }) => article === status)
@@ -68,10 +96,36 @@ const Item = ({ children, ...props }) => (
   </Grid>
 )
 
+const getState = machineEventsLazy =>
+  JSON.parse(machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}')
+    .state
+
 const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
-  const [action, setAction] = useState(null)
+  const [action, setAction] = useState({ command: null })
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useMDStyles()
+
+  const warningMessage = (
+    <span className={classes.warning}>
+      A user may be in the middle of a transaction and they could lose their
+      funds if you continue.
+    </span>
+  )
+
+  const [fetchMachineEvents, { loading: loadingEvents }] = useLazyQuery(
+    MACHINE,
+    {
+      variables: {
+        deviceId: machine.deviceId
+      },
+      onCompleted: machineEventsLazy => {
+        const message = !isStaticState(getState(machineEventsLazy))
+          ? warningMessage
+          : null
+        setAction(action => ({ ...action, message }))
+      }
+    }
+  )
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
     onError: ({ message }) => {
@@ -80,11 +134,12 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
     },
     onCompleted: () => {
       onActionSuccess && onActionSuccess()
-      setAction(null)
+      setAction({ command: null })
     }
   })
 
-  const confirmDialogOpen = Boolean(action)
+  const confirmDialogOpen = Boolean(action.command)
+  const disabled = !!(action?.command === 'restartServices' && loadingEvents)
 
   return (
     <>
@@ -127,25 +182,26 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
           className={classes.separator}
         />
         <ConfirmDialog
+          disabled={disabled}
           open={confirmDialogOpen}
-          title={`${action?.command} this machine?`}
+          title={`${action?.display} this machine?`}
           errorMessage={errorMessage}
           toBeConfirmed={machine.name}
           message={action?.message}
           confirmationMessage={action?.confirmationMessage}
-          saveButtonAlwaysEnabled={action?.command === 'Rename'}
+          saveButtonAlwaysEnabled={action?.command === 'rename'}
           onConfirmed={value => {
             setErrorMessage(null)
             machineAction({
               variables: {
                 deviceId: machine.deviceId,
-                action: `${action?.command}`.toLowerCase(),
-                ...(action?.command === 'Rename' && { newName: value })
+                action: `${action?.command}`,
+                ...(action?.command === 'rename' && { newName: value })
               }
             })
           }}
           onDissmised={() => {
-            setAction(null)
+            setAction({ command: null })
             setErrorMessage(null)
           }}
         />
@@ -174,7 +230,8 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   InverseIcon={EditReversedIcon}
                   onClick={() =>
                     setAction({
-                      command: 'Rename',
+                      command: 'rename',
+                      display: 'Rename',
                       confirmationMessage: 'Write the new name for this machine'
                     })
                   }>
@@ -188,7 +245,8 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   disabled={loading}
                   onClick={() =>
                     setAction({
-                      command: 'Unpair'
+                      command: 'unpair',
+                      display: 'Unpair'
                     })
                   }>
                   Unpair
@@ -201,25 +259,42 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   disabled={loading}
                   onClick={() =>
                     setAction({
-                      command: 'Reboot'
+                      command: 'reboot',
+                      display: 'Reboot'
                     })
                   }>
                   Reboot
                 </ActionButton>
                 <ActionButton
-                  className={classes.inlineChip}
+                  className={classes.mr}
                   disabled={loading}
                   color="primary"
                   Icon={ShutdownIcon}
                   InverseIcon={ShutdownReversedIcon}
                   onClick={() =>
                     setAction({
-                      command: 'Shutdown',
+                      command: 'shutdown',
+                      display: 'Shutdown',
                       message:
                         'In order to bring it back online, the machine will need to be visited and its power reset.'
                     })
                   }>
                   Shutdown
+                </ActionButton>
+                <ActionButton
+                  color="primary"
+                  className={classes.inlineChip}
+                  Icon={RebootIcon}
+                  InverseIcon={RebootReversedIcon}
+                  disabled={loading}
+                  onClick={() => {
+                    fetchMachineEvents()
+                    setAction({
+                      command: 'restartServices',
+                      display: 'Restart services for'
+                    })
+                  }}>
+                  Restart Services
                 </ActionButton>
               </div>
             </Item>
