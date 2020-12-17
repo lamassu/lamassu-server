@@ -45,7 +45,7 @@ const BlackListModal = ({ onClose, selectedCoin, addToBlacklist }) => {
             .required('An address is required')
         })}
         onSubmit={({ address }, { resetForm }) => {
-          handleAddToBlacklist(address)
+          handleAddToBlacklist(address.trim())
           resetForm()
         }}>
         <Form id="address-form">
