@@ -10,10 +10,12 @@ const getAuthorizedStatus = it =>
     ? { label: `${it.daysSuspended} day suspension`, type: 'warning' }
     : { label: 'Authorized', type: 'success' }
 
-const getFormattedPhone = (phone, country) =>
-  phone && country
-    ? parsePhoneNumberFromString(phone, country).formatInternational()
-    : ''
+const getFormattedPhone = (phone, country) => {
+  const phoneNumber =
+    phone && country ? parsePhoneNumberFromString(phone, country) : null
+
+  return phoneNumber ? phoneNumber.formatInternational() : phone
+}
 
 const getName = it => {
   const idData = R.path(['idCardData'])(it)
