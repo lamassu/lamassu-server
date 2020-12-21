@@ -73,14 +73,15 @@ const Blacklist = () => {
     code: 'BTC',
     display: 'Bitcoin'
   })
+  const [errorMsg, setErrorMsg] = useState(null)
+
   const [deleteEntry] = useMutation(DELETE_ROW, {
     onError: () => console.error('Error while deleting row'),
     refetchQueries: () => ['getBlacklistData']
   })
 
   const [addEntry] = useMutation(ADD_ROW, {
-    onError: () => console.error('Error while adding row'),
-    onCompleted: () => setShowModal(false),
+    onError: () => console.log('Error while adding row'),
     refetchQueries: () => ['getBlacklistData']
   })
 
@@ -114,8 +115,20 @@ const Blacklist = () => {
     deleteEntry({ variables: { cryptoCode, address } })
   }
 
-  const addToBlacklist = (cryptoCode, address) => {
-    addEntry({ variables: { cryptoCode, address } })
+  const addToBlacklist = async (cryptoCode, address) => {
+    setErrorMsg(null)
+    const res = await addEntry({ variables: { cryptoCode, address } })
+    if (!res.errors) {
+      return setShowModal(false)
+    }
+    const duplicateKeyError = res.errors.some(e => {
+      return e.message.includes('duplicate')
+    })
+    if (duplicateKeyError) {
+      setErrorMsg('This address is already being blocked')
+    } else {
+      setErrorMsg('Server error')
+    }
   }
 
   return (
@@ -169,7 +182,11 @@ const Blacklist = () => {
       </Grid>
       {showModal && (
         <BlackListModal
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setErrorMsg(null)
+            setShowModal(false)
+          }}
+          errorMsg={errorMsg}
           selectedCoin={clickedItem}
           addToBlacklist={addToBlacklist}
         />
