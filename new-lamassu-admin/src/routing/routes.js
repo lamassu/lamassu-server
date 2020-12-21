@@ -40,7 +40,8 @@ const useStyles = makeStyles({
   wrapper: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    height: '100%'
   }
 })
 
@@ -296,13 +297,12 @@ const Routes = () => {
       {flattened.map(({ route, component: Page, key }) => (
         <Route path={route} key={key}>
           <Transition
-            className={classes.wrapper}
             {...transitionProps}
             in={location.pathname === route}
             mountOnEnter
             unmountOnExit
             children={
-              <div>
+              <div className={classes.wrapper}>
                 <Page name={key} />
               </div>
             }
