@@ -15,7 +15,7 @@ const base = {
   color: fontColor
 }
 
-export default {
+const styles = {
   h1: {
     extend: base,
     fontSize: fontSize1,
@@ -132,3 +132,5 @@ export default {
     margin: 0
   }
 }
+
+export default styles
