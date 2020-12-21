@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import prettyMs from 'pretty-ms'
 import React from 'react'
-
 import { Label1, Label2, TL2 } from 'src/components/typography'
 import { ReactComponent as Wrench } from 'src/styling/icons/action/wrench/zodiac.svg'
 import { ReactComponent as Transaction } from 'src/styling/icons/arrow/transaction.svg'
