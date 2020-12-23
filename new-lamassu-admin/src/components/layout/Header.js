@@ -25,7 +25,7 @@ const Subheader = ({ item, classes }) => {
             {item.children.map((it, idx) => (
               <li key={idx} className={classes.subheaderLi}>
                 <NavLink
-                  to={{ pathname: it.route, state: { prev: prev } }}
+                  to={{ pathname: it.route, state: { prev } }}
                   className={classes.subheaderLink}
                   activeClassName={classes.activeSubheaderLink}
                   isActive={match => {
