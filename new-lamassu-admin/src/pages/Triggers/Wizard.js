@@ -216,7 +216,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          <Form onChange={console.log} className={classes.form}>
+          <Form className={classes.form}>
             <GetValues setValues={setLiveValues} />
             <stepOptions.Component />
             <div className={classes.submit}>

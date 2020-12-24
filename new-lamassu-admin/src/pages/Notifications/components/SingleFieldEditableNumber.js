@@ -3,9 +3,9 @@ import React, { useContext, useState } from 'react'
 import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
+import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
-import { transformNumber } from '../helper'
 
 import Header from './EditHeader'
 import EditableNumber from './EditableNumber'
