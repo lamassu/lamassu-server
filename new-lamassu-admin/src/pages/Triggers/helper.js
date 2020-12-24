@@ -7,9 +7,9 @@ import * as Yup from 'yup'
 
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info2 } from 'src/components/typography'
+import { errorColor } from 'src/styling/variables'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 // import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { errorColor } from 'src/styling/variables'
 
 const useStyles = makeStyles({
   radioLabel: {
@@ -72,13 +72,28 @@ const useStyles = makeStyles({
 const triggerType = Yup.string().required()
 const threshold = Yup.object().shape({
   threshold: Yup.number(),
-  thresholdDays: Yup.number()
+  thresholdDays: Yup.number().test({
+    test(val) {
+      const { triggerType } = this.parent
+      const requireThrehsold = ['txVolume', 'txVelocity']
+
+      if (R.isEmpty(val) && R.includes(triggerType, requireThrehsold)) {
+        return this.createError()
+      }
+
+      return true
+    }
+  })
 })
+
 const requirement = Yup.object().shape({
   requirement: Yup.string().required(),
   suspensionDays: Yup.number().when('requirement', {
     is: 'suspend',
-    then: Yup.number().required()
+    then: Yup.number().required(),
+    otherwise: Yup.number()
+      .nullable()
+      .transform(() => null)
   })
 })
 

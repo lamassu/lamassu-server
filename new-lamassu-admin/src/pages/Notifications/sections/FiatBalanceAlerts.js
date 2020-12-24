@@ -5,12 +5,12 @@ import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { TL2 } from 'src/components/typography'
+import { transformNumber } from 'src/utils/number'
 
 import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
 import NotificationsCtx from '../NotificationsContext'
 import Header from '../components/EditHeader'
 import EditableNumber from '../components/EditableNumber'
-import { transformNumber } from '../helper'
 
 import styles from './FiatBalanceAlerts.styles.js'
 

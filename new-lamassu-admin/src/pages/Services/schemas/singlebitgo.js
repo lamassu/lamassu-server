@@ -6,7 +6,7 @@ import {
   Autocomplete
 } from 'src/components/inputs/formik'
 
-export default code => ({
+const singleBitgo = code => ({
   code: 'bitgo',
   name: 'BitGo',
   title: 'BitGo (Wallet)',
@@ -53,3 +53,5 @@ export default code => ({
       .required()
   })
 })
+
+export default singleBitgo

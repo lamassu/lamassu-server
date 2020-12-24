@@ -5,9 +5,9 @@ import * as Yup from 'yup'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
-import { transformNumber } from '../helper'
 
 const HIGH_BALANCE_KEY = 'highBalance'
 const LOW_BALANCE_KEY = 'lowBalance'

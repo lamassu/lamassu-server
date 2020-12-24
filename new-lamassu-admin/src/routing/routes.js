@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 import {
+  matchPath,
   Route,
   Redirect,
   Switch,
@@ -29,7 +30,7 @@ import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
-import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
+// import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
@@ -40,7 +41,8 @@ const useStyles = makeStyles({
   wrapper: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    height: '100%'
   }
 })
 
@@ -211,23 +213,23 @@ const tree = [
         component: CustomerProfile
       }
     ]
-  },
-  {
-    key: 'system',
-    label: 'System',
-    route: '/system',
-    get component() {
-      return () => <Redirect to={this.children[0].route} />
-    },
-    children: [
-      {
-        key: 'token-management',
-        label: 'Token Management',
-        route: '/system/token-management',
-        component: TokenManagement
-      }
-    ]
   }
+  // {
+  //   key: 'system',
+  //   label: 'System',
+  //   route: '/system',
+  //   get component() {
+  //     return () => <Redirect to={this.children[0].route} />
+  //   },
+  //   children: [
+  //     {
+  //       key: 'token-management',
+  //       label: 'Token Management',
+  //       route: '/system/token-management',
+  //       component: TokenManagement
+  //     }
+  //   ]
+  // }
 ]
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
@@ -298,11 +300,11 @@ const Routes = () => {
           <Transition
             className={classes.wrapper}
             {...transitionProps}
-            in={location.pathname === route}
+            in={!!matchPath(location.pathname, { path: route })}
             mountOnEnter
             unmountOnExit
             children={
-              <div>
+              <div className={classes.wrapper}>
                 <Page name={key} />
               </div>
             }
