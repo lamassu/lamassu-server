@@ -13,7 +13,6 @@ import AddMachine from 'src/pages/AddMachine'
 import { ReactComponent as AddIconReverse } from 'src/styling/icons/button/add/white.svg'
 import { ReactComponent as AddIcon } from 'src/styling/icons/button/add/zodiac.svg'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
-import { ReactComponent as NotificationIconZodiac } from 'src/styling/icons/menu/notification-zodiac.svg'
 import { ReactComponent as NotificationIcon } from 'src/styling/icons/menu/notification.svg'
 
 import styles from './Header.styles'

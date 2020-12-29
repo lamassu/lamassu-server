@@ -16,7 +16,7 @@ const styles = {
     top: 0,
     zIndex: -1,
     backgroundColor: white,
-    height: '100vh'
+    boxShadow: '0 0 14px 0 rgba(0, 0, 0, 0.24)'
   },
   container: {
     left: -200,
@@ -53,7 +53,6 @@ const styles = {
     backgroundColor: zircon
   },
   notificationsList: {
-    zIndex: 10,
     width: 440,
     height: '90vh',
     maxHeight: '100vh',
