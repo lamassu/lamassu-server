@@ -43,9 +43,8 @@ const RightSide = () => {
   }
 
   return (
-    <>
-      <Grid item xs={6}>
-        {/*         <CollapsibleCard
+    <Grid item xs={6}>
+      {/*         <CollapsibleCard
           className={classes.alertsCard}
           state={alertsSize}
           shrunkComponent={
@@ -64,26 +63,25 @@ const RightSide = () => {
             size={alertsSize}
           />
         </CollapsibleCard> */}
-        <CollapsibleCard
-          state={systemStatusSize}
-          shrunkComponent={
-            <ShrunkCard
-              title={'System status'}
-              buttonName={'Show machines'}
-              onUnshrink={onReset}
-            />
-          }>
-          <SystemStatus
-            onExpand={() => {
-              setSystemStatusSize(cardState.EXPANDED)
-              // setAlertsSize(cardState.SHRUNK)
-            }}
-            onReset={onReset}
-            size={systemStatusSize}
+      <CollapsibleCard
+        state={systemStatusSize}
+        shrunkComponent={
+          <ShrunkCard
+            title={'System status'}
+            buttonName={'Show machines'}
+            onUnshrink={onReset}
           />
-        </CollapsibleCard>
-      </Grid>
-    </>
+        }>
+        <SystemStatus
+          onExpand={() => {
+            setSystemStatusSize(cardState.EXPANDED)
+            // setAlertsSize(cardState.SHRUNK)
+          }}
+          onReset={onReset}
+          size={systemStatusSize}
+        />
+      </CollapsibleCard>
+    </Grid>
   )
 }
 

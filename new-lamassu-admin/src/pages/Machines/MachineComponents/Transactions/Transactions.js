@@ -155,19 +155,17 @@ const Transactions = ({ id }) => {
   }
 
   return (
-    <>
-      <DataTable
-        extraHeight={extraHeight}
-        onClick={handleClick}
-        loading={loading || id === null}
-        emptyText="No transactions so far"
-        elements={elements}
-        // need to splice because back end query could return double NUM_LOG_RESULTS because it doesnt merge the txIn and the txOut results before applying the limit
-        data={R.path(['transactions'])(txResponse)} // .splice(0,NUM_LOG_RESULTS)}
-        Details={DetailsRow}
-        expandable
-      />
-    </>
+    <DataTable
+      extraHeight={extraHeight}
+      onClick={handleClick}
+      loading={loading || id === null}
+      emptyText="No transactions so far"
+      elements={elements}
+      // need to splice because back end query could return double NUM_LOG_RESULTS because it doesnt merge the txIn and the txOut results before applying the limit
+      data={R.path(['transactions'])(txResponse)} // .splice(0,NUM_LOG_RESULTS)}
+      Details={DetailsRow}
+      expandable
+    />
   )
 }
 
