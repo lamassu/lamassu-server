@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
+import { utils } from 'lamassu-coins'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
@@ -22,7 +23,7 @@ import { ReactComponent as Download } from 'src/styling/icons/button/download/zo
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { URI } from 'src/utils/apollo'
-import { toUnit, formatCryptoAddress } from 'src/utils/coin'
+// import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import CopyToClipboard from './CopyToClipboard'
@@ -53,7 +54,7 @@ const TX_SUMMARY = gql`
 `
 
 const formatAddress = (cryptoCode = '', address = '') =>
-  formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
+  utils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
 const Label = ({ children }) => {
   const classes = useStyles()
@@ -70,7 +71,7 @@ const DetailsRow = ({ it: tx }) => {
   })
 
   const fiat = Number.parseFloat(tx.fiat)
-  const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
+  const crypto = utils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = Number(fiat * commissionPercentage).toFixed(2)
   const discount = tx.discount ? `-${tx.discount}%` : null
