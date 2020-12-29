@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
+import { utils } from 'lamassu-coins'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
 import * as R from 'ramda'
@@ -22,7 +23,7 @@ import {
 } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { primaryColor } from 'src/styling/variables'
-import { formatCryptoAddress } from 'src/utils/coin'
+// import { formatCryptoAddress } from 'src/utils/coin'
 
 import styles from './Funding.styles'
 
@@ -52,7 +53,7 @@ const GET_FUNDING = gql`
 `
 
 const formatAddress = (cryptoCode = '', address = '') =>
-  formatCryptoAddress(cryptoCode, address).replace(/(.{4})/g, '$1 ')
+  utils.formatCryptoAddress(cryptoCode, address).replace(/(.{4})/g, '$1 ')
 const sumReducer = (acc, value) => acc.plus(value)
 const formatNumber = it => new BigNumber(it).toFormat(2)
 
