@@ -77,7 +77,6 @@ const NotificationCenter = ({ close, notifyUnread }) => {
   const handleClearNotification = id => {
     clearNotification({ variables: { id } })
   }
-
   const buildNotifications = () => {
     const notificationsToShow =
       !showingUnread || !hasUnread
