@@ -20,6 +20,9 @@ const BlackListModal = ({
 }) => {
   const classes = useStyles()
   const handleAddToBlacklist = address => {
+    if (selectedCoin.code === 'BCH' && !address.startsWith('bitcoincash:')) {
+      address = 'bitcoincash:' + address
+    }
     addToBlacklist(selectedCoin.code, address)
   }
   const placeholderAddress = {
