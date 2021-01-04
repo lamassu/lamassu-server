@@ -3,7 +3,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
 import { TextInput, NumberInput } from 'src/components/inputs/base'
 import { H1, H3, TL1, P } from 'src/components/typography'
