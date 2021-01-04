@@ -23,7 +23,6 @@ import {
 } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { primaryColor } from 'src/styling/variables'
-// import { formatCryptoAddress } from 'src/utils/coin'
 
 import styles from './Funding.styles'
 

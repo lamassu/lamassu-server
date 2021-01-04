@@ -8,7 +8,6 @@ import DataTable from 'src/components/tables/DataTable'
 import { H3, H4, Label1, Label2, P } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-// import { toUnit } from 'src/utils/coin'
 import { ifNotNull } from 'src/utils/nullCheck'
 import { formatDate } from 'src/utils/timezones'
 
