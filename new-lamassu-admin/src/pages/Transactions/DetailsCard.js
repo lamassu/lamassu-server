@@ -16,7 +16,6 @@ import { ReactComponent as CamIdIcon } from 'src/styling/icons/ID/photo/zodiac.s
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { URI } from 'src/utils/apollo'
-// import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import CopyToClipboard from './CopyToClipboard'
