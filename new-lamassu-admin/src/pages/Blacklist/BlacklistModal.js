@@ -12,13 +12,16 @@ import { H3 } from 'src/components/typography'
 import styles from './Blacklist.styles'
 const useStyles = makeStyles(styles)
 
-const BlackListModal = ({ onClose, selectedCoin, addToBlacklist }) => {
+const BlackListModal = ({
+  onClose,
+  selectedCoin,
+  addToBlacklist,
+  errorMsg
+}) => {
   const classes = useStyles()
-
   const handleAddToBlacklist = address => {
     addToBlacklist(selectedCoin.code, address)
   }
-
   const placeholderAddress = {
     BTC: '1ADwinnimZKGgQ3dpyfoUZvJh4p1UWSSpD',
     ETH: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
@@ -45,7 +48,7 @@ const BlackListModal = ({ onClose, selectedCoin, addToBlacklist }) => {
             .required('An address is required')
         })}
         onSubmit={({ address }, { resetForm }) => {
-          handleAddToBlacklist(address)
+          handleAddToBlacklist(address.trim())
           resetForm()
         }}>
         <Form id="address-form">
@@ -54,6 +57,7 @@ const BlackListModal = ({ onClose, selectedCoin, addToBlacklist }) => {
               ? `Blacklist ${R.toLower(selectedCoin.display)} address`
               : ''}
           </H3>
+          <span className={classes.error}>{errorMsg}</span>
           <Field
             name="address"
             fullWidth

@@ -1,6 +1,10 @@
+import Fade from '@material-ui/core/Fade'
+import Slide from '@material-ui/core/Slide'
+import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 import {
+  matchPath,
   Route,
   Redirect,
   Switch,
@@ -27,12 +31,21 @@ import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
-import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
+// import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import WalletSettings from 'src/pages/Wallet/Wallet'
 import Wizard from 'src/pages/Wizard'
 import { namespaces } from 'src/utils/config'
+
+const useStyles = makeStyles({
+  wrapper: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  }
+})
 
 const tree = [
   {
@@ -131,7 +144,14 @@ const tree = [
         route: '/settings/operator-info',
         title: 'Operator Information',
         get component() {
-          return () => <Redirect to={this.children[0].route} />
+          return () => (
+            <Redirect
+              to={{
+                pathname: this.children[0].route,
+                state: { prev: this.state?.prev }
+              }}
+            />
+          )
         },
         children: [
           {
@@ -194,23 +214,23 @@ const tree = [
         component: CustomerProfile
       }
     ]
-  },
-  {
-    key: 'system',
-    label: 'System',
-    route: '/system',
-    get component() {
-      return () => <Redirect to={this.children[0].route} />
-    },
-    children: [
-      {
-        key: 'token-management',
-        label: 'Token Management',
-        route: '/system/token-management',
-        component: TokenManagement
-      }
-    ]
   }
+  // {
+  //   key: 'system',
+  //   label: 'System',
+  //   route: '/system',
+  //   get component() {
+  //     return () => <Redirect to={this.children[0].route} />
+  //   },
+  //   children: [
+  //     {
+  //       key: 'token-management',
+  //       label: 'Token Management',
+  //       route: '/system/token-management',
+  //       component: TokenManagement
+  //     }
+  //   ]
+  // }
 ]
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
@@ -243,8 +263,11 @@ const getParent = route =>
   )(flattened)
 
 const Routes = () => {
+  const classes = useStyles()
+
   const history = useHistory()
   const location = useLocation()
+
   const { wizardTested } = useContext(AppContext)
 
   const dontTriggerPages = ['/404', '/register', '/wizard']
@@ -252,6 +275,19 @@ const Routes = () => {
   if (!wizardTested && !R.contains(location.pathname)(dontTriggerPages)) {
     history.push('/wizard')
   }
+
+  const Transition = location.state ? Slide : Fade
+
+  const transitionProps =
+    Transition === Slide
+      ? {
+          direction:
+            R.findIndex(R.propEq('route', location.state.prev))(leafRoutes) >
+            R.findIndex(R.propEq('route', location.pathname))(leafRoutes)
+              ? 'right'
+              : 'left'
+        }
+      : { timeout: 400 }
 
   return (
     <Switch>
@@ -263,7 +299,18 @@ const Routes = () => {
       <Route path="/configmigration" component={ConfigMigration} />
       {flattened.map(({ route, component: Page, key }) => (
         <Route path={route} key={key}>
-          <Page name={key} />
+          <Transition
+            className={classes.wrapper}
+            {...transitionProps}
+            in={!!matchPath(location.pathname, { path: route })}
+            mountOnEnter
+            unmountOnExit
+            children={
+              <div className={classes.wrapper}>
+                <Page name={key} />
+              </div>
+            }
+          />
         </Route>
       ))}
       <Route path="/404" />

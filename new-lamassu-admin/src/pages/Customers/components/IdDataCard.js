@@ -10,6 +10,8 @@ import {
 } from 'src/pages/Customers/components/propertyCard'
 import { ifNotNull } from 'src/utils/nullCheck'
 
+import { getName } from '../helper'
+
 import Field from './Field'
 
 const IdDataCard = memo(({ customerData, updateCustomer }) => {
@@ -21,9 +23,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
   const elements = [
     {
       header: 'Name',
-      display: `${R.path(['firstName'])(idData)} ${R.path(['lastName'])(
-        idData
-      )}`,
+      display: `${getName(customerData)}`,
       size: 190
     },
     {

@@ -5,9 +5,9 @@ import * as Yup from 'yup'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
+import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
-import { transformNumber } from '../helper'
 
 const CASSETTE_1_KEY = 'fiatBalanceCassette1'
 const CASSETTE_2_KEY = 'fiatBalanceCassette2'

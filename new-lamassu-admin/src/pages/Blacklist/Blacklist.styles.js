@@ -1,6 +1,11 @@
-import { spacer, fontPrimary, primaryColor, white } from 'src/styling/variables'
-
-export default {
+import {
+  spacer,
+  fontPrimary,
+  primaryColor,
+  white,
+  errorColor
+} from 'src/styling/variables'
+const styles = {
   grid: {
     flex: 1,
     height: '100%'
@@ -35,5 +40,10 @@ export default {
   },
   addressRow: {
     marginLeft: 8
+  },
+  error: {
+    color: errorColor
   }
 }
+
+export default styles

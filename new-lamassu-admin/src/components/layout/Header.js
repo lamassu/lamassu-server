@@ -15,6 +15,8 @@ import styles from './Header.styles'
 const useStyles = makeStyles(styles)
 
 const Subheader = ({ item, classes }) => {
+  const [prev, setPrev] = useState(null)
+
   return (
     <div className={classes.subheader}>
       <div className={classes.content}>
@@ -23,9 +25,14 @@ const Subheader = ({ item, classes }) => {
             {item.children.map((it, idx) => (
               <li key={idx} className={classes.subheaderLi}>
                 <NavLink
-                  to={it.route}
+                  to={{ pathname: it.route, state: { prev } }}
                   className={classes.subheaderLink}
-                  activeClassName={classes.activeSubheaderLink}>
+                  activeClassName={classes.activeSubheaderLink}
+                  isActive={match => {
+                    if (!match) return false
+                    setPrev(it.route)
+                    return true
+                  }}>
                   {it.label}
                 </NavLink>
               </li>
