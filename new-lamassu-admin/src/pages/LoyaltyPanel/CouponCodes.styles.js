@@ -1,6 +1,6 @@
 import { spacer, fontPrimary, primaryColor } from 'src/styling/variables'
 
-export default {
+const styles = {
   footer: {
     margin: [['auto', 0, spacer * 3, 'auto']]
   },
@@ -35,3 +35,5 @@ export default {
     width: 620
   }
 }
+
+export default styles
