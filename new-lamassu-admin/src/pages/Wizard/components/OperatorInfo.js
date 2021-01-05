@@ -1,7 +1,8 @@
 import { makeStyles } from '@material-ui/core'
 import React from 'react'
-import styles from 'src/pages/AddMachine/styles'
 // import OperatorInfo from 'src/pages/OperatorInfo'
+
+import styles from 'src/pages/AddMachine/styles'
 
 const useStyles = makeStyles(styles)
 
