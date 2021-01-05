@@ -2,8 +2,8 @@ const db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    'alter table cash_in_txs add column discount smallint',
-    'alter table cash_out_txs add column discount smallint'
+    'ALTER TABLE cash_in_txs ADD COLUMN discount SMALLINT',
+    'ALTER TABLE cash_out_txs ADD COLUMN discount SMALLINT'
   ]
 
   db.multi(sql, next)
