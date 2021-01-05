@@ -2,10 +2,10 @@ const db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    'alter table trades add column tx_in_id uuid unique',
-    'alter table trades add constraint fk_tx_in foreign key (tx_in_id) references cash_in_txs (id)',
-    'alter table trades add column tx_out_id uuid unique',
-    'alter table trades add constraint fk_tx_out foreign key (tx_in_id) references cash_out_txs (id)'
+    'ALTER TABLE trades ADD COLUMN tx_in_id UUID UNIQUE',
+    'ALTER TABLE trades ADD CONSTRAINT fk_tx_in FOREIGN KEY (tx_in_id) REFERENCES cash_in_txs (id)',
+    'ALTER TABLE trades ADD COLUMN tx_out_id UUID UNIQUE',
+    'ALTER TABLE trades ADD CONSTRAINT fk_tx_out FOREIGN KEY (tx_in_id) REFERENCES cash_out_txs (id)'
   ]
 
   db.multi(sql, next)

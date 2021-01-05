@@ -3,12 +3,12 @@ var db = require('./db')
 exports.up = function (next) {
   const sql =
     [
-      `create table coupons (
-        id uuid primary key,
-        code text not null,
-        discount smallint not null,
-        soft_deleted boolean default false )`,
-      `create unique index uq_code on coupons using btree(code) where not soft_deleted`
+      `CREATE TABLE coupons (
+        id UUID PRIMARY KEY,
+        code TEXT NOT NULL,
+        discount SMALLINT NOT NULL,
+        soft_deleted BOOLEAN DEFAULT false )`,
+      `CREATE UNIQUE INDEX uq_code ON coupons USING btree(code) WHERE NOT soft_deleted`
     ]
 
   db.multi(sql, next)
