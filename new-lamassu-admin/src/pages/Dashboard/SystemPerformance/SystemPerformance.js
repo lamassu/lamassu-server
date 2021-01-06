@@ -223,4 +223,30 @@ const SystemPerformance = () => {
   )
 }
 
+/**
+<Grid item xs={4}>
+              <div style={{ display: 'flex' }}>
+                <Label2>Direction</Label2>
+                <div style={{ marginLeft: 8, display: 'flex' }}>
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: 2,
+                      marginTop: 18,
+                      marginRight: 8,
+                      backgroundColor: 'pink'
+                    }}
+                  />
+                  <p>In</p>
+                </div>
+              </div>
+              <Grid container>
+                <Grid item xs>
+                  <PercentageChart data={getDirectionPercent()} />
+                </Grid>
+              </Grid>
+            </Grid>
+ */
+
 export default SystemPerformance
