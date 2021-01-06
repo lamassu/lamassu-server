@@ -3,12 +3,7 @@ import classnames from 'classnames'
 import React from 'react'
 import { ReactComponent as CashIn } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as CashOut } from 'src/styling/icons/direction/cash-out.svg'
-import {
-  zircon,
-  fontSize3,
-  fontSecondary,
-  fontColor
-} from 'src/styling/variables'
+import { fontSize3, fontSecondary, fontColor } from 'src/styling/variables'
 
 const styles = {
   wrapper: {
@@ -17,7 +12,6 @@ const styles = {
     marginTop: -8
   },
   percentageBox: {
-    backgroundColor: zircon,
     height: 130,
     borderRadius: 4,
     display: 'flex',
