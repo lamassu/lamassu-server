@@ -2,8 +2,10 @@ import { withStyles, makeStyles } from '@material-ui/core'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { P } from 'src/components/typography/index'
 import { ReactComponent as Wrench } from 'src/styling/icons/action/wrench/zodiac.svg'
+import { ReactComponent as LinkIcon } from 'src/styling/icons/button/link/zodiac.svg'
 import { ReactComponent as CashBoxEmpty } from 'src/styling/icons/cassettes/cashbox-empty.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/tomato.svg'
 
@@ -23,7 +25,14 @@ const icons = {
   )
 }
 
+const links = {
+  error: '/maintenance/machine-status',
+  fiatBalance: '/maintenance/cash-cassettes',
+  cryptoBalance: '/maintenance/funding'
+}
+
 const AlertsTable = ({ numToRender, alerts, machines }) => {
+  const history = useHistory()
   const classes = useStyles()
   return (
     <List dense className={classes.table}>
@@ -37,6 +46,10 @@ const AlertsTable = ({ numToRender, alerts, machines }) => {
               <P className={classes.listItemText}>{`${alert.message}${alert
                 .detail.deviceId &&
                 ' - ' + machines[alert.detail.deviceId]}`}</P>
+              <LinkIcon
+                className={classes.linkIcon}
+                onClick={() => history.push(links[alert.type] || '/dashboard')}
+              />
             </StyledListItem>
           )
         } else return null
