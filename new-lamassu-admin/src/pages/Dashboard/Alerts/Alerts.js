@@ -35,8 +35,8 @@ const useStyles = makeStyles(styles)
 
 const Alerts = ({ cardState, setRightSideState }) => {
   const classes = useStyles()
-  const [showAllItems, setShowAllItems] = useState(false)
   const { data } = useQuery(GET_ALERTS)
+  const [showAllItems, setShowAllItems] = useState(false)
 
   const alerts = R.path(['alerts'])(data) ?? []
   const machines = R.compose(

@@ -51,20 +51,8 @@ const styles = {
   statusHeader: {
     marginLeft: 2
   },
-  /*   table: {
-    maxHeight: 440,
-    '&::-webkit-scrollbar': {
-      width: 7
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: offColor,
-      borderRadius: 5
-    }
-  }, */
-  // temporary, when notifications are enabled delete this one and decomment above
   table: {
-    maxHeight: 465,
-    minHeight: 465,
+    maxHeight: 440,
     '&::-webkit-scrollbar': {
       width: 7
     },
