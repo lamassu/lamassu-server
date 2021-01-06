@@ -92,7 +92,10 @@ const Header = memo(({ tree }) => {
       <div className={classes.header}>
         <div className={classes.content}>
           <div
-            onClick={() => history.push('/dashboard')}
+            onClick={() => {
+              setActive(false)
+              history.push('/dashboard')
+            }}
             className={classnames(classes.logo, classes.logoLink)}>
             <Logo />
             <H4 className={classes.white}>Lamassu Admin</H4>

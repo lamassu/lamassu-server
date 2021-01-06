@@ -303,7 +303,21 @@ const Routes = () => {
       <Route exact path="/">
         <Redirect to={{ pathname: '/transactions' }} />
       </Route>
-      <Route path="/dashboard" component={Dashboard} />
+      {/* <Route path="/dashboard" /> */}
+      <Route path={'/dashboard'}>
+        <Transition
+          className={classes.wrapper}
+          {...transitionProps}
+          in={true}
+          mountOnEnter
+          unmountOnExit
+          children={
+            <div className={classes.wrapper}>
+              <Dashboard />
+            </div>
+          }
+        />
+      </Route>
       <Route path="/machines" component={Machines} />
       <Route path="/wizard" component={Wizard} />
       <Route path="/register" component={AuthRegister} />
