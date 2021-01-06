@@ -23,8 +23,7 @@ exports.up = function (next) {
         "message" TEXT NOT NULL,
         "created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "read" BOOLEAN NOT NULL DEFAULT 'false',
-        "valid" BOOLEAN NOT NULL DEFAULT 'true',
-        "modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+        "valid" BOOLEAN NOT NULL DEFAULT 'true'
     );
     CREATE INDEX ON notifications (valid);
     CREATE INDEX ON notifications (read);`

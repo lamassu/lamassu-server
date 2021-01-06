@@ -19,7 +19,6 @@ const GET_NOTIFICATIONS = gql`
   query getNotifications {
     notifications {
       id
-      deviceName
       type
       detail
       message
