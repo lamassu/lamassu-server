@@ -33,8 +33,7 @@ const GET_ALERTS = gql`
 
 const useStyles = makeStyles(styles)
 
-const Alerts = props => {
-  const { cardState, setRightSideState } = props
+const Alerts = ({ cardState, setRightSideState }) => {
   const classes = useStyles()
   const [showAllItems, setShowAllItems] = useState(false)
   const { data } = useQuery(GET_ALERTS)

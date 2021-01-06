@@ -85,6 +85,10 @@ const styles = {
   },
   listItemText: {
     margin: '8px 0 8px 0'
+  },
+  linkIcon: {
+    marginLeft: 'auto',
+    cursor: 'pointer'
   }
 }
 export default styles

@@ -303,7 +303,6 @@ const Routes = () => {
       <Route exact path="/">
         <Redirect to={{ pathname: '/transactions' }} />
       </Route>
-      {/* <Route path="/dashboard" /> */}
       <Route path={'/dashboard'}>
         <Transition
           className={classes.wrapper}
