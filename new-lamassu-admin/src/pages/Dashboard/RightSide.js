@@ -41,7 +41,6 @@ const RightSide = () => {
     // setAlertsSize(cardState.DEFAULT)
     setSystemStatusSize(cardState.DEFAULT)
   }
-
   return (
     <Grid item xs={6}>
       {/*         <CollapsibleCard

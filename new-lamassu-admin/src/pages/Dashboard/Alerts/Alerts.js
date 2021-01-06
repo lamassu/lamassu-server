@@ -33,10 +33,11 @@ const GET_ALERTS = gql`
 
 const useStyles = makeStyles(styles)
 
-const Alerts = ({ cardState, setRightSideState }) => {
+const Alerts = props => {
+  const { cardState, setRightSideState } = props
   const classes = useStyles()
-  const { data } = useQuery(GET_ALERTS)
   const [showAllItems, setShowAllItems] = useState(false)
+  const { data } = useQuery(GET_ALERTS)
 
   const alerts = R.path(['alerts'])(data) ?? []
   const machines = R.compose(

@@ -1,6 +1,8 @@
+import { useQuery } from '@apollo/react-hooks'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import gql from 'graphql-tag'
 import React from 'react'
 import TitleSection from 'src/components/layout/TitleSection'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -11,9 +13,28 @@ import Footer from './Footer'
 import LeftSide from './LeftSide'
 import RightSide from './RightSide'
 const useStyles = makeStyles(styles)
+const GET_ALERTS = gql`
+  query getAlerts {
+    alerts {
+      id
+      type
+      detail
+      message
+      created
+      read
+      valid
+    }
+    machines {
+      deviceId
+      name
+    }
+  }
+`
 
 const Dashboard = () => {
+  const { data } = useQuery(GET_ALERTS)
   const classes = useStyles()
+  console.log(data)
 
   return (
     <>
