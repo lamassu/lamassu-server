@@ -21,14 +21,13 @@ const GET_COUPONS = gql`
       id
       code
       discount
-      soft_deleted
     }
   }
 `
 
-const SOFT_DELETE_COUPON = gql`
-  mutation softDeleteCoupon($couponId: ID!) {
-    softDeleteCoupon(couponId: $couponId) {
+const DELETE_COUPON = gql`
+  mutation deleteCoupon($couponId: ID!) {
+    deleteCoupon(couponId: $couponId) {
       id
     }
   }
@@ -40,7 +39,6 @@ const CREATE_COUPON = gql`
       id
       code
       discount
-      soft_deleted
     }
   }
 `
@@ -53,7 +51,7 @@ const Coupons = () => {
 
   const { data: couponResponse, loading } = useQuery(GET_COUPONS)
 
-  const [softDeleteCoupon] = useMutation(SOFT_DELETE_COUPON, {
+  const [softDeleteCoupon] = useMutation(DELETE_COUPON, {
     refetchQueries: () => ['coupons']
   })
 
