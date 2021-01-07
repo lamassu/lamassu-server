@@ -47,11 +47,12 @@ const Coupons = () => {
   const classes = useStyles()
 
   const [showModal, setShowModal] = useState(false)
+  const [errorMsg, setErrorMsg] = useState(null)
   const toggleModal = () => setShowModal(!showModal)
 
   const { data: couponResponse, loading } = useQuery(GET_COUPONS)
 
-  const [softDeleteCoupon] = useMutation(DELETE_COUPON, {
+  const [deleteCoupon] = useMutation(DELETE_COUPON, {
     refetchQueries: () => ['coupons']
   })
 
@@ -59,8 +60,22 @@ const Coupons = () => {
     refetchQueries: () => ['coupons']
   })
 
-  const addCoupon = (code, discount) => {
-    createCoupon({ variables: { code: code, discount: discount } })
+  const addCoupon = async (code, discount) => {
+    setErrorMsg(null)
+    const res = await createCoupon({
+      variables: { code: code, discount: discount }
+    })
+
+    if (!res.errors) {
+      return setShowModal(false)
+    }
+
+    const duplicateCouponError = res.errors.some(e => {
+      return e.message.includes('duplicate')
+    })
+
+    if (duplicateCouponError)
+      setErrorMsg('There is already a coupon with that code!')
   }
 
   const elements = [
@@ -90,7 +105,7 @@ const Coupons = () => {
       view: t => (
         <IconButton
           onClick={() => {
-            softDeleteCoupon({ variables: { couponId: t.id } })
+            deleteCoupon({ variables: { couponId: t.id } })
           }}>
           <DeleteIcon />
         </IconButton>
@@ -127,7 +142,11 @@ const Coupons = () => {
       )}
       <CouponCodesModal
         showModal={showModal}
-        toggleModal={toggleModal}
+        onClose={() => {
+          setErrorMsg(null)
+          setShowModal(false)
+        }}
+        errorMsg={errorMsg}
         addCoupon={addCoupon}
       />
     </>

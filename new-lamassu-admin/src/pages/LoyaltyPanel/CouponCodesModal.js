@@ -1,121 +1,106 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { Form, Formik, Field } from 'formik'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
+import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { Tooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
-import { TextInput, NumberInput } from 'src/components/inputs/base'
-import { H1, H3, TL1, P } from 'src/components/typography'
+import { TextInput, NumberInput } from 'src/components/inputs/formik'
+import { H3, TL1, P } from 'src/components/typography'
 
 import styles from './CouponCodes.styles'
 
 const useStyles = makeStyles(styles)
 
-const CouponCodesModal = ({ showModal, toggleModal, addCoupon }) => {
+const initialValues = {
+  code: '',
+  discount: ''
+}
+
+const validationSchema = Yup.object().shape({
+  code: Yup.string()
+    .required()
+    .trim()
+    .max(25),
+  discount: Yup.number()
+    .required()
+    .min(0)
+    .max(100)
+})
+
+const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
   const classes = useStyles()
 
-  const [codeField, setCodeField] = useState('')
-  const [discountField, setDiscountField] = useState('')
-  const [invalidCode, setInvalidCode] = useState(false)
-  const [invalidDiscount, setInvalidDiscount] = useState(false)
-
-  const handleCodeChange = event => {
-    if (event.target.value === '') {
-      setInvalidCode(false)
-    }
-    setCodeField(event.target.value)
-  }
-
-  const handleDiscountChange = event => {
-    if (event.target.value === '') {
-      setInvalidDiscount(false)
-    }
-    setDiscountField(event.target.value)
-  }
-
-  const handleClose = () => {
-    setCodeField('')
-    setDiscountField('')
-    setInvalidCode(false)
-    setInvalidDiscount(false)
-    toggleModal()
-  }
-
-  const handleAddCoupon = () => {
-    if (codeField.trim() === '') {
-      setInvalidCode(true)
-      return
-    }
-    if (!validDiscount(discountField)) {
-      setInvalidDiscount(true)
-      return
-    }
-    if (codeField.trim() !== '' && validDiscount(discountField)) {
-      addCoupon(R.toUpper(codeField.trim()), parseInt(discountField))
-      handleClose()
-    }
-  }
-
-  const validDiscount = discount => {
-    const parsedDiscount = parseInt(discount)
-    return parsedDiscount >= 0 && parsedDiscount <= 100
+  const handleAddCoupon = (code, discount) => {
+    addCoupon(R.toUpper(code), parseInt(discount))
   }
 
   return (
     <>
       {showModal && (
         <Modal
+          title="Add coupon code discount"
           closeOnBackdropClick={true}
           width={600}
           height={500}
-          handleClose={handleClose}
+          handleClose={onClose}
           open={true}>
-          <H1 className={classes.modalTitle}>Add coupon code discount</H1>
-          <H3 className={classes.modalLabel1}>Coupon code name</H3>
-          <TextInput
-            error={invalidCode}
-            name="coupon-code"
-            autoFocus
-            id="coupon-code"
-            type="text"
-            size="lg"
-            width={338}
-            onChange={handleCodeChange}
-            value={codeField}
-            inputProps={{ style: { textTransform: 'uppercase' } }}
-          />
-          <div className={classes.modalLabel2Wrapper}>
-            <H3 className={classes.modalLabel2}>Define discount rate</H3>
-            <Tooltip width={304}>
-              <P>
-                The discount rate inserted will be applied to the commissions of
-                all transactions performed with this respective coupon code.
-              </P>
-              <P>
-                (It should be a number between 0 (zero) and 100 (one hundred)).
-              </P>
-            </Tooltip>
-          </div>
-          <div className={classes.discountInput}>
-            <NumberInput
-              error={invalidDiscount}
-              name="coupon-discount"
-              id="coupon-discount"
-              size="lg"
-              width={50}
-              onChange={handleDiscountChange}
-              value={discountField}
-              decimalScale={0}
-              className={classes.discountInputField}
-            />
-            <TL1 inline className={classes.inputLabel}>
-              %
-            </TL1>
-          </div>
-          <div className={classes.footer}>
-            <Button onClick={handleAddCoupon}>Add coupon</Button>
-          </div>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={({ code, discount }, { resetForm }) => {
+              handleAddCoupon(code, discount)
+              resetForm()
+            }}>
+            <Form id="coupon-form" className={classes.form}>
+              <H3 className={classes.modalLabel1}>Coupon code name</H3>
+              <Field
+                name="code"
+                autoFocus
+                size="lg"
+                autoComplete="off"
+                width={338}
+                inputProps={{ style: { textTransform: 'uppercase' } }}
+                component={TextInput}
+              />
+              <div className={classes.modalLabel2Wrapper}>
+                <H3 className={classes.modalLabel2}>Define discount rate</H3>
+                <Tooltip width={304}>
+                  <P>
+                    The discount rate inserted will be applied to the
+                    commissions of all transactions performed with this
+                    respective coupon code.
+                  </P>
+                  <P>
+                    (It should be a number between 0 (zero) and 100 (one
+                    hundred)).
+                  </P>
+                </Tooltip>
+              </div>
+              <div className={classes.discountInput}>
+                <Field
+                  name="discount"
+                  size="lg"
+                  autoComplete="off"
+                  width={50}
+                  decimalScale={0}
+                  className={classes.discountInputField}
+                  component={NumberInput}
+                />
+                <TL1 inline className={classes.inputLabel}>
+                  %
+                </TL1>
+              </div>
+              <span className={classes.error}>{errorMsg}</span>
+              <div className={classes.footer}>
+                <Button type="submit" form="coupon-form">
+                  Add coupon
+                </Button>
+              </div>
+            </Form>
+          </Formik>
         </Modal>
       )}
     </>
