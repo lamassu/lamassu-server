@@ -8,7 +8,7 @@ exports.up = function (next) {
         code TEXT NOT NULL,
         discount SMALLINT NOT NULL,
         soft_deleted BOOLEAN DEFAULT false )`,
-      `CREATE UNIQUE INDEX uq_code ON coupons USING btree(code) WHERE NOT soft_deleted`
+      `CREATE UNIQUE INDEX uq_code ON coupons (code) WHERE NOT soft_deleted`
     ]
 
   db.multi(sql, next)
