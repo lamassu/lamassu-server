@@ -1,13 +1,13 @@
-import { spacer, fontPrimary, primaryColor } from 'src/styling/variables'
+import {
+  spacer,
+  fontPrimary,
+  primaryColor,
+  errorColor
+} from 'src/styling/variables'
 
 const styles = {
   footer: {
     margin: [['auto', 0, spacer * 3, 'auto']]
-  },
-  modalTitle: {
-    marginTop: -5,
-    color: primaryColor,
-    fontFamily: fontPrimary
   },
   modalLabel1: {
     marginTop: 20
@@ -20,7 +20,6 @@ const styles = {
   },
   discountInput: {
     display: 'flex',
-    height: '100%',
     flexDirection: 'row',
     alignItems: 'flex-start'
   },
@@ -33,6 +32,14 @@ const styles = {
   },
   tableWidth: {
     width: 620
+  },
+  error: {
+    color: errorColor
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
   }
 }
 
