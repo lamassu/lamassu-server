@@ -69,18 +69,16 @@ const Coupons = () => {
       variables: { code: code, discount: discount }
     })
       .then(res => {
-        if (!res.errors) {
-          return setShowModal(false)
-        } else {
-          const duplicateCouponError = R.any(it =>
-            R.includes('duplicate', it?.message)
-          )(res.errors)
+        if (!res.errors) return setShowModal(false)
 
-          const msg = duplicateCouponError
-            ? DUPLICATE_ERROR_MSG
-            : DEFAULT_ERROR_MSG
-          setErrorMsg(msg)
-        }
+        const duplicateCouponError = R.any(it =>
+          R.includes('duplicate', it?.message)
+        )(res.errors)
+
+        const msg = duplicateCouponError
+          ? DUPLICATE_ERROR_MSG
+          : DEFAULT_ERROR_MSG
+        setErrorMsg(msg)
       })
       .catch(err => {
         setErrorMsg(DEFAULT_ERROR_MSG)
