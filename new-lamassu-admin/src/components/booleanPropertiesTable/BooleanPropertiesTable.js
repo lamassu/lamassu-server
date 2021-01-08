@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { useFormikContext, Form, Formik, Field as FormikField } from 'formik'
-import _ from 'lodash/fp'
+import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 import * as Yup from 'yup'
 
@@ -26,10 +26,11 @@ const BooleanCell = ({ name }) => {
 
 const BooleanPropertiesTable = memo(
   ({ title, disabled, data, elements, save, forcedEditing = false }) => {
-    const initialValues = _.fromPairs(
-      elements.map(it => [it.name, data[it.name] || null])
+    const initialValues = R.fromPairs(
+      elements.map(it => [it.name, data[it.name] ?? null])
     )
-    const schemaValidation = _.fromPairs(
+
+    const schemaValidation = R.fromPairs(
       elements.map(it => [it.name, Yup.boolean().required()])
     )
 
@@ -38,8 +39,7 @@ const BooleanPropertiesTable = memo(
     const classes = useStyles()
 
     const innerSave = async value => {
-      const filteredValues = _.omitBy(_.isNil, value)
-      save(filteredValues)
+      save(R.filter(R.complement(R.isNil), value))
       setEditing(false)
     }
 
