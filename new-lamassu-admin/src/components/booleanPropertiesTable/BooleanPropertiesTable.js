@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { useFormikContext, Form, Formik, Field as FormikField } from 'formik'
-import _ from 'lodash'
+import _ from 'lodash/fp'
 import React, { useState, memo } from 'react'
 import * as Yup from 'yup'
 
@@ -26,7 +26,9 @@ const BooleanCell = ({ name }) => {
 
 const BooleanPropertiesTable = memo(
   ({ title, disabled, data, elements, save, forcedEditing = false }) => {
-    const initialValues = _.fromPairs(elements.map(it => [it.name, '']))
+    const initialValues = _.fromPairs(
+      elements.map(it => [it.name, data[it.name] || null])
+    )
     const schemaValidation = _.fromPairs(
       elements.map(it => [it.name, Yup.boolean().required()])
     )
@@ -36,74 +38,83 @@ const BooleanPropertiesTable = memo(
     const classes = useStyles()
 
     const innerSave = async value => {
-      save(value)
+      const filteredValues = _.omitBy(_.isNil, value)
+      save(filteredValues)
       setEditing(false)
     }
-
-    const innerCancel = () => setEditing(false)
 
     const radioButtonOptions = [
       { display: 'Yes', code: 'true' },
       { display: 'No', code: 'false' }
     ]
-
     return (
       <div className={classes.booleanPropertiesTableWrapper}>
         <Formik
           enableReinitialize
           onSubmit={innerSave}
-          initialValues={data || initialValues}
+          initialValues={initialValues}
           schemaValidation={schemaValidation}>
-          <Form>
-            <div className={classes.rowWrapper}>
-              <H4>{title}</H4>
-              {editing ? (
-                <div className={classes.rightAligned}>
-                  <Link type="submit" color="primary">
-                    Save
-                  </Link>
-                  <Link
-                    className={classes.rightLink}
-                    onClick={innerCancel}
-                    color="secondary">
-                    Cancel
-                  </Link>
+          {({ resetForm }) => {
+            return (
+              <Form>
+                <div className={classes.rowWrapper}>
+                  <H4>{title}</H4>
+                  {editing ? (
+                    <div className={classes.rightAligned}>
+                      <Link type="submit" color="primary">
+                        Save
+                      </Link>
+                      <Link
+                        type="reset"
+                        className={classes.rightLink}
+                        onClick={() => {
+                          resetForm()
+                          setEditing(false)
+                        }}
+                        color="secondary">
+                        Cancel
+                      </Link>
+                    </div>
+                  ) : (
+                    <IconButton
+                      className={classes.transparentButton}
+                      onClick={() => setEditing(true)}>
+                      {disabled ? <EditIconDisabled /> : <EditIcon />}
+                    </IconButton>
+                  )}
                 </div>
-              ) : (
-                <IconButton
-                  className={classes.transparentButton}
-                  onClick={() => setEditing(true)}>
-                  {disabled ? <EditIconDisabled /> : <EditIcon />}
-                </IconButton>
-              )}
-            </div>
-            <PromptWhenDirty />
-            <Table className={classes.fillColumn}>
-              <TableBody className={classes.fillColumn}>
-                {elements.map((it, idx) => (
-                  <TableRow key={idx} size="sm" className={classes.tableRow}>
-                    <TableCell className={classes.leftTableCell}>
-                      {it.display}
-                    </TableCell>
-                    <TableCell className={classes.rightTableCell}>
-                      {editing && (
-                        <FormikField
-                          component={RadioGroup}
-                          name={it.name}
-                          options={radioButtonOptions}
-                          className={classnames(
-                            classes.radioButtons,
-                            classes.rightTableCell
+                <PromptWhenDirty />
+                <Table className={classes.fillColumn}>
+                  <TableBody className={classes.fillColumn}>
+                    {elements.map((it, idx) => (
+                      <TableRow
+                        key={idx}
+                        size="sm"
+                        className={classes.tableRow}>
+                        <TableCell className={classes.leftTableCell}>
+                          {it.display}
+                        </TableCell>
+                        <TableCell className={classes.rightTableCell}>
+                          {editing && (
+                            <FormikField
+                              component={RadioGroup}
+                              name={it.name}
+                              options={radioButtonOptions}
+                              className={classnames(
+                                classes.radioButtons,
+                                classes.rightTableCell
+                              )}
+                            />
                           )}
-                        />
-                      )}
-                      {!editing && <BooleanCell name={it.name} />}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Form>
+                          {!editing && <BooleanCell name={it.name} />}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Form>
+            )
+          }}
         </Formik>
       </div>
     )
