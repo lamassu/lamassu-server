@@ -1,5 +1,5 @@
 import { useFormikContext } from 'formik'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Prompt } from 'react-router-dom'
 
 const PROMPT_DEFAULT_MESSAGE =
@@ -8,9 +8,21 @@ const PROMPT_DEFAULT_MESSAGE =
 const PromptWhenDirty = ({ message = PROMPT_DEFAULT_MESSAGE }) => {
   const formik = useFormikContext()
 
-  return (
-    <Prompt when={formik.dirty && formik.submitCount === 0} message={message} />
-  )
+  const hasChanges = formik.dirty && formik.submitCount === 0
+
+  useEffect(() => {
+    if (hasChanges) {
+      window.onbeforeunload = confirmExit
+    } else {
+      window.onbeforeunload = undefined
+    }
+  }, [hasChanges])
+
+  const confirmExit = () => {
+    return PROMPT_DEFAULT_MESSAGE
+  }
+
+  return <Prompt when={hasChanges} message={message} />
 }
 
 export default PromptWhenDirty
