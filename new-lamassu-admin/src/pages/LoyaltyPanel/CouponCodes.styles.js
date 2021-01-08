@@ -7,7 +7,9 @@ import {
 
 const styles = {
   footer: {
-    margin: [['auto', 0, spacer * 3, 'auto']]
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 3, 0]]
   },
   modalLabel1: {
     marginTop: 20
@@ -40,6 +42,9 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     height: '100%'
+  },
+  submit: {
+    margin: [['auto', 0, 0, 'auto']]
   }
 }
 

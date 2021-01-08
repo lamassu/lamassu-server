@@ -4,6 +4,7 @@ import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Tooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
@@ -50,9 +51,8 @@ const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={({ code, discount }, { resetForm }) => {
+            onSubmit={({ code, discount }) => {
               handleAddCoupon(code, discount)
-              resetForm()
             }}>
             <Form id="coupon-form" className={classes.form}>
               <H3 className={classes.modalLabel1}>Coupon code name</H3>
@@ -93,9 +93,12 @@ const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
                   %
                 </TL1>
               </div>
-              <span className={classes.error}>{errorMsg}</span>
               <div className={classes.footer}>
-                <Button type="submit" form="coupon-form">
+                {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+                <Button
+                  type="submit"
+                  form="coupon-form"
+                  className={classes.submit}>
                   Add coupon
                 </Button>
               </div>

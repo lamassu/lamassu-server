@@ -60,22 +60,27 @@ const Coupons = () => {
     refetchQueries: () => ['coupons']
   })
 
-  const addCoupon = async (code, discount) => {
+  const addCoupon = (code, discount) => {
     setErrorMsg(null)
-    const res = await createCoupon({
+    createCoupon({
       variables: { code: code, discount: discount }
     })
+      .then(res => {
+        if (!res.errors) {
+          return setShowModal(false)
+        } else {
+          const duplicateCouponError = res.errors.some(e => {
+            return e.message.includes('duplicate')
+          })
 
-    if (!res.errors) {
-      return setShowModal(false)
-    }
-
-    const duplicateCouponError = res.errors.some(e => {
-      return e.message.includes('duplicate')
-    })
-
-    if (duplicateCouponError)
-      setErrorMsg('There is already a coupon with that code!')
+          if (duplicateCouponError)
+            setErrorMsg('There is already a coupon with that code!')
+        }
+      })
+      .catch(err => {
+        setErrorMsg('Failed to save')
+        console.log(err)
+      })
   }
 
   const elements = [
