@@ -62,6 +62,10 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center'
   },
+  textWrapper: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
   qrTextIcon: {
     marginRight: 16
   },

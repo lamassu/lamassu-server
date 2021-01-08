@@ -6,7 +6,7 @@ import { Form, Formik, FastField } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import * as R from 'ramda'
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect, useRef } from 'react'
 import * as Yup from 'yup'
 
 import Title from 'src/components/Title'
@@ -42,10 +42,26 @@ const useStyles = makeStyles(styles)
 const getSize = R.compose(R.length, R.pathOr([], ['machines']))
 
 const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
+  const timeout = useRef(null)
+  const CLOSE_SCREEN_TIMEOUT = 2000
   const { data } = useQuery(GET_MACHINES, { pollInterval: 10000 })
 
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current)
+      }
+    }
+  }, [])
+
   const addedMachine = data?.machines?.find(m => m.name === name)
-  if (getSize(data) > count && addedMachine) onPaired(addedMachine)
+  const hasNewMachine = getSize(data) > count && addedMachine
+  if (hasNewMachine) {
+    timeout.current = setTimeout(
+      () => onPaired(addedMachine),
+      CLOSE_SCREEN_TIMEOUT
+    )
+  }
 
   return (
     <>
@@ -61,12 +77,19 @@ const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
             <div className={classes.qrTextIcon}>
               <WarningIcon />
             </div>
-            <P className={classes.qrText}>
-              To pair the machine you need scan the QR code with your machine.
-              To do this either snap a picture of this QR code or download it
-              through the button above and scan it with the scanning bay on your
-              machine.
-            </P>
+            <div className={classes.textWrapper}>
+              <P className={classes.qrText}>
+                To pair the machine you need scan the QR code with your machine.
+                To do this either snap a picture of this QR code or download it
+                through the button above and scan it with the scanning bay on
+                your machine.
+              </P>
+              {hasNewMachine && (
+                <P className={classes.qrText}>
+                  ✔ Machine has been successfully paired!
+                </P>
+              )}
+            </div>
           </div>
         </div>
       </div>
