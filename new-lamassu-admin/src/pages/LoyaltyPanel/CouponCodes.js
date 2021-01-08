@@ -15,6 +15,9 @@ import CouponCodesModal from './CouponCodesModal'
 
 const useStyles = makeStyles(styles)
 
+const DUPLICATE_ERROR_MSG = 'There is already a coupon with that code!'
+const DEFAULT_ERROR_MSG = 'Failed to save'
+
 const GET_COUPONS = gql`
   query coupons {
     coupons {
@@ -69,16 +72,18 @@ const Coupons = () => {
         if (!res.errors) {
           return setShowModal(false)
         } else {
-          const duplicateCouponError = res.errors.some(e => {
-            return e.message.includes('duplicate')
-          })
+          const duplicateCouponError = R.any(it =>
+            R.includes('duplicate', it?.message)
+          )(res.errors)
 
-          if (duplicateCouponError)
-            setErrorMsg('There is already a coupon with that code!')
+          const msg = duplicateCouponError
+            ? DUPLICATE_ERROR_MSG
+            : DEFAULT_ERROR_MSG
+          setErrorMsg(msg)
         }
       })
       .catch(err => {
-        setErrorMsg('Failed to save')
+        setErrorMsg(DEFAULT_ERROR_MSG)
         console.log(err)
       })
   }
