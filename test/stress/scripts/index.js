@@ -13,7 +13,7 @@ async function execCommand (cmd) {
       } else {
         console.log(stdout)
         console.error(stderr)
-        // resolve({ stdout, stderr })
+        resolve({ stdout, stderr })
       }
     })
   })
