@@ -9,4 +9,4 @@ process.on('unhandledRejection', err => {
 })
 
 app.run()
-.catch(console.log)
+  .catch(console.log)
