@@ -1,4 +1,4 @@
-const exec = require('child_process')
+const exec = require('child_process').exec
 
 /**
  * Execute simple shell command (async wrapper).
@@ -7,14 +7,24 @@ const exec = require('child_process')
  */
 async function execCommand (cmd) {
   return new Promise(function (resolve, reject) {
-    exec.exec(cmd, (err, stdout, stderr) => {
+    const proc = exec(cmd, (err, stdout, stderr) => {
       if (err) {
         reject(err)
       } else {
-        console.log(stdout)
-        console.error(stderr)
         resolve({ stdout, stderr })
       }
+    })
+
+    proc.stdout.on('data', data => {
+      console.log(data)
+    })
+
+    proc.stderr.on('data', data => {
+      console.log(data)
+    })
+
+    proc.on('exit', code => {
+      console.log('child process exited with code ' + code.toString())
     })
   })
 }
