@@ -11,17 +11,23 @@ async function createMachines (numberOfMachines) {
   )
 }
 
+function startServer () {
+  const forked = fork('test-server.js')
+  forked.send('start')
+}
+
 async function run (args = minimist(process.argv.slice(2))) {
   const NUMBER_OF_MACHINES = args._[0]
   const HAS_VARIANCE = args.v || false
 
+  startServer()
   await createMachines(NUMBER_OF_MACHINES)
 
   for (let i = 1; i <= NUMBER_OF_MACHINES; i++) {
     const forked = fork('child.js')
     forked.send({ machineIndex: i, hasVariance: HAS_VARIANCE })
     forked.on('message', msg => {
-      console.log(`Message from child ${i}: ${msg}`)
+      console.log(`Machine ${i} || ${msg}`)
     })
   }
 }
