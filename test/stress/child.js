@@ -12,19 +12,19 @@ const variables = require('./utils/variables')
 var certificate = {}
 var connectionInfo = {}
 
-async function getCert (machineIndex) {
+const getCert = machineIndex => {
   const key = fs.readFile(path.resolve(__dirname, 'machines', `${machineIndex}`, 'client.key'))
   const cert = fs.readFile(path.resolve(__dirname, 'machines', `${machineIndex}`, 'client.pem'))
 
-  return Promise.all([key, cert]).then(values => {
-    return { key: values[0], cert: values[1] }
+  return Promise.all([key, cert]).then(([key, cert]) => {
+    return { key, cert }
   }).catch(err => {
-    console.err('The following error when reading the certificate: ', err)
+    console.error('The following error when reading the certificate: ', err)
     return null
   })
 }
 
-async function getConnectionInfo (machineIndex) {
+const getConnectionInfo = machineIndex => {
   return fs.readFile(path.resolve(__dirname, 'machines', `${machineIndex}`, 'connection_info.json'))
 }
 
@@ -32,7 +32,7 @@ let counter = 0
 const requestTimes = []
 let latestResponseTime = 0
 
-function request (machineIndex, pid) {
+const request = (machineIndex, pid) => {
   performance.mark('A')
   https.get({
     hostname: 'localhost',
@@ -73,7 +73,7 @@ process.on('message', async (msg) => {
     certificate = values[0]
     connectionInfo = JSON.parse(values[1])
   }).catch(err => {
-    console.err('The following error occurred during certificate parsing: ', err)
+    console.error('The following error occurred during certificate parsing: ', err)
   })
 
   if (msg.hasVariance) await new Promise(resolve => setTimeout(resolve, utils.randomIntFromInterval(1, variables.POLLING_INTERVAL)))

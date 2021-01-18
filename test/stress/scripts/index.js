@@ -5,7 +5,7 @@ const exec = require('child_process').exec
  * @param {String} cmd
  * @return {Object} { stdout: String, stderr: String }
  */
-async function execCommand (cmd) {
+function execCommand (cmd) {
   return new Promise(function (resolve, reject) {
     const proc = exec(cmd, (err, stdout, stderr) => {
       if (err) {
