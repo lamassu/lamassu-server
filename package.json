@@ -115,7 +115,8 @@
     "server": "nodemon bin/lamassu-server --mockSms",
     "admin-server": "nodemon bin/lamassu-admin-server --dev",
     "graphql-server": "nodemon bin/new-graphql-dev-insecure",
-    "watch": "concurrently \"npm:server\" \"npm:admin-server\" \"npm:graphql-server\""
+    "watch": "concurrently \"npm:server\" \"npm:admin-server\" \"npm:graphql-server\"",
+    "stress-test": "cd ./test/stress/ && node index.js 50 -v"
   },
   "nodemonConfig": {
     "ignore": [
