@@ -2,10 +2,6 @@ export default {
   wrapper: {
     display: 'flex'
   },
-  /* formWrapper: {
-    display: 'flex',
-    marginBottom: 36
-  }, */
   form: {
     marginBottom: 36
   },
@@ -16,7 +12,6 @@ export default {
     marginTop: 0
   },
   row: {
-    // width: 136,
     width: 183,
     display: 'grid',
     gridTemplateColumns: 'repeat(2,1fr)',
@@ -26,11 +21,5 @@ export default {
   },
   col2: {
     width: 136
-  } /* ,
-  vertSeparator: {
-    width: 1,
-    borderRight: [[1, 'solid', 'black']],
-    marginRight: 50,
-    marginLeft: 32
-  } */
+  }
 }
