@@ -110,11 +110,12 @@ const DataTable = ({
   const classes = useStyles({ width })
 
   const expandRow = id => {
+    cache.clear(id)
     setExpanded(id === expanded ? null : id)
   }
 
   const cache = new CellMeasurerCache({
-    defaultHeight: 62,
+    defaultHeight: 58,
     fixedWidth: true
   })
 
@@ -126,20 +127,22 @@ const DataTable = ({
         key={key}
         parent={parent}
         rowIndex={index}>
-        <div style={style}>
-          <Row
-            width={width}
-            id={index}
-            expWidth={expWidth}
-            elements={elements}
-            data={data[index]}
-            Details={Details}
-            expanded={index === expanded}
-            expandRow={expandRow}
-            expandable={expandable}
-            onClick={onClick}
-          />
-        </div>
+        {({ registerChild }) => (
+          <div ref={registerChild} style={style}>
+            <Row
+              width={width}
+              id={index}
+              expWidth={expWidth}
+              elements={elements}
+              data={data[index]}
+              Details={Details}
+              expanded={index === expanded}
+              expandRow={expandRow}
+              expandable={expandable}
+              onClick={onClick}
+            />
+          </div>
+        )}
       </CellMeasurer>
     )
   }
@@ -173,7 +176,7 @@ const DataTable = ({
                 rowCount={data.length}
                 rowHeight={cache.rowHeight}
                 rowRenderer={rowRenderer}
-                overscanRowCount={50}
+                overscanRowCount={5}
                 deferredMeasurementCache={cache}
               />
             )}
