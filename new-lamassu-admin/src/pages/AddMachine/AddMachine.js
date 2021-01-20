@@ -15,6 +15,7 @@ import { TextInput } from 'src/components/inputs/formik'
 import Sidebar from 'src/components/layout/Sidebar'
 import { Info2, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { ReactComponent as CompleteStageIconSpring } from 'src/styling/icons/stage/spring/complete.svg'
 import { ReactComponent as CompleteStageIconZodiac } from 'src/styling/icons/stage/zodiac/complete.svg'
 import { ReactComponent as CurrentStageIconZodiac } from 'src/styling/icons/stage/zodiac/current.svg'
 import { ReactComponent as EmptyStageIconZodiac } from 'src/styling/icons/stage/zodiac/empty.svg'
@@ -73,7 +74,7 @@ const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
           <QRCode size={240} fgColor={primaryColor} value={qrCode} />
         </div>
         <div className={classes.qrTextWrapper}>
-          <div className={classes.qrCodeWrapper}>
+          <div className={classes.qrTextInfoWrapper}>
             <div className={classes.qrTextIcon}>
               <WarningIcon />
             </div>
@@ -84,13 +85,18 @@ const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
                 through the button above and scan it with the scanning bay on
                 your machine.
               </P>
-              {hasNewMachine && (
-                <P className={classes.qrText}>
-                  ✔ Machine has been successfully paired!
-                </P>
-              )}
             </div>
           </div>
+          {hasNewMachine && (
+            <div className={classes.successMessageWrapper}>
+              <div className={classes.successMessageIcon}>
+                <CompleteStageIconSpring />
+              </div>
+              <Info2 className={classes.successMessage}>
+                Machine has been successfully paired!
+              </Info2>
+            </div>
+          )}
         </div>
       </div>
     </>
