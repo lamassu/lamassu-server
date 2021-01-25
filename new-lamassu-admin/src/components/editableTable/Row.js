@@ -2,8 +2,9 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
 import * as R from 'ramda'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 
+import { DeleteDialog } from 'src/components/DeleteDialog'
 import { Link, IconButton } from 'src/components/buttons'
 import { Td, Tr } from 'src/components/fake-table/Table'
 import { Switch } from 'src/components/inputs'
@@ -44,6 +45,13 @@ const ActionCol = ({ disabled, editing }) => {
     resetForm()
   }
 
+  const [deleteDialog, setDeleteDialog] = useState(false)
+
+  const onConfirmed = () => {
+    onDelete(values.id)
+    setDeleteDialog(false)
+  }
+
   return (
     <>
       {editing && (
@@ -74,9 +82,20 @@ const ActionCol = ({ disabled, editing }) => {
       )}
       {!editing && enableDelete && (
         <Td textAlign="center" width={deleteWidth}>
-          <IconButton disabled={disabled} onClick={() => onDelete(values.id)}>
+          <IconButton
+            disabled={disabled}
+            onClick={() => {
+              setDeleteDialog(true)
+            }}>
             {disabled ? <DisabledDeleteIcon /> : <DeleteIcon />}
           </IconButton>
+          {
+            <DeleteDialog
+              open={deleteDialog}
+              setDeleteDialog={setDeleteDialog}
+              onConfirmed={onConfirmed}
+            />
+          }
         </Td>
       )}
       {!editing && enableToggle && (
