@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import { DeleteDialog } from 'src/components/DeleteDialog'
 import { Link, Button, IconButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
@@ -48,6 +49,14 @@ const CREATE_CODE = gql`
 
 const PromoCodes = () => {
   const classes = useStyles()
+
+  const [deleteDialog, setDeleteDialog] = useState(false)
+  const [toBeDeleted, setToBeDeleted] = useState()
+
+  const onConfirmed = () => {
+    deleteCode(toBeDeleted)
+    setDeleteDialog(false)
+  }
 
   const [showModal, setShowModal] = useState(false)
   const [errorMsg, setErrorMsg] = useState(null)
@@ -111,7 +120,8 @@ const PromoCodes = () => {
       view: t => (
         <IconButton
           onClick={() => {
-            deleteCode({ variables: { codeId: t.id } })
+            setDeleteDialog(true)
+            setToBeDeleted({ variables: { codeId: t.id } })
           }}>
           <DeleteIcon />
         </IconButton>
@@ -135,10 +145,17 @@ const PromoCodes = () => {
         </Box>
       )}
       {!loading && !R.isEmpty(codeResponse.promoCodes) && (
-        <DataTable
-          elements={elements}
-          data={R.path(['promoCodes'])(codeResponse)}
-        />
+        <>
+          <DataTable
+            elements={elements}
+            data={R.path(['promoCodes'])(codeResponse)}
+          />
+          <DeleteDialog
+            open={deleteDialog}
+            setDeleteDialog={setDeleteDialog}
+            onConfirmed={onConfirmed}
+          />
+        </>
       )}
       {!loading && R.isEmpty(codeResponse.promoCodes) && (
         <Box display="flex" alignItems="left" flexDirection="column">
