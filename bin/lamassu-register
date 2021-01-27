@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const login = require('../lib/admin/login')
+const authentication = require('../lib/new-admin/graphql/modules/authentication')
 const options = require('../lib/options')
 
 const name = process.argv[2]
+const role = process.argv[3]
 const domain = options.hostname
 
 if (!domain) {
@@ -11,16 +12,26 @@ if (!domain) {
   process.exit(1)
 }
 
-if (!name) {
-  console.log('Usage: lamassu-register <username>')
+if (!name || !role) {
+  console.log('Usage: lamassu-register <username> <role>')
   process.exit(2)
 }
 
-login.generateOTP(name).then(otp => {
+if (role !== 'user' && role !== 'superuser') {
+  console.log('Usage: <role> has two possible values: user | superuser')
+  process.exit(2)
+}
+
+authentication.createRegisterToken(name, role).then(token => {
+  if (!token) {
+    console.log(`A user named ${name} already exists!`)
+    process.exit(2)
+  }
+
   if (domain === 'localhost') {
-    console.log(`https://${domain}:3001/register?otp=${otp}`)
+    console.log(`https://${domain}:3001/register?t=${token.token}`)
   } else {
-    console.log(`https://${domain}/register?otp=${otp}`)
+    console.log(`https://${domain}/register?t=${token.token}`)
   }
 
   process.exit(0)
