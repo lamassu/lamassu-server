@@ -97,7 +97,7 @@ const Logs = () => {
             <div className={classes.buttonsWrapper}>
               <LogsDowloaderPopover
                 title="Download logs"
-                name="machine-logs"
+                name={selected.name}
                 query={GET_MACHINE_LOGS_CSV}
                 args={{ deviceId }}
                 getLogs={logs => R.path(['machineLogsCsv'])(logs)}
