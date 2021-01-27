@@ -46,11 +46,17 @@ EOL
 
   # Update db config
   sudo -u postgres psql -t -d lamassu_stress -c "select data from user_config where type='config' order by id desc limit 1" > config.json
+  if [[ -s config.json ]]
+  then
   NEW_CONFIG=$(node ./utils/save-config.js $NUMBER $DEVICE_ID)
   sudo -u postgres psql "lamassu_stress" << EOF
     insert into user_config(type, data, created, valid) 
     values('config', '$NEW_CONFIG', now(), 't')
 EOF
+
+  else
+    echo "file is empty"
+  fi
 
   # Add device on db
   sudo -u postgres psql "lamassu_stress" << EOF
