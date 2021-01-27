@@ -129,10 +129,6 @@ const App = () => {
     process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
   useEffect(() => {
-    getUserData()
-  }, [])
-
-  const getUserData = () => {
     axios({
       method: 'GET',
       url: `${url}/user-data`,
@@ -146,7 +142,7 @@ const App = () => {
         setLoading(false)
         if (err.status === 403) setUserData(null)
       })
-  }
+  }, [url])
 
   return (
     <AppContext.Provider

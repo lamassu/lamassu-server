@@ -10,19 +10,17 @@ const Login = () => {
   const classes = useStyles()
 
   return (
-    <>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justify="center"
-        className={classes.welcomeBackground}>
-        <Grid>
-          <LoginCard />
-        </Grid>
+    <Grid
+      container
+      spacing={0}
+      direction="column"
+      alignItems="center"
+      justify="center"
+      className={classes.welcomeBackground}>
+      <Grid>
+        <LoginCard />
       </Grid>
-    </>
+    </Grid>
   )
 }
 

@@ -2,87 +2,87 @@ var db = require('./db')
 
 exports.up = function (next) {
   var sql = [
-    `create type role as ENUM('user', 'superuser')`,
-    `create table users (
-      id uuid PRIMARY KEY,
-      username varchar(50) UNIQUE,
-      password varchar(100),
-      role role default 'user',
-      enabled boolean default true,
-      twofa_code varchar(100),
-      created timestamptz not null default now(),
-      last_accessed timestamptz not null default now(),
-      last_accessed_from text,
-      last_accessed_address inet )`,
+    `CREATE TYPE role AS ENUM('user', 'superuser')`,
+    `CREATE TABLE users (
+      id UUID PRIMARY KEY,
+      username VARCHAR(50) UNIQUE,
+      password VARCHAR(100),
+      role role DEFAULT 'user',
+      enabled BOOLEAN DEFAULT true,
+      twofa_code VARCHAR(100),
+      created TIMESTAMPTZ NOT NULL DEFAULT now(),
+      last_accessed TIMESTAMPTZ NOT NULL DEFAULT now(),
+      last_accessed_from TEXT,
+      last_accessed_address INET )`,
     `CREATE TABLE "user_sessions" (
-      "sid" varchar NOT NULL COLLATE "default",
-      "sess" json NOT NULL,
-      "expire" timestamp(6) NOT NULL )
+      "sid" VARCHAR NOT NULL COLLATE "default",
+      "sess" JSON NOT NULL,
+      "expire" TIMESTAMP(6) NOT NULL )
       WITH (OIDS=FALSE)`,
     `ALTER TABLE "user_sessions" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE`,
     `CREATE INDEX "IDX_session_expire" ON "user_sessions" ("expire")`,
-    `create table reset_password (
-      token text not null PRIMARY KEY,
-      user_id uuid references users(id) on delete cascade unique,
-      expire timestamptz not null default now() + interval '30 minutes'
+    `CREATE TABLE reset_password (
+      token TEXT NOT NULL PRIMARY KEY,
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
     )`,
-    `create index "idx_reset_pw_expire" on "reset_password" ("expire")`,
-    `create table reset_twofa (
-      token text not null PRIMARY KEY,
-      user_id uuid references users(id) on delete cascade unique,
-      expire timestamptz not null default now() + interval '30 minutes'
+    `CREATE INDEX "idx_reset_pw_expire" ON "reset_password" ("expire")`,
+    `CREATE TABLE reset_twofa (
+      token TEXT NOT NULL PRIMARY KEY,
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
     )`,
-    `create index "idx_reset_twofa_expire" on "reset_twofa" ("expire")`,
-    `create table user_register_tokens (
-      token text not null PRIMARY KEY,
-      username text not null unique,
-      role role default 'user',
-      expire timestamptz not null default now() + interval '30 minutes'
+    `CREATE INDEX "idx_reset_twofa_expire" ON "reset_twofa" ("expire")`,
+    `CREATE TABLE user_register_tokens (
+      token TEXT NOT NULL PRIMARY KEY,
+      username TEXT NOT NULL UNIQUE,
+      role role DEFAULT 'user',
+      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
     )`,
     // migrate values from customers which reference user_tokens for data persistence
-    `alter table customers add column sms_override_by_old text`,
-    `alter table customers add column id_card_data_override_by_old text`,
-    `alter table customers add column id_card_photo_override_by_old text`,
-    `alter table customers add column front_camera_override_by_old text`,
-    `alter table customers add column sanctions_override_by_old text`,
-    `alter table customers add column authorized_override_by_old text`,
-    `alter table customers add column us_ssn_override_by_old text`,
-    `update customers set sms_override_by_old=ut.name from user_tokens ut
-      where customers.sms_override_by=ut.token`,
-    `update customers set id_card_data_override_by_old=ut.name from user_tokens ut
-      where customers.id_card_data_override_by=ut.token`,
-    `update customers set id_card_photo_override_by_old=ut.name from user_tokens ut
-      where customers.id_card_photo_override_by=ut.token`,
-    `update customers set front_camera_override_by_old=ut.name from user_tokens ut
-      where customers.front_camera_override_by=ut.token`,
-    `update customers set sanctions_override_by_old=ut.name from user_tokens ut
-      where customers.sanctions_override_by=ut.token`,
-    `update customers set authorized_override_by_old=ut.name from user_tokens ut
-      where customers.authorized_override_by=ut.token`,
-    `update customers set us_ssn_override_by_old=ut.name from user_tokens ut
-      where customers.us_ssn_override_by=ut.token`,
-    `alter table customers drop column sms_override_by`,
-    `alter table customers drop column id_card_data_override_by`,
-    `alter table customers drop column id_card_photo_override_by`,
-    `alter table customers drop column front_camera_override_by`,
-    `alter table customers drop column sanctions_override_by`,
-    `alter table customers drop column authorized_override_by`,
-    `alter table customers drop column us_ssn_override_by`,
-    `alter table customers add column sms_override_by uuid references users(id)`,
-    `alter table customers add column id_card_data_override_by uuid references users(id)`,
-    `alter table customers add column id_card_photo_override_by uuid references users(id)`,
-    `alter table customers add column front_camera_override_by uuid references users(id)`,
-    `alter table customers add column sanctions_override_by uuid references users(id)`,
-    `alter table customers add column authorized_override_by uuid references users(id)`,
-    `alter table customers add column us_ssn_override_by uuid references users(id)`,
+    `ALTER TABLE customers ADD COLUMN sms_override_by_old TEXT`,
+    `ALTER TABLE customers ADD COLUMN id_card_data_override_by_old TEXT`,
+    `ALTER TABLE customers ADD COLUMN id_card_photo_override_by_old TEXT`,
+    `ALTER TABLE customers ADD COLUMN front_camera_override_by_old TEXT`,
+    `ALTER TABLE customers ADD COLUMN sanctions_override_by_old TEXT`,
+    `ALTER TABLE customers ADD COLUMN authorized_override_by_old TEXT`,
+    `ALTER TABLE customers ADD COLUMN us_ssn_override_by_old TEXT`,
+    `UPDATE customers SET sms_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.sms_override_by=ut.token`,
+    `UPDATE customers SET id_card_data_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.id_card_data_override_by=ut.token`,
+    `UPDATE customers SET id_card_photo_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.id_card_photo_override_by=ut.token`,
+    `UPDATE customers SET front_camera_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.front_camera_override_by=ut.token`,
+    `UPDATE customers SET sanctions_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.sanctions_override_by=ut.token`,
+    `UPDATE customers SET authorized_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.authorized_override_by=ut.token`,
+    `UPDATE customers SET us_ssn_override_by_old=ut.name FROM user_tokens ut
+      WHERE customers.us_ssn_override_by=ut.token`,
+    `ALTER TABLE customers DROP COLUMN sms_override_by`,
+    `ALTER TABLE customers DROP COLUMN id_card_data_override_by`,
+    `ALTER TABLE customers DROP COLUMN id_card_photo_override_by`,
+    `ALTER TABLE customers DROP COLUMN front_camera_override_by`,
+    `ALTER TABLE customers DROP COLUMN sanctions_override_by`,
+    `ALTER TABLE customers DROP COLUMN authorized_override_by`,
+    `ALTER TABLE customers DROP COLUMN us_ssn_override_by`,
+    `ALTER TABLE customers ADD COLUMN sms_override_by UUID REFERENCES users(id)`,
+    `ALTER TABLE customers ADD COLUMN id_card_data_override_by UUID REFERENCES users(id)`,
+    `ALTER TABLE customers ADD COLUMN id_card_photo_override_by UUID REFERENCES users(id)`,
+    `ALTER TABLE customers ADD COLUMN front_camera_override_by UUID REFERENCES users(id)`,
+    `ALTER TABLE customers ADD COLUMN sanctions_override_by UUID REFERENCES users(id)`,
+    `ALTER TABLE customers ADD COLUMN authorized_override_by UUID REFERENCES users(id)`,
+    `ALTER TABLE customers ADD COLUMN us_ssn_override_by UUID REFERENCES users(id)`,
     // migrate values from compliance_overrides which reference user_tokens for data persistence
-    `alter table compliance_overrides add column override_by_old text`,
-    `update compliance_overrides set override_by_old=ut.name from user_tokens ut
-      where compliance_overrides.override_by=ut.token`,
-    `alter table compliance_overrides drop column override_by`,
-    `alter table compliance_overrides add column override_by uuid references users(id)`,
-    `drop table if exists one_time_passes`,
-    `drop table if exists user_tokens`
+    `ALTER TABLE compliance_overrides ADD COLUMN override_by_old TEXT`,
+    `UPDATE compliance_overrides SET override_by_old=ut.name FROM user_tokens ut
+      WHERE compliance_overrides.override_by=ut.token`,
+    `ALTER TABLE compliance_overrides DROP COLUMN override_by`,
+    `ALTER TABLE compliance_overrides ADD COLUMN override_by UUID REFERENCES users(id)`,
+    `DROP TABLE IF EXISTS one_time_passes`,
+    `DROP TABLE IF EXISTS user_tokens`
   ]
 
   db.multi(sql, next)
