@@ -89,13 +89,11 @@ const ActionCol = ({ disabled, editing }) => {
             }}>
             {disabled ? <DisabledDeleteIcon /> : <DeleteIcon />}
           </IconButton>
-          {
-            <DeleteDialog
-              open={deleteDialog}
-              setDeleteDialog={setDeleteDialog}
-              onConfirmed={onConfirmed}
-            />
-          }
+          <DeleteDialog
+            open={deleteDialog}
+            setDeleteDialog={setDeleteDialog}
+            onConfirmed={onConfirmed}
+          />
         </Td>
       )}
       {!editing && enableToggle && (
