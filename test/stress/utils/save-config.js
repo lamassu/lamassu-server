@@ -1,3 +1,3 @@
-const old = require('../config.json')
+const config = require('./default-config.json')
 
-console.log(JSON.stringify(old))
+console.log(JSON.stringify(config))
