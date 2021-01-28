@@ -12,40 +12,43 @@ import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodi
 import { spacer } from 'src/styling/variables'
 
 const useStyles = makeStyles({
-  dialogContent: {
+  content: {
     width: 434,
     padding: spacer * 2,
     paddingRight: spacer * 3.5
   },
-  dialogTitle: {
+  titleSection: {
     padding: spacer * 2,
     paddingRight: spacer * 1.5,
     display: 'flex',
-    'justify-content': 'space-between',
-    '& > h4': {
-      margin: 0
-    },
-    '& > button': {
-      padding: 0,
-      marginTop: -(spacer / 2)
-    }
+    justifyContent: 'space-between',
+    margin: 0
   },
-  dialogActions: {
+  actions: {
     padding: spacer * 4,
     paddingTop: spacer * 2
+  },
+  title: {
+    margin: 0
+  },
+  closeButton: {
+    padding: 0,
+    marginTop: -(spacer / 2)
   }
 })
 
 export const DialogTitle = ({ children, close }) => {
   const classes = useStyles()
   return (
-    <div className={classes.dialogTitle}>
+    <div className={classes.titleSection}>
       {children}
-      {
-        <IconButton size={16} aria-label="close" onClick={close}>
-          <CloseIcon />
-        </IconButton>
-      }
+      <IconButton
+        size={16}
+        aria-label="close"
+        onClick={close}
+        className={classes.closeButton}>
+        <CloseIcon />
+      </IconButton>
     </div>
   )
 }
@@ -63,12 +66,12 @@ export const DeleteDialog = ({
   return (
     <Dialog open={open} aria-labelledby="form-dialog-title">
       <DialogTitle close={() => setDeleteDialog(false)}>
-        <H4>{title}</H4>
+        <H4 className={classes.title}>{title}</H4>
       </DialogTitle>
-      <DialogContent className={classes.dialogContent}>
+      <DialogContent className={classes.content}>
         {confirmationMessage && <P>{confirmationMessage}</P>}
       </DialogContent>
-      <DialogActions className={classes.dialogActions}>
+      <DialogActions className={classes.actions}>
         <Button onClick={onConfirmed}>Confirm</Button>
       </DialogActions>
     </Dialog>
