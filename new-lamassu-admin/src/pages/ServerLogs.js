@@ -174,18 +174,22 @@ const Logs = () => {
             </TableHead>
             <TableBody>
               {data &&
-                data.serverLogs
-                  .filter(
-                    log =>
-                      logLevel === SHOW_ALL || log.logLevel === logLevel.code
-                  )
-                  .map((log, idx) => (
-                    <TableRow key={idx} size="sm">
-                      <TableCell>{formatDate(log.timestamp)}</TableCell>
-                      <TableCell>{log.logLevel}</TableCell>
-                      <TableCell>{log.message}</TableCell>
-                    </TableRow>
-                  ))}
+                (!data.serverLogs.length ? (
+                  <p>{'No activity so far'} </p>
+                ) : (
+                  data.serverLogs
+                    .filter(
+                      log =>
+                        logLevel === SHOW_ALL || log.logLevel === logLevel.code
+                    )
+                    .map((log, idx) => (
+                      <TableRow key={idx} size="sm">
+                        <TableCell>{formatDate(log.timestamp)}</TableCell>
+                        <TableCell>{log.logLevel}</TableCell>
+                        <TableCell>{log.message}</TableCell>
+                      </TableRow>
+                    ))
+                ))}
             </TableBody>
           </Table>
         </div>

@@ -123,16 +123,21 @@ const Logs = () => {
                 <TableHeader className={classes.fillColumn} />
               </TableRow>
             </TableHead>
-            <TableBody>
-              {logsResponse &&
-                logsResponse.machineLogs.map((log, idx) => (
-                  <TableRow key={idx} size="sm">
-                    <TableCell>{formatDate(log.timestamp)}</TableCell>
-                    <TableCell>{log.logLevel}</TableCell>
-                    <TableCell>{log.message}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
+            {logsResponse &&
+              (!logsResponse.machineLogs.length ? (
+                <p>{'No activity so far'}</p>
+              ) : (
+                <TableBody>
+                  {logsResponse &&
+                    logsResponse.machineLogs.map((log, idx) => (
+                      <TableRow key={idx} size="sm">
+                        <TableCell>{formatDate(log.timestamp)}</TableCell>
+                        <TableCell>{log.logLevel}</TableCell>
+                        <TableCell>{log.message}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              ))}
           </Table>
         </div>
       </div>
