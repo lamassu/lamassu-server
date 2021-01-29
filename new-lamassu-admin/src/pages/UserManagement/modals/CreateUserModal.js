@@ -10,7 +10,7 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
-import { H1, H2, H3, Info3, Mono } from 'src/components/typography'
+import { H1, H3, Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 
 import styles from '../UserManagement.styles'
@@ -139,19 +139,24 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
       {showModal && createUserURL && (
         <Modal
           closeOnBackdropClick={true}
-          width={600}
-          height={275}
+          width={500}
+          height={200}
           handleClose={handleClose}
           open={true}>
-          <H2 className={classes.modalTitle}>Creating {usernameField}...</H2>
-          <Info3 className={classes.info}>
+          <Info2 className={classes.modalTitle}>
+            Creating {usernameField}...
+          </Info2>
+          <P className={classes.info}>
             Safely share this link with {usernameField} to finish the
             registration process.
-          </Info3>
+          </P>
           <div className={classes.addressWrapper}>
             <Mono className={classes.address}>
               <strong>
-                <CopyToClipboard buttonClassname={classes.copyToClipboard}>
+                <CopyToClipboard
+                  className={classes.link}
+                  buttonClassname={classes.copyToClipboard}
+                  wrapperClassname={classes.linkWrapper}>
                   {createUserURL}
                 </CopyToClipboard>
               </strong>
