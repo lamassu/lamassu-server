@@ -84,17 +84,15 @@ const LoginCard = () => {
   }
 
   return (
-    <div>
-      <Paper elevation={1}>
-        <div className={classes.wrapper}>
-          <div className={classes.titleWrapper}>
-            <Logo className={classes.icon} />
-            <H2 className={classes.title}>Lamassu Admin</H2>
-          </div>
-          {renderState()}
+    <Paper elevation={1}>
+      <div className={classes.wrapper}>
+        <div className={classes.titleWrapper}>
+          <Logo className={classes.icon} />
+          <H2 className={classes.title}>Lamassu Admin</H2>
         </div>
-      </Paper>
-    </div>
+        {renderState()}
+      </div>
+    </Paper>
   )
 }
 

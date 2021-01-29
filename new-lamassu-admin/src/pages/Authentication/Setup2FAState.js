@@ -81,77 +81,73 @@ const Setup2FAState = ({
   }
 
   return (
-    <>
-      {secret && otpauth ? (
-        <>
-          <div className={classes.infoWrapper}>
-            <Label2 className={classes.info2}>
-              We detected that this account does not have its two-factor
-              authentication enabled. In order to protect the resources in the
-              system, a two-factor authentication is enforced.
-            </Label2>
-            <Label2 className={classes.info2}>
-              To finish this process, please scan the following QR code or
-              insert the secret further below on an authentication app of your
-              choice, such as Google Authenticator or Authy.
-            </Label2>
-          </div>
-          <div className={classes.qrCodeWrapper}>
-            <QRCode size={240} fgColor={primaryColor} value={otpauth} />
-          </div>
-          <div className={classes.secretWrapper}>
-            <Label2 className={classes.secretLabel}>Your secret:</Label2>
-            <Label2
-              className={isShowing ? classes.secret : classes.hiddenSecret}>
-              {secret}
-            </Label2>
-            <ActionButton
-              disabled={!secret && !otpauth}
-              color="primary"
-              onClick={() => {
-                setShowing(!isShowing)
-              }}>
-              {isShowing ? 'Hide' : 'Show'}
-            </ActionButton>
-          </div>
-          <div className={classes.confirm2FAInput}>
-            <CodeInput
-              name="2fa"
-              value={twoFAConfirmation}
-              onChange={handle2FAChange}
-              numInputs={6}
-              error={invalidToken}
-              shouldAutoFocus
-            />
-          </div>
-          <div className={classes.twofaFooter}>
-            {getErrorMsg() && (
-              <P className={classes.errorMessage}>{getErrorMsg()}</P>
-            )}
-            <Button
-              onClick={() => {
-                if (twoFAConfirmation.length !== 6) {
-                  setInvalidToken(true)
-                  return
+    secret &&
+    otpauth && (
+      <>
+        <div className={classes.infoWrapper}>
+          <Label2 className={classes.info2}>
+            We detected that this account does not have its two-factor
+            authentication enabled. In order to protect the resources in the
+            system, a two-factor authentication is enforced.
+          </Label2>
+          <Label2 className={classes.info2}>
+            To finish this process, please scan the following QR code or insert
+            the secret further below on an authentication app of your choice,
+            such as Google Authenticator or Authy.
+          </Label2>
+        </div>
+        <div className={classes.qrCodeWrapper}>
+          <QRCode size={240} fgColor={primaryColor} value={otpauth} />
+        </div>
+        <div className={classes.secretWrapper}>
+          <Label2 className={classes.secretLabel}>Your secret:</Label2>
+          <Label2 className={isShowing ? classes.secret : classes.hiddenSecret}>
+            {secret}
+          </Label2>
+          <ActionButton
+            disabled={!secret && !otpauth}
+            color="primary"
+            onClick={() => {
+              setShowing(!isShowing)
+            }}>
+            {isShowing ? 'Hide' : 'Show'}
+          </ActionButton>
+        </div>
+        <div className={classes.confirm2FAInput}>
+          <CodeInput
+            name="2fa"
+            value={twoFAConfirmation}
+            onChange={handle2FAChange}
+            numInputs={6}
+            error={invalidToken}
+            shouldAutoFocus
+          />
+        </div>
+        <div className={classes.twofaFooter}>
+          {getErrorMsg() && (
+            <P className={classes.errorMessage}>{getErrorMsg()}</P>
+          )}
+          <Button
+            onClick={() => {
+              if (twoFAConfirmation.length !== 6) {
+                setInvalidToken(true)
+                return
+              }
+              setup2FA({
+                variables: {
+                  username: clientField,
+                  password: passwordField,
+                  secret: secret,
+                  codeConfirmation: twoFAConfirmation
                 }
-                setup2FA({
-                  variables: {
-                    username: clientField,
-                    password: passwordField,
-                    secret: secret,
-                    codeConfirmation: twoFAConfirmation
-                  }
-                })
-              }}
-              buttonClassName={classes.loginButton}>
-              Done
-            </Button>
-          </div>
-        </>
-      ) : (
-        <div></div>
-      )}
-    </>
+              })
+            }}
+            buttonClassName={classes.loginButton}>
+            Done
+          </Button>
+        </div>
+      </>
+    )
   )
 }
 

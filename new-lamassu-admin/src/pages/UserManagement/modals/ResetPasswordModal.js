@@ -22,35 +22,33 @@ const ResetPasswordModal = ({
   }
 
   return (
-    <>
-      {showModal && (
-        <Modal
-          closeOnBackdropClick={true}
-          width={500}
-          height={180}
-          handleClose={handleClose}
-          open={true}>
-          <Info2 className={classes.modalTitle}>
-            Reset password for {user.username}
-          </Info2>
-          <P className={classes.info}>
-            Safely share this link with {user.username} for a password reset.
-          </P>
-          <div className={classes.addressWrapper}>
-            <Mono className={classes.address}>
-              <strong>
-                <CopyToClipboard
-                  className={classes.link}
-                  buttonClassname={classes.copyToClipboard}
-                  wrapperClassname={classes.test1}>
-                  {resetPasswordURL}
-                </CopyToClipboard>
-              </strong>
-            </Mono>
-          </div>
-        </Modal>
-      )}
-    </>
+    showModal && (
+      <Modal
+        closeOnBackdropClick={true}
+        width={500}
+        height={180}
+        handleClose={handleClose}
+        open={true}>
+        <Info2 className={classes.modalTitle}>
+          Reset password for {user.username}
+        </Info2>
+        <P className={classes.info}>
+          Safely share this link with {user.username} for a password reset.
+        </P>
+        <div className={classes.addressWrapper}>
+          <Mono className={classes.address}>
+            <strong>
+              <CopyToClipboard
+                className={classes.link}
+                buttonClassname={classes.copyToClipboard}
+                wrapperClassname={classes.linkWrapper}>
+                {resetPasswordURL}
+              </CopyToClipboard>
+            </strong>
+          </Mono>
+        </div>
+      </Modal>
+    )
   )
 }
 

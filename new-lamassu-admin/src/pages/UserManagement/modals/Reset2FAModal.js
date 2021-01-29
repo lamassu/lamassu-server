@@ -17,36 +17,34 @@ const Reset2FAModal = ({ showModal, toggleModal, reset2FAURL, user }) => {
   }
 
   return (
-    <>
-      {showModal && (
-        <Modal
-          closeOnBackdropClick={true}
-          width={500}
-          height={200}
-          handleClose={handleClose}
-          open={true}>
-          <Info2 className={classes.modalTitle}>
-            Reset 2FA for {user.username}
-          </Info2>
-          <P className={classes.info}>
-            Safely share this link with {user.username} for a two-factor
-            authentication reset.
-          </P>
-          <div className={classes.addressWrapper}>
-            <Mono className={classes.address}>
-              <strong>
-                <CopyToClipboard
-                  className={classes.link}
-                  buttonClassname={classes.copyToClipboard}
-                  wrapperClassname={classes.test1}>
-                  {reset2FAURL}
-                </CopyToClipboard>
-              </strong>
-            </Mono>
-          </div>
-        </Modal>
-      )}
-    </>
+    showModal && (
+      <Modal
+        closeOnBackdropClick={true}
+        width={500}
+        height={200}
+        handleClose={handleClose}
+        open={true}>
+        <Info2 className={classes.modalTitle}>
+          Reset 2FA for {user.username}
+        </Info2>
+        <P className={classes.info}>
+          Safely share this link with {user.username} for a two-factor
+          authentication reset.
+        </P>
+        <div className={classes.addressWrapper}>
+          <Mono className={classes.address}>
+            <strong>
+              <CopyToClipboard
+                className={classes.link}
+                buttonClassname={classes.copyToClipboard}
+                wrapperClassname={classes.linkWrapper}>
+                {reset2FAURL}
+              </CopyToClipboard>
+            </strong>
+          </Mono>
+        </div>
+      </Modal>
+    )
   )
 }
 

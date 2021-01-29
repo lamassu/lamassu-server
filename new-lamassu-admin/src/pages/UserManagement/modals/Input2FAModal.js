@@ -55,47 +55,45 @@ const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
   }
 
   return (
-    <>
-      {showModal && (
-        <Modal
-          closeOnBackdropClick={true}
-          width={500}
-          height={350}
-          handleClose={handleClose}
-          open={true}>
-          <Info2 className={classes.modalTitle}>Confirm action</Info2>
-          <P className={classes.info}>
-            To make changes on this user, please confirm this action by entering
-            your two-factor authentication code below.
-          </P>
-          <CodeInput
-            name="2fa"
-            value={twoFACode}
-            onChange={handleCodeChange}
-            numInputs={6}
-            error={invalidCode}
-            containerStyle={classes.codeContainer}
-            shouldAutoFocus
-          />
-          {getErrorMsg() && (
-            <P className={classes.errorMessage}>{getErrorMsg()}</P>
-          )}
-          <div className={classes.footer}>
-            <Button
-              className={classes.submit}
-              onClick={() => {
-                if (twoFACode.length !== 6) {
-                  setInvalidCode(true)
-                  return
-                }
-                confirm2FA({ variables: { code: twoFACode } })
-              }}>
-              Confirm
-            </Button>
-          </div>
-        </Modal>
-      )}
-    </>
+    showModal && (
+      <Modal
+        closeOnBackdropClick={true}
+        width={500}
+        height={350}
+        handleClose={handleClose}
+        open={true}>
+        <Info2 className={classes.modalTitle}>Confirm action</Info2>
+        <P className={classes.info}>
+          To make changes on this user, please confirm this action by entering
+          your two-factor authentication code below.
+        </P>
+        <CodeInput
+          name="2fa"
+          value={twoFACode}
+          onChange={handleCodeChange}
+          numInputs={6}
+          error={invalidCode}
+          containerStyle={classes.codeContainer}
+          shouldAutoFocus
+        />
+        {getErrorMsg() && (
+          <P className={classes.errorMessage}>{getErrorMsg()}</P>
+        )}
+        <div className={classes.footer}>
+          <Button
+            className={classes.submit}
+            onClick={() => {
+              if (twoFACode.length !== 6) {
+                setInvalidCode(true)
+                return
+              }
+              confirm2FA({ variables: { code: twoFACode } })
+            }}>
+            Confirm
+          </Button>
+        </div>
+      </Modal>
+    )
   )
 }
 
