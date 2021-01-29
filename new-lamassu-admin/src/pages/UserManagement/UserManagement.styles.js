@@ -100,7 +100,7 @@ const styles = {
     overflowX: 'auto',
     width: '92.5%'
   },
-  test1: {
+  linkWrapper: {
     width: '100%',
     height: '100%',
     overflow: 'hidden',
