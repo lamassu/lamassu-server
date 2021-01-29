@@ -23,6 +23,7 @@ const usePopperHandler = width => {
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
 
   const handleOpenHelpPopper = event => {
+    console.log(event)
     setHelpPopperAnchorEl(helpPopperAnchorEl ? null : event.currentTarget)
   }
 
@@ -48,6 +49,7 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
     <ClickAwayListener onClickAway={handler.handleCloseHelpPopper}>
       <div>
         <button
+          type="button"
           className={handler.classes.transparentButton}
           onClick={handler.handleOpenHelpPopper}>
           <Icon />
