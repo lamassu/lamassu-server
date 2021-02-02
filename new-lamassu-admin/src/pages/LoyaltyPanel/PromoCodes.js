@@ -10,17 +10,17 @@ import DataTable from 'src/components/tables/DataTable'
 import { H2, TL1 } from 'src/components/typography'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 
-import styles from './CouponCodes.styles'
-import CouponCodesModal from './CouponCodesModal'
+import styles from './PromoCodes.styles'
+import PromoCodesModal from './PromoCodesModal'
 
 const useStyles = makeStyles(styles)
 
-const DUPLICATE_ERROR_MSG = 'There is already a coupon with that code!'
+const DUPLICATE_ERROR_MSG = 'There is already a promotion with that code!'
 const DEFAULT_ERROR_MSG = 'Failed to save'
 
-const GET_COUPONS = gql`
-  query coupons {
-    coupons {
+const GET_PROMO_CODES = gql`
+  query promoCodes {
+    promoCodes {
       id
       code
       discount
@@ -28,17 +28,17 @@ const GET_COUPONS = gql`
   }
 `
 
-const DELETE_COUPON = gql`
-  mutation deleteCoupon($couponId: ID!) {
-    deleteCoupon(couponId: $couponId) {
+const DELETE_CODE = gql`
+  mutation deletePromoCode($codeId: ID!) {
+    deletePromoCodes(codeId: $codeId) {
       id
     }
   }
 `
 
-const CREATE_COUPON = gql`
-  mutation createCoupon($code: String!, $discount: Int!) {
-    createCoupon(code: $code, discount: $discount) {
+const CREATE_CODE = gql`
+  mutation createPromoCode($code: String!, $discount: Int!) {
+    createPromoCode(code: $code, discount: $discount) {
       id
       code
       discount
@@ -46,38 +46,36 @@ const CREATE_COUPON = gql`
   }
 `
 
-const Coupons = () => {
+const PromoCodes = () => {
   const classes = useStyles()
 
   const [showModal, setShowModal] = useState(false)
   const [errorMsg, setErrorMsg] = useState(null)
   const toggleModal = () => setShowModal(!showModal)
 
-  const { data: couponResponse, loading } = useQuery(GET_COUPONS)
+  const { data: codeResponse, loading } = useQuery(GET_PROMO_CODES)
 
-  const [deleteCoupon] = useMutation(DELETE_COUPON, {
-    refetchQueries: () => ['coupons']
+  const [deleteCode] = useMutation(DELETE_CODE, {
+    refetchQueries: () => ['promoCodes']
   })
 
-  const [createCoupon] = useMutation(CREATE_COUPON, {
-    refetchQueries: () => ['coupons']
+  const [createCode] = useMutation(CREATE_CODE, {
+    refetchQueries: () => ['promoCodes']
   })
 
-  const addCoupon = (code, discount) => {
+  const addCode = (code, discount) => {
     setErrorMsg(null)
-    createCoupon({
+    createCode({
       variables: { code: code, discount: discount }
     })
       .then(res => {
         if (!res.errors) return setShowModal(false)
 
-        const duplicateCouponError = R.any(it =>
+        const duplicateCodeError = R.any(it =>
           R.includes('duplicate', it?.message)
         )(res.errors)
 
-        const msg = duplicateCouponError
-          ? DUPLICATE_ERROR_MSG
-          : DEFAULT_ERROR_MSG
+        const msg = duplicateCodeError ? DUPLICATE_ERROR_MSG : DEFAULT_ERROR_MSG
         setErrorMsg(msg)
       })
       .catch(err => {
@@ -88,7 +86,7 @@ const Coupons = () => {
 
   const elements = [
     {
-      header: 'Coupon Code',
+      header: 'Code',
       width: 300,
       textAlign: 'left',
       size: 'sm',
@@ -113,7 +111,7 @@ const Coupons = () => {
       view: t => (
         <IconButton
           onClick={() => {
-            deleteCoupon({ variables: { couponId: t.id } })
+            deleteCode({ variables: { codeId: t.id } })
           }}>
           <DeleteIcon />
         </IconButton>
@@ -123,8 +121,8 @@ const Coupons = () => {
 
   return (
     <>
-      <TitleSection title="Discount Coupons"></TitleSection>
-      {!loading && !R.isEmpty(couponResponse.coupons) && (
+      <TitleSection title="Promo Codes"></TitleSection>
+      {!loading && !R.isEmpty(codeResponse.promoCodes) && (
         <Box
           marginBottom={4}
           marginTop={-5}
@@ -132,32 +130,32 @@ const Coupons = () => {
           display="flex"
           justifyContent="flex-end">
           <Link color="primary" onClick={toggleModal}>
-            Add new coupon
+            Add new code
           </Link>
         </Box>
       )}
-      {!loading && !R.isEmpty(couponResponse.coupons) && (
+      {!loading && !R.isEmpty(codeResponse.promoCodes) && (
         <DataTable
           elements={elements}
-          data={R.path(['coupons'])(couponResponse)}
+          data={R.path(['promoCodes'])(codeResponse)}
         />
       )}
-      {!loading && R.isEmpty(couponResponse.coupons) && (
+      {!loading && R.isEmpty(codeResponse.promoCodes) && (
         <Box display="flex" alignItems="left" flexDirection="column">
-          <H2>Currently, there are no active coupon codes on your network.</H2>
-          <Button onClick={toggleModal}>Add coupon</Button>
+          <H2>Currently, there are no active promo codes on your network.</H2>
+          <Button onClick={toggleModal}>Add Code</Button>
         </Box>
       )}
-      <CouponCodesModal
+      <PromoCodesModal
         showModal={showModal}
         onClose={() => {
           setErrorMsg(null)
           setShowModal(false)
         }}
         errorMsg={errorMsg}
-        addCoupon={addCoupon}
+        addCode={addCode}
       />
     </>
   )
 }
-export default Coupons
+export default PromoCodes
