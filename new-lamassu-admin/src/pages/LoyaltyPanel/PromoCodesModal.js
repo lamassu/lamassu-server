@@ -11,7 +11,7 @@ import { Button } from 'src/components/buttons'
 import { TextInput, NumberInput } from 'src/components/inputs/formik'
 import { H3, TL1, P } from 'src/components/typography'
 
-import styles from './CouponCodes.styles'
+import styles from './PromoCodes.styles'
 
 const useStyles = makeStyles(styles)
 
@@ -31,18 +31,18 @@ const validationSchema = Yup.object().shape({
     .max(100)
 })
 
-const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
+const PromoCodesModal = ({ showModal, onClose, errorMsg, addCode }) => {
   const classes = useStyles()
 
-  const handleAddCoupon = (code, discount) => {
-    addCoupon(R.toUpper(code), parseInt(discount))
+  const handleAddCode = (code, discount) => {
+    addCode(R.toUpper(code), parseInt(discount))
   }
 
   return (
     <>
       {showModal && (
         <Modal
-          title="Add coupon code discount"
+          title="Add promo code discount"
           closeOnBackdropClick={true}
           width={600}
           height={500}
@@ -52,10 +52,10 @@ const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={({ code, discount }) => {
-              handleAddCoupon(code, discount)
+              handleAddCode(code, discount)
             }}>
-            <Form id="coupon-form" className={classes.form}>
-              <H3 className={classes.modalLabel1}>Coupon code name</H3>
+            <Form id="promo-form" className={classes.form}>
+              <H3 className={classes.modalLabel1}>Promo code name</H3>
               <Field
                 name="code"
                 autoFocus
@@ -69,13 +69,14 @@ const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
                 <H3 className={classes.modalLabel2}>Define discount rate</H3>
                 <Tooltip width={304}>
                   <P>
-                    The discount rate inserted will be applied to the
-                    commissions of all transactions performed with this
-                    respective coupon code.
+                    This is a percentage discount off of your existing
+                    commission rates for a customer entering this code at the
+                    machine.
                   </P>
                   <P>
-                    (It should be a number between 0 (zero) and 100 (one
-                    hundred)).
+                    For instance, if you charge 8% commissions, and this code is
+                    set for 50%, then you'll instead be charging 4% on
+                    transactions using the code.
                   </P>
                 </Tooltip>
               </div>
@@ -97,9 +98,9 @@ const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
                 {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
                 <Button
                   type="submit"
-                  form="coupon-form"
+                  form="promo-form"
                   className={classes.submit}>
-                  Add coupon
+                  Add code
                 </Button>
               </div>
             </Form>
@@ -110,4 +111,4 @@ const CouponCodesModal = ({ showModal, onClose, errorMsg, addCoupon }) => {
   )
 }
 
-export default CouponCodesModal
+export default PromoCodesModal

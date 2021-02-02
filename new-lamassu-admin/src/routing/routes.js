@@ -22,7 +22,7 @@ import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Dashboard from 'src/pages/Dashboard'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
-import Coupons from 'src/pages/LoyaltyPanel/CouponCodes'
+import PromoCodes from 'src/pages/LoyaltyPanel/PromoCodes'
 import MachineLogs from 'src/pages/MachineLogs'
 import Machines from 'src/pages/Machines'
 import CashCassettes from 'src/pages/Maintenance/CashCassettes'
@@ -212,10 +212,10 @@ const tree = [
         component: Blacklist
       },
       {
-        key: 'discount-coupons',
-        label: 'Discount Coupons',
-        route: '/compliance/loyalty/coupons',
-        component: Coupons
+        key: 'promo-codes',
+        label: 'Promo Codes',
+        route: '/compliance/loyalty/codes',
+        component: PromoCodes
       },
       {
         key: 'customer',
