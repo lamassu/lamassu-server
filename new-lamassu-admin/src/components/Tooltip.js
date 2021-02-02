@@ -23,7 +23,6 @@ const usePopperHandler = width => {
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
 
   const handleOpenHelpPopper = event => {
-    console.log(event)
     setHelpPopperAnchorEl(helpPopperAnchorEl ? null : event.currentTarget)
   }
 
