@@ -17,6 +17,13 @@ if (!name || !role) {
   process.exit(2)
 }
 
+const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+if (!emailRegex.test(name)) {
+  console.log('Usage: <name> should be in an email format')
+  process.exit(2)
+}
+
 if (role !== 'user' && role !== 'superuser') {
   console.log('Usage: <role> has two possible values: user | superuser')
   process.exit(2)
