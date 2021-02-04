@@ -17,7 +17,7 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Info3 } from 'src/components/typography'
+import { Info3, H4 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
 import { offColor } from 'src/styling/variables'
 import { startCase } from 'src/utils/string'
@@ -91,7 +91,7 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_DATA, {
     onCompleted: () => setSaveMessage(''),
     variables: {
       limit: NUM_LOG_RESULTS
@@ -174,24 +174,22 @@ const Logs = () => {
             </TableHead>
             <TableBody>
               {data &&
-                (!data.serverLogs.length ? (
-                  <p>{'No activity so far'} </p>
-                ) : (
-                  data.serverLogs
-                    .filter(
-                      log =>
-                        logLevel === SHOW_ALL || log.logLevel === logLevel.code
-                    )
-                    .map((log, idx) => (
-                      <TableRow key={idx} size="sm">
-                        <TableCell>{formatDate(log.timestamp)}</TableCell>
-                        <TableCell>{log.logLevel}</TableCell>
-                        <TableCell>{log.message}</TableCell>
-                      </TableRow>
-                    ))
-                ))}
+                data.serverLogs
+                  .filter(
+                    log =>
+                      logLevel === SHOW_ALL || log.logLevel === logLevel.code
+                  )
+                  .map((log, idx) => (
+                    <TableRow key={idx} size="sm">
+                      <TableCell>{formatDate(log.timestamp)}</TableCell>
+                      <TableCell>{log.logLevel}</TableCell>
+                      <TableCell>{log.message}</TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
+          {loading && <H4>{'Loading...'}</H4>}
+          {!loading && !data && <H4>{'No activity so far'}</H4>}
         </div>
       </div>
     </>
