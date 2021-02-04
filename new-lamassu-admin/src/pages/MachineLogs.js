@@ -16,7 +16,7 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Info3 } from 'src/components/typography'
+import { Info3, H4 } from 'src/components/typography'
 
 import styles from './Logs.styles'
 
@@ -74,7 +74,7 @@ const Logs = () => {
 
   const { data: machineResponse } = useQuery(GET_MACHINES)
 
-  const { data: logsResponse } = useQuery(GET_MACHINE_LOGS, {
+  const { data: logsResponse, loading } = useQuery(GET_MACHINE_LOGS, {
     variables: { deviceId, limit: NUM_LOG_RESULTS },
     skip: !selected,
     onCompleted: () => setSaveMessage('')
@@ -123,22 +123,19 @@ const Logs = () => {
                 <TableHeader className={classes.fillColumn} />
               </TableRow>
             </TableHead>
-            {logsResponse &&
-              (!logsResponse.machineLogs.length ? (
-                <p>{'No activity so far'}</p>
-              ) : (
-                <TableBody>
-                  {logsResponse &&
-                    logsResponse.machineLogs.map((log, idx) => (
-                      <TableRow key={idx} size="sm">
-                        <TableCell>{formatDate(log.timestamp)}</TableCell>
-                        <TableCell>{log.logLevel}</TableCell>
-                        <TableCell>{log.message}</TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              ))}
+            <TableBody>
+              {logsResponse &&
+                logsResponse.machineLogs.map((log, idx) => (
+                  <TableRow key={idx} size="sm">
+                    <TableCell>{formatDate(log.timestamp)}</TableCell>
+                    <TableCell>{log.logLevel}</TableCell>
+                    <TableCell>{log.message}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
           </Table>
+          {loading && <H4>{'Loading...'}</H4>}
+          {!loading && !logsResponse && <H4>{'No activity so far'}</H4>}
         </div>
       </div>
     </>
