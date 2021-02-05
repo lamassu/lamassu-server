@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
 import * as R from 'ramda'
 import React, { useEffect, useRef, useCallback } from 'react'
+
 import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 
 const transactionProfit = tx => {

@@ -6,7 +6,9 @@ import {
   fontSecondary,
   fontColor,
   spring4,
-  tomato
+  tomato,
+  java,
+  neon
 } from 'src/styling/variables'
 
 const styles = {
@@ -90,6 +92,28 @@ const styles = {
   },
   gridContainer: {
     marginTop: 30
+  },
+  inSquare: {
+    width: 8,
+    height: 8,
+    borderRadius: 2,
+    marginTop: 18,
+    marginRight: 4,
+    backgroundColor: java
+  },
+  outSquare: {
+    width: 8,
+    height: 8,
+    borderRadius: 2,
+    marginTop: 18,
+    marginRight: 4,
+    backgroundColor: neon
+  },
+  directionLabelContainer: {
+    display: 'flex'
+  },
+  dirLabContMargin: {
+    marginRight: 20
   }
 }
 

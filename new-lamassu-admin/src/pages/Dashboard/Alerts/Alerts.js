@@ -4,7 +4,9 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+
+import { cardState as cardState_ } from 'src/components/CollapsibleCard'
 import { Label1, H4 } from 'src/components/typography'
 
 import styles from '../Dashboard.styles'
@@ -33,98 +35,58 @@ const GET_ALERTS = gql`
 
 const useStyles = makeStyles(styles)
 
-const Alerts = ({ cardState, setRightSideState }) => {
+const Alerts = ({ onReset, onExpand, size }) => {
   const classes = useStyles()
-  const [showAllItems, setShowAllItems] = useState(false)
+  const showAllItems = size === cardState_.EXPANDED
   const { data } = useQuery(GET_ALERTS)
-
   const alerts = R.path(['alerts'])(data) ?? []
   const machines = R.compose(
     R.map(R.prop('name')),
     R.indexBy(R.prop('deviceId'))
   )(data?.machines ?? [])
-
-  const showExpandButton = alerts.length > NUM_TO_RENDER && !showAllItems
-
-  useEffect(() => {
-    if (cardState.cardSize === 'small' || cardState.cardSize === 'default') {
-      setShowAllItems(false)
-    }
-  }, [cardState.cardSize])
-
-  const reset = () => {
-    setRightSideState({
-      systemStatus: { cardSize: 'default', buttonName: 'Show less' },
-      alerts: { cardSize: 'default', buttonName: 'Show less' }
-    })
-    setShowAllItems(false)
-  }
-
-  const showAllClick = () => {
-    setShowAllItems(true)
-    setRightSideState({
-      systemStatus: { cardSize: 'small', buttonName: 'Show machines' },
-      alerts: { cardSize: 'big', buttonName: 'Show less' }
-    })
-  }
+  const alertsLength = alerts.length
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}>
-        <H4 className={classes.h4}>{`Alerts ${
-          data ? `(${alerts.length})` : 0
-        }`}</H4>
-        {(showAllItems || cardState.cardSize === 'small') && (
-          <>
-            <Label1
-              style={{
-                textAlign: 'center',
-                marginBottom: 0,
-                marginTop: 0
-              }}>
+      <div className={classes.container}>
+        <H4 className={classes.h4}>{`Alerts (${alertsLength})`}</H4>
+        {showAllItems && (
+          <Label1 className={classes.upperButtonLabel}>
+            <Button
+              onClick={() => {
+                console.log('aaaa')
+                onReset()
+              }}
+              size="small"
+              disableRipple
+              disableFocusRipple
+              className={classes.button}>
+              {'Show less'}
+            </Button>
+          </Label1>
+        )}
+      </div>
+      <Grid container spacing={1}>
+        <Grid item xs={12} className={classes.alertsTableMargin}>
+          <AlertsTable
+            numToRender={showAllItems ? alerts.length : NUM_TO_RENDER}
+            alerts={alerts}
+            machines={machines}
+          />
+          {!showAllItems && alertsLength > NUM_TO_RENDER && (
+            <Label1 className={classes.centerLabel}>
               <Button
-                onClick={reset}
+                onClick={() => onExpand('alerts')}
                 size="small"
                 disableRipple
                 disableFocusRipple
                 className={classes.button}>
-                {cardState.buttonName}
+                {`Show all (${alerts.length})`}
               </Button>
             </Label1>
-          </>
-        )}
-      </div>
-      {cardState.cardSize !== 'small' && (
-        <>
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <AlertsTable
-                numToRender={showAllItems ? alerts.length : NUM_TO_RENDER}
-                alerts={alerts}
-                machines={machines}
-              />
-              {showExpandButton && (
-                <>
-                  <Label1 style={{ textAlign: 'center', marginBottom: 0 }}>
-                    <Button
-                      onClick={showAllClick}
-                      size="small"
-                      disableRipple
-                      disableFocusRipple
-                      className={classes.button}>
-                      {`Show all (${alerts.length})`}
-                    </Button>
-                  </Label1>
-                </>
-              )}
-            </Grid>
-          </Grid>
-        </>
-      )}
+          )}
+        </Grid>
+      </Grid>
     </>
   )
 }

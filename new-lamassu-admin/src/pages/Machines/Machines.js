@@ -8,6 +8,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+
 import { TL1, TL2, Label3 } from 'src/components/typography'
 
 import Cassettes from './MachineComponents/Cassettes'

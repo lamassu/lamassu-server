@@ -52,11 +52,17 @@ const styles = {
   upperButtonLabel: {
     textAlign: 'center',
     marginBottom: 0,
-    marginTop: 16,
+    marginTop: 0,
     marginLeft: spacer
   },
   alertsCard: {
     marginBottom: 16
+  },
+  h4: {
+    marginTop: 0
+  },
+  alertsTableMargin: {
+    marginTop: -30
   }
 }
 
