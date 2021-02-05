@@ -50,8 +50,12 @@ const getLogo = code => {
       return LitecoinLogo
     case 'ZEC':
       return ZCashLogo
-    default:
+    case 'USDT':
       return EthereumLogo
+    case 'YEENUS':
+      return EthereumLogo
+    default:
+      return null
   }
 }
 
