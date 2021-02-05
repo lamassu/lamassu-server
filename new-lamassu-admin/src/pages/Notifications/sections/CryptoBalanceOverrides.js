@@ -9,8 +9,8 @@ import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
-const HIGH_BALANCE_KEY = 'cryptoHighBalance'
-const LOW_BALANCE_KEY = 'cryptoLowBalance'
+const HIGH_BALANCE_KEY = 'highBalance'
+const LOW_BALANCE_KEY = 'lowBalance'
 const CRYPTOCURRENCY_KEY = 'cryptoCurrency'
 const NAME = 'cryptoBalanceOverrides'
 

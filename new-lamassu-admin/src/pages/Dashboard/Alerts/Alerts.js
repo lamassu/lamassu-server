@@ -53,10 +53,7 @@ const Alerts = ({ onReset, onExpand, size }) => {
         {showAllItems && (
           <Label1 className={classes.upperButtonLabel}>
             <Button
-              onClick={() => {
-                console.log('aaaa')
-                onReset()
-              }}
+              onClick={onReset}
               size="small"
               disableRipple
               disableFocusRipple

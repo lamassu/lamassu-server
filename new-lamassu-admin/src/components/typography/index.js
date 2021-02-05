@@ -91,7 +91,6 @@ const TL2 = pBuilder('tl2')
 const Label1 = pBuilder('label1')
 const Label2 = pBuilder('label2')
 const Label3 = pBuilder('label3')
-const Label4 = pBuilder('regularLabel')
 
 function pBuilder(elementClass) {
   return ({ inline, noMargin, className, children, ...props }) => {
@@ -125,6 +124,5 @@ export {
   Mono,
   Label1,
   Label2,
-  Label3,
-  Label4
+  Label3
 }
