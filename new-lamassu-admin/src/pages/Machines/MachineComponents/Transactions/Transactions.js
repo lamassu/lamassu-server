@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
+
 import DetailsRow from 'src/pages/Transactions/DetailsCard'
 import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
 import { getStatus } from 'src/pages/Transactions/helper'

@@ -2,10 +2,11 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
+
 import CollapsibleCard, { cardState } from 'src/components/CollapsibleCard'
 import { H4, Label1 } from 'src/components/typography'
 
-// import Alerts from './Alerts'
+import Alerts from './Alerts'
 import styles from './Dashboard.styles'
 import SystemStatus from './SystemStatus'
 
@@ -33,35 +34,35 @@ const ShrunkCard = ({ title, buttonName, onUnshrink }) => {
 }
 
 const RightSide = () => {
-  // const classes = useStyles()
+  const classes = useStyles()
   const [systemStatusSize, setSystemStatusSize] = useState(cardState.DEFAULT)
-  // const [alertsSize, setAlertsSize] = useState(cardState.DEFAULT)
+  const [alertsSize, setAlertsSize] = useState(cardState.DEFAULT)
 
   const onReset = () => {
-    // setAlertsSize(cardState.DEFAULT)
+    setAlertsSize(cardState.DEFAULT)
     setSystemStatusSize(cardState.DEFAULT)
   }
   return (
     <Grid item xs={6}>
-      {/*         <CollapsibleCard
-          className={classes.alertsCard}
-          state={alertsSize}
-          shrunkComponent={
-            <ShrunkCard
-              title={'Alerts'}
-              buttonName={'Show alerts'}
-              onUnshrink={onReset}
-            />
-          }>
-          <Alerts
-            onExpand={() => {
-              setAlertsSize(cardState.EXPANDED)
-              setSystemStatusSize(cardState.SHRUNK)
-            }}
-            onReset={onReset}
-            size={alertsSize}
+      <CollapsibleCard
+        className={classes.alertsCard}
+        state={alertsSize}
+        shrunkComponent={
+          <ShrunkCard
+            title={'Alerts'}
+            buttonName={'Show alerts'}
+            onUnshrink={onReset}
           />
-        </CollapsibleCard> */}
+        }>
+        <Alerts
+          onExpand={() => {
+            setAlertsSize(cardState.EXPANDED)
+            setSystemStatusSize(cardState.SHRUNK)
+          }}
+          onReset={onReset}
+          size={alertsSize}
+        />
+      </CollapsibleCard>
       <CollapsibleCard
         state={systemStatusSize}
         shrunkComponent={
@@ -74,7 +75,7 @@ const RightSide = () => {
         <SystemStatus
           onExpand={() => {
             setSystemStatusSize(cardState.EXPANDED)
-            // setAlertsSize(cardState.SHRUNK)
+            setAlertsSize(cardState.SHRUNK)
           }}
           onReset={onReset}
           size={systemStatusSize}

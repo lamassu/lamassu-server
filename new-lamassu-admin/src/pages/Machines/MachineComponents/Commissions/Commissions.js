@@ -2,6 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
+
 import { Table as EditableTable } from 'src/components/editableTable'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 

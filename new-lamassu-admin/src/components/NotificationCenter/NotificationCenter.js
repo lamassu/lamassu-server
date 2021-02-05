@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+
 import ActionButton from 'src/components/buttons/ActionButton'
 import { H5 } from 'src/components/typography'
 import { ReactComponent as NotificationIconZodiac } from 'src/styling/icons/menu/notification-zodiac.svg'

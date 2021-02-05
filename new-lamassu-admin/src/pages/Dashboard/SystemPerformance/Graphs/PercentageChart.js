@@ -1,9 +1,9 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import React from 'react'
-import { ReactComponent as CashIn } from 'src/styling/icons/direction/cash-in.svg'
-import { ReactComponent as CashOut } from 'src/styling/icons/direction/cash-out.svg'
-import { fontSize3, fontSecondary, fontColor } from 'src/styling/variables'
+
+import { Label1 } from 'src/components/typography/index'
+import { java, neon, white } from 'src/styling/variables'
 
 const styles = {
   wrapper: {
@@ -20,47 +20,52 @@ const styles = {
     whiteSpace: 'pre'
   },
   label: {
-    fontSize: fontSize3,
-    fontFamily: fontSecondary,
-    fontWeight: 700,
-    color: fontColor
+    color: white
   },
-  cashIn: ({ value }) => ({
-    width: `${value}%`,
-    marginRight: 4
-  }),
-  cashOut: ({ value }) => ({
-    width: `${100 - value}%`
-  })
+  inColor: {
+    backgroundColor: java
+  },
+  outColor: {
+    backgroundColor: neon
+  },
+  other: {
+    minWidth: '6px',
+    borderRadius: 2
+  }
 }
 
 const useStyles = makeStyles(styles)
 
 const PercentageChart = ({ cashIn, cashOut }) => {
+  const classes = useStyles()
   const value = cashIn || cashOut !== 0 ? cashIn : 50
-  const classes = useStyles({ value })
 
-  const buildPercentageView = (value, direction) => {
-    const Operation = direction === 'cashIn' ? CashIn : CashOut
-    if (value > 25) {
-      return (
-        <>
-          <Operation />
-          {value > 25 && <span className={classes.label}>{` ${value}%`}</span>}
-        </>
-      )
-    }
-    if (value >= 10) {
-      return <Operation />
+  const buildPercentageView = value => {
+    if (value > 15) {
+      return <Label1 className={classes.label}>{` ${value}%`}</Label1>
     }
   }
 
   return (
     <div className={classes.wrapper}>
-      <div className={classnames(classes.percentageBox, classes.cashIn)}>
+      <div
+        className={classnames(
+          classes.percentageBox,
+          classes.inColor,
+          // if value between [1, 4], percentage box should not go below 6 px and border radius is 2px
+          // if value is 0 or 100, then width will be allowed to be 0px in one of the boxes, making it disappear
+          value < 5 && value > 0 ? classes.other : null
+        )}
+        style={{ width: `${value}%`, marginRight: 4 }}>
         {buildPercentageView(value, 'cashIn')}
       </div>
-      <div className={classnames(classes.percentageBox, classes.cashOut)}>
+      <div
+        className={classnames(
+          classes.percentageBox,
+          classes.outColor,
+          100 - value < 5 && 100 - value > 0 ? classes.other : null
+        )}
+        style={{ width: `${100 - value}%` }}>
         {buildPercentageView(100 - value, 'cashOut')}
       </div>
     </div>

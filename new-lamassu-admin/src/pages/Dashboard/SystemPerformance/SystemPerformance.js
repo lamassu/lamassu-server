@@ -2,11 +2,13 @@ import { useQuery } from '@apollo/react-hooks'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
+import classnames from 'classnames'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-import { Label2 } from 'src/components/typography/index'
+
+import { Label1, Label2 } from 'src/components/typography/index'
 import { ReactComponent as TriangleDown } from 'src/styling/icons/arrow/triangle_down.svg'
 import { ReactComponent as TriangleUp } from 'src/styling/icons/arrow/triangle_up.svg'
 import { fromNamespace } from 'src/utils/config'
@@ -206,14 +208,29 @@ const SystemPerformance = () => {
               <LineChart timeFrame={selectedRange} data={transactionsToShow} />
             </Grid>
             <Grid item xs={4}>
-              <Label2>Direction</Label2>
               <Grid container>
-                <Grid item xs>
-                  <PercentageChart
-                    cashIn={getDirectionPercent().cashIn}
-                    cashOut={getDirectionPercent().cashOut}
-                  />
+                <Grid item style={{ marginRight: 34 }}>
+                  <Label2>Direction</Label2>
                 </Grid>
+                <Grid
+                  item
+                  className={classnames(
+                    classes.directionLabelContainer,
+                    classes.dirLabContMargin
+                  )}>
+                  <div className={classes.outSquare} />
+                  <Label1 className={classes.directionLabel}>Out</Label1>
+                </Grid>
+                <Grid item className={classes.directionLabelContainer}>
+                  <div className={classes.inSquare} />
+                  <Label1 className={classes.directionLabel}>In</Label1>
+                </Grid>
+              </Grid>
+              <Grid item xs>
+                <PercentageChart
+                  cashIn={getDirectionPercent().cashIn}
+                  cashOut={getDirectionPercent().cashOut}
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -222,31 +239,5 @@ const SystemPerformance = () => {
     </>
   )
 }
-
-/**
-<Grid item xs={4}>
-              <div style={{ display: 'flex' }}>
-                <Label2>Direction</Label2>
-                <div style={{ marginLeft: 8, display: 'flex' }}>
-                  <div
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 2,
-                      marginTop: 18,
-                      marginRight: 8,
-                      backgroundColor: 'pink'
-                    }}
-                  />
-                  <p>In</p>
-                </div>
-              </div>
-              <Grid container>
-                <Grid item xs>
-                  <PercentageChart data={getDirectionPercent()} />
-                </Grid>
-              </Grid>
-            </Grid>
- */
 
 export default SystemPerformance
