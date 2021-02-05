@@ -2,6 +2,7 @@ import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
+import { utils } from 'lamassu-coins'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
@@ -11,7 +12,6 @@ import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
 import { getStatus } from 'src/pages/Transactions/helper'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { toUnit, formatCryptoAddress } from 'src/utils/coin'
 
 import DataTable from './DataTable'
 const useStyles = makeStyles(mainStyles)
@@ -118,13 +118,13 @@ const Transactions = ({ id }) => {
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
-          it.cryptoCode
-        }`
+        `${utils
+          .toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)
+          .toFormat(5)} ${it.cryptoCode}`
     },
     {
       header: 'Address',
-      view: it => formatCryptoAddress(it.cryptoCode, it.toAddress),
+      view: it => utils.formatCryptoAddress(it.cryptoCode, it.toAddress),
       className: classes.overflowTd,
       size: 'sm',
       textAlign: 'left',
