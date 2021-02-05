@@ -52,8 +52,6 @@ const getLogo = code => {
       return ZCashLogo
     case 'USDT':
       return EthereumLogo
-    case 'YEENUS':
-      return EthereumLogo
     default:
       return null
   }
