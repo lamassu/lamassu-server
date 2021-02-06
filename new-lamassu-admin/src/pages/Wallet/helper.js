@@ -52,7 +52,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       inputProps: {
         options: getOptions('ticker'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         optionsLimit: null
       }
     },
@@ -66,7 +66,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       inputProps: {
         options: getOptions('wallet'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         optionsLimit: null,
         onChange
       }
@@ -81,7 +81,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       inputProps: {
         options: getOptions('exchange'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         optionsLimit: null,
         onChange
       }
@@ -96,7 +96,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       inputProps: {
         options: getOptions('zeroConf'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         optionsLimit: null,
         onChange
       }

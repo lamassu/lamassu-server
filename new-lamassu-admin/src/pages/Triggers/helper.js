@@ -504,7 +504,7 @@ const getElements = (currency, classes) => [
     inputProps: {
       options: typeOptions,
       valueProp: 'code',
-      getLabel: R.path(['display']),
+      labelProp: 'display',
       optionsLimit: null
     }
   },

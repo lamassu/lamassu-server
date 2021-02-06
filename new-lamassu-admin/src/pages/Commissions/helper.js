@@ -80,7 +80,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       inputProps: {
         options: machineData,
         valueProp: 'deviceId',
-        getLabel: R.path(['name'])
+        labelProp: 'name'
       }
     },
     {
@@ -92,7 +92,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       inputProps: {
         options: cryptoData,
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         multiple: true,
         onChange: onCryptoChange
       }
