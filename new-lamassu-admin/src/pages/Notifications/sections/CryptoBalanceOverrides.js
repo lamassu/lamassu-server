@@ -104,7 +104,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         options: it => R.concat(suggestions, findSuggestion(it)),
         optionsLimit: null,
         valueProp: 'code',
-        getLabel: R.path(['display'])
+        labelProp: 'display'
       }
     },
     {

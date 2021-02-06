@@ -122,11 +122,6 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     ...inputProps
   }
 
-  // Autocomplete
-  if (innerProps.options && !innerProps.getLabel) {
-    innerProps.getLabel = view
-  }
-
   const isEditing = editing && editable
   const isField = !bypassField
 

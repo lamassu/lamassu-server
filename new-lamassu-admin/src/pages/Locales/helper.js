@@ -53,7 +53,7 @@ const allFields = (getData, onChange, auxElements = []) => {
         options: it =>
           R.concat(findSuggestion(it))(suggestionFilter(machineData)),
         valueProp: 'deviceId',
-        getLabel: R.path(['name'])
+        labelProp: 'name'
       }
     },
     {
@@ -65,7 +65,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: countryData,
         valueProp: 'code',
-        getLabel: R.path(['display'])
+        labelProp: 'display'
       }
     },
     {
@@ -77,7 +77,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: currencyData,
         valueProp: 'code',
-        getLabel: R.path(['code'])
+        labelProp: 'code'
       }
     },
     {
@@ -89,7 +89,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: languageData,
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         multiple: true
       }
     },
@@ -102,7 +102,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: cryptoData,
         valueProp: 'code',
-        getLabel: R.path(['code']),
+        labelProp: 'code',
         multiple: true,
         optionsLimit: null,
         onChange

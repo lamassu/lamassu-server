@@ -13,7 +13,7 @@ const Autocomplete = ({
   valueProp,
   multiple,
   onChange,
-  getLabel,
+  labelProp,
   value: outsideValue,
   error,
   fullWidth,
@@ -50,7 +50,7 @@ const Autocomplete = ({
   }
 
   const filter = (array, input) =>
-    sort(array, input, { keys: ['code', 'display'] })
+    sort(array, input, { keys: [valueProp, labelProp] })
 
   const filterOptions = (array, { inputValue }) =>
     R.union(
@@ -68,7 +68,7 @@ const Autocomplete = ({
       multiple={multiple}
       value={value}
       onChange={innerOnChange}
-      getOptionLabel={getLabel}
+      getOptionLabel={R.path([labelProp])}
       forcePopupIcon={false}
       filterOptions={filterOptions}
       openOnFocus
