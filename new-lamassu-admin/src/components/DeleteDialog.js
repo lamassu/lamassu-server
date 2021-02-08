@@ -4,7 +4,6 @@ import {
   DialogContent,
   makeStyles
 } from '@material-ui/core'
-// import * as R from 'ramda'
 import React from 'react'
 
 import { Button, IconButton } from 'src/components/buttons'
