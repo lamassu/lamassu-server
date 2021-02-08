@@ -53,11 +53,6 @@ const PromoCodes = () => {
   const [deleteDialog, setDeleteDialog] = useState(false)
   const [toBeDeleted, setToBeDeleted] = useState()
 
-  const onConfirmed = () => {
-    deleteCode(toBeDeleted)
-    setDeleteDialog(false)
-  }
-
   const [showModal, setShowModal] = useState(false)
   const [errorMsg, setErrorMsg] = useState(null)
   const toggleModal = () => setShowModal(!showModal)
@@ -65,6 +60,11 @@ const PromoCodes = () => {
   const { data: codeResponse, loading } = useQuery(GET_PROMO_CODES)
 
   const [deleteCode] = useMutation(DELETE_CODE, {
+    onError: ({ message }) => {
+      const errorMessage = message ?? 'Error while deleting row'
+      setErrorMsg(errorMessage)
+    },
+    onCompleted: () => setDeleteDialog(false),
     refetchQueries: () => ['promoCodes']
   })
 
@@ -152,8 +152,15 @@ const PromoCodes = () => {
           />
           <DeleteDialog
             open={deleteDialog}
-            setDeleteDialog={setDeleteDialog}
-            onConfirmed={onConfirmed}
+            onDismissed={() => {
+              setDeleteDialog(false)
+              setErrorMsg(null)
+            }}
+            onConfirmed={() => {
+              setErrorMsg(null)
+              deleteCode(toBeDeleted)
+            }}
+            errorMessage={errorMsg}
           />
         </>
       )}

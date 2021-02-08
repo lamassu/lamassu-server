@@ -100,12 +100,14 @@ const FiatCurrencyChangeAlert = ({ open, close, save }) => {
 const Locales = ({ name: SCREEN_KEY }) => {
   const [wizard, setWizard] = useState(false)
   const [onChangeFunction, setOnChangeFunction] = useState(null)
+  const [error, setError] = useState(null)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
   })
 
   const [dataToSave, setDataToSave] = useState(null)
@@ -138,6 +140,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
+    setError(null)
     return saveConfig({ variables: { config } })
   }
 

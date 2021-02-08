@@ -4,12 +4,15 @@ import {
   DialogContent,
   makeStyles
 } from '@material-ui/core'
+// import * as R from 'ramda'
 import React from 'react'
 
 import { Button, IconButton } from 'src/components/buttons'
 import { H4, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { spacer } from 'src/styling/variables'
+
+import ErrorMessage from './ErrorMessage'
 
 const useStyles = makeStyles({
   content: {
@@ -42,13 +45,15 @@ export const DialogTitle = ({ children, close }) => {
   return (
     <div className={classes.titleSection}>
       {children}
-      <IconButton
-        size={16}
-        aria-label="close"
-        onClick={close}
-        className={classes.closeButton}>
-        <CloseIcon />
-      </IconButton>
+      {close && (
+        <IconButton
+          size={16}
+          aria-label="close"
+          onClick={close}
+          className={classes.closeButton}>
+          <CloseIcon />
+        </IconButton>
+      )}
     </div>
   )
 }
@@ -56,18 +61,31 @@ export const DialogTitle = ({ children, close }) => {
 export const DeleteDialog = ({
   title = 'Confirm Delete',
   open = false,
-  setDeleteDialog,
   onConfirmed,
+  onDismissed,
   item = 'item',
-  confirmationMessage = `Are you sure you want to delete this ${item}?`
+  confirmationMessage = `Are you sure you want to delete this ${item}?`,
+  errorMessage = ''
 }) => {
   const classes = useStyles()
 
   return (
     <Dialog open={open} aria-labelledby="form-dialog-title">
-      <DialogTitle close={() => setDeleteDialog(false)}>
+      <DialogTitle close={() => onDismissed()}>
         <H4 className={classes.title}>{title}</H4>
       </DialogTitle>
+      {errorMessage && (
+        <DialogTitle>
+          <ErrorMessage>
+            {errorMessage.split(':').map(error => (
+              <>
+                {error}
+                <br />
+              </>
+            ))}
+          </ErrorMessage>
+        </DialogTitle>
+      )}
       <DialogContent className={classes.content}>
         {confirmationMessage && <P>{confirmationMessage}</P>}
       </DialogContent>
