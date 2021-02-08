@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
