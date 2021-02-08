@@ -30,7 +30,7 @@ const GET_PROMO_CODES = gql`
 
 const DELETE_CODE = gql`
   mutation deletePromoCode($codeId: ID!) {
-    deletePromoCodes(codeId: $codeId) {
+    deletePromoCode(codeId: $codeId) {
       id
     }
   }
