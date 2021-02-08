@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
@@ -36,7 +37,8 @@ const ActionCol = ({ disabled, editing }) => {
     toggleWidth,
     forceAdd,
     clearError,
-    actionColSize
+    actionColSize,
+    error
   } = useContext(TableCtx)
 
   const disableEdit = disabled || (disableRowEdit && disableRowEdit(values))
@@ -48,8 +50,9 @@ const ActionCol = ({ disabled, editing }) => {
   const [deleteDialog, setDeleteDialog] = useState(false)
 
   const onConfirmed = () => {
-    onDelete(values.id)
-    setDeleteDialog(false)
+    onDelete(values.id).then(res => {
+      if (!R.isNil(res)) setDeleteDialog(false)
+    })
   }
 
   return (
@@ -93,6 +96,11 @@ const ActionCol = ({ disabled, editing }) => {
             open={deleteDialog}
             setDeleteDialog={setDeleteDialog}
             onConfirmed={onConfirmed}
+            onDismissed={() => {
+              setDeleteDialog(false)
+              clearError()
+            }}
+            errorMessage={error}
           />
         </Td>
       )}

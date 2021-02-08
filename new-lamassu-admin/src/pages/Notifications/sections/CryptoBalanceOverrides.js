@@ -19,6 +19,7 @@ const CryptoBalanceOverrides = ({ section }) => {
     cryptoCurrencies = [],
     data,
     save,
+    error,
     currency,
     isDisabled,
     setEditing
@@ -135,6 +136,7 @@ const CryptoBalanceOverrides = ({ section }) => {
     <EditableTable
       name={NAME}
       title="Overrides"
+      error={error?.message}
       enableDelete
       enableEdit
       enableCreate

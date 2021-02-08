@@ -13,19 +13,18 @@ import styles from './Blacklist.styles'
 
 const useStyles = makeStyles(styles)
 
-const BlacklistTable = ({ data, selectedCoin, handleDeleteEntry }) => {
+const BlacklistTable = ({
+  data,
+  selectedCoin,
+  handleDeleteEntry,
+  errorMessage,
+  setErrorMessage,
+  deleteDialog,
+  setDeleteDialog
+}) => {
   const classes = useStyles()
 
-  const [deleteDialog, setDeleteDialog] = useState(false)
   const [toBeDeleted, setToBeDeleted] = useState()
-
-  const onConfirmed = () => {
-    handleDeleteEntry(
-      R.path(['cryptoCode'], toBeDeleted),
-      R.path(['address'], toBeDeleted)
-    )
-    setDeleteDialog(false)
-  }
 
   const elements = [
     {
@@ -72,8 +71,18 @@ const BlacklistTable = ({ data, selectedCoin, handleDeleteEntry }) => {
       />
       <DeleteDialog
         open={deleteDialog}
-        setDeleteDialog={setDeleteDialog}
-        onConfirmed={onConfirmed}
+        onDismissed={() => {
+          setDeleteDialog(false)
+          setErrorMessage(null)
+        }}
+        onConfirmed={() => {
+          setErrorMessage(null)
+          handleDeleteEntry(
+            R.path(['cryptoCode'], toBeDeleted),
+            R.path(['address'], toBeDeleted)
+          )
+        }}
+        errorMessage={errorMessage}
       />
     </>
   )
