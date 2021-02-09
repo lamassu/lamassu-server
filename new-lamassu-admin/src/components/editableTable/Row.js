@@ -157,7 +157,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
 }
 
 const groupStriped = elements => {
-  const [toStripe, noStripe] = R.partition(R.has('stripe'))(elements)
+  const [toStripe, noStripe] = R.partition(R.propEq('stripe', true))(elements)
 
   if (!toStripe.length) {
     return elements
@@ -187,7 +187,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
 
   const classes = useStyles()
 
-  const shouldStripe = stripeWhen && stripeWhen(values) && !editing
+  const shouldStripe = stripeWhen && stripeWhen(values)
 
   const innerElements = shouldStripe ? groupStriped(elements) : elements
   const [toSHeader] = R.partition(R.has('doubleHeader'))(elements)
