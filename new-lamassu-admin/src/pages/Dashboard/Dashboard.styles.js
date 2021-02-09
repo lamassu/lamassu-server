@@ -63,6 +63,20 @@ const styles = {
   },
   alertsTableMargin: {
     marginTop: -30
+  },
+  alertsTableContainer: {
+    height: 220,
+    overflowX: 'hidden',
+    overflowY: 'auto'
+  },
+  expandedAlertsTableContainer: {
+    minHeight: 476,
+    overflowX: 'hidden',
+    overflowY: 'auto'
+  },
+  centerLabel: {
+    marginTop: 40,
+    marginBottom: 0
   }
 }
 

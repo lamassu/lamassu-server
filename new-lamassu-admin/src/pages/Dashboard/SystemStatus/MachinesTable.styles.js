@@ -40,7 +40,8 @@ const styles = {
     }
   },
   buttonLabel: {
-    textAlign: 'center',
+    position: 'absolute',
+    bottom: 160,
     marginBottom: 0
   },
   upperButtonLabel: {
@@ -74,7 +75,12 @@ const styles = {
     display: 'inline'
   },
   machinesTableContainer: {
-    marginTop: 23
+    marginTop: 10,
+    height: 230
+  },
+  expandedMachinesTableContainer: {
+    marginTop: 10,
+    height: 442
   }
 }
 

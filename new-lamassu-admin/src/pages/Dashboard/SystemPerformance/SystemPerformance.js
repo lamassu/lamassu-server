@@ -9,8 +9,9 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { Label1, Label2 } from 'src/components/typography/index'
-import { ReactComponent as TriangleDown } from 'src/styling/icons/arrow/triangle_down.svg'
-import { ReactComponent as TriangleUp } from 'src/styling/icons/arrow/triangle_up.svg'
+import { ReactComponent as PercentDownIcon } from 'src/styling/icons/dashboard/down.svg'
+import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboard/equal.svg'
+import { ReactComponent as PercentUpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import PercentageChart from './Graphs/PercentageChart'
@@ -130,6 +131,7 @@ const SystemPerformance = () => {
     const thisTimePeriodProfit = getProfit(transactionsToShow)
     const previousTimePeriodProfit = getProfit(transactionsLastTimePeriod)
 
+    if (thisTimePeriodProfit === previousTimePeriodProfit) return 0
     if (previousTimePeriodProfit === 0) return 100
 
     return Math.round(
@@ -154,6 +156,22 @@ const SystemPerformance = () => {
   }
 
   const percentChange = getPercentChange()
+
+  console.log(percentChange)
+
+  const percentageClasses = {
+    [classes.percentDown]: percentChange < 0,
+    [classes.percentUp]: percentChange > 0,
+    [classes.percentNeutral]: percentChange === 0
+  }
+
+  const getPercentageIcon = () => {
+    if (percentChange === 0)
+      return <PercentNeutralIcon className={classes.directionIcon} />
+    if (percentChange > 0)
+      return <PercentUpIcon className={classes.directionIcon} />
+    return <PercentDownIcon className={classes.directionIcon} />
+  }
 
   return (
     <>
@@ -193,15 +211,8 @@ const SystemPerformance = () => {
                     data?.config.locale_fiatCurrency
                   }`}
                 </div>
-                <div
-                  className={
-                    percentChange <= 0 ? classes.percentDown : classes.percentUp
-                  }>
-                  {percentChange <= 0 ? (
-                    <TriangleDown className={classes.percentDown} />
-                  ) : (
-                    <TriangleUp className={classes.percentUp} />
-                  )}{' '}
+                <div className={classnames(percentageClasses)}>
+                  {getPercentageIcon()}
                   {`${percentChange}%`}
                 </div>
               </div>
