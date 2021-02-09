@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
@@ -46,6 +47,11 @@ const Alerts = ({ onReset, onExpand, size }) => {
   )(data?.machines ?? [])
   const alertsLength = alerts.length
 
+  const alertsTableContainerClasses = {
+    [classes.alertsTableContainer]: !showAllItems,
+    [classes.expandedAlertsTableContainer]: showAllItems
+  }
+
   return (
     <>
       <div className={classes.container}>
@@ -63,7 +69,10 @@ const Alerts = ({ onReset, onExpand, size }) => {
           </Label1>
         )}
       </div>
-      <Grid container spacing={1}>
+      <Grid
+        className={classnames(alertsTableContainerClasses)}
+        container
+        spacing={1}>
         <Grid item xs={12} className={classes.alertsTableMargin}>
           <AlertsTable
             numToRender={showAllItems ? alerts.length : NUM_TO_RENDER}

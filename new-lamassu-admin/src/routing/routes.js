@@ -301,7 +301,7 @@ const Routes = () => {
   return (
     <Switch>
       <Route exact path="/">
-        <Redirect to={{ pathname: '/transactions' }} />
+        <Redirect to={{ pathname: '/dashboard' }} />
       </Route>
       <Route path={'/dashboard'}>
         <Transition

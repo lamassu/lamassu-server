@@ -18,14 +18,15 @@ const styles = {
     marginLeft: spacer * 3
   },
   footer: ({ expanded, bigFooter }) => ({
-    height: expanded
-      ? bigFooter
+    height:
+      expanded && bigFooter
+        ? spacer * 12 * 3 + spacer * 3
+        : expanded
         ? spacer * 12 * 2 + spacer * 2
-        : spacer * 12 * 3 + spacer * 3
-      : spacer * 12,
-    position: 'fixed',
+        : spacer * 12,
     left: 0,
     bottom: 0,
+    position: 'fixed',
     width: '100vw',
     backgroundColor: white,
     textAlign: 'left',
@@ -37,17 +38,28 @@ const styles = {
   },
   content: {
     width: 1200,
-    margin: '0 auto',
     backgroundColor: white,
-    marginTop: 4
+    zIndex: 1
   },
-  footerContainer: {
+  footerContainer: ({ expanded, bigFooter }) => ({
     marginLeft: spacer * 5,
-    marginBottom: spacer * 2
-  },
-  footerItemContainer: {
-    marginBottom: 18
-  }
+    height: 100,
+    marginTop: expanded && bigFooter ? -300 : expanded ? -200 : -100,
+    overflow: !expanded && 'hidden'
+  }),
+  mouseWatcher: ({ expanded, bigFooter }) => ({
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    width: '100vw',
+    height:
+      expanded && bigFooter
+        ? spacer * 12 * 3 + spacer * 3
+        : expanded
+        ? spacer * 12 * 2 + spacer * 2
+        : spacer * 12,
+    zIndex: 2
+  })
 }
 
 export default styles

@@ -8,7 +8,8 @@ import {
   spring4,
   tomato,
   java,
-  neon
+  neon,
+  comet
 } from 'src/styling/variables'
 
 const styles = {
@@ -84,6 +85,12 @@ const styles = {
     color: tomato,
     height: 13
   },
+  percentNeutral: {
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 700,
+    color: comet
+  },
   profitContainer: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -91,7 +98,8 @@ const styles = {
     position: 'relative'
   },
   gridContainer: {
-    marginTop: 30
+    marginTop: 30,
+    height: 225
   },
   inSquare: {
     width: 8,
@@ -114,6 +122,12 @@ const styles = {
   },
   dirLabContMargin: {
     marginRight: 20
+  },
+  directionIcon: {
+    width: 16,
+    height: 16,
+    marginBottom: -2,
+    marginRight: 4
   }
 }
 

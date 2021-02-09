@@ -2,7 +2,9 @@ import { useQuery } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React from 'react'
 
 import { cardState as cardState_ } from 'src/components/CollapsibleCard'
@@ -50,8 +52,13 @@ const SystemStatus = ({ onReset, onExpand, size }) => {
   const classes = useStyles()
   const { data, loading } = useQuery(GET_DATA)
 
+  const machines = R.path(['machines'])(data) ?? []
   const showAllItems = size === cardState_.EXPANDED
 
+  const machinesTableContainerClasses = {
+    [classes.machinesTableContainer]: !showAllItems,
+    [classes.expandedMachinesTableContainer]: showAllItems
+  }
   // const uptime = data?.uptime ?? [{}]
   return (
     <>
@@ -99,15 +106,13 @@ const SystemStatus = ({ onReset, onExpand, size }) => {
           <Grid
             container
             spacing={1}
-            className={classes.machinesTableContainer}>
+            className={classnames(machinesTableContainerClasses)}>
             <Grid item xs={12}>
               <MachinesTable
-                numToRender={
-                  showAllItems ? data?.machines.length : NUM_TO_RENDER
-                }
-                machines={data?.machines ?? []}
+                numToRender={showAllItems ? Infinity : NUM_TO_RENDER}
+                machines={machines}
               />
-              {!showAllItems && data.machines.length > NUM_TO_RENDER && (
+              {!showAllItems && machines.length > NUM_TO_RENDER && (
                 <>
                   <Label1 className={classes.buttonLabel}>
                     <Button
@@ -116,7 +121,7 @@ const SystemStatus = ({ onReset, onExpand, size }) => {
                       disableRipple
                       disableFocusRipple
                       className={classes.button}>
-                      {`Show all (${data.machines.length})`}
+                      {`Show all (${machines.length})`}
                     </Button>
                   </Label1>
                 </>
