@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
@@ -112,7 +113,6 @@ const CashCassettes = () => {
       name: 'cashbox',
       header: 'Cashbox',
       width: 240,
-      stripe: true,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
@@ -159,6 +159,8 @@ const CashCassettes = () => {
     }
   ]
 
+  const isAnyStripeFalse = () => !!R.find(R.propEq('stripe', false))(elements)
+
   return (
     <>
       <TitleSection title="Cash Cassettes" />
@@ -168,7 +170,7 @@ const CashCassettes = () => {
         name="cashboxes"
         enableEdit
         stripeWhen={isCashOutDisabled}
-        disableRowEdit={isCashOutDisabled}
+        disableRowEdit={!isAnyStripeFalse}
         elements={elements}
         data={data && data.machines}
         save={onSave}
