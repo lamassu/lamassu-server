@@ -157,8 +157,6 @@ const SystemPerformance = () => {
 
   const percentChange = getPercentChange()
 
-  console.log(percentChange)
-
   const percentageClasses = {
     [classes.percentDown]: percentChange < 0,
     [classes.percentUp]: percentChange > 0,
@@ -216,7 +214,12 @@ const SystemPerformance = () => {
                   {`${percentChange}%`}
                 </div>
               </div>
-              <LineChart timeFrame={selectedRange} data={transactionsToShow} />
+              <LineChart
+                timeFrame={selectedRange}
+                data={transactionsToShow}
+                previousTimeData={transactionsLastTimePeriod}
+                previousProfit={getProfit(transactionsLastTimePeriod)}
+              />
             </Grid>
             <Grid item xs={4}>
               <Grid container>
