@@ -9,8 +9,7 @@ const cpcStyles = {
   wrapper: {
     extend: mono,
     display: 'flex',
-    alignItems: 'center',
-    height: 32
+    alignItems: 'center'
   },
   address: {
     lineBreak: 'anywhere'
