@@ -54,7 +54,7 @@ const Row = ({
           size={size}
           className={classnames(trClasses)}
           onClick={() => {
-            expandable && expandRow(id)
+            expandable && expandRow(id, data)
             onClick && onClick(data)
           }}
           error={data.error}
@@ -67,7 +67,7 @@ const Row = ({
           {expandable && (
             <Td width={expWidth} textAlign="center">
               <button
-                onClick={() => expandRow(id)}
+                onClick={() => expandRow(id, data)}
                 className={classes.expandButton}>
                 {expanded && <ExpandOpenIcon />}
                 {!expanded && <ExpandClosedIcon />}
@@ -112,9 +112,14 @@ const DataTable = ({
 
   const classes = useStyles({ width })
 
-  const expandRow = id => {
-    cache.clear(id)
-    setExpanded(id === expanded ? null : id)
+  const expandRow = (id, data) => {
+    if (data.id) {
+      cache.clear(data.id)
+      setExpanded(data.id === expanded ? null : data.id)
+    } else {
+      cache.clear(id)
+      setExpanded(id === expanded ? null : id)
+    }
   }
 
   const cache = new CellMeasurerCache({
@@ -135,12 +140,16 @@ const DataTable = ({
             <Row
               width={width}
               size={rowSize}
-              id={index}
+              id={data[index].id ? data[index].id : index}
               expWidth={expWidth}
               elements={elements}
               data={data[index]}
               Details={Details}
-              expanded={index === expanded}
+              expanded={
+                data[index].id
+                  ? data[index].id === expanded
+                  : index === expanded
+              }
               expandRow={expandRow}
               expandable={expandable}
               onClick={onClick}
