@@ -25,7 +25,12 @@ export default {
       display: 'Environment',
       component: Autocomplete,
       inputProps: {
-        options: ['prod', 'test']
+        options: [
+          { code: 'prod', display: 'prod' },
+          { code: 'test', display: 'test' }
+        ],
+        labelProp: 'display',
+        valueProp: 'code'
       },
       face: true
     },
