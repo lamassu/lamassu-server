@@ -189,7 +189,7 @@ const Logs = () => {
             </TableBody>
           </Table>
           {loading && <H4>{'Loading...'}</H4>}
-          {!loading && R.isEmpty(data?.serverLogs) && (
+          {!loading && !data?.serverLogs?.length && (
             <H4>{'No activity so far'}</H4>
           )}
         </div>
