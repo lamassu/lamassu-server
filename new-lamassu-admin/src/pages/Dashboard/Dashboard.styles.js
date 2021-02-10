@@ -1,5 +1,5 @@
 import typographyStyles from 'src/components/typography/styles'
-import { spacer, white, primaryColor } from 'src/styling/variables'
+import { spacer, white, primaryColor, comet } from 'src/styling/variables'
 const { label1 } = typographyStyles
 
 const styles = {
@@ -77,6 +77,10 @@ const styles = {
   centerLabel: {
     marginTop: 40,
     marginBottom: 0
+  },
+  notAlertsLabel: {
+    marginTop: 40,
+    color: comet
   }
 }
 
