@@ -74,6 +74,11 @@ const Alerts = ({ onReset, onExpand, size }) => {
         container
         spacing={1}>
         <Grid item xs={12} className={classes.alertsTableMargin}>
+          {!alerts.length && (
+            <Label1 className={classes.notAlertsLabel}>
+              No new alerts. Your system is running smoothly.
+            </Label1>
+          )}
           <AlertsTable
             numToRender={showAllItems ? alerts.length : NUM_TO_RENDER}
             alerts={alerts}
