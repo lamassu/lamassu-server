@@ -68,7 +68,8 @@ const Transactions = () => {
   const { data: txResponse, loading } = useQuery(GET_TRANSACTIONS, {
     variables: {
       limit: NUM_LOG_RESULTS
-    }
+    },
+    pollInterval: 10000
   })
 
   const redirect = customerId => {
