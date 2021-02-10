@@ -49,8 +49,10 @@ const Autocomplete = ({
     return multiple ? value : [value]
   }
 
-  const filter = (array, input) =>
-    sort(array, input, { keys: [valueProp, labelProp] })
+  const filter = (array, input) => {
+    if (!input) return array
+    return sort(array, input, { keys: [valueProp, labelProp] })
+  }
 
   const filterOptions = (array, { inputValue }) =>
     R.union(

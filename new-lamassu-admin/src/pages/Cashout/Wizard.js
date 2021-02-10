@@ -54,12 +54,22 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     {
       type: 'top',
       display: 'Cassette 1 (Top)',
-      component: Autocomplete
+      component: Autocomplete,
+      inputProps: {
+        options: R.map(it => ({ code: it, display: it }))(options),
+        labelProp: 'display',
+        valueProp: 'code'
+      }
     },
     {
       type: 'bottom',
       display: 'Cassette 2',
-      component: Autocomplete
+      component: Autocomplete,
+      inputProps: {
+        options: R.map(it => ({ code: it, display: it }))(options),
+        labelProp: 'display',
+        valueProp: 'code'
+      }
     },
     {
       type: 'zeroConfLimit',
