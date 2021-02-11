@@ -36,17 +36,23 @@ const styles = {
   },
   infoCurrentText: {
     color: comet
+  },
+  blankSpace: {
+    padding: [[0, 30]],
+    margin: [[0, 4, 0, 2]],
+    borderBottom: `1px solid ${comet}`,
+    display: 'inline-block'
   }
 }
 
 const useStyles = makeStyles(styles)
 
-const getStep = step => {
+const getStep = (step, currency) => {
   switch (step) {
     // case 1:
     //   return txDirection
     case 1:
-      return type
+      return type(currency)
     case 2:
       return requirements
     default:
@@ -91,9 +97,11 @@ const getTypeText = (config, currency) => {
         config.threshold.threshold
       )} ${currency}`
     case 'txVolume':
-      return `makes transactions over ${orUnderline(
+      return `makes ${orUnderline(
         config.threshold.threshold
-      )} ${currency} in ${orUnderline(config.threshold.thresholdDays)} days`
+      )} ${currency} worth of transactions within ${orUnderline(
+        config.threshold.thresholdDays
+      )} days`
     case 'txVelocity':
       return `makes ${orUnderline(
         config.threshold.threshold
@@ -143,13 +151,27 @@ const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
   const newText = getText(step, liveValues, currency)
   const isLastStep = step === LAST_STEP
 
+  const newTextParts = newText.split('⎼⎼⎼⎼⎼ ')
+  const mapIndexed = R.addIndex(R.map)
+  const newTextElements = mapIndexed((it, idx) => {
+    return idx === newTextParts.length - 1 ? (
+      <span className={classes.infoCurrentText}>{it}</span>
+    ) : (
+      <>
+        <span className={classes.infoCurrentText}>{it}</span>
+        <span className={classes.blankSpace}></span>
+      </>
+    )
+  })(newTextParts)
+
   return (
     <>
       <H5 className={classes.infoTitle}>Trigger overview so far</H5>
-      <Info3 noMargin>
+      <Info3 noMargin className={classes.infoText}>
         {oldText}
         {step !== 1 && ', '}
-        <span className={classes.infoCurrentText}>{newText}</span>
+        {newTextElements}
+        {/* <span className={classes.infoCurrentText}>{newText}</span> */}
         {!isLastStep && '...'}
       </Info3>
     </>
@@ -174,7 +196,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
   })
 
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step)
+  const stepOptions = getStep(step, currency)
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
@@ -195,7 +217,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
         title="New compliance trigger"
         handleClose={onClose}
         width={520}
-        height={480}
+        height={520}
         infoPanel={
           <InfoPanel
             currency={currency}
@@ -218,7 +240,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
           validationSchema={stepOptions.schema}>
           <Form className={classes.form}>
             <GetValues setValues={setLiveValues} />
-            <stepOptions.Component />
+            <stepOptions.Component {...stepOptions.props} />
             <div className={classes.submit}>
               {error && <ErrorMessage>Failed to save</ErrorMessage>}
               <Button className={classes.button} type="submit">
