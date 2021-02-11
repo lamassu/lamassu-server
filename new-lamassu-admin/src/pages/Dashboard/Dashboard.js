@@ -34,10 +34,15 @@ const Dashboard = () => {
           </div>
         </div>
       </TitleSection>
+
       <div className={classes.root}>
         <Grid container>
-          <LeftSide />
-          <RightSide />
+          <Grid container direction="column" item xs={6}>
+            <LeftSide />
+          </Grid>
+          <Grid container direction="column" item xs={6}>
+            <RightSide />
+          </Grid>
         </Grid>
       </div>
       <Footer />

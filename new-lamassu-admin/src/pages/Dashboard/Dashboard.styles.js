@@ -20,7 +20,7 @@ const styles = {
   },
   root: {
     flexGrow: 1,
-    marginBottom: 108
+    display: 'flex'
   },
   footer: {
     margin: [['auto', 0, spacer * 3, 'auto']]
@@ -30,9 +30,8 @@ const styles = {
     boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)',
     borderRadius: 12,
     padding: 24,
-    backgroundColor: white
-  },
-  leftSideMargin: {
+    backgroundColor: white,
+    flex: 1,
     marginRight: 24
   },
   container: {
@@ -56,23 +55,10 @@ const styles = {
     marginLeft: spacer
   },
   alertsCard: {
-    marginBottom: 16
+    marginBottom: spacer
   },
   h4: {
     marginTop: 0
-  },
-  alertsTableMargin: {
-    marginTop: -30
-  },
-  alertsTableContainer: {
-    height: 220,
-    overflowX: 'hidden',
-    overflowY: 'auto'
-  },
-  expandedAlertsTableContainer: {
-    minHeight: 476,
-    overflowX: 'hidden',
-    overflowY: 'auto'
   },
   centerLabel: {
     marginTop: 40,
@@ -81,6 +67,21 @@ const styles = {
   notAlertsLabel: {
     marginTop: 40,
     color: comet
+  },
+  systemStatusCard: {
+    flex: 1,
+    marginTop: spacer
+  },
+  expandedCard: {
+    flex: 0.9
+  },
+  shrunkCard: {
+    flex: 0.1
+  },
+  displayFlex: {
+    display: 'flex',
+    flex: 0.85,
+    flexDirection: 'column'
   }
 }
 

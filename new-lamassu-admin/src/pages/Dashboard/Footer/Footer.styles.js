@@ -39,7 +39,10 @@ const styles = {
   content: {
     width: 1200,
     backgroundColor: white,
-    zIndex: 1
+    zIndex: 1,
+    position: 'fixed',
+    bottom: -spacer,
+    transform: 'translateY(-100%)'
   },
   footerContainer: ({ expanded, bigFooter }) => ({
     marginLeft: spacer * 5,

@@ -7,11 +7,10 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
 
-import { cardState as cardState_ } from 'src/components/CollapsibleCard'
+import { cardState } from 'src/components/CollapsibleCard'
 import { Label1, H4 } from 'src/components/typography'
 
-import styles from '../Dashboard.styles'
-
+import styles from './Alerts.styles'
 import AlertsTable from './AlertsTable'
 
 const NUM_TO_RENDER = 3
@@ -38,7 +37,7 @@ const useStyles = makeStyles(styles)
 
 const Alerts = ({ onReset, onExpand, size }) => {
   const classes = useStyles()
-  const showAllItems = size === cardState_.EXPANDED
+  const showAllItems = size === cardState.EXPANDED
   const { data } = useQuery(GET_ALERTS)
   const alerts = R.path(['alerts'])(data) ?? []
   const machines = R.compose(
@@ -73,9 +72,9 @@ const Alerts = ({ onReset, onExpand, size }) => {
         className={classnames(alertsTableContainerClasses)}
         container
         spacing={1}>
-        <Grid item xs={12} className={classes.alertsTableMargin}>
+        <Grid item xs={12}>
           {!alerts.length && (
-            <Label1 className={classes.notAlertsLabel}>
+            <Label1 className={classes.noAlertsLabel}>
               No new alerts. Your system is running smoothly.
             </Label1>
           )}
@@ -84,20 +83,22 @@ const Alerts = ({ onReset, onExpand, size }) => {
             alerts={alerts}
             machines={machines}
           />
-          {!showAllItems && alertsLength > NUM_TO_RENDER && (
-            <Label1 className={classes.centerLabel}>
-              <Button
-                onClick={() => onExpand('alerts')}
-                size="small"
-                disableRipple
-                disableFocusRipple
-                className={classes.button}>
-                {`Show all (${alerts.length})`}
-              </Button>
-            </Label1>
-          )}
         </Grid>
       </Grid>
+      {!showAllItems && alertsLength > NUM_TO_RENDER && (
+        <Grid item xs={12}>
+          <Label1 className={classes.centerLabel}>
+            <Button
+              onClick={() => onExpand('alerts')}
+              size="small"
+              disableRipple
+              disableFocusRipple
+              className={classes.button}>
+              {`Show all (${alerts.length})`}
+            </Button>
+          </Label1>
+        </Grid>
+      )}
     </>
   )
 }
