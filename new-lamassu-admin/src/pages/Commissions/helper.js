@@ -450,7 +450,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     {
       name: 'cryptoCurrencies',
       display: 'Crypto Currency',
-      width: 280,
+      width: 265,
       view: R.prop(0),
       size: 'sm',
       editable: false
