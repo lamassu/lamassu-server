@@ -37,7 +37,8 @@ const styles = {
     textTransform: 'none',
     '&:hover': {
       backgroundColor: 'transparent'
-    }
+    },
+    marginBottom: -40
   },
   buttonLabel: {
     position: 'absolute',
@@ -76,11 +77,16 @@ const styles = {
   },
   machinesTableContainer: {
     marginTop: 10,
-    height: 230
+    height: 220
   },
   expandedMachinesTableContainer: {
     marginTop: 10,
-    height: 442
+    height: 414
+  },
+  centerLabel: {
+    marginBottom: 0,
+    padding: 0,
+    textAlign: 'center'
   }
 }
 

@@ -17,7 +17,7 @@ import styles from './MachinesTable.styles'
 const useStyles = makeStyles(styles)
 
 // number of machines in the table to render on page load
-const NUM_TO_RENDER = 3
+const NUM_TO_RENDER = 4
 
 const GET_DATA = gql`
   query getData {
@@ -112,22 +112,22 @@ const SystemStatus = ({ onReset, onExpand, size }) => {
                 numToRender={showAllItems ? Infinity : NUM_TO_RENDER}
                 machines={machines}
               />
-              {!showAllItems && machines.length > NUM_TO_RENDER && (
-                <>
-                  <Label1 className={classes.buttonLabel}>
-                    <Button
-                      onClick={() => onExpand()}
-                      size="small"
-                      disableRipple
-                      disableFocusRipple
-                      className={classes.button}>
-                      {`Show all (${machines.length})`}
-                    </Button>
-                  </Label1>
-                </>
-              )}
             </Grid>
           </Grid>
+          {!showAllItems && machines.length > NUM_TO_RENDER && (
+            <Grid item xs={12}>
+              <Label1 className={classes.centerLabel}>
+                <Button
+                  onClick={() => onExpand()}
+                  size="small"
+                  disableRipple
+                  disableFocusRipple
+                  className={classes.button}>
+                  {`Show all (${machines.length})`}
+                </Button>
+              </Label1>
+            </Grid>
+          )}
         </>
       )}
     </>

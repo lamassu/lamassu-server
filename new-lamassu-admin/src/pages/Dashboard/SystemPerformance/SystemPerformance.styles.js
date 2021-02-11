@@ -48,6 +48,8 @@ const styles = {
   },
   newHighlightedLabel: {
     cursor: 'pointer',
+    color: primaryColor,
+    fontWeight: 700,
     borderRadius: 0,
     minHeight: 0,
     minWidth: 0,
