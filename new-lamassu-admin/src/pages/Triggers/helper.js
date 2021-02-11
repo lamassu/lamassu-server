@@ -6,7 +6,7 @@ import React, { memo } from 'react'
 import * as Yup from 'yup'
 
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
-import { H4, Label2, Label1, Info2 } from 'src/components/typography'
+import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 // import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -41,11 +41,22 @@ const useStyles = makeStyles({
     marginLeft: 6
   },
   thresholdWrapper: {
-    display: 'flex'
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  thresholdTitle: {
+    marginTop: 50
+  },
+  thresholdContentWrapper: {
+    display: 'flex',
+    flexDirection: 'row'
   },
   thresholdField: {
-    margin: 10,
-    width: 208
+    marginRight: 6,
+    width: 75
+  },
+  description: {
+    marginTop: 7
   },
   space: {
     marginLeft: 6,
@@ -203,7 +214,7 @@ const typeOptions = [
   { display: 'Consecutive days', code: 'consecutiveDays' }
 ]
 
-const Type = () => {
+const Type = ({ ...props }) => {
   const classes = useStyles()
   const { errors, touched, values } = useFormikContext()
 
@@ -212,17 +223,19 @@ const Type = () => {
   }
 
   const containsType = R.contains(values?.triggerType)
-  const isThresholdEnabled = containsType([
-    'txAmount',
-    'txVolume',
-    'txVelocity'
-  ])
+  const isThresholdCurrencyEnabled = containsType(['txAmount', 'txVolume'])
+  const isTransactionAmountEnabled = containsType(['txVelocity'])
+  const isThresholdDaysEnabled = containsType(['txVolume', 'txVelocity'])
+  const isConsecutiveDaysEnabled = containsType(['consecutiveDays'])
 
-  const isThresholdDaysEnabled = containsType([
-    'txVolume',
-    'txVelocity',
-    'consecutiveDays'
-  ])
+  const isRadioGroupActive = () => {
+    return (
+      isThresholdCurrencyEnabled ||
+      isTransactionAmountEnabled ||
+      isThresholdDaysEnabled ||
+      isConsecutiveDaysEnabled
+    )
+  }
 
   return (
     <>
@@ -239,38 +252,94 @@ const Type = () => {
       />
 
       <div className={classes.thresholdWrapper}>
-        {isThresholdEnabled && (
-          <Field
-            className={classes.thresholdField}
-            component={TextInput}
-            label="Threshold"
-            size="lg"
-            name="threshold.threshold"
-          />
+        {isRadioGroupActive() && (
+          <H4 className={classnames(typeClass, classes.thresholdTitle)}>
+            Threshold
+          </H4>
         )}
-        {isThresholdDaysEnabled && (
-          <Field
-            className={classes.thresholdField}
-            component={TextInput}
-            label="Threshold Days"
-            size="lg"
-            name="threshold.thresholdDays"
-          />
-        )}
+        <div className={classes.thresholdContentWrapper}>
+          {isThresholdCurrencyEnabled && (
+            <>
+              <Field
+                className={classes.thresholdField}
+                component={TextInput}
+                size="lg"
+                name="threshold.threshold"
+              />
+              <Info1 className={classnames(typeClass, classes.description)}>
+                {props.currency}
+              </Info1>
+            </>
+          )}
+          {isTransactionAmountEnabled && (
+            <>
+              <Field
+                className={classes.thresholdField}
+                component={TextInput}
+                size="lg"
+                name="threshold.threshold"
+              />
+              <Info1 className={classnames(typeClass, classes.description)}>
+                transactions
+              </Info1>
+            </>
+          )}
+          {isThresholdDaysEnabled && (
+            <>
+              <Info1
+                className={classnames(
+                  typeClass,
+                  classes.space,
+                  classes.description
+                )}>
+                in
+              </Info1>
+              <Field
+                className={classes.thresholdField}
+                component={TextInput}
+                size="lg"
+                name="threshold.thresholdDays"
+              />
+              <Info1 className={classnames(typeClass, classes.description)}>
+                days
+              </Info1>
+            </>
+          )}
+          {isConsecutiveDaysEnabled && (
+            <>
+              <Field
+                className={classes.thresholdField}
+                component={TextInput}
+                size="lg"
+                name="threshold.thresholdDays"
+              />
+              <Info1 className={classnames(typeClass, classes.description)}>
+                consecutive days
+              </Info1>
+            </>
+          )}
+        </div>
       </div>
     </>
   )
 }
 
-const type = {
+const type = currency => ({
   schema: typeSchema,
   options: typeOptions,
   Component: Type,
+  props: { currency },
   initialValues: { triggerType: '', threshold: '' }
-}
+})
 
 const requirementSchema = Yup.object().shape({
-  requirement
+  requirement: Yup.object({
+    requirement: Yup.string().required(),
+    suspensionDays: Yup.number().when('requirement', {
+      is: value => value === 'suspend',
+      then: Yup.number().required()
+    })
+  }).required()
 })
 
 const requirementOptions = [
@@ -287,10 +356,15 @@ const requirementOptions = [
 
 const Requirement = () => {
   const classes = useStyles()
-  const { errors, values } = useFormikContext()
+  const { touched, errors, values } = useFormikContext()
 
   const titleClass = {
-    [classes.error]: errors.requirement
+    [classes.error]:
+      !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
+      (errors.requirement &&
+        touched.requirement &&
+        errors.requirement.suspensionDays &&
+        touched.requirement.suspensionDays)
   }
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
@@ -326,7 +400,7 @@ const requirements = {
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  initialValues: { requirement: '' }
+  initialValues: { requirement: { requirement: '', suspensionDays: '' } }
 }
 
 const getView = (data, code, compare) => it => {
