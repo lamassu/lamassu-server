@@ -202,7 +202,9 @@ const SystemPerformance = () => {
           </Grid>
           <Grid container className={classes.gridContainer}>
             <Grid item xs={8}>
-              <Label2>Profit from commissions</Label2>
+              <Label2 className={classes.labelMargin}>
+                Profit from commissions
+              </Label2>
               <div className={classes.profitContainer}>
                 <div className={classes.profitLabel}>
                   {`${getProfit(transactionsToShow)} ${
@@ -223,8 +225,8 @@ const SystemPerformance = () => {
             </Grid>
             <Grid item xs={4}>
               <Grid container>
-                <Grid item style={{ marginRight: 34 }}>
-                  <Label2>Direction</Label2>
+                <Grid item>
+                  <Label2 className={classes.labelMargin}>Direction</Label2>
                 </Grid>
                 <Grid
                   item
