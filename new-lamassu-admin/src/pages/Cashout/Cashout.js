@@ -8,6 +8,7 @@ import { Tooltip } from 'src/components/Tooltip'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
+import { EmptyTable } from 'src/components/table'
 import { P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
@@ -113,6 +114,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         disableRowEdit={R.compose(R.not, R.path(['active']))}
         elements={getElements(machines, locale)}
       />
+      {R.isEmpty(config) && <EmptyTable message="No machines so far" />}
       {wizard && (
         <Wizard
           machine={R.find(R.propEq('deviceId', wizard))(machines)}
