@@ -130,6 +130,10 @@ const styles = {
     height: 16,
     marginBottom: -2,
     marginRight: 4
+  },
+  labelMargin: {
+    marginBottom: 20,
+    marginRight: 32
   }
 }
 
