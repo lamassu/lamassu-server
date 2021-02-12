@@ -39,7 +39,8 @@ const DetailsRow = ({ it: tx }) => {
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = Number(fiat * commissionPercentage).toFixed(2)
-  const exchangeRate = Number(fiat / crypto).toFixed(3)
+  const discount = tx.discount ? `-${tx.discount}%` : null
+  const exchangeRate = BigNumber(fiat / crypto).toFormat(2)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
 
   const customer = tx.customerIdCardData && {
@@ -153,8 +154,13 @@ const DetailsRow = ({ it: tx }) => {
         </div>
         <div className={classes.commission}>
           <Label>Commission</Label>
-          <div>
+          <div className={classes.container}>
             {`${commission} ${tx.fiatCode} (${commissionPercentage * 100} %)`}
+            {discount && (
+              <div className={classes.chip}>
+                <Label1 className={classes.chipLabel}>{discount}</Label1>
+              </div>
+            )}
           </div>
         </div>
         <div>
