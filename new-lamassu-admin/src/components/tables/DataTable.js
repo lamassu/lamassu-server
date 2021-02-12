@@ -35,7 +35,8 @@ const Row = ({
   expandRow,
   expWidth,
   expandable,
-  onClick
+  onClick,
+  size
 }) => {
   const classes = useStyles()
 
@@ -45,11 +46,11 @@ const Row = ({
     [classes.row]: true,
     [classes.expanded]: expanded
   }
-
   return (
     <div className={classes.rowWrapper}>
       <div className={classnames({ [classes.before]: expanded && id !== 0 })}>
         <Tr
+          size={size}
           className={classnames(trClasses)}
           onClick={() => {
             expandable && expandRow(id)
@@ -97,6 +98,7 @@ const DataTable = ({
   onClick,
   loading,
   emptyText,
+  rowSize,
   ...props
 }) => {
   const [expanded, setExpanded] = useState(initialExpanded)
@@ -131,6 +133,7 @@ const DataTable = ({
           <div ref={registerChild} style={style}>
             <Row
               width={width}
+              size={rowSize}
               id={index}
               expWidth={expWidth}
               elements={elements}

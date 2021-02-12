@@ -74,6 +74,7 @@ const Transactions = () => {
   }
 
   const getCustomerDisplayName = tx => {
+    console.log(tx)
     if (tx.customerName) return tx.customerName
     if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
     return tx.customerPhone
@@ -172,6 +173,7 @@ const Transactions = () => {
         data={R.path(['transactions'])(txResponse)}
         Details={DetailsRow}
         expandable
+        rowSize="sm"
       />
     </>
   )

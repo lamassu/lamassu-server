@@ -53,7 +53,6 @@ const Td = ({
     [classes.size]: !header,
     [classes.bold]: !header && bold
   }
-
   return <div className={classnames(className, classNames)}>{children}</div>
 }
 
