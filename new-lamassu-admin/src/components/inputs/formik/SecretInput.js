@@ -5,8 +5,9 @@ import { SecretInput } from '../base'
 const SecretInputFormik = memo(({ ...props }) => {
   const { name, onChange, onBlur, value } = props.field
   const { touched, errors } = props.form
+  const isPasswordFilled = props.isPasswordFilled
 
-  const error = !!(touched[name] && errors[name])
+  const error = !isPasswordFilled && !!(touched[name] && errors[name])
 
   return (
     <SecretInput

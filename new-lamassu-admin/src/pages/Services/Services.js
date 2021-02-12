@@ -5,6 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
+import { SecretInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
@@ -56,6 +57,47 @@ const Services = () => {
     }))(faceElements)
   }
 
+  const getElements = ({ code, elements }) => {
+    return R.compose(
+      R.map(elem => {
+        return elem.component === SecretInput
+          ? R.assoc(
+              'inputProps',
+              {
+                isPasswordFilled:
+                  !R.isNil(accounts[code]) &&
+                  !R.isNil(R.path([elem.code], accounts[code]))
+              },
+              elem
+            )
+          : R.identity(elem)
+      })
+    )(elements)
+  }
+
+  const getAccounts = ({ elements, code }) => {
+    const account = accounts[code]
+    const passwordFields = R.compose(
+      R.reject(R.isNil),
+      R.map(({ component, code }) => (component === SecretInput ? code : null))
+    )(elements)
+    return R.compose(
+      R.mapObjIndexed((value, key, obj) =>
+        R.includes(key, passwordFields) ? '' : value
+      )
+    )(account)
+  }
+
+  const getValidationSchema = ({
+    validationSchema,
+    code,
+    hasSecret,
+    getValidationSchema
+  }) => {
+    if (!hasSecret) return validationSchema
+    return getValidationSchema(accounts[code])
+  }
+
   return (
     <div className={classes.wrapper}>
       <TitleSection title="3rd Party Services" />
@@ -83,9 +125,9 @@ const Services = () => {
                 variables: { accounts: { [editingSchema.code]: it } }
               })
             }
-            elements={editingSchema.elements}
-            validationSchema={editingSchema.validationSchema}
-            value={accounts[editingSchema.code]}
+            elements={getElements(editingSchema)}
+            validationSchema={getValidationSchema(editingSchema)}
+            value={getAccounts(editingSchema)}
           />
         </Modal>
       )}

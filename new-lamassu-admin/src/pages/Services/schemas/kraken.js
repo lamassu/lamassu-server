@@ -3,9 +3,12 @@ import * as Yup from 'yup'
 import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
+import secretTest from './helper'
+
 export default {
   code: 'kraken',
   name: 'Kraken',
+  hasSecret: true,
   title: 'Kraken (Exchange)',
   elements: [
     {
@@ -28,5 +31,16 @@ export default {
     privateKey: Yup.string()
       .max(100, 'Too long')
       .required()
-  })
+  }),
+  getValidationSchema: account => {
+    const schema = {
+      apiKey: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      privateKey: Yup.string()
+        .max(100, 'Too long')
+        .test(secretTest(account?.privateKey))
+    }
+    return Yup.object().shape(schema)
+  }
 }

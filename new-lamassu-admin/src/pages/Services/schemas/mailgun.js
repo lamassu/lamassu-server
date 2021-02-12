@@ -5,6 +5,7 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 export default {
   code: 'mailgun',
   name: 'Mailgun',
+  hasSecret: false,
   title: 'Mailgun (Email)',
   elements: [
     {

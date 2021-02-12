@@ -6,11 +6,14 @@ import {
   Autocomplete
 } from 'src/components/inputs/formik'
 
+import secretTest from './helper'
+
 const isDefined = it => it && it.length
 
 export default {
   code: 'bitgo',
   name: 'BitGo',
+  hasSecret: true,
   title: 'BitGo (Wallet)',
   elements: [
     {
@@ -122,5 +125,51 @@ export default {
     environment: Yup.string()
       .matches(/(prod|test)/)
       .required()
-  })
+  }),
+  getValidationSchema: account => {
+    const schema = {
+      token: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      BTCWalletId: Yup.string().max(100, 'Too long'),
+      BTCWalletPassphrase: Yup.string()
+        .max(100, 'Too long')
+        .when('BTCWalletId', {
+          is: isDefined,
+          then: Yup.string().test(secretTest(account?.BTCWalletPassphrase))
+        }),
+      LTCWalletId: Yup.string().max(100, 'Too long'),
+      LTCWalletPassphrase: Yup.string()
+        .max(100, 'Too long')
+        .when('LTCWalletId', {
+          is: isDefined,
+          then: Yup.string().test(secretTest(account?.LTCWalletPassphrase))
+        }),
+      ZECWalletId: Yup.string().max(100, 'Too long'),
+      ZECWalletPassphrase: Yup.string()
+        .max(100, 'Too long')
+        .when('ZECWalletId', {
+          is: isDefined,
+          then: Yup.string().test(secretTest(account?.ZECWalletPassphrase))
+        }),
+      BCHWalletId: Yup.string().max(100, 'Too long'),
+      BCHWalletPassphrase: Yup.string()
+        .max(100, 'Too long')
+        .when('BCHWalletId', {
+          is: isDefined,
+          then: Yup.string().test(secretTest(account?.BCHWalletPassphrase))
+        }),
+      DASHWalletId: Yup.string().max(100, 'Too long'),
+      DASHWalletPassphrase: Yup.string()
+        .max(100, 'Too long')
+        .when('DASHWalletId', {
+          is: isDefined,
+          then: Yup.string().test(secretTest(account?.DASHWalletPassphrase))
+        }),
+      environment: Yup.string()
+        .matches(/(prod|test)/)
+        .required()
+    }
+    return Yup.object().shape(schema)
+  }
 }
