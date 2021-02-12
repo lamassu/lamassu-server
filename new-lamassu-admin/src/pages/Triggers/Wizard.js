@@ -171,7 +171,6 @@ const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
         {oldText}
         {step !== 1 && ', '}
         {newTextElements}
-        {/* <span className={classes.infoCurrentText}>{newText}</span> */}
         {!isLastStep && '...'}
       </Info3>
     </>
