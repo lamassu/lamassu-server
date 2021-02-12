@@ -84,6 +84,15 @@ const mainStyles = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'
+  },
+  flexWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginRight: 16
+  },
+  customerLinkIcon: {
+    marginLeft: 2
   }
 }
 
