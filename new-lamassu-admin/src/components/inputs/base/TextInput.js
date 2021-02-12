@@ -26,8 +26,9 @@ const TextInput = memo(
     ...props
   }) => {
     const classes = useStyles({ textAlign, width, size })
-    const filled = !error && !R.isNil(value) && !R.isEmpty(value)
-
+    const isPasswordFilled = props.isPasswordFilled
+    const isTextFilled = !error && !R.isNil(value) && !R.isEmpty(value)
+    const filled = isPasswordFilled || isTextFilled
     const inputClasses = {
       [classes.bold]: bold
     }

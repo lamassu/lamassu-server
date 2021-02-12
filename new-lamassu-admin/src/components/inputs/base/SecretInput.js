@@ -4,11 +4,8 @@ import { TextInput } from '../base'
 
 const SecretInput = memo(({ value, onFocus, onBlur, ...props }) => {
   const [focused, setFocused] = useState(false)
-
+  const isPasswordFilled = props.isPasswordFilled
   const placeholder = '⚬ ⚬ ⚬ This field is set ⚬ ⚬ ⚬'
-  const previouslyFilled = !!value
-  const tempValue = previouslyFilled ? '' : value
-
   const innerOnFocus = event => {
     setFocused(true)
     onFocus && onFocus(event)
@@ -26,9 +23,9 @@ const SecretInput = memo(({ value, onFocus, onBlur, ...props }) => {
       onFocus={innerOnFocus}
       onBlur={innerOnBlur}
       value={value}
-      InputProps={{ value: !focused ? tempValue : value }}
-      InputLabelProps={{ shrink: previouslyFilled || focused }}
-      placeholder={previouslyFilled ? placeholder : ''}
+      InputProps={{ value: value }}
+      InputLabelProps={{ shrink: isPasswordFilled || value || focused }}
+      placeholder={isPasswordFilled ? placeholder : ''}
     />
   )
 })

@@ -3,9 +3,12 @@ import * as Yup from 'yup'
 import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
+import secretTest from './helper'
+
 export default {
   code: 'infura',
   name: 'Infura',
+  hasSecret: true,
   title: 'Infura (Wallet)',
   elements: [
     {
@@ -37,5 +40,19 @@ export default {
     endpoint: Yup.string()
       .max(100, 'Too long')
       .required()
-  })
+  }),
+  getValidationSchema: account => {
+    const schema = {
+      apiKey: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      apiSecret: Yup.string()
+        .max(100, 'Too long')
+        .test(secretTest(account?.apiSecret)),
+      endpoint: Yup.string()
+        .max(100, 'Too long')
+        .required()
+    }
+    return Yup.object().shape(schema)
+  }
 }
