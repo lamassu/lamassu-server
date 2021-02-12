@@ -5,9 +5,14 @@ import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
 
-import { TextInput, RadioGroup } from 'src/components/inputs/formik'
+import {
+  NumberInput,
+  TextInput,
+  RadioGroup
+} from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
+import { transformNumber } from 'src/utils/number'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 // import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -86,7 +91,7 @@ const threshold = Yup.object().shape({
   thresholdDays: Yup.number().test({
     test(val) {
       const { triggerType } = this.parent
-      const requireThrehsold = ['txVolume', 'txVelocity']
+      const requireThrehsold = ['txVolume', 'txVelocity', 'consecutiveDays']
 
       if (R.isEmpty(val) && R.includes(triggerType, requireThrehsold)) {
         return this.createError()
@@ -202,10 +207,37 @@ const Schema = Yup.object().shape({
 // }
 
 // TYPE
-const typeSchema = Yup.object().shape({
-  triggerType,
-  threshold
-})
+const typeSchema = Yup.object()
+  .shape({
+    triggerType: Yup.string().required(),
+    threshold: Yup.object({
+      threshold: Yup.number()
+        .transform(transformNumber)
+        .nullable(),
+      thresholdDays: Yup.number()
+        .transform(transformNumber)
+        .nullable()
+    })
+  })
+  .test(
+    'are-fields-set',
+    'All fields must be set.',
+    ({ triggerType, threshold }, context) => {
+      const validator = {
+        txAmount: threshold => threshold.threshold >= 0,
+        txVolume: threshold =>
+          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+        txVelocity: threshold =>
+          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+        consecutiveDays: threshold => threshold.thresholdDays >= 0
+      }
+
+      return (
+        (triggerType && validator?.[triggerType](threshold)) ||
+        context.createError({ path: 'threshold' })
+      )
+    }
+  )
 
 const typeOptions = [
   { display: 'Transaction amount', code: 'txAmount' },
@@ -227,6 +259,13 @@ const Type = ({ ...props }) => {
   const isTransactionAmountEnabled = containsType(['txVelocity'])
   const isThresholdDaysEnabled = containsType(['txVolume', 'txVelocity'])
   const isConsecutiveDaysEnabled = containsType(['consecutiveDays'])
+
+  const thresholdClass = {
+    [classes.error]:
+      errors.threshold &&
+      ((!containsType(['consecutiveDays']) && touched.threshold?.threshold) ||
+        (!containsType(['txAmount']) && touched.threshold?.thresholdDays))
+  }
 
   const isRadioGroupActive = () => {
     return (
@@ -253,7 +292,7 @@ const Type = ({ ...props }) => {
 
       <div className={classes.thresholdWrapper}>
         {isRadioGroupActive() && (
-          <H4 className={classnames(typeClass, classes.thresholdTitle)}>
+          <H4 className={classnames(thresholdClass, classes.thresholdTitle)}>
             Threshold
           </H4>
         )}
@@ -262,11 +301,11 @@ const Type = ({ ...props }) => {
             <>
               <Field
                 className={classes.thresholdField}
-                component={TextInput}
+                component={NumberInput}
                 size="lg"
                 name="threshold.threshold"
               />
-              <Info1 className={classnames(typeClass, classes.description)}>
+              <Info1 className={classnames(classes.description)}>
                 {props.currency}
               </Info1>
             </>
@@ -275,11 +314,11 @@ const Type = ({ ...props }) => {
             <>
               <Field
                 className={classes.thresholdField}
-                component={TextInput}
+                component={NumberInput}
                 size="lg"
                 name="threshold.threshold"
               />
-              <Info1 className={classnames(typeClass, classes.description)}>
+              <Info1 className={classnames(classes.description)}>
                 transactions
               </Info1>
             </>
@@ -296,24 +335,22 @@ const Type = ({ ...props }) => {
               </Info1>
               <Field
                 className={classes.thresholdField}
-                component={TextInput}
+                component={NumberInput}
                 size="lg"
                 name="threshold.thresholdDays"
               />
-              <Info1 className={classnames(typeClass, classes.description)}>
-                days
-              </Info1>
+              <Info1 className={classnames(classes.description)}>days</Info1>
             </>
           )}
           {isConsecutiveDaysEnabled && (
             <>
               <Field
                 className={classes.thresholdField}
-                component={TextInput}
+                component={NumberInput}
                 size="lg"
                 name="threshold.thresholdDays"
               />
-              <Info1 className={classnames(typeClass, classes.description)}>
+              <Info1 className={classnames(classes.description)}>
                 consecutive days
               </Info1>
             </>
@@ -329,7 +366,10 @@ const type = currency => ({
   options: typeOptions,
   Component: Type,
   props: { currency },
-  initialValues: { triggerType: '', threshold: '' }
+  initialValues: {
+    triggerType: '',
+    threshold: { threshold: '', thresholdDays: '' }
+  }
 })
 
 const requirementSchema = Yup.object().shape({
@@ -337,7 +377,10 @@ const requirementSchema = Yup.object().shape({
     requirement: Yup.string().required(),
     suspensionDays: Yup.number().when('requirement', {
       is: value => value === 'suspend',
-      then: Yup.number().required()
+      then: Yup.number().required(),
+      otherwise: Yup.number()
+        .nullable()
+        .transform(() => null)
     })
   }).required()
 })
@@ -594,7 +637,7 @@ const getElements = (currency, classes) => [
     name: 'threshold',
     size: 'sm',
     width: 284,
-    textAlign: 'right',
+    textAlign: 'left',
     input: () => <ThresholdInput currency={currency} />,
     view: (it, config) => <ThresholdView config={config} currency={currency} />
   }
