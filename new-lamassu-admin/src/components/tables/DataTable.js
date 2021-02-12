@@ -20,6 +20,7 @@ import {
 import { H4 } from 'src/components/typography'
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from 'src/styling/icons/action/expand/open.svg'
+import { ReactComponent as EmptyTableIcon } from 'src/styling/icons/table/empty-table.svg'
 
 import styles from './DataTable.styles'
 
@@ -164,7 +165,12 @@ const DataTable = ({
         </THead>
         <TBody className={classes.body}>
           {loading && <H4>Loading...</H4>}
-          {!loading && R.isEmpty(data) && <H4>{emptyText}</H4>}
+          {!loading && R.isEmpty(data) && (
+            <div className={classes.emptyTable}>
+              <EmptyTableIcon />
+              <H4>{emptyText}</H4>
+            </div>
+          )}
           <AutoSizer disableWidth>
             {({ height }) => (
               <List
