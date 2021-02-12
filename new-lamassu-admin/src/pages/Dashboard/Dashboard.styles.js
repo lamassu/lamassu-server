@@ -1,5 +1,5 @@
 import typographyStyles from 'src/components/typography/styles'
-import { spacer, white, primaryColor, comet } from 'src/styling/variables'
+import { spacer, white, primaryColor } from 'src/styling/variables'
 const { label1 } = typographyStyles
 
 const styles = {
@@ -20,10 +20,8 @@ const styles = {
   },
   root: {
     flexGrow: 1,
-    display: 'flex'
-  },
-  footer: {
-    margin: [['auto', 0, spacer * 3, 'auto']]
+    display: 'flex',
+    marginBottom: 120
   },
   card: {
     wordWrap: 'break-word',
@@ -64,10 +62,6 @@ const styles = {
     marginTop: 40,
     marginBottom: 0
   },
-  notAlertsLabel: {
-    marginTop: 40,
-    color: comet
-  },
   systemStatusCard: {
     flex: 1,
     marginTop: spacer
@@ -80,7 +74,6 @@ const styles = {
   },
   displayFlex: {
     display: 'flex',
-    flex: 0.85,
     flexDirection: 'column'
   }
 }

@@ -38,7 +38,8 @@ const styles = {
   },
   noAlertsLabel: {
     color: comet,
-    marginLeft: -5
+    marginLeft: -5,
+    height: 100
   },
   table: {
     maxHeight: 465,
