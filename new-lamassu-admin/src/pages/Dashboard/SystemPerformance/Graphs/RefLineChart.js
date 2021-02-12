@@ -11,10 +11,9 @@ const transactionProfit = tx => {
   return commission + cashInFee
 }
 
-const mockPoint = tx => {
-  const date = new Date(tx.created)
-  date.setHours(date.getHours() - 1)
-  return { created: date.toISOString(), profit: tx.profit }
+const mockPoint = (tx, offsetMs, profit) => {
+  const date = new Date(new Date(tx.created).getTime() + offsetMs).toISOString()
+  return { created: date, profit }
 }
 
 // if we're viewing transactions for the past day, then we group by hour. If not, we group by day
@@ -56,7 +55,7 @@ const RefLineChart = ({
       // if no point exists, then return 2 points at y = 0
       if (!aggregatedTX.length && !previousTimeData.length) {
         const mockPoint1 = { created: new Date().toISOString(), profit: 0 }
-        const mockPoint2 = mockPoint(mockPoint1)
+        const mockPoint2 = mockPoint(mockPoint1, -3600000, 0)
         return [[mockPoint1, mockPoint2], true]
       }
       // if this time period has no txs, but previous time period has, then % change is -100%
@@ -65,10 +64,7 @@ const RefLineChart = ({
           created: new Date().toISOString(),
           profit: 0
         }
-        const mockPoint2 = {
-          created: new Date(Date.now() - 1).toISOString(),
-          profit: 1
-        }
+        const mockPoint2 = mockPoint(mockPoint1, -timeFrameMS[timeFrame], 1)
         return [[mockPoint1, mockPoint2], false]
       }
       // if this time period has txs, but previous doesn't, then % change is +100%
@@ -77,10 +73,7 @@ const RefLineChart = ({
           created: new Date().toISOString(),
           profit: 1
         }
-        const mockPoint2 = {
-          created: new Date(Date.now() - timeFrameMS[timeFrame]).toISOString(),
-          profit: 0
-        }
+        const mockPoint2 = mockPoint(mockPoint1, -timeFrameMS[timeFrame], 0)
         return [[mockPoint1, mockPoint2], false]
       }
       // if only one point exists, create point on the left - otherwise the line won't be drawn
