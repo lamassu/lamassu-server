@@ -113,29 +113,25 @@ const SystemPerformance = () => {
   }
 
   const getFiatVolume = () =>
-    new BigNumber(R.sum(getFiats(transactionsToShow)))
-      .decimalPlaces(2)
-      .toNumber()
+    new BigNumber(R.sum(getFiats(transactionsToShow))).toFormat(2)
 
   const getProfit = transactions => {
     const cashInFees = R.sum(mapToFee(transactions))
     const commissionFees = R.reduce(reducer, 0, transactions)
 
     return new BigNumber(commissionFees + cashInFees)
-      .decimalPlaces(2)
-      .toNumber()
   }
 
   const getPercentChange = () => {
     const thisTimePeriodProfit = getProfit(transactionsToShow)
     const previousTimePeriodProfit = getProfit(transactionsLastTimePeriod)
 
-    if (previousTimePeriodProfit === 0) return 100
+    if (previousTimePeriodProfit.toNumber() === 0) return 100
 
-    return Math.round(
-      (100 * (thisTimePeriodProfit - previousTimePeriodProfit)) /
-        Math.abs(previousTimePeriodProfit)
-    )
+    return new BigNumber(
+      ((thisTimePeriodProfit - previousTimePeriodProfit) * 100) /
+        previousTimePeriodProfit
+    ).toFormat(2)
   }
 
   const getDirectionPercent = () => {
@@ -189,7 +185,7 @@ const SystemPerformance = () => {
               <Label2>Profit from commissions</Label2>
               <div className={classes.profitContainer}>
                 <div className={classes.profitLabel}>
-                  {`${getProfit(transactionsToShow)} ${
+                  {`${getProfit(transactionsToShow).toFormat(2)} ${
                     data?.config.locale_fiatCurrency
                   }`}
                 </div>

@@ -62,23 +62,17 @@ const Footer = () => {
 
     const avgOfAskBid = new BigNumber(
       (cashInNoCommission + cashOutNoCommission) / 2
-    )
-      .decimalPlaces(2)
-      .toFormat(2)
+    ).toFormat(2)
     const cashIn = new BigNumber(
       parseFloat(
         R.path(['cryptoRates', 'withCommissions', key, 'cashIn'])(data)
       )
-    )
-      .decimalPlaces(2)
-      .toFormat(2)
+    ).toFormat(2)
     const cashOut = new BigNumber(
       parseFloat(
         R.path(['cryptoRates', 'withCommissions', key, 'cashOut'])(data)
       )
-    )
-      .decimalPlaces(2)
-      .toFormat(2)
+    ).toFormat(2)
 
     const localeFiatCurrency = data.config.locale_fiatCurrency
 
