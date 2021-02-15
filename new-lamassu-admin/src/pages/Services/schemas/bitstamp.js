@@ -8,7 +8,6 @@ import secretTest from './helper'
 export default {
   code: 'bitstamp',
   name: 'Bitstamp',
-  hasSecret: true,
   title: 'Bitstamp (Exchange)',
   elements: [
     {
@@ -31,19 +30,8 @@ export default {
       component: SecretInputFormik
     }
   ],
-  validationSchema: Yup.object().shape({
-    clientId: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    key: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    secret: Yup.string()
-      .max(100, 'Too long')
-      .required()
-  }),
   getValidationSchema: account => {
-    const schema = {
+    return Yup.object().shape({
       clientId: Yup.string()
         .max(100, 'Too long')
         .required(),
@@ -53,7 +41,6 @@ export default {
       secret: Yup.string()
         .max(100, 'Too long')
         .test(secretTest(account?.secret))
-    }
-    return Yup.object().shape(schema)
+    })
   }
 }
