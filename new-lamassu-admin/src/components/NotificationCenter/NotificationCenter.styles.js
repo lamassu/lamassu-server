@@ -38,9 +38,9 @@ const styles = {
     height: 0
   },
   notificationIcon: {
-    position: 'absolute',
-    left: spacer * 33,
-    top: spacer * 2 + 4,
+    /*     position: 'absolute',
+    left: spacer * 22 + 2,
+    top: spacer + 5, */
     cursor: 'pointer',
     background: 'transparent',
     boxShadow: '0px 0px 0px transparent',
@@ -59,7 +59,7 @@ const styles = {
     maxHeight: '100vh',
     marginTop: spacer * 3,
     marginLeft: 0,
-    marginRight: 10,
+    marginRight: -50,
     overflowY: 'auto',
     overflowX: 'hidden',
     backgroundColor: white,

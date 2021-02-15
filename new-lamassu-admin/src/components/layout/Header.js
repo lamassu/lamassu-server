@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { memo, useState, useEffect } from 'react'
+import React, { memo, useState, useEffect, useRef } from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
 
 import NotificationCenter from 'src/components/NotificationCenter'
@@ -61,13 +61,16 @@ const notNil = R.compose(R.not, R.isNil)
 
 const Header = memo(({ tree }) => {
   const [open, setOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [notifButtonCoords, setNotifButtonCoords] = useState({ x: 0, y: 0 })
   const [active, setActive] = useState()
-  const { data, refetch } = useQuery(HAS_UNREAD, { pollInterval: 60000 })
   const [hasUnread, setHasUnread] = useState(false)
 
+  const { data, refetch } = useQuery(HAS_UNREAD, { pollInterval: 60000 })
+  const notifCenterButtonRef = useRef()
   const history = useHistory()
   const classes = useStyles()
+
   useEffect(() => {
     if (data?.hasUnreadNotifications) return setHasUnread(true)
     // if not true, make sure it's false and not undefined
@@ -90,6 +93,9 @@ const Header = memo(({ tree }) => {
   }
 
   const handleClick = event => {
+    const coords = notifCenterButtonRef.current.getBoundingClientRect()
+    setNotifButtonCoords({ x: coords.x, y: coords.y })
+
     setAnchorEl(anchorEl ? null : event.currentTarget)
     document.querySelector('#root').classList.add('root-notifcenter-open')
     document.querySelector('body').classList.add('body-notifcenter-open')
@@ -141,7 +147,7 @@ const Header = memo(({ tree }) => {
               Add machine
             </ActionButton>
             <ClickAwayListener onClickAway={onClickAway}>
-              <div>
+              <div ref={notifCenterButtonRef}>
                 <button
                   onClick={handleClick}
                   className={classes.notificationIcon}>
@@ -163,6 +169,8 @@ const Header = memo(({ tree }) => {
                   <NotificationCenter
                     close={onClickAway}
                     notifyUnread={refetch}
+                    hasUnread={hasUnread}
+                    notifButtonCoords={notifButtonCoords}
                   />
                 </Popper>
               </div>
