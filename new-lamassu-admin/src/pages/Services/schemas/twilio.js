@@ -8,7 +8,6 @@ import secretTest from './helper'
 export default {
   code: 'twilio',
   name: 'Twilio',
-  hasSecret: true,
   title: 'Twilio (SMS)',
   elements: [
     {
@@ -34,22 +33,8 @@ export default {
       face: true
     }
   ],
-  validationSchema: Yup.object().shape({
-    accountSid: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    authToken: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    fromNumber: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    toNumber: Yup.string()
-      .max(100, 'Too long')
-      .required()
-  }),
   getValidationSchema: account => {
-    const schema = {
+    return Yup.object().shape({
       accountSid: Yup.string()
         .max(100, 'Too long')
         .required(),
@@ -62,7 +47,6 @@ export default {
       toNumber: Yup.string()
         .max(100, 'Too long')
         .required()
-    }
-    return Yup.object().shape(schema)
+    })
   }
 }

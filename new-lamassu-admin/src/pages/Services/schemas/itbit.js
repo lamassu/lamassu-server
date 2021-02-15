@@ -8,7 +8,6 @@ import secretTest from './helper'
 export default {
   code: 'itbit',
   name: 'itBit',
-  hasSecret: true,
   title: 'itBit (Exchange)',
   elements: [
     {
@@ -36,22 +35,8 @@ export default {
       component: SecretInputFormik
     }
   ],
-  validationSchema: Yup.object().shape({
-    userId: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    walletId: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    clientKey: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    clientSecret: Yup.string()
-      .max(100, 'Too long')
-      .required()
-  }),
   getValidationSchema: account => {
-    const schema = {
+    return Yup.object().shape({
       userId: Yup.string()
         .max(100, 'Too long')
         .required(),
@@ -64,7 +49,6 @@ export default {
       clientSecret: Yup.string()
         .max(100, 'Too long')
         .test(secretTest(account?.clientSecret))
-    }
-    return Yup.object().shape(schema)
+    })
   }
 }

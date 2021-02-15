@@ -58,21 +58,17 @@ const Services = () => {
   }
 
   const getElements = ({ code, elements }) => {
-    return R.compose(
-      R.map(elem => {
-        return elem.component === SecretInput
-          ? R.assoc(
-              'inputProps',
-              {
-                isPasswordFilled:
-                  !R.isNil(accounts[code]) &&
-                  !R.isNil(R.path([elem.code], accounts[code]))
-              },
-              elem
-            )
-          : R.identity(elem)
-      })
-    )(elements)
+    return R.map(elem => {
+      if (elem.component !== SecretInput) return elem
+      return {
+        ...elem,
+        inputProps: {
+          isPasswordFilled:
+            !R.isNil(accounts[code]) &&
+            !R.isNil(R.path([elem.code], accounts[code]))
+        }
+      }
+    }, elements)
   }
 
   const getAccounts = ({ elements, code }) => {
@@ -81,22 +77,14 @@ const Services = () => {
       R.reject(R.isNil),
       R.map(({ component, code }) => (component === SecretInput ? code : null))
     )(elements)
-    return R.compose(
-      R.mapObjIndexed((value, key, obj) =>
-        R.includes(key, passwordFields) ? '' : value
-      )
-    )(account)
+    return R.mapObjIndexed(
+      (value, key) => (R.includes(key, passwordFields) ? '' : value),
+      account
+    )
   }
 
-  const getValidationSchema = ({
-    validationSchema,
-    code,
-    hasSecret,
-    getValidationSchema
-  }) => {
-    if (!hasSecret) return validationSchema
-    return getValidationSchema(accounts[code])
-  }
+  const getValidationSchema = ({ code, getValidationSchema }) =>
+    getValidationSchema(accounts[code])
 
   return (
     <div className={classes.wrapper}>

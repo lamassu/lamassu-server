@@ -144,7 +144,9 @@ const ChooseWallet = ({ data: currentData, addData }) => {
             value={accounts.infura}
             save={saveWallet(selected)}
             elements={schema.infura.elements}
-            validationSchema={schema.infura.validationSchema}
+            validationSchema={schema.infura.getValidationSchema(
+              accounts.infura
+            )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}
           />

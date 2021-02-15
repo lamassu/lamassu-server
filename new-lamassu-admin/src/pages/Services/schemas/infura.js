@@ -8,7 +8,6 @@ import secretTest from './helper'
 export default {
   code: 'infura',
   name: 'Infura',
-  hasSecret: true,
   title: 'Infura (Wallet)',
   elements: [
     {
@@ -30,19 +29,8 @@ export default {
       face: true
     }
   ],
-  validationSchema: Yup.object().shape({
-    apiKey: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    apiSecret: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    endpoint: Yup.string()
-      .max(100, 'Too long')
-      .required()
-  }),
   getValidationSchema: account => {
-    const schema = {
+    return Yup.object().shape({
       apiKey: Yup.string()
         .max(100, 'Too long')
         .required(),
@@ -52,7 +40,6 @@ export default {
       endpoint: Yup.string()
         .max(100, 'Too long')
         .required()
-    }
-    return Yup.object().shape(schema)
+    })
   }
 }

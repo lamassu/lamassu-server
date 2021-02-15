@@ -5,7 +5,6 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 export default {
   code: 'mailgun',
   name: 'Mailgun',
-  hasSecret: false,
   title: 'Mailgun (Email)',
   elements: [
     {
@@ -31,20 +30,22 @@ export default {
       face: true
     }
   ],
-  validationSchema: Yup.object().shape({
-    apiKey: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    domain: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    fromEmail: Yup.string()
-      .max(100, 'Too long')
-      .email('Please input a valid email address')
-      .required(),
-    toEmail: Yup.string()
-      .max(100, 'Too long')
-      .email('Please input a valid email address')
-      .required()
-  })
+  getValidationSchema: () => {
+    return Yup.object().shape({
+      apiKey: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      domain: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      fromEmail: Yup.string()
+        .max(100, 'Too long')
+        .email('Please input a valid email address')
+        .required(),
+      toEmail: Yup.string()
+        .max(100, 'Too long')
+        .email('Please input a valid email address')
+        .required()
+    })
+  }
 }

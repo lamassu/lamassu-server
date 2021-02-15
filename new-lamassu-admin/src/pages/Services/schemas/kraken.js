@@ -8,7 +8,6 @@ import secretTest from './helper'
 export default {
   code: 'kraken',
   name: 'Kraken',
-  hasSecret: true,
   title: 'Kraken (Exchange)',
   elements: [
     {
@@ -24,23 +23,14 @@ export default {
       component: SecretInputFormik
     }
   ],
-  validationSchema: Yup.object().shape({
-    apiKey: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    privateKey: Yup.string()
-      .max(100, 'Too long')
-      .required()
-  }),
   getValidationSchema: account => {
-    const schema = {
+    return Yup.object().shape({
       apiKey: Yup.string()
         .max(100, 'Too long')
         .required(),
       privateKey: Yup.string()
         .max(100, 'Too long')
         .test(secretTest(account?.privateKey))
-    }
-    return Yup.object().shape(schema)
+    })
   }
 }

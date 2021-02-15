@@ -24,8 +24,8 @@ const getItems = (accountsConfig, accounts, type, crypto) => {
     const account = find(code)
     if (!schema[code]) return true
 
-    const { validationSchema } = schema[code]
-    return validationSchema.isValidSync(account)
+    const { getValidationSchema } = schema[code]
+    return getValidationSchema(account).isValidSync(account)
   })(fConfig)
 
   return { filled, unfilled }

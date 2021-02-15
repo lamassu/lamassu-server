@@ -13,7 +13,6 @@ const isDefined = it => it && it.length
 export default {
   code: 'bitgo',
   name: 'BitGo',
-  hasSecret: true,
   title: 'BitGo (Wallet)',
   elements: [
     {
@@ -88,51 +87,8 @@ export default {
       component: SecretInput
     }
   ],
-  validationSchema: Yup.object().shape({
-    token: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    BTCWalletId: Yup.string().max(100, 'Too long'),
-    BTCWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('BTCWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    LTCWalletId: Yup.string().max(100, 'Too long'),
-    LTCWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('LTCWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    ZECWalletId: Yup.string().max(100, 'Too long'),
-    ZECWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('ZECWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    BCHWalletId: Yup.string().max(100, 'Too long'),
-    BCHWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('BCHWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    DASHWalletId: Yup.string().max(100, 'Too long'),
-    DASHWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('DASHWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    environment: Yup.string()
-      .matches(/(prod|test)/)
-      .required()
-  }),
   getValidationSchema: account => {
-    const schema = {
+    return Yup.object().shape({
       token: Yup.string()
         .max(100, 'Too long')
         .required(),
@@ -174,7 +130,6 @@ export default {
       environment: Yup.string()
         .matches(/(prod|test)/)
         .required()
-    }
-    return Yup.object().shape(schema)
+    })
   }
 }
