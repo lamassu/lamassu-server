@@ -170,8 +170,8 @@ const styles = {
   },
   hasUnread: {
     position: 'absolute',
-    top: 5,
-    left: 185,
+    top: 4,
+    left: 182,
     width: '9px',
     height: '9px',
     backgroundColor: secondaryColor,

@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import ActionButton from 'src/components/buttons/ActionButton'
 import { H5 } from 'src/components/typography'
@@ -52,19 +52,27 @@ const CLEAR_ALL_NOTIFICATIONS = gql`
   }
 `
 
-const NotificationCenter = ({ close, notifyUnread }) => {
+const NotificationCenter = ({
+  close,
+  notifyUnread,
+  hasUnreadProp,
+  notifButtonCoords
+}) => {
   const classes = useStyles()
   const { data, loading } = useQuery(GET_NOTIFICATIONS, {
     pollInterval: 60000
   })
   const [showingUnread, setShowingUnread] = useState(false)
+  const [xOffset, setXOffset] = useState(0)
   const machines = R.compose(
     R.map(R.prop('name')),
     R.indexBy(R.prop('deviceId'))
   )(data?.machines ?? [])
 
   const notifications = R.path(['notifications'])(data) ?? []
-  const hasUnread = data?.hasUnreadNotifications ?? false
+  const hasUnread = hasUnreadProp || (data?.hasUnreadNotifications ?? false)
+  const popperDOM = document.querySelector('#notifications-popper')
+
   if (!hasUnread) {
     notifyUnread && notifyUnread()
   }
@@ -77,6 +85,9 @@ const NotificationCenter = ({ close, notifyUnread }) => {
     refetchQueries: () => ['getNotifications']
   })
 
+  useEffect(() => {
+    if (popperDOM) setXOffset(popperDOM.getBoundingClientRect().x)
+  }, [popperDOM])
   const buildNotifications = () => {
     const notificationsToShow =
       !showingUnread || !hasUnread
@@ -106,13 +117,20 @@ const NotificationCenter = ({ close, notifyUnread }) => {
 
   return (
     <>
+      <button
+        onClick={close}
+        className={classes.notificationIcon}
+        style={{
+          position: 'absolute',
+          top: notifButtonCoords.y,
+          left: notifButtonCoords.x - xOffset
+        }}>
+        <NotificationIconZodiac />
+        {hasUnread && <div className={classes.hasUnread} />}
+      </button>
       <div className={classes.container}>
         <div className={classes.header}>
           <H5 className={classes.headerText}>Notifications</H5>
-          <button onClick={close} className={classes.notificationIcon}>
-            <NotificationIconZodiac />
-            {hasUnread && <div className={classes.hasUnread} />}
-          </button>
         </div>
         <div className={classes.actionButtons}>
           {hasUnread && (
