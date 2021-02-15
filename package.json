@@ -33,6 +33,7 @@
     "express-ws": "^3.0.0",
     "futoin-hkdf": "^1.0.2",
     "got": "^7.1.0",
+    "graphql": "^15.5.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-type-json": "^0.3.1",
     "helmet": "^3.8.1",
