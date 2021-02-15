@@ -53,8 +53,10 @@ const MachinesTable = ({ machines, numToRender }) => {
     return <TL2>{`${percent}%`}</TL2>
   }
 
-  const redirect = name => {
-    return history.push('/machines', { selectedMachine: name })
+  const redirect = ({ name, deviceId }) => {
+    return history.push('/machines/' + `${deviceId}`, {
+      selectedMachine: name
+    })
   }
 
   return (
@@ -96,7 +98,7 @@ const MachinesTable = ({ machines, numToRender }) => {
             if (idx < numToRender) {
               return (
                 <TableRow
-                  onClick={() => redirect(machine.name)}
+                  onClick={() => redirect(machine)}
                   className={classnames(classes.row, classes.clickableRow)}
                   key={machine.deviceId + idx}>
                   <StyledCell align="left">

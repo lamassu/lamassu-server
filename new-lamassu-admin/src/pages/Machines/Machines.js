@@ -16,7 +16,6 @@ import Commissions from './MachineComponents/Commissions'
 import Details from './MachineComponents/Details'
 import Overview from './MachineComponents/Overview'
 import Transactions from './MachineComponents/Transactions'
-import Sidebar from './MachineSidebar'
 import styles from './Machines.styles'
 const useStyles = makeStyles(styles)
 
@@ -73,21 +72,21 @@ const Machines = () => {
           <div className={classes.breadcrumbsContainer}>
             <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
               <Link to="/dashboard" className={classes.breadcrumbLink}>
-                <Label3 className={classes.subtitle}>Dashboard</Label3>
+                <Label3 className={classes.breadcrumbElem}>Dashboard</Label3>
               </Link>
-              <TL2 className={classes.subtitle}>{selectedMachine}</TL2>
+              <TL2 className={classes.breadcrumbElem}>{selectedMachine}</TL2>
             </Breadcrumbs>
             <Overview data={machineInfo} onActionSuccess={refetch} />
           </div>
         </Grid>
         <Grid item xs={12}>
-          <Sidebar
+          {/* on hold for now <Sidebar
             isSelected={R.equals(selectedMachine)}
             selectItem={setSelectedMachine}
             data={machines}
             getText={R.prop('name')}
             getKey={R.prop('deviceId')}
-          />
+          /> */}
         </Grid>
       </Grid>
       <Grid item xs={9}>
