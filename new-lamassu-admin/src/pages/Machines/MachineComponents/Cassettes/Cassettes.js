@@ -5,7 +5,7 @@ import React from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
-import { CashOut } from 'src/components/inputs/cashbox/Cashbox'
+import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput } from 'src/components/inputs/formik'
 import { fromNamespace } from 'src/utils/config'
 
@@ -15,6 +15,12 @@ const useStyles = makeStyles(styles)
 
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
+  cashbox: Yup.number()
+    .label('Cashbox')
+    .required()
+    .integer()
+    .min(0)
+    .max(1000),
   cassette1: Yup.number()
     .required('Required')
     .integer()
@@ -27,20 +33,23 @@ const ValidationSchema = Yup.object().shape({
     .max(500)
 })
 
-const RESET_CASHOUT_BILLS = gql`
+const SET_CASSETTE_BILLS = gql`
   mutation MachineAction(
     $deviceId: ID!
     $action: MachineAction!
+    $cashbox: Int!
     $cassette1: Int!
     $cassette2: Int!
   ) {
     machineAction(
       deviceId: $deviceId
       action: $action
+      cashbox: $cashbox
       cassette1: $cassette1
       cassette2: $cassette2
     ) {
       deviceId
+      cashbox
       cassette1
       cassette2
     }
@@ -60,6 +69,19 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     !getCashoutSettings(deviceId).active
 
   const elements = [
+    {
+      name: 'cashbox',
+      header: 'Cashbox',
+      width: 240,
+      stripe: true,
+      view: value => (
+        <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
+      ),
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
+    },
     {
       name: 'cassette1',
       header: 'Cash-out 1',
@@ -100,15 +122,16 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     }
   ]
 
-  const [resetCashOut, { error }] = useMutation(RESET_CASHOUT_BILLS, {
+  const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => refetchData()
   })
 
-  const onSave = (...[, { deviceId, cassette1, cassette2 }]) => {
-    return resetCashOut({
+  const onSave = (...[, { deviceId, cashbox, cassette1, cassette2 }]) => {
+    return setCassetteBills({
       variables: {
-        action: 'resetCashOutBills',
+        action: 'setCassetteBills',
         deviceId: deviceId,
+        cashbox,
         cassette1,
         cassette2
       }
