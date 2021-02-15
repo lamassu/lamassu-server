@@ -4,7 +4,8 @@ import Popper from '@material-ui/core/Popper'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
-import React, { memo, useState } from 'react'
+import * as R from 'ramda'
+import React, { memo, useState, useEffect } from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
 
 import NotificationCenter from 'src/components/NotificationCenter'
@@ -56,14 +57,22 @@ const Subheader = ({ item, classes }) => {
   )
 }
 
+const notNil = R.compose(R.not, R.isNil)
+
 const Header = memo(({ tree }) => {
   const [open, setOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [active, setActive] = useState()
-  const { data, refetch } = useQuery(HAS_UNREAD)
-  const hasUnread = data?.hasUnreadNotifications ?? false
+  const { data, refetch } = useQuery(HAS_UNREAD, { pollInterval: 60000 })
+  const [hasUnread, setHasUnread] = useState(false)
+
   const history = useHistory()
   const classes = useStyles()
+  useEffect(() => {
+    if (data?.hasUnreadNotifications) return setHasUnread(true)
+    // if not true, make sure it's false and not undefined
+    if (notNil(data?.hasUnreadNotifications)) return setHasUnread(false)
+  }, [data])
 
   const onPaired = machine => {
     setOpen(false)

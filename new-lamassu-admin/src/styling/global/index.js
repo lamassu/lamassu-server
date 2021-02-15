@@ -13,7 +13,7 @@ export default {
     },
     '.root-notifcenter-open': {
       // for when notification center is open
-      overflowY: 'scroll',
+      overflowY: 'auto',
       position: 'absolute',
       top: 0,
       bottom: 0,
