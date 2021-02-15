@@ -73,9 +73,11 @@ const Services = () => {
 
   const getAccounts = ({ elements, code }) => {
     const account = accounts[code]
+    const filterBySecretComponent = R.filter(R.propEq('component', SecretInput))
+    const mapToCode = R.map(R.prop(['code']))
     const passwordFields = R.compose(
-      R.reject(R.isNil),
-      R.map(({ component, code }) => (component === SecretInput ? code : null))
+      mapToCode,
+      filterBySecretComponent
     )(elements)
     return R.mapObjIndexed(
       (value, key) => (R.includes(key, passwordFields) ? '' : value),
