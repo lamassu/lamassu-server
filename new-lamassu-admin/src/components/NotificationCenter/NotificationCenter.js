@@ -53,7 +53,9 @@ const CLEAR_ALL_NOTIFICATIONS = gql`
 
 const NotificationCenter = ({ close, notifyUnread }) => {
   const classes = useStyles()
-  const { data, loading } = useQuery(GET_NOTIFICATIONS)
+  const { data, loading } = useQuery(GET_NOTIFICATIONS, {
+    pollInterval: 60000
+  })
   const [showingUnread, setShowingUnread] = useState(false)
   const machines = R.compose(
     R.map(R.prop('name')),
