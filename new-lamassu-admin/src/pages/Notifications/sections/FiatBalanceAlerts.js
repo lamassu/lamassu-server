@@ -74,7 +74,12 @@ const FiatBalance = ({
         <div className={classes.wrapper}>
           <div className={classes.first}>
             <div className={classes.row}>
-              <Cashbox percent={fiatBalanceCassette1Percent} cashOut />
+              <Cashbox
+                className={classes.cashbox}
+                emptyPartClassName={classes.cashboxEmptyPart}
+                percent={fiatBalanceCassette1Percent}
+                cashOut
+              />
               <div className={classes.col2}>
                 <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
                 <EditableNumber
@@ -89,7 +94,12 @@ const FiatBalance = ({
             </div>
           </div>
           <div className={classes.row}>
-            <Cashbox percent={fiatBalanceCassette2Percent} cashOut />
+            <Cashbox
+              className={classes.cashbox}
+              emptyPartClassName={classes.cashboxEmptyPart}
+              percent={fiatBalanceCassette2Percent}
+              cashOut
+            />
             <div className={classes.col2}>
               <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
               <EditableNumber
