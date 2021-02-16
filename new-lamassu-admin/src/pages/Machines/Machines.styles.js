@@ -76,14 +76,6 @@ const styles = {
   breadcrumbLink: {
     textDecoration: 'none'
   },
-  breadcrumbElem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    color: comet,
-    margin: 0
-  },
   detailsMargin: {
     marginTop: 24
   },

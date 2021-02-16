@@ -72,9 +72,13 @@ const Machines = () => {
           <div className={classes.breadcrumbsContainer}>
             <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
               <Link to="/dashboard" className={classes.breadcrumbLink}>
-                <Label3 className={classes.breadcrumbElem}>Dashboard</Label3>
+                <Label3 noMargin className={classes.subtitle}>
+                  Dashboard
+                </Label3>
               </Link>
-              <TL2 className={classes.breadcrumbElem}>{selectedMachine}</TL2>
+              <TL2 noMargin className={classes.subtitle}>
+                {selectedMachine}
+              </TL2>
             </Breadcrumbs>
             <Overview data={machineInfo} onActionSuccess={refetch} />
           </div>
