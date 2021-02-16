@@ -60,21 +60,22 @@ const getStep = (step, currency) => {
   }
 }
 
-const getText = (step, config, currency) => {
+const getText = (step, config, currency, classes) => {
   switch (step) {
     // case 1:
     //   return `In ${getDirectionText(config)} transactions`
     case 1:
-      return `If the user ${getTypeText(config, currency)}`
+      return <>If the user {getTypeText(config, currency, classes)}</>
     case 2:
-      return `the user will be ${getRequirementText(config)}.`
+      return <>the user will be {getRequirementText(config, classes)}.</>
     default:
-      return ''
+      return <></>
   }
 }
 
-const orUnderline = value => {
-  return R.isEmpty(value) || R.isNil(value) ? '⎼⎼⎼⎼⎼ ' : value
+const orUnderline = (value, classes) => {
+  const blankSpaceEl = <span className={classes.blankSpace}></span>
+  return R.isEmpty(value) || R.isNil(value) ? blankSpaceEl : value
 }
 
 // const getDirectionText = config => {
@@ -90,79 +91,80 @@ const orUnderline = value => {
 //   }
 // }
 
-const getTypeText = (config, currency) => {
+const getTypeText = (config, currency, classes) => {
   switch (config.triggerType) {
     case 'txAmount':
-      return `makes a single transaction over ${orUnderline(
-        config.threshold.threshold
-      )} ${currency}`
+      return (
+        <>
+          makes a single transaction over{' '}
+          {orUnderline(config.threshold.threshold, classes)} {currency}
+        </>
+      )
     case 'txVolume':
-      return `makes ${orUnderline(
-        config.threshold.threshold
-      )} ${currency} worth of transactions within ${orUnderline(
-        config.threshold.thresholdDays
-      )} days`
+      return (
+        <>
+          makes {orUnderline(config.threshold.threshold, classes)} {currency}{' '}
+          worth of transactions within{' '}
+          {orUnderline(config.threshold.thresholdDays, classes)} days
+        </>
+      )
     case 'txVelocity':
-      return `makes ${orUnderline(
-        config.threshold.threshold
-      )} transactions in ${orUnderline(config.threshold.thresholdDays)} days`
+      return (
+        <>
+          makes {orUnderline(config.threshold.threshold, classes)} transactions
+          in {orUnderline(config.threshold.thresholdDays, classes)} days
+        </>
+      )
     case 'consecutiveDays':
-      return `at least one transaction every day for ${orUnderline(
-        config.threshold.thresholdDays
-      )} days`
+      return (
+        <>
+          at least one transaction every day for{' '}
+          {orUnderline(config.threshold.thresholdDays, classes)} days
+        </>
+      )
     default:
       return ''
   }
 }
 
-const getRequirementText = config => {
+const getRequirementText = (config, classes) => {
   switch (config.requirement?.requirement) {
     case 'sms':
-      return 'asked to enter code provided through SMS verification'
+      return <>asked to enter code provided through SMS verification</>
     case 'idCardPhoto':
-      return 'asked to scan a ID with photo'
+      return <>asked to scan a ID with photo</>
     case 'idCardData':
-      return 'asked to scan a ID'
+      return <>asked to scan a ID</>
     case 'facephoto':
-      return 'asked to have a photo taken'
+      return <>asked to have a photo taken</>
     case 'usSsn':
-      return 'asked to input his social security number'
+      return <>asked to input his social security number</>
     case 'sanctions':
-      return 'matched against the OFAC sanctions list'
+      return <>matched against the OFAC sanctions list</>
     case 'superuser':
-      return ''
+      return <></>
     case 'suspend':
-      return `suspended for ${orUnderline(
-        config.requirement.suspensionDays
-      )} days`
+      return (
+        <>
+          suspended for{' '}
+          {orUnderline(config.requirement.suspensionDays, classes)} days
+        </>
+      )
     case 'block':
-      return 'blocked'
+      return <>blocked</>
     default:
-      return orUnderline(null)
+      return orUnderline(null, classes)
   }
 }
 
 const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
   const classes = useStyles()
 
-  const oldText = R.range(1, step)
-    .map(it => getText(it, config, currency))
-    .join(', ')
-  const newText = getText(step, liveValues, currency)
+  const oldText = R.range(1, step).map(it =>
+    getText(it, config, currency, classes)
+  )
+  const newText = getText(step, liveValues, currency, classes)
   const isLastStep = step === LAST_STEP
-
-  const newTextParts = newText.split('⎼⎼⎼⎼⎼ ')
-  const mapIndexed = R.addIndex(R.map)
-  const newTextElements = mapIndexed((it, idx) => {
-    return idx === newTextParts.length - 1 ? (
-      <span className={classes.infoCurrentText}>{it}</span>
-    ) : (
-      <>
-        <span className={classes.infoCurrentText}>{it}</span>
-        <span className={classes.blankSpace}></span>
-      </>
-    )
-  })(newTextParts)
 
   return (
     <>
@@ -170,7 +172,7 @@ const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
       <Info3 noMargin className={classes.infoText}>
         {oldText}
         {step !== 1 && ', '}
-        {newTextElements}
+        {newText}
         {!isLastStep && '...'}
       </Info3>
     </>
