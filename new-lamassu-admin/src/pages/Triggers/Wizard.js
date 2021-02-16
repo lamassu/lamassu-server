@@ -123,7 +123,7 @@ const getTypeText = (config, currency, classes) => {
         </>
       )
     default:
-      return ''
+      return <></>
   }
 }
 
