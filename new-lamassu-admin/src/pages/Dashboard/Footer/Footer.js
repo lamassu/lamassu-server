@@ -36,7 +36,7 @@ const Footer = () => {
   const [delayedExpand, setDelayedExpand] = useState(null)
 
   const classes = useStyles({
-    bigFooter: R.keys(data?.cryptoRates?.withCommissions).length < 8,
+    bigFooter: R.keys(data?.cryptoRates?.withCommissions).length > 8,
     expanded
   })
 
@@ -77,7 +77,7 @@ const Footer = () => {
     const localeFiatCurrency = data.config.locale_fiatCurrency
 
     return (
-      <Grid key={key} item xs={3} className={classes.footerItemContainer}>
+      <Grid key={key} item xs={3}>
         <Label2 className={classes.label}>
           {data.cryptoCurrencies[idx].display}
         </Label2>
@@ -109,10 +109,12 @@ const Footer = () => {
   }
 
   return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={classes.footer}>
+    <>
+      <div
+        className={classes.mouseWatcher}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+      />
       <div className={classes.content}>
         {!loading && data && (
           <Grid container spacing={1}>
@@ -124,7 +126,8 @@ const Footer = () => {
           </Grid>
         )}
       </div>
-    </div>
+      <div className={classes.footer} />
+    </>
   )
 }
 

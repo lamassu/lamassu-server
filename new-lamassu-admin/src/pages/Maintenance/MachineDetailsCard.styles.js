@@ -29,14 +29,16 @@ const machineDetailsStyles = {
   },
   wrapper: {
     display: 'flex',
-    marginTop: 24,
-    marginBottom: 32,
+    // marginTop: 24,
+    // marginBottom: 32,
+    marginTop: 12,
+    marginBottom: 16,
     fontSize: fontSize4
   },
   row: {
     display: 'flex',
-    flexDirection: 'row',
-    marginBottom: 36
+    flexDirection: 'row'
+    // marginBottom: 36
   },
   list: {
     padding: 0,

@@ -20,19 +20,16 @@ const styles = {
   },
   root: {
     flexGrow: 1,
-    marginBottom: 108
-  },
-  footer: {
-    margin: [['auto', 0, spacer * 3, 'auto']]
+    display: 'flex',
+    marginBottom: 120
   },
   card: {
     wordWrap: 'break-word',
     boxShadow: '0 0 4px 0 rgba(0, 0, 0, 0.08)',
     borderRadius: 12,
     padding: 24,
-    backgroundColor: white
-  },
-  leftSideMargin: {
+    backgroundColor: white,
+    flex: 1,
     marginRight: 24
   },
   container: {
@@ -56,13 +53,28 @@ const styles = {
     marginLeft: spacer
   },
   alertsCard: {
-    marginBottom: 16
+    marginBottom: spacer
   },
   h4: {
     marginTop: 0
   },
-  alertsTableMargin: {
-    marginTop: -30
+  centerLabel: {
+    marginTop: 40,
+    marginBottom: 0
+  },
+  systemStatusCard: {
+    flex: 1,
+    marginTop: spacer
+  },
+  expandedCard: {
+    flex: 0.9
+  },
+  shrunkCard: {
+    flex: 0.1
+  },
+  displayFlex: {
+    display: 'flex',
+    flexDirection: 'column'
   }
 }
 

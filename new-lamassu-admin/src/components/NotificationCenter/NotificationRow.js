@@ -2,6 +2,7 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import prettyMs from 'pretty-ms'
+import * as R from 'ramda'
 import React from 'react'
 
 import { Label1, Label2, TL2 } from 'src/components/typography'
@@ -14,6 +15,7 @@ import styles from './NotificationCenter.styles'
 const useStyles = makeStyles(styles)
 
 const types = {
+  transaction: { display: 'Transactions', icon: <Transaction /> },
   highValueTransaction: { display: 'Transactions', icon: <Transaction /> },
   fiatBalance: { display: 'Maintenance', icon: <Wrench /> },
   cryptoBalance: { display: 'Maintenance', icon: <Wrench /> },
@@ -34,15 +36,18 @@ const NotificationRow = ({
 }) => {
   const classes = useStyles()
 
-  const buildType = () => {
-    return types[type].display
-  }
-
-  const buildAge = () => {
-    const createdDate = new Date(created)
-    const interval = +new Date() - createdDate
-    return prettyMs(interval, { compact: true, verbose: true })
-  }
+  const typeDisplay = R.path([type, 'display'])(types) ?? null
+  const icon = R.path([type, 'icon'])(types) ?? <Wrench />
+  const age = prettyMs(new Date().getTime() - new Date(created).getTime(), {
+    compact: true,
+    verbose: true
+  })
+  const notificationTitle =
+    typeDisplay && deviceName
+      ? `${typeDisplay} - ${deviceName}`
+      : !typeDisplay && deviceName
+      ? `${deviceName}`
+      : `${typeDisplay}`
 
   return (
     <Grid
@@ -52,21 +57,19 @@ const NotificationRow = ({
         !read && valid ? classes.unread : ''
       )}>
       <Grid item xs={2} className={classes.notificationRowIcon}>
-        {types[type].icon}
+        {icon}
       </Grid>
       <Grid item container xs={7} direction="row">
         <Grid item xs={12}>
           <Label2 className={classes.notificationTitle}>
-            {`${buildType()} ${deviceName ? '- ' + deviceName : ''}`}
+            {notificationTitle}
           </Label2>
         </Grid>
         <Grid item xs={12}>
           <TL2 className={classes.notificationBody}>{message}</TL2>
         </Grid>
         <Grid item xs={12}>
-          <Label1 className={classes.notificationSubtitle}>
-            {buildAge(created)}
-          </Label1>
+          <Label1 className={classes.notificationSubtitle}>{age}</Label1>
         </Grid>
       </Grid>
       <Grid item xs={3} style={{ zIndex: 1 }}>

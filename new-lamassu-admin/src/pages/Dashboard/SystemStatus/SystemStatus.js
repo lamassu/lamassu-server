@@ -2,7 +2,9 @@ import { useQuery } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React from 'react'
 
 import { cardState as cardState_ } from 'src/components/CollapsibleCard'
@@ -15,7 +17,7 @@ import styles from './MachinesTable.styles'
 const useStyles = makeStyles(styles)
 
 // number of machines in the table to render on page load
-const NUM_TO_RENDER = 3
+const NUM_TO_RENDER = 4
 
 const GET_DATA = gql`
   query getData {
@@ -50,8 +52,13 @@ const SystemStatus = ({ onReset, onExpand, size }) => {
   const classes = useStyles()
   const { data, loading } = useQuery(GET_DATA)
 
+  const machines = R.path(['machines'])(data) ?? []
   const showAllItems = size === cardState_.EXPANDED
 
+  const machinesTableContainerClasses = {
+    [classes.machinesTableContainer]: !showAllItems,
+    [classes.expandedMachinesTableContainer]: showAllItems
+  }
   // const uptime = data?.uptime ?? [{}]
   return (
     <>
@@ -99,30 +106,28 @@ const SystemStatus = ({ onReset, onExpand, size }) => {
           <Grid
             container
             spacing={1}
-            className={classes.machinesTableContainer}>
+            className={classnames(machinesTableContainerClasses)}>
             <Grid item xs={12}>
               <MachinesTable
-                numToRender={
-                  showAllItems ? data?.machines.length : NUM_TO_RENDER
-                }
-                machines={data?.machines ?? []}
+                numToRender={showAllItems ? Infinity : NUM_TO_RENDER}
+                machines={machines}
               />
-              {!showAllItems && data.machines.length > NUM_TO_RENDER && (
-                <>
-                  <Label1 className={classes.buttonLabel}>
-                    <Button
-                      onClick={() => onExpand()}
-                      size="small"
-                      disableRipple
-                      disableFocusRipple
-                      className={classes.button}>
-                      {`Show all (${data.machines.length})`}
-                    </Button>
-                  </Label1>
-                </>
-              )}
             </Grid>
           </Grid>
+          {!showAllItems && machines.length > NUM_TO_RENDER && (
+            <Grid item xs={12}>
+              <Label1 className={classes.centerLabel}>
+                <Button
+                  onClick={() => onExpand()}
+                  size="small"
+                  disableRipple
+                  disableFocusRipple
+                  className={classes.button}>
+                  {`Show all (${machines.length})`}
+                </Button>
+              </Label1>
+            </Grid>
+          )}
         </>
       )}
     </>

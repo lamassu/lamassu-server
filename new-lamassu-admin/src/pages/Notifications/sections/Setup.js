@@ -87,6 +87,7 @@ const Setup = ({ wizard, forceDisable }) => {
       <TBody>
         <Row namespace="email" forceDisable={forceDisable} />
         <Row namespace="sms" forceDisable={forceDisable} />
+        <Row namespace="notificationCenter" forceDisable={forceDisable} />
       </TBody>
     </Table>
   )

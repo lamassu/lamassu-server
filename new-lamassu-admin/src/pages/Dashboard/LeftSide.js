@@ -11,12 +11,10 @@ const LeftSide = () => {
   const classes = useStyles()
 
   return (
-    <Grid item xs={6}>
-      <Grid item className={classes.leftSideMargin}>
-        <div className={classes.card}>
-          <SystemPerformance />
-        </div>
-      </Grid>
+    <Grid item xs={12} className={classes.displayFlex}>
+      <div className={classes.card}>
+        <SystemPerformance />
+      </div>
     </Grid>
   )
 }

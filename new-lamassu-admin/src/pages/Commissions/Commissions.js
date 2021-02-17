@@ -38,9 +38,11 @@ const removeCoinFromOverride = crypto => override =>
 
 const Commissions = ({ name: SCREEN_KEY }) => {
   const [showMachines, setShowMachines] = useState(false)
+  const [error, setError] = useState(null)
   const { data } = useQuery(GET_DATA)
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
   })
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
@@ -57,6 +59,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
+    setError(null)
     return saveConfig({ variables: { config } })
   }
 

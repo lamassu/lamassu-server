@@ -17,7 +17,7 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Info3 } from 'src/components/typography'
+import { Info3, H4 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
 import { offColor } from 'src/styling/variables'
 import { startCase } from 'src/utils/string'
@@ -91,7 +91,7 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_DATA, {
     onCompleted: () => setSaveMessage(''),
     variables: {
       limit: NUM_LOG_RESULTS
@@ -188,6 +188,10 @@ const Logs = () => {
                   ))}
             </TableBody>
           </Table>
+          {loading && <H4>{'Loading...'}</H4>}
+          {!loading && !data?.serverLogs?.length && (
+            <H4>{'No activity so far'}</H4>
+          )}
         </div>
       </div>
     </>

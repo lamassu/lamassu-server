@@ -107,6 +107,7 @@ const MachineStatus = () => {
         data={machines}
         Details={InnerMachineDetailsRow}
         initialExpanded={expandedIndex}
+        emptyText="No machines so far"
         expandable
       />
     </>

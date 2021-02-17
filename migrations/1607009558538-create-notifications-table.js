@@ -4,6 +4,7 @@ const singleQuotify = (item) => `'${item}'`
 
 var types = [
   'highValueTransaction',
+  'transaction',
   'fiatBalance',
   'cryptoBalance',
   'compliance',

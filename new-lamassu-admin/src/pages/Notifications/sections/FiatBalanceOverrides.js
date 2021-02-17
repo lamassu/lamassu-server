@@ -15,9 +15,14 @@ const MACHINE_KEY = 'machine'
 const NAME = 'fiatBalanceOverrides'
 
 const FiatBalanceOverrides = ({ section }) => {
-  const { machines = [], data, save, isDisabled, setEditing } = useContext(
-    NotificationsCtx
-  )
+  const {
+    machines = [],
+    data,
+    save,
+    isDisabled,
+    setEditing,
+    error
+  } = useContext(NotificationsCtx)
 
   const setupValues = data?.fiatBalanceOverrides ?? []
   const innerSetEditing = it => setEditing(NAME, it)
@@ -86,7 +91,7 @@ const FiatBalanceOverrides = ({ section }) => {
       inputProps: {
         options: it => R.concat(suggestions, findSuggestion(it)),
         valueProp: 'deviceId',
-        getLabel: R.path(['name'])
+        labelProp: 'name'
       }
     },
     {
@@ -121,6 +126,7 @@ const FiatBalanceOverrides = ({ section }) => {
     <EditableTable
       name={NAME}
       title="Overrides"
+      error={error?.message}
       enableDelete
       enableEdit
       enableCreate

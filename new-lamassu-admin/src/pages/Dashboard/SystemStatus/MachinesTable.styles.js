@@ -37,10 +37,12 @@ const styles = {
     textTransform: 'none',
     '&:hover': {
       backgroundColor: 'transparent'
-    }
+    },
+    marginBottom: -40
   },
   buttonLabel: {
-    textAlign: 'center',
+    position: 'absolute',
+    bottom: 160,
     marginBottom: 0
   },
   upperButtonLabel: {
@@ -74,7 +76,17 @@ const styles = {
     display: 'inline'
   },
   machinesTableContainer: {
-    marginTop: 23
+    marginTop: 10,
+    height: 220
+  },
+  expandedMachinesTableContainer: {
+    marginTop: 10,
+    height: 414
+  },
+  centerLabel: {
+    marginBottom: 0,
+    padding: 0,
+    textAlign: 'center'
   }
 }
 

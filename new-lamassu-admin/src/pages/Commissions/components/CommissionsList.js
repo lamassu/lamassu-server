@@ -23,7 +23,7 @@ const styles = {
   tableWrapper: {
     flex: 1,
     display: 'block',
-    overflowX: 'auto',
+    overflowY: 'auto',
     width: '100%',
     maxHeight: '70vh'
   }

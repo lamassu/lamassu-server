@@ -17,6 +17,7 @@ import {
   Td,
   Th
 } from 'src/components/fake-table/Table'
+import { EmptyTable } from 'src/components/table'
 import { H4 } from 'src/components/typography'
 import { ReactComponent as ExpandClosedIcon } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandOpenIcon } from 'src/styling/icons/action/expand/open.svg'
@@ -35,7 +36,8 @@ const Row = ({
   expandRow,
   expWidth,
   expandable,
-  onClick
+  onClick,
+  size
 }) => {
   const classes = useStyles()
 
@@ -45,14 +47,14 @@ const Row = ({
     [classes.row]: true,
     [classes.expanded]: expanded
   }
-
   return (
     <div className={classes.rowWrapper}>
       <div className={classnames({ [classes.before]: expanded && id !== 0 })}>
         <Tr
+          size={size}
           className={classnames(trClasses)}
           onClick={() => {
-            expandable && expandRow(id)
+            expandable && expandRow(id, data)
             onClick && onClick(data)
           }}
           error={data.error}
@@ -65,7 +67,7 @@ const Row = ({
           {expandable && (
             <Td width={expWidth} textAlign="center">
               <button
-                onClick={() => expandRow(id)}
+                onClick={() => expandRow(id, data)}
                 className={classes.expandButton}>
                 {expanded && <ExpandOpenIcon />}
                 {!expanded && <ExpandClosedIcon />}
@@ -97,6 +99,7 @@ const DataTable = ({
   onClick,
   loading,
   emptyText,
+  rowSize,
   ...props
 }) => {
   const [expanded, setExpanded] = useState(initialExpanded)
@@ -109,9 +112,14 @@ const DataTable = ({
 
   const classes = useStyles({ width })
 
-  const expandRow = id => {
-    cache.clear(id)
-    setExpanded(id === expanded ? null : id)
+  const expandRow = (id, data) => {
+    if (data.id) {
+      cache.clear(data.id)
+      setExpanded(data.id === expanded ? null : data.id)
+    } else {
+      cache.clear(id)
+      setExpanded(id === expanded ? null : id)
+    }
   }
 
   const cache = new CellMeasurerCache({
@@ -131,12 +139,17 @@ const DataTable = ({
           <div ref={registerChild} style={style}>
             <Row
               width={width}
-              id={index}
+              size={rowSize}
+              id={data[index].id ? data[index].id : index}
               expWidth={expWidth}
               elements={elements}
               data={data[index]}
               Details={Details}
-              expanded={index === expanded}
+              expanded={
+                data[index].id
+                  ? data[index].id === expanded
+                  : index === expanded
+              }
               expandRow={expandRow}
               expandable={expandable}
               onClick={onClick}
@@ -164,7 +177,7 @@ const DataTable = ({
         </THead>
         <TBody className={classes.body}>
           {loading && <H4>Loading...</H4>}
-          {!loading && R.isEmpty(data) && <H4>{emptyText}</H4>}
+          {!loading && R.isEmpty(data) && <EmptyTable message={emptyText} />}
           <AutoSizer disableWidth>
             {({ height }) => (
               <List

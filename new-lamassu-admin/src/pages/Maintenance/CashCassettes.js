@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
@@ -8,6 +9,7 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
+import { EmptyTable } from 'src/components/table'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
@@ -112,7 +114,6 @@ const CashCassettes = () => {
       name: 'cashbox',
       header: 'Cashbox',
       width: 240,
-      stripe: true,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
@@ -168,12 +169,15 @@ const CashCassettes = () => {
         name="cashboxes"
         enableEdit
         stripeWhen={isCashOutDisabled}
-        disableRowEdit={isCashOutDisabled}
         elements={elements}
         data={data && data.machines}
         save={onSave}
         validationSchema={ValidationSchema}
       />
+
+      {data && R.isEmpty(data.machines) && (
+        <EmptyTable message="No machines so far" />
+      )}
     </>
   )
 }

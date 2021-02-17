@@ -1,5 +1,6 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
 
@@ -26,13 +27,9 @@ const useStyles = makeStyles(styles)
 const CollapsibleCard = ({ className, state, shrunkComponent, children }) => {
   const classes = useStyles()
   return (
-    <div className={className}>
-      <Grid item>
-        <div className={classes.card}>
-          {state === cardState.SHRUNK ? shrunkComponent : children}
-        </div>
-      </Grid>
-    </div>
+    <Grid item className={classnames(className, classes.card)}>
+      {state === cardState.SHRUNK ? shrunkComponent : children}
+    </Grid>
   )
 }
 

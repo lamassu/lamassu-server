@@ -37,7 +37,7 @@
     "react-virtualized": "^9.21.2",
     "sanctuary": "^2.0.1",
     "uuid": "^7.0.2",
-    "yup": "0.29.3"
+    "yup": "0.30.0"
   },
   "devDependencies": {
     "@storybook/addon-actions": "6.0.26",
@@ -48,11 +48,12 @@
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "6.0.26",
     "@welldone-software/why-did-you-render": "^3.3.9",
+    "eslint": "^7.19.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-prettier-standard": "^3.0.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-promise": "^4.2.1",

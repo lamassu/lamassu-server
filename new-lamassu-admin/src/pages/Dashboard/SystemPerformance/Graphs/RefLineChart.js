@@ -11,10 +11,9 @@ const transactionProfit = tx => {
   return commission + cashInFee
 }
 
-const mockPoint = tx => {
-  const date = new Date(tx.created)
-  date.setHours(date.getHours() - 1)
-  return { created: date.toISOString(), profit: tx.profit }
+const mockPoint = (tx, offsetMs, profit) => {
+  const date = new Date(new Date(tx.created).getTime() + offsetMs).toISOString()
+  return { created: date, profit }
 }
 
 // if we're viewing transactions for the past day, then we group by hour. If not, we group by day
@@ -28,7 +27,18 @@ const reducer = (acc, tx) => {
   return { ...tx, profit: currentProfit + transactionProfit(tx) }
 }
 
-const RefLineChart = ({ data: realData, timeFrame }) => {
+const timeFrameMS = {
+  Day: 24 * 3600 * 1000,
+  Week: 7 * 24 * 3600 * 1000,
+  Month: 30 * 24 * 3600 * 1000
+}
+
+const RefLineChart = ({
+  data: realData,
+  previousTimeData,
+  previousProfit,
+  timeFrame
+}) => {
   const svgRef = useRef()
 
   const drawGraph = useCallback(() => {
@@ -43,14 +53,43 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
 
       const aggregatedTX = R.values(R.reduceBy(reducer, [], method, realData))
       // if no point exists, then return 2 points at y = 0
-      if (aggregatedTX.length === 0) {
+      if (!aggregatedTX.length && !previousTimeData.length) {
         const mockPoint1 = { created: new Date().toISOString(), profit: 0 }
-        const mockPoint2 = mockPoint(mockPoint1)
+        const mockPoint2 = mockPoint(mockPoint1, -3600000, 0)
         return [[mockPoint1, mockPoint2], true]
+      }
+      // if this time period has no txs, but previous time period has, then % change is -100%
+      if (!aggregatedTX.length && previousTimeData.length) {
+        const mockPoint1 = {
+          created: new Date().toISOString(),
+          profit: 0
+        }
+        const mockPoint2 = mockPoint(mockPoint1, -timeFrameMS[timeFrame], 1)
+        return [[mockPoint1, mockPoint2], false]
+      }
+      // if this time period has txs, but previous doesn't, then % change is +100%
+      if (aggregatedTX.length && !previousTimeData.length) {
+        const mockPoint1 = {
+          created: new Date().toISOString(),
+          profit: 1
+        }
+        const mockPoint2 = mockPoint(mockPoint1, -timeFrameMS[timeFrame], 0)
+        return [[mockPoint1, mockPoint2], false]
       }
       // if only one point exists, create point on the left - otherwise the line won't be drawn
       if (aggregatedTX.length === 1) {
-        return [R.append(mockPoint(aggregatedTX[0]), aggregatedTX), false]
+        return [
+          R.append(
+            {
+              created: new Date(
+                Date.now() - timeFrameMS[timeFrame]
+              ).toISOString(),
+              profit: previousProfit
+            },
+            aggregatedTX
+          ),
+          false
+        ]
       }
       // the boolean value is for zeroProfit. It makes the line render at y = 0 instead of y = 50% of container height
       return [aggregatedTX, false]
@@ -148,7 +187,7 @@ const RefLineChart = ({ data: realData, timeFrame }) => {
       .attr('stroke-width', '2')
       .attr('stroke-linejoin', 'round')
       .attr('stroke', primaryColor)
-  }, [realData, timeFrame])
+  }, [realData, timeFrame, previousTimeData, previousProfit])
 
   useEffect(() => {
     // first we clear old chart DOM elements on component update
