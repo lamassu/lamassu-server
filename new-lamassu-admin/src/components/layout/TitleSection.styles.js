@@ -1,3 +1,5 @@
+import { backgroundColor } from 'src/styling/variables'
+
 export default {
   titleWrapper: {
     display: 'flex',
@@ -14,6 +16,10 @@ export default {
   },
   subpageButton: {
     marginLeft: 12
+  },
+  buttonText: {
+    color: `${backgroundColor}`,
+    fontSize: 15
   },
   icon: {
     marginRight: 6

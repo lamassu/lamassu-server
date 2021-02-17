@@ -39,7 +39,12 @@ const cashOutHeader = (
 const getView = (data, code, compare) => it => {
   if (!data) return ''
 
-  return R.compose(R.prop(code), R.find(R.propEq(compare ?? 'code', it)))(data)
+  // The following boolean should come undefined if it is rendering an unpaired machine
+  const hasValue = R.find(R.propEq(compare ?? 'code', it))(data)
+
+  return hasValue
+    ? R.compose(R.prop(code), R.find(R.propEq(compare ?? 'code', it)))(data)
+    : 'Unpaired machine'
 }
 
 const displayCodeArray = data => it => {
@@ -61,6 +66,12 @@ const onCryptoChange = (prev, curr, setValue) => {
   }
 
   setValue(curr)
+}
+
+const boldStyle = () => {
+  return {
+    fontWeight: 'bold'
+  }
 }
 
 const getOverridesFields = (getData, currency, auxElements) => {
@@ -105,6 +116,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
+      textStyle: boldStyle,
       inputProps: {
         decimalPlaces: 3
       }
@@ -117,6 +129,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
+      textStyle: boldStyle,
       inputProps: {
         decimalPlaces: 3
       }
@@ -129,6 +142,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency,
+      textStyle: boldStyle,
       inputProps: {
         decimalPlaces: 2
       }
@@ -141,6 +155,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency,
+      textStyle: boldStyle,
       inputProps: {
         decimalPlaces: 2
       }
@@ -158,6 +173,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: '%',
+    textStyle: boldStyle,
     inputProps: {
       decimalPlaces: 3
     }
@@ -171,6 +187,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: '%',
+    textStyle: boldStyle,
     inputProps: {
       decimalPlaces: 3
     }
@@ -185,6 +202,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: currency,
+    textStyle: boldStyle,
     inputProps: {
       decimalPlaces: 2
     }
@@ -199,6 +217,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: currency,
+    textStyle: boldStyle,
     inputProps: {
       decimalPlaces: 2
     }
