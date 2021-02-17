@@ -235,6 +235,8 @@ const Wizard = ({ onClose, save, error, currency }) => {
           currentStep={step}
         />
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           enableReinitialize
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}

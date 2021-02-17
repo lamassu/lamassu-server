@@ -50,6 +50,8 @@ const BooleanPropertiesTable = memo(
     return (
       <div className={classes.booleanPropertiesTableWrapper}>
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           enableReinitialize
           onSubmit={innerSave}
           initialValues={initialValues}
