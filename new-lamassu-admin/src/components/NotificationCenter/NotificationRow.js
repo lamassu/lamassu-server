@@ -32,7 +32,7 @@ const NotificationRow = ({
   created,
   read,
   valid,
-  onClear
+  toggleClear
 }) => {
   const classes = useStyles()
 
@@ -73,8 +73,10 @@ const NotificationRow = ({
         </Grid>
       </Grid>
       <Grid item xs={3} style={{ zIndex: 1 }}>
-        {!read && (
-          <div onClick={() => onClear(id)} className={classes.unreadIcon} />
+        {read ? (
+          <div onClick={() => toggleClear(id)} className={classes.readIcon} />
+        ) : (
+          <div onClick={() => toggleClear(id)} className={classes.unreadIcon} />
         )}
       </Grid>
       {!valid && <StripesSvg className={classes.stripes} />}

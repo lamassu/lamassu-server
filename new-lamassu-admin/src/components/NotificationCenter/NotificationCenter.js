@@ -35,10 +35,11 @@ const GET_NOTIFICATIONS = gql`
   }
 `
 
-const CLEAR_NOTIFICATION = gql`
-  mutation clearNotification($id: ID!) {
-    clearNotification(id: $id) {
+const TOGGLE_CLEAR_NOTIFICATION = gql`
+  mutation toggleClearNotification($id: ID!, $read: Boolean!) {
+    toggleClearNotification(id: $id, read: $read) {
       id
+      read
     }
   }
 `
@@ -67,7 +68,7 @@ const NotificationCenter = ({ close, notifyUnread }) => {
   if (!hasUnread) {
     notifyUnread && notifyUnread()
   }
-  const [clearNotification] = useMutation(CLEAR_NOTIFICATION, {
+  const [toggleClearNotification] = useMutation(TOGGLE_CLEAR_NOTIFICATION, {
     onError: () => console.error('Error while clearing notification'),
     refetchQueries: () => ['getNotifications']
   })
@@ -76,9 +77,6 @@ const NotificationCenter = ({ close, notifyUnread }) => {
     refetchQueries: () => ['getNotifications']
   })
 
-  const handleClearNotification = id => {
-    clearNotification({ variables: { id } })
-  }
   const buildNotifications = () => {
     const notificationsToShow =
       !showingUnread || !hasUnread
@@ -96,7 +94,11 @@ const NotificationCenter = ({ close, notifyUnread }) => {
           created={n.created}
           read={n.read}
           valid={n.valid}
-          onClear={handleClearNotification}
+          toggleClear={() =>
+            toggleClearNotification({
+              variables: { id: n.id, read: !n.read }
+            })
+          }
         />
       )
     })
@@ -123,14 +125,16 @@ const NotificationCenter = ({ close, notifyUnread }) => {
               {showingUnread ? 'Show all' : 'Show unread'}
             </ActionButton>
           )}
-          <ActionButton
-            color="primary"
-            Icon={ClearAllIcon}
-            InverseIcon={ClearAllIconInverse}
-            className={classes.clearAllButton}
-            onClick={clearAllNotifications}>
-            Mark all as read
-          </ActionButton>
+          {hasUnread && (
+            <ActionButton
+              color="primary"
+              Icon={ClearAllIcon}
+              InverseIcon={ClearAllIconInverse}
+              className={classes.clearAllButton}
+              onClick={clearAllNotifications}>
+              Mark all as read
+            </ActionButton>
+          )}
         </div>
         <div className={classes.notificationsList}>
           {!loading && buildNotifications()}

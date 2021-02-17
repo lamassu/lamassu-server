@@ -34,7 +34,8 @@ const styles = {
   },
   actionButtons: {
     display: 'flex',
-    marginLeft: spacer * 2
+    marginLeft: spacer * 2,
+    height: 0
   },
   notificationIcon: {
     position: 'absolute',
@@ -56,7 +57,7 @@ const styles = {
     width: 440,
     height: '90vh',
     maxHeight: '100vh',
-    marginTop: 8,
+    marginTop: spacer * 3,
     marginLeft: 0,
     marginRight: 10,
     overflowY: 'auto',
@@ -80,9 +81,20 @@ const styles = {
   },
   unreadIcon: {
     marginLeft: spacer,
+    marginTop: 5,
     width: '12px',
     height: '12px',
     backgroundColor: secondaryColor,
+    borderRadius: '50%',
+    cursor: 'pointer',
+    zIndex: 1
+  },
+  readIcon: {
+    marginLeft: spacer,
+    marginTop: 5,
+    width: '12px',
+    height: '12px',
+    border: `1px solid ${comet}`,
     borderRadius: '50%',
     cursor: 'pointer',
     zIndex: 1
