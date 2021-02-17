@@ -53,6 +53,8 @@ const SingleFieldEditableNumber = ({
 
   return (
     <Formik
+      validateOnBlur={false}
+      validateOnChange={false}
       enableReinitialize
       initialValues={{ [name]: (data && data[name]) ?? '' }}
       validationSchema={schema}

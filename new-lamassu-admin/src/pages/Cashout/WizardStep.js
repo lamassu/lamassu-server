@@ -43,6 +43,8 @@ const WizardStep = ({
 
       {step <= 2 && (
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           onSubmit={onContinue}
           initialValues={{ top: '', bottom: '' }}
           enableReinitialize
@@ -95,6 +97,8 @@ const WizardStep = ({
 
       {step === 3 && (
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           onSubmit={onContinue}
           initialValues={{ zeroConfLimit: '' }}
           enableReinitialize

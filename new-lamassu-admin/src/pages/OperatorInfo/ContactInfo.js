@@ -218,6 +218,8 @@ const ContactInfo = ({ wizard }) => {
           )}
         </div>
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           enableReinitialize
           initialValues={form.initialValues}
           validationSchema={validationSchema}

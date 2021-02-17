@@ -42,6 +42,8 @@ const FormRenderer = ({
 
   return (
     <Formik
+      validateOnBlur={false}
+      validateOnChange={false}
       enableReinitialize
       initialValues={values}
       validationSchema={validationSchema}

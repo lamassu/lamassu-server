@@ -53,6 +53,8 @@ const FiatBalance = ({
 
   return (
     <Formik
+      validateOnBlur={false}
+      validateOnChange={false}
       enableReinitialize
       initialValues={{
         fiatBalanceCassette1: data?.fiatBalanceCassette1 ?? '',

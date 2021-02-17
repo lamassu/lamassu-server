@@ -198,6 +198,8 @@ const TermsConditions = () => {
           )}
         </div>
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           enableReinitialize
           initialValues={initialValues}
           validationSchema={validationSchema}

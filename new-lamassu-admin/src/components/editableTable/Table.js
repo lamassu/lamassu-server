@@ -183,6 +183,8 @@ const ETable = ({
               <TBody>
                 {adding && (
                   <Formik
+                    validateOnBlur={false}
+                    validateOnChange={false}
                     initialValues={{ id: v4(), ...initialValues }}
                     onReset={onReset}
                     validationSchema={validationSchema}
@@ -205,6 +207,8 @@ const ETable = ({
 
                   return (
                     <Formik
+                      validateOnBlur={false}
+                      validateOnChange={false}
                       key={it.id ?? idx}
                       enableReinitialize
                       initialValues={it}

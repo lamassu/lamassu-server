@@ -49,6 +49,8 @@ const PromoCodesModal = ({ showModal, onClose, errorMsg, addCode }) => {
           handleClose={onClose}
           open={true}>
           <Formik
+            validateOnBlur={false}
+            validateOnChange={false}
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={({ code, discount }) => {

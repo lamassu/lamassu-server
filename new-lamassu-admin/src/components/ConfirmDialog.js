@@ -115,7 +115,6 @@ export const ConfirmDialog = memo(
             error={error}
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            onBlur={() => setError(isOnErrorState)}
           />
         </DialogContent>
         <DialogActions className={classes.dialogActions}>

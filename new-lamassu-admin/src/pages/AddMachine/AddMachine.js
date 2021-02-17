@@ -131,6 +131,8 @@ const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
         Machine Name (ex: Coffee shop 01)
       </Info2>
       <Formik
+        validateOnBlur={false}
+        validateOnChange={false}
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={({ name }) => {
