@@ -127,6 +127,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     bold,
     width,
     textAlign,
+    editingAlign = textAlign,
     suffix,
     SuffixComponent = TL2,
     textStyle = it => {},
@@ -135,19 +136,23 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
   } = config
 
   const { values } = useFormikContext()
-  const classes = useStyles({ textAlign, size })
+
+  const isEditing = editing && editable
+  const isField = !bypassField
+
+  const classes = useStyles({
+    textAlign: isEditing ? editingAlign : textAlign,
+    size
+  })
 
   const innerProps = {
     fullWidth: true,
     autoFocus: focus,
     size,
     bold,
-    textAlign,
+    textAlign: isEditing ? editingAlign : textAlign,
     ...inputProps
   }
-
-  const isEditing = editing && editable
-  const isField = !bypassField
 
   return (
     <Td

@@ -155,6 +155,7 @@ const mainFields = currency => [
     display: 'Cash-in',
     width: 169,
     size: 'lg',
+    editingAlign: 'right',
     input: NumberInput,
     suffix: '%',
     inputProps: {
@@ -167,6 +168,7 @@ const mainFields = currency => [
     display: 'Cash-out',
     width: 169,
     size: 'lg',
+    editingAlign: 'right',
     input: NumberInput,
     suffix: '%',
     inputProps: {
@@ -180,6 +182,7 @@ const mainFields = currency => [
     size: 'lg',
     doubleHeader: 'Cash-in only',
     textAlign: 'center',
+    editingAlign: 'right',
     input: NumberInput,
     suffix: currency,
     inputProps: {
@@ -193,6 +196,7 @@ const mainFields = currency => [
     size: 'lg',
     doubleHeader: 'Cash-in only',
     textAlign: 'center',
+    editingAlign: 'right',
     input: NumberInput,
     suffix: currency,
     inputProps: {
