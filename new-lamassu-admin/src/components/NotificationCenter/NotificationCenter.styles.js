@@ -37,17 +37,17 @@ const styles = {
     marginLeft: spacer * 2,
     height: 0
   },
-  notificationIcon: {
-    /*     position: 'absolute',
-    left: spacer * 22 + 2,
-    top: spacer + 5, */
+  notificationIcon: ({ notifButtonCoords, xOffset }) => ({
+    position: 'absolute',
+    top: notifButtonCoords ? notifButtonCoords.y : 0,
+    left: notifButtonCoords ? notifButtonCoords.x - xOffset : 0,
     cursor: 'pointer',
     background: 'transparent',
     boxShadow: '0px 0px 0px transparent',
     border: '0px solid transparent',
     textShadow: '0px 0px 0px transparent',
     outline: 'none'
-  },
+  }),
   clearAllButton: {
     marginTop: -spacer * 2,
     marginLeft: spacer,
