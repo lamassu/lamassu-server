@@ -5,7 +5,7 @@ import React from 'react'
 import ErrorMessage from 'src/components/ErrorMessage'
 import Title from 'src/components/Title'
 import { SubpageButton } from 'src/components/buttons'
-import { Label1 } from 'src/components/typography'
+import { Info1, Label1 } from 'src/components/typography'
 
 import styles from './TitleSection.styles'
 
@@ -33,7 +33,7 @@ const TitleSection = ({
             Icon={button.icon}
             InverseIcon={button.inverseIcon}
             toggle={button.toggle}>
-            {button.text}
+            <Info1 className={classes.buttonText}>{button.text}</Info1>
           </SubpageButton>
         )}
       </div>

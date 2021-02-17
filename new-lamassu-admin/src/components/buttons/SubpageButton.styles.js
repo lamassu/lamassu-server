@@ -33,7 +33,8 @@ export default {
     }
   },
   buttonIconActiveLeft: {
-    marginRight: 12
+    marginRight: 12,
+    marginLeft: 4
   },
   buttonIconActiveRight: {
     marginRight: 5,

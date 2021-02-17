@@ -1,16 +1,25 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import TitleSection from 'src/components/layout/TitleSection'
-import { ReactComponent as ExeceptionViewIcon } from 'src/styling/icons/circle buttons/exception-view/white.svg'
+import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
 import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
 import { ReactComponent as OverrideLabelIcon } from 'src/styling/icons/status/spring2.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import CommissionsDetails from './components/CommissionsDetails'
 import CommissionsList from './components/CommissionsList'
+
+const styles = {
+  listViewButton: {
+    marginLeft: 4
+  }
+}
+
+const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
@@ -37,6 +46,7 @@ const removeCoinFromOverride = crypto => override =>
   })
 
 const Commissions = ({ name: SCREEN_KEY }) => {
+  const classes = useStyles()
   const [showMachines, setShowMachines] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
@@ -99,9 +109,10 @@ const Commissions = ({ name: SCREEN_KEY }) => {
         button={{
           text: 'List view',
           icon: ListingViewIcon,
-          inverseIcon: ExeceptionViewIcon,
+          inverseIcon: ReverseListingViewIcon,
           toggle: setShowMachines
         }}
+        iconClassName={classes.listViewButton}
       />
 
       {!showMachines && (
