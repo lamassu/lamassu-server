@@ -17,7 +17,8 @@ const Cashbox = ({
   percent = 0,
   cashOut = false,
   className,
-  emptyPartClassName
+  emptyPartClassName,
+  labelClassName
 }) => {
   const classes = cashboxClasses({ percent, cashOut })
   const threshold = 51
@@ -25,10 +26,14 @@ const Cashbox = ({
   return (
     <div className={classnames(className, classes.cashbox)}>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
-        {percent <= threshold && <Label2>{percent.toFixed(0)}%</Label2>}
+        {percent <= threshold && (
+          <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
+        )}
       </div>
       <div className={classes.fullPart}>
-        {percent > threshold && <Label2>{percent.toFixed(0)}%</Label2>}
+        {percent > threshold && (
+          <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
+        )}
       </div>
     </div>
   )
