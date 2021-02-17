@@ -24,11 +24,9 @@ export default {
   col2: {
     width: 136
   },
-  cashbox: {
-    '& p': {
-      marginRight: 4,
-      fontSize: 20
-    }
+  cashboxLabel: {
+    marginRight: 4,
+    fontSize: 20
   },
   cashboxEmptyPart: {
     backgroundColor: `${backgroundColor}`

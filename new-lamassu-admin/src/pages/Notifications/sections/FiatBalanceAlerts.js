@@ -77,7 +77,7 @@ const FiatBalance = ({
           <div className={classes.first}>
             <div className={classes.row}>
               <Cashbox
-                className={classes.cashbox}
+                labelClassName={classes.cashboxLabel}
                 emptyPartClassName={classes.cashboxEmptyPart}
                 percent={fiatBalanceCassette1Percent}
                 cashOut
@@ -97,7 +97,7 @@ const FiatBalance = ({
           </div>
           <div className={classes.row}>
             <Cashbox
-              className={classes.cashbox}
+              labelClassName={classes.cashboxLabel}
               emptyPartClassName={classes.cashboxEmptyPart}
               percent={fiatBalanceCassette2Percent}
               cashOut
