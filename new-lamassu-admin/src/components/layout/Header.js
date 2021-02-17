@@ -68,6 +68,7 @@ const Header = memo(({ tree }) => {
 
   const { data, refetch } = useQuery(HAS_UNREAD, { pollInterval: 60000 })
   const notifCenterButtonRef = useRef()
+  const popperRef = useRef()
   const history = useHistory()
   const classes = useStyles()
 
@@ -155,6 +156,7 @@ const Header = memo(({ tree }) => {
                   {hasUnread && <div className={classes.hasUnread} />}
                 </button>
                 <Popper
+                  ref={popperRef}
                   id={id}
                   open={popperOpen}
                   anchorEl={anchorEl}
@@ -167,10 +169,13 @@ const Header = memo(({ tree }) => {
                     }
                   }}>
                   <NotificationCenter
-                    close={onClickAway}
-                    notifyUnread={refetch}
-                    hasUnread={hasUnread}
+                    popperRef={popperRef}
                     notifButtonCoords={notifButtonCoords}
+                    close={onClickAway}
+                    refetchHasUnreadHeader={refetch}
+                    setHeaderHasUnread={unread => {
+                      setHasUnread(unread)
+                    }}
                   />
                 </Popper>
               </div>

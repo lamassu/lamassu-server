@@ -39,7 +39,7 @@ const styles = {
   },
   notificationIcon: ({ notifButtonCoords, xOffset }) => ({
     position: 'absolute',
-    top: notifButtonCoords ? notifButtonCoords.y : 0,
+    top: notifButtonCoords ? notifButtonCoords.y - 1 : 0,
     left: notifButtonCoords ? notifButtonCoords.x - xOffset : 0,
     cursor: 'pointer',
     background: 'transparent',
