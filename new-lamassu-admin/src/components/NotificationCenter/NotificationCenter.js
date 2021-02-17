@@ -58,12 +58,12 @@ const NotificationCenter = ({
   hasUnreadProp,
   notifButtonCoords
 }) => {
-  const classes = useStyles()
   const { data, loading } = useQuery(GET_NOTIFICATIONS, {
     pollInterval: 60000
   })
   const [showingUnread, setShowingUnread] = useState(false)
   const [xOffset, setXOffset] = useState(0)
+  const classes = useStyles({ notifButtonCoords, xOffset })
   const machines = R.compose(
     R.map(R.prop('name')),
     R.indexBy(R.prop('deviceId'))
@@ -117,14 +117,7 @@ const NotificationCenter = ({
 
   return (
     <>
-      <button
-        onClick={close}
-        className={classes.notificationIcon}
-        style={{
-          position: 'absolute',
-          top: notifButtonCoords.y,
-          left: notifButtonCoords.x - xOffset
-        }}>
+      <button onClick={close} className={classes.notificationIcon}>
         <NotificationIconZodiac />
         {hasUnread && <div className={classes.hasUnread} />}
       </button>
