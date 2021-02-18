@@ -94,7 +94,8 @@ const getOverridesFields = (getData, currency, auxElements) => {
         valueProp: 'code',
         labelProp: 'display',
         multiple: true,
-        onChange: onCryptoChange
+        onChange: onCryptoChange,
+        keepOpen: true
       }
     },
     {
