@@ -173,7 +173,7 @@ const groupStriped = elements => {
   )
 }
 
-const ERow = ({ editing, disabled, lastOfGroup }) => {
+const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
   const { touched, errors, values } = useFormikContext()
   const {
     elements,
@@ -219,6 +219,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
     <Tr
       className={classnames(classNames)}
       size={rowSize}
+      newRow={newRow && !hasErrors}
       error={editing && hasErrors}
       errorMessage={errorMessage}>
       {innerElements.map((it, idx) => {

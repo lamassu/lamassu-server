@@ -189,7 +189,11 @@ const ETable = ({
                     onSubmit={innerSave}>
                     <Form>
                       <PromptWhenDirty />
-                      <ERow editing={true} disabled={forceDisable} />
+                      <ERow
+                        editing={true}
+                        disabled={forceDisable}
+                        newRow={true}
+                      />
                     </Form>
                   </Formik>
                 )}
