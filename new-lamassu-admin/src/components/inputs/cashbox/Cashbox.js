@@ -46,7 +46,7 @@ const CashIn = ({ currency, notes, total }) => {
   return (
     <>
       <div className={classes.row}>
-        <div className={classes.col2}>
+        <div>
           <div className={classes.innerRow}>
             <Info2 className={classes.noMarginText}>{notes} notes</Info2>
           </div>
@@ -104,7 +104,8 @@ const CashOut = ({
   denomination = 0,
   currency,
   notes,
-  className
+  className,
+  editingMode = false
 }) => {
   const percent = (100 * notes) / capacity
   const classes = gridClasses()
@@ -114,20 +115,22 @@ const CashOut = ({
         <div className={classes.col}>
           <Cashbox className={className} percent={percent} cashOut />
         </div>
-        <div className={classes.col2}>
-          <div className={classes.innerRow}>
-            <Info2 className={classes.noMarginText}>{notes}</Info2>
-            <Chip
-              className={classes.chip}
-              label={`${denomination} ${currency.code}`}
-            />
+        {!editingMode && (
+          <div className={classes.col2}>
+            <div className={classes.innerRow}>
+              <Info2 className={classes.noMarginText}>{notes}</Info2>
+              <Chip
+                className={classes.chip}
+                label={`${denomination} ${currency.code}`}
+              />
+            </div>
+            <div className={classes.innerRow}>
+              <Label1 className={classes.noMarginText}>
+                {notes * denomination} {currency.code}
+              </Label1>
+            </div>
           </div>
-          <div className={classes.innerRow}>
-            <Label1 className={classes.noMarginText}>
-              {notes * denomination} {currency.code}
-            </Label1>
-          </div>
-        </div>
+        )}
       </div>
     </>
   )

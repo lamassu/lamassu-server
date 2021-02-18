@@ -7,7 +7,7 @@ import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
-import { NumberInput } from 'src/components/inputs/formik'
+import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
 import { fromNamespace } from 'src/utils/config'
@@ -86,6 +86,7 @@ const CashCassettes = () => {
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
+  const machines = R.path(['machines'])(data) ?? []
 
   const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
     return setCassetteBills({
@@ -135,7 +136,7 @@ const CashCassettes = () => {
           notes={value}
         />
       ),
-      input: NumberInput,
+      input: CashCassetteInput,
       inputProps: {
         decimalPlaces: 0
       }
@@ -145,15 +146,17 @@ const CashCassettes = () => {
       header: 'Cassette 2 (Bottom)',
       width: 265,
       stripe: true,
-      view: (value, { id }) => (
-        <CashOut
-          className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.bottom}
-          currency={{ code: fiatCurrency }}
-          notes={value}
-        />
-      ),
-      input: NumberInput,
+      view: (value, { id }) => {
+        return (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(id)?.bottom}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        )
+      },
+      input: CashCassetteInput,
       inputProps: {
         decimalPlaces: 0
       }
@@ -161,24 +164,23 @@ const CashCassettes = () => {
   ]
 
   return (
-    <>
+    <div className={classes.pageBottomMargin}>
       <TitleSection title="Cash Cassettes" />
-
       <EditableTable
         error={error?.message}
         name="cashboxes"
         enableEdit
         stripeWhen={isCashOutDisabled}
         elements={elements}
-        data={data && data.machines}
+        data={machines}
         save={onSave}
         validationSchema={ValidationSchema}
       />
 
-      {data && R.isEmpty(data.machines) && (
+      {data && R.isEmpty(machines) && (
         <EmptyTable message="No machines so far" />
       )}
-    </>
+    </div>
   )
 }
 
