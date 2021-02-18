@@ -19,6 +19,7 @@ export default {
     height: 64,
     backgroundColor: 'white',
     display: 'flex',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    boxShadow: [[0, -1, 10, 0, 'rgba(50, 50, 50, 0.1)']]
   }
 }

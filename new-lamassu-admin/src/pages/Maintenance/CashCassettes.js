@@ -49,6 +49,12 @@ const GET_MACHINES_AND_CONFIG = gql`
       cassette2
     }
     config
+    bills {
+      fiat
+      deviceId
+      created
+      cashbox
+    }
   }
 `
 
@@ -79,14 +85,19 @@ const CashCassettes = () => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
+
+  const machines = R.path(['machines'])(data) ?? []
+  const config = R.path(['config'])(data) ?? {}
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
-
+  const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
+  const deviceIds = R.uniq(
+    R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
+  )
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
-  const machines = R.path(['machines'])(data) ?? []
 
   const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
     return setCassetteBills({
@@ -99,7 +110,6 @@ const CashCassettes = () => {
       }
     })
   }
-
   const getCashoutSettings = id => fromNamespace(id)(cashout)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
@@ -183,7 +193,13 @@ const CashCassettes = () => {
           <EmptyTable message="No machines so far" />
         )}
       </div>
-      <CashCassettesFooter />
+      <CashCassettesFooter
+        currencyCode={fiatCurrency}
+        machines={machines}
+        config={config}
+        bills={bills}
+        deviceIds={deviceIds}
+      />
     </>
   )
 }
