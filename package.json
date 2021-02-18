@@ -7,6 +7,8 @@
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "@fczbkk/uuid4": "^3.0.0",
+    "@simplewebauthn/browser": "^2.1.0",
+    "@simplewebauthn/server": "^2.1.0",
     "apollo-server-express": "^2.9.14",
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
