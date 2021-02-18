@@ -1,5 +1,6 @@
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
+import Slide from '@material-ui/core/Slide'
 import {
   StylesProvider,
   jssPreset,
@@ -91,12 +92,26 @@ const Main = () => {
     ? classes.contentWithSidebar
     : classes.contentWithoutSidebar
 
+  const transitionProps = {
+    direction: 'left'
+  }
+
   return (
     <div className={classes.root}>
       {!is404 && wizardTested && <Header tree={tree} />}
       <main className={classes.wrapper}>
         {sidebar && !is404 && wizardTested && (
-          <TitleSection title={parent.title}></TitleSection>
+          <Slide
+            {...transitionProps}
+            in={true}
+            mountOnEnter
+            unmountOnExit
+            children={
+              <div>
+                <TitleSection title={parent.title}></TitleSection>
+              </div>
+            }
+          />
         )}
 
         <Grid container className={classes.grid}>
