@@ -49,6 +49,10 @@ const NotificationRow = ({
       ? `${deviceName}`
       : `${typeDisplay}`
 
+  const iconClass = {
+    [classes.readIcon]: read,
+    [classes.unreadIcon]: !read
+  }
   return (
     <Grid
       container
@@ -73,11 +77,10 @@ const NotificationRow = ({
         </Grid>
       </Grid>
       <Grid item xs={3} style={{ zIndex: 1 }}>
-        {read ? (
-          <div onClick={() => toggleClear(id)} className={classes.readIcon} />
-        ) : (
-          <div onClick={() => toggleClear(id)} className={classes.unreadIcon} />
-        )}
+        <div
+          onClick={() => toggleClear(id)}
+          className={classnames(iconClass)}
+        />
       </Grid>
       {!valid && <StripesSvg className={classes.stripes} />}
     </Grid>

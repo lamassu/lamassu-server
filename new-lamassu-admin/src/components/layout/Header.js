@@ -170,12 +170,10 @@ const Header = memo(({ tree }) => {
                   }}>
                   <NotificationCenter
                     popperRef={popperRef}
-                    notifButtonCoords={notifButtonCoords}
+                    buttonCoords={notifButtonCoords}
                     close={onClickAway}
+                    hasUnreadProp={hasUnread}
                     refetchHasUnreadHeader={refetch}
-                    setHeaderHasUnread={unread => {
-                      setHasUnread(unread)
-                    }}
                   />
                 </Popper>
               </div>

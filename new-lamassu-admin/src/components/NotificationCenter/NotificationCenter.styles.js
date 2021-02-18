@@ -37,10 +37,10 @@ const styles = {
     marginLeft: spacer * 2,
     height: 0
   },
-  notificationIcon: ({ notifButtonCoords, xOffset }) => ({
+  notificationIcon: ({ buttonCoords, xOffset }) => ({
     position: 'absolute',
-    top: notifButtonCoords ? notifButtonCoords.y - 1 : 0,
-    left: notifButtonCoords ? notifButtonCoords.x - xOffset : 0,
+    top: buttonCoords ? buttonCoords.y - 1 : 0,
+    left: buttonCoords ? buttonCoords.x - xOffset : 0,
     cursor: 'pointer',
     background: 'transparent',
     boxShadow: '0px 0px 0px transparent',
@@ -94,7 +94,7 @@ const styles = {
     marginTop: 5,
     width: '12px',
     height: '12px',
-    border: `1px solid ${comet}`,
+    border: [[1, 'solid', comet]],
     borderRadius: '50%',
     cursor: 'pointer',
     zIndex: 1
