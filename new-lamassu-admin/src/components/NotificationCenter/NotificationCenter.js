@@ -55,10 +55,9 @@ const CLEAR_ALL_NOTIFICATIONS = gql`
 const NotificationCenter = ({
   close,
   hasUnreadProp,
-  notifButtonCoords,
+  buttonCoords,
   popperRef,
-  refetchHasUnreadHeader,
-  setHeaderHasUnread
+  refetchHasUnreadHeader
 }) => {
   const { data, loading } = useQuery(GET_NOTIFICATIONS, {
     pollInterval: 60000
@@ -68,12 +67,11 @@ const NotificationCenter = ({
 
   const [showingUnread, setShowingUnread] = useState(false)
 
-  const classes = useStyles({ notifButtonCoords, xOffset })
+  const classes = useStyles({ buttonCoords, xOffset })
   const machines = R.compose(
     R.map(R.prop('name')),
     R.indexBy(R.prop('deviceId'))
   )(data?.machines ?? [])
-
   const notifications = R.path(['notifications'])(data) ?? []
   const [hasUnread, setHasUnread] = useState(
     hasUnreadProp || (data?.hasUnreadNotifications ?? false)
