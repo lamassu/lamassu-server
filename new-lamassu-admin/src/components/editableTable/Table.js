@@ -54,7 +54,8 @@ const ETable = ({
   groupBy,
   sortBy,
   createText = 'Add override',
-  forceAdd = false
+  forceAdd = false,
+  tbodyWrapperClass
 }) => {
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
@@ -180,57 +181,60 @@ const ETable = ({
             )}
             <Table>
               <Header />
-              <TBody>
-                {adding && (
-                  <Formik
-                    validateOnBlur={false}
-                    validateOnChange={false}
-                    initialValues={{ id: v4(), ...initialValues }}
-                    onReset={onReset}
-                    validationSchema={validationSchema}
-                    onSubmit={innerSave}>
-                    <Form>
-                      <PromptWhenDirty />
-                      <ERow editing={true} disabled={forceDisable} />
-                    </Form>
-                  </Formik>
-                )}
-                {innerData.map((it, idx) => {
-                  const nextElement = innerData[idx + 1]
-
-                  const canGroup = !!groupBy && nextElement
-                  const isFunction = R.type(groupBy) === 'Function'
-                  const groupFunction = isFunction ? groupBy : R.prop(groupBy)
-
-                  const isLastOfGroup =
-                    canGroup && groupFunction(it) !== groupFunction(nextElement)
-
-                  return (
+              <div className={tbodyWrapperClass}>
+                <TBody>
+                  {adding && (
                     <Formik
                       validateOnBlur={false}
                       validateOnChange={false}
-                      key={it.id ?? idx}
-                      enableReinitialize
-                      initialValues={it}
+                      initialValues={{ id: v4(), ...initialValues }}
                       onReset={onReset}
                       validationSchema={validationSchema}
                       onSubmit={innerSave}>
                       <Form>
                         <PromptWhenDirty />
-                        <ERow
-                          lastOfGroup={isLastOfGroup}
-                          editing={editingId === it.id}
-                          disabled={
-                            forceDisable ||
-                            (editingId && editingId !== it.id) ||
-                            adding
-                          }
-                        />
+                        <ERow editing={true} disabled={forceDisable} />
                       </Form>
                     </Formik>
-                  )
-                })}
-              </TBody>
+                  )}
+                  {innerData.map((it, idx) => {
+                    const nextElement = innerData[idx + 1]
+
+                    const canGroup = !!groupBy && nextElement
+                    const isFunction = R.type(groupBy) === 'Function'
+                    const groupFunction = isFunction ? groupBy : R.prop(groupBy)
+
+                    const isLastOfGroup =
+                      canGroup &&
+                      groupFunction(it) !== groupFunction(nextElement)
+
+                    return (
+                      <Formik
+                        validateOnBlur={false}
+                        validateOnChange={false}
+                        key={it.id ?? idx}
+                        enableReinitialize
+                        initialValues={it}
+                        onReset={onReset}
+                        validationSchema={validationSchema}
+                        onSubmit={innerSave}>
+                        <Form>
+                          <PromptWhenDirty />
+                          <ERow
+                            lastOfGroup={isLastOfGroup}
+                            editing={editingId === it.id}
+                            disabled={
+                              forceDisable ||
+                              (editingId && editingId !== it.id) ||
+                              adding
+                            }
+                          />
+                        </Form>
+                      </Formik>
+                    )
+                  })}
+                </TBody>
+              </div>
             </Table>
           </>
         )}

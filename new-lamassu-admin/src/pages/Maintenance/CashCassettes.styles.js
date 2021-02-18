@@ -3,7 +3,12 @@ export default {
     width: 80,
     height: 36
   },
-  pageBottomMargin: {
-    marginBottom: 180
+  tableContainer: {
+    flex: 1,
+    marginBottom: 100
+  },
+  tBody: {
+    maxHeight: '65vh',
+    overflow: 'auto'
   }
 }
