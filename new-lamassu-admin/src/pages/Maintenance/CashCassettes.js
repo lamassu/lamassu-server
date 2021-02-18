@@ -13,6 +13,7 @@ import { EmptyTable } from 'src/components/table'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
+import CashCassettesFooter from './CashCassettesFooter'
 
 const useStyles = makeStyles(styles)
 
@@ -78,7 +79,6 @@ const CashCassettes = () => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
-
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
@@ -164,23 +164,27 @@ const CashCassettes = () => {
   ]
 
   return (
-    <div className={classes.pageBottomMargin}>
+    <>
       <TitleSection title="Cash Cassettes" />
-      <EditableTable
-        error={error?.message}
-        name="cashboxes"
-        enableEdit
-        stripeWhen={isCashOutDisabled}
-        elements={elements}
-        data={machines}
-        save={onSave}
-        validationSchema={ValidationSchema}
-      />
+      <div className={classes.tableContainer}>
+        <EditableTable
+          error={error?.message}
+          name="cashboxes"
+          enableEdit
+          stripeWhen={isCashOutDisabled}
+          elements={elements}
+          data={machines}
+          save={onSave}
+          validationSchema={ValidationSchema}
+          tbodyWrapperClass={classes.tBody}
+        />
 
-      {data && R.isEmpty(machines) && (
-        <EmptyTable message="No machines so far" />
-      )}
-    </div>
+        {data && R.isEmpty(machines) && (
+          <EmptyTable message="No machines so far" />
+        )}
+      </div>
+      <CashCassettesFooter />
+    </>
   )
 }
 
