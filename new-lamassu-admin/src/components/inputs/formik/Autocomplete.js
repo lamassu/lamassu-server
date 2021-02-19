@@ -7,7 +7,7 @@ import { Autocomplete } from '../base'
 const AutocompleteFormik = ({ options, onChange, ...props }) => {
   const [open, setOpen] = useState(false)
 
-  const { keepopen } = props
+  const { keepOpen } = props
   const { name, onBlur, value } = props.field
   const { touched, errors, setFieldValue, setFieldTouched } = props.form
   const error = !!(touched[name] && errors[name])
@@ -39,7 +39,7 @@ const AutocompleteFormik = ({ options, onChange, ...props }) => {
         setOpen(value?.length !== props.limit)
       }}
       onClose={(event, reason) => {
-        if (!!keepopen && reason !== 'blur') setOpen(true)
+        if (!!keepOpen && reason !== 'blur') setOpen(true)
         else setOpen(false)
       }}
       {...props}

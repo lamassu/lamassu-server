@@ -1,7 +1,8 @@
 import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 
+import { DeleteDialog } from 'src/components/DeleteDialog'
 import { IconButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { Label1 } from 'src/components/typography'
@@ -12,8 +13,18 @@ import styles from './Blacklist.styles'
 
 const useStyles = makeStyles(styles)
 
-const BlacklistTable = ({ data, selectedCoin, handleDeleteEntry }) => {
+const BlacklistTable = ({
+  data,
+  selectedCoin,
+  handleDeleteEntry,
+  errorMessage,
+  setErrorMessage,
+  deleteDialog,
+  setDeleteDialog
+}) => {
   const classes = useStyles()
+
+  const [toBeDeleted, setToBeDeleted] = useState()
 
   const elements = [
     {
@@ -37,12 +48,10 @@ const BlacklistTable = ({ data, selectedCoin, handleDeleteEntry }) => {
       view: it => (
         <IconButton
           className={classes.deleteButton}
-          onClick={() =>
-            handleDeleteEntry(
-              R.path(['cryptoCode'], it),
-              R.path(['address'], it)
-            )
-          }>
+          onClick={() => {
+            setDeleteDialog(true)
+            setToBeDeleted(it)
+          }}>
           <DeleteIcon />
         </IconButton>
       )
@@ -53,12 +62,29 @@ const BlacklistTable = ({ data, selectedCoin, handleDeleteEntry }) => {
     : data[R.keys(data)[0]]
 
   return (
-    <DataTable
-      data={dataToShow}
-      elements={elements}
-      emptyText="No blacklisted addresses so far"
-      name="blacklistTable"
-    />
+    <>
+      <DataTable
+        data={dataToShow}
+        elements={elements}
+        emptyText="No blacklisted addresses so far"
+        name="blacklistTable"
+      />
+      <DeleteDialog
+        open={deleteDialog}
+        onDismissed={() => {
+          setDeleteDialog(false)
+          setErrorMessage(null)
+        }}
+        onConfirmed={() => {
+          setErrorMessage(null)
+          handleDeleteEntry(
+            R.path(['cryptoCode'], toBeDeleted),
+            R.path(['address'], toBeDeleted)
+          )
+        }}
+        errorMessage={errorMessage}
+      />
+    </>
   )
 }
 

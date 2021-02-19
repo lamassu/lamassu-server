@@ -57,7 +57,7 @@ const Notifications = ({
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: ['getData'],
     onCompleted: () => setEditingKey(null),
-    onError: error => setError({ error })
+    onError: error => setError(error)
   })
 
   const config = fromNamespace(SCREEN_KEY)(data?.config)
