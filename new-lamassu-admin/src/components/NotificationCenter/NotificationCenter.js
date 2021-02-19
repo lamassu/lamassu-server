@@ -62,20 +62,17 @@ const NotificationCenter = ({
   const { data, loading } = useQuery(GET_NOTIFICATIONS, {
     pollInterval: 60000
   })
-
   const [xOffset, setXoffset] = useState(300)
 
   const [showingUnread, setShowingUnread] = useState(false)
-
   const classes = useStyles({ buttonCoords, xOffset })
   const machines = R.compose(
     R.map(R.prop('name')),
     R.indexBy(R.prop('deviceId'))
-  )(data?.machines ?? [])
+  )(R.path(['machines'])(data) ?? [])
   const notifications = R.path(['notifications'])(data) ?? []
-  const [hasUnread, setHasUnread] = useState(
-    hasUnreadProp || (data?.hasUnreadNotifications ?? false)
-  )
+  const [hasUnread, setHasUnread] = useState(hasUnreadProp)
+
   const [toggleClearNotification] = useMutation(TOGGLE_CLEAR_NOTIFICATION, {
     onError: () => console.error('Error while clearing notification'),
     refetchQueries: () => ['getNotifications']
