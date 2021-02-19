@@ -49,14 +49,18 @@ const GET_MACHINES_AND_CONFIG = gql`
       cassette2
     }
     config
-    bills {
-      fiat
-      deviceId
-      created
-      cashbox
-    }
   }
 `
+
+/* 
+  // for cash in total calculation
+  bills {
+    fiat
+    deviceId
+    created
+    cashbox
+  }
+*/
 
 const SET_CASSETTE_BILLS = gql`
   mutation MachineAction(
