@@ -46,6 +46,7 @@ const LoginState = ({
     onCompleted: ({ login }) => {
       if (login === 'INPUT2FA') handleLoginState(STATES.INPUT_2FA)
       if (login === 'SETUP2FA') handleLoginState(STATES.SETUP_2FA)
+      if (login === 'FIDO') handleLoginState(STATES.FIDO)
       if (login === 'FAILED') setInvalidLogin(true)
     }
   })

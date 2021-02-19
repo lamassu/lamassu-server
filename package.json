@@ -12,6 +12,7 @@
     "apollo-server-express": "^2.9.14",
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
+    "base64url": "^3.0.1",
     "bchaddrjs": "^0.3.0",
     "bcrypt": "^5.0.0",
     "bignumber.js": "^4.1.0",

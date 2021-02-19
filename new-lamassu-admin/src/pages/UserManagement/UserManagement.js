@@ -1,5 +1,6 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, Box, Chip } from '@material-ui/core'
+import { startAttestation } from '@simplewebauthn/browser'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, useContext } from 'react'
@@ -70,6 +71,24 @@ const CREATE_RESET_2FA_TOKEN = gql`
   }
 `
 
+const GENERATE_ATTESTATION = gql`
+  query generateAttestationOptions($userID: ID!) {
+    generateAttestationOptions(userID: $userID)
+  }
+`
+
+const VALIDATE_ATTESTATION = gql`
+  mutation validateAttestation(
+    $userID: ID!
+    $attestationResponse: JSONObject!
+  ) {
+    validateAttestation(
+      userID: $userID
+      attestationResponse: $attestationResponse
+    )
+  }
+`
+
 const Users = () => {
   const classes = useStyles()
 
@@ -98,6 +117,27 @@ const Users = () => {
     onCompleted: ({ createReset2FAToken: token }) => {
       setReset2FAUrl(`https://localhost:3001/reset2fa?t=${token.token}`)
       toggleReset2FAModal()
+    }
+  })
+
+  const [validateAttestation] = useMutation(VALIDATE_ATTESTATION, {
+    onCompleted: res => {
+      console.log(res)
+      // success ? console.log('success') : console.log('failure')
+    }
+  })
+
+  const [generateAttestationOptions] = useLazyQuery(GENERATE_ATTESTATION, {
+    onCompleted: ({ generateAttestationOptions: options }) => {
+      console.log(options)
+      startAttestation(options).then(res => {
+        validateAttestation({
+          variables: {
+            userID: userInfo.id,
+            attestationResponse: res
+          }
+        })
+      })
     }
   })
 
@@ -235,6 +275,30 @@ const Users = () => {
                   toggleInputConfirmModal()
                 } else {
                   createReset2FAToken({
+                    variables: {
+                      userID: u.id
+                    }
+                  })
+                }
+              }}
+            />
+            <Chip
+              size="small"
+              label="Add FIDO"
+              className={classes.actionChip}
+              onClick={() => {
+                setUserInfo(u)
+                if (u.role === 'superuser') {
+                  setAction(() => () =>
+                    generateAttestationOptions({
+                      variables: {
+                        userID: u.id
+                      }
+                    })
+                  )
+                  toggleInputConfirmModal()
+                } else {
+                  generateAttestationOptions({
                     variables: {
                       userID: u.id
                     }

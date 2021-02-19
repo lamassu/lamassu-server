@@ -27,7 +27,7 @@ const LoginCard = () => {
   const [clientField, setClientField] = useState('')
   const [passwordField, setPasswordField] = useState('')
   const [rememberMeField, setRememberMeField] = useState(false)
-  const [loginState, setLoginState] = useState(STATES.FIDO)
+  const [loginState, setLoginState] = useState(STATES.LOGIN)
 
   const onClientChange = newValue => {
     setClientField(newValue)

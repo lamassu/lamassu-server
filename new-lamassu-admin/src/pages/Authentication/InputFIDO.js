@@ -1,23 +1,37 @@
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery /*, useQuery */ } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
+import { startAssertion } from '@simplewebauthn/browser'
 import gql from 'graphql-tag'
 import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { AppContext } from 'src/App'
+import { Button } from 'src/components/buttons'
 import { H2, P } from 'src/components/typography'
 
 import styles from './Login.styles'
 
 const useStyles = makeStyles(styles)
 
-const INPUT_FIDO = gql`
-  mutation inputFIDO(
+const GENERATE_ASSERTION = gql`
+  query generateAssertionOptions($username: String!, $password: String!) {
+    generateAssertionOptions(username: $username, password: $password)
+  }
+`
+
+const VALIDATE_ASSERTION = gql`
+  mutation validateAssertion(
     $username: String!
     $password: String!
     $rememberMe: Boolean!
+    $assertionResponse: JSONObject!
   ) {
-    inputFIDO(username: $username, password: $password, rememberMe: $rememberMe)
+    validateAssertion(
+      username: $username
+      password: $password
+      rememberMe: $rememberMe
+      assertionResponse: $assertionResponse
+    )
   }
 `
 
@@ -38,11 +52,42 @@ const InputFIDO = ({ clientField, passwordField, rememberMeField }) => {
 
   const [invalidToken, setInvalidToken] = useState(false)
 
-  const [inputFIDO, { error: mutationError }] = useMutation(INPUT_FIDO, {
-    onCompleted: ({ input2FA: success }) => {
-      success ? getUserData() : setInvalidToken(true)
+  const [validateAssertion, { error: mutationError }] = useMutation(
+    VALIDATE_ASSERTION,
+    {
+      onCompleted: ({ validateAssertion: success }) => {
+        success ? getUserData() : setInvalidToken(true)
+      }
     }
-  })
+  )
+
+  const [assertionOptions, { error: assertionQueryError }] = useLazyQuery(
+    GENERATE_ASSERTION,
+    {
+      variables: {
+        username: clientField,
+        password: passwordField
+      },
+      onCompleted: ({ generateAssertionOptions: options }) => {
+        console.log(options)
+        startAssertion(options)
+          .then(res => {
+            validateAssertion({
+              variables: {
+                username: clientField,
+                password: passwordField,
+                rememberMe: rememberMeField,
+                assertionResponse: res
+              }
+            })
+          })
+          .catch(err => {
+            console.error(err)
+            setInvalidToken(true)
+          })
+      }
+    }
+  )
 
   const [getUserData, { error: queryError }] = useLazyQuery(GET_USER_DATA, {
     onCompleted: ({ userData }) => {
@@ -51,16 +96,9 @@ const InputFIDO = ({ clientField, passwordField, rememberMeField }) => {
     }
   })
 
-  inputFIDO({
-    variables: {
-      username: clientField,
-      password: passwordField,
-      rememberMe: rememberMeField
-    }
-  })
-
   const getErrorMsg = () => {
-    if (mutationError || queryError) return 'Internal server error'
+    if (assertionQueryError || queryError || mutationError)
+      return 'Internal server error'
     if (invalidToken) return 'Code is invalid. Please try again.'
     return null
   }
@@ -72,6 +110,11 @@ const InputFIDO = ({ clientField, passwordField, rememberMeField }) => {
         {getErrorMsg() && (
           <P className={classes.errorMessage}>{getErrorMsg()}</P>
         )}
+        <Button
+          onClick={() => assertionOptions()}
+          buttonClassName={classes.loginButton}>
+          Use FIDO
+        </Button>
       </div>
     </>
   )
