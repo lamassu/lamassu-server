@@ -18,7 +18,7 @@ export default {
     marginLeft: 12
   },
   buttonText: {
-    color: `${backgroundColor}`,
+    color: backgroundColor,
     fontSize: 15
   },
   icon: {
