@@ -5,6 +5,7 @@ import * as R from 'ramda'
 import React from 'react'
 
 import { Button } from 'src/components/buttons'
+import { SecretInput } from 'src/components/inputs/formik'
 
 const styles = {
   button: {
@@ -40,6 +41,18 @@ const FormRenderer = ({
 
   const values = R.merge(initialValues, value)
 
+  const saveNonEmptySecret = it => {
+    const emptySecretFields = R.compose(
+      R.map(R.prop('code')),
+      R.filter(
+        elem =>
+          R.prop('component', elem) === SecretInput &&
+          R.isEmpty(it[R.prop('code', elem)])
+      )
+    )(elements)
+    return save(R.omit(emptySecretFields, it))
+  }
+
   return (
     <Formik
       validateOnBlur={false}
@@ -47,7 +60,7 @@ const FormRenderer = ({
       enableReinitialize
       initialValues={values}
       validationSchema={validationSchema}
-      onSubmit={save}>
+      onSubmit={saveNonEmptySecret}>
       <Form className={classes.form}>
         <Grid container spacing={3} className={classes.grid}>
           {elements.map(({ component, code, display, inputProps }) => (
