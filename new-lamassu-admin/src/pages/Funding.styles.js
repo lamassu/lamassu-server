@@ -8,7 +8,7 @@ import {
   comet
 } from 'src/styling/variables'
 
-const { label1 } = typographyStyles
+const { label1, mono } = typographyStyles
 
 export default {
   wrapper: {
@@ -91,5 +91,10 @@ export default {
     paddingTop: 6,
     paddingLeft: 15,
     marginRight: -11
+  },
+  mono: {
+    extend: mono,
+    width: 375,
+    margin: `${spacer * 1.5}px ${spacer * 3}px`
   }
 }

@@ -62,26 +62,19 @@ const Footer = () => {
 
     const avgOfAskBid = new BigNumber(
       (cashInNoCommission + cashOutNoCommission) / 2
-    )
-      .decimalPlaces(2)
-      .toNumber()
+    ).toFormat(2)
     const cashIn = new BigNumber(
       parseFloat(
         R.path(['cryptoRates', 'withCommissions', key, 'cashIn'])(data)
       )
-    )
-      .decimalPlaces(2)
-      .toNumber()
+    ).toFormat(2)
     const cashOut = new BigNumber(
       parseFloat(
         R.path(['cryptoRates', 'withCommissions', key, 'cashOut'])(data)
       )
-    )
-      .decimalPlaces(2)
-      .toNumber()
+    ).toFormat(2)
 
     const localeFiatCurrency = data.config.locale_fiatCurrency
-    const localeLanguage = data.config.locale_languages[0]
 
     return (
       <Grid key={key} item xs={3}>
@@ -91,23 +84,17 @@ const Footer = () => {
         <div className={classes.headerLabels}>
           <div className={classes.headerLabel}>
             <TxInIcon />
-            <Label2>{` ${cashIn.toLocaleString(
-              localeLanguage
-            )} ${localeFiatCurrency}`}</Label2>
+            <Label2>{` ${cashIn} ${localeFiatCurrency}`}</Label2>
           </div>
           <div className={classnames(classes.headerLabel, classes.txOutMargin)}>
             <TxOutIcon />
-            <Label2>{` ${cashOut.toLocaleString(
-              localeLanguage
-            )} ${localeFiatCurrency}`}</Label2>
+            <Label2>{` ${cashOut} ${localeFiatCurrency}`}</Label2>
           </div>
         </div>
         <Label2
           className={
             classes.tickerLabel
-          }>{`${tickerName}: ${avgOfAskBid.toLocaleString(
-          localeLanguage
-        )} ${localeFiatCurrency}`}</Label2>
+          }>{`${tickerName}: ${avgOfAskBid} ${localeFiatCurrency}`}</Label2>
       </Grid>
     )
   }

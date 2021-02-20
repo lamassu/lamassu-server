@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import TableLabel from 'src/components/TableLabel'
@@ -16,7 +17,6 @@ import {
   Info1,
   Info2,
   Info3,
-  Mono,
   Label1,
   Label3
 } from 'src/components/typography'
@@ -108,9 +108,10 @@ const Funding = () => {
   }
 
   const { data: fundingResponse } = useQuery(GET_FUNDING)
+  const funding = R.path(['funding'])(fundingResponse) ?? []
 
-  if (fundingResponse?.funding?.length && !selected) {
-    setSelected(fundingResponse?.funding[0])
+  if (funding.length && !selected) {
+    setSelected(funding[0])
   }
 
   const itemRender = (it, active) => {
@@ -129,7 +130,7 @@ const Funding = () => {
         {!it.errorMsg && (
           <>
             <div className={classnames(itemClass)}>
-              {it.fiatConfirmedBalance} {it.fiatCode}
+              {formatNumber(it.fiatConfirmedBalance)} {it.fiatCode}
             </div>
             <div className={classnames(itemClass)}>
               {it.confirmedBalance} {it.cryptoCode}
@@ -140,7 +141,7 @@ const Funding = () => {
     )
   }
 
-  const pendingTotal = getPendingTotal(fundingResponse?.funding || [])
+  const pendingTotal = getPendingTotal(funding)
   const signIfPositive = num => (num >= 0 ? '+' : '')
 
   return (
@@ -151,19 +152,19 @@ const Funding = () => {
       </div>
       <div className={classes.wrapper}>
         <Sidebar
-          data={fundingResponse?.funding}
+          data={funding}
           isSelected={isSelected}
           onClick={setSelected}
           displayName={it => it.display}
           itemRender={itemRender}>
-          {fundingResponse?.funding && fundingResponse?.funding?.length && (
+          {funding.length && (
             <div className={classes.total}>
               <Label1 className={classes.totalTitle}>
                 Total Crypto Balance
               </Label1>
               <Info1 noMargin>
-                {getConfirmedTotal(fundingResponse.funding)}
-                {fundingResponse.funding[0].fiatCode}
+                {getConfirmedTotal(funding)}
+                {funding[0].fiatCode}
               </Info1>
               <Label1 className={classes.totalPending}>
                 ({signIfPositive(pendingTotal)} {pendingTotal} pending)
@@ -208,7 +209,7 @@ const Funding = () => {
 
               <H3 className={classes.topSpacer}>Address</H3>
               <div className={classes.addressWrapper}>
-                <Mono className={classes.address}>
+                <div className={classes.mono}>
                   <strong>
                     <CopyToClipboard buttonClassname={classes.copyToClipboard}>
                       {formatAddress(
@@ -217,7 +218,7 @@ const Funding = () => {
                       )}
                     </CopyToClipboard>
                   </strong>
-                </Mono>
+                </div>
               </div>
             </div>
 
