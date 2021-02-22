@@ -14,6 +14,7 @@ const Autocomplete = ({
   multiple,
   onChange,
   labelProp,
+  keepOpenProp,
   value: outsideValue,
   error,
   fullWidth,

@@ -85,7 +85,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'cryptoCurrencies',
-      width: 280,
+      width: 316,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
@@ -93,6 +93,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
         options: cryptoData,
         valueProp: 'code',
         labelProp: 'display',
+        keepOpenProp: true,
         multiple: true,
         onChange: onCryptoChange
       }
