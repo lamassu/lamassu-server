@@ -92,17 +92,13 @@ const Main = () => {
     ? classes.contentWithSidebar
     : classes.contentWithoutSidebar
 
-  const transitionProps = {
-    direction: 'left'
-  }
-
   return (
     <div className={classes.root}>
       {!is404 && wizardTested && <Header tree={tree} />}
       <main className={classes.wrapper}>
         {sidebar && !is404 && wizardTested && (
           <Slide
-            {...transitionProps}
+            direction="left"
             in={true}
             mountOnEnter
             unmountOnExit
