@@ -60,6 +60,7 @@
     "nocache": "^2.1.0",
     "numeral": "^2.0.3",
     "p-each-series": "^1.0.0",
+    "p-retry": "^4.4.0",
     "pg-native": "^3.0.0",
     "pg-promise": "^7.4.1",
     "pify": "^3.0.0",
