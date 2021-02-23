@@ -15,10 +15,11 @@ const contains = crypto => R.compose(R.contains(crypto), R.prop('cryptos'))
 const sameClass = type => R.propEq('class', type)
 const filterConfig = (crypto, type) =>
   R.filter(it => sameClass(type)(it) && contains(crypto)(it))
-const removeGethOption = R.filter(config => config.code !== 'geth')
+const removeDeprecated = R.filter(({ deprecated }) => !deprecated)
 
 const getItems = (accountsConfig, accounts, type, crypto) => {
-  const fConfig = removeGethOption(filterConfig(crypto, type)(accountsConfig))
+  const fConfig = removeDeprecated(filterConfig(crypto, type)(accountsConfig))
+
   const find = code => accounts && accounts[code]
 
   const [filled, unfilled] = R.partition(({ code }) => {

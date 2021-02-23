@@ -35,6 +35,7 @@ const GET_INFO = gql`
       display
       class
       cryptos
+      deprecated
     }
     cryptoCurrencies {
       code
