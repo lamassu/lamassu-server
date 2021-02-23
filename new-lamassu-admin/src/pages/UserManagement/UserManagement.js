@@ -129,7 +129,6 @@ const Users = () => {
 
   const [generateAttestationOptions] = useLazyQuery(GENERATE_ATTESTATION, {
     onCompleted: ({ generateAttestationOptions: options }) => {
-      console.log(options)
       startAttestation(options).then(res => {
         validateAttestation({
           variables: {

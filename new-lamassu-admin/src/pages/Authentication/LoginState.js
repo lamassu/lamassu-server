@@ -1,10 +1,13 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { startAssertion } from '@simplewebauthn/browser'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 
+import { AppContext } from 'src/App'
 import { Button } from 'src/components/buttons'
 import { Checkbox, SecretInput, TextInput } from 'src/components/inputs/formik'
 import { Label2, P } from 'src/components/typography'
@@ -16,6 +19,28 @@ const useStyles = makeStyles(styles)
 const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password)
+  }
+`
+
+const GENERATE_ASSERTION = gql`
+  query generateAssertionOptions {
+    generateAssertionOptions
+  }
+`
+
+const VALIDATE_ASSERTION = gql`
+  mutation validateAssertion($assertionResponse: JSONObject!) {
+    validateAssertion(assertionResponse: $assertionResponse)
+  }
+`
+
+const GET_USER_DATA = gql`
+  {
+    userData {
+      id
+      username
+      role
+    }
   }
 `
 
@@ -41,21 +66,68 @@ const LoginState = ({
   handleLoginState
 }) => {
   const classes = useStyles()
+  const history = useHistory()
+  const { setUserData } = useContext(AppContext)
 
-  const [login, { error: mutationError }] = useMutation(LOGIN, {
+  const [login, { error: loginMutationError }] = useMutation(LOGIN, {
     onCompleted: ({ login }) => {
       if (login === 'INPUT2FA') handleLoginState(STATES.INPUT_2FA)
       if (login === 'SETUP2FA') handleLoginState(STATES.SETUP_2FA)
-      if (login === 'FIDO') handleLoginState(STATES.FIDO)
       if (login === 'FAILED') setInvalidLogin(true)
     }
   })
+
+  const [validateAssertion, { error: FIDOMutationError }] = useMutation(
+    VALIDATE_ASSERTION,
+    {
+      onCompleted: ({ validateAssertion: success }) => {
+        success ? getUserData() : setInvalidLogin(true)
+      }
+    }
+  )
+
+  const [assertionOptions, { error: assertionQueryError }] = useLazyQuery(
+    GENERATE_ASSERTION,
+    {
+      onCompleted: ({ generateAssertionOptions: options }) => {
+        console.log(options)
+        startAssertion(options)
+          .then(res => {
+            validateAssertion({
+              variables: {
+                assertionResponse: res
+              }
+            })
+          })
+          .catch(err => {
+            console.error(err)
+            setInvalidLogin(true)
+          })
+      }
+    }
+  )
+
+  const [getUserData, { error: userDataQueryError }] = useLazyQuery(
+    GET_USER_DATA,
+    {
+      onCompleted: ({ userData }) => {
+        setUserData(userData)
+        history.push('/')
+      }
+    }
+  )
 
   const [invalidLogin, setInvalidLogin] = useState(false)
 
   const getErrorMsg = (formikErrors, formikTouched) => {
     if (!formikErrors || !formikTouched) return null
-    if (mutationError) return 'Internal server error'
+    if (
+      loginMutationError ||
+      FIDOMutationError ||
+      assertionQueryError ||
+      userDataQueryError
+    )
+      return 'Internal server error'
     if (formikErrors.client && formikTouched.client) return formikErrors.client
     if (formikErrors.password && formikTouched.password)
       return formikErrors.password
@@ -119,6 +191,12 @@ const LoginState = ({
                 {getErrorMsg(errors, touched)}
               </P>
             )}
+            <Button
+              onClick={() => assertionOptions()}
+              buttonClassName={classes.loginButton}
+              className={classes.fidoLoginButtonWrapper}>
+              I have a YubiKey
+            </Button>
             <Button
               type="submit"
               form="login-form"
