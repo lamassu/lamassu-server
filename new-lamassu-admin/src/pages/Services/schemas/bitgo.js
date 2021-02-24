@@ -10,6 +10,15 @@ import secretTest from './helper'
 
 const isDefined = it => it && it.length
 
+const buildTestValidation = (id, passphrase) => {
+  return Yup.string()
+    .max(100, 'Too long')
+    .when(id, {
+      is: isDefined,
+      then: Yup.string().test(secretTest(passphrase))
+    })
+}
+
 export default {
   code: 'bitgo',
   name: 'BitGo',
@@ -93,40 +102,30 @@ export default {
         .max(100, 'Too long')
         .required(),
       BTCWalletId: Yup.string().max(100, 'Too long'),
-      BTCWalletPassphrase: Yup.string()
-        .max(100, 'Too long')
-        .when('BTCWalletId', {
-          is: isDefined,
-          then: Yup.string().test(secretTest(account?.BTCWalletPassphrase))
-        }),
+      BTCWalletPassphrase: buildTestValidation(
+        'BTCWalletId',
+        account?.BTCWalletPassphrase
+      ),
       LTCWalletId: Yup.string().max(100, 'Too long'),
-      LTCWalletPassphrase: Yup.string()
-        .max(100, 'Too long')
-        .when('LTCWalletId', {
-          is: isDefined,
-          then: Yup.string().test(secretTest(account?.LTCWalletPassphrase))
-        }),
+      LTCWalletPassphrase: buildTestValidation(
+        'LTCWalletId',
+        account?.LTCWalletPassphrase
+      ),
       ZECWalletId: Yup.string().max(100, 'Too long'),
-      ZECWalletPassphrase: Yup.string()
-        .max(100, 'Too long')
-        .when('ZECWalletId', {
-          is: isDefined,
-          then: Yup.string().test(secretTest(account?.ZECWalletPassphrase))
-        }),
+      ZECWalletPassphrase: buildTestValidation(
+        'ZECWalletId',
+        account?.ZECWalletPassphrase
+      ),
       BCHWalletId: Yup.string().max(100, 'Too long'),
-      BCHWalletPassphrase: Yup.string()
-        .max(100, 'Too long')
-        .when('BCHWalletId', {
-          is: isDefined,
-          then: Yup.string().test(secretTest(account?.BCHWalletPassphrase))
-        }),
+      BCHWalletPassphrase: buildTestValidation(
+        'BCHWalletId',
+        account?.BCHWalletPassphrase
+      ),
       DASHWalletId: Yup.string().max(100, 'Too long'),
-      DASHWalletPassphrase: Yup.string()
-        .max(100, 'Too long')
-        .when('DASHWalletId', {
-          is: isDefined,
-          then: Yup.string().test(secretTest(account?.DASHWalletPassphrase))
-        }),
+      DASHWalletPassphrase: buildTestValidation(
+        'DASHWalletId',
+        account?.DASHWalletPassphrase
+      ),
       environment: Yup.string()
         .matches(/(prod|test)/)
         .required()
