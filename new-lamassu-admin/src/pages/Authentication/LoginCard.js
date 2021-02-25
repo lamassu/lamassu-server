@@ -6,6 +6,7 @@ import { H2 } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import Input2FAState from './Input2FAState'
+import InputFIDOState from './InputFIDOState'
 import styles from './Login.styles'
 import LoginState from './LoginState'
 import Setup2FAState from './Setup2FAState'
@@ -15,8 +16,12 @@ const useStyles = makeStyles(styles)
 const STATES = {
   LOGIN: 'Login',
   SETUP_2FA: 'Setup 2FA',
-  INPUT_2FA: 'Input 2FA'
+  INPUT_2FA: 'Input 2FA',
+  FIDO_2FA: 'FIDO 2FA'
 }
+
+// FIDO2FA, FIDOPasswordless or FIDOUsernameless
+const AUTHENTICATION_STRATEGY = 'FIDOUsernameless'
 
 const LoginCard = () => {
   const classes = useStyles()
@@ -56,6 +61,7 @@ const LoginCard = () => {
             onPasswordChange={onPasswordChange}
             onRememberMeChange={onRememberMeChange}
             STATES={STATES}
+            strategy={AUTHENTICATION_STRATEGY}
             handleLoginState={handleLoginState}
           />
         )
@@ -78,6 +84,17 @@ const LoginCard = () => {
             handleLoginState={handleLoginState}
           />
         )
+      case STATES.FIDO_2FA:
+        return (
+          <InputFIDOState
+            clientField={clientField}
+            passwordField={passwordField}
+            rememberMeField={rememberMeField}
+            strategy={AUTHENTICATION_STRATEGY}
+          />
+        )
+      case STATES.FIDO_PASSWORDLESS:
+        return <InputFIDOState strategy={AUTHENTICATION_STRATEGY} />
       default:
         break
     }

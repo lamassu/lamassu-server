@@ -63,6 +63,7 @@ const LoginState = ({
   onPasswordChange,
   onRememberMeChange,
   STATES,
+  strategy,
   handleLoginState
 }) => {
   const classes = useStyles()
@@ -73,6 +74,7 @@ const LoginState = ({
     onCompleted: ({ login }) => {
       if (login === 'INPUT2FA') handleLoginState(STATES.INPUT_2FA)
       if (login === 'SETUP2FA') handleLoginState(STATES.SETUP_2FA)
+      if (login === 'FIDO2FA') handleLoginState(STATES.FIDO_2FA)
       if (login === 'FAILED') setInvalidLogin(true)
     }
   })
@@ -191,12 +193,19 @@ const LoginState = ({
                 {getErrorMsg(errors, touched)}
               </P>
             )}
-            <Button
-              onClick={() => assertionOptions()}
-              buttonClassName={classes.loginButton}
-              className={classes.fidoLoginButtonWrapper}>
-              I have a YubiKey
-            </Button>
+            {strategy !== 'FIDO2FA' && (
+              <Button
+                type="button"
+                onClick={() => {
+                  return strategy === 'FIDOUsernameless'
+                    ? assertionOptions()
+                    : handleLoginState(STATES.FIDO_2FA)
+                }}
+                buttonClassName={classes.loginButton}
+                className={classes.fidoLoginButtonWrapper}>
+                I have a YubiKey
+              </Button>
+            )}
             <Button
               type="submit"
               form="login-form"
