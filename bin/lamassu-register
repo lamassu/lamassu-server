@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const authentication = require('../lib/new-admin/graphql/modules/authentication')
+const userManagement = require('../lib/new-admin/graphql/modules/userManagement')
 const options = require('../lib/options')
 
 const name = process.argv[2]
@@ -29,7 +29,7 @@ if (role !== 'user' && role !== 'superuser') {
   process.exit(2)
 }
 
-authentication.createRegisterToken(name, role).then(token => {
+userManagement.createRegisterToken(name, role).then(token => {
   if (!token) {
     console.log(`A user named ${name} already exists!`)
     process.exit(2)
