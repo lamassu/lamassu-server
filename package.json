@@ -67,7 +67,7 @@
     "p-each-series": "^1.0.0",
     "p-retry": "^4.4.0",
     "pg-native": "^3.0.0",
-    "pg-promise": "^10.9.2",
+    "pg-promise": "^7.4.1",
     "pify": "^3.0.0",
     "pretty-ms": "^2.1.0",
     "promise-sequential": "^1.1.1",
