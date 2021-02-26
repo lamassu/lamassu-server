@@ -77,7 +77,7 @@ const STEPS = [
     Component: Locale,
     exImage: '/assets/wizard/fullexample.locale.png',
     subtitle: 'Locales',
-    text: `From the Locales page, you can define default settings
+    text: `From the Locales panel, you can define default settings
     that will be applied to all machines you add to your network later on.
     These settings may be overridden for specific machines in the Overrides section.`
   },
