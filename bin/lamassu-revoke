@@ -14,7 +14,7 @@ const name = argv[0]
 
 const sql = `delete from user_tokens where name = $1 RETURNING *;`
 
-return db.result(sql, [name], r => r.rowCount)
+return db.$result(sql, [name], r => r.rowCount)
     .then(r => {if(r==0){console.log('could not find user.')}
             else{console.log(name + ' removed successfully.')}})
 .then(() => process.exit(0))
