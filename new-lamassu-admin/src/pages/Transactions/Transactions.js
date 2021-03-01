@@ -117,7 +117,7 @@ const Transactions = () => {
     },
     {
       header: 'Cash',
-      width: 104,
+      width: 110,
       textAlign: 'right',
       size: 'sm',
       view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
@@ -144,7 +144,7 @@ const Transactions = () => {
       view: it => moment.utc(it.created).format('YYYY-MM-DD'),
       textAlign: 'right',
       size: 'sm',
-      width: 130
+      width: 135
     },
     {
       header: 'Time (UTC)',
