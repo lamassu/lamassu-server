@@ -15,7 +15,7 @@ const sql = `select regexp_replace(crypto_code, '$', ' ') as code,regexp_replace
 const deleteSql = `delete from blacklist where crypto_code = $1 and address = $2`
 const makeDimAndReset = '\x1b[2m%s\x1b[0m'
 
-db.query(sql)
+db.$query(sql)
   .then(many => {
     console.log(os.EOL, 'Here is your current list of prohibited addresses:', os.EOL)
     console.log(many.map(it => `${it.code} | ${it.address}`).join(os.EOL), os.EOL)
@@ -38,8 +38,8 @@ db.query(sql)
           errorHandler(err)
         }
 
-        db.none(deleteSql, [cryptoCode, address])
-          .then(() => db.query(sql))
+        db.$none(deleteSql, [cryptoCode, address])
+          .then(() => db.$query(sql))
           .then(many2 => {
             console.log(os.EOL, `Address removed. Here's the new list of prohibited addresses:`, os.EOL)
             console.log(many2.map(it => `${it.code} | ${it.address}`).join(os.EOL))

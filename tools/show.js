@@ -7,7 +7,7 @@ function pp (o) {
 }
 
 function dbFetchConfig () {
-  return db.oneOrNone(
+  return db.$oneOrNone(
     'select data from user_config where type=$1 order by id desc limit 1',
     ['config']
   )
