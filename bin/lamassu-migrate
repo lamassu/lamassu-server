@@ -4,7 +4,7 @@ const FileStore = require('migrate/lib/file-store')
 const db = require('../lib/db')
 const migrate = require('../lib/migrate')
 const options = require('../lib/options')
-
+const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
 const createMigration = `CREATE TABLE IF NOT EXISTS migrations (
   id serial PRIMARY KEY,
   data json NOT NULL
@@ -21,20 +21,23 @@ const getMigrateFile = () => {
   })
 }
 
-db.$none(createMigration)
-  .then(() => Promise.all([db.$oneOrNone(select), getMigrateFile()]))
-  .then(([qResult, migrateFile]) => {
-    process.env.SKIP_SERVER_LOGS = !(qResult && qResult.data.migrations.find(({ title }) => title === '1572524820075-server-support-logs.js'))
-    if (!qResult && migrateFile) {
-      return db.$none('insert into migrations (id, data) values (1, $1)', [migrateFile])
-    }
-  })
-  .then(() => migrate.run())
-  .then(() => {
-    console.log('DB Migration succeeded.')
-    process.exit(0)
-  })
-  .catch(err => {
-    console.error('DB Migration failed: %s', err)
-    process.exit(1)
-  })
+const store = defaultStore()
+asyncLocalStorage.run(store, () => {
+  db.$none(createMigration)
+    .then(() => Promise.all([db.$oneOrNone(select), getMigrateFile()]))
+    .then(([qResult, migrateFile]) => {
+      process.env.SKIP_SERVER_LOGS = !(qResult && qResult.data.migrations.find(({ title }) => title === '1572524820075-server-support-logs.js'))
+      if (!qResult && migrateFile) {
+        return db.$none('insert into migrations (id, data) values (1, $1)', [migrateFile])
+      }
+    })
+    .then(() => migrate.run())
+    .then(() => {
+      console.log('DB Migration succeeded.')
+      process.exit(0)
+    })
+    .catch(err => {
+      console.error('DB Migration failed: %s', err)
+      process.exit(1)
+    })
+})
