@@ -27,7 +27,6 @@ import {
 import { getFormattedPhone, getName } from './helper'
 
 const useStyles = makeStyles(styles)
-const ANONYMOUS_USER_NAME = 'anonymous'
 
 const GET_CUSTOMER = gql`
   query customer($customerId: ID!) {
@@ -38,7 +37,7 @@ const GET_CUSTOMER = gql`
       frontCameraPath
       frontCameraOverride
       phone
-      name
+      isAnonymous
       smsOverride
       idCardData
       idCardDataOverride
@@ -167,7 +166,7 @@ const CustomerProfile = memo(() => {
             locale={locale}
             setShowCompliance={() => setShowCompliance(!showCompliance)}
           />
-          {!loading && customerData.name !== ANONYMOUS_USER_NAME && (
+          {!loading && !customerData.isAnonymous && (
             <div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
               <ActionButton

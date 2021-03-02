@@ -22,7 +22,6 @@ import { getStatus } from './helper'
 const useStyles = makeStyles(mainStyles)
 
 const NUM_LOG_RESULTS = 1000
-const ANONYMOUS_USER_NAME = 'anonymous'
 
 const GET_TRANSACTIONS_CSV = gql`
   query transactions($limit: Int, $from: Date, $until: Date) {
@@ -59,6 +58,7 @@ const GET_TRANSACTIONS = gql`
       customerPhone
       discount
       customerId
+      isAnonymous
     }
   }
 `
@@ -88,7 +88,6 @@ const Transactions = () => {
     if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
     return tx.customerPhone
   }
-
   const elements = [
     {
       header: '',
@@ -110,7 +109,7 @@ const Transactions = () => {
       view: it => (
         <div className={classes.flexWrapper}>
           <div className={classes.overflowTd}>{getCustomerDisplayName(it)}</div>
-          {getCustomerDisplayName(it) !== ANONYMOUS_USER_NAME && (
+          {!it.isAnonymous && (
             <div onClick={() => redirect(it.customerId)}>
               <CustomerLinkIcon className={classes.customerLinkIcon} />
             </div>
