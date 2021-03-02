@@ -21,12 +21,12 @@ const getMigrateFile = () => {
   })
 }
 
-db.none(createMigration)
-  .then(() => Promise.all([db.oneOrNone(select), getMigrateFile()]))
+db.$none(createMigration)
+  .then(() => Promise.all([db.$oneOrNone(select), getMigrateFile()]))
   .then(([qResult, migrateFile]) => {
     process.env.SKIP_SERVER_LOGS = !(qResult && qResult.data.migrations.find(({ title }) => title === '1572524820075-server-support-logs.js'))
     if (!qResult && migrateFile) {
-      return db.none('insert into migrations (id, data) values (1, $1)', [migrateFile])
+      return db.$none('insert into migrations (id, data) values (1, $1)', [migrateFile])
     }
   })
   .then(() => migrate.run())
