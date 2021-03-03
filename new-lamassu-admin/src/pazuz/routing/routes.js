@@ -41,9 +41,13 @@ import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import UserManagement from 'src/pages/UserManagement/UserManagement'
 import Wizard from 'src/pages/Wizard'
+<<<<<<< HEAD
 import PrivateRoute from 'src/routing/PrivateRoute'
 import PublicRoute from 'src/routing/PublicRoute'
 import { ROLES } from 'src/routing/utils'
+=======
+import ATMWallet from 'src/pazuz/pages/ATMWallet/ATMWallet'
+>>>>>>> feat: pazuz ATM wallet screen
 import { namespaces } from 'src/utils/config'
 
 const useStyles = makeStyles({
@@ -244,6 +248,23 @@ const tree = [
         route: '/compliance/customer/:id',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: CustomerProfile
+      }
+    ]
+  },
+  {
+    key: 'accounting',
+    label: 'Accounting',
+    route: '/accounting',
+    allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    get component() {
+      return () => <Redirect to={this.children[0].route} />
+    },
+    children: [
+      {
+        key: 'atmwallets',
+        label: 'ATM Wallets',
+        route: '/accounting/wallets',
+        component: ATMWallet
       }
     ]
   },
