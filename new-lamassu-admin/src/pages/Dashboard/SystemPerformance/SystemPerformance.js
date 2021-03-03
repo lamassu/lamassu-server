@@ -124,18 +124,17 @@ const SystemPerformance = () => {
   }
 
   const getPercentChange = () => {
-    const thisTimePeriodProfit = getProfit(transactionsToShow).toNumber()
-    const previousTimePeriodProfit = getProfit(
-      transactionsLastTimePeriod
-    ).toNumber()
+    const thisTimePeriodProfit = getProfit(transactionsToShow)
+    const previousTimePeriodProfit = getProfit(transactionsLastTimePeriod)
 
-    if (thisTimePeriodProfit === previousTimePeriodProfit) return 0
-    if (previousTimePeriodProfit === 0) return 100
+    if (thisTimePeriodProfit.eq(previousTimePeriodProfit)) return 0
+    if (previousTimePeriodProfit.eq(0)) return 100
 
-    return new BigNumber(
-      ((thisTimePeriodProfit - previousTimePeriodProfit) * 100) /
-        previousTimePeriodProfit
-    ).toFormat(2)
+    return thisTimePeriodProfit
+      .minus(previousTimePeriodProfit)
+      .times(100)
+      .div(previousTimePeriodProfit)
+      .toNumber()
   }
 
   const getDirectionPercent = () => {
@@ -211,7 +210,7 @@ const SystemPerformance = () => {
                 </div>
                 <div className={classnames(percentageClasses)}>
                   {getPercentageIcon()}
-                  {`${percentChange}%`}
+                  {`${new BigNumber(percentChange).toFormat(2)}%`}
                 </div>
               </div>
               <LineChart
