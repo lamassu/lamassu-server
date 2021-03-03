@@ -133,12 +133,6 @@ const tree = [
         route: '/settings/3rd-party-services',
         component: Services
       },
-      // {
-      //   key: namespaces.WALLETS,
-      //   label: 'Wallet',
-      //   route: '/settings/wallet-settings',
-      //   component: WalletSettings
-      // },
       {
         key: namespaces.OPERATOR_INFO,
         label: 'Operator Info',
@@ -222,22 +216,6 @@ const tree = [
       }
     ]
   }
-  // {
-  //   key: 'system',
-  //   label: 'System',
-  //   route: '/system',
-  //   get component() {
-  //     return () => <Redirect to={this.children[0].route} />
-  //   },
-  //   children: [
-  //     {
-  //       key: 'token-management',
-  //       label: 'Token Management',
-  //       route: '/system/token-management',
-  //       component: TokenManagement
-  //     }
-  //   ]
-  // }
 ]
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
