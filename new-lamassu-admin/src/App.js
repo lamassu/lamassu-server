@@ -9,13 +9,14 @@ import {
 } from '@material-ui/core/styles'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { createContext, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   useLocation,
   useHistory,
   BrowserRouter as Router
 } from 'react-router-dom'
 
+import AppContext from 'src/AppContext'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
 import ApolloProvider from 'src/utils/apollo'
@@ -68,8 +69,6 @@ const useStyles = makeStyles({
     width: mainWidth
   }
 })
-
-const AppContext = createContext()
 
 const Main = () => {
   const classes = useStyles()
@@ -148,4 +147,3 @@ const App = () => {
 }
 
 export default App
-export { AppContext }
