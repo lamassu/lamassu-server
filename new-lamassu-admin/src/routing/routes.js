@@ -12,7 +12,7 @@ import {
   useLocation
 } from 'react-router-dom'
 
-import { AppContext } from 'src/App'
+import AppContext from 'src/AppContext'
 import AuthRegister from 'src/pages/AuthRegister'
 import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'

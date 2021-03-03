@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { AppContext } from 'src/App'
+import AppContext from 'src/AppContext'
 import { getWizardStep, STEPS } from 'src/pages/Wizard/helper'
 import { backgroundColor } from 'src/styling/variables'
 
