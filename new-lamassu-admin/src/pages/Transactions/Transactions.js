@@ -117,7 +117,7 @@ const Transactions = () => {
     },
     {
       header: 'Cash',
-      width: 110,
+      width: 126,
       textAlign: 'right',
       size: 'sm',
       view: it => `${Number.parseFloat(it.fiat)} ${it.fiatCode}`
