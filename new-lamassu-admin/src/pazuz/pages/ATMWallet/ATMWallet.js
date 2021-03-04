@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -75,19 +76,25 @@ const WalletInfoChip = ({ wallet, currency }) => {
   const getLogo = cryptoCode => {
     switch (cryptoCode) {
       case 'BTC':
-        return <BitcoinLogo className={classes.btcLogo} />
+        return <BitcoinLogo className={classes.logo} />
       case 'ETH':
-        return <EthereumLogo className={classes.ethLogo} />
+        return <EthereumLogo className={classes.logo} />
       case 'LTC':
-        return <LitecoinLogo className={classes.ltcLogo} />
+        return <LitecoinLogo className={classes.logo} />
       case 'ZEC':
-        return <ZCashLogo className={classes.zecLogo} />
+        return (
+          <ZCashLogo className={classnames(classes.logo, classes.zecLogo)} />
+        )
       case 'BCH':
-        return <BitcoinCashLogo className={classes.bchLogo} />
+        return (
+          <BitcoinCashLogo
+            className={classnames(classes.logo, classes.bchLogo)}
+          />
+        )
       case 'DASH':
-        return <DashLogo className={classes.dashLogo} />
+        return <DashLogo className={classes.logo} />
       default:
-        return <BitcoinLogo className={classes.btcLogo} />
+        return <BitcoinLogo className={classes.logo} />
     }
   }
 
@@ -103,7 +110,7 @@ const WalletInfoChip = ({ wallet, currency }) => {
         <div className={classes.walletValueWrapper}>
           <Label2 className={classes.fieldHeader}>{wallet.name} value</Label2>
           <Label2 className={classes.walletValue}>
-            {wallet.amount.toLocaleString('en-US', {
+            {wallet.amount.toFixed(1).toLocaleString('en-US', {
               maximumFractionDigits: 2
             })}{' '}
             {wallet.cryptoCode}
