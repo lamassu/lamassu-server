@@ -54,37 +54,20 @@ const styles = ({ numberOfChips }) => ({
   walletHeader: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    height: 50
   },
-  btcLogo: {
+  logo: {
     transform: `scale(0.4, 0.4)`,
-    margin: [[-8, 0, 0, -26]]
-  },
-  ethLogo: {
-    transform: `scale(0.35, 0.35)`,
-    margin: [[-16, 0, -7, -15]],
-    maxHeight: 80,
-    maxWidth: 80
-  },
-  ltcLogo: {
-    transform: `scale(0.4, 0.4)`,
-    margin: [[-8, 0, 0, -26]]
+    height: 80,
+    maxWidth: 110,
+    margin: [[-14, 0, 0, -26]]
   },
   zecLogo: {
-    transform: `scale(0.4, 0.4)`,
-    margin: [[-15, 0, -9, -14]],
-    maxHeight: 80,
-    maxWidth: 80
+    margin: [[-15, 0, 0, -10]]
   },
   bchLogo: {
-    transform: `scale(0.4, 0.4)`,
-    margin: [[-8, 0, 0, -15]]
-  },
-  dashLogo: {
-    transform: `scale(0.4, 0.4)`,
-    margin: [[-13, 0, -10, -10]],
-    maxHeight: 80,
-    maxWidth: 80
+    margin: [[-12, 0, 0, -18]]
   },
   hedgedText: {
     color: offColor,
