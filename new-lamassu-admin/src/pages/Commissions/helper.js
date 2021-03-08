@@ -42,7 +42,7 @@ const getView = (data, code, compare) => it => {
   // The following boolean should come undefined if it is rendering an unpaired machine
   const hasValue = R.find(R.propEq(compare ?? 'code', it))(data)
 
-  return hasValue ? R.compose(R.prop(code), hasValue)(data) : 'Unpaired machine'
+  return hasValue ? R.prop(code, hasValue) : 'Unpaired machine'
 }
 
 const displayCodeArray = data => it => {
