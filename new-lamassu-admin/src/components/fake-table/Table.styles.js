@@ -4,6 +4,7 @@ import {
   tableHeaderColor,
   tableHeaderHeight,
   tableErrorColor,
+  tableSuccessColor,
   spacer,
   white,
   tableDoubleHeaderHeight,
@@ -70,6 +71,9 @@ export default {
   },
   trError: {
     backgroundColor: tableErrorColor
+  },
+  trAdding: {
+    backgroundColor: tableSuccessColor
   },
   mainContent: ({ size }) => {
     const sizes = {
