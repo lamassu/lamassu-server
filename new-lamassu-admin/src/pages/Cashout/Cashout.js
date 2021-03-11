@@ -72,6 +72,8 @@ const CashOut = ({ name: SCREEN_KEY }) => {
     save(toNamespace(id, { active: !namespaced?.active }))
   }
 
+  const wasNeverEnabled = it => R.compose(R.length, R.keys)(it) === 1
+
   return (
     <>
       <TitleSection title="Cash-out">
@@ -102,7 +104,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
       <EditableTable
         namespaces={R.map(R.path(['deviceId']))(machines)}
         data={config}
-        stripeWhen={it => !DenominationsSchema.isValidSync(it)}
+        stripeWhen={wasNeverEnabled}
         enableEdit
         editWidth={134}
         enableToggle
