@@ -318,7 +318,8 @@ const getOverridesSchema = (values, rawData) => {
         }
       })
       .label('Crypto Currencies')
-      .required(),
+      .required()
+      .min(1),
     cashIn: Yup.number()
       .label('Cash-in')
       .min(0)
@@ -423,7 +424,8 @@ const getListCommissionsSchema = () => {
       .required(),
     cryptoCurrencies: Yup.array()
       .label('Crypto Currency')
-      .required(),
+      .required()
+      .min(1),
     cashIn: Yup.number()
       .label('Cash-in')
       .min(0)

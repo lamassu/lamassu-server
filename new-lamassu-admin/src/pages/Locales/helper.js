@@ -142,10 +142,12 @@ const LocaleSchema = Yup.object().shape({
   languages: Yup.array()
     .label('Languages')
     .required()
+    .min(1)
     .max(4),
   cryptoCurrencies: Yup.array()
     .label('Crypto Currencies')
     .required()
+    .min(1)
 })
 
 const OverridesSchema = Yup.object().shape({
@@ -157,10 +159,12 @@ const OverridesSchema = Yup.object().shape({
     .required(),
   languages: Yup.array()
     .label('Languages')
-    .required(),
+    .required()
+    .min(1),
   cryptoCurrencies: Yup.array()
     .label('Crypto Currencies')
     .required()
+    .min(1)
 })
 
 const localeDefaults = {
