@@ -64,7 +64,7 @@ const FiatBalanceOverrides = ({ section }) => {
         .max(notesMax)
         .nullable(),
       [CASSETTE_2_KEY]: Yup.number()
-        .label('Cassette 1 (bottom)')
+        .label('Cassette 2 (bottom)')
         .when(CASSETTE_1_KEY, {
           is: CASSETTE_1_KEY => !CASSETTE_1_KEY,
           then: Yup.number().required()
