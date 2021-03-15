@@ -114,7 +114,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         disableRowEdit={R.compose(R.not, R.path(['active']))}
         elements={getElements(machines, locale)}
       />
-      {R.isEmpty(config) && <EmptyTable message="No machines so far" />}
+      {R.isEmpty(machines) && <EmptyTable message="No machines so far" />}
       {wizard && (
         <Wizard
           machine={R.find(R.propEq('deviceId', wizard))(machines)}
