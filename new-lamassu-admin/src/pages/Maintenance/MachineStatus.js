@@ -43,7 +43,7 @@ const MachineStatus = () => {
   const classes = useStyles()
   const { state } = useLocation()
   const addedMachineId = state?.id
-  const { data: machinesResponse, refetch } = useQuery(GET_MACHINES)
+  const { data: machinesResponse, refetch, loading } = useQuery(GET_MACHINES)
 
   const elements = [
     {
@@ -103,6 +103,7 @@ const MachineStatus = () => {
         </div>
       </div>
       <DataTable
+        loading={loading}
         elements={elements}
         data={machines}
         Details={InnerMachineDetailsRow}
