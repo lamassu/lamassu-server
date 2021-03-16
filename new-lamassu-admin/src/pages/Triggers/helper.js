@@ -449,7 +449,7 @@ const Requirement = () => {
       {isSuspend && (
         <Field
           className={classes.thresholdField}
-          component={TextInput}
+          component={NumberInput}
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
@@ -548,7 +548,7 @@ const DisplayThreshold = ({ config, currency, isEdit }) => {
       bold
       className={classnames(inputClasses)}
       name="threshold.threshold"
-      component={TextInput}
+      component={NumberInput}
       textAlign="right"
     />
   ) : (
@@ -559,7 +559,7 @@ const DisplayThreshold = ({ config, currency, isEdit }) => {
       bold
       className={classnames(inputClasses)}
       name="threshold.thresholdDays"
-      component={TextInput}
+      component={NumberInput}
       textAlign="right"
     />
   ) : (
