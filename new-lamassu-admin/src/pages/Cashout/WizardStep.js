@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core'
 import { Formik, Form, Field } from 'formik'
-import * as R from 'ramda'
 import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
@@ -44,6 +43,8 @@ const WizardStep = ({
 
       {step <= 2 && (
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           onSubmit={onContinue}
           initialValues={{ top: '', bottom: '' }}
           enableReinitialize
@@ -71,7 +72,7 @@ const WizardStep = ({
                           name={type}
                           options={options}
                           valueProp={'code'}
-                          getLabel={R.path(['display'])}></Field>
+                          labelProp={'display'}></Field>
                         <Info1 noMargin className={classes.suffix}>
                           {fiatCurrency}
                         </Info1>
@@ -96,6 +97,8 @@ const WizardStep = ({
 
       {step === 3 && (
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           onSubmit={onContinue}
           initialValues={{ zeroConfLimit: '' }}
           enableReinitialize

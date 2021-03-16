@@ -19,6 +19,7 @@ const CryptoBalanceOverrides = ({ section }) => {
     cryptoCurrencies = [],
     data,
     save,
+    error,
     currency,
     isDisabled,
     setEditing
@@ -104,7 +105,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         options: it => R.concat(suggestions, findSuggestion(it)),
         optionsLimit: null,
         valueProp: 'code',
-        getLabel: R.path(['display'])
+        labelProp: 'display'
       }
     },
     {
@@ -135,6 +136,7 @@ const CryptoBalanceOverrides = ({ section }) => {
     <EditableTable
       name={NAME}
       title="Overrides"
+      error={error?.message}
       enableDelete
       enableEdit
       enableCreate

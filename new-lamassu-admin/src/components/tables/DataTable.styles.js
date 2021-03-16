@@ -39,5 +39,12 @@ export default {
     flex: 1,
     display: 'flex',
     flexDirection: 'column'
-  })
+  }),
+  emptyTable: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: 52
+  }
 }

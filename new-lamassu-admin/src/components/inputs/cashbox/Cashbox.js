@@ -13,17 +13,27 @@ import { cashboxStyles, gridStyles } from './Cashbox.styles'
 const cashboxClasses = makeStyles(cashboxStyles)
 const gridClasses = makeStyles(gridStyles)
 
-const Cashbox = ({ percent = 0, cashOut = false, className }) => {
+const Cashbox = ({
+  percent = 0,
+  cashOut = false,
+  className,
+  emptyPartClassName,
+  labelClassName
+}) => {
   const classes = cashboxClasses({ percent, cashOut })
   const threshold = 51
 
   return (
     <div className={classnames(className, classes.cashbox)}>
-      <div className={classes.emptyPart}>
-        {percent <= threshold && <Label2>{percent.toFixed(0)}%</Label2>}
+      <div className={classnames(emptyPartClassName, classes.emptyPart)}>
+        {percent <= threshold && (
+          <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
+        )}
       </div>
       <div className={classes.fullPart}>
-        {percent > threshold && <Label2>{percent.toFixed(0)}%</Label2>}
+        {percent > threshold && (
+          <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
+        )}
       </div>
     </div>
   )
@@ -31,19 +41,19 @@ const Cashbox = ({ percent = 0, cashOut = false, className }) => {
 
 // https://support.lamassu.is/hc/en-us/articles/360025595552-Installing-the-Sintra-Forte
 // Sintra and Sintra Forte can have up to 500 notes per cashOut box and up to 1000 per cashIn box
-const CashIn = ({ capacity = 1000, notes = 0, total = 0 }) => {
-  const percent = (100 * notes) / capacity
+const CashIn = ({ currency, notes, total }) => {
   const classes = gridClasses()
   return (
     <>
       <div className={classes.row}>
         <div>
-          <Cashbox percent={percent} />
-        </div>
-        <div className={classes.col2}>
-          <div>
+          <div className={classes.innerRow}>
             <Info2 className={classes.noMarginText}>{notes} notes</Info2>
-            <Label1 className={classes.noMarginText}>{total}</Label1>
+          </div>
+          <div className={classes.innerRow}>
+            <Label1 className={classes.noMarginText}>
+              {total} {currency.code}
+            </Label1>
           </div>
         </div>
       </div>
@@ -94,7 +104,8 @@ const CashOut = ({
   denomination = 0,
   currency,
   notes,
-  className
+  className,
+  editingMode = false
 }) => {
   const percent = (100 * notes) / capacity
   const classes = gridClasses()
@@ -104,20 +115,22 @@ const CashOut = ({
         <div className={classes.col}>
           <Cashbox className={className} percent={percent} cashOut />
         </div>
-        <div className={classes.col2}>
-          <div className={classes.innerRow}>
-            <Info2 className={classes.noMarginText}>{notes}</Info2>
-            <Chip
-              className={classes.chip}
-              label={`${denomination} ${currency.code}`}
-            />
+        {!editingMode && (
+          <div className={classes.col2}>
+            <div className={classes.innerRow}>
+              <Info2 className={classes.noMarginText}>{notes}</Info2>
+              <Chip
+                className={classes.chip}
+                label={`${denomination} ${currency.code}`}
+              />
+            </div>
+            <div className={classes.innerRow}>
+              <Label1 className={classes.noMarginText}>
+                {notes * denomination} {currency.code}
+              </Label1>
+            </div>
           </div>
-          <div className={classes.innerRow}>
-            <Label1 className={classes.noMarginText}>
-              {notes * denomination} {currency.code}
-            </Label1>
-          </div>
-        </div>
+        )}
       </div>
     </>
   )

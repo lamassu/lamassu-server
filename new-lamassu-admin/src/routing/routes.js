@@ -17,10 +17,14 @@ import AuthRegister from 'src/pages/AuthRegister'
 import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
+import ConfigMigration from 'src/pages/ConfigMigration'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
+import Dashboard from 'src/pages/Dashboard'
 import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
+import PromoCodes from 'src/pages/LoyaltyPanel/PromoCodes'
 import MachineLogs from 'src/pages/MachineLogs'
+import Machines from 'src/pages/Machines'
 import CashCassettes from 'src/pages/Maintenance/CashCassettes'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
@@ -208,6 +212,12 @@ const tree = [
         component: Blacklist
       },
       {
+        key: 'promo-codes',
+        label: 'Promo Codes',
+        route: '/compliance/loyalty/codes',
+        component: PromoCodes
+      },
+      {
         key: 'customer',
         route: '/compliance/customer/:id',
         component: CustomerProfile
@@ -291,10 +301,26 @@ const Routes = () => {
   return (
     <Switch>
       <Route exact path="/">
-        <Redirect to={{ pathname: '/transactions' }} />
+        <Redirect to={{ pathname: '/dashboard' }} />
       </Route>
+      <Route path={'/dashboard'}>
+        <Transition
+          className={classes.wrapper}
+          {...transitionProps}
+          in={true}
+          mountOnEnter
+          unmountOnExit
+          children={
+            <div className={classes.wrapper}>
+              <Dashboard />
+            </div>
+          }
+        />
+      </Route>
+      <Route path="/machines" component={Machines} />
       <Route path="/wizard" component={Wizard} />
       <Route path="/register" component={AuthRegister} />
+      <Route path="/configmigration" component={ConfigMigration} />
       {flattened.map(({ route, component: Page, key }) => (
         <Route path={route} key={key}>
           <Transition

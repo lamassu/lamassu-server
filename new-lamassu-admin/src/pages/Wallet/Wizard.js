@@ -15,17 +15,19 @@ const contains = crypto => R.compose(R.contains(crypto), R.prop('cryptos'))
 const sameClass = type => R.propEq('class', type)
 const filterConfig = (crypto, type) =>
   R.filter(it => sameClass(type)(it) && contains(crypto)(it))
+const removeDeprecated = R.filter(({ deprecated }) => !deprecated)
 
 const getItems = (accountsConfig, accounts, type, crypto) => {
-  const fConfig = filterConfig(crypto, type)(accountsConfig)
+  const fConfig = removeDeprecated(filterConfig(crypto, type)(accountsConfig))
+
   const find = code => accounts && accounts[code]
 
   const [filled, unfilled] = R.partition(({ code }) => {
     const account = find(code)
     if (!schema[code]) return true
 
-    const { validationSchema } = schema[code]
-    return validationSchema.isValidSync(account)
+    const { getValidationSchema } = schema[code]
+    return getValidationSchema(account).isValidSync(account)
   })(fConfig)
 
   return { filled, unfilled }

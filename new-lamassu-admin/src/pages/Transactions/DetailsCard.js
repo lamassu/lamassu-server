@@ -3,8 +3,9 @@ import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React, { memo } from 'react'
 
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { IDButton } from 'src/components/buttons'
-import { Label1 } from 'src/components/typography'
+import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
 import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
 import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone/white.svg'
@@ -19,7 +20,7 @@ import { onlyFirstToUpper } from 'src/utils/string'
 
 import CopyToClipboard from './CopyToClipboard'
 import styles from './DetailsCard.styles'
-import { getStatus } from './helper'
+import { getStatus, getStatusDetails } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -38,7 +39,8 @@ const DetailsRow = ({ it: tx }) => {
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = Number(fiat * commissionPercentage).toFixed(2)
-  const exchangeRate = Number(fiat / crypto).toFixed(3)
+  const discount = tx.discount ? `-${tx.discount}%` : null
+  const exchangeRate = BigNumber(fiat / crypto).toFormat(2)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
 
   const customer = tx.customerIdCardData && {
@@ -52,6 +54,13 @@ const DetailsRow = ({ it: tx }) => {
       'DD-MM-YYYY'
     )
   }
+
+  const errorElements = (
+    <>
+      <Label>Transaction status</Label>
+      <span className={classes.bold}>{getStatus(tx)}</span>
+    </>
+  )
 
   return (
     <div className={classes.wrapper}>
@@ -80,7 +89,7 @@ const DetailsRow = ({ it: tx }) => {
             )}
             {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
               <IDButton
-                popoverClassname={classes.popover}
+                popoverClassname={classes.clipboardPopover}
                 className={classes.idButton}
                 name="card"
                 Icon={CardIdIcon}
@@ -145,8 +154,13 @@ const DetailsRow = ({ it: tx }) => {
         </div>
         <div className={classes.commission}>
           <Label>Commission</Label>
-          <div>
+          <div className={classes.container}>
             {`${commission} ${tx.fiatCode} (${commissionPercentage * 100} %)`}
+            {discount && (
+              <div className={classes.chip}>
+                <Label1 className={classes.chipLabel}>{discount}</Label1>
+              </div>
+            )}
           </div>
         </div>
         <div>
@@ -184,8 +198,13 @@ const DetailsRow = ({ it: tx }) => {
       </div>
       <div className={classes.lastRow}>
         <div>
-          <Label>Transaction status</Label>
-          <span className={classes.bold}>{getStatus(tx)}</span>
+          {getStatusDetails(tx) ? (
+            <HoverableTooltip parentElements={errorElements} width={200}>
+              <P>{getStatusDetails(tx)}</P>
+            </HoverableTooltip>
+          ) : (
+            errorElements
+          )}
         </div>
       </div>
     </div>

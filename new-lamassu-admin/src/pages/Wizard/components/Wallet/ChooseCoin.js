@@ -51,6 +51,8 @@ const ChooseCoin = ({ addData }) => {
       </H4>
 
       <Formik
+        validateOnBlur={false}
+        validateOnChange={false}
         enableReinitialize
         initialValues={{ coin: '' }}
         onSubmit={onSubmit}>

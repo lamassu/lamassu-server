@@ -7,12 +7,12 @@ const DenominationsSchema = Yup.object().shape({
   top: Yup.number()
     .label('Cassette 1 (Top)')
     .required()
-    .min(0)
+    .min(1)
     .max(currencyMax),
   bottom: Yup.number()
     .label('Cassette 2 (Bottom)')
     .required()
-    .min(0)
+    .min(1)
     .max(currencyMax),
   zeroConfLimit: Yup.number()
     .label('0-conf Limit')

@@ -1,3 +1,5 @@
+import { backgroundColor } from 'src/styling/variables'
+
 export default {
   wrapper: {
     display: 'flex'
@@ -21,5 +23,12 @@ export default {
   },
   col2: {
     width: 136
+  },
+  cashboxLabel: {
+    marginRight: 4,
+    fontSize: 20
+  },
+  cashboxEmptyPart: {
+    backgroundColor: `${backgroundColor}`
   }
 }

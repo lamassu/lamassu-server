@@ -72,7 +72,11 @@ export default {
     backgroundColor: tableErrorColor
   },
   mainContent: ({ size }) => {
-    const minHeight = size === 'lg' ? 68 : 48
+    const sizes = {
+      sm: 34,
+      lg: 68
+    }
+    const minHeight = sizes[size] || 48
     return {
       display: 'flex',
       alignItems: 'center',

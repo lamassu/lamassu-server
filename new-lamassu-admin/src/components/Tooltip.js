@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   })
 })
 
-const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
+const usePopperHandler = width => {
   const classes = useStyles({ width })
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
 
@@ -32,23 +32,56 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
 
   const helpPopperOpen = Boolean(helpPopperAnchorEl)
 
+  return {
+    classes,
+    helpPopperAnchorEl,
+    helpPopperOpen,
+    handleOpenHelpPopper,
+    handleCloseHelpPopper
+  }
+}
+
+const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
+  const handler = usePopperHandler(width)
+
   return (
-    <ClickAwayListener onClickAway={handleCloseHelpPopper}>
+    <ClickAwayListener onClickAway={handler.handleCloseHelpPopper}>
       <div>
         <button
-          className={classes.transparentButton}
-          onClick={handleOpenHelpPopper}>
+          type="button"
+          className={handler.classes.transparentButton}
+          onClick={handler.handleOpenHelpPopper}>
           <Icon />
         </button>
         <Popper
-          open={helpPopperOpen}
-          anchorEl={helpPopperAnchorEl}
+          open={handler.helpPopperOpen}
+          anchorEl={handler.helpPopperAnchorEl}
           placement="bottom">
-          <div className={classes.popoverContent}>{children}</div>
+          <div className={handler.classes.popoverContent}>{children}</div>
         </Popper>
       </div>
     </ClickAwayListener>
   )
 })
 
-export default Tooltip
+const HoverableTooltip = memo(({ parentElements, children, width }) => {
+  const handler = usePopperHandler(width)
+
+  return (
+    <div>
+      <div
+        onMouseEnter={handler.handleOpenHelpPopper}
+        onMouseLeave={handler.handleCloseHelpPopper}>
+        {parentElements}
+      </div>
+      <Popper
+        open={handler.helpPopperOpen}
+        anchorEl={handler.helpPopperAnchorEl}
+        placement="bottom">
+        <div className={handler.classes.popoverContent}>{children}</div>
+      </Popper>
+    </div>
+  )
+})
+
+export { Tooltip, HoverableTooltip }

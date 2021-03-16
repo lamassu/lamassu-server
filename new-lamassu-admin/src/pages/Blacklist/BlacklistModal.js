@@ -42,6 +42,8 @@ const BlackListModal = ({
       handleClose={onClose}
       open={true}>
       <Formik
+        validateOnBlur={false}
+        validateOnChange={false}
         initialValues={{
           address: ''
         }}

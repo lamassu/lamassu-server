@@ -2,8 +2,9 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
 import * as R from 'ramda'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 
+import { DeleteDialog } from 'src/components/DeleteDialog'
 import { Link, IconButton } from 'src/components/buttons'
 import { Td, Tr } from 'src/components/fake-table/Table'
 import { Switch } from 'src/components/inputs'
@@ -35,13 +36,22 @@ const ActionCol = ({ disabled, editing }) => {
     toggleWidth,
     forceAdd,
     clearError,
-    actionColSize
+    actionColSize,
+    error
   } = useContext(TableCtx)
 
   const disableEdit = disabled || (disableRowEdit && disableRowEdit(values))
   const cancel = () => {
     clearError()
     resetForm()
+  }
+
+  const [deleteDialog, setDeleteDialog] = useState(false)
+
+  const onConfirmed = () => {
+    onDelete(values.id).then(res => {
+      if (!R.isNil(res)) setDeleteDialog(false)
+    })
   }
 
   return (
@@ -74,9 +84,23 @@ const ActionCol = ({ disabled, editing }) => {
       )}
       {!editing && enableDelete && (
         <Td textAlign="center" width={deleteWidth}>
-          <IconButton disabled={disabled} onClick={() => onDelete(values.id)}>
+          <IconButton
+            disabled={disabled}
+            onClick={() => {
+              setDeleteDialog(true)
+            }}>
             {disabled ? <DisabledDeleteIcon /> : <DeleteIcon />}
           </IconButton>
+          <DeleteDialog
+            open={deleteDialog}
+            setDeleteDialog={setDeleteDialog}
+            onConfirmed={onConfirmed}
+            onDismissed={() => {
+              setDeleteDialog(false)
+              clearError()
+            }}
+            errorMessage={error}
+          />
         </Td>
       )}
       {!editing && enableToggle && (
@@ -103,31 +127,32 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     bold,
     width,
     textAlign,
+    editingAlign = textAlign,
     suffix,
     SuffixComponent = TL2,
+    textStyle = it => {},
     view = it => it?.toString(),
     inputProps = {}
   } = config
 
   const { values } = useFormikContext()
-  const classes = useStyles({ textAlign, size })
+
+  const isEditing = editing && editable
+  const isField = !bypassField
+
+  const classes = useStyles({
+    textAlign: isEditing ? editingAlign : textAlign,
+    size
+  })
 
   const innerProps = {
     fullWidth: true,
     autoFocus: focus,
     size,
     bold,
-    textAlign,
+    textAlign: isEditing ? editingAlign : textAlign,
     ...inputProps
   }
-
-  // Autocomplete
-  if (innerProps.options && !innerProps.getLabel) {
-    innerProps.getLabel = view
-  }
-
-  const isEditing = editing && editable
-  const isField = !bypassField
 
   return (
     <Td
@@ -144,16 +169,24 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
         <Field name={name} component={input} {...innerProps} />
       )}
       {isEditing && !isField && <config.input name={name} />}
-      {!isEditing && values && <>{view(values[name], values)}</>}
+      {!isEditing && values && (
+        <div style={textStyle(values, isEditing)}>
+          {view(values[name], values)}
+        </div>
+      )}
       {suffix && (
-        <SuffixComponent className={classes.suffix}>{suffix}</SuffixComponent>
+        <SuffixComponent
+          className={classes.suffix}
+          style={isEditing ? {} : textStyle(values, isEditing)}>
+          {suffix}
+        </SuffixComponent>
       )}
     </Td>
   )
 }
 
 const groupStriped = elements => {
-  const [toStripe, noStripe] = R.partition(R.has('stripe'))(elements)
+  const [toStripe, noStripe] = R.partition(R.propEq('stripe', true))(elements)
 
   if (!toStripe.length) {
     return elements
@@ -183,7 +216,7 @@ const ERow = ({ editing, disabled, lastOfGroup }) => {
 
   const classes = useStyles()
 
-  const shouldStripe = stripeWhen && stripeWhen(values) && !editing
+  const shouldStripe = stripeWhen && stripeWhen(values)
 
   const innerElements = shouldStripe ? groupStriped(elements) : elements
   const [toSHeader] = R.partition(R.has('doubleHeader'))(elements)

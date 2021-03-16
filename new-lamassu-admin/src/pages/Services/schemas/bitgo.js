@@ -6,7 +6,18 @@ import {
   Autocomplete
 } from 'src/components/inputs/formik'
 
+import secretTest from './helper'
+
 const isDefined = it => it && it.length
+
+const buildTestValidation = (id, passphrase) => {
+  return Yup.string()
+    .max(100, 'Too long')
+    .when(id, {
+      is: isDefined,
+      then: Yup.string().test(secretTest(passphrase))
+    })
+}
 
 export default {
   code: 'bitgo',
@@ -25,7 +36,12 @@ export default {
       display: 'Environment',
       component: Autocomplete,
       inputProps: {
-        options: ['prod', 'test']
+        options: [
+          { code: 'prod', display: 'prod' },
+          { code: 'test', display: 'test' }
+        ],
+        labelProp: 'display',
+        valueProp: 'code'
       },
       face: true
     },
@@ -80,47 +96,39 @@ export default {
       component: SecretInput
     }
   ],
-  validationSchema: Yup.object().shape({
-    token: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    BTCWalletId: Yup.string().max(100, 'Too long'),
-    BTCWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('BTCWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    LTCWalletId: Yup.string().max(100, 'Too long'),
-    LTCWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('LTCWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    ZECWalletId: Yup.string().max(100, 'Too long'),
-    ZECWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('ZECWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    BCHWalletId: Yup.string().max(100, 'Too long'),
-    BCHWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('BCHWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    DASHWalletId: Yup.string().max(100, 'Too long'),
-    DASHWalletPassphrase: Yup.string()
-      .max(100, 'Too long')
-      .when('DASHWalletId', {
-        is: isDefined,
-        then: Yup.string().required()
-      }),
-    environment: Yup.string()
-      .matches(/(prod|test)/)
-      .required()
-  })
+  getValidationSchema: account => {
+    return Yup.object().shape({
+      token: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      BTCWalletId: Yup.string().max(100, 'Too long'),
+      BTCWalletPassphrase: buildTestValidation(
+        'BTCWalletId',
+        account?.BTCWalletPassphrase
+      ),
+      LTCWalletId: Yup.string().max(100, 'Too long'),
+      LTCWalletPassphrase: buildTestValidation(
+        'LTCWalletId',
+        account?.LTCWalletPassphrase
+      ),
+      ZECWalletId: Yup.string().max(100, 'Too long'),
+      ZECWalletPassphrase: buildTestValidation(
+        'ZECWalletId',
+        account?.ZECWalletPassphrase
+      ),
+      BCHWalletId: Yup.string().max(100, 'Too long'),
+      BCHWalletPassphrase: buildTestValidation(
+        'BCHWalletId',
+        account?.BCHWalletPassphrase
+      ),
+      DASHWalletId: Yup.string().max(100, 'Too long'),
+      DASHWalletPassphrase: buildTestValidation(
+        'DASHWalletId',
+        account?.DASHWalletPassphrase
+      ),
+      environment: Yup.string()
+        .matches(/(prod|test)/)
+        .required()
+    })
+  }
 }

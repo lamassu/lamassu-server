@@ -25,17 +25,16 @@ export default {
     }
   },
   buttonIcon: {
-    '& svg': {
-      width: 16,
-      height: 16,
-      overflow: 'visible',
-      '& g': {
-        strokeWidth: 1.8
-      }
+    width: 16,
+    height: 16,
+    overflow: 'visible',
+    '& g': {
+      strokeWidth: 1.8
     }
   },
   buttonIconActiveLeft: {
-    marginRight: 12
+    marginRight: 12,
+    marginLeft: 4
   },
   buttonIconActiveRight: {
     marginRight: 5,

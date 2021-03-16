@@ -77,12 +77,9 @@ const STEPS = [
     Component: Locale,
     exImage: '/assets/wizard/fullexample.locale.png',
     subtitle: 'Locales',
-    text: `From the Locales page, you can define some important default settings
-          of your machines. These values will be the default values of all
-          machines you'll later add to your network. Default settings keep you
-          from having to enther the same values everytime you add a new machine.
-          Once a machine is added, you may override some of these values in the
-          overrides section.`
+    text: `From the Locales panel, you can define default settings
+    that will be applied to all machines you add to your network later on.
+    These settings may be overridden for specific machines in the Overrides section.`
   },
   {
     id: 'twilio',

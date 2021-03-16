@@ -71,7 +71,7 @@ const TransactionsList = ({ customer, data, loading }) => {
           ) : (
             <TxInIcon className={classes.txClassIconLeft} />
           )}
-          {it.txClass === 'cashOut' ? 'Cach-out' : 'Cash-in'}
+          {it.txClass === 'cashOut' ? 'Cash-out' : 'Cash-in'}
         </>
       )
     },

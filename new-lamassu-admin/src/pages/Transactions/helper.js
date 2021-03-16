@@ -20,4 +20,8 @@ const getStatus = it => {
   return getCashInStatus(it)
 }
 
-export { getStatus }
+const getStatusDetails = it => {
+  return it.hasError ? it.hasError : null
+}
+
+export { getStatus, getStatusDetails }

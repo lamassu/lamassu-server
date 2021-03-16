@@ -6,7 +6,7 @@ import { Form, Formik, FastField } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import * as R from 'ramda'
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect, useRef } from 'react'
 import * as Yup from 'yup'
 
 import Title from 'src/components/Title'
@@ -15,6 +15,7 @@ import { TextInput } from 'src/components/inputs/formik'
 import Sidebar from 'src/components/layout/Sidebar'
 import { Info2, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { ReactComponent as CompleteStageIconSpring } from 'src/styling/icons/stage/spring/complete.svg'
 import { ReactComponent as CompleteStageIconZodiac } from 'src/styling/icons/stage/zodiac/complete.svg'
 import { ReactComponent as CurrentStageIconZodiac } from 'src/styling/icons/stage/zodiac/current.svg'
 import { ReactComponent as EmptyStageIconZodiac } from 'src/styling/icons/stage/zodiac/empty.svg'
@@ -42,10 +43,26 @@ const useStyles = makeStyles(styles)
 const getSize = R.compose(R.length, R.pathOr([], ['machines']))
 
 const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
+  const timeout = useRef(null)
+  const CLOSE_SCREEN_TIMEOUT = 2000
   const { data } = useQuery(GET_MACHINES, { pollInterval: 10000 })
 
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current)
+      }
+    }
+  }, [])
+
   const addedMachine = data?.machines?.find(m => m.name === name)
-  if (getSize(data) > count && addedMachine) onPaired(addedMachine)
+  const hasNewMachine = getSize(data) > count && addedMachine
+  if (hasNewMachine) {
+    timeout.current = setTimeout(
+      () => onPaired(addedMachine),
+      CLOSE_SCREEN_TIMEOUT
+    )
+  }
 
   return (
     <>
@@ -57,17 +74,29 @@ const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
           <QRCode size={240} fgColor={primaryColor} value={qrCode} />
         </div>
         <div className={classes.qrTextWrapper}>
-          <div className={classes.qrCodeWrapper}>
+          <div className={classes.qrTextInfoWrapper}>
             <div className={classes.qrTextIcon}>
               <WarningIcon />
             </div>
-            <P className={classes.qrText}>
-              To pair the machine you need scan the QR code with your machine.
-              To do this either snap a picture of this QR code or download it
-              through the button above and scan it with the scanning bay on your
-              machine.
-            </P>
+            <div className={classes.textWrapper}>
+              <P className={classes.qrText}>
+                To pair the machine you need scan the QR code with your machine.
+                To do this either snap a picture of this QR code or download it
+                through the button above and scan it with the scanning bay on
+                your machine.
+              </P>
+            </div>
           </div>
+          {hasNewMachine && (
+            <div className={classes.successMessageWrapper}>
+              <div className={classes.successMessageIcon}>
+                <CompleteStageIconSpring />
+              </div>
+              <Info2 className={classes.successMessage}>
+                Machine has been successfully paired!
+              </Info2>
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -102,6 +131,8 @@ const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
         Machine Name (ex: Coffee shop 01)
       </Info2>
       <Formik
+        validateOnBlur={false}
+        validateOnChange={false}
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={({ name }) => {

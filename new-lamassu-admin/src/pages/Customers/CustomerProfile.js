@@ -37,6 +37,7 @@ const GET_CUSTOMER = gql`
       frontCameraPath
       frontCameraOverride
       phone
+      isAnonymous
       smsOverride
       idCardData
       idCardDataOverride
@@ -165,22 +166,26 @@ const CustomerProfile = memo(() => {
             locale={locale}
             setShowCompliance={() => setShowCompliance(!showCompliance)}
           />
-          <div>
-            <Label1 className={classes.actionLabel}>Actions</Label1>
-            <ActionButton
-              color="primary"
-              Icon={blocked ? AuthorizeIcon : BlockIcon}
-              InverseIcon={blocked ? AuthorizeReversedIcon : BlockReversedIcon}
-              onClick={() =>
-                updateCustomer({
-                  authorizedOverride: blocked
-                    ? OVERRIDE_AUTHORIZED
-                    : OVERRIDE_REJECTED
-                })
-              }>
-              {`${blocked ? 'Authorize' : 'Block'} customer`}
-            </ActionButton>
-          </div>
+          {!loading && !customerData.isAnonymous && (
+            <div>
+              <Label1 className={classes.actionLabel}>Actions</Label1>
+              <ActionButton
+                color="primary"
+                Icon={blocked ? AuthorizeIcon : BlockIcon}
+                InverseIcon={
+                  blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                }
+                onClick={() =>
+                  updateCustomer({
+                    authorizedOverride: blocked
+                      ? OVERRIDE_AUTHORIZED
+                      : OVERRIDE_REJECTED
+                  })
+                }>
+                {`${blocked ? 'Authorize' : 'Block'} customer`}
+              </ActionButton>
+            </div>
+          )}
         </Box>
       </div>
       {!showCompliance && (

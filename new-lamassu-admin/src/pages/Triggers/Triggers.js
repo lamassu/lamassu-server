@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import { v4 } from 'uuid'
 
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { Link, Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
@@ -41,10 +41,12 @@ const Triggers = () => {
   const complianceConfig =
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
+  const [error, setError] = useState(null)
 
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
   })
 
   const add = rawConfig => {
@@ -60,6 +62,7 @@ const Triggers = () => {
   }
 
   const save = config => {
+    setError(null)
     return saveConfig({
       variables: { config: { triggers: toServer(config.triggers) } }
     })

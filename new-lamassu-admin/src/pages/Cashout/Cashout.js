@@ -4,10 +4,11 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
+import { EmptyTable } from 'src/components/table'
 import { P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
@@ -71,6 +72,8 @@ const CashOut = ({ name: SCREEN_KEY }) => {
     save(toNamespace(id, { active: !namespaced?.active }))
   }
 
+  const wasNeverEnabled = it => R.compose(R.length, R.keys)(it) === 1
+
   return (
     <>
       <TitleSection title="Cash-out">
@@ -101,7 +104,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
       <EditableTable
         namespaces={R.map(R.path(['deviceId']))(machines)}
         data={config}
-        stripeWhen={it => !DenominationsSchema.isValidSync(it)}
+        stripeWhen={wasNeverEnabled}
         enableEdit
         editWidth={134}
         enableToggle
@@ -113,6 +116,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         disableRowEdit={R.compose(R.not, R.path(['active']))}
         elements={getElements(machines, locale)}
       />
+      {R.isEmpty(config) && <EmptyTable message="No machines so far" />}
       {wizard && (
         <Wizard
           machine={R.find(R.propEq('deviceId', wizard))(machines)}

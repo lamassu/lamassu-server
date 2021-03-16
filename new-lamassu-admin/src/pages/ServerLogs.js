@@ -17,9 +17,10 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Info3 } from 'src/components/typography'
+import { Info3, H4 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
 import { offColor } from 'src/styling/variables'
+import { startCase } from 'src/utils/string'
 
 import logsStyles from './Logs.styles'
 
@@ -51,7 +52,7 @@ const styles = R.merge(logsStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
-const SHOW_ALL = 'Show all'
+const SHOW_ALL = { code: 'SHOW_ALL', display: 'Show all' }
 
 const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
@@ -90,21 +91,29 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_DATA, {
     onCompleted: () => setSaveMessage(''),
     variables: {
       limit: NUM_LOG_RESULTS
     }
   })
 
+  const defaultLogLevels = [
+    { code: 'error', display: 'Error' },
+    { code: 'info', display: 'Info' },
+    { code: 'debug', display: 'Debug' }
+  ]
   const serverVersion = data?.serverVersion
   const processStates = data?.uptime ?? []
 
   const getLogLevels = R.compose(
     R.prepend(SHOW_ALL),
     R.uniq,
-    R.concat(['error', 'info', 'debug']),
-    R.map(R.path(['logLevel'])),
+    R.concat(defaultLogLevels),
+    R.map(it => ({
+      code: R.path(['logLevel'])(it),
+      display: startCase(R.path(['logLevel'])(it))
+    })),
     R.path(['serverLogs'])
   )
 
@@ -167,7 +176,8 @@ const Logs = () => {
               {data &&
                 data.serverLogs
                   .filter(
-                    log => logLevel === SHOW_ALL || log.logLevel === logLevel
+                    log =>
+                      logLevel === SHOW_ALL || log.logLevel === logLevel.code
                   )
                   .map((log, idx) => (
                     <TableRow key={idx} size="sm">
@@ -178,6 +188,10 @@ const Logs = () => {
                   ))}
             </TableBody>
           </Table>
+          {loading && <H4>{'Loading...'}</H4>}
+          {!loading && !data?.serverLogs?.length && (
+            <H4>{'No activity so far'}</H4>
+          )}
         </div>
       </div>
     </>

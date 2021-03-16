@@ -1,22 +1,25 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { Table as EditableTable } from 'src/components/editableTable'
-import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
+import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
+import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
+import { ReactComponent as OverrideLabelIcon } from 'src/styling/icons/status/spring2.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import {
-  mainFields,
-  overrides,
-  schema,
-  getOverridesSchema,
-  defaults,
-  overridesDefaults,
-  getOrder
-} from './helper'
+import CommissionsDetails from './components/CommissionsDetails'
+import CommissionsList from './components/CommissionsList'
+
+const styles = {
+  listViewButton: {
+    marginLeft: 4
+  }
+}
+
+const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
@@ -37,27 +40,27 @@ const SAVE_CONFIG = gql`
     saveConfig(config: $config)
   }
 `
+const removeCoinFromOverride = crypto => override =>
+  R.mergeRight(override, {
+    cryptoCurrencies: R.without([crypto], override.cryptoCurrencies)
+  })
 
 const Commissions = ({ name: SCREEN_KEY }) => {
-  const [isEditingDefault, setEditingDefault] = useState(false)
-  const [isEditingOverrides, setEditingOverrides] = useState(false)
+  const classes = useStyles()
+  const [showMachines, setShowMachines] = useState(false)
+  const [error, setError] = useState(null)
   const { data } = useQuery(GET_DATA)
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
   })
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
-  )
+  const localeConfig =
+    data?.config && fromNamespace(namespaces.LOCALE)(data.config)
 
-  const commission = config && !R.isEmpty(config) ? config : defaults
-  const commissionOverrides = commission?.overrides ?? []
-
-  const orderedCommissionsOverrides = R.sortWith([
-    R.ascend(getOrder),
-    R.ascend(R.prop('machine'))
-  ])(commissionOverrides)
+  const currency = R.prop('fiatCurrency')(localeConfig)
+  const overrides = R.prop('overrides')(config)
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
@@ -66,54 +69,75 @@ const Commissions = ({ name: SCREEN_KEY }) => {
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
+    setError(null)
     return saveConfig({ variables: { config } })
   }
 
-  const onEditingDefault = (it, editing) => setEditingDefault(editing)
-  const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
+  const saveOverridesFromList = it => (_, override) => {
+    const cryptoOverriden = R.path(['cryptoCurrencies', 0], override)
+
+    const sameMachine = R.eqProps('machine', override)
+    const notSameOverride = it => !R.eqProps('cryptoCurrencies', override, it)
+
+    const filterMachine = R.filter(R.both(sameMachine, notSameOverride))
+    const removeCoin = removeCoinFromOverride(cryptoOverriden)
+
+    const machineOverrides = R.map(removeCoin)(filterMachine(it))
+
+    const overrides = machineOverrides.concat(
+      R.filter(it => !sameMachine(it), it)
+    )
+
+    const config = {
+      commissions_overrides: R.prepend(override, overrides)
+    }
+
+    return saveConfig({ variables: { config } })
+  }
+
+  const labels = showMachines
+    ? [
+        {
+          label: 'Override value',
+          icon: <OverrideLabelIcon />
+        }
+      ]
+    : []
 
   return (
     <>
-      <TitleSection title="Commissions" />
-      <Section>
-        <EditableTable
-          error={error?.message}
-          title="Default setup"
-          rowSize="lg"
-          titleLg
-          name="commissions"
-          enableEdit
-          initialValues={commission}
+      <TitleSection
+        title="Commissions"
+        labels={labels}
+        button={{
+          text: 'List view',
+          icon: ListingViewIcon,
+          inverseIcon: ReverseListingViewIcon,
+          toggle: setShowMachines
+        }}
+        iconClassName={classes.listViewButton}
+      />
+
+      {!showMachines && (
+        <CommissionsDetails
+          config={config}
+          currency={currency}
+          data={data}
+          error={error}
           save={save}
-          validationSchema={schema}
-          data={R.of(commission)}
-          elements={mainFields(currency)}
-          setEditing={onEditingDefault}
-          forceDisable={isEditingOverrides}
+          saveOverrides={saveOverrides}
         />
-      </Section>
-      <Section>
-        <EditableTable
-          error={error?.message}
-          title="Overrides"
-          titleLg
-          name="overrides"
-          enableDelete
-          enableEdit
-          enableCreate
-          groupBy={getOrder}
-          initialValues={overridesDefaults}
-          save={saveOverrides}
-          validationSchema={getOverridesSchema(
-            orderedCommissionsOverrides,
-            data
-          )}
-          data={orderedCommissionsOverrides}
-          elements={overrides(data, currency, orderedCommissionsOverrides)}
-          setEditing={onEditingOverrides}
-          forceDisable={isEditingDefault}
+      )}
+      {showMachines && (
+        <CommissionsList
+          config={config}
+          localeConfig={localeConfig}
+          currency={currency}
+          data={data}
+          error={error}
+          saveOverrides={saveOverridesFromList(overrides)}
         />
-      </Section>
+      )}
     </>
   )
 }

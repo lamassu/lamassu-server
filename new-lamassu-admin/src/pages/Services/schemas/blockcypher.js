@@ -21,14 +21,15 @@ export default {
       face: true
     }
   ],
-
-  validationSchema: Yup.object().shape({
-    token: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    confidenceFactor: Yup.number()
-      .integer('Please input a positive integer')
-      .positive('Please input a positive integer')
-      .required()
-  })
+  getValidationSchema: () => {
+    return Yup.object().shape({
+      token: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      confidenceFactor: Yup.number()
+        .integer('Please input a positive integer')
+        .positive('Please input a positive integer')
+        .required()
+    })
+  }
 }

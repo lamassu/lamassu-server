@@ -53,7 +53,7 @@ const allFields = (getData, onChange, auxElements = []) => {
         options: it =>
           R.concat(findSuggestion(it))(suggestionFilter(machineData)),
         valueProp: 'deviceId',
-        getLabel: R.path(['name'])
+        labelProp: 'name'
       }
     },
     {
@@ -65,7 +65,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: countryData,
         valueProp: 'code',
-        getLabel: R.path(['display'])
+        labelProp: 'display'
       }
     },
     {
@@ -77,7 +77,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: currencyData,
         valueProp: 'code',
-        getLabel: R.path(['code'])
+        labelProp: 'code'
       }
     },
     {
@@ -89,7 +89,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: languageData,
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         multiple: true
       }
     },
@@ -102,7 +102,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: cryptoData,
         valueProp: 'code',
-        getLabel: R.path(['code']),
+        labelProp: 'code',
         multiple: true,
         optionsLimit: null,
         onChange
@@ -142,10 +142,12 @@ const LocaleSchema = Yup.object().shape({
   languages: Yup.array()
     .label('Languages')
     .required()
+    .min(1)
     .max(4),
   cryptoCurrencies: Yup.array()
     .label('Crypto Currencies')
     .required()
+    .min(1)
 })
 
 const OverridesSchema = Yup.object().shape({
@@ -157,10 +159,12 @@ const OverridesSchema = Yup.object().shape({
     .required(),
   languages: Yup.array()
     .label('Languages')
-    .required(),
+    .required()
+    .min(1),
   cryptoCurrencies: Yup.array()
     .label('Crypto Currencies')
     .required()
+    .min(1)
 })
 
 const localeDefaults = {

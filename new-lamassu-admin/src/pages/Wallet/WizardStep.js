@@ -120,7 +120,7 @@ const WizardStep = ({
             label={`Select ${displayName}`}
             className={classes.picker}
             getOptionSelected={R.eqProps('code')}
-            getLabel={R.path(['display'])}
+            labelProp={'display'}
             options={unfilled}
             onChange={(evt, it) => {
               dispatch({ type: 'form', form: it })
