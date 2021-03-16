@@ -54,7 +54,7 @@ const MachinesTable = ({ machines, numToRender }) => {
   }
 
   const redirect = ({ name, deviceId }) => {
-    return history.push('/machines/' + `${deviceId}`, {
+    return history.push(`/machines/${deviceId}`, {
       selectedMachine: name
     })
   }
