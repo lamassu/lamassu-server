@@ -21,6 +21,7 @@ const AutocompleteFormik = ({ options, onChange, ...props }) => {
   }
 
   const onChangeHandler = value => setFieldValue(name, value)
+  const shouldStayOpen = !!props.shouldStayOpen
 
   return (
     <Autocomplete
@@ -38,7 +39,10 @@ const AutocompleteFormik = ({ options, onChange, ...props }) => {
         if (!props.multiple) return setOpen(true)
         setOpen(value?.length !== props.limit)
       }}
-      onClose={() => setOpen(false)}
+      onClose={(event, reason) => {
+        if (shouldStayOpen && reason !== 'blur') setOpen(true)
+        else setOpen(false)
+      }}
       {...props}
     />
   )
