@@ -21,11 +21,11 @@ import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
 import ApolloProvider from 'src/utils/apollo'
 
-import Header from './components/layout/Header'
-import { tree, hasSidebar, Routes, getParent } from './routing/routes'
-import global from './styling/global'
-import theme from './styling/theme'
-import { backgroundColor, mainWidth } from './styling/variables'
+import Header from '../components/layout/Header'
+import { tree, hasSidebar, Routes, getParent } from '../routing/routes'
+import global from '../styling/global'
+import theme from '../styling/theme'
+import { backgroundColor, mainWidth } from '../styling/variables'
 
 if (process.env.NODE_ENV !== 'production') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render')

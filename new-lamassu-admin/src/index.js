@@ -5,7 +5,7 @@ import * as serviceWorker from './serviceWorker'
 
 function importBuildTarget() {
   if (process.env.REACT_APP_BUILD_TARGET === 'LAMASSU') {
-    return import('./App')
+    return import('./lamassu/App')
   } else if (process.env.REACT_APP_BUILD_TARGET === 'PAZUZ') {
     return import('./pazuz/App')
   } else {
