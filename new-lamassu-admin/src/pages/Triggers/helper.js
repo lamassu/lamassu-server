@@ -104,7 +104,7 @@ const requirement = Yup.object().shape({
     is: 'suspend',
     then: Yup.number()
       .required()
-      .min(0)
+      .min(1)
       .label('Invalid value'),
     otherwise: Yup.number()
       .nullable()
@@ -126,10 +126,10 @@ const Schema = Yup.object()
       const validator = {
         txAmount: threshold => threshold.threshold >= 0,
         txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+          threshold.threshold >= 0 && threshold.thresholdDays > 0,
         txVelocity: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
-        consecutiveDays: threshold => threshold.thresholdDays >= 0
+          threshold.threshold > 0 && threshold.thresholdDays > 0,
+        consecutiveDays: threshold => threshold.thresholdDays > 0
       }
       return (
         (triggerType && validator?.[triggerType](threshold)) ||
@@ -244,10 +244,10 @@ const typeSchema = Yup.object()
       const validator = {
         txAmount: threshold => threshold.threshold >= 0,
         txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+          threshold.threshold >= 0 && threshold.thresholdDays > 0,
         txVelocity: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
-        consecutiveDays: threshold => threshold.thresholdDays >= 0
+          threshold.threshold > 0 && threshold.thresholdDays > 0,
+        consecutiveDays: threshold => threshold.thresholdDays > 0
       }
 
       return (
@@ -397,7 +397,7 @@ const requirementSchema = Yup.object().shape({
       is: value => value === 'suspend',
       then: Yup.number()
         .required()
-        .min(0),
+        .min(1),
       otherwise: Yup.number()
         .nullable()
         .transform(() => null)
