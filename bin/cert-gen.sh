@@ -15,6 +15,7 @@ POSTGRES_PASS=postgres123
 OFAC_DATA_DIR=$CONFIG_DIR/ofac
 IDPHOTOCARD_DIR=$CONFIG_DIR/idphotocard
 FRONTCAMERA_DIR=$CONFIG_DIR/frontcamera
+IDCARDDATA_DIR=$CONFIG_DIR/idcarddata
 
 mkdir -p $CERT_DIR
 mkdir -p $CONFIG_DIR >> $LOG_FILE 2>&1
@@ -113,7 +114,8 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
     }
   ],
   "idPhotoCardDir": "$IDPHOTOCARD_DIR",
-  "frontCameraDir": "$FRONTCAMERA_DIR"
+  "frontCameraDir": "$FRONTCAMERA_DIR",
+  "idCardDataDir": "$IDCARDDATA_DIR"
 }
 EOF
 
