@@ -19,6 +19,7 @@ BLOCKCHAIN_DIR=/mnt/blockchains
 OFAC_DATA_DIR=/var/lamassu/ofac
 ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
 FRONTCAMERA_DIR=/opt/lamassu-server/frontcamera
+IDCARDDATA_DIR=/opt/lamassu-server/idcarddata
 
 # Look into http://unix.stackexchange.com/questions/140734/configure-localtime-dpkg-reconfigure-tzdata
 
@@ -183,6 +184,7 @@ cat <<EOF > $CONFIG_DIR/lamassu.json
   "ofacDataDir": "$OFAC_DATA_DIR",
   "idPhotoCardDir": "$ID_PHOTO_CARD_DIR",
   "frontCameraDir": "$FRONTCAMERA_DIR",
+  "idCardDataDir": "$IDCARDDATA_DIR"
   "strike": {
     "baseUrl": "https://api.strike.acinq.co/api/"
   },
