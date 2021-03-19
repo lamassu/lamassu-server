@@ -3,7 +3,7 @@ import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { ActionButton } from 'src/components/buttons'
@@ -16,32 +16,39 @@ import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/butto
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
-  IdDataCard,
-  PhoneCard,
-  IdCardPhotoCard,
-  TransactionsList
+  TransactionsList,
+  ComplianceDetails
 } from './components'
+import { getFormattedPhone, getName } from './helper'
 
 const useStyles = makeStyles(styles)
 
 const GET_CUSTOMER = gql`
   query customer($customerId: ID!) {
+    config
     customer(customerId: $customerId) {
       id
-      name
       authorizedOverride
       frontCameraPath
+      frontCameraOverride
       phone
+      isAnonymous
       smsOverride
       idCardData
       idCardDataOverride
       idCardDataExpiration
       idCardPhotoPath
       idCardPhotoOverride
+      usSsn
+      usSsnOverride
+      sanctions
+      sanctionsAt
+      sanctionsOverride
       totalTxs
       totalSpent
       lastActive
@@ -67,9 +74,9 @@ const SET_CUSTOMER = gql`
   mutation setCustomer($customerId: ID!, $customerInput: CustomerInput) {
     setCustomer(customerId: $customerId, customerInput: $customerInput) {
       id
-      name
       authorizedOverride
       frontCameraPath
+      frontCameraOverride
       phone
       smsOverride
       idCardData
@@ -77,6 +84,11 @@ const SET_CUSTOMER = gql`
       idCardDataExpiration
       idCardPhotoPath
       idCardPhotoOverride
+      usSsn
+      usSsnOverride
+      sanctions
+      sanctionsAt
+      sanctionsOverride
       totalTxs
       totalSpent
       lastActive
@@ -90,9 +102,10 @@ const SET_CUSTOMER = gql`
 const CustomerProfile = memo(() => {
   const classes = useStyles()
   const history = useHistory()
+  const [showCompliance, setShowCompliance] = useState(false)
   const { id: customerId } = useParams()
 
-  const { data: customerResponse, refetch: getCustomer } = useQuery(
+  const { data: customerResponse, refetch: getCustomer, loading } = useQuery(
     GET_CUSTOMER,
     {
       variables: { customerId }
@@ -111,12 +124,14 @@ const CustomerProfile = memo(() => {
       }
     })
 
+  const configData = R.path(['config'])(customerResponse) ?? []
+  const locale = configData && fromNamespace(namespaces.LOCALE, configData)
   const customerData = R.path(['customer'])(customerResponse) ?? []
   const rawTransactions = R.path(['transactions'])(customerData) ?? []
   const sortedTransactions = R.sort(R.descend(R.prop('cryptoAtoms')))(
     rawTransactions
   )
-
+  const name = getName(customerData)
   const blocked =
     R.path(['authorizedOverride'])(customerData) === OVERRIDE_REJECTED
 
@@ -133,45 +148,59 @@ const CustomerProfile = memo(() => {
           Customers
         </Label1>
         <Label2 noMargin className={classes.labelLink}>
-          {R.path(['name'])(customerData) ?? R.path(['phone'])(customerData)}
+          {name.length
+            ? name
+            : getFormattedPhone(
+                R.path(['phone'])(customerData),
+                locale.country
+              )}
         </Label2>
       </Breadcrumbs>
       <div>
-        <Box display="flex" justifyContent="space-between">
-          <CustomerDetails customer={customerData} />
-          <div>
-            <Label1 className={classes.actionLabel}>Actions</Label1>
-            <ActionButton
-              color="primary"
-              Icon={blocked ? AuthorizeIcon : BlockIcon}
-              InverseIcon={blocked ? AuthorizeReversedIcon : BlockReversedIcon}
-              onClick={() =>
-                updateCustomer({
-                  authorizedOverride: blocked
-                    ? OVERRIDE_AUTHORIZED
-                    : OVERRIDE_REJECTED
-                })
-              }>
-              {`${blocked ? 'Authorize' : 'Block'} customer`}
-            </ActionButton>
-          </div>
-        </Box>
-        <Box display="flex">
-          <IdDataCard
-            customerData={customerData}
-            updateCustomer={updateCustomer}
+        <Box
+          className={classes.customerDetails}
+          display="flex"
+          justifyContent="space-between">
+          <CustomerDetails
+            customer={customerData}
+            locale={locale}
+            setShowCompliance={() => setShowCompliance(!showCompliance)}
           />
-          <PhoneCard
-            customerData={customerData}
-            updateCustomer={updateCustomer}
-          />
-          <IdCardPhotoCard
-            customerData={customerData}
-            updateCustomer={updateCustomer}
-          />
+          {!loading && !customerData.isAnonymous && (
+            <div>
+              <Label1 className={classes.actionLabel}>Actions</Label1>
+              <ActionButton
+                color="primary"
+                Icon={blocked ? AuthorizeIcon : BlockIcon}
+                InverseIcon={
+                  blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                }
+                onClick={() =>
+                  updateCustomer({
+                    authorizedOverride: blocked
+                      ? OVERRIDE_AUTHORIZED
+                      : OVERRIDE_REJECTED
+                  })
+                }>
+                {`${blocked ? 'Authorize' : 'Block'} customer`}
+              </ActionButton>
+            </div>
+          )}
         </Box>
       </div>
-      <TransactionsList data={sortedTransactions} />
+      {!showCompliance && (
+        <TransactionsList
+          customer={customerData}
+          data={sortedTransactions}
+          loading={loading}
+        />
+      )}
+      {showCompliance && (
+        <ComplianceDetails
+          customer={customerData}
+          updateCustomer={updateCustomer}
+        />
+      )}
     </>
   )
 })

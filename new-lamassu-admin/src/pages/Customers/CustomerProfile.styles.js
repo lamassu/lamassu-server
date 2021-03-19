@@ -11,5 +11,8 @@ export default {
   actionLabel: {
     color: comet,
     margin: [[4, 0]]
+  },
+  customerDetails: {
+    marginBottom: 18
   }
 }

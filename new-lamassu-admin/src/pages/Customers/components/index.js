@@ -1,13 +1,6 @@
+import ComplianceDetails from './ComplianceDetails'
 import CustomerDetails from './CustomerDetails'
-import IdCardPhotoCard from './IdCardPhotoCard'
 import IdDataCard from './IdDataCard'
-import PhoneCard from './PhoneCard'
 import TransactionsList from './TransactionsList'
 
-export {
-  CustomerDetails,
-  IdDataCard,
-  IdCardPhotoCard,
-  PhoneCard,
-  TransactionsList
-}
+export { CustomerDetails, IdDataCard, TransactionsList, ComplianceDetails }

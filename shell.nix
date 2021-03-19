@@ -1,15 +1,15 @@
 with import (fetchTarball {
   name = "nixpkgs-19.03";
-  url = https://github.com/NixOS/nixpkgs-channels/archive/f52505fac8c82716872a616c501ad9eff188f97f.tar.gz;
-  sha256 = "0q2m2qhyga9yq29yz90ywgjbn9hdahs7i8wwlq7b55rdbyiwa5dy";
+  url = https://github.com/NixOS/nixpkgs/archive/0b8799ecaaf0dc6b4c11583a3c96ca5b40fcfdfb.tar.gz;
+  sha256 = "11m4aig6cv0zi3gbq2xn9by29cfvnsxgzf9qsvz67qr0yq29ryyz";
 }) {};
 
 stdenv.mkDerivation {
     name = "node";
         buildInputs = [
-        nodejs-8_x
+        nodejs-14_x
         python2Full
-        openssl_1_0_2
+        openssl
         postgresql_9_6
     ];
     shellHook = ''

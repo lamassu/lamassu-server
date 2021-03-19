@@ -52,4 +52,8 @@ function toUnit(cryptoAtoms, cryptoCode) {
   return cryptoAtoms.shiftedBy(-unitScale)
 }
 
-export { toUnit }
+function formatCryptoAddress(cryptoCode = '', address = '') {
+  return cryptoCode === 'BCH' ? address.replace('bitcoincash:', '') : address
+}
+
+export { toUnit, formatCryptoAddress }

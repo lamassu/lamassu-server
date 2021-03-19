@@ -3,8 +3,11 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import Modal from 'src/components/Modal'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
+import FormRenderer from 'src/pages/Services/FormRenderer'
+import schemas from 'src/pages/Services/schemas'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import Wizard from './Wizard'
@@ -13,6 +16,12 @@ import { WalletSchema, getElements } from './helper'
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
     saveConfig(config: $config)
+    saveAccounts(accounts: $accounts)
+  }
+`
+
+const SAVE_ACCOUNT = gql`
+  mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
   }
 `
@@ -26,6 +35,7 @@ const GET_INFO = gql`
       display
       class
       cryptos
+      deprecated
     }
     cryptoCurrencies {
       code
@@ -35,19 +45,23 @@ const GET_INFO = gql`
 `
 
 const Wallet = ({ name: SCREEN_KEY }) => {
+  const [editingSchema, setEditingSchema] = useState(null)
+  const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [wizard, setWizard] = useState(false)
-  const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    onError: () => setError(true),
+    refetchQueries: () => ['getData']
+  })
+
+  const [saveAccount] = useMutation(SAVE_ACCOUNT, {
+    onCompleted: () => setEditingSchema(null),
     refetchQueries: () => ['getData']
   })
 
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setError(false)
     return saveConfig({ variables: { config, accounts } })
   }
 
@@ -56,41 +70,74 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
 
-  const onToggle = id => {
-    const namespaced = fromNamespace(id)(config)
-    if (!WalletSchema.isValidSync(namespaced)) return setWizard(id)
-    save(toNamespace(id, { active: !namespaced?.active }))
+  const onChange = (previous, current, setValue) => {
+    if (!current) return setValue(current)
+
+    if (!accounts[current] && schemas[current]) {
+      setEditingSchema(schemas[current])
+      setOnChangeFunction(() => () => setValue(current))
+      return
+    }
+
+    setValue(current)
   }
+
+  const shouldOverrideEdit = it => {
+    const namespaced = fromNamespace(it)(config)
+    return !WalletSchema.isValidSync(namespaced)
+  }
+
+  const wizardSave = it =>
+    saveAccount({
+      variables: { accounts: { [editingSchema.code]: it } }
+    }).then(it => {
+      onChangeFunction()
+      setOnChangeFunction(null)
+      return it
+    })
 
   return (
     <>
-      <TitleSection title="Wallet Settings" error={error} />
+      <TitleSection title="Wallet Settings" />
       <EditableTable
         name="test"
         namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
         data={config}
+        error={error?.message}
         stripeWhen={it => !WalletSchema.isValidSync(it)}
         enableEdit
-        editWidth={134}
-        enableToggle
-        toggleWidth={109}
-        onToggle={onToggle}
+        shouldOverrideEdit={shouldOverrideEdit}
+        editOverride={setWizard}
+        editWidth={174}
         save={save}
         validationSchema={WalletSchema}
-        disableRowEdit={R.compose(R.not, R.path(['active']))}
-        elements={getElements(cryptoCurrencies, accountsConfig)}
+        elements={getElements(cryptoCurrencies, accountsConfig, onChange)}
       />
       {wizard && (
         <Wizard
           coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
           onClose={() => setWizard(false)}
           save={save}
-          error={error}
+          error={error?.message}
           cryptoCurrencies={cryptoCurrencies}
           userAccounts={data?.config?.accounts}
           accounts={accounts}
           accountsConfig={accountsConfig}
         />
+      )}
+      {editingSchema && (
+        <Modal
+          title={`Edit ${editingSchema.name}`}
+          width={478}
+          handleClose={() => setEditingSchema(null)}
+          open={true}>
+          <FormRenderer
+            save={wizardSave}
+            elements={editingSchema.elements}
+            validationSchema={editingSchema.validationSchema}
+            value={accounts[editingSchema.code]}
+          />
+        </Modal>
       )}
     </>
   )

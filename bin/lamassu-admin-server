@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const adminServer = require('../lib/admin/admin-server')
+const adminServer = require('../lib/new-admin/admin-server')
 
 adminServer.run()

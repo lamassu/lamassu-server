@@ -4,10 +4,11 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import Tooltip from 'src/components/Tooltip'
+import { Tooltip } from 'src/components/Tooltip'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
+import { EmptyTable } from 'src/components/table'
 import { P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
@@ -48,18 +49,15 @@ const GET_INFO = gql`
 const CashOut = ({ name: SCREEN_KEY }) => {
   const classes = useStyles()
   const [wizard, setWizard] = useState(false)
-  const [error, setError] = useState(false)
   const { data } = useQuery(GET_INFO)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    onError: () => setError(true),
     refetchQueries: () => ['getData']
   })
 
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setError(false)
     return saveConfig({ variables: { config, accounts } })
   }
 
@@ -74,9 +72,11 @@ const CashOut = ({ name: SCREEN_KEY }) => {
     save(toNamespace(id, { active: !namespaced?.active }))
   }
 
+  const wasNeverEnabled = it => R.compose(R.length, R.keys)(it) === 1
+
   return (
     <>
-      <TitleSection title="Cash-out" error={error}>
+      <TitleSection title="Cash-out">
         <div className={classes.fudgeFactor}>
           <P>Transaction fudge factor</P>
           <Switch
@@ -92,7 +92,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           <Tooltip width={304}>
             <P>
               Automatically accept customer deposits as complete if their
-              received amount is 10 crypto atoms or less.
+              received amount is 100 crypto atoms or less.
             </P>
             <P>
               (Crypto atoms are the smallest unit in each cryptocurrency. E.g.,
@@ -102,26 +102,27 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         </div>
       </TitleSection>
       <EditableTable
-        name="test"
         namespaces={R.map(R.path(['deviceId']))(machines)}
         data={config}
-        stripeWhen={it => !DenominationsSchema.isValidSync(it)}
+        stripeWhen={wasNeverEnabled}
         enableEdit
         editWidth={134}
         enableToggle
         toggleWidth={109}
         onToggle={onToggle}
         save={save}
+        error={error?.message}
         validationSchema={DenominationsSchema}
         disableRowEdit={R.compose(R.not, R.path(['active']))}
         elements={getElements(machines, locale)}
       />
+      {R.isEmpty(config) && <EmptyTable message="No machines so far" />}
       {wizard && (
         <Wizard
           machine={R.find(R.propEq('deviceId', wizard))(machines)}
           onClose={() => setWizard(false)}
           save={save}
-          error={error}
+          error={error?.message}
           locale={locale}
         />
       )}

@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { memo } from 'react'
 
+import { MainStatus } from 'src/components/Status'
 import { ActionButton } from 'src/components/buttons'
 import { H3 } from 'src/components/typography'
 import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
@@ -21,13 +22,6 @@ const OVERRIDE_REJECTED = 'blocked'
 const PropertyCard = memo(
   ({ className, title, state, authorize, reject, children }) => {
     const classes = useStyles()
-
-    const propertyCardClassNames = {
-      [classes.propertyCard]: true,
-      [classes.propertyCardPending]: state === OVERRIDE_PENDING,
-      [classes.propertyCardRejected]: state === OVERRIDE_REJECTED,
-      [classes.propertyCardAccepted]: state === OVERRIDE_AUTHORIZED
-    }
 
     const label1ClassNames = {
       [classes.label1]: true,
@@ -58,29 +52,27 @@ const PropertyCard = memo(
       </ActionButton>
     )
 
-    const authorizedAsString =
+    const authorized =
       state === OVERRIDE_PENDING
-        ? 'Pending'
+        ? { label: 'Pending', type: 'neutral' }
         : state === OVERRIDE_REJECTED
-        ? 'Rejected'
-        : 'Accepted'
+        ? { label: 'Rejected', type: 'error' }
+        : { label: 'Accepted', type: 'success' }
 
     return (
       <Paper
-        className={classnames(propertyCardClassNames, className)}
+        className={classnames(classes.propertyCard, className)}
         elevation={0}>
-        <div className={classes.rowSpaceBetween}>
-          <H3>{title}</H3>
+        <H3 className={classes.propertyCardTopRow}>{title}</H3>
+        <div className={classes.propertyCardBottomRow}>
           <div className={classnames(label1ClassNames)}>
-            {authorizedAsString}
+            <MainStatus statuses={[authorized]} />
           </div>
-        </div>
-        <Paper className={classes.cardProperties} elevation={0}>
           {children}
-        </Paper>
-        <div className={classes.buttonsWrapper}>
-          {state !== OVERRIDE_AUTHORIZED && AuthorizeButton()}
-          {state !== OVERRIDE_REJECTED && RejectButton()}
+          <div className={classes.buttonsWrapper}>
+            {authorize && state !== OVERRIDE_AUTHORIZED && AuthorizeButton()}
+            {reject && state !== OVERRIDE_REJECTED && RejectButton()}
+          </div>
         </div>
       </Paper>
     )

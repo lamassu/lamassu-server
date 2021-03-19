@@ -41,7 +41,11 @@ export default {
   },
   header: {
     display: 'flex',
-    paddingBottom: 96
+    paddingBottom: 95
+  },
+  thirdStepHeader: {
+    display: 'flex',
+    paddingBottom: 188
   },
   step: {
     flex: 1

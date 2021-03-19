@@ -73,5 +73,33 @@ export default {
     '&::after': {
       height: '100%'
     }
+  },
+  item: {
+    position: 'relative',
+    margin: '12px 0 12px 0',
+    display: 'flex'
+  },
+  itemText: {
+    extend: p,
+    color: placeholderColor,
+    marginRight: 24
+  },
+  itemTextActive: {
+    extend: tl2,
+    color: primaryColor
+  },
+  itemTextPast: {
+    color: primaryColor
+  },
+  stepperPath: {
+    position: 'absolute',
+    height: 25,
+    width: 1,
+    border: [[1, 'solid', placeholderColor]],
+    right: 8,
+    top: 18
+  },
+  stepperPast: {
+    border: [[1, 'solid', primaryColor]]
   }
 }

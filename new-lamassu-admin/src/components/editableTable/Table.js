@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik } from 'formik'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { v4 } from 'uuid'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
@@ -32,6 +32,7 @@ const ETable = ({
   elements = [],
   data = [],
   save,
+  error: externalError,
   rowSize = 'md',
   validationSchema,
   enableCreate,
@@ -46,15 +47,26 @@ const ETable = ({
   disableAdd,
   initialValues,
   setEditing,
+  shouldOverrideEdit,
+  editOverride,
   stripeWhen,
   disableRowEdit,
   groupBy,
   sortBy,
-  createText = 'Add override'
+  createText = 'Add override',
+  forceAdd = false,
+  tbodyWrapperClass
 }) => {
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => setError(externalError), [externalError])
+  useEffect(() => {
+    setError(null)
+    setAdding(forceAdd)
+  }, [forceAdd])
 
   const innerSave = async value => {
     if (saving) return
@@ -66,9 +78,9 @@ const ETable = ({
     const list = index !== -1 ? R.update(index, it, data) : R.prepend(it, data)
 
     if (!R.equals(data[index], it)) {
-      // no response means the save failed
-      const response = await save({ [name]: list }, it)
-      if (!response) {
+      try {
+        await save({ [name]: list }, it)
+      } catch (err) {
         setSaving(false)
         return
       }
@@ -92,12 +104,15 @@ const ETable = ({
   }
 
   const onEdit = it => {
+    if (shouldOverrideEdit && shouldOverrideEdit(it)) return editOverride(it)
     setEditingId(it)
+    setError(null)
     setEditing && setEditing(it, true)
   }
 
   const addField = () => {
     setAdding(true)
+    setError(null)
     setEditing && setEditing(true, true)
   }
 
@@ -124,6 +139,8 @@ const ETable = ({
     elements,
     enableEdit,
     onEdit,
+    clearError: () => setError(null),
+    error: error,
     disableRowEdit,
     editWidth,
     enableDelete,
@@ -135,6 +152,7 @@ const ETable = ({
     toggleWidth,
     actionColSize,
     stripeWhen,
+    forceAdd,
     DEFAULT_COL_SIZE
   }
 
@@ -163,49 +181,60 @@ const ETable = ({
             )}
             <Table>
               <Header />
-              <TBody>
-                {adding && (
-                  <Formik
-                    initialValues={{ id: v4(), ...initialValues }}
-                    onReset={onReset}
-                    validationSchema={validationSchema}
-                    onSubmit={innerSave}>
-                    <Form>
-                      <PromptWhenDirty />
-                      <ERow editing={true} disabled={forceDisable} />
-                    </Form>
-                  </Formik>
-                )}
-                {innerData.map((it, idx) => {
-                  const nextElement = innerData[idx + 1]
-                  const isLastOfGroup =
-                    groupBy &&
-                    nextElement &&
-                    nextElement[groupBy] !== it[groupBy]
-
-                  return (
+              <div className={tbodyWrapperClass}>
+                <TBody>
+                  {adding && (
                     <Formik
-                      key={it.id ?? idx}
-                      enableReinitialize
-                      initialValues={it}
+                      validateOnBlur={false}
+                      validateOnChange={false}
+                      initialValues={{ id: v4(), ...initialValues }}
                       onReset={onReset}
                       validationSchema={validationSchema}
                       onSubmit={innerSave}>
                       <Form>
-                        <ERow
-                          lastOfGroup={isLastOfGroup}
-                          editing={editingId === it.id}
-                          disabled={
-                            forceDisable ||
-                            (editingId && editingId !== it.id) ||
-                            adding
-                          }
-                        />
+                        <PromptWhenDirty />
+                        <ERow editing={true} disabled={forceDisable} />
                       </Form>
                     </Formik>
-                  )
-                })}
-              </TBody>
+                  )}
+                  {innerData.map((it, idx) => {
+                    const nextElement = innerData[idx + 1]
+
+                    const canGroup = !!groupBy && nextElement
+                    const isFunction = R.type(groupBy) === 'Function'
+                    const groupFunction = isFunction ? groupBy : R.prop(groupBy)
+
+                    const isLastOfGroup =
+                      canGroup &&
+                      groupFunction(it) !== groupFunction(nextElement)
+
+                    return (
+                      <Formik
+                        validateOnBlur={false}
+                        validateOnChange={false}
+                        key={it.id ?? idx}
+                        enableReinitialize
+                        initialValues={it}
+                        onReset={onReset}
+                        validationSchema={validationSchema}
+                        onSubmit={innerSave}>
+                        <Form>
+                          <PromptWhenDirty />
+                          <ERow
+                            lastOfGroup={isLastOfGroup}
+                            editing={editingId === it.id}
+                            disabled={
+                              forceDisable ||
+                              (editingId && editingId !== it.id) ||
+                              adding
+                            }
+                          />
+                        </Form>
+                      </Formik>
+                    )
+                  })}
+                </TBody>
+              </div>
             </Table>
           </>
         )}

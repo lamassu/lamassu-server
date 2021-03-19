@@ -185,16 +185,17 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
       return moment(date).format('YYYY-MM-DD_HH-mm')
     }
 
-    const text = logs.map(it => JSON.stringify(it)).join('\n')
-    const blob = new window.Blob([text], {
+    const blob = new window.Blob([logs], {
       type: 'text/plain;charset=utf-8'
     })
 
     FileSaver.saveAs(
       blob,
       selectedRadio === ALL
-        ? `${formatDateFile(new Date())}_${name}`
-        : `${formatDateFile(range.from)}_${formatDateFile(range.until)}_${name}`
+        ? `${formatDateFile(new Date())}_${name}.csv`
+        : `${formatDateFile(range.from)}_${formatDateFile(
+            range.until
+          )}_${name}.csv`
     )
   }
 

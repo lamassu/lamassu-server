@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react'
 import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
+import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
@@ -43,14 +44,17 @@ const SingleFieldEditableNumber = ({
 
   const schema = Yup.object().shape({
     [name]: Yup.number()
+      .transform(transformNumber)
       .integer()
       .min(min)
       .max(max)
-      .required()
+      .nullable()
   })
 
   return (
     <Formik
+      validateOnBlur={false}
+      validateOnChange={false}
       enableReinitialize
       initialValues={{ [name]: (data && data[name]) ?? '' }}
       validationSchema={schema}

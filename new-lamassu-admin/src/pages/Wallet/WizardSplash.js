@@ -66,7 +66,7 @@ const WizardSplash = ({ code, name, onContinue }) => {
       <P className={classes.text}>
         You are about to enable {name} on your system. This will allow you to
         use this cryptocurrency on your machines. To be able to do that, you’ll
-        have to setup all the necessary 3rd party services.
+        have to set up all the necessary 3rd party services.
       </P>
       <Button className={classes.button} onClick={onContinue}>
         Start configuration

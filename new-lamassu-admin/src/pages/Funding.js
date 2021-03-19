@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import QRCode from 'qrcode.react'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import TableLabel from 'src/components/TableLabel'
@@ -16,12 +17,12 @@ import {
   Info1,
   Info2,
   Info3,
-  Mono,
   Label1,
   Label3
 } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { primaryColor } from 'src/styling/variables'
+import { formatCryptoAddress } from 'src/utils/coin'
 
 import styles from './Funding.styles'
 
@@ -50,7 +51,8 @@ const GET_FUNDING = gql`
   }
 `
 
-const formatAddress = (address = '') => address.replace(/(.{4})/g, '$1 ')
+const formatAddress = (cryptoCode = '', address = '') =>
+  formatCryptoAddress(cryptoCode, address).replace(/(.{4})/g, '$1 ')
 const sumReducer = (acc, value) => acc.plus(value)
 const formatNumber = it => new BigNumber(it).toFormat(2)
 
@@ -106,9 +108,10 @@ const Funding = () => {
   }
 
   const { data: fundingResponse } = useQuery(GET_FUNDING)
+  const funding = R.path(['funding'])(fundingResponse) ?? []
 
-  if (fundingResponse?.funding?.length && !selected) {
-    setSelected(fundingResponse?.funding[0])
+  if (funding.length && !selected) {
+    setSelected(funding[0])
   }
 
   const itemRender = (it, active) => {
@@ -127,7 +130,7 @@ const Funding = () => {
         {!it.errorMsg && (
           <>
             <div className={classnames(itemClass)}>
-              {it.fiatConfirmedBalance} {it.fiatCode}
+              {formatNumber(it.fiatConfirmedBalance)} {it.fiatCode}
             </div>
             <div className={classnames(itemClass)}>
               {it.confirmedBalance} {it.cryptoCode}
@@ -138,6 +141,9 @@ const Funding = () => {
     )
   }
 
+  const pendingTotal = getPendingTotal(funding)
+  const signIfPositive = num => (num >= 0 ? '+' : '')
+
   return (
     <>
       <div>
@@ -146,22 +152,22 @@ const Funding = () => {
       </div>
       <div className={classes.wrapper}>
         <Sidebar
-          data={fundingResponse?.funding}
+          data={funding}
           isSelected={isSelected}
           onClick={setSelected}
           displayName={it => it.display}
           itemRender={itemRender}>
-          {fundingResponse?.funding && fundingResponse?.funding?.length && (
+          {funding.length && (
             <div className={classes.total}>
               <Label1 className={classes.totalTitle}>
                 Total Crypto Balance
               </Label1>
               <Info1 noMargin>
-                {getConfirmedTotal(fundingResponse.funding)}
-                {fundingResponse.funding[0].fiatCode}
+                {getConfirmedTotal(funding)}
+                {funding[0].fiatCode}
               </Info1>
               <Label1 className={classes.totalPending}>
-                (+{getPendingTotal(fundingResponse.funding)} pending)
+                ({signIfPositive(pendingTotal)} {pendingTotal} pending)
               </Label1>
             </div>
           )}
@@ -182,7 +188,9 @@ const Funding = () => {
                   {`${selected.confirmedBalance} ${selected.cryptoCode}`}
                 </Info1>
                 <Info2 inline noMargin className={classes.leftSpacer}>
-                  {`(+ ${selected.pending} pending)`}
+                  {`(${signIfPositive(selected.pending)} ${
+                    selected.pending
+                  } pending)`}
                 </Info2>
               </div>
 
@@ -193,19 +201,24 @@ const Funding = () => {
                   }`}
                 </Info3>
                 <Label3 inline noMargin className={classes.leftSpacer}>
-                  {`(+${formatNumber(selected.fiatPending)} pending)`}
+                  {`(${signIfPositive(selected.fiatPending)} ${formatNumber(
+                    selected.fiatPending
+                  )} pending)`}
                 </Label3>
               </div>
 
               <H3 className={classes.topSpacer}>Address</H3>
               <div className={classes.addressWrapper}>
-                <Mono className={classes.address}>
+                <div className={classes.mono}>
                   <strong>
                     <CopyToClipboard buttonClassname={classes.copyToClipboard}>
-                      {formatAddress(selected.fundingAddress)}
+                      {formatAddress(
+                        selected.cryptoCode,
+                        selected.fundingAddress
+                      )}
                     </CopyToClipboard>
                   </strong>
-                </Mono>
+                </div>
               </div>
             </div>
 

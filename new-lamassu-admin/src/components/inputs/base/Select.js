@@ -4,13 +4,12 @@ import { useSelect } from 'downshift'
 import React from 'react'
 
 import { ReactComponent as Arrowdown } from 'src/styling/icons/action/arrow/regular.svg'
-import { startCase } from 'src/utils/string'
 
 import styles from './Select.styles'
 
 const useStyles = makeStyles(styles)
 
-function Select({ label, items, ...props }) {
+function Select({ className, label, items, ...props }) {
   const classes = useStyles()
 
   const {
@@ -35,17 +34,17 @@ function Select({ label, items, ...props }) {
   }
 
   return (
-    <div className={classnames(selectClassNames)}>
-      <label {...getLabelProps()}>{startCase(label)}</label>
+    <div className={classnames(selectClassNames, className)}>
+      <label {...getLabelProps()}>{label}</label>
       <button {...getToggleButtonProps()}>
-        <span className={classes.selectedItem}>{startCase(selectedItem)}</span>
+        <span className={classes.selectedItem}>{selectedItem.display}</span>
         <Arrowdown />
       </button>
       <ul {...getMenuProps()}>
         {isOpen &&
-          items.map((item, index) => (
-            <li key={`${item}${index}`} {...getItemProps({ item, index })}>
-              <span>{startCase(item)}</span>
+          items.map(({ code, display }, index) => (
+            <li key={`${code}${index}`} {...getItemProps({ code, index })}>
+              <span>{display}</span>
             </li>
           ))}
       </ul>

@@ -3,7 +3,9 @@ import {
   placeholderColor,
   backgroundColor,
   primaryColor,
-  mainWidth
+  mainWidth,
+  spring2,
+  spring3
 } from 'src/styling/variables'
 
 const { tl2, p } = typographyStyles
@@ -55,10 +57,19 @@ const styles = {
   qrCodeWrapper: {
     display: 'flex'
   },
+  qrTextInfoWrapper: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
   qrTextWrapper: {
     width: 381,
     marginLeft: 80,
-    display: 'flex'
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  textWrapper: {
+    display: 'flex',
+    flexDirection: 'column'
   },
   qrTextIcon: {
     marginRight: 16
@@ -88,11 +99,29 @@ const styles = {
     height: 25,
     width: 1,
     border: [[1, 'solid', placeholderColor]],
-    right: 7,
-    top: 15
+    right: 8,
+    top: 18
   },
   stepperPast: {
     border: [[1, 'solid', primaryColor]]
+  },
+  successMessageWrapper: {
+    backgroundColor: spring3,
+    display: 'flex',
+    flexDirection: 'row',
+    padding: '0px 10px',
+    borderRadius: '8px'
+  },
+  successMessage: {
+    color: spring2,
+    margin: '8px 0px'
+  },
+  successMessageIcon: {
+    marginRight: 16,
+    marginBottom: 2,
+    display: 'flex',
+    flexDirection: 'col',
+    alignItems: 'center'
   }
 }
 

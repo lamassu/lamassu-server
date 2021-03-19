@@ -13,7 +13,7 @@ const NamespacedTable = ({
   ...props
 }) => {
   const innerSave = (...[, it]) => {
-    save(toNamespace(it.id)(R.omit(['id2'], it)))
+    return save(toNamespace(it.id)(R.omit(['id2'], it)))
   }
 
   const innerData = R.map(it => ({

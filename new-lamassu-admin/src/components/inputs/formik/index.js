@@ -1,4 +1,5 @@
 import Autocomplete from './Autocomplete'
+import CashCassetteInput from './CashCassetteInput'
 import Checkbox from './Checkbox'
 import NumberInput from './NumberInput'
 import RadioGroup from './RadioGroup'
@@ -11,5 +12,6 @@ export {
   TextInput,
   NumberInput,
   SecretInput,
-  RadioGroup
+  RadioGroup,
+  CashCassetteInput
 }

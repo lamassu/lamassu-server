@@ -1,4 +1,4 @@
-const settingsLoader = require('../lib/settings-loader')
+const settingsLoader = require('../lib/admin/settings-loader')
 
 const fields = [
   settingsLoader.configDeleteField({crypto: 'BTC', machine: 'global'}, 'wallet')

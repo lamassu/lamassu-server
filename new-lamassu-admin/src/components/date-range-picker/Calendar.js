@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 
 import typographyStyles from 'src/components/typography/styles'
 import { ReactComponent as Arrow } from 'src/styling/icons/arrow/month_change.svg'
+import { ReactComponent as RightArrow } from 'src/styling/icons/arrow/month_change_right.svg'
 import { primaryColor, zircon } from 'src/styling/variables'
 
 import Tile from './Tile'
@@ -16,6 +17,9 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center'
+  },
+  button: {
+    outline: 'none'
   },
   navbar: {
     extend: p,
@@ -143,7 +147,9 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
   return (
     <div className={classes.wrapper}>
       <div className={classes.navbar}>
-        <button onClick={() => handleNavPrev(currentDisplayedMonth)}>
+        <button
+          className={classes.button}
+          onClick={() => handleNavPrev(currentDisplayedMonth)}>
           <Arrow />
         </button>
         <span>
@@ -151,8 +157,10 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
             'MMMM'
           )} ${currentDisplayedMonth.format('YYYY')}`}
         </span>
-        <button onClick={() => handleNavNext(currentDisplayedMonth)}>
-          <Arrow transform="rotate(180)" />
+        <button
+          className={classes.button}
+          onClick={() => handleNavNext(currentDisplayedMonth)}>
+          <RightArrow />
         </button>
       </div>
       <table className={classes.table}>

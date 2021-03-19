@@ -1,3 +1,4 @@
+import { ClickAwayListener } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React, { useState, memo } from 'react'
@@ -101,22 +102,24 @@ const IDButton = memo(
 
     return (
       <>
-        <button
-          aria-describedby={id}
-          onClick={handleClick}
-          className={classnames(classNames, className)}
-          {...props}>
-          {Icon && !open && (
-            <div className={classnames(iconClassNames)}>
-              <Icon />
-            </div>
-          )}
-          {InverseIcon && open && (
-            <div className={classnames(iconClassNames)}>
-              <InverseIcon />
-            </div>
-          )}
-        </button>
+        <ClickAwayListener onClickAway={handleClose}>
+          <button
+            aria-describedby={id}
+            onClick={handleClick}
+            className={classnames(classNames, className)}
+            {...props}>
+            {Icon && !open && (
+              <div className={classnames(iconClassNames)}>
+                <Icon />
+              </div>
+            )}
+            {InverseIcon && open && (
+              <div className={classnames(iconClassNames)}>
+                <InverseIcon />
+              </div>
+            )}
+          </button>
+        </ClickAwayListener>
         <Popover
           className={popoverClassname}
           id={id}

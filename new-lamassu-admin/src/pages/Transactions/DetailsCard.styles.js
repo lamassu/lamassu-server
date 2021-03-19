@@ -1,5 +1,5 @@
 import typographyStyles from 'src/components/typography/styles'
-import { offColor } from 'src/styling/variables'
+import { offColor, comet, white } from 'src/styling/variables'
 
 const { p } = typographyStyles
 
@@ -32,7 +32,7 @@ export default {
   txIcon: {
     marginRight: 10
   },
-  popover: {
+  clipboardPopover: {
     height: 164,
     width: 215
   },
@@ -43,7 +43,6 @@ export default {
     extend: p,
     display: 'flex',
     padding: [[11, 8]],
-    // rework this into a proper component
     '& > div': {
       display: 'flex',
       flexDirection: 'column',
@@ -80,5 +79,23 @@ export default {
   },
   sessionId: {
     width: 215
+  },
+  container: {
+    display: 'flex'
+  },
+  chip: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '4px 8px 4px 8px',
+    backgroundColor: comet,
+    color: white,
+    height: 24,
+    marginBottom: -24,
+    marginTop: -3,
+    marginLeft: 7,
+    borderRadius: 4
+  },
+  chipLabel: {
+    color: white
   }
 }

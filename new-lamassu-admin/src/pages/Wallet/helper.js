@@ -7,13 +7,14 @@ const filterClass = type => R.filter(it => it.class === type)
 const filterCoins = ({ id }) => R.filter(it => R.contains(id)(it.cryptos))
 
 const WalletSchema = Yup.object().shape({
-  ticker: Yup.string().required('Required'),
-  wallet: Yup.string().required('Required'),
-  exchange: Yup.string().required('Required'),
-  zeroConf: Yup.string().required('Required')
+  ticker: Yup.string().required(),
+  wallet: Yup.string().required(),
+  exchange: Yup.string().required(),
+  zeroConf: Yup.string().required()
 })
 
-const getElements = (cryptoCurrencies, accounts) => {
+const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
+  const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it =>
     R.compose(
       R.prop(['display']),
@@ -36,7 +37,7 @@ const getElements = (cryptoCurrencies, accounts) => {
     {
       name: 'id',
       header: 'Cryptocurrency',
-      width: 180,
+      width: 180 - widthAdjust,
       view: viewCryptoCurrency,
       size: 'sm',
       editable: false
@@ -46,12 +47,12 @@ const getElements = (cryptoCurrencies, accounts) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('ticker'),
-      width: 190,
+      width: 190 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('ticker'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
+        labelProp: 'display',
         optionsLimit: null
       }
     },
@@ -60,13 +61,14 @@ const getElements = (cryptoCurrencies, accounts) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('wallet'),
-      width: 190,
+      width: 190 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('wallet'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
-        optionsLimit: null
+        labelProp: 'display',
+        optionsLimit: null,
+        onChange
       }
     },
     {
@@ -74,13 +76,14 @@ const getElements = (cryptoCurrencies, accounts) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('exchange'),
-      width: 190,
+      width: 190 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('exchange'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
-        optionsLimit: null
+        labelProp: 'display',
+        optionsLimit: null,
+        onChange
       }
     },
     {
@@ -89,12 +92,13 @@ const getElements = (cryptoCurrencies, accounts) => {
       stripe: true,
       view: getDisplayName('zeroConf'),
       input: Autocomplete,
-      width: 190,
+      width: 190 - widthAdjust,
       inputProps: {
         options: getOptions('zeroConf'),
         valueProp: 'code',
-        getLabel: R.path(['display']),
-        optionsLimit: null
+        labelProp: 'display',
+        optionsLimit: null,
+        onChange
       }
     }
   ]

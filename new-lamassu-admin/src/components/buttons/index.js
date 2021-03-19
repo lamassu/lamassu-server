@@ -6,6 +6,8 @@ import IDButton from './IDButton'
 import IconButton from './IconButton'
 import Link from './Link'
 import SimpleButton from './SimpleButton'
+import SubpageButton from './SubpageButton'
+import SupportLinkButton from './SupportLinkButton'
 
 export {
   Button,
@@ -15,5 +17,7 @@ export {
   FeatureButton,
   IconButton,
   IDButton,
-  AddButton
+  AddButton,
+  SupportLinkButton,
+  SubpageButton
 }

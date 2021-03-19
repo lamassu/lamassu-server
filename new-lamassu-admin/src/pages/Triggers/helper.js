@@ -5,11 +5,16 @@ import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
 
-import { TextInput, RadioGroup } from 'src/components/inputs/formik'
-import { H4, Label2, Label1, Info2 } from 'src/components/typography'
-import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
-import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import {
+  NumberInput,
+  TextInput,
+  RadioGroup
+} from 'src/components/inputs/formik'
+import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
+import { transformNumber } from 'src/utils/number'
+// import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+// import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
 const useStyles = makeStyles({
   radioLabel: {
@@ -41,11 +46,22 @@ const useStyles = makeStyles({
     marginLeft: 6
   },
   thresholdWrapper: {
-    display: 'flex'
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  thresholdTitle: {
+    marginTop: 50
+  },
+  thresholdContentWrapper: {
+    display: 'flex',
+    flexDirection: 'row'
   },
   thresholdField: {
-    margin: 10,
-    width: 208
+    marginRight: 6,
+    width: 75
+  },
+  description: {
+    marginTop: 7
   },
   space: {
     marginLeft: 6,
@@ -68,115 +84,160 @@ const useStyles = makeStyles({
   }
 })
 
-const cashDirection = Yup.string().required('Required')
-const triggerType = Yup.string().required('Required')
+// const direction = Yup.string().required()
+const triggerType = Yup.string().required()
 const threshold = Yup.object().shape({
   threshold: Yup.number(),
-  thresholdDays: Yup.number()
+  thresholdDays: Yup.number().test({
+    test(val) {
+      const { triggerType } = this.parent
+      const requireThrehsold = ['txVolume', 'txVelocity', 'consecutiveDays']
+
+      if (R.isEmpty(val) && R.includes(triggerType, requireThrehsold)) {
+        return this.createError()
+      }
+
+      return true
+    }
+  })
 })
+
 const requirement = Yup.object().shape({
-  requirement: Yup.string().required('Required'),
-  suspensionDays: Yup.number()
+  requirement: Yup.string().required(),
+  suspensionDays: Yup.number().when('requirement', {
+    is: 'suspend',
+    then: Yup.number().required(),
+    otherwise: Yup.number()
+      .nullable()
+      .transform(() => null)
+  })
 })
 
 const Schema = Yup.object().shape({
   triggerType,
   requirement,
-  threshold,
-  cashDirection
+  threshold
+  // direction
 })
 
-// Direction
-const directionSchema = Yup.object().shape({ cashDirection })
+// Direction V2 only
+// const directionSchema = Yup.object().shape({ direction })
 
-const directionOptions = [
-  {
-    display: 'Both',
-    code: 'both'
-  },
-  {
-    display: 'Only cash-in',
-    code: 'cashIn'
-  },
-  {
-    display: 'Only cash-out',
-    code: 'cashOut'
-  }
-]
+// const directionOptions = [
+//   {
+//     display: 'Both',
+//     code: 'both'
+//   },
+//   {
+//     display: 'Only cash-in',
+//     code: 'cashIn'
+//   },
+//   {
+//     display: 'Only cash-out',
+//     code: 'cashOut'
+//   }
+// ]
 
-const directionOptions2 = [
-  {
-    display: (
-      <>
-        <TxInIcon /> in
-      </>
-    ),
-    code: 'cashIn'
-  },
-  {
-    display: (
-      <>
-        <TxOutIcon /> out
-      </>
-    ),
-    code: 'cashOut'
-  },
-  {
-    display: (
-      <>
-        <Box display="flex">
-          <Box mr={0.25}>
-            <TxOutIcon />
-          </Box>
-          <Box>
-            <TxInIcon />
-          </Box>
-        </Box>
-      </>
-    ),
-    code: 'both'
-  }
-]
+// const directionOptions2 = [
+//   {
+//     display: (
+//       <>
+//         <TxInIcon /> in
+//       </>
+//     ),
+//     code: 'cashIn'
+//   },
+//   {
+//     display: (
+//       <>
+//         <TxOutIcon /> out
+//       </>
+//     ),
+//     code: 'cashOut'
+//   },
+//   {
+//     display: (
+//       <>
+//         <Box display="flex">
+//           <Box mr={0.25}>
+//             <TxOutIcon />
+//           </Box>
+//           <Box>
+//             <TxInIcon />
+//           </Box>
+//         </Box>
+//       </>
+//     ),
+//     code: 'both'
+//   }
+// ]
 
-const Direction = () => {
-  const classes = useStyles()
-  const { errors } = useFormikContext()
+// const Direction = () => {
+//   const classes = useStyles()
+//   const { errors } = useFormikContext()
 
-  const titleClass = {
-    [classes.error]: errors.cashDirection
-  }
+//   const titleClass = {
+//     [classes.error]: errors.direction
+//   }
 
-  return (
-    <>
-      <Box display="flex" alignItems="center">
-        <H4 className={classnames(titleClass)}>
-          In which type of transactions will it trigger?
-        </H4>
-      </Box>
-      <Field
-        component={RadioGroup}
-        name="cashDirection"
-        options={directionOptions}
-        labelClassName={classes.radioLabel}
-        radioClassName={classes.radio}
-        className={classes.radioGroup}
-      />
-    </>
-  )
-}
+//   return (
+//     <>
+//       <Box display="flex" alignItems="center">
+//         <H4 className={classnames(titleClass)}>
+//           In which type of transactions will it trigger?
+//         </H4>
+//       </Box>
+//       <Field
+//         component={RadioGroup}
+//         name="direction"
+//         options={directionOptions}
+//         labelClassName={classes.radioLabel}
+//         radioClassName={classes.radio}
+//         className={classes.radioGroup}
+//       />
+//     </>
+//   )
+// }
 
-const direction = {
-  schema: directionSchema,
-  options: directionOptions,
-  Component: Direction,
-  initialValues: { cashDirection: '' }
-}
+// const txDirection = {
+//   schema: directionSchema,
+//   options: directionOptions,
+//   Component: Direction,
+//   initialValues: { direction: '' }
+// }
 
 // TYPE
-const typeSchema = Yup.object().shape({
-  triggerType,
-  threshold
-})
+const typeSchema = Yup.object()
+  .shape({
+    triggerType: Yup.string().required(),
+    threshold: Yup.object({
+      threshold: Yup.number()
+        .transform(transformNumber)
+        .nullable(),
+      thresholdDays: Yup.number()
+        .transform(transformNumber)
+        .nullable()
+    })
+  })
+  .test(
+    'are-fields-set',
+    'All fields must be set.',
+    ({ triggerType, threshold }, context) => {
+      const validator = {
+        txAmount: threshold => threshold.threshold >= 0,
+        txVolume: threshold =>
+          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+        txVelocity: threshold =>
+          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+        consecutiveDays: threshold => threshold.thresholdDays >= 0
+      }
+
+      return (
+        (triggerType && validator?.[triggerType](threshold)) ||
+        context.createError({ path: 'threshold' })
+      )
+    }
+  )
 
 const typeOptions = [
   { display: 'Transaction amount', code: 'txAmount' },
@@ -185,7 +246,7 @@ const typeOptions = [
   { display: 'Consecutive days', code: 'consecutiveDays' }
 ]
 
-const Type = () => {
+const Type = ({ ...props }) => {
   const classes = useStyles()
   const { errors, touched, values } = useFormikContext()
 
@@ -194,17 +255,26 @@ const Type = () => {
   }
 
   const containsType = R.contains(values?.triggerType)
-  const isThresholdEnabled = containsType([
-    'txAmount',
-    'txVolume',
-    'txVelocity'
-  ])
+  const isThresholdCurrencyEnabled = containsType(['txAmount', 'txVolume'])
+  const isTransactionAmountEnabled = containsType(['txVelocity'])
+  const isThresholdDaysEnabled = containsType(['txVolume', 'txVelocity'])
+  const isConsecutiveDaysEnabled = containsType(['consecutiveDays'])
 
-  const isThresholdDaysEnabled = containsType([
-    'txVolume',
-    'txVelocity',
-    'consecutiveDays'
-  ])
+  const thresholdClass = {
+    [classes.error]:
+      errors.threshold &&
+      ((!containsType(['consecutiveDays']) && touched.threshold?.threshold) ||
+        (!containsType(['txAmount']) && touched.threshold?.thresholdDays))
+  }
+
+  const isRadioGroupActive = () => {
+    return (
+      isThresholdCurrencyEnabled ||
+      isTransactionAmountEnabled ||
+      isThresholdDaysEnabled ||
+      isConsecutiveDaysEnabled
+    )
+  }
 
   return (
     <>
@@ -221,57 +291,123 @@ const Type = () => {
       />
 
       <div className={classes.thresholdWrapper}>
-        {isThresholdEnabled && (
-          <Field
-            className={classes.thresholdField}
-            component={TextInput}
-            label="Threshold"
-            size="lg"
-            name="threshold.threshold"
-          />
+        {isRadioGroupActive() && (
+          <H4 className={classnames(thresholdClass, classes.thresholdTitle)}>
+            Threshold
+          </H4>
         )}
-        {isThresholdDaysEnabled && (
-          <Field
-            className={classes.thresholdField}
-            component={TextInput}
-            label="Threshold Days"
-            size="lg"
-            name="threshold.thresholdDays"
-          />
-        )}
+        <div className={classes.thresholdContentWrapper}>
+          {isThresholdCurrencyEnabled && (
+            <>
+              <Field
+                className={classes.thresholdField}
+                component={NumberInput}
+                size="lg"
+                name="threshold.threshold"
+              />
+              <Info1 className={classnames(classes.description)}>
+                {props.currency}
+              </Info1>
+            </>
+          )}
+          {isTransactionAmountEnabled && (
+            <>
+              <Field
+                className={classes.thresholdField}
+                component={NumberInput}
+                size="lg"
+                name="threshold.threshold"
+              />
+              <Info1 className={classnames(classes.description)}>
+                transactions
+              </Info1>
+            </>
+          )}
+          {isThresholdDaysEnabled && (
+            <>
+              <Info1
+                className={classnames(
+                  typeClass,
+                  classes.space,
+                  classes.description
+                )}>
+                in
+              </Info1>
+              <Field
+                className={classes.thresholdField}
+                component={NumberInput}
+                size="lg"
+                name="threshold.thresholdDays"
+              />
+              <Info1 className={classnames(classes.description)}>days</Info1>
+            </>
+          )}
+          {isConsecutiveDaysEnabled && (
+            <>
+              <Field
+                className={classes.thresholdField}
+                component={NumberInput}
+                size="lg"
+                name="threshold.thresholdDays"
+              />
+              <Info1 className={classnames(classes.description)}>
+                consecutive days
+              </Info1>
+            </>
+          )}
+        </div>
       </div>
     </>
   )
 }
 
-const type = {
+const type = currency => ({
   schema: typeSchema,
   options: typeOptions,
   Component: Type,
-  initialValues: { triggerType: '', threshold: '' }
-}
+  props: { currency },
+  initialValues: {
+    triggerType: '',
+    threshold: { threshold: '', thresholdDays: '' }
+  }
+})
 
 const requirementSchema = Yup.object().shape({
-  requirement
+  requirement: Yup.object({
+    requirement: Yup.string().required(),
+    suspensionDays: Yup.number().when('requirement', {
+      is: value => value === 'suspend',
+      then: Yup.number().required(),
+      otherwise: Yup.number()
+        .nullable()
+        .transform(() => null)
+    })
+  }).required()
 })
 
 const requirementOptions = [
   { display: 'SMS verification', code: 'sms' },
-  { display: 'ID card image', code: 'idPhoto' },
-  { display: 'ID data', code: 'idData' },
+  { display: 'ID card image', code: 'idCardPhoto' },
+  { display: 'ID data', code: 'idCardData' },
   { display: 'Customer camera', code: 'facephoto' },
   { display: 'Sanctions', code: 'sanctions' },
-  { display: 'Super user', code: 'superuser' },
+  { display: 'US SSN', code: 'usSsn' },
+  // { display: 'Super user', code: 'superuser' },
   { display: 'Suspend', code: 'suspend' },
   { display: 'Block', code: 'block' }
 ]
 
 const Requirement = () => {
   const classes = useStyles()
-  const { errors, values } = useFormikContext()
+  const { touched, errors, values } = useFormikContext()
 
   const titleClass = {
-    [classes.error]: errors.requirement
+    [classes.error]:
+      !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
+      (errors.requirement &&
+        touched.requirement &&
+        errors.requirement.suspensionDays &&
+        touched.requirement.suspensionDays)
   }
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
@@ -307,7 +443,7 @@ const requirements = {
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  initialValues: { requirement: '' }
+  initialValues: { requirement: { requirement: '', suspensionDays: '' } }
 }
 
 const getView = (data, code, compare) => it => {
@@ -316,20 +452,20 @@ const getView = (data, code, compare) => it => {
   return R.compose(R.prop(code), R.find(R.propEq(compare ?? 'code', it)))(data)
 }
 
-const DirectionDisplay = ({ code }) => {
-  const classes = useStyles()
-  const displayName = getView(directionOptions, 'display')(code)
-  const showCashIn = code === 'cashIn' || code === 'both'
-  const showCashOut = code === 'cashOut' || code === 'both'
+// const DirectionDisplay = ({ code }) => {
+//   const classes = useStyles()
+//   const displayName = getView(directionOptions, 'display')(code)
+//   const showCashIn = code === 'cashIn' || code === 'both'
+//   const showCashOut = code === 'cashOut' || code === 'both'
 
-  return (
-    <div>
-      {showCashOut && <TxOutIcon className={classes.directionIcon} />}
-      {showCashIn && <TxInIcon className={classes.directionIcon} />}
-      <span className={classes.directionName}>{displayName}</span>
-    </div>
-  )
-}
+//   return (
+//     <div>
+//       {showCashOut && <TxOutIcon className={classes.directionIcon} />}
+//       {showCashIn && <TxInIcon className={classes.directionIcon} />}
+//       <span className={classes.directionName}>{displayName}</span>
+//     </div>
+//   )
+// }
 
 const RequirementInput = () => {
   const { values } = useFormikContext()
@@ -485,7 +621,7 @@ const getElements = (currency, classes) => [
     inputProps: {
       options: typeOptions,
       valueProp: 'code',
-      getLabel: R.path(['display']),
+      labelProp: 'display',
       optionsLimit: null
     }
   },
@@ -501,22 +637,22 @@ const getElements = (currency, classes) => [
     name: 'threshold',
     size: 'sm',
     width: 284,
-    textAlign: 'right',
+    textAlign: 'left',
     input: () => <ThresholdInput currency={currency} />,
     view: (it, config) => <ThresholdView config={config} currency={currency} />
-  },
-  {
-    name: 'cashDirection',
-    size: 'sm',
-    width: 282,
-    view: it => <DirectionDisplay code={it} />,
-    input: RadioGroup,
-    inputProps: {
-      labelClassName: classes.tableRadioLabel,
-      className: classes.tableRadioGroup,
-      options: directionOptions2
-    }
   }
+  // {
+  //   name: 'direction',
+  //   size: 'sm',
+  //   width: 282,
+  //   view: it => <DirectionDisplay code={it} />,
+  //   input: RadioGroup,
+  //   inputProps: {
+  //     labelClassName: classes.tableRadioLabel,
+  //     className: classes.tableRadioGroup,
+  //     options: directionOptions2
+  //   }
+  // }
 ]
 
 const triggerOrder = R.map(R.prop('code'))(typeOptions)
@@ -554,7 +690,7 @@ const toServer = triggers =>
 export {
   Schema,
   getElements,
-  direction,
+  // txDirection,
   type,
   requirements,
   sortBy,

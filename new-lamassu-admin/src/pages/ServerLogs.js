@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import moment from 'moment'
@@ -8,7 +8,6 @@ import React, { useState, useRef } from 'react'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
 import Uptime from 'src/components/Uptime'
-import { SimpleButton } from 'src/components/buttons'
 import { Select } from 'src/components/inputs'
 import {
   Table,
@@ -18,11 +17,10 @@ import {
   TableBody,
   TableCell
 } from 'src/components/table'
-import { Label1, Info3 } from 'src/components/typography'
+import { Info3, H4 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
-import { ReactComponent as WhiteShareIcon } from 'src/styling/icons/circle buttons/share/white.svg'
-import { ReactComponent as ShareIcon } from 'src/styling/icons/circle buttons/share/zodiac.svg'
 import { offColor } from 'src/styling/variables'
+import { startCase } from 'src/utils/string'
 
 import logsStyles from './Logs.styles'
 
@@ -54,32 +52,33 @@ const styles = R.merge(logsStyles, localStyles)
 
 const useStyles = makeStyles(styles)
 
-const SHOW_ALL = 'Show all'
+const SHOW_ALL = { code: 'SHOW_ALL', display: 'Show all' }
 
 const formatDate = date => {
   return moment(date).format('YYYY-MM-DD HH:mm')
 }
 
+const NUM_LOG_RESULTS = 500
+
+const GET_CSV = gql`
+  query ServerData($limit: Int, $from: Date, $until: Date) {
+    serverLogsCsv(limit: $limit, from: $from, until: $until)
+  }
+`
+
 const GET_DATA = gql`
-  {
+  query ServerData($limit: Int, $from: Date, $until: Date) {
     serverVersion
     uptime {
       name
       state
       uptime
     }
-    serverLogs {
+    serverLogs(limit: $limit, from: $from, until: $until) {
       logLevel
       id
       timestamp
       message
-    }
-  }
-`
-const SUPPORT_LOGS = gql`
-  mutation ServerSupportLogs {
-    serverSupportLogs {
-      id
     }
   }
 `
@@ -92,22 +91,29 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data } = useQuery(GET_DATA, {
-    onCompleted: () => setSaveMessage('')
+  const { data, loading } = useQuery(GET_DATA, {
+    onCompleted: () => setSaveMessage(''),
+    variables: {
+      limit: NUM_LOG_RESULTS
+    }
   })
 
+  const defaultLogLevels = [
+    { code: 'error', display: 'Error' },
+    { code: 'info', display: 'Info' },
+    { code: 'debug', display: 'Debug' }
+  ]
   const serverVersion = data?.serverVersion
   const processStates = data?.uptime ?? []
-
-  const [sendSnapshot, { loading }] = useMutation(SUPPORT_LOGS, {
-    onError: () => setSaveMessage('Failure saving snapshot'),
-    onCompleted: () => setSaveMessage('✓ Saved latest snapshot')
-  })
 
   const getLogLevels = R.compose(
     R.prepend(SHOW_ALL),
     R.uniq,
-    R.map(R.path(['logLevel'])),
+    R.concat(defaultLogLevels),
+    R.map(it => ({
+      code: R.path(['logLevel'])(it),
+      display: startCase(R.path(['logLevel'])(it))
+    })),
     R.path(['serverLogs'])
   )
 
@@ -127,17 +133,10 @@ const Logs = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="server-logs"
+                query={GET_CSV}
                 logs={data.serverLogs}
-                getTimestamp={log => log.timestamp}
+                getLogs={logs => R.path(['serverLogsCsv'])(logs)}
               />
-              <SimpleButton
-                className={classes.shareButton}
-                disabled={loading}
-                Icon={ShareIcon}
-                InverseIcon={WhiteShareIcon}
-                onClick={sendSnapshot}>
-                <Label1>Share with Lamassu</Label1>
-              </SimpleButton>
               <Info3>{saveMessage}</Info3>
             </div>
           )}
@@ -177,7 +176,8 @@ const Logs = () => {
               {data &&
                 data.serverLogs
                   .filter(
-                    log => logLevel === SHOW_ALL || log.logLevel === logLevel
+                    log =>
+                      logLevel === SHOW_ALL || log.logLevel === logLevel.code
                   )
                   .map((log, idx) => (
                     <TableRow key={idx} size="sm">
@@ -188,6 +188,10 @@ const Logs = () => {
                   ))}
             </TableBody>
           </Table>
+          {loading && <H4>{'Loading...'}</H4>}
+          {!loading && !data?.serverLogs?.length && (
+            <H4>{'No activity so far'}</H4>
+          )}
         </div>
       </div>
     </>

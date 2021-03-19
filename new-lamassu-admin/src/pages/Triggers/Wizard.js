@@ -10,9 +10,9 @@ import { Button } from 'src/components/buttons'
 import { H5, Info3 } from 'src/components/typography'
 import { comet } from 'src/styling/variables'
 
-import { direction, type, requirements } from './helper'
+import { type, requirements } from './helper'
 
-const LAST_STEP = 3
+const LAST_STEP = 2
 
 const styles = {
   stepper: {
@@ -36,118 +36,143 @@ const styles = {
   },
   infoCurrentText: {
     color: comet
+  },
+  blankSpace: {
+    padding: [[0, 30]],
+    margin: [[0, 4, 0, 2]],
+    borderBottom: `1px solid ${comet}`,
+    display: 'inline-block'
   }
 }
 
 const useStyles = makeStyles(styles)
 
-const getStep = step => {
+const getStep = (step, currency) => {
   switch (step) {
+    // case 1:
+    //   return txDirection
     case 1:
-      return direction
+      return type(currency)
     case 2:
-      return type
-    case 3:
       return requirements
     default:
       return Fragment
   }
 }
 
-const getText = (step, config, currency) => {
+const getText = (step, config, currency, classes) => {
   switch (step) {
+    // case 1:
+    //   return `In ${getDirectionText(config)} transactions`
     case 1:
-      return `In ${getDirectionText(config)} transactions`
+      return <>If the user {getTypeText(config, currency, classes)}</>
     case 2:
-      return `if the user ${getTypeText(config, currency)}`
-    case 3:
-      return `the user will be ${getRequirementText(config)}.`
+      return <>the user will be {getRequirementText(config, classes)}.</>
     default:
-      return ''
+      return <></>
   }
 }
 
-const orUnderline = value => {
-  return R.isEmpty(value) || R.isNil(value) ? '⎼⎼⎼⎼⎼ ' : value
+const orUnderline = (value, classes) => {
+  const blankSpaceEl = <span className={classes.blankSpace}></span>
+  return R.isEmpty(value) || R.isNil(value) ? blankSpaceEl : value
 }
 
-const getDirectionText = config => {
-  switch (config.cashDirection) {
-    case 'both':
-      return 'both cash-in and cash-out'
-    case 'cashIn':
-      return 'cash-in'
-    case 'cashOut':
-      return 'cash-out'
-    default:
-      return orUnderline(null)
-  }
-}
+// const getDirectionText = config => {
+//   switch (config.direction) {
+//     case 'both':
+//       return 'both cash-in and cash-out'
+//     case 'cashIn':
+//       return 'cash-in'
+//     case 'cashOut':
+//       return 'cash-out'
+//     default:
+//       return orUnderline(null)
+//   }
+// }
 
-const getTypeText = (config, currency) => {
+const getTypeText = (config, currency, classes) => {
   switch (config.triggerType) {
     case 'txAmount':
-      return `makes a single transaction over ${orUnderline(
-        config.threshold.threshold
-      )} ${currency}`
+      return (
+        <>
+          makes a single transaction over{' '}
+          {orUnderline(config.threshold.threshold, classes)} {currency}
+        </>
+      )
     case 'txVolume':
-      return `makes transactions over ${orUnderline(
-        config.threshold.threshold
-      )} ${currency} in ${orUnderline(config.threshold.thresholdDays)} days`
+      return (
+        <>
+          makes {orUnderline(config.threshold.threshold, classes)} {currency}{' '}
+          worth of transactions within{' '}
+          {orUnderline(config.threshold.thresholdDays, classes)} days
+        </>
+      )
     case 'txVelocity':
-      return `makes ${orUnderline(
-        config.threshold.threshold
-      )} transactions in ${orUnderline(config.threshold.thresholdDays)} days`
+      return (
+        <>
+          makes {orUnderline(config.threshold.threshold, classes)} transactions
+          in {orUnderline(config.threshold.thresholdDays, classes)} days
+        </>
+      )
     case 'consecutiveDays':
-      return `at least one transaction every day for ${orUnderline(
-        config.threshold.thresholdDays
-      )} days`
+      return (
+        <>
+          at least one transaction every day for{' '}
+          {orUnderline(config.threshold.thresholdDays, classes)} days
+        </>
+      )
     default:
-      return ''
+      return <></>
   }
 }
 
-const getRequirementText = config => {
+const getRequirementText = (config, classes) => {
   switch (config.requirement?.requirement) {
     case 'sms':
-      return 'asked to enter code provided through SMS verification'
-    case 'idPhoto':
-      return 'asked to scan a ID with photo'
-    case 'idData':
-      return 'asked to scan a ID'
+      return <>asked to enter code provided through SMS verification</>
+    case 'idCardPhoto':
+      return <>asked to scan a ID with photo</>
+    case 'idCardData':
+      return <>asked to scan a ID</>
     case 'facephoto':
-      return 'asked to have a photo taken'
+      return <>asked to have a photo taken</>
+    case 'usSsn':
+      return <>asked to input his social security number</>
     case 'sanctions':
-      return 'matched against the OFAC sanctions list'
+      return <>matched against the OFAC sanctions list</>
     case 'superuser':
-      return ''
+      return <></>
     case 'suspend':
-      return `suspended for ${orUnderline(
-        config.requirement.suspensionDays
-      )} days`
+      return (
+        <>
+          suspended for{' '}
+          {orUnderline(config.requirement.suspensionDays, classes)} days
+        </>
+      )
     case 'block':
-      return 'blocked'
+      return <>blocked</>
     default:
-      return orUnderline(null)
+      return orUnderline(null, classes)
   }
 }
 
 const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
   const classes = useStyles()
 
-  const oldText = R.range(1, step)
-    .map(it => getText(it, config, currency))
-    .join(', ')
-  const newText = getText(step, liveValues, currency)
+  const oldText = R.range(1, step).map(it =>
+    getText(it, config, currency, classes)
+  )
+  const newText = getText(step, liveValues, currency, classes)
   const isLastStep = step === LAST_STEP
 
   return (
     <>
       <H5 className={classes.infoTitle}>Trigger overview so far</H5>
-      <Info3 noMargin>
+      <Info3 noMargin className={classes.infoText}>
         {oldText}
         {step !== 1 && ', '}
-        <span className={classes.infoCurrentText}>{newText}</span>
+        {newText}
         {!isLastStep && '...'}
       </Info3>
     </>
@@ -172,7 +197,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
   })
 
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step)
+  const stepOptions = getStep(step, currency)
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
@@ -193,7 +218,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
         title="New compliance trigger"
         handleClose={onClose}
         width={520}
-        height={480}
+        height={520}
         infoPanel={
           <InfoPanel
             currency={currency}
@@ -210,13 +235,15 @@ const Wizard = ({ onClose, save, error, currency }) => {
           currentStep={step}
         />
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           enableReinitialize
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          <Form onChange={console.log} className={classes.form}>
+          <Form className={classes.form}>
             <GetValues setValues={setLiveValues} />
-            <stepOptions.Component />
+            <stepOptions.Component {...stepOptions.props} />
             <div className={classes.submit}>
               {error && <ErrorMessage>Failed to save</ErrorMessage>}
               <Button className={classes.button} type="submit">

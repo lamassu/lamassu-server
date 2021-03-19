@@ -2,6 +2,7 @@ import { zircon } from 'src/styling/variables'
 
 export default {
   expandButton: {
+    outline: 'none',
     border: 'none',
     backgroundColor: 'transparent',
     cursor: 'pointer',
@@ -38,5 +39,12 @@ export default {
     flex: 1,
     display: 'flex',
     flexDirection: 'column'
-  })
+  }),
+  emptyTable: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: 52
+  }
 }

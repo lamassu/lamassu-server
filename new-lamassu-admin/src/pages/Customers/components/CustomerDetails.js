@@ -1,76 +1,42 @@
 import { makeStyles, Box } from '@material-ui/core'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
+import { SubpageButton } from 'src/components/buttons'
 import { H2, Label1, P } from 'src/components/typography'
-import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
-import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { comet } from 'src/styling/variables'
-import { ifNotNull } from 'src/utils/nullCheck'
+import { ReactComponent as IdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
+import { ReactComponent as LawIconInverse } from 'src/styling/icons/circle buttons/law/white.svg'
+import { ReactComponent as LawIcon } from 'src/styling/icons/circle buttons/law/zodiac.svg'
+
+import mainStyles from '../CustomersList.styles'
+import { getFormattedPhone, getName } from '../helper'
 
 import FrontCameraPhoto from './FrontCameraPhoto'
 
-const styles = {
-  icon: {
-    marginRight: 11
-  },
-  name: {
-    marginTop: 6
-  },
-  value: {
-    height: 16
-  },
-  label: {
-    marginBottom: 4,
-    color: comet
-  }
-}
+const useStyles = makeStyles(mainStyles)
 
-const useStyles = makeStyles(styles)
-
-const CustomerDetails = memo(({ customer }) => {
+const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
   const classes = useStyles()
-  const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
 
   const elements = [
     {
-      header: 'Transactions',
+      header: 'Phone number',
+      size: 172,
+      value: getFormattedPhone(customer.phone, locale.country)
+    },
+    {
+      header: 'ID number',
+      size: 172,
+      value: R.path(['idCardData', 'documentNumber'])(customer) ?? ''
+    },
+    {
+      header: 'US SSN',
       size: 127,
-      value: ifNotNull(
-        customer.totalTxs,
-        `${Number.parseInt(customer.totalTxs)}`
-      )
-    },
-    {
-      header: 'Transaction volume',
-      size: 167,
-      value: ifNotNull(
-        customer.totalSpent,
-        `${Number.parseFloat(customer.totalSpent)} ${customer.lastTxFiatCode}`
-      )
-    },
-    {
-      header: 'Last active',
-      size: 142,
-      value: ifNotNull(
-        customer.lastActive,
-        moment.utc(customer.lastActive).format('YYYY-MM-D')
-      )
-    },
-    {
-      header: 'Last transaction',
-      size: 198,
-      value: ifNotNull(
-        customer.lastTxFiat,
-        <>
-          <LastTxIcon className={classes.icon} />
-          {`${Number.parseFloat(customer.lastTxFiat)} 
-            ${customer.lastTxFiatCode}`}
-        </>
-      )
+      value: R.path(['usSsn'])(customer) ?? ''
     }
   ]
+
+  const name = getName(customer)
 
   return (
     <Box display="flex">
@@ -79,9 +45,19 @@ const CustomerDetails = memo(({ customer }) => {
       />
       <Box display="flex" flexDirection="column">
         <div className={classes.name}>
+          <IdIcon className={classes.idIcon} />
           <H2 noMargin>
-            {R.path(['name'])(customer) ?? R.path(['phone'])(customer)}
+            {name.length
+              ? name
+              : getFormattedPhone(R.path(['phone'])(customer), locale.country)}
           </H2>
+          <SubpageButton
+            className={classes.subpageButton}
+            Icon={LawIcon}
+            InverseIcon={LawIconInverse}
+            toggle={setShowCompliance}>
+            Compliance details
+          </SubpageButton>
         </div>
         <Box display="flex" mt="auto">
           {elements.map(({ size, header }, idx) => (

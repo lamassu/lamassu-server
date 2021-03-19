@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
 import { H4, Info2, Info3, Label2, Label3 } from 'src/components/typography'
@@ -74,7 +74,7 @@ const Field = ({
 }
 
 const GET_CONFIG = gql`
-  {
+  query getData {
     config
   }
 `
@@ -90,50 +90,30 @@ const styles = R.merge(globalStyles, termsConditionsStyles)
 const useTermsConditionsStyles = makeStyles(styles)
 
 const TermsConditions = () => {
-  const [showOnScreen, setShowOnScreen] = useState(false)
-  const [formData, setFormData] = useState(null)
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: data => {
-      const termsAndConditions = fromNamespace(
-        namespaces.TERMS_CONDITIONS,
-        data.saveConfig
-      )
-      setFormData(termsAndConditions)
-      setShowOnScreen(termsAndConditions.active)
+    onCompleted: () => {
       setError(null)
       setEditing(false)
     },
+    refetchQueries: () => ['getData'],
     onError: e => setError(e)
   })
 
   const classes = useTermsConditionsStyles()
 
-  useQuery(GET_CONFIG, {
-    onCompleted: data => {
-      const termsAndConditions = fromNamespace(
-        namespaces.TERMS_CONDITIONS,
-        data.config
-      )
-      setFormData(termsAndConditions ?? {})
-      setShowOnScreen(termsAndConditions?.active ?? false)
-    }
-  })
+  const { data } = useQuery(GET_CONFIG)
 
-  const save = it => {
-    setError(null)
-    return saveConfig({
+  const termsAndConditions =
+    data?.config && fromNamespace(namespaces.TERMS_CONDITIONS, data.config)
+  const formData = termsAndConditions ?? {}
+  const showOnScreen = termsAndConditions?.active ?? false
+
+  const save = it =>
+    saveConfig({
       variables: { config: toNamespace(namespaces.TERMS_CONDITIONS, it) }
     })
-  }
-
-  const handleEnable = () => {
-    const s = !showOnScreen
-    save({ active: s })
-  }
-
-  if (!formData) return null
 
   const fields = [
     {
@@ -183,10 +163,10 @@ const TermsConditions = () => {
     text: Yup.string().required(),
     acceptButtonText: Yup.string()
       .required()
-      .max(15, 'Too long'),
+      .max(50, 'Too long'),
     cancelButtonText: Yup.string()
       .required()
-      .max(15, 'Too long')
+      .max(50, 'Too long')
   })
 
   return (
@@ -197,20 +177,30 @@ const TermsConditions = () => {
       <div className={classes.section}>
         <div className={classes.enable}>
           <span>Show on screen</span>
-          <Switch checked={showOnScreen} onChange={handleEnable} value="show" />
+          <Switch
+            checked={showOnScreen}
+            onChange={event =>
+              save({
+                active: event.target.checked
+              })
+            }
+          />
           <Label2>{showOnScreen ? 'Yes' : 'No'}</Label2>
         </div>
         <div className={classes.header}>
           <Info2>Info card</Info2>
           {!editing && (
-            <div className={classes.transparentButton}>
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            </div>
+            <IconButton
+              className={classes.transparentButton}
+              onClick={() => setEditing(true)}>
+              <EditIcon />
+            </IconButton>
           )}
         </div>
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
+          enableReinitialize
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={values => save(values)}

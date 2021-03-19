@@ -4,26 +4,31 @@ import React, { useState } from 'react'
 
 import { Autocomplete } from '../base'
 
-const AutocompleteFormik = ({ options, ...props }) => {
+const AutocompleteFormik = ({ options, onChange, ...props }) => {
   const [open, setOpen] = useState(false)
 
   const { name, onBlur, value } = props.field
   const { touched, errors, setFieldValue, setFieldTouched } = props.form
   const error = !!(touched[name] && errors[name])
-  const { initialValues } = useFormikContext()
+  const { initialValues, values } = useFormikContext()
 
   const innerOptions =
-    R.type(options) === 'Function' ? options(initialValues) : options
+    R.type(options) === 'Function' ? options(initialValues, values) : options
 
   const innerOnBlur = event => {
     name && setFieldTouched(name, true)
     onBlur && onBlur(event)
   }
 
+  const onChangeHandler = value => setFieldValue(name, value)
+
   return (
     <Autocomplete
       name={name}
-      onChange={(event, item) => setFieldValue(name, item)}
+      onChange={(event, item) => {
+        if (onChange) return onChange(value, item, onChangeHandler)
+        setFieldValue(name, item)
+      }}
       onBlur={innerOnBlur}
       value={value}
       error={error}

@@ -5,6 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
+import { SecretInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
@@ -56,6 +57,37 @@ const Services = () => {
     }))(faceElements)
   }
 
+  const getElements = ({ code, elements }) => {
+    return R.map(elem => {
+      if (elem.component !== SecretInput) return elem
+      return {
+        ...elem,
+        inputProps: {
+          isPasswordFilled:
+            !R.isNil(accounts[code]) &&
+            !R.isNil(R.path([elem.code], accounts[code]))
+        }
+      }
+    }, elements)
+  }
+
+  const getAccounts = ({ elements, code }) => {
+    const account = accounts[code]
+    const filterBySecretComponent = R.filter(R.propEq('component', SecretInput))
+    const mapToCode = R.map(R.prop(['code']))
+    const passwordFields = R.compose(
+      mapToCode,
+      filterBySecretComponent
+    )(elements)
+    return R.mapObjIndexed(
+      (value, key) => (R.includes(key, passwordFields) ? '' : value),
+      account
+    )
+  }
+
+  const getValidationSchema = ({ code, getValidationSchema }) =>
+    getValidationSchema(accounts[code])
+
   return (
     <div className={classes.wrapper}>
       <TitleSection title="3rd Party Services" />
@@ -83,9 +115,9 @@ const Services = () => {
                 variables: { accounts: { [editingSchema.code]: it } }
               })
             }
-            elements={editingSchema.elements}
-            validationSchema={editingSchema.validationSchema}
-            value={accounts[editingSchema.code]}
+            elements={getElements(editingSchema)}
+            validationSchema={getValidationSchema(editingSchema)}
+            value={getAccounts(editingSchema)}
           />
         </Modal>
       )}

@@ -30,20 +30,22 @@ export default {
       face: true
     }
   ],
-  validationSchema: Yup.object().shape({
-    apiKey: Yup.string()
-      .max(100, 'Too long')
-      .required('Required'),
-    domain: Yup.string()
-      .max(100, 'Too long')
-      .required('Required'),
-    fromEmail: Yup.string()
-      .max(100, 'Too long')
-      .email('Please input a valid email address')
-      .required('Required'),
-    toEmail: Yup.string()
-      .max(100, 'Too long')
-      .email('Please input a valid email address')
-      .required('Required')
-  })
+  getValidationSchema: () => {
+    return Yup.object().shape({
+      apiKey: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      domain: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      fromEmail: Yup.string()
+        .max(100, 'Too long')
+        .email('Please input a valid email address')
+        .required(),
+      toEmail: Yup.string()
+        .max(100, 'Too long')
+        .email('Please input a valid email address')
+        .required()
+    })
+  }
 }

@@ -1,25 +1,66 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
 import DataTable from 'src/components/tables/DataTable'
-import { H4, Label2 } from 'src/components/typography'
+import { H3, H4, Label1, Label2, P } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit } from 'src/utils/coin'
+import { ifNotNull } from 'src/utils/nullCheck'
 
 import CopyToClipboard from '../../Transactions/CopyToClipboard'
 import mainStyles from '../CustomersList.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-const TransactionsList = ({ data }) => {
+const TransactionsList = ({ customer, data, loading }) => {
   const classes = useStyles()
+  const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
   const hasData = !(R.isEmpty(data) || R.isNil(data))
 
-  const elements = [
+  const summaryElements = [
+    {
+      header: 'Transactions',
+      size: 127,
+      value: ifNotNull(
+        customer.totalTxs,
+        `${Number.parseInt(customer.totalTxs)}`
+      )
+    },
+    {
+      header: 'Transaction volume',
+      size: 167,
+      value: ifNotNull(
+        customer.totalSpent,
+        `${Number.parseFloat(customer.totalSpent)} ${customer.lastTxFiatCode}`
+      )
+    },
+    {
+      header: 'Last active',
+      size: 142,
+      value: ifNotNull(
+        customer.lastActive,
+        moment.utc(customer.lastActive).format('YYYY-MM-D')
+      )
+    },
+    {
+      header: 'Last transaction',
+      size: 198,
+      value: ifNotNull(
+        customer.lastTxFiat,
+        <>
+          <LastTxIcon className={classes.icon} />
+          {`${Number.parseFloat(customer.lastTxFiat)} 
+            ${customer.lastTxFiatCode}`}
+        </>
+      )
+    }
+  ]
+
+  const tableElements = [
     {
       header: 'Direction',
       width: 207,
@@ -30,7 +71,7 @@ const TransactionsList = ({ data }) => {
           ) : (
             <TxInIcon className={classes.txClassIconLeft} />
           )}
-          {it.txClass === 'cashOut' ? 'Cach-out' : 'Cash-in'}
+          {it.txClass === 'cashOut' ? 'Cash-out' : 'Cash-in'}
         </>
       )
     },
@@ -79,16 +120,43 @@ const TransactionsList = ({ data }) => {
 
   return (
     <>
+      <H3>Transactions</H3>
+      <Box display="flex" flexDirection="column">
+        <Box display="flex" mt="auto">
+          {summaryElements.map(({ size, header }, idx) => (
+            <Label1
+              noMargin
+              key={idx}
+              className={classes.label}
+              style={{ width: size }}>
+              {header}
+            </Label1>
+          ))}
+        </Box>
+        <Box display="flex">
+          {summaryElements.map(({ size, value }, idx) => (
+            <P
+              noMargin
+              key={idx}
+              className={classes.value}
+              style={{ width: size }}>
+              {value}
+            </P>
+          ))}
+        </Box>
+      </Box>
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <H4>
-            {hasData
+            {loading
+              ? 'Loading'
+              : hasData
               ? 'All transactions from this customer'
               : 'No transactions so far'}
           </H4>
         </div>
       </div>
-      {hasData && <DataTable elements={elements} data={data} />}
+      {hasData && <DataTable elements={tableElements} data={data} />}
     </>
   )
 }

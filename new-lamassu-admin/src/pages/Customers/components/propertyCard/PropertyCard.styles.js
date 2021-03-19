@@ -1,39 +1,11 @@
-import {
-  white,
-  zircon,
-  mistyRose,
-  tomato,
-  spring3,
-  spring4,
-  comet,
-  fontSize5
-} from 'src/styling/variables'
+import { white, tomato, spring4, comet } from 'src/styling/variables'
 
 const propertyCardStyles = {
-  propertyCard: {
-    margin: [[32, 12, 0, 0]],
-    padding: [[0, 16]],
-    borderRadius: 8
-  },
-  propertyCardPending: {
-    backgroundColor: zircon
-  },
-  propertyCardRejected: {
-    backgroundColor: mistyRose
-  },
-  propertyCardAccepted: {
-    backgroundColor: spring3
-  },
   label1: {
-    fontFamily: 'MuseoSans',
-    fontSize: fontSize5,
-    fontWeight: 500,
-    fontStretch: 'normal',
-    fontStyle: 'normal',
-    lineHeight: 1.33,
-    letterSpacing: 'normal',
-    color: comet,
-    margin: [[4, 0]]
+    display: 'flex',
+    marginBottom: 2,
+    marginTop: 'auto',
+    width: 85
   },
   label1Pending: {
     color: comet
@@ -45,19 +17,32 @@ const propertyCardStyles = {
     color: spring4
   },
   cardActionButton: {
+    display: 'flex',
     height: 28,
+    marginRight: 'auto',
     marginLeft: 12
   },
-  cardProperties: {
+  propertyCardTopRow: {
     display: 'flex',
+    margin: [[0, 10, 5, 0]]
+  },
+  propertyCardBottomRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    height: 45
+  },
+  propertyCard: {
+    display: 'flex',
+    flexDirection: 'column',
     borderRadius: 8,
     width: '100%',
-    height: 'calc(100% - 104px)',
+    height: 100,
     padding: [[20]],
     boxSizing: 'border-box',
     boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.04)',
     border: 'solid 0',
-    backgroundColor: white
+    backgroundColor: white,
+    margin: [[20, 0, 0, 0]]
   },
   rowSpaceBetween: {
     display: 'flex',
@@ -65,11 +50,19 @@ const propertyCardStyles = {
     alignItems: 'center',
     justifyContent: 'space-between'
   },
+  columnSpaceBetween: {
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 90
+  },
   buttonsWrapper: {
     display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 16,
-    marginBottom: 16
+    marginLeft: 'auto',
+    marginTop: 'auto'
   }
 }
 

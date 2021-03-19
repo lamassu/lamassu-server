@@ -207,7 +207,6 @@ lamassu-migrate >> $LOG_FILE 2>&1
 
 decho "Setting up lamassu-admin..."
 ADMIN_REGISTRATION_URL=`lamassu-register admin 2>> $LOG_FILE`
-lamassu-apply-defaults >> $LOG_FILE 2>&1
 
 decho "Setting up backups..."
 BIN=$(npm -g bin)

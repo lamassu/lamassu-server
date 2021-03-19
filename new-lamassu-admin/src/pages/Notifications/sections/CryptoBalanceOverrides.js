@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
@@ -18,6 +19,7 @@ const CryptoBalanceOverrides = ({ section }) => {
     cryptoCurrencies = [],
     data,
     save,
+    error,
     currency,
     isDisabled,
     setEditing
@@ -51,20 +53,39 @@ const CryptoBalanceOverrides = ({ section }) => {
     [HIGH_BALANCE_KEY]: ''
   }
 
+  const notesMin = 0
   const currencyMax = 9999999
-  const validationSchema = Yup.object().shape({
-    [CRYPTOCURRENCY_KEY]: Yup.string().required(),
-    [LOW_BALANCE_KEY]: Yup.number()
-      .integer()
-      .min(0)
-      .max(currencyMax)
-      .required(),
-    [HIGH_BALANCE_KEY]: Yup.number()
-      .integer()
-      .min(0)
-      .max(currencyMax)
-      .required()
-  })
+  const validationSchema = Yup.object().shape(
+    {
+      [CRYPTOCURRENCY_KEY]: Yup.string()
+        .label('Cryptocurrency')
+        .nullable()
+        .required(),
+      [LOW_BALANCE_KEY]: Yup.number()
+        .label('Low Balance')
+        .when(HIGH_BALANCE_KEY, {
+          is: HIGH_BALANCE_KEY => !HIGH_BALANCE_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(currencyMax)
+        .nullable(),
+      [HIGH_BALANCE_KEY]: Yup.number()
+        .label('High Balance')
+        .when(LOW_BALANCE_KEY, {
+          is: LOW_BALANCE_KEY => !LOW_BALANCE_KEY,
+          then: Yup.number().required()
+        })
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(currencyMax)
+        .nullable()
+    },
+    [LOW_BALANCE_KEY, HIGH_BALANCE_KEY]
+  )
 
   const viewCrypto = it =>
     R.compose(
@@ -84,7 +105,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         options: it => R.concat(suggestions, findSuggestion(it)),
         optionsLimit: null,
         valueProp: 'code',
-        getLabel: R.path(['display'])
+        labelProp: 'display'
       }
     },
     {
@@ -115,6 +136,7 @@ const CryptoBalanceOverrides = ({ section }) => {
     <EditableTable
       name={NAME}
       title="Overrides"
+      error={error?.message}
       enableDelete
       enableEdit
       enableCreate

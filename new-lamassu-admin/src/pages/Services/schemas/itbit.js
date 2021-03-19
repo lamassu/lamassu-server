@@ -3,10 +3,12 @@ import * as Yup from 'yup'
 import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
+import secretTest from './helper'
+
 export default {
   code: 'itbit',
-  name: 'Itbit',
-  title: 'Itbit (Exchange)',
+  name: 'itBit',
+  title: 'itBit (Exchange)',
   elements: [
     {
       code: 'userId',
@@ -33,18 +35,20 @@ export default {
       component: SecretInputFormik
     }
   ],
-  validationSchema: Yup.object().shape({
-    userId: Yup.string()
-      .max(100, 'Too long')
-      .required('Required'),
-    walletId: Yup.string()
-      .max(100, 'Too long')
-      .required('Required'),
-    clientKey: Yup.string()
-      .max(100, 'Too long')
-      .required('Required'),
-    clientSecret: Yup.string()
-      .max(100, 'Too long')
-      .required('Required')
-  })
+  getValidationSchema: account => {
+    return Yup.object().shape({
+      userId: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      walletId: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      clientKey: Yup.string()
+        .max(100, 'Too long')
+        .required(),
+      clientSecret: Yup.string()
+        .max(100, 'Too long')
+        .test(secretTest(account?.clientSecret))
+    })
+  }
 }

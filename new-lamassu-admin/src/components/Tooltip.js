@@ -9,6 +9,7 @@ const useStyles = makeStyles({
     border: 'none',
     backgroundColor: 'transparent',
     marginTop: 4,
+    outline: 'none',
     cursor: 'pointer'
   },
   popoverContent: ({ width }) => ({
@@ -17,7 +18,7 @@ const useStyles = makeStyles({
   })
 })
 
-const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
+const usePopperHandler = width => {
   const classes = useStyles({ width })
   const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
 
@@ -31,22 +32,56 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
 
   const helpPopperOpen = Boolean(helpPopperAnchorEl)
 
+  return {
+    classes,
+    helpPopperAnchorEl,
+    helpPopperOpen,
+    handleOpenHelpPopper,
+    handleCloseHelpPopper
+  }
+}
+
+const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
+  const handler = usePopperHandler(width)
+
   return (
-    <ClickAwayListener onClickAway={handleCloseHelpPopper}>
-      <button
-        className={classes.transparentButton}
-        onClick={handleOpenHelpPopper}>
-        <Icon />
+    <ClickAwayListener onClickAway={handler.handleCloseHelpPopper}>
+      <div>
+        <button
+          type="button"
+          className={handler.classes.transparentButton}
+          onClick={handler.handleOpenHelpPopper}>
+          <Icon />
+        </button>
         <Popper
-          open={helpPopperOpen}
-          anchorEl={helpPopperAnchorEl}
-          placement="bottom"
-          onClose={handleCloseHelpPopper}>
-          <div className={classes.popoverContent}>{children}</div>
+          open={handler.helpPopperOpen}
+          anchorEl={handler.helpPopperAnchorEl}
+          placement="bottom">
+          <div className={handler.classes.popoverContent}>{children}</div>
         </Popper>
-      </button>
+      </div>
     </ClickAwayListener>
   )
 })
 
-export default Tooltip
+const HoverableTooltip = memo(({ parentElements, children, width }) => {
+  const handler = usePopperHandler(width)
+
+  return (
+    <div>
+      <div
+        onMouseEnter={handler.handleOpenHelpPopper}
+        onMouseLeave={handler.handleCloseHelpPopper}>
+        {parentElements}
+      </div>
+      <Popper
+        open={handler.helpPopperOpen}
+        anchorEl={handler.helpPopperAnchorEl}
+        placement="bottom">
+        <div className={handler.classes.popoverContent}>{children}</div>
+      </Popper>
+    </div>
+  )
+})
+
+export { Tooltip, HoverableTooltip }

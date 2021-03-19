@@ -7,7 +7,8 @@ import {
   spacer,
   white,
   tableDoubleHeaderHeight,
-  offColor
+  offColor,
+  errorColor
 } from 'src/styling/variables'
 
 const { tl2, p, label1 } = typographyStyles
@@ -71,7 +72,11 @@ export default {
     backgroundColor: tableErrorColor
   },
   mainContent: ({ size }) => {
-    const minHeight = size === 'lg' ? 68 : 48
+    const sizes = {
+      sm: 34,
+      lg: 68
+    }
+    const minHeight = sizes[size] || 48
     return {
       display: 'flex',
       alignItems: 'center',
@@ -97,5 +102,9 @@ export default {
   },
   actionCol: {
     marginLeft: 'auto'
+  },
+  errorContent: {
+    padding: [[12, 0, 12, 24]],
+    color: errorColor
   }
 }

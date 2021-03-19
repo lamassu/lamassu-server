@@ -3,16 +3,15 @@ import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
 import gql from 'graphql-tag'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link } from 'src/components/buttons'
+import { Link, IconButton } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
-import { TextInput, NumberInput } from 'src/components/inputs/formik'
+import { TextInput } from 'src/components/inputs/formik'
 import { P, H4, Info3, Label1, Label2, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
@@ -88,7 +87,7 @@ const Field = ({ editing, field, displayValue, ...props }) => {
 }
 
 const GET_CONFIG = gql`
-  {
+  query getData {
     config
   }
 `
@@ -103,25 +102,19 @@ const styles = R.merge(globalStyles, contactInfoStyles)
 
 const contactUseStyles = makeStyles(styles)
 
-const ContactInfo = () => {
-  const [editing, setEditing] = useState(false)
-  const [info, setInfo] = useState(null)
-  const [locale, setLocale] = useState(null)
+const ContactInfo = ({ wizard }) => {
+  const classes = contactUseStyles()
+
+  const [editing, setEditing] = useState(wizard || false)
   const [error, setError] = useState(null)
+
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: data => {
-      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.saveConfig))
-      setEditing(false)
-    },
+    onCompleted: () => setEditing(false),
+    refetchQueries: () => ['getData'],
     onError: e => setError(e)
   })
 
-  useQuery(GET_CONFIG, {
-    onCompleted: data => {
-      setInfo(fromNamespace(namespaces.OPERATOR_INFO, data.config))
-      setLocale(fromNamespace(namespaces.LOCALE, data.config))
-    }
-  })
+  const { data } = useQuery(GET_CONFIG)
 
   const save = it => {
     return saveConfig({
@@ -129,25 +122,20 @@ const ContactInfo = () => {
     })
   }
 
-  const classes = contactUseStyles()
+  const info =
+    data?.config && fromNamespace(namespaces.OPERATOR_INFO, data.config)
 
   if (!info) return null
 
   const validationSchema = Yup.object().shape({
     active: Yup.boolean(),
     name: Yup.string(),
-    phone: Yup.string().test(
-      'phone',
-      'Please enter a valid phone number',
-      function(phone) {
-        return parsePhoneNumberFromString(phone, locale.country).isValid()
-      }
-    ),
+    phone: Yup.string(),
     email: Yup.string()
       .email('Please enter a valid email address')
       .required(),
     website: Yup.string(),
-    companyNumber: Yup.number()
+    companyNumber: Yup.string()
   })
 
   const fields = [
@@ -160,14 +148,8 @@ const ContactInfo = () => {
     {
       name: 'phone',
       label: 'Phone number',
-      value:
-        info.phone && locale.country
-          ? parsePhoneNumberFromString(
-              info.phone,
-              locale.country
-            ).formatInternational()
-          : '',
-      component: NumberInput
+      value: info.phone,
+      component: TextInput
     },
     {
       name: 'email',
@@ -185,7 +167,7 @@ const ContactInfo = () => {
       name: 'companyNumber',
       label: 'Company number',
       value: info.companyNumber ?? '',
-      component: NumberInput
+      component: TextInput
     }
   ]
 
@@ -198,7 +180,7 @@ const ContactInfo = () => {
     initialValues: {
       active: info.active,
       name: findValue('name'),
-      phone: info.phone ?? '',
+      phone: findValue('phone'),
       email: findValue('email'),
       website: findValue('website'),
       companyNumber: findValue('companyNumber')
@@ -228,14 +210,16 @@ const ContactInfo = () => {
         <div className={classes.rowWrapper}>
           <H4>Info card</H4>
           {!editing && (
-            <div className={classes.transparentButton}>
-              <button onClick={() => setEditing(true)}>
-                <EditIcon />
-              </button>
-            </div>
+            <IconButton
+              className={classes.transparentButton}
+              onClick={() => setEditing(true)}>
+              <EditIcon />
+            </IconButton>
           )}
         </div>
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           enableReinitialize
           initialValues={form.initialValues}
           validationSchema={validationSchema}
@@ -302,14 +286,16 @@ const ContactInfo = () => {
           </Form>
         </Formik>
       </div>
-      <div className={classnames(classes.section, classes.infoMessage)}>
-        <WarningIcon />
-        <Label1>
-          Sharing your information with your customers through your machines
-          allows them to contact you in case there's a problem with a machine in
-          your network or a transaction.
-        </Label1>
-      </div>
+      {!wizard && (
+        <div className={classnames(classes.section, classes.infoMessage)}>
+          <WarningIcon />
+          <Label1>
+            Sharing your information with your customers through your machines
+            allows them to contact you in case there's a problem with a machine
+            in your network or a transaction.
+          </Label1>
+        </div>
+      )}
     </>
   )
 }

@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { TL2 } from 'src/components/typography'
+import { transformNumber } from 'src/utils/number'
 
 import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
 import NotificationsCtx from '../NotificationsContext'
@@ -19,6 +20,7 @@ const NAME = 'fiatBalanceAlerts'
 
 const FiatBalance = ({
   section,
+  min = 0,
   max = Number.MAX_SAFE_INTEGER,
   fieldWidth = 80
 }) => {
@@ -31,15 +33,17 @@ const FiatBalance = ({
 
   const schema = Yup.object().shape({
     fiatBalanceCassette1: Yup.number()
+      .transform(transformNumber)
       .integer()
-      .min(0)
+      .min(min)
       .max(max)
-      .required(),
+      .nullable(),
     fiatBalanceCassette2: Yup.number()
+      .transform(transformNumber)
       .integer()
-      .min(0)
+      .min(min)
       .max(max)
-      .required()
+      .nullable()
   })
 
   const fiatBalanceCassette1Percent =
@@ -49,6 +53,8 @@ const FiatBalance = ({
 
   return (
     <Formik
+      validateOnBlur={false}
+      validateOnChange={false}
       enableReinitialize
       initialValues={{
         fiatBalanceCassette1: data?.fiatBalanceCassette1 ?? '',
@@ -70,7 +76,12 @@ const FiatBalance = ({
         <div className={classes.wrapper}>
           <div className={classes.first}>
             <div className={classes.row}>
-              <Cashbox percent={fiatBalanceCassette1Percent} cashOut />
+              <Cashbox
+                labelClassName={classes.cashboxLabel}
+                emptyPartClassName={classes.cashboxEmptyPart}
+                percent={fiatBalanceCassette1Percent}
+                cashOut
+              />
               <div className={classes.col2}>
                 <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
                 <EditableNumber
@@ -85,7 +96,12 @@ const FiatBalance = ({
             </div>
           </div>
           <div className={classes.row}>
-            <Cashbox percent={fiatBalanceCassette2Percent} cashOut />
+            <Cashbox
+              labelClassName={classes.cashboxLabel}
+              emptyPartClassName={classes.cashboxEmptyPart}
+              percent={fiatBalanceCassette2Percent}
+              cashOut
+            />
             <div className={classes.col2}>
               <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
               <EditableNumber

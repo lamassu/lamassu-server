@@ -1,174 +1,384 @@
-import { useMutation } from '@apollo/react-hooks'
-import { Dialog, DialogContent } from '@material-ui/core'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { Grid /*, Divider */ } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
 
-import { DialogTitle, ConfirmDialog } from 'src/components/ConfirmDialog'
-import { Status } from 'src/components/Status'
+import { ConfirmDialog } from 'src/components/ConfirmDialog'
+// import { Status } from 'src/components/Status'
 import ActionButton from 'src/components/buttons/ActionButton'
-import { Label1, H4 } from 'src/components/typography'
+import { ReactComponent as EditReversedIcon } from 'src/styling/icons/button/edit/white.svg'
+import { ReactComponent as EditIcon } from 'src/styling/icons/button/edit/zodiac.svg'
+// import { ReactComponent as LinkIcon } from 'src/styling/icons/button/link/zodiac.svg'
 import { ReactComponent as RebootReversedIcon } from 'src/styling/icons/button/reboot/white.svg'
 import { ReactComponent as RebootIcon } from 'src/styling/icons/button/reboot/zodiac.svg'
+import { ReactComponent as ShutdownReversedIcon } from 'src/styling/icons/button/shut down/white.svg'
+import { ReactComponent as ShutdownIcon } from 'src/styling/icons/button/shut down/zodiac.svg'
 import { ReactComponent as UnpairReversedIcon } from 'src/styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zodiac.svg'
 
-import styles from './MachineDetailsCard.styles'
+import { labelStyles, machineDetailsStyles } from './MachineDetailsCard.styles'
 
 const MACHINE_ACTION = gql`
-  mutation MachineAction($deviceId: ID!, $action: MachineAction!) {
-    machineAction(deviceId: $deviceId, action: $action) {
+  mutation MachineAction(
+    $deviceId: ID!
+    $action: MachineAction!
+    $newName: String
+  ) {
+    machineAction(deviceId: $deviceId, action: $action, newName: $newName) {
       deviceId
     }
   }
 `
 
-const useStyles = makeStyles(styles)
+const MACHINE = gql`
+  query getMachine($deviceId: ID!) {
+    machine(deviceId: $deviceId) {
+      latestEvent {
+        note
+      }
+    }
+  }
+`
 
-const Label = ({ children }) => {
-  const classes = useStyles()
-  return <Label1 className={classes.label}>{children}</Label1>
+// const supportArtices = [
+//   {
+//     // Default article for non-maped statuses
+//     code: undefined,
+//     label: 'Troubleshooting',
+//     article:
+//       'https://support.lamassu.is/hc/en-us/categories/115000075249-Troubleshooting'
+//   }
+//   // TODO add Stuck and Fully Functional statuses articles for the new-admins
+// ]
+
+const isStaticState = machineState => {
+  if (!machineState) {
+    return true
+  }
+  const staticStates = [
+    'chooseCoin',
+    'idle',
+    'pendingIdle',
+    'dualIdle',
+    'networkDown',
+    'unpaired',
+    'maintenance',
+    'virgin',
+    'wifiList'
+  ]
+  return staticStates.includes(machineState)
 }
 
-const MachineDetailsRow = ({ it: machine }) => {
-  const [errorDialog, setErrorDialog] = useState(false)
-  const [dialogOpen, setOpen] = useState(false)
-  const [actionMessage, setActionMessage] = useState(null)
-  const classes = useStyles()
+// const article = ({ code: status }) =>
+//   supportArtices.find(({ code: article }) => article === status)
 
-  const unpairDialog = () => setOpen(true)
+const useLStyles = makeStyles(labelStyles)
+
+const Label = ({ children }) => {
+  const classes = useLStyles()
+
+  return <div className={classes.label}>{children}</div>
+}
+
+const useMDStyles = makeStyles(machineDetailsStyles)
+
+const Container = ({ children, ...props }) => (
+  <Grid container spacing={4} {...props}>
+    {children}
+  </Grid>
+)
+
+const Item = ({ children, ...props }) => (
+  <Grid item xs {...props}>
+    {children}
+  </Grid>
+)
+
+const getState = machineEventsLazy =>
+  JSON.parse(machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}')
+    .state
+
+const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
+  const [action, setAction] = useState({ command: null })
+  const [errorMessage, setErrorMessage] = useState(null)
+  const classes = useMDStyles()
+
+  const warningMessage = (
+    <span className={classes.warning}>
+      A user may be in the middle of a transaction and they could lose their
+      funds if you continue.
+    </span>
+  )
+
+  const [fetchMachineEvents, { loading: loadingEvents }] = useLazyQuery(
+    MACHINE,
+    {
+      variables: {
+        deviceId: machine.deviceId
+      },
+      onCompleted: machineEventsLazy => {
+        const message = !isStaticState(getState(machineEventsLazy))
+          ? warningMessage
+          : null
+        setAction(action => ({ ...action, message }))
+      }
+    }
+  )
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
-    onError: ({ graphQLErrors, message }) => {
-      const errorMessage = graphQLErrors[0] ? graphQLErrors[0].message : message
-      setActionMessage(errorMessage)
-      setErrorDialog(true)
+    onError: ({ message }) => {
+      const errorMessage = message ?? 'An error ocurred'
+      setErrorMessage(errorMessage)
+    },
+    onCompleted: () => {
+      onActionSuccess && onActionSuccess()
+      setAction({ command: null })
     }
   })
 
+  const confirmDialogOpen = Boolean(action.command)
+  const disabled = !!(action?.command === 'restartServices' && loadingEvents)
+
   return (
-    <>
-      <Dialog open={errorDialog} aria-labelledby="form-dialog-title">
-        <DialogTitle
-          id="customized-dialog-title"
-          onClose={() => setErrorDialog(false)}>
-          <H4>Error</H4>
-        </DialogTitle>
-        <DialogContent>{actionMessage}</DialogContent>
-      </Dialog>
-      <div className={classes.wrapper}>
-        <div className={classes.column1}>
-          <div className={classes.lastRow}>
-            <div className={classes.status}>
-              <Label>Statuses</Label>
-              <div>
-                {machine.statuses.map((status, index) => (
-                  <Status
-                    className={classes.chips}
-                    status={status}
-                    key={index}
-                  />
+    <Container className={classes.wrapper}>
+      {/* <Item xs={5}>
+        <Container>
+          <Item>
+            <Label>Statuses</Label>
+            <ul className={classes.list}>
+              {machine.statuses.map((status, index) => (
+                <li className={classes.item} key={index}>
+                  <Status status={status} />
+                </li>
+              ))}
+            </ul>
+          </Item>
+          <Item>
+            <Label>Lamassu Support article</Label>
+            <ul className={classes.list}>
+              {machine.statuses
+                .map(article)
+                .map(({ label, article }, index) => (
+                  <li className={classes.item} key={index}>
+                    <a
+                      className={classes.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={article}>
+                      '{label}' <LinkIcon />
+                    </a>
+                  </li>
                 ))}
-              </div>
+            </ul>
+          </Item>
+        </Container>
+      </Item>
+      <Divider
+        orientation="vertical"
+        flexItem
+        className={classes.separator}
+      /> */}
+      <ConfirmDialog
+        disabled={disabled}
+        open={confirmDialogOpen}
+        title={`${action?.display} this machine?`}
+        errorMessage={errorMessage}
+        toBeConfirmed={machine.name}
+        message={action?.message}
+        confirmationMessage={action?.confirmationMessage}
+        saveButtonAlwaysEnabled={action?.command === 'rename'}
+        onConfirmed={value => {
+          setErrorMessage(null)
+          machineAction({
+            variables: {
+              deviceId: machine.deviceId,
+              action: `${action?.command}`,
+              ...(action?.command === 'rename' && { newName: value })
+            }
+          })
+        }}
+        onDissmised={() => {
+          setAction({ command: null })
+          setErrorMessage(null)
+        }}
+      />
+      <Item xs>
+        <Container className={classes.row}>
+          <Item xs={2}>
+            <Label>Machine Model</Label>
+            <span>{machine.model}</span>
+          </Item>
+          <Item xs={4}>
+            <Label>Paired at</Label>
+            <span>
+              {moment(machine.pairedAt).format('YYYY-MM-DD HH:mm:ss')}
+            </span>
+          </Item>
+          <Item xs={6}>
+            <Label>Actions</Label>
+            <div className={classes.stack}>
+              <ActionButton
+                className={classes.mr}
+                disabled={loading}
+                color="primary"
+                Icon={EditIcon}
+                InverseIcon={EditReversedIcon}
+                onClick={() =>
+                  setAction({
+                    command: 'rename',
+                    display: 'Rename',
+                    confirmationMessage: 'Write the new name for this machine'
+                  })
+                }>
+                Rename
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.mr}
+                Icon={UnpairIcon}
+                InverseIcon={UnpairReversedIcon}
+                disabled={loading}
+                onClick={() =>
+                  setAction({
+                    command: 'unpair',
+                    display: 'Unpair'
+                  })
+                }>
+                Unpair
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.mr}
+                Icon={RebootIcon}
+                InverseIcon={RebootReversedIcon}
+                disabled={loading}
+                onClick={() =>
+                  setAction({
+                    command: 'reboot',
+                    display: 'Reboot'
+                  })
+                }>
+                Reboot
+              </ActionButton>
+              <ActionButton
+                className={classes.mr}
+                disabled={loading}
+                color="primary"
+                Icon={ShutdownIcon}
+                InverseIcon={ShutdownReversedIcon}
+                onClick={() =>
+                  setAction({
+                    command: 'shutdown',
+                    display: 'Shutdown',
+                    message:
+                      'In order to bring it back online, the machine will need to be visited and its power reset.'
+                  })
+                }>
+                Shutdown
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.inlineChip}
+                Icon={RebootIcon}
+                InverseIcon={RebootReversedIcon}
+                disabled={loading}
+                onClick={() => {
+                  fetchMachineEvents()
+                  setAction({
+                    command: 'restartServices',
+                    display: 'Restart services for'
+                  })
+                }}>
+                Restart Services
+              </ActionButton>
             </div>
-            <div>
-              <Label>Lamassu Support article</Label>
-              <div>
-                {machine.statuses.map((...[, index]) => (
-                  // TODO support articles
-                  <span key={index}></span>
-                ))}
-              </div>
+          </Item>
+        </Container>
+        {/* <Container>
+          <Item>
+            <Label>Actions</Label>
+            <div className={classes.stack}>
+              <ActionButton
+                className={classes.mr}
+                disabled={loading}
+                color="primary"
+                Icon={EditIcon}
+                InverseIcon={EditReversedIcon}
+                onClick={() =>
+                  setAction({
+                    command: 'rename',
+                    display: 'Rename',
+                    confirmationMessage: 'Write the new name for this machine'
+                  })
+                }>
+                Rename
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.mr}
+                Icon={UnpairIcon}
+                InverseIcon={UnpairReversedIcon}
+                disabled={loading}
+                onClick={() =>
+                  setAction({
+                    command: 'unpair',
+                    display: 'Unpair'
+                  })
+                }>
+                Unpair
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.mr}
+                Icon={RebootIcon}
+                InverseIcon={RebootReversedIcon}
+                disabled={loading}
+                onClick={() =>
+                  setAction({
+                    command: 'reboot',
+                    display: 'Reboot'
+                  })
+                }>
+                Reboot
+              </ActionButton>
+              <ActionButton
+                className={classes.mr}
+                disabled={loading}
+                color="primary"
+                Icon={ShutdownIcon}
+                InverseIcon={ShutdownReversedIcon}
+                onClick={() =>
+                  setAction({
+                    command: 'shutdown',
+                    display: 'Shutdown',
+                    message:
+                      'In order to bring it back online, the machine will need to be visited and its power reset.'
+                  })
+                }>
+                Shutdown
+              </ActionButton>
+              <ActionButton
+                color="primary"
+                className={classes.inlineChip}
+                Icon={RebootIcon}
+                InverseIcon={RebootReversedIcon}
+                disabled={loading}
+                onClick={() => {
+                  fetchMachineEvents()
+                  setAction({
+                    command: 'restartServices',
+                    display: 'Restart services for'
+                  })
+                }}>
+                Restart Services
+              </ActionButton>
             </div>
-            <div className={classes.separator} />
-          </div>
-        </div>
-        <div className={classes.column2}>
-          <div className={classes.row}>
-            <div className={classes.machineModel}>
-              <Label>Machine Model</Label>
-              <div>{machine.model ?? 'unknown'}</div>
-            </div>
-            <div>
-              <Label>Paired at</Label>
-              <div>
-                {machine.pairedAt
-                  ? moment(machine.pairedAt).format('YYYY-MM-DD HH:mm:ss')
-                  : 'N/A'}
-              </div>
-            </div>
-          </div>
-          <div className={classes.lastRow}>
-            <div>
-              <Label>Actions</Label>
-              <div className={classes.actionRow}>
-                <ActionButton
-                  className={classes.action}
-                  color="primary"
-                  Icon={UnpairIcon}
-                  InverseIcon={UnpairReversedIcon}
-                  disabled={loading}
-                  onClick={unpairDialog}>
-                  Unpair
-                </ActionButton>
-                <ConfirmDialog
-                  open={dialogOpen}
-                  className={classes.dialog}
-                  title="Unpair this machine?"
-                  subtitle={false}
-                  toBeConfirmed={machine.name}
-                  onConfirmed={() => {
-                    setOpen(false)
-                    machineAction({
-                      variables: {
-                        deviceId: machine.deviceId,
-                        action: 'unpair'
-                      }
-                    })
-                  }}
-                  onDissmised={() => {
-                    setOpen(false)
-                  }}
-                />
-                <ActionButton
-                  className={classes.action}
-                  color="primary"
-                  Icon={RebootIcon}
-                  InverseIcon={RebootReversedIcon}
-                  disabled={loading}
-                  onClick={() => {
-                    machineAction({
-                      variables: {
-                        deviceId: machine.deviceId,
-                        action: 'reboot'
-                      }
-                    })
-                  }}>
-                  Reboot
-                </ActionButton>
-                <ActionButton
-                  className={classes.action}
-                  disabled={loading}
-                  color="primary"
-                  Icon={RebootIcon}
-                  InverseIcon={RebootReversedIcon}
-                  onClick={() => {
-                    machineAction({
-                      variables: {
-                        deviceId: machine.deviceId,
-                        action: 'restartServices'
-                      }
-                    })
-                  }}>
-                  Restart Services
-                </ActionButton>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+          </Item>
+        </Container> */}
+      </Item>
+    </Container>
   )
 }
 

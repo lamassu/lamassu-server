@@ -10,7 +10,9 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import Wizard from 'src/pages/Wallet/Wizard'
+import { WalletSchema } from 'src/pages/Wallet/helper'
+import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { styles } from './Locales.styles'
 import {
@@ -27,6 +29,13 @@ const useStyles = makeStyles(styles)
 const GET_DATA = gql`
   query getData {
     config
+    accounts
+    accountsConfig {
+      code
+      display
+      class
+      cryptos
+    }
     currencies {
       code
       display
@@ -89,40 +98,75 @@ const FiatCurrencyChangeAlert = ({ open, close, save }) => {
 }
 
 const Locales = ({ name: SCREEN_KEY }) => {
+  const [wizard, setWizard] = useState(false)
+  const [onChangeFunction, setOnChangeFunction] = useState(null)
+  const [error, setError] = useState(null)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+    onCompleted: () => setWizard(false),
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
   })
 
   const [dataToSave, setDataToSave] = useState(null)
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const wallets = data?.config && fromNamespace(namespaces.WALLETS)(data.config)
 
+  const accountsConfig = data?.accountsConfig
+  const accounts = data?.accounts ?? []
+  const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const locale = config && !R.isEmpty(config) ? config : localeDefaults
   const localeOverrides = locale.overrides ?? []
 
   const handleSave = it => {
     const newConfig = toNamespace(SCREEN_KEY)(it.locale[0])
 
-    if (newConfig.locale_fiatCurrency !== config.fiatCurrency)
-      setDataToSave(newConfig)
-    else save(newConfig)
+    if (
+      config.fiatCurrency &&
+      newConfig.locale_fiatCurrency !== config.fiatCurrency
+    )
+      return setDataToSave(newConfig)
+
+    return save(newConfig)
   }
 
   const save = config => {
     setDataToSave(null)
-    saveConfig({ variables: { config } })
+    return saveConfig({ variables: { config } })
   }
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
+    setError(null)
     return saveConfig({ variables: { config } })
+  }
+
+  const onChangeCoin = (prev, curr, setValue) => {
+    const coin = R.difference(curr, prev)[0]
+    if (!coin) return setValue(curr)
+
+    const namespaced = fromNamespace(coin)(wallets)
+    if (!WalletSchema.isValidSync(namespaced)) {
+      setOnChangeFunction(() => () => setValue(curr))
+      setWizard(coin)
+      return
+    }
+
+    setValue(curr)
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
+
+  const wizardSave = it =>
+    save(toNamespace(namespaces.WALLETS)(it)).then(it => {
+      onChangeFunction()
+      setOnChangeFunction(null)
+      return it
+    })
 
   return (
     <>
@@ -135,6 +179,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
       <Section>
         <EditableTable
           title="Default settings"
+          error={error?.message}
           titleLg
           name="locale"
           enableEdit
@@ -142,13 +187,14 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={handleSave}
           validationSchema={LocaleSchema}
           data={R.of(locale)}
-          elements={mainFields(data)}
+          elements={mainFields(data, onChangeCoin)}
           setEditing={onEditingDefault}
           forceDisable={isEditingOverrides}
         />
       </Section>
       <Section>
         <EditableTable
+          error={error?.message}
           title="Overrides"
           titleLg
           name="overrides"
@@ -159,7 +205,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={saveOverrides}
           validationSchema={OverridesSchema}
           data={localeOverrides ?? []}
-          elements={overrides(data, localeOverrides)}
+          elements={overrides(data, localeOverrides, onChangeCoin)}
           disableAdd={R.compose(R.isEmpty, R.difference)(
             data?.machines.map(m => m.deviceId) ?? [],
             localeOverrides?.map(o => o.machine) ?? []
@@ -168,6 +214,18 @@ const Locales = ({ name: SCREEN_KEY }) => {
           forceDisable={isEditingDefault}
         />
       </Section>
+      {wizard && (
+        <Wizard
+          coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
+          onClose={() => setWizard(false)}
+          save={wizardSave}
+          error={error?.message}
+          cryptoCurrencies={cryptoCurrencies}
+          userAccounts={data?.config?.accounts}
+          accounts={accounts}
+          accountsConfig={accountsConfig}
+        />
+      )}
     </>
   )
 }

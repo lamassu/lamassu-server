@@ -1,5 +1,4 @@
 import { makeStyles, Box } from '@material-ui/core'
-// import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
@@ -10,8 +9,6 @@ import {
 } from 'src/pages/Customers/components/propertyCard'
 import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
 import { URI } from 'src/utils/apollo'
-
-// import Field from './Field'
 
 const useStyles = makeStyles({
   idCardPhotoCard: {
@@ -32,8 +29,7 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
 
   return (
     <PropertyCard
-      className={classes.idCardPhotoCard}
-      title={'ID card photo'}
+      title={'ID photo'}
       state={R.path(['idCardPhotoOverride'])(customerData)}
       authorize={() =>
         updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED })
@@ -51,13 +47,6 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
         ) : (
           <CrossedCameraIcon />
         )}
-        {/* <Field
-          className={classes.field}
-          label={'Expiration date'}
-          display={moment
-            .utc(R.path(['idCardDataExpiration'])(customerData))
-            .format('YYYY-MM-D')}
-        /> */}
       </Box>
     </PropertyCard>
   )

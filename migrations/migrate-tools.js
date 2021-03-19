@@ -1,7 +1,7 @@
 const pgp = require('pg-promise')()
 const _ = require('lodash/fp')
 
-const settingsLoader = require('../lib/settings-loader')
+const settingsLoader = require('../lib/admin/settings-loader')
 const machineLoader = require('../lib/machine-loader')
 
 module.exports = {migrateNames}

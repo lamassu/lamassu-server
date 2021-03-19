@@ -7,7 +7,6 @@ import { comet } from 'src/styling/variables'
 
 const useStyles = makeStyles({
   field: {
-    width: 144,
     height: 46
   },
   label: {
@@ -23,11 +22,13 @@ const useStyles = makeStyles({
   }
 })
 
-const Field = memo(({ label, display, className }) => {
+const Field = memo(({ label, display, size, className }) => {
   const classes = useStyles()
 
   return (
-    <div className={classnames(classes.field, className)}>
+    <div
+      className={classnames(classes.field, className)}
+      style={{ width: size }}>
       <Label1 className={classes.label}>{label}</Label1>
       <Info3 className={classes.value}>{display}</Info3>
     </div>

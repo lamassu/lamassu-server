@@ -2,51 +2,50 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   makeStyles
 } from '@material-ui/core'
-import React, { useEffect, useState, memo } from 'react'
+import React, { memo, useState } from 'react'
 
 import { Button, IconButton } from 'src/components/buttons'
+import { TextInput } from 'src/components/inputs'
+import { H4, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
-import { fontSize3 } from 'src/styling/variables'
+import { spacer } from 'src/styling/variables'
 
-import { TextInput } from './inputs'
-import { H4, P } from './typography'
+import ErrorMessage from './ErrorMessage'
 
 const useStyles = makeStyles({
-  label: {
-    fontSize: fontSize3
+  dialogContent: {
+    width: 434,
+    padding: spacer * 2,
+    paddingRight: spacer * 3.5
   },
-  spacing: {
-    padding: 32
+  dialogTitle: {
+    padding: spacer * 2,
+    paddingRight: spacer * 1.5,
+    display: 'flex',
+    'justify-content': 'space-between',
+    '& > h4': {
+      margin: 0
+    },
+    '& > button': {
+      padding: 0,
+      marginTop: -(spacer / 2)
+    }
   },
-  wrapper: {
-    display: 'flex'
-  },
-  title: {
-    margin: [[20, 0, 24, 16]]
-  },
-  closeButton: {
-    padding: 0,
-    margin: [[12, 12, 'auto', 'auto']]
-    // position: 'absolute',
-    // right: spacer,
-    // top: spacer
+  dialogActions: {
+    padding: spacer * 4,
+    paddingTop: spacer * 2
   }
 })
 
 export const DialogTitle = ({ children, onClose }) => {
   const classes = useStyles()
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.dialogTitle}>
       {children}
       {onClose && (
-        <IconButton
-          size={16}
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={onClose}>
+        <IconButton size={16} aria-label="close" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       )}
@@ -57,54 +56,72 @@ export const DialogTitle = ({ children, onClose }) => {
 export const ConfirmDialog = memo(
   ({
     title = 'Confirm action',
-    subtitle = 'This action requires confirmation',
+    errorMessage = 'This action requires confirmation',
     open,
     toBeConfirmed,
+    saveButtonAlwaysEnabled = false,
+    message,
+    confirmationMessage = `Write '${toBeConfirmed}' to confirm this action`,
     onConfirmed,
     onDissmised,
-    className,
+    initialValue = '',
+    disabled = false,
     ...props
   }) => {
     const classes = useStyles()
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState(initialValue)
     const [error, setError] = useState(false)
-    useEffect(() => setValue(''), [open])
-    const handleChange = event => {
-      setValue(event.target.value)
+    const handleChange = event => setValue(event.target.value)
+
+    const innerOnClose = () => {
+      setValue('')
+      setError(false)
+      onDissmised()
     }
+
+    const isOnErrorState =
+      (!saveButtonAlwaysEnabled && toBeConfirmed !== value) || value === ''
 
     return (
       <Dialog open={open} aria-labelledby="form-dialog-title" {...props}>
-        <DialogTitle id="customized-dialog-title" onClose={onDissmised}>
-          <H4 className={classes.title}>{title}</H4>
-          {subtitle && (
-            <DialogContentText>
-              <P>{subtitle}</P>
-            </DialogContentText>
-          )}
+        <DialogTitle id="customized-dialog-title" onClose={innerOnClose}>
+          <H4>{title}</H4>
         </DialogTitle>
-        <DialogContent className={className}>
+        {errorMessage && (
+          <DialogTitle>
+            <ErrorMessage>
+              {errorMessage.split(':').map(error => (
+                <>
+                  {error}
+                  <br />
+                </>
+              ))}
+            </ErrorMessage>
+          </DialogTitle>
+        )}
+        <DialogContent className={classes.dialogContent}>
+          {message && <P>{message}</P>}
           <TextInput
-            label={`Write '${toBeConfirmed}' to confirm`}
+            disabled={disabled}
+            label={confirmationMessage}
             name="confirm-input"
             autoFocus
             id="confirm-input"
             type="text"
-            size="lg"
+            size="sm"
             fullWidth
             value={value}
             touched={{}}
             error={error}
-            InputLabelProps={{ shrink: true, className: classes.label }}
+            InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            onBlur={() => setError(toBeConfirmed !== value)}
           />
         </DialogContent>
-        <DialogActions classes={{ spacing: classes.spacing }}>
+        <DialogActions className={classes.dialogActions}>
           <Button
             color="green"
-            disabled={toBeConfirmed !== value}
-            onClick={onConfirmed}>
+            disabled={isOnErrorState}
+            onClick={() => onConfirmed(value)}>
             Confirm
           </Button>
         </DialogActions>

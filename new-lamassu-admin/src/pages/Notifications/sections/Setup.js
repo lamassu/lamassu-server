@@ -66,16 +66,20 @@ const Row = ({ namespace, forceDisable }) => {
 const useStyles = makeStyles({
   mainTable: {
     width
+  },
+  wizardTable: {
+    width: 930
   }
 })
-const Setup = ({ forceDisable }) => {
+const Setup = ({ wizard, forceDisable }) => {
+  const widthAdjust = wizard ? 20 : 0
   const classes = useStyles()
   return (
-    <Table className={classes.mainTable}>
+    <Table className={wizard ? classes.wizardTable : classes.mainTable}>
       <THead>
-        <Th width={channelSize}>Channel</Th>
+        <Th width={channelSize - widthAdjust}>Channel</Th>
         {Object.keys(sizes).map(it => (
-          <Th key={it} width={sizes[it]} textAlign="center">
+          <Th key={it} width={sizes[it] - widthAdjust} textAlign="center">
             {startCase(it)}
           </Th>
         ))}
@@ -83,6 +87,7 @@ const Setup = ({ forceDisable }) => {
       <TBody>
         <Row namespace="email" forceDisable={forceDisable} />
         <Row namespace="sms" forceDisable={forceDisable} />
+        <Row namespace="notificationCenter" forceDisable={forceDisable} />
       </TBody>
     </Table>
   )

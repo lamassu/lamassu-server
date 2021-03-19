@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core'
 import { Formik, Form, Field } from 'formik'
-import * as R from 'ramda'
 import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
@@ -39,11 +38,13 @@ const WizardStep = ({
     <div className={classes.content}>
       <div className={classes.titleDiv}>
         <Info2 className={classes.title}>{name}</Info2>
-        <Stepper steps={3} currentStep={step} />
+        <Stepper steps={4} currentStep={step} />
       </div>
 
-      {!lastStep && (
+      {step <= 2 && (
         <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
           onSubmit={onContinue}
           initialValues={{ top: '', bottom: '' }}
           enableReinitialize
@@ -71,7 +72,7 @@ const WizardStep = ({
                           name={type}
                           options={options}
                           valueProp={'code'}
-                          getLabel={R.path(['display'])}></Field>
+                          labelProp={'display'}></Field>
                         <Info1 noMargin className={classes.suffix}>
                           {fiatCurrency}
                         </Info1>
@@ -94,22 +95,61 @@ const WizardStep = ({
         </Formik>
       )}
 
+      {step === 3 && (
+        <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
+          onSubmit={onContinue}
+          initialValues={{ zeroConfLimit: '' }}
+          enableReinitialize
+          validationSchema={steps[step - 1].schema}>
+          <Form>
+            <div className={classes.thirdStepHeader}>
+              <div className={classes.step}>
+                <H4 className={classes.edit}>Edit 0-conf Limit</H4>
+
+                <Label1>Choose a limit</Label1>
+                <div className={classes.bill}>
+                  <Field
+                    className={classes.billInput}
+                    type="text"
+                    size="lg"
+                    autoFocus={true}
+                    component={NumberInput}
+                    fullWidth
+                    decimalPlaces={0}
+                    name={steps[step - 1].type}
+                  />
+                  <Info1 noMargin className={classes.suffix}>
+                    {fiatCurrency}
+                  </Info1>
+                </div>
+              </div>
+            </div>
+
+            <Button className={classes.submit} type="submit">
+              {label}
+            </Button>
+          </Form>
+        </Formik>
+      )}
+
       {lastStep && (
         <div className={classes.disclaimer}>
-          <Info2 className={classes.title}>Cashout Bill Count</Info2>
+          <Info2 className={classes.title}>Cash-out Bill Count</Info2>
           <P>
             <WarningIcon className={classes.disclaimerIcon} />
-            When enabling cash out, your bill count will be automatically set to
-            zero. Make sure you physically put cash inside the cashboxes to
+            When enabling cash-out, your bill count will be automatically set to
+            zero. Make sure you physically put cash inside the cash cassettes to
             allow the machine to dispense it to your users. If you already did,
-            make sure you set the correct cash out bill count for this machine
-            on your Cashboxes tab under Maintenance.
+            make sure you set the correct cash-out bill count for this machine
+            on your Cash Cassettes tab under Maintenance.
           </P>
 
           <Info2 className={classes.title}>Default Commissions</Info2>
           <P>
             <WarningIcon className={classes.disclaimerIcon} />
-            When enabling cash out, default commissions will be set. To change
+            When enabling cash-out, default commissions will be set. To change
             commissions for this machine, please go to the Commissions tab under
             Settings where you can set exceptions for each of the available
             cryptocurrencies.
