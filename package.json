@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "7.4.10",
+  "version": "7.4.11",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
@@ -81,7 +81,6 @@
     "lamassu-cancel": "./bin/lamassu-cancel",
     "lamassu-nuke-db": "./bin/lamassu-nuke-db",
     "lamassu-coins": "./bin/lamassu-coins",
-    "lamassu-update": "./bin/lamassu-update",
     "lamassu-ofac-update": "./bin/lamassu-ofac-update",
     "lamassu-send-coins": "./bin/lamassu-send-coins",
     "lamassu-update-to-mnemonic": "./bin/lamassu-update-to-mnemonic",
