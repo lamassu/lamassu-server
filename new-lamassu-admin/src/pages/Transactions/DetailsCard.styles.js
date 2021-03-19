@@ -74,6 +74,12 @@ export default {
   address: {
     width: 280
   },
+  downloadRawLogs: {
+    width: 180
+  },
+  status: {
+    width: 230
+  },
   transactionId: {
     width: 280
   },

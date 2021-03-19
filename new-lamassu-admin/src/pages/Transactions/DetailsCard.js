@@ -1,10 +1,15 @@
+import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
+import FileSaver from 'file-saver'
+import gql from 'graphql-tag'
+import JSZip from 'jszip'
 import moment from 'moment'
+import * as R from 'ramda'
 import React, { memo } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { IDButton } from 'src/components/buttons'
+import { IDButton, ActionButton } from 'src/components/buttons'
 import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
 import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
@@ -12,6 +17,7 @@ import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone
 import { ReactComponent as PhoneIdIcon } from 'src/styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as CamIdInverseIcon } from 'src/styling/icons/ID/photo/white.svg'
 import { ReactComponent as CamIdIcon } from 'src/styling/icons/ID/photo/zodiac.svg'
+import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { URI } from 'src/utils/apollo'
@@ -23,6 +29,27 @@ import styles from './DetailsCard.styles'
 import { getStatus, getStatusDetails } from './helper'
 
 const useStyles = makeStyles(styles)
+const MINUTES_OFFSET = 3
+const TX_SUMMARY = gql`
+  query txSummaryAndLogs(
+    $txId: ID!
+    $deviceId: ID!
+    $limit: Int
+    $from: Date
+    $until: Date
+    $txClass: String
+  ) {
+    serverLogsCsv(limit: $limit, from: $from, until: $until)
+    machineLogsCsv(
+      deviceId: $deviceId
+      limit: $limit
+      from: $from
+      until: $until
+    )
+    transactionCsv(id: $txId, txClass: $txClass)
+    txAssociatedDataCsv(id: $txId, txClass: $txClass)
+  }
+`
 
 const formatAddress = (cryptoCode = '', address = '') =>
   formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
@@ -34,6 +61,8 @@ const Label = ({ children }) => {
 
 const DetailsRow = ({ it: tx }) => {
   const classes = useStyles()
+
+  const zip = new JSZip()
 
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
@@ -53,6 +82,30 @@ const DetailsRow = ({ it: tx }) => {
     idCardExpirationDate: moment(tx.customerIdCardData.expirationDate).format(
       'DD-MM-YYYY'
     )
+  }
+
+  const from = moment(tx.created)
+    .subtract(MINUTES_OFFSET, 'm')
+    .format()
+  const until = moment(tx.created)
+    .add(MINUTES_OFFSET, 'm')
+    .format()
+
+  const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
+    onCompleted: data => createCsv(data)
+  })
+
+  const loadAndTxSummary = ({ id: txId, deviceId, txClass }) => {
+    fetchSummary({ variables: { txId, from, until, deviceId, txClass } })
+  }
+
+  const createCsv = logs => {
+    const zipFilename = `tx_${tx.id}_summary.zip`
+    const filesNames = R.keys(logs)
+    R.map(name => zip.file(name + '.csv', logs[name]), filesNames)
+    zip.generateAsync({ type: 'blob' }).then(function(content) {
+      FileSaver.saveAs(content, zipFilename)
+    })
   }
 
   const errorElements = (
@@ -197,7 +250,7 @@ const DetailsRow = ({ it: tx }) => {
         </div>
       </div>
       <div className={classes.lastRow}>
-        <div>
+        <div className={classes.status}>
           {getStatusDetails(tx) ? (
             <HoverableTooltip parentElements={errorElements} width={200}>
               <P>{getStatusDetails(tx)}</P>
@@ -205,6 +258,22 @@ const DetailsRow = ({ it: tx }) => {
           ) : (
             errorElements
           )}
+        </div>
+        <div>
+          {
+            <div
+              onClick={() => {
+                loadAndTxSummary(tx)
+              }}>
+              <Label>Other actions</Label>
+              <ActionButton
+                color="primary"
+                Icon={Download}
+                className={classes.downloadRawLogs}>
+                {'Download raw logs'}
+              </ActionButton>
+            </div>
+          }
         </div>
       </div>
     </div>
