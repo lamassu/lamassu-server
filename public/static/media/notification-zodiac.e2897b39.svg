@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nav-/-primary-/-1440" transform="translate(-1295.000000, -19.000000)" stroke="#1B2559" stroke-width="2">
+            <g id="icon/menu/notification" transform="translate(1296.000000, 20.000000)">
+                <path d="M10.1052632,14.3157895 C10.1052632,15.2454737 9.35073684,16 8.42105263,16 C7.49136842,16 6.73684211,15.2454737 6.73684211,14.3157895" id="Stroke-1"></path>
+                <path d="M1.6,14.3157895 C0.7168,14.3157895 0,13.6031813 0,12.7251462 C0,11.8471111 0.7168,11.1345029 1.6,11.1345029 L1.6,6.3625731 C1.6,2.84884211 4.4656,0 8,0 C11.5344,0 14.4,2.84884211 14.4,6.3625731 L14.4,11.1345029 C15.2832,11.1345029 16,11.8471111 16,12.7251462 C16,13.6031813 15.2832,14.3157895 14.4,14.3157895 L1.6,14.3157895 Z" id="Stroke-3" stroke-linejoin="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

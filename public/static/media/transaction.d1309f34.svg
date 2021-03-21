@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="↳-notification-center" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="notification-center_v01a#1-(marked-one-as-read)" transform="translate(-1023.000000, -123.000000)" stroke="#1B2559">
+            <g id="Group-5" transform="translate(1000.000000, 0.000000)">
+                <g id="Group-4" transform="translate(24.000000, 124.000000)">
+                    <g id="Group-3">
+                        <line x1="0" y1="4" x2="16" y2="4" id="Path-2"></line>
+                        <polyline id="Path-3" points="12 0 16 4 12 8"></polyline>
+                    </g>
+                    <g id="Group-2" transform="translate(8.000000, 12.000000) scale(-1, 1) translate(-8.000000, -12.000000) translate(0.000000, 8.000000)">
+                        <line x1="0" y1="4" x2="16" y2="4" id="Path-2-Copy"></line>
+                        <polyline id="Path-3-Copy" points="12 0 16 4 12 8"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
