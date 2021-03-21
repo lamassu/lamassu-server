@@ -17,7 +17,7 @@ import AuthRegister from 'src/pages/AuthRegister'
 import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
-import ConfigMigration from 'src/pages/ConfigMigration'
+// import ConfigMigration from 'src/pages/ConfigMigration'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
 import Dashboard from 'src/pages/Dashboard'
 import Funding from 'src/pages/Funding'
@@ -320,7 +320,7 @@ const Routes = () => {
       <Route path="/machines" component={Machines} />
       <Route path="/wizard" component={Wizard} />
       <Route path="/register" component={AuthRegister} />
-      <Route path="/configmigration" component={ConfigMigration} />
+      {/* <Route path="/configmigration" component={ConfigMigration} /> */}
       {flattened.map(({ route, component: Page, key }) => (
         <Route path={route} key={key}>
           <Transition
