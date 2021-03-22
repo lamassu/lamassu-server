@@ -29,7 +29,9 @@ const CashCassettesFooter = ({
     (acc[0] += cassette1 * getCashoutSettings(id).top),
     (acc[1] += cassette2 * getCashoutSettings(id).bottom)
   ]
-  const totalInCassettes = R.sum(R.reduce(reducerFn, [0, 0], machines))
+  const totalInCassettes = R.isEmpty(machines)
+    ? 0
+    : R.sum(R.reduce(reducerFn, [0, 0], machines))
 
   /*   const totalInCashBox = R.sum(
     R.flatten(
