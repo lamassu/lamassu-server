@@ -50,6 +50,9 @@ const GET_TRANSACTIONS = gql`
       customerIdCardPhotoPath
       customerFrontCameraPath
       customerPhone
+      discount
+      customerId
+      isAnonymous
     }
   }
 `
@@ -95,13 +98,13 @@ const Transactions = ({ id }) => {
   const elements = [
     {
       header: '',
-      width: 62,
+      width: 0,
       size: 'sm',
       view: it => (it.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />)
     },
     {
       header: 'Customer',
-      width: 162,
+      width: 122,
       size: 'sm',
       view: getCustomerDisplayName
     },
@@ -128,20 +131,20 @@ const Transactions = ({ id }) => {
       className: classes.overflowTd,
       size: 'sm',
       textAlign: 'left',
-      width: 170
+      width: 140
     },
     {
       header: 'Date (UTC)',
       view: it => moment.utc(it.created).format('YYYY-MM-DD'),
       textAlign: 'left',
       size: 'sm',
-      width: 150
+      width: 140
     },
     {
       header: 'Status',
       view: it => getStatus(it),
       size: 'sm',
-      width: 80
+      width: 20
     }
   ]
 
@@ -162,8 +165,7 @@ const Transactions = ({ id }) => {
       loading={loading || id === null}
       emptyText="No transactions so far"
       elements={elements}
-      // need to splice because back end query could return double NUM_LOG_RESULTS because it doesnt merge the txIn and the txOut results before applying the limit
-      data={R.path(['transactions'])(txResponse)} // .splice(0,NUM_LOG_RESULTS)}
+      data={R.path(['transactions'])(txResponse)}
       Details={DetailsRow}
       expandable
     />
