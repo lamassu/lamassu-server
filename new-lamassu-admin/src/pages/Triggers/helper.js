@@ -110,10 +110,10 @@ const Schema = Yup.object()
   })
   .test(({ threshold, triggerType }, context) => {
     const errorMessages = {
-      txAmount: threshold => 'Amount must be non negative',
+      txAmount: threshold => 'Amount must be greater than or equal to 0',
       txVolume: threshold => {
-        const thresholdMessage = 'Volume must be non negative'
-        const thresholdDaysMessage = 'Days must be positive'
+        const thresholdMessage = 'Volume must be greater than or equal to 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
         let message = ''
         if (threshold.threshold < 0) message = message.concat(thresholdMessage)
         if (threshold.thresholdDays <= 0)
@@ -124,8 +124,9 @@ const Schema = Yup.object()
         return message
       },
       txVelocity: threshold => {
-        const thresholdMessage = 'Transactions must be non negative'
-        const thresholdDaysMessage = 'Days must be positive'
+        const thresholdMessage =
+          'Transactions must be greater than or equal to 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
         let message = ''
         if (threshold.threshold <= 0) message = message.concat(thresholdMessage)
         if (threshold.thresholdDays <= 0)
@@ -135,7 +136,7 @@ const Schema = Yup.object()
         console.log(message)
         return message
       },
-      consecutiveDays: threshold => 'Days must be non negative'
+      consecutiveDays: threshold => 'Days must be greater than or equal to 0'
     }
     const thresholdValidator = {
       txAmount: threshold => threshold.threshold >= 0,
@@ -164,7 +165,7 @@ const Schema = Yup.object()
       (requirement && requirementValidator(requirement)) ||
       context.createError({
         path: 'requirement',
-        message: 'Suspension days must be positive'
+        message: 'Suspension days must be greater than 0'
       })
     )
   })
