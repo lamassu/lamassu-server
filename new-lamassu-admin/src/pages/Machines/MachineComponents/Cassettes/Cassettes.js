@@ -73,7 +73,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       name: 'cashbox',
       header: 'Cashbox',
       width: 240,
-      stripe: true,
+      stripe: false,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
