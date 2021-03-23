@@ -145,7 +145,6 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       disableRowEdit={isCashOutDisabled}
       name="cashboxes"
       elements={elements}
-      enableEdit
       data={[machine] || []}
       save={onSave}
       validationSchema={ValidationSchema}
