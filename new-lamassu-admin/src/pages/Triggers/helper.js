@@ -124,8 +124,7 @@ const Schema = Yup.object()
         return message
       },
       txVelocity: threshold => {
-        const thresholdMessage =
-          'Transactions must be greater than or equal to 0'
+        const thresholdMessage = 'Transactions must be greater than 0'
         const thresholdDaysMessage = 'Days must be greater than 0'
         let message = ''
         if (threshold.threshold <= 0) message = message.concat(thresholdMessage)
@@ -136,7 +135,7 @@ const Schema = Yup.object()
         console.log(message)
         return message
       },
-      consecutiveDays: threshold => 'Days must be greater than or equal to 0'
+      consecutiveDays: threshold => 'Days must be greater than 0'
     }
     const thresholdValidator = {
       txAmount: threshold => threshold.threshold >= 0,
