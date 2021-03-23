@@ -6,7 +6,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { TL1, TL2, Label3 } from 'src/components/typography'
@@ -46,24 +46,16 @@ const GET_INFO = gql`
 const getMachines = R.path(['machines'])
 
 const Machines = () => {
-  const { data, refetch, loading } = useQuery(GET_INFO)
+  const { data, refetch } = useQuery(GET_INFO)
   const location = useLocation()
-  const [selectedMachine, setSelectedMachine] = useState('')
   const classes = useStyles()
 
+  const selectedMachine =
+    R.path(['state', 'selectedMachine'])(location) ??
+    R.path(['machines', 0, 'name'])(data) ??
+    ''
   const machines = getMachines(data) ?? []
   const machineInfo = getMachineInfo(selectedMachine)(machines) ?? {}
-
-  // pre-selects first machine from the list, if there is a machine configured.
-  useEffect(() => {
-    if (!loading && data && data.machines) {
-      if (location.state && location.state.selectedMachine) {
-        setSelectedMachine(location.state.selectedMachine)
-      } else {
-        setSelectedMachine(R.path(['machines', 0, 'name'])(data) ?? '')
-      }
-    }
-  }, [loading, data, location.state])
 
   return (
     <Grid container className={classes.grid}>
