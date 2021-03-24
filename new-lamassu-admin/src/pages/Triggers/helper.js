@@ -260,11 +260,19 @@ const Type = ({ ...props }) => {
   const isThresholdDaysEnabled = containsType(['txVolume', 'txVelocity'])
   const isConsecutiveDaysEnabled = containsType(['consecutiveDays'])
 
+  const hasAmountError =
+    (!!errors.threshold || touched.threshold?.threshold) &&
+    !isConsecutiveDaysEnabled &&
+    !values.threshold?.threshold
+  const hasDaysError =
+    (!!errors.threshold || touched.threshold?.thresholdDays) &&
+    !containsType(['txAmount']) &&
+    !values.threshold?.thresholdDays
+
+  const triggerTypeError = !!(hasDaysError || hasAmountError)
+
   const thresholdClass = {
-    [classes.error]:
-      errors.threshold &&
-      ((!containsType(['consecutiveDays']) && touched.threshold?.threshold) ||
-        (!containsType(['txAmount']) && touched.threshold?.thresholdDays))
+    [classes.error]: triggerTypeError
   }
 
   const isRadioGroupActive = () => {
@@ -304,6 +312,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.threshold"
+                error={hasAmountError}
               />
               <Info1 className={classnames(classes.description)}>
                 {props.currency}
@@ -317,6 +326,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.threshold"
+                error={hasAmountError}
               />
               <Info1 className={classnames(classes.description)}>
                 transactions
@@ -338,6 +348,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.thresholdDays"
+                error={hasDaysError}
               />
               <Info1 className={classnames(classes.description)}>days</Info1>
             </>
@@ -349,6 +360,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.thresholdDays"
+                error={hasDaysError}
               />
               <Info1 className={classnames(classes.description)}>
                 consecutive days
@@ -401,16 +413,18 @@ const Requirement = () => {
   const classes = useStyles()
   const { touched, errors, values } = useFormikContext()
 
+  const hasRequirementError =
+    (errors.requirement?.suspensionDays ||
+      touched.requirement?.suspensionDays) &&
+    !values.requirement?.suspensionDays
+
+  const isSuspend = values?.requirement?.requirement === 'suspend'
+
   const titleClass = {
     [classes.error]:
       !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
-      (errors.requirement &&
-        touched.requirement &&
-        errors.requirement.suspensionDays &&
-        touched.requirement.suspensionDays)
+      (isSuspend && hasRequirementError)
   }
-
-  const isSuspend = values?.requirement?.requirement === 'suspend'
 
   return (
     <>
@@ -433,6 +447,7 @@ const Requirement = () => {
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
+          error={hasRequirementError}
         />
       )}
     </>
