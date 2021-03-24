@@ -11,8 +11,9 @@ import { useHistory } from 'react-router-dom'
 
 import { Status } from 'src/components/Status'
 import { Label2, TL2 } from 'src/components/typography'
-// import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { ReactComponent as MachineLinkIcon } from 'src/styling/icons/month arrows/right.svg'
+// import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 
 import styles from './MachinesTable.styles'
 
@@ -98,11 +99,19 @@ const MachinesTable = ({ machines, numToRender }) => {
             if (idx < numToRender) {
               return (
                 <TableRow
-                  onClick={() => redirect(machine)}
-                  className={classnames(classes.row, classes.clickableRow)}
+                  className={classnames(classes.row)}
                   key={machine.deviceId + idx}>
-                  <StyledCell align="left">
+                  <StyledCell
+                    align="left"
+                    className={classes.machineNameWrapper}>
                     <TL2>{machine.name}</TL2>
+                    <MachineLinkIcon
+                      className={classnames(
+                        classes.machineRedirectIcon,
+                        classes.clickableRow
+                      )}
+                      onClick={() => redirect(machine)}
+                    />
                   </StyledCell>
                   <StyledCell>
                     <Status status={machine.statuses[0]} />
