@@ -155,11 +155,9 @@ const ResetPassword = () => {
                 </Formik>
               )}
               {!isLoading && !wasSuccessful && (
-                <>
-                  <Label2 className={classes.inputLabel}>
-                    Link has expired
-                  </Label2>
-                </>
+                <Label2 className={classes.inputLabel}>
+                  Link has expired
+                </Label2>
               )}
             </div>
           </Paper>

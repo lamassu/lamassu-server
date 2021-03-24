@@ -1,4 +1,4 @@
-import { useMutation, useLazyQuery /*, useQuery */ } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import { startAssertion } from '@simplewebauthn/browser'
 import { Field, Form, Formik } from 'formik'

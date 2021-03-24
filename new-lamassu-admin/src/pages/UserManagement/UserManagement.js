@@ -123,7 +123,6 @@ const Users = () => {
   const [validateAttestation] = useMutation(VALIDATE_ATTESTATION, {
     onCompleted: res => {
       console.log(res)
-      // Show a popup with message 'Success'?
     }
   })
 
