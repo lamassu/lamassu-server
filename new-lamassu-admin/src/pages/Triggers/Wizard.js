@@ -212,6 +212,42 @@ const Wizard = ({ onClose, save, error, currency }) => {
     })
   }
 
+  const createErrorMessage = (errors, touched, values) => {
+    const triggerType = values?.triggerType
+    const containsType = R.contains(triggerType)
+    const isSuspend = values?.requirement?.requirement === 'suspend'
+
+    const hasRequirementError =
+      errors.requirement?.suspensionDays &&
+      touched.requirement?.suspensionDays &&
+      (!values.requirement?.suspensionDays ||
+        values.requirement?.suspensionDays < 0)
+
+    const hasAmountError =
+      !!errors.threshold &&
+      !!touched.threshold?.threshold &&
+      !containsType(['consecutiveDays']) &&
+      (!values.threshold?.threshold || values.threshold?.threshold < 0)
+
+    const hasDaysError =
+      !!errors.threshold &&
+      !!touched.threshold?.thresholdDays &&
+      !containsType(['txAmount']) &&
+      (!values.threshold?.thresholdDays || values.threshold?.thresholdDays < 0)
+
+    if (containsType(['txAmount', 'txVolume', 'txVelocity']) && hasAmountError)
+      return errors.threshold?.[triggerType]
+
+    if (
+      containsType(['txVolume', 'txVelocity', 'consecutiveDays']) &&
+      hasDaysError
+    )
+      return errors.threshold?.[triggerType]
+
+    if (isSuspend && hasRequirementError)
+      return errors.requirement?.suspensionDays
+  }
+
   return (
     <>
       <Modal
@@ -236,21 +272,28 @@ const Wizard = ({ onClose, save, error, currency }) => {
         />
         <Formik
           validateOnBlur={false}
-          validateOnChange={false}
+          validateOnChange={true}
           enableReinitialize
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          <Form className={classes.form}>
-            <GetValues setValues={setLiveValues} />
-            <stepOptions.Component {...stepOptions.props} />
-            <div className={classes.submit}>
-              {error && <ErrorMessage>Failed to save</ErrorMessage>}
-              <Button className={classes.button} type="submit">
-                {isLastStep ? 'Finish' : 'Next'}
-              </Button>
-            </div>
-          </Form>
+          {({ errors, touched, values }) => (
+            <Form className={classes.form}>
+              <GetValues setValues={setLiveValues} />
+              <stepOptions.Component {...stepOptions.props} />
+              <div className={classes.submit}>
+                {error && <ErrorMessage>Failed to save</ErrorMessage>}
+                {createErrorMessage(errors, touched, values) && (
+                  <ErrorMessage>
+                    {createErrorMessage(errors, touched, values)}
+                  </ErrorMessage>
+                )}
+                <Button className={classes.button} type="submit">
+                  {isLastStep ? 'Finish' : 'Next'}
+                </Button>
+              </div>
+            </Form>
+          )}
         </Formik>
       </Modal>
     </>

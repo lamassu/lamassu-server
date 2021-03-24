@@ -223,18 +223,48 @@ const typeSchema = Yup.object()
     'are-fields-set',
     'All fields must be set.',
     ({ triggerType, threshold }, context) => {
+      const errorMessages = {
+        txAmount: () => 'Transaction amount must be a positive number.',
+        txVolume: threshold => {
+          if (
+            (!threshold.threshold || threshold.threshold <= 0) &&
+            (!threshold.thresholdDays || threshold.thresholdDays <= 0)
+          )
+            return 'Transaction volume and number of days must be positive numbers.'
+          else if (!threshold.threshold || threshold.threshold <= 0)
+            return 'Transaction volume must be a positive number.'
+          else if (!threshold.thresholdDays || threshold.thresholdDays <= 0)
+            return 'Number of days must be a positive number.'
+        },
+        txVelocity: threshold => {
+          if (
+            (!threshold.threshold || threshold.threshold <= 0) &&
+            (!threshold.thresholdDays || threshold.thresholdDays <= 0)
+          )
+            return 'Transaction volume and number of days must be positive numbers.'
+          else if (!threshold.threshold || threshold.threshold <= 0)
+            return 'Transaction volume must be a positive number.'
+          else if (!threshold.thresholdDays || threshold.thresholdDays <= 0)
+            return 'Number of days must be a positive number.'
+        },
+        consecutiveDays: () => 'Number of days must be a positive number.'
+      }
+
       const validator = {
-        txAmount: threshold => threshold.threshold >= 0,
+        txAmount: threshold => threshold.threshold > 0,
         txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+          threshold.threshold >= 0 && threshold.thresholdDays > 0,
         txVelocity: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
-        consecutiveDays: threshold => threshold.thresholdDays >= 0
+          threshold.threshold > 0 && threshold.thresholdDays > 0,
+        consecutiveDays: threshold => threshold.thresholdDays > 0
       }
 
       return (
         (triggerType && validator?.[triggerType](threshold)) ||
-        context.createError({ path: 'threshold' })
+        context.createError({
+          path: `threshold.${triggerType}`,
+          message: errorMessages?.[triggerType](threshold)
+        })
       )
     }
   )
@@ -261,13 +291,15 @@ const Type = ({ ...props }) => {
   const isConsecutiveDaysEnabled = containsType(['consecutiveDays'])
 
   const hasAmountError =
-    (!!errors.threshold || touched.threshold?.threshold) &&
+    !!errors.threshold &&
+    !!touched.threshold?.threshold &&
     !isConsecutiveDaysEnabled &&
-    !values.threshold?.threshold
+    (!values.threshold?.threshold || values.threshold?.threshold < 0)
   const hasDaysError =
-    (!!errors.threshold || touched.threshold?.thresholdDays) &&
+    !!errors.threshold &&
+    !!touched.threshold?.thresholdDays &&
     !containsType(['txAmount']) &&
-    !values.threshold?.thresholdDays
+    (!values.threshold?.thresholdDays || values.threshold?.thresholdDays < 0)
 
   const triggerTypeError = !!(hasDaysError || hasAmountError)
 
@@ -373,11 +405,11 @@ const Type = ({ ...props }) => {
   )
 }
 
-const type = currency => ({
+const type = (currency, setType) => ({
   schema: typeSchema,
   options: typeOptions,
   Component: Type,
-  props: { currency },
+  props: { currency, setType },
   initialValues: {
     triggerType: '',
     threshold: { threshold: '', thresholdDays: '' }
@@ -389,12 +421,29 @@ const requirementSchema = Yup.object().shape({
     requirement: Yup.string().required(),
     suspensionDays: Yup.number().when('requirement', {
       is: value => value === 'suspend',
-      then: Yup.number().required(),
+      then: Yup.number()
+        .transform(transformNumber)
+        .nullable(),
       otherwise: Yup.number()
         .nullable()
         .transform(() => null)
     })
-  }).required()
+  }).test(
+    'are-fields-set',
+    'All fields must be set.',
+    ({ requirement, suspensionDays }, context) => {
+      if (
+        requirement === 'suspend' &&
+        (!suspensionDays || suspensionDays < 0)
+      ) {
+        return context.createError({
+          path: `requirement.suspensionDays`,
+          message: 'Number of days must be a positive number.'
+        })
+      }
+      return true
+    }
+  )
 })
 
 const requirementOptions = [
@@ -414,9 +463,10 @@ const Requirement = () => {
   const { touched, errors, values } = useFormikContext()
 
   const hasRequirementError =
-    (errors.requirement?.suspensionDays ||
-      touched.requirement?.suspensionDays) &&
-    !values.requirement?.suspensionDays
+    errors.requirement?.suspensionDays &&
+    touched.requirement?.suspensionDays &&
+    (!values.requirement?.suspensionDays ||
+      values.requirement?.suspensionDays < 0)
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
 
@@ -443,7 +493,7 @@ const Requirement = () => {
       {isSuspend && (
         <Field
           className={classes.thresholdField}
-          component={TextInput}
+          component={NumberInput}
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
