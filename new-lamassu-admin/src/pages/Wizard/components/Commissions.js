@@ -12,6 +12,11 @@ import { mainFields, defaults, schema } from 'src/pages/Commissions/helper'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 const useStyles = makeStyles(styles)
+const useCommissionStyles = makeStyles({
+  autoComplete: {
+    width: '100%'
+  }
+})
 
 const GET_DATA = gql`
   query getData {
@@ -26,6 +31,7 @@ const SAVE_CONFIG = gql`
 
 function Commissions({ isActive, doContinue }) {
   const classes = useStyles()
+  const commissionClasses = useCommissionStyles()
   const { data } = useQuery(GET_DATA)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
@@ -40,6 +46,8 @@ function Commissions({ isActive, doContinue }) {
   const currency = R.path(['fiatCurrency'])(
     fromNamespace(namespaces.LOCALE)(data?.config)
   )
+
+  const locale = fromNamespace(namespaces.LOCALE)(data?.config)
 
   return (
     <div className={classes.wrapper}>
@@ -56,7 +64,7 @@ function Commissions({ isActive, doContinue }) {
           save={save}
           validationSchema={schema}
           data={[]}
-          elements={mainFields(currency)}
+          elements={mainFields(currency, locale, commissionClasses)}
         />
       </Section>
     </div>

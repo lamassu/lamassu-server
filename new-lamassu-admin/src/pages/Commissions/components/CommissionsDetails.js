@@ -14,7 +14,7 @@ import {
 } from 'src/pages/Commissions/helper'
 
 const CommissionsDetails = memo(
-  ({ config, currency, data, error, save, saveOverrides }) => {
+  ({ config, locale, currency, data, error, save, saveOverrides, classes }) => {
     const [isEditingDefault, setEditingDefault] = useState(false)
     const [isEditingOverrides, setEditingOverrides] = useState(false)
 
@@ -43,7 +43,7 @@ const CommissionsDetails = memo(
             save={save}
             validationSchema={schema}
             data={R.of(commission)}
-            elements={mainFields(currency)}
+            elements={mainFields(currency, locale, classes)}
             setEditing={onEditingDefault}
             forceDisable={isEditingOverrides}
           />
@@ -65,7 +65,13 @@ const CommissionsDetails = memo(
               data
             )}
             data={orderedCommissionsOverrides}
-            elements={overrides(data, currency, orderedCommissionsOverrides)}
+            elements={overrides(
+              data,
+              currency,
+              orderedCommissionsOverrides,
+              locale,
+              classes
+            )}
             setEditing={onEditingOverrides}
             forceDisable={isEditingDefault}
           />

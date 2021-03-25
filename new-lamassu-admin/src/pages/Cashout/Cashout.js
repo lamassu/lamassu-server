@@ -24,6 +24,9 @@ const useStyles = makeStyles({
   switchLabel: {
     margin: 6,
     width: 24
+  },
+  autoComplete: {
+    width: '100%'
   }
 })
 
@@ -114,7 +117,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         error={error?.message}
         validationSchema={DenominationsSchema}
         disableRowEdit={R.compose(R.not, R.path(['active']))}
-        elements={getElements(machines, locale)}
+        elements={getElements(machines, locale, classes)}
       />
       {R.isEmpty(machines) && <EmptyTable message="No machines so far" />}
       {wizard && (

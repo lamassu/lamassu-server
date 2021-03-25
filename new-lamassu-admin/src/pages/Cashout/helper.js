@@ -1,7 +1,10 @@
+import * as R from 'ramda'
 import * as Yup from 'yup'
 
-import { NumberInput } from 'src/components/inputs/formik'
+import { Autocomplete, NumberInput } from 'src/components/inputs/formik'
 import { bold } from 'src/styling/helpers'
+import denominations from 'src/utils/bill-denominations'
+import { getBillOptions } from 'src/utils/bill-options'
 import { CURRENCY_MAX } from 'src/utils/constants'
 
 const DenominationsSchema = Yup.object().shape({
@@ -17,7 +20,18 @@ const DenominationsSchema = Yup.object().shape({
     .max(CURRENCY_MAX)
 })
 
-const getElements = (machines, { fiatCurrency } = {}) => {
+const getElements = (machines, locale = {}, classes) => {
+  const options = getBillOptions(locale, denominations)
+  const cassetteProps =
+    options?.length > 0
+      ? {
+          options: options,
+          labelProp: 'display',
+          valueProp: 'code',
+          className: classes.autoComplete
+        }
+      : { decimalPlaces: 0 }
+
   return [
     {
       name: 'id',
@@ -33,25 +47,23 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       stripe: true,
       width: 250,
       textAlign: 'right',
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency,
+      view: it => it,
+      input: options?.length > 0 ? Autocomplete : NumberInput,
+      inputProps: cassetteProps,
+      suffix: R.prop('fiatCurrency')(locale),
       bold: bold
     },
     {
       name: 'bottom',
       header: 'Cassette 2 (Bottom)',
-      size: 'sm',
       stripe: true,
       textAlign: 'right',
       width: 250,
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency
+      view: it => it,
+      input: options?.length > 0 ? Autocomplete : NumberInput,
+      inputProps: cassetteProps,
+      suffix: R.prop('fiatCurrency')(locale),
+      bold: bold
     }
   ]
 }

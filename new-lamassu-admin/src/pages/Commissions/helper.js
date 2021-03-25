@@ -4,12 +4,10 @@ import React from 'react'
 import { v4 } from 'uuid'
 import * as Yup from 'yup'
 
-import { NumberInput } from 'src/components/inputs/formik'
-import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { Autocomplete, NumberInput } from 'src/components/inputs/formik'
 import { bold } from 'src/styling/helpers'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { primaryColor, secondaryColorDark } from 'src/styling/variables'
 import { CURRENCY_MAX } from 'src/utils/constants'
 
 const ALL_MACHINES = {
@@ -145,10 +143,12 @@ const getOverridesFields = (getData, currency, auxElements) => {
     {
       name: 'minimumTx',
       display: 'Minimun Tx',
-      width: 144,
-      input: NumberInput,
+      width: 169,
+      size: 'lg',
       doubleHeader: 'Cash-in only',
-      textAlign: 'right',
+      textAlign: 'center',
+      editingAlign: 'right',
+      input: NumberInput,
       suffix: currency,
       bold: bold,
       inputProps: {
@@ -445,9 +445,9 @@ const getListCommissionsSchema = () => {
   })
 }
 
-const getTextStyle = (obj, isEditing) => {
-  return { color: obj.default ? primaryColor : secondaryColorDark }
-}
+// const getTextStyle = (obj, isEditing) => {
+//   return { color: obj.default ? primaryColor : secondaryColorDark }
+// }
 
 const commissionsList = (auxData, currency, auxElements) => {
   const getData = R.path(R.__, auxData)
@@ -482,7 +482,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
-      textStyle: obj => getTextStyle(obj),
+      // textStyle: obj => getTextStyle(obj),
       inputProps: {
         decimalPlaces: 3
       }
@@ -496,7 +496,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       textAlign: 'right',
       greenText: true,
       suffix: '%',
-      textStyle: obj => getTextStyle(obj),
+      // textStyle: obj => getTextStyle(obj),
       inputProps: {
         decimalPlaces: 3
       }
@@ -509,7 +509,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency,
-      textStyle: obj => getTextStyle(obj),
+      // textStyle: obj => getTextStyle(obj),
       inputProps: {
         decimalPlaces: 2
       }
@@ -522,7 +522,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency,
-      textStyle: obj => getTextStyle(obj),
+      // textStyle: obj => getTextStyle(obj),
       inputProps: {
         decimalPlaces: 2
       }

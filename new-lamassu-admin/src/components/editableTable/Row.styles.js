@@ -18,12 +18,12 @@ export default {
     const justifyContent = textAlign === 'right' ? 'end' : textAlign
     return {
       display: 'flex',
-      alignItems: 'baseline',
+      alignItems: 'center',
       justifyContent
     }
   },
   suffix: {
-    marginLeft: 7
+    margin: [[0, 0, 0, 7]]
   },
   size: ({ size }) => bySize(size),
   bold

@@ -16,6 +16,13 @@ import CommissionsList from './components/CommissionsList'
 const styles = {
   listViewButton: {
     marginLeft: 4
+  },
+  autoComplete: {
+    width: '100%'
+  },
+  bold: {
+    fontWeight: 'bold',
+    height: 200
   }
 }
 
@@ -121,11 +128,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
       {!showMachines && (
         <CommissionsDetails
           config={config}
+          locale={localeConfig}
           currency={currency}
           data={data}
           error={error}
           save={save}
           saveOverrides={saveOverrides}
+          classes={classes}
         />
       )}
       {showMachines && (
