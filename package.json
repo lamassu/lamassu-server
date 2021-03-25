@@ -2,12 +2,11 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "7.5.0-beta.2",
+  "version": "7.4.11",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "@fczbkk/uuid4": "^3.0.0",
-    "apollo-server-express": "^2.9.14",
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
     "bchaddrjs": "^0.3.0",
@@ -19,34 +18,23 @@
     "bitgo": "4.47.0",
     "body-parser": "^1.15.1",
     "coinbase": "^2.0.6",
-    "compression": "^1.7.4",
     "console-log-level": "^1.4.0",
     "cookie-parser": "^1.4.3",
-    "cors": "^2.8.5",
-    "dataloader": "^2.0.0",
-    "ed25519": "git+https://github.com/lamassu/ed25519#3140c985fee9828ce6707202f9f7d55cb1f0b46d",
     "ethereumjs-tx": "^1.3.3",
     "ethereumjs-util": "^5.2.0",
-    "ethereumjs-wallet": "^0.6.3",
+    "ethereumjs-wallet": "^0.6.0",
     "express": "^4.15.4",
     "express-limiter": "^1.6.0",
     "express-rate-limit": "^2.9.0",
     "express-ws": "^3.0.0",
     "futoin-hkdf": "^1.0.2",
     "got": "^7.1.0",
-    "graphql": "^15.5.0",
-    "graphql-iso-date": "^3.6.1",
-    "graphql-tools": "^7.0.2",
-    "graphql-type-json": "^0.3.1",
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
-    "json2csv": "^5.0.3",
     "kraken-api": "github:DeX3/npm-kraken-api",
-    "libphonenumber-js": "^1.7.38",
-    "lnd-async": "^1.8.0",
+    "lnd-async": "^1.2.0",
     "lodash": "^4.17.10",
     "longjohn": "^0.2.12",
-    "lowdb": "^1.0.0",
     "mailgun-js": "^0.21.0",
     "make-dir": "^1.0.0",
     "mem": "^1.1.0",
@@ -54,14 +42,11 @@
     "minimist": "^1.2.0",
     "moment": "^2.17.0",
     "morgan": "^1.8.2",
-    "nan": "^2.14.0",
     "nano-markdown": "^1.2.0",
     "ndjson": "^1.5.0",
-    "nocache": "^2.1.0",
     "numeral": "^2.0.3",
     "p-each-series": "^1.0.0",
-    "p-retry": "^4.4.0",
-    "pg-native": "^3.0.0",
+    "pg-native": "^2.2.0",
     "pg-promise": "^7.4.1",
     "pify": "^3.0.0",
     "pretty-ms": "^2.1.0",
@@ -72,15 +57,11 @@
     "socket.io-client": "^2.0.3",
     "talisman": "^0.20.0",
     "twilio": "^3.6.1",
-    "ua-parser-js": "^0.7.22",
     "uuid": "^3.1.0",
     "web3": "^0.20.6",
     "winston": "^2.4.2",
-    "winston-transport": "^4.3.0",
     "ws": "^3.1.0",
-    "xml-stream": "^0.4.5",
-    "xmlrpc": "^1.3.2",
-    "yup": "^0.31.1"
+    "xml-stream": "^0.4.5"
   },
   "repository": {
     "type": "git",
@@ -92,6 +73,7 @@
     "lamassu-migrate-config": "./bin/lamassu-migrate-config",
     "lamassu-register": "./bin/lamassu-register",
     "lamassu-admin-server": "./bin/lamassu-admin-server",
+    "lamassu-apply-defaults": "./bin/lamassu-apply-defaults",
     "hkdf": "./bin/hkdf",
     "bip39": "./bin/bip39",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
@@ -114,33 +96,21 @@
   "scripts": {
     "start": "node bin/lamassu-server",
     "test": "mocha --recursive tests",
-    "jtest": "jest",
-    "build-admin": "npm run build-admin:css && npm run build-admin:main && npm run build-admin:lamassu",
-    "server": "nodemon bin/lamassu-server --mockSms",
-    "admin-server": "nodemon bin/lamassu-admin-server --dev",
-    "graphql-server": "nodemon bin/new-graphql-dev-insecure",
-    "watch": "concurrently \"npm:server\" \"npm:admin-server\" \"npm:graphql-server\"",
-    "stress-test": "cd ./test/stress/ && node index.js 50 -v"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "new-lamassu-admin/*"
-    ]
+    "build-admin:css": "cd lamassu-admin-elm && elm-css src/Stylesheets.elm",
+    "build-admin:main": "cd lamassu-admin-elm && elm-make src/Main.elm --output ../public/elm.js",
+    "build-admin:lamassu": "cd lamassu-admin-elm && elm-make src/Lamassu.elm --output ../public/lamassu-elm.js",
+    "build-admin": "npm run build-admin:css && npm run build-admin:main && npm run build-admin:lamassu"
   },
   "devDependencies": {
-    "ava": "3.8.2",
-    "concurrently": "^5.3.0",
-    "jest": "^26.6.3",
+    "ava": "^0.19.1",
     "mocha": "^5.0.1",
-    "nodemon": "^2.0.6",
     "rewire": "^4.0.1",
     "standard": "^12.0.1"
   },
   "standard": {
     "ignore": [
       "/lamassu-admin-elm",
-      "/public",
-      "/new-lamassu-admin"
+      "/public"
     ]
   }
 }
