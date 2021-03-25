@@ -31,7 +31,7 @@ const AutocompleteFormik = ({ options, onChange, ...props }) => {
         setFieldValue(name, item)
       }}
       onBlur={innerOnBlur}
-      value={value || ''}
+      value={value}
       error={error}
       open={open}
       options={innerOptions}
