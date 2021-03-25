@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import Modal from 'src/components/Modal'
 import { Autocomplete } from 'src/components/inputs/formik'
 import denominations from 'src/utils/bill-denominations'
+import { getBillOptions } from 'src/utils/bill-options'
 import { toNamespace } from 'src/utils/config'
 
 import WizardSplash from './WizardSplash'
@@ -15,22 +16,13 @@ const LAST_STEP = 3
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
-const getOptions = R.curry((locale, denomiations) => {
-  const currency = R.prop('fiatCurrency')(locale)
-  return R.compose(
-    R.map(code => ({ code, display: code })),
-    R.keys,
-    R.path([currency])
-  )(denomiations)
-})
-
 const Wizard = ({ machine, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
   })
 
-  const options = getOptions(locale, denominations)
+  const options = getBillOptions(locale, denominations)
 
   const title = `Enable cash-out`
   const isLastStep = step === LAST_STEP
