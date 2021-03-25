@@ -37874,8 +37874,8 @@ var _user$project$NavBar$view = F2(
 											ctor: '::',
 											_0: {
 												ctor: '_Tuple3',
-												_0: 'Bitstamp',
-												_1: _user$project$CoreTypes$AccountRoute('bitstamp'),
+												_0: 'BitGo',
+												_1: _user$project$CoreTypes$AccountRoute('bitgo'),
 												_2: true
 											},
                                             _1: {
