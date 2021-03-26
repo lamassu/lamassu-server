@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const uuid = require('@fczbkk/uuid4')
+const uuid = require('uuid')
 
 const tx = require('../lib/cash-out/cash-out-tx.js')
 
