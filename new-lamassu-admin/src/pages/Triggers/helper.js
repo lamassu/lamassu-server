@@ -114,21 +114,18 @@ const Schema = Yup.object()
       txVolume: threshold => {
         const thresholdMessage = 'Volume must be greater than or equal to 0'
         const thresholdDaysMessage = 'Days must be greater than 0'
-        const message = [thresholdMessage, thresholdDaysMessage]
-        if (threshold.threshold < 0 && threshold.thresholdDays <= 0)
-          return message.join(', ')
-        if (threshold.threshold < 0) return message[0]
-        if (threshold.thresholdDays <= 0) return message[1]
+        const message = []
+        if (threshold.threshold < 0) message.push(thresholdMessage)
+        if (threshold.thresholdDays <= 0) message.push(thresholdDaysMessage)
+        return message.join(', ')
       },
       txVelocity: threshold => {
         const thresholdMessage = 'Transactions must be greater than 0'
         const thresholdDaysMessage = 'Days must be greater than 0'
-        const message = [thresholdMessage, thresholdDaysMessage]
-        if (threshold.threshold <= 0 && threshold.thresholdDays <= 0)
-          return message.join(', ')
-        if (threshold.threshold <= 0) return message[0]
-        if (threshold.thresholdDays <= 0) return message[1]
-        return message
+        const message = []
+        if (threshold.threshold <= 0) message.push(thresholdMessage)
+        if (threshold.thresholdDays <= 0) message.push(thresholdDaysMessage)
+        return message.join(', ')
       },
       consecutiveDays: threshold => 'Days must be greater than 0'
     }
