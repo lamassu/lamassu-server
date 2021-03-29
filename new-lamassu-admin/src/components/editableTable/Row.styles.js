@@ -23,8 +23,7 @@ export default {
     }
   },
   suffix: {
-    marginLeft: 7,
-    fontSize: '12px'
+    marginLeft: 7
   },
   size: ({ size }) => bySize(size),
   bold

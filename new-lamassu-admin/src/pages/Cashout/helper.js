@@ -1,6 +1,7 @@
 import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
+import { bold } from 'src/styling/helpers'
 
 const currencyMax = 999999999
 const DenominationsSchema = Yup.object().shape({
@@ -20,12 +21,6 @@ const DenominationsSchema = Yup.object().shape({
     .min(0)
     .max(currencyMax)
 })
-
-const boldStyle = () => {
-  return {
-    fontWeight: 'bold'
-  }
-}
 
 const getElements = (machines, { fiatCurrency } = {}) => {
   return [
@@ -48,7 +43,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
         decimalPlaces: 0
       },
       suffix: fiatCurrency,
-      textStyle: boldStyle
+      bold: bold
     },
     {
       name: 'bottom',
@@ -61,7 +56,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
         decimalPlaces: 0
       },
       suffix: fiatCurrency,
-      textStyle: boldStyle
+      bold: bold
     },
     {
       name: 'zeroConfLimit',
@@ -74,7 +69,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
         decimalPlaces: 0
       },
       suffix: fiatCurrency,
-      textStyle: boldStyle
+      bold: bold
     }
   ]
 }
