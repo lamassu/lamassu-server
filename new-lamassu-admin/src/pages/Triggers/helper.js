@@ -114,25 +114,20 @@ const Schema = Yup.object()
       txVolume: threshold => {
         const thresholdMessage = 'Volume must be greater than or equal to 0'
         const thresholdDaysMessage = 'Days must be greater than 0'
-        let message = ''
-        if (threshold.threshold < 0) message = message.concat(thresholdMessage)
-        if (threshold.thresholdDays <= 0)
-          message = message
-            ? message.concat(', ' + thresholdDaysMessage)
-            : message.concat(thresholdDaysMessage)
-        console.log(message)
-        return message
+        const message = [thresholdMessage, thresholdDaysMessage]
+        if (threshold.threshold < 0 && threshold.thresholdDays <= 0)
+          return message.join(', ')
+        if (threshold.threshold < 0) return message[0]
+        if (threshold.thresholdDays <= 0) return message[1]
       },
       txVelocity: threshold => {
         const thresholdMessage = 'Transactions must be greater than 0'
         const thresholdDaysMessage = 'Days must be greater than 0'
-        let message = ''
-        if (threshold.threshold <= 0) message = message.concat(thresholdMessage)
-        if (threshold.thresholdDays <= 0)
-          message = message
-            ? message.concat(', ' + thresholdDaysMessage)
-            : message.concat(thresholdDaysMessage)
-        console.log(message)
+        const message = [thresholdMessage, thresholdDaysMessage]
+        if (threshold.threshold <= 0 && threshold.thresholdDays <= 0)
+          return message.join(', ')
+        if (threshold.threshold <= 0) return message[0]
+        if (threshold.thresholdDays <= 0) return message[1]
         return message
       },
       consecutiveDays: threshold => 'Days must be greater than 0'
@@ -146,13 +141,12 @@ const Schema = Yup.object()
       consecutiveDays: threshold => threshold.thresholdDays > 0
     }
 
-    return (
-      (triggerType && thresholdValidator?.[triggerType](threshold)) ||
-      context.createError({
-        path: 'threshold',
-        message: errorMessages?.[triggerType](threshold)
-      })
-    )
+    if (triggerType && thresholdValidator[triggerType](threshold)) return
+
+    return context.createError({
+      path: 'threshold',
+      message: errorMessages[triggerType](threshold)
+    })
   })
   .test(({ requirement }, context) => {
     const requirementValidator = requirement =>
@@ -160,13 +154,12 @@ const Schema = Yup.object()
         ? requirement.suspensionDays > 0
         : true
 
-    return (
-      (requirement && requirementValidator(requirement)) ||
-      context.createError({
-        path: 'requirement',
-        message: 'Suspension days must be greater than 0'
-      })
-    )
+    if (requirement && requirementValidator(requirement)) return
+
+    return context.createError({
+      path: 'requirement',
+      message: 'Suspension days must be greater than 0'
+    })
   })
 
 // Direction V2 only
