@@ -259,7 +259,6 @@ const typeSchema = Yup.object()
     })
   })
   .test(({ threshold, triggerType }, context) => {
-    console.log(context)
     const errorMessages = {
       txAmount: threshold => 'Amount must be greater than or equal to 0',
       txVolume: threshold => {
@@ -464,7 +463,6 @@ const requirementSchema = Yup.object()
     }).required()
   })
   .test(({ requirement }, context) => {
-    console.log('requirement aaaaa', requirement)
     const requirementValidator = requirement =>
       requirement.requirement === 'suspend'
         ? requirement.suspensionDays > 0
@@ -505,8 +503,6 @@ const Requirement = () => {
   const titleClass = {
     [classes.error]:
       (!!errors.requirement && !isSuspend) || (isSuspend && hasRequirementError)
-    // !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
-    // (isSuspend && hasRequirementError)
   }
 
   return (
