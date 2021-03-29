@@ -7,7 +7,6 @@ import { Info1, Info2, Info3 } from 'src/components/typography/index'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { fromNamespace } from 'src/utils/config'
-import { isValidNumber } from 'src/utils/number'
 
 import styles from './CashCassettesFooter.styles.js'
 const useStyles = makeStyles(styles)
@@ -26,10 +25,15 @@ const CashCassettesFooter = ({
   const classes = useStyles()
   const cashout = config && fromNamespace('cashOut')(config)
   const getCashoutSettings = id => fromNamespace(id)(cashout)
-  const reducerFn = (acc, { cassette1, cassette2, id }) => [
-    (acc[0] += cassette1 * getCashoutSettings(id).top),
-    (acc[1] += cassette2 * getCashoutSettings(id).bottom)
-  ]
+  const reducerFn = (acc, { cassette1, cassette2, id }) => {
+    const topDenomination = getCashoutSettings(id).top ?? 0
+    const bottomDenomination = getCashoutSettings(id).bottom ?? 0
+    return [
+      (acc[0] += cassette1 * topDenomination),
+      (acc[1] += cassette2 * bottomDenomination)
+    ]
+  }
+
   const totalInCassettes = R.sum(R.reduce(reducerFn, [0, 0], machines))
 
   /*   const totalInCashBox = R.sum(
@@ -61,8 +65,7 @@ const CashCassettesFooter = ({
           <TxOutIcon className={classes.icon} />
           <Info2 className={classes.iconLabel}>Cash-out:</Info2>
           <Info1 className={classes.valueDisplay}>
-            {isValidNumber(totalInCassettes) ? totalInCassettes : 0}{' '}
-            {currencyCode}
+            {totalInCassettes} {currencyCode}
           </Info1>
         </div>
         {/*         <div className={classes.flex}>
