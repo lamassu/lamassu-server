@@ -254,8 +254,6 @@ const Wizard = ({ onClose, save, error, currency }) => {
     )
       return errors.threshold
 
-    console.log(errors)
-
     if (isSuspend && hasRequirementError) return errors.requirement
   }
 
