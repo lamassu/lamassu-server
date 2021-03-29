@@ -64,6 +64,10 @@ const DetailsRow = ({ it: tx }) => {
 
   const zip = new JSZip()
 
+  const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
+    onCompleted: data => createCsv(data)
+  })
+
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
@@ -91,21 +95,16 @@ const DetailsRow = ({ it: tx }) => {
     .add(MINUTES_OFFSET, 'm')
     .format()
 
-  const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
-    onCompleted: data => createCsv(data)
-  })
-
-  const loadAndTxSummary = ({ id: txId, deviceId, txClass }) => {
+  const downloadRawLogs = ({ id: txId, deviceId, txClass }) => {
     fetchSummary({ variables: { txId, from, until, deviceId, txClass } })
   }
 
-  const createCsv = logs => {
+  const createCsv = async logs => {
     const zipFilename = `tx_${tx.id}_summary.zip`
     const filesNames = R.keys(logs)
     R.map(name => zip.file(name + '.csv', logs[name]), filesNames)
-    zip.generateAsync({ type: 'blob' }).then(function(content) {
-      FileSaver.saveAs(content, zipFilename)
-    })
+    const content = await zip.generateAsync({ type: 'blob' })
+    FileSaver.saveAs(content, zipFilename)
   }
 
   const errorElements = (
@@ -263,7 +262,7 @@ const DetailsRow = ({ it: tx }) => {
           {
             <div
               onClick={() => {
-                loadAndTxSummary(tx)
+                downloadRawLogs(tx)
               }}>
               <Label>Other actions</Label>
               <ActionButton
