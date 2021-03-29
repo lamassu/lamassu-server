@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { bold } from 'src/styling/helpers'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { primaryColor, secondaryColorDark } from 'src/styling/variables'
@@ -66,12 +67,6 @@ const onCryptoChange = (prev, curr, setValue) => {
   setValue(curr)
 }
 
-const boldStyle = () => {
-  return {
-    fontWeight: 'bold'
-  }
-}
-
 const getOverridesFields = (getData, currency, auxElements) => {
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const rawCryptos = getData(['cryptoCurrencies'])
@@ -115,7 +110,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
-      textStyle: boldStyle,
+      bold: bold,
       inputProps: {
         decimalPlaces: 3
       }
@@ -128,7 +123,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
-      textStyle: boldStyle,
+      bold: bold,
       inputProps: {
         decimalPlaces: 3
       }
@@ -141,7 +136,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency,
-      textStyle: boldStyle,
+      bold: bold,
       inputProps: {
         decimalPlaces: 2
       }
@@ -154,7 +149,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency,
-      textStyle: boldStyle,
+      bold: bold,
       inputProps: {
         decimalPlaces: 2
       }
@@ -172,7 +167,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: '%',
-    textStyle: boldStyle,
+    bold: bold,
     inputProps: {
       decimalPlaces: 3
     }
@@ -186,7 +181,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: '%',
-    textStyle: boldStyle,
+    bold: bold,
     inputProps: {
       decimalPlaces: 3
     }
@@ -201,7 +196,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: currency,
-    textStyle: boldStyle,
+    bold: bold,
     inputProps: {
       decimalPlaces: 2
     }
@@ -216,7 +211,7 @@ const mainFields = currency => [
     editingAlign: 'right',
     input: NumberInput,
     suffix: currency,
-    textStyle: boldStyle,
+    bold: bold,
     inputProps: {
       decimalPlaces: 2
     }

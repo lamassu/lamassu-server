@@ -8,7 +8,7 @@ import { DeleteDialog } from 'src/components/DeleteDialog'
 import { Link, IconButton } from 'src/components/buttons'
 import { Td, Tr } from 'src/components/fake-table/Table'
 import { Switch } from 'src/components/inputs'
-import { TL2 } from 'src/components/typography'
+import { Label2 } from 'src/components/typography'
 import { ReactComponent as DisabledDeleteIcon } from 'src/styling/icons/action/delete/disabled.svg'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 import { ReactComponent as DisabledEditIcon } from 'src/styling/icons/action/edit/disabled.svg'
@@ -129,7 +129,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     textAlign,
     editingAlign = textAlign,
     suffix,
-    SuffixComponent = TL2,
+    SuffixComponent = Label2,
     textStyle = it => {},
     view = it => it?.toString(),
     inputProps = {}
