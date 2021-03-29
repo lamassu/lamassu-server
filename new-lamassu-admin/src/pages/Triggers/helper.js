@@ -455,8 +455,8 @@ const requirementSchema = Yup.object()
       suspensionDays: Yup.number().when('requirement', {
         is: value => value === 'suspend',
         then: Yup.number()
-          .required()
-          .min(1),
+          .nullable()
+          .transform(transformNumber),
         otherwise: Yup.number()
           .nullable()
           .transform(() => null)
@@ -464,6 +464,7 @@ const requirementSchema = Yup.object()
     }).required()
   })
   .test(({ requirement }, context) => {
+    console.log('requirement aaaaa', requirement)
     const requirementValidator = requirement =>
       requirement.requirement === 'suspend'
         ? requirement.suspensionDays > 0
@@ -494,7 +495,7 @@ const Requirement = () => {
   const { touched, errors, values } = useFormikContext()
 
   const hasRequirementError =
-    !!errors.requirement?.suspensionDays &&
+    !!errors.requirement &&
     !!touched.requirement?.suspensionDays &&
     (!values.requirement?.suspensionDays ||
       values.requirement?.suspensionDays < 0)
@@ -503,8 +504,9 @@ const Requirement = () => {
 
   const titleClass = {
     [classes.error]:
-      !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
-      (isSuspend && hasRequirementError)
+      (!!errors.requirement && !isSuspend) || (isSuspend && hasRequirementError)
+    // !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
+    // (isSuspend && hasRequirementError)
   }
 
   return (

@@ -228,7 +228,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
     const isSuspend = values?.requirement?.requirement === 'suspend'
 
     const hasRequirementError =
-      !!errors.requirement?.suspensionDays &&
+      !!errors.requirement &&
       !!touched.requirement?.suspensionDays &&
       (!values.requirement?.suspensionDays ||
         values.requirement?.suspensionDays < 0)
@@ -254,8 +254,9 @@ const Wizard = ({ onClose, save, error, currency }) => {
     )
       return errors.threshold
 
-    if (isSuspend && hasRequirementError)
-      return errors.requirement?.suspensionDays
+    console.log(errors)
+
+    if (isSuspend && hasRequirementError) return errors.requirement
   }
 
   return (
