@@ -309,7 +309,13 @@ const typeOptions = [
 
 const Type = ({ ...props }) => {
   const classes = useStyles()
-  const { errors, touched, values } = useFormikContext()
+  const {
+    errors,
+    touched,
+    values,
+    setTouched,
+    handleChange
+  } = useFormikContext()
 
   const typeClass = {
     [classes.error]: errors.triggerType && touched.triggerType
@@ -359,6 +365,13 @@ const Type = ({ ...props }) => {
         labelClassName={classes.radioLabel}
         radioClassName={classes.radio}
         className={classes.radioGroup}
+        onChange={e => {
+          handleChange(e)
+          setTouched({
+            threshold: false,
+            thresholdDays: false
+          })
+        }}
       />
 
       <div className={classes.thresholdWrapper}>
@@ -490,7 +503,13 @@ const requirementOptions = [
 
 const Requirement = () => {
   const classes = useStyles()
-  const { touched, errors, values } = useFormikContext()
+  const {
+    touched,
+    errors,
+    values,
+    handleChange,
+    setTouched
+  } = useFormikContext()
 
   const hasRequirementError =
     !!errors.requirement &&
@@ -517,6 +536,12 @@ const Requirement = () => {
         labelClassName={classes.specialLabel}
         radioClassName={classes.radio}
         className={classnames(classes.radioGroup, classes.specialGrid)}
+        onChange={e => {
+          handleChange(e)
+          setTouched({
+            suspensionDays: false
+          })
+        }}
       />
 
       {isSuspend && (
