@@ -1,5 +1,6 @@
 import * as Yup from 'yup'
 
+import CheckboxInput from 'src/components/inputs/formik/Checkbox'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 export default {
@@ -18,6 +19,11 @@ export default {
       code: 'confidenceFactor',
       display: 'Confidence Factor',
       component: TextInputFormik,
+      face: true
+    },
+    {
+      code: 'rbf',
+      component: CheckboxInput,
       face: true
     }
   ],
