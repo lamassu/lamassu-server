@@ -5,7 +5,6 @@ import * as R from 'ramda'
 import React, { useContext } from 'react'
 import {
   matchPath,
-  Route,
   Redirect,
   Switch,
   useHistory,
@@ -398,11 +397,11 @@ const Routes = () => {
       </PrivateRoute>
       <PrivateRoute path="/machines" component={Machines} />
       <PrivateRoute path="/wizard" component={Wizard} />
-      <Route path="/register" component={Register} />
-      {/* <Route path="/configmigration" component={ConfigMigration} /> */}
+      <PublicRoute path="/register" component={Register} />
+      {/* <PublicRoute path="/configmigration" component={ConfigMigration} /> */}
       <PublicRoute path="/login" restricted component={Login} />
-      <Route path="/resetpassword" component={ResetPassword} />
-      <Route path="/reset2fa" component={Reset2FA} />
+      <PublicRoute path="/resetpassword" component={ResetPassword} />
+      <PublicRoute path="/reset2fa" component={Reset2FA} />
       {getFilteredRoutes().map(({ route, component: Page, key }) => (
         <PrivateRoute path={route} key={key}>
           <Transition
@@ -421,10 +420,10 @@ const Routes = () => {
           />
         </PrivateRoute>
       ))}
-      <Route path="/404" />
-      <Route path="*">
+      <PublicRoute path="/404" />
+      <PublicRoute path="*">
         <Redirect to={{ pathname: '/404' }} />
-      </Route>
+      </PublicRoute>
     </Switch>
   )
 }

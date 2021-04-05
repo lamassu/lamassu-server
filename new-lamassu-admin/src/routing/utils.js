@@ -1,8 +1,6 @@
-export const isLoggedIn = userData => {
-  return userData
-}
+export const isLoggedIn = userData => !!userData
 
 export const ROLES = {
-  USER: { key: 'user', value: '0' },
-  SUPERUSER: { key: 'superuser', value: '1' }
+  USER: { key: 'user' },
+  SUPERUSER: { key: 'superuser' }
 }

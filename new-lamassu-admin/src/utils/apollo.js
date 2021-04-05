@@ -4,6 +4,7 @@ import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
 import { onError } from 'apollo-link-error'
 import { HttpLink } from 'apollo-link-http'
+import * as R from 'ramda'
 import React, { useContext } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -18,10 +19,7 @@ const getClient = (history, location, setUserData) =>
       onError(({ graphQLErrors, networkError }) => {
         if (graphQLErrors)
           graphQLErrors.forEach(({ message, locations, path, extensions }) => {
-            if (extensions?.code === 'UNAUTHENTICATED') {
-              setUserData(null)
-              if (location.pathname !== '/login') history.push('/login')
-            }
+            handle(extensions?.code, history, location, setUserData)
             console.log(
               `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
             )
@@ -48,6 +46,23 @@ const getClient = (history, location, setUserData) =>
       }
     }
   })
+
+const handle = (type, ...args) => {
+  const handler = {
+    UNAUTHENTICATED: ({ history, location, setUserData }) => {
+      setUserData(null)
+      if (location.pathname !== '/login') history.push('/login')
+    },
+    INVALID_CREDENTIALS: () => {},
+    INVALID_TWO_FACTOR_CODE: () => {},
+    INVALID_URL_TOKEN: () => {},
+    USER_ALREADY_EXISTS: () => {}
+  }
+
+  if (!R.has(type, handler)) throw new Error('Unknown error code.')
+
+  return handler[type](...args)
+}
 
 const Provider = ({ children }) => {
   const history = useHistory()
