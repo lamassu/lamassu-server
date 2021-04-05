@@ -3,7 +3,7 @@ var db = require('./db')
 exports.up = function (next) {
   var sqls = [
     `create table cashbox_batches (
-      id serial PRIMARY KEY,
+      id uuid PRIMARY KEY,
       device_id text REFERENCES devices (device_id),
       created timestamptz NOT NULL default now()
     )`,
