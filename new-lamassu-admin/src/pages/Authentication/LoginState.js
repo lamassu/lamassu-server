@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
-import React, { useState } from 'react'
+import React from 'react'
 import * as Yup from 'yup'
 
 import { Button } from 'src/components/buttons'
@@ -46,19 +46,15 @@ const LoginState = ({
     onCompleted: ({ login }) => {
       if (login === 'INPUT2FA') handleLoginState(STATES.INPUT_2FA)
       if (login === 'SETUP2FA') handleLoginState(STATES.SETUP_2FA)
-      if (login === 'FAILED') setInvalidLogin(true)
     }
   })
 
-  const [invalidLogin, setInvalidLogin] = useState(false)
-
   const getErrorMsg = (formikErrors, formikTouched) => {
     if (!formikErrors || !formikTouched) return null
-    if (mutationError) return 'Internal server error'
+    if (mutationError) return 'Invalid login/password combination'
     if (formikErrors.client && formikTouched.client) return formikErrors.client
     if (formikErrors.password && formikTouched.password)
       return formikErrors.password
-    if (invalidLogin) return 'Invalid login/password combination'
     return null
   }
 
@@ -67,7 +63,6 @@ const LoginState = ({
       validationSchema={validationSchema}
       initialValues={initialValues}
       onSubmit={values => {
-        setInvalidLogin(false)
         onClientChange(values.client)
         onPasswordChange(values.password)
         onRememberMeChange(values.rememberMe)
@@ -89,9 +84,6 @@ const LoginState = ({
             autoFocus
             className={classes.input}
             error={getErrorMsg(errors, touched)}
-            onKeyUp={() => {
-              if (invalidLogin) setInvalidLogin(false)
-            }}
           />
           <Field
             name="password"
@@ -100,9 +92,6 @@ const LoginState = ({
             label="Password"
             fullWidth
             error={getErrorMsg(errors, touched)}
-            onKeyUp={() => {
-              if (invalidLogin) setInvalidLogin(false)
-            }}
           />
           <div className={classes.rememberMeWrapper}>
             <Field

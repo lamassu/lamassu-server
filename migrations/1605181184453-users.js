@@ -5,9 +5,9 @@ exports.up = function (next) {
     `CREATE TYPE role AS ENUM('user', 'superuser')`,
     `CREATE TABLE users (
       id UUID PRIMARY KEY,
-      username VARCHAR(50) UNIQUE,
+      username VARCHAR(50) NOT NULL UNIQUE,
       password VARCHAR(100),
-      role role DEFAULT 'user',
+      role role NOT NULL DEFAULT 'user',
       enabled BOOLEAN DEFAULT true,
       twofa_code VARCHAR(100),
       created TIMESTAMPTZ NOT NULL DEFAULT now(),

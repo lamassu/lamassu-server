@@ -78,10 +78,11 @@ const Reset2FA = () => {
   })
 
   const getErrorMsg = () => {
-    if (mutationError || queryError) return 'Internal server error'
+    if (queryError) return 'Internal server error'
     if (twoFAConfirmation.length !== 6 && invalidToken)
       return 'The code should have 6 characters!'
-    if (invalidToken) return 'Code is invalid. Please try again.'
+    if (mutationError || invalidToken)
+      return 'Code is invalid. Please try again.'
     return null
   }
 
