@@ -26,4 +26,7 @@ const startCase = R.compose(
   splitOnUpper
 )
 
-export { startCase, onlyFirstToUpper, formatLong }
+const singularOrPlural = (amount, singularStr, pluralStr) =>
+  parseInt(amount) === 1 ? singularStr : pluralStr
+
+export { startCase, onlyFirstToUpper, formatLong, singularOrPlural }
