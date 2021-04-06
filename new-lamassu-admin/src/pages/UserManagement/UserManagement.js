@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, useContext } from 'react'
 
-import { AppContext } from 'src/App'
+import AppContext from 'src/AppContext'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'

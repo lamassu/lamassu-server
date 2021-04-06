@@ -20,11 +20,11 @@ import AppContext from 'src/AppContext'
 import Header from 'src/components/layout/Header'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
-import ApolloProvider from 'src/pazuz/apollo/Provider'
-import { tree, hasSidebar, Routes, getParent } from 'src/pazuz/routing/routes'
+import { tree, hasSidebar, Routes, getParent } from 'src/routing/routes'
 import global from 'src/styling/global'
 import theme from 'src/styling/theme'
 import { backgroundColor, mainWidth } from 'src/styling/variables'
+import ApolloProvider from 'src/utils/apollo'
 
 if (process.env.NODE_ENV !== 'production') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render')
