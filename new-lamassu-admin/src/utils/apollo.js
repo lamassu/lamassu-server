@@ -19,7 +19,12 @@ const getClient = (history, location, setUserData) =>
       onError(({ graphQLErrors, networkError }) => {
         if (graphQLErrors)
           graphQLErrors.forEach(({ message, locations, path, extensions }) => {
-            handle(extensions?.code, history, location, setUserData)
+            handle(
+              { message, locations, path, extensions },
+              history,
+              location,
+              setUserData
+            )
             console.log(
               `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
             )
@@ -47,21 +52,20 @@ const getClient = (history, location, setUserData) =>
     }
   })
 
-const handle = (type, ...args) => {
+const handle = (apolloError, ...args) => {
   const handler = {
-    UNAUTHENTICATED: ({ history, location, setUserData }) => {
+    UNAUTHENTICATED: (...args) => {
+      const history = args[0]
+      const location = args[1]
+      const setUserData = args[2]
       setUserData(null)
       if (location.pathname !== '/login') history.push('/login')
-    },
-    INVALID_CREDENTIALS: () => {},
-    INVALID_TWO_FACTOR_CODE: () => {},
-    INVALID_URL_TOKEN: () => {},
-    USER_ALREADY_EXISTS: () => {}
+    }
   }
 
-  if (!R.has(type, handler)) throw new Error('Unknown error code.')
+  if (!R.has(apolloError.extensions?.code, handler)) return apolloError
 
-  return handler[type](...args)
+  return handler[apolloError.extensions?.code](...args)
 }
 
 const Provider = ({ children }) => {

@@ -27,8 +27,18 @@ const VALIDATE_REGISTER_LINK = gql`
 `
 
 const REGISTER = gql`
-  mutation register($username: String!, $password: String!, $role: String!) {
-    register(username: $username, password: $password, role: $role)
+  mutation register(
+    $token: String!
+    $username: String!
+    $password: String!
+    $role: String!
+  ) {
+    register(
+      token: $token
+      username: $username
+      password: $password
+      role: $role
+    )
   }
 `
 
@@ -117,6 +127,7 @@ const Register = () => {
                   onSubmit={values => {
                     register({
                       variables: {
+                        token: token,
                         username: username,
                         password: values.password,
                         role: role

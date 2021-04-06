@@ -27,7 +27,7 @@ const HAS_UNREAD = gql`
   }
 `
 
-const Subheader = ({ item, classes }) => {
+const Subheader = ({ item, classes, user }) => {
   const [prev, setPrev] = useState(null)
 
   return (
@@ -35,21 +35,32 @@ const Subheader = ({ item, classes }) => {
       <div className={classes.content}>
         <nav>
           <ul className={classes.subheaderUl}>
-            {item.children.map((it, idx) => (
-              <li key={idx} className={classes.subheaderLi}>
-                <NavLink
-                  to={{ pathname: it.route, state: { prev } }}
-                  className={classes.subheaderLink}
-                  activeClassName={classes.activeSubheaderLink}
-                  isActive={match => {
-                    if (!match) return false
-                    setPrev(it.route)
-                    return true
-                  }}>
-                  {it.label}
-                </NavLink>
-              </li>
-            ))}
+            {item.children.map((it, idx) => {
+              if (
+                !R.includes(
+                  user.role,
+                  it.allowedRoles.map(v => {
+                    return v.key
+                  })
+                )
+              )
+                return <></>
+              return (
+                <li key={idx} className={classes.subheaderLi}>
+                  <NavLink
+                    to={{ pathname: it.route, state: { prev } }}
+                    className={classes.subheaderLink}
+                    activeClassName={classes.activeSubheaderLink}
+                    isActive={match => {
+                      if (!match) return false
+                      setPrev(it.route)
+                      return true
+                    }}>
+                    {it.label}
+                  </NavLink>
+                </li>
+              )
+            })}
           </ul>
         </nav>
       </div>
@@ -193,7 +204,7 @@ const Header = memo(({ tree, user }) => {
         </div>
       </div>
       {active && active.children && (
-        <Subheader item={active} classes={classes} />
+        <Subheader item={active} classes={classes} user={user} />
       )}
       {open && <AddMachine close={() => setOpen(false)} onPaired={onPaired} />}
     </header>

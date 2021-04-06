@@ -42,9 +42,17 @@ const CHANGE_USER_ROLE = gql`
   }
 `
 
-const TOGGLE_USER_ENABLE = gql`
-  mutation toggleUserEnable($id: ID!) {
-    toggleUserEnable(id: $id) {
+const ENABLE_USER = gql`
+  mutation enableUser($id: ID!) {
+    enableUser(id: $id) {
+      id
+    }
+  }
+`
+
+const DISABLE_USER = gql`
+  mutation disableUser($id: ID!) {
+    disableUser(id: $id) {
       id
     }
   }
@@ -81,7 +89,11 @@ const Users = () => {
     refetchQueries: () => ['users']
   })
 
-  const [toggleUserEnable] = useMutation(TOGGLE_USER_ENABLE, {
+  const [enableUser] = useMutation(ENABLE_USER, {
+    refetchQueries: () => ['users']
+  })
+
+  const [disableUser] = useMutation(DISABLE_USER, {
     refetchQueries: () => ['users']
   })
 
@@ -307,7 +319,7 @@ const Users = () => {
         showModal={showEnableUserModal}
         toggleModal={toggleEnableUserModal}
         user={userInfo}
-        confirm={toggleUserEnable}
+        confirm={userInfo?.enabled ? disableUser : enableUser}
         inputConfirmToggle={toggleInputConfirmModal}
         setAction={setAction}
       />

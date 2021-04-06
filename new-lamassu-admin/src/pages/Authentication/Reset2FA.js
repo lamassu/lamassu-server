@@ -28,8 +28,13 @@ const VALIDATE_RESET_2FA_LINK = gql`
 `
 
 const RESET_2FA = gql`
-  mutation reset2FA($userID: ID!, $secret: String!, $code: String!) {
-    reset2FA(userID: $userID, secret: $secret, code: $code)
+  mutation reset2FA(
+    $token: String!
+    $userID: ID!
+    $secret: String!
+    $code: String!
+  ) {
+    reset2FA(token: $token, userID: $userID, secret: $secret, code: $code)
   }
 `
 
@@ -154,6 +159,7 @@ const Reset2FA = () => {
                         }
                         reset2FA({
                           variables: {
+                            token: token,
                             userID: userID,
                             secret: secret,
                             code: twoFAConfirmation
