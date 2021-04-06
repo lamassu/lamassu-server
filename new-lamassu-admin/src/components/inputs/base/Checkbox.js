@@ -1,10 +1,7 @@
-import { useQuery } from '@apollo/react-hooks'
 import Checkbox from '@material-ui/core/Checkbox'
 import { makeStyles } from '@material-ui/core/styles'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import gql from 'graphql-tag'
-import * as R from 'ramda'
 import React from 'react'
 
 import { Label2, Info3 } from 'src/components/typography'
@@ -43,24 +40,13 @@ const useStyles = makeStyles({
   }
 })
 
-const GET_INFO = gql`
-  query getData {
-    config
-  }
-`
-
-const CheckboxInput = ({ name, onChange, value, ...props }) => {
-  const { data: configData } = useQuery(GET_INFO)
-
-  const disabledMessage = 'RBF verification not available'
-  const label = 'Enable RBF verification'
-  const wallet = R.lensPath(['config', 'wallets_BTC_wallet'])
-  const isEnabled = R.equals(R.view(wallet, configData), 'bitcoind')
+const CheckboxInput = ({ name, onChange, value, settings, ...props }) => {
+  const { enabled, label, disabledMessage } = settings
   const classes = useStyles()
 
   return (
     <>
-      {isEnabled ? (
+      {enabled ? (
         <div className={classes.checkBoxLabel}>
           <Label2>{label}</Label2>
           <Checkbox

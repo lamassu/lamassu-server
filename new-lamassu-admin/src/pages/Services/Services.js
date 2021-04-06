@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import { SecretInput } from 'src/components/inputs/formik'
+import CheckboxInput from 'src/components/inputs/formik/Checkbox'
 import TitleSection from 'src/components/layout/TitleSection'
 import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
@@ -16,6 +17,7 @@ import schemas from './schemas'
 const GET_INFO = gql`
   query getData {
     accounts
+    config
   }
 `
 
@@ -57,8 +59,17 @@ const Services = () => {
     }))(faceElements)
   }
 
+  const updateSettings = element => {
+    const settings = element.settings
+    const wallet = R.lensPath(['config', 'wallets_BTC_wallet'])
+    const isEnabled = R.equals(R.view(wallet, data), settings.requirement)
+    settings.enabled = isEnabled
+    return element
+  }
+
   const getElements = ({ code, elements }) => {
     return R.map(elem => {
+      if (elem.component === CheckboxInput) return updateSettings(elem)
       if (elem.component !== SecretInput) return elem
       return {
         ...elem,
