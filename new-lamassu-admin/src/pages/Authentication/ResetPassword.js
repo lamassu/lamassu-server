@@ -26,8 +26,8 @@ const VALIDATE_RESET_PASSWORD_LINK = gql`
 `
 
 const RESET_PASSWORD = gql`
-  mutation resetPassword($userID: ID!, $newPassword: String!) {
-    resetPassword(userID: $userID, newPassword: $newPassword)
+  mutation resetPassword($token: String!, $userID: ID!, $newPassword: String!) {
+    resetPassword(token: $token, userID: $userID, newPassword: $newPassword)
   }
 `
 
@@ -114,6 +114,7 @@ const ResetPassword = () => {
                   onSubmit={values => {
                     resetPassword({
                       variables: {
+                        token: token,
                         userID: userID,
                         newPassword: values.confirmPassword
                       }

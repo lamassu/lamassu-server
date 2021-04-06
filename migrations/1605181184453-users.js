@@ -21,18 +21,13 @@ exports.up = function (next) {
       WITH (OIDS=FALSE)`,
     `ALTER TABLE "user_sessions" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE`,
     `CREATE INDEX "IDX_session_expire" ON "user_sessions" ("expire")`,
-    `CREATE TABLE reset_password (
+    `CREATE TYPE auth_token_type AS ENUM('reset_password', 'reset_twofa')`,
+    `CREATE TABLE auth_tokens (
       token TEXT NOT NULL PRIMARY KEY,
+      type auth_token_type NOT NULL,
       user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
       expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
     )`,
-    `CREATE INDEX "idx_reset_pw_expire" ON "reset_password" ("expire")`,
-    `CREATE TABLE reset_twofa (
-      token TEXT NOT NULL PRIMARY KEY,
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
-      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
-    )`,
-    `CREATE INDEX "idx_reset_twofa_expire" ON "reset_twofa" ("expire")`,
     `CREATE TABLE user_register_tokens (
       token TEXT NOT NULL PRIMARY KEY,
       username TEXT NOT NULL UNIQUE,
