@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { AppContext } from 'src/App'
+import AppContext from 'src/AppContext'
 import { Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
 import { H2, P } from 'src/components/typography'
