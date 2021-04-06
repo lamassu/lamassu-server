@@ -63,17 +63,20 @@ const FormRenderer = ({
       onSubmit={saveNonEmptySecret}>
       <Form className={classes.form}>
         <Grid container spacing={3} className={classes.grid}>
-          {elements.map(({ component, code, display, inputProps }) => (
-            <Grid item xs={xs} key={code}>
-              <FastField
-                component={component}
-                {...inputProps}
-                name={code}
-                label={display}
-                fullWidth={true}
-              />
-            </Grid>
-          ))}
+          {elements.map(
+            ({ component, code, display, settings, inputProps }) => (
+              <Grid item xs={xs} key={code}>
+                <FastField
+                  component={component}
+                  {...inputProps}
+                  name={code}
+                  label={display}
+                  settings={settings}
+                  fullWidth={true}
+                />
+              </Grid>
+            )
+          )}
         </Grid>
         <Button
           className={classnames(classes.button, buttonClass)}

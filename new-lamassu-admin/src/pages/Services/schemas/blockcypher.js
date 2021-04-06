@@ -24,6 +24,12 @@ export default {
     {
       code: 'rbf',
       component: CheckboxInput,
+      settings: {
+        enabled: true,
+        disabledMessage: 'RBF verification not available',
+        label: 'Enable RBF verification',
+        requirement: 'bitcoind'
+      },
       face: true
     }
   ],
