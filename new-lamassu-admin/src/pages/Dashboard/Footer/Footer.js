@@ -31,27 +31,29 @@ BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_UP })
 
 const useStyles = makeStyles(styles)
 const Footer = () => {
-  const { data, loading } = useQuery(GET_DATA)
+  const { data } = useQuery(GET_DATA)
   const [expanded, setExpanded] = useState(false)
   const [delayedExpand, setDelayedExpand] = useState(null)
 
+  const withCommissions = R.path(['cryptoRates', 'withCommissions'])(data) ?? {}
   const classes = useStyles({
-    bigFooter: R.keys(data?.cryptoRates?.withCommissions).length > 8,
+    bigFooter: R.keys(withCommissions).length > 8,
     expanded
   })
+  const config = R.path(['config'])(data) ?? {}
+  const canExpand = R.keys(withCommissions).length > 4
 
-  const canExpand = R.keys(data?.cryptoRates.withCommissions ?? []).length > 4
-
-  const wallets = fromNamespace('wallets')(data?.config)
+  const wallets = fromNamespace('wallets')(config)
+  const cryptoCurrencies = R.path(['cryptoCurrencies'])(data) ?? []
+  const accountsConfig = R.path(['accountsConfig'])(data) ?? []
+  const localeFiatCurrency = R.path(['locale_fiatCurrency'])(config) ?? ''
 
   const renderFooterItem = key => {
-    const idx = R.findIndex(R.propEq('code', key))(data.cryptoCurrencies)
+    const idx = R.findIndex(R.propEq('code', key))(cryptoCurrencies)
     const tickerCode = wallets[`${key}_ticker`]
-    const tickerIdx = R.findIndex(R.propEq('code', tickerCode))(
-      data.accountsConfig
-    )
+    const tickerIdx = R.findIndex(R.propEq('code', tickerCode))(accountsConfig)
 
-    const tickerName = data.accountsConfig[tickerIdx].display
+    const tickerName = tickerIdx > -1 ? accountsConfig[tickerIdx].display : ''
 
     const cashInNoCommission = parseFloat(
       R.path(['cryptoRates', 'withoutCommissions', key, 'cashIn'])(data)
@@ -74,12 +76,10 @@ const Footer = () => {
       )
     ).toFormat(2)
 
-    const localeFiatCurrency = data.config.locale_fiatCurrency
-
     return (
       <Grid key={key} item xs={3}>
         <Label2 className={classes.label}>
-          {data.cryptoCurrencies[idx].display}
+          {cryptoCurrencies[idx].display}
         </Label2>
         <div className={classes.headerLabels}>
           <div className={classes.headerLabel}>
@@ -116,15 +116,11 @@ const Footer = () => {
         onMouseEnter={handleMouseEnter}
       />
       <div className={classes.content}>
-        {!loading && data && (
-          <Grid container spacing={1}>
-            <Grid container className={classes.footerContainer}>
-              {R.keys(data.cryptoRates.withCommissions).map(key =>
-                renderFooterItem(key)
-              )}
-            </Grid>
+        <Grid container spacing={1}>
+          <Grid container className={classes.footerContainer}>
+            {R.keys(withCommissions).map(key => renderFooterItem(key))}
           </Grid>
-        )}
+        </Grid>
       </div>
       <div className={classes.footer} />
     </>
