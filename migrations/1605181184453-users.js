@@ -25,8 +25,9 @@ exports.up = function (next) {
     `CREATE TABLE auth_tokens (
       token TEXT NOT NULL PRIMARY KEY,
       type auth_token_type NOT NULL,
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
-      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes',
+      CONSTRAINT unique_userid_type UNIQUE (user_id, type)
     )`,
     `CREATE TABLE user_register_tokens (
       token TEXT NOT NULL PRIMARY KEY,
