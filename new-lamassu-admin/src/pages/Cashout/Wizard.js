@@ -11,7 +11,7 @@ import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 import { DenominationsSchema } from './helper'
 
-const LAST_STEP = 4
+const LAST_STEP = 3
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
@@ -70,13 +70,6 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
         labelProp: 'display',
         valueProp: 'code'
       }
-    },
-    {
-      type: 'zeroConfLimit',
-      display: '0-conf Limit',
-      schema: Yup.object().shape({
-        zeroConfLimit: Yup.number().required()
-      })
     }
   ]
 

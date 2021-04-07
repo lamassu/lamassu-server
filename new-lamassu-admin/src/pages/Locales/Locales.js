@@ -224,6 +224,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           userAccounts={data?.config?.accounts}
           accounts={accounts}
           accountsConfig={accountsConfig}
+          locale={locale}
         />
       )}
     </>

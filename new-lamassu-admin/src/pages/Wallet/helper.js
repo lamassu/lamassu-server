@@ -1,16 +1,22 @@
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
+import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 
 const filterClass = type => R.filter(it => it.class === type)
 const filterCoins = ({ id }) => R.filter(it => R.contains(id)(it.cryptos))
-
+const currencyMax = 999999999
 const WalletSchema = Yup.object().shape({
   ticker: Yup.string().required(),
   wallet: Yup.string().required(),
   exchange: Yup.string().required(),
-  zeroConf: Yup.string().required()
+  zeroConf: Yup.string().required(),
+  zeroConfLimit: Yup.number()
+    .integer()
+    .required()
+    .min(0)
+    .max(currencyMax)
 })
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
@@ -99,6 +105,17 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
         labelProp: 'display',
         optionsLimit: null,
         onChange
+      }
+    },
+    {
+      name: 'zeroConfLimit',
+      size: 'sm',
+      stripe: true,
+      view: it => it,
+      input: NumberInput,
+      width: 190 - widthAdjust,
+      inputProps: {
+        decimalPlaces: 0
       }
     }
   ]

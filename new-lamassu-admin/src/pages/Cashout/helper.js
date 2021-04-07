@@ -14,11 +14,6 @@ const DenominationsSchema = Yup.object().shape({
     .label('Cassette 2 (Bottom)')
     .required()
     .min(1)
-    .max(currencyMax),
-  zeroConfLimit: Yup.number()
-    .label('0-conf Limit')
-    .required()
-    .min(0)
     .max(currencyMax)
 })
 
@@ -27,7 +22,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
     {
       name: 'id',
       header: 'Machine',
-      width: 200,
+      width: 300,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -36,7 +31,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       name: 'top',
       header: 'Cassette 1 (Top)',
       stripe: true,
-      width: 200,
+      width: 250,
       textAlign: 'right',
       input: NumberInput,
       inputProps: {
@@ -48,28 +43,15 @@ const getElements = (machines, { fiatCurrency } = {}) => {
     {
       name: 'bottom',
       header: 'Cassette 2 (Bottom)',
+      size: 'sm',
       stripe: true,
       textAlign: 'right',
-      width: 200,
+      width: 250,
       input: NumberInput,
       inputProps: {
         decimalPlaces: 0
       },
-      suffix: fiatCurrency,
-      bold: bold
-    },
-    {
-      name: 'zeroConfLimit',
-      header: '0-conf Limit',
-      stripe: true,
-      textAlign: 'right',
-      width: 200,
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency,
-      bold: bold
+      suffix: fiatCurrency
     }
   ]
 }
