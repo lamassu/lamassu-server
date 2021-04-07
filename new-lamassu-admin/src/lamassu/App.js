@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/react-hooks'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import {
@@ -6,10 +7,11 @@ import {
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
-import { axios } from '@use-hooks/axios'
+import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { useContext, useEffect, useState } from 'react'
+import * as R from 'ramda'
+import React, { useContext, useState, useEffect } from 'react'
 import {
   useLocation,
   useHistory,
@@ -73,7 +75,28 @@ const Main = () => {
   const classes = useStyles()
   const location = useLocation()
   const history = useHistory()
-  const { wizardTested, userData } = useContext(AppContext)
+  const { wizardTested, userData, setUserData } = useContext(AppContext)
+
+  const GET_USER_DATA = gql`
+    query userData {
+      userData {
+        id
+        username
+        role
+        enabled
+        last_accessed
+        last_accessed_from
+        last_accessed_address
+      }
+    }
+  `
+
+  const { data: userResponse, loading } = useQuery(GET_USER_DATA)
+
+  useEffect(() => {
+    if (!R.equals(userData, userResponse?.userData) && !loading)
+      setUserData(userResponse?.userData)
+  }, [loading, setUserData, userData, userResponse])
 
   const route = location.pathname
 
@@ -109,9 +132,7 @@ const Main = () => {
               onClick={onClick}
             />
           )}
-          <div className={contentClassName}>
-            <Routes />
-          </div>
+          <div className={contentClassName}>{!loading && <Routes />}</div>
         </Grid>
       </main>
     </div>
@@ -121,42 +142,20 @@ const Main = () => {
 const App = () => {
   const [wizardTested, setWizardTested] = useState(false)
   const [userData, setUserData] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  const url =
-    process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
-
-  useEffect(() => {
-    axios({
-      method: 'GET',
-      url: `${url}/user-data`,
-      withCredentials: true
-    })
-      .then(res => {
-        setLoading(false)
-        if (res.status === 200) setUserData(res.data.user)
-      })
-      .catch(err => {
-        setLoading(false)
-        if (err.status === 403) setUserData(null)
-      })
-  }, [url])
 
   return (
     <AppContext.Provider
       value={{ wizardTested, setWizardTested, userData, setUserData }}>
-      {!loading && (
-        <Router>
-          <ApolloProvider>
-            <StylesProvider jss={jss}>
-              <MuiThemeProvider theme={theme}>
-                <CssBaseline />
-                <Main />
-              </MuiThemeProvider>
-            </StylesProvider>
-          </ApolloProvider>
-        </Router>
-      )}
+      <Router>
+        <ApolloProvider>
+          <StylesProvider jss={jss}>
+            <MuiThemeProvider theme={theme}>
+              <CssBaseline />
+              <Main />
+            </MuiThemeProvider>
+          </StylesProvider>
+        </ApolloProvider>
+      </Router>
     </AppContext.Provider>
   )
 }
