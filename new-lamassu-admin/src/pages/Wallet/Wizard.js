@@ -8,7 +8,7 @@ import { toNamespace } from 'src/utils/config'
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 
-const LAST_STEP = 4
+const LAST_STEP = 5
 const MODAL_WIDTH = 554
 
 const contains = crypto => R.compose(R.contains(crypto), R.prop('cryptos'))
@@ -33,7 +33,15 @@ const getItems = (accountsConfig, accounts, type, crypto) => {
   return { filled, unfilled }
 }
 
-const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
+const Wizard = ({
+  coin,
+  onClose,
+  accountsConfig,
+  accounts,
+  save,
+  error,
+  locale
+}) => {
   const [{ step, config, accountsToSave }, setState] = useState({
     step: 0,
     config: { active: true },
@@ -77,6 +85,8 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
         return { type: 'exchange', ...exchanges }
       case 4:
         return { type: 'zeroConf', name: 'zero conf', ...zeroConfs }
+      case 5:
+        return { type: 'zeroConfLimit' }
       default:
         return null
     }
@@ -103,6 +113,7 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
           {...getStepData()}
           onContinue={onContinue}
           getValue={getValue}
+          locale={locale}
         />
       )}
     </Modal>
