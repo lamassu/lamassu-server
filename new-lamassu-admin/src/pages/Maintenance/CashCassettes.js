@@ -2,18 +2,21 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import { IconButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
+import Wizard from './Wizard/Wizard'
 
 const useStyles = makeStyles(styles)
 
@@ -89,6 +92,8 @@ const CashCassettes = () => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
+  const [wizard, setWizard] = useState(false)
+  const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
@@ -103,7 +108,7 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
 
-  const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
+  const onSave = (id, cashbox, cassette1, cassette2) => {
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
@@ -174,6 +179,22 @@ const CashCassettes = () => {
       inputProps: {
         decimalPlaces: 0
       }
+    },
+    {
+      name: 'edit',
+      header: 'Edit',
+      width: 87,
+      view: (value, { id }) => {
+        return (
+          <IconButton
+            onClick={() => {
+              setMachineId(id)
+              setWizard(true)
+            }}>
+            <EditIcon />
+          </IconButton>
+        )
+      }
     }
   ]
 
@@ -184,11 +205,9 @@ const CashCassettes = () => {
         <EditableTable
           error={error?.message}
           name="cashboxes"
-          enableEdit
           stripeWhen={isCashOutDisabled}
           elements={elements}
           data={machines}
-          save={onSave}
           validationSchema={ValidationSchema}
           tbodyWrapperClass={classes.tBody}
         />
@@ -204,6 +223,18 @@ const CashCassettes = () => {
         bills={bills}
         deviceIds={deviceIds}
       />
+      {wizard && (
+        <Wizard
+          machine={R.find(R.propEq('id', machineId))(machines)}
+          cashoutSettings={getCashoutSettings(machineId)}
+          onClose={() => {
+            setWizard(false)
+          }}
+          error={error?.message}
+          save={onSave}
+          locale={locale}
+        />
+      )}
     </>
   )
 }
