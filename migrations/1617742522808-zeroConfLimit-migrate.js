@@ -10,6 +10,7 @@ exports.up = function (next) {
     const mp = t.any('SELECT device_id FROM devices')
     const [{ config }, machines] = await Promise.all([sp, mp])
     const cryptoCurrencies = config.locale_cryptoCurrencies
+
     _.forEach(o => {
       const machineId = o.device_id
       const cashOutConfig = configManager.getCashOut(machineId, config)
@@ -29,6 +30,14 @@ exports.up = function (next) {
         config[key] = Number(min)
       }
     }, cryptoCurrencies)
+
+    const regexp = /^cashOut_[0-9a-z]+_zeroConfLimit$/
+    const keysToErase = Object.keys(config).filter(key => key.match(regexp))
+
+    _.forEach(key => {
+      config[key] = null
+    }, keysToErase)
+
     return settingsLoader.saveConfig(config)
   })
     .then(() => next())
