@@ -38,7 +38,7 @@ const ZeroConfLimit = ({ data: currentData, addData }) => {
         ]}
         validationSchema={zeroConfLimitSchema}
         buttonLabel={'Continue'}
-        value={0}
+        value={null}
         save={it => submit(Number(it.zeroConfLimit))}
       />
     </div>

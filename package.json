@@ -114,7 +114,7 @@
   "scripts": {
     "start": "node bin/lamassu-server",
     "test": "mocha --recursive tests",
-    "jtest": "jest",
+    "jtest": "jest --detectOpenHandles",
     "build-admin": "npm run build-admin:css && npm run build-admin:main && npm run build-admin:lamassu",
     "server": "nodemon bin/lamassu-server --mockSms",
     "admin-server": "nodemon bin/lamassu-admin-server --dev",
