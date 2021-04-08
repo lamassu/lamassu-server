@@ -174,7 +174,7 @@ const WizardStep = ({
             ]}
             validationSchema={zeroConfLimitSchema}
             buttonLabel={label}
-            value={0}
+            value={null}
           />
         </>
       )}
