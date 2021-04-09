@@ -52,6 +52,8 @@ const AllSet = ({ data: currentData, doContinue }) => {
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
+  currentData.zeroConfLimit = 0
+
   const save = () => {
     if (!WalletSchema.isValidSync(currentData)) return setError(true)
 

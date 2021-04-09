@@ -8,7 +8,7 @@ import { toNamespace } from 'src/utils/config'
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 
-const LAST_STEP = 5
+const LAST_STEP = 4
 const MODAL_WIDTH = 554
 
 const contains = crypto => R.compose(R.contains(crypto), R.prop('cryptos'))
@@ -65,6 +65,7 @@ const Wizard = ({
       : accountsToSave
 
     if (isLastStep) {
+      newConfig.zeroConfLimit = 0
       return save(toNamespace(coin.code, newConfig), newAccounts)
     }
 
@@ -85,8 +86,6 @@ const Wizard = ({
         return { type: 'exchange', ...exchanges }
       case 4:
         return { type: 'zeroConf', name: 'zero conf', ...zeroConfs }
-      case 5:
-        return { type: 'zeroConfLimit' }
       default:
         return null
     }

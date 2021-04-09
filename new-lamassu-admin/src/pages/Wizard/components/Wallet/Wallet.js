@@ -12,7 +12,6 @@ import ChooseCoin from './ChooseCoin'
 import ChooseExchange from './ChooseExchange'
 import ChooseTicker from './ChooseTicker'
 import ChooseWallet from './ChooseWallet'
-import ZeroConfLimit from './ZeroConfLimit'
 
 const useStyles = makeStyles(styles)
 
@@ -36,10 +35,6 @@ const steps = [
   {
     label: 'Blockcypher',
     component: Blockcypher
-  },
-  {
-    label: 'Set 0-conf Limit',
-    component: ZeroConfLimit
   },
   {
     label: 'All set',
