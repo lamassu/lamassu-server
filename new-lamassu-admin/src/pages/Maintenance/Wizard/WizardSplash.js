@@ -3,8 +3,9 @@ import React from 'react'
 
 import { Button } from 'src/components/buttons'
 import { H1, P, Info2 } from 'src/components/typography'
-import cassetteOne from 'src/styling/icons/cassettes/cashout-cassette-1.svg'
+import filledCassettes from 'src/styling/icons/cassettes/both-filled.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+import { comet } from 'src/styling/variables'
 
 const styles = {
   button: {
@@ -35,6 +36,10 @@ const styles = {
   warningText: {
     flexBasis: '100%',
     flexGrow: 1
+  },
+  machineName: {
+    margin: [[5, 0]],
+    color: comet
   }
 }
 
@@ -45,7 +50,7 @@ const WizardSplash = ({ name, onContinue }) => {
 
   return (
     <div className={classes.modalContent}>
-      <img width="148" height="196" alt="cassette" src={cassetteOne}></img>
+      <img width="148" height="196" alt="cassette" src={filledCassettes}></img>
       <H1 className={classes.splashTitle} noMargin>
         Update counts
       </H1>
