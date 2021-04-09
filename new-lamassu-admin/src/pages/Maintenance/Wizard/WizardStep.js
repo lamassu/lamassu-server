@@ -14,7 +14,7 @@ import cashbox from 'src/styling/icons/cassettes/acceptor-left.svg'
 import cassetteOne from 'src/styling/icons/cassettes/dispenser-1.svg'
 import cassetteTwo from 'src/styling/icons/cassettes/dispenser-2.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { zircon2 } from 'src/styling/variables'
+import { comet } from 'src/styling/variables'
 
 const styles = {
   content: {
@@ -28,7 +28,8 @@ const styles = {
     marginBottom: 32
   },
   title: {
-    margin: [[0, 0, 12, 0]]
+    margin: [[0, 0, 12, 0]],
+    color: comet
   },
   stepImage: {
     width: 148,
@@ -81,7 +82,7 @@ const styles = {
     marginBottom: 25
   },
   fiatTotal: {
-    color: zircon2
+    color: comet
   }
 }
 
