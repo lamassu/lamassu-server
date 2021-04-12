@@ -12,8 +12,8 @@ import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
-import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
-import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
+import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
+import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
@@ -208,8 +208,8 @@ const CashCassettes = () => {
         title="Cash Cassettes"
         button={{
           text: 'Cashbox history',
-          icon: ListingViewIcon,
-          inverseIcon: ReverseListingViewIcon,
+          icon: HistoryIcon,
+          inverseIcon: ReverseHistoryIcon,
           toggle: setShowHistory
         }}
         iconClassName={classes.listViewButton}
@@ -234,7 +234,9 @@ const CashCassettes = () => {
             )}
           </>
         )}
-        {showHistory && <CashboxHistory machines={machines} />}
+        {showHistory && (
+          <CashboxHistory machines={machines} currency={fiatCurrency} />
+        )}
       </div>
       <CashCassettesFooter
         currencyCode={fiatCurrency}

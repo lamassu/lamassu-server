@@ -1,12 +1,16 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
+import * as Yup from 'yup'
 
+import { Link, IconButton } from 'src/components/buttons'
+import { TextInput } from 'src/components/inputs'
 import { NumberInput } from 'src/components/inputs/formik'
 import DataTable from 'src/components/tables/DataTable'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -29,6 +33,14 @@ const GET_BATCHES = gql`
   }
 `
 
+const EDIT_BATCH = gql`
+  mutation editBatch($id: ID, $performedBy: String) {
+    editBatch(id: $id, performedBy: $performedBy) {
+      id
+    }
+  }
+`
+
 const styles = {
   operationType: {
     marginLeft: 8
@@ -37,14 +49,31 @@ const styles = {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  saveAndCancel: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   }
 }
 
+const schema = Yup.object().shape({
+  performedBy: Yup.string().nullable()
+})
+
 const useStyles = makeStyles(styles)
 
-const CashboxHistory = ({ machines }) => {
+const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
-  const { data } = useQuery(GET_BATCHES)
+  const [editing, setEditing] = useState(false)
+  const [error, setError] = useState(false)
+  const [fields, setFields] = useState({})
+
+  const { data, loading } = useQuery(GET_BATCHES)
+
+  const [editBatch] = useMutation(EDIT_BATCH, {
+    refetchQueries: () => ['cashboxBatches']
+  })
 
   const batches = R.path(['cashboxBatches'])(data)
 
@@ -81,6 +110,24 @@ const CashboxHistory = ({ machines }) => {
     )
   }
 
+  const save = row => {
+    schema
+      .isValid(fields)
+      .then(() => {
+        setError(false)
+        editBatch({
+          variables: { id: row.id, performedBy: fields?.performedBy }
+        })
+      })
+      .catch(setError(true))
+    return close()
+  }
+
+  const close = () => {
+    setFields({})
+    return setEditing(false)
+  }
+
   const elements = [
     {
       name: 'operation',
@@ -96,7 +143,7 @@ const CashboxHistory = ({ machines }) => {
     {
       name: 'machine',
       header: 'Machine',
-      width: 190,
+      width: 200,
       textAlign: 'left',
       view: it => {
         return R.find(R.propEq('id', it.deviceId))(machines).name
@@ -117,9 +164,13 @@ const CashboxHistory = ({ machines }) => {
     {
       name: 'total',
       header: 'Total',
-      width: 125,
+      width: 100,
       textAlign: 'right',
-      view: it => R.sum(R.map(b => R.prop('fiat', b), it.bills))
+      view: it => (
+        <span>
+          {R.sum(R.map(b => R.prop('fiat', b), it.bills))} {currency}
+        </span>
+      )
     },
     {
       name: 'date',
@@ -138,22 +189,58 @@ const CashboxHistory = ({ machines }) => {
     {
       name: 'performedBy',
       header: 'Performed by',
-      width: 200,
+      width: 190,
       textAlign: 'left',
-      view: it => (R.isNil(it.performedBy) ? 'Unknown entity' : it.performedBy)
+      view: it => {
+        if (!editing)
+          return R.isNil(it.performedBy) ? 'Unknown entity' : it.performedBy
+        return (
+          <TextInput
+            onChange={e =>
+              setFields({ ...fields, performedBy: e.target.value })
+            }
+            error={error}
+            width={190 * 0.85}
+            value={fields.performedBy ?? ''}
+          />
+        )
+      }
     },
     {
       name: '',
       header: 'Edit',
-      width: 120,
+      width: 150,
       textAlign: 'right',
-      view: it => 'aaaaa'
+      view: it => {
+        if (!editing)
+          return (
+            <IconButton
+              onClick={() => {
+                setFields({})
+                setEditing(true)
+              }}>
+              <EditIcon />
+            </IconButton>
+          )
+        return (
+          <div className={classes.saveAndCancel}>
+            <Link type="submit" color="primary" onClick={() => save(it)}>
+              Save
+            </Link>
+            <Link color="secondary" onClick={close}>
+              Cancel
+            </Link>
+          </div>
+        )
+      }
     }
   ]
 
   return (
     <>
-      <DataTable name="cashboxHistory" elements={elements} data={batches} />
+      {!loading && (
+        <DataTable name="cashboxHistory" elements={elements} data={batches} />
+      )}
     </>
   )
 }
