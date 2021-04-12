@@ -11,10 +11,13 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2, H2 } from 'src/components/typography'
+import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
+import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import styles from './Triggers.styles'
 import Wizard from './Wizard'
+import AdvancedTriggers from './components/AdvancedTriggers'
 import { Schema, getElements, sortBy, fromServer, toServer } from './helper'
 
 const useStyles = makeStyles(styles)
@@ -34,6 +37,7 @@ const GET_INFO = gql`
 const Triggers = () => {
   const classes = useStyles()
   const [wizard, setWizard] = useState(false)
+  const [advancedSettings, setAdvancedSettings] = useState(false)
 
   const { data, loading } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
@@ -74,72 +78,96 @@ const Triggers = () => {
 
   return (
     <>
-      <TitleSection title="Compliance Triggers" className={classes.tableWidth}>
-        <Box display="flex" alignItems="center">
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="end"
-            mr="-5px">
-            <P>Reject reused addresses</P>
-            <Switch
-              checked={rejectAddressReuse}
-              onChange={event => {
-                addressReuseSave({ rejectAddressReuse: event.target.checked })
-              }}
-              value={rejectAddressReuse}
-            />
-            <Label2 className={classes.switchLabel}>
-              {rejectAddressReuse ? 'On' : 'Off'}
-            </Label2>
-            <Tooltip width={304}>
-              <P>
-                This option requires a user to scan a different cryptocurrency
-                address if they attempt to scan one that had been previously
-                used for a transaction in your network
-              </P>
-            </Tooltip>
+      <TitleSection
+        title="Compliance Triggers"
+        button={{
+          text: 'Advanced settings',
+          icon: ListingViewIcon,
+          inverseIcon: ReverseListingViewIcon,
+          toggle: setAdvancedSettings
+        }}
+        className={classes.tableWidth}>
+        {!advancedSettings && (
+          <Box display="flex" alignItems="center">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="end"
+              mr="-5px">
+              <P>Reject reused addresses</P>
+              <Switch
+                checked={rejectAddressReuse}
+                onChange={event => {
+                  addressReuseSave({ rejectAddressReuse: event.target.checked })
+                }}
+                value={rejectAddressReuse}
+              />
+              <Label2 className={classes.switchLabel}>
+                {rejectAddressReuse ? 'On' : 'Off'}
+              </Label2>
+              <Tooltip width={304}>
+                <P>
+                  This option requires a user to scan a different cryptocurrency
+                  address if they attempt to scan one that had been previously
+                  used for a transaction in your network
+                </P>
+              </Tooltip>
+            </Box>
           </Box>
-        </Box>
-      </TitleSection>
-      <Box
-        marginBottom={2}
-        className={classes.tableWidth}
-        display="flex"
-        justifyContent="flex-end">
-        {!loading && !R.isEmpty(triggers) && (
-          <Link color="primary" onClick={() => setWizard(true)}>
-            + Add new trigger
-          </Link>
         )}
-      </Box>
-      <EditableTable
-        data={triggers}
-        name="triggers"
-        enableEdit
-        sortBy={sortBy}
-        groupBy="triggerType"
-        enableDelete
-        error={error?.message}
-        save={save}
-        validationSchema={Schema}
-        elements={getElements(currency, classes)}
-      />
-      {wizard && (
-        <Wizard
-          currency={currency}
-          error={error?.message}
-          save={add}
-          onClose={() => setWizard(null)}
-        />
+      </TitleSection>
+      {!advancedSettings && (
+        <>
+          <Box
+            marginBottom={2}
+            className={classes.tableWidth}
+            display="flex"
+            justifyContent="flex-end">
+            {!loading && !R.isEmpty(triggers) && (
+              <Link color="primary" onClick={() => setWizard(true)}>
+                + Add new trigger
+              </Link>
+            )}
+          </Box>
+          <EditableTable
+            data={triggers}
+            name="triggers"
+            enableEdit
+            sortBy={sortBy}
+            groupBy="triggerType"
+            enableDelete
+            error={error?.message}
+            save={save}
+            validationSchema={Schema}
+            elements={getElements(currency, classes)}
+          />
+          {wizard && (
+            <Wizard
+              currency={currency}
+              error={error?.message}
+              save={add}
+              onClose={() => setWizard(null)}
+            />
+          )}
+          {!loading && R.isEmpty(triggers) && (
+            <Box
+              display="flex"
+              alignItems="center"
+              flexDirection="column"
+              mt={15}>
+              <H2>
+                It seems there are no active compliance triggers on your network
+              </H2>
+              <Button onClick={() => setWizard(true)}>Add first trigger</Button>
+            </Box>
+          )}
+        </>
       )}
-      {!loading && R.isEmpty(triggers) && (
-        <Box display="flex" alignItems="center" flexDirection="column" mt={15}>
-          <H2>
-            It seems there are no active compliance triggers on your network
-          </H2>
-          <Button onClick={() => setWizard(true)}>Add first trigger</Button>
-        </Box>
+      {advancedSettings && (
+        <AdvancedTriggers
+          error={error}
+          save={saveConfig}
+          data={data}></AdvancedTriggers>
       )}
     </>
   )

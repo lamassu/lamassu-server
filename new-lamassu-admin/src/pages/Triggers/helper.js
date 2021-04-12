@@ -715,5 +715,7 @@ export {
   requirements,
   sortBy,
   fromServer,
-  toServer
+  toServer,
+  getView,
+  requirementOptions
 }
