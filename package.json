@@ -97,7 +97,6 @@
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
     "lamassu-cancel": "./bin/lamassu-cancel",
-    "lamassu-nuke-db": "./bin/lamassu-nuke-db",
     "lamassu-coins": "./bin/lamassu-coins",
     "lamassu-ofac-update": "./bin/lamassu-ofac-update",
     "lamassu-send-coins": "./bin/lamassu-send-coins",
@@ -106,10 +105,7 @@
     "lamassu-ofac-update-sources": "./bin/lamassu-ofac-update-sources",
     "lamassu-devices": "./bin/lamassu-devices",
     "lamassu-operator": "./bin/lamassu-operator",
-    "lamassu-coinatmradar": "./bin/lamassu-coinatmradar",
-    "lamassu-users": "./bin/lamassu-users",
-    "lamassu-blacklist": "./bin/lamassu-blacklist",
-    "lamassu-revoke": "./bin/lamassu-revoke"
+    "lamassu-coinatmradar": "./bin/lamassu-coinatmradar"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
