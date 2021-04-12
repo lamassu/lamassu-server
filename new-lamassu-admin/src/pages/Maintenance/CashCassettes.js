@@ -12,10 +12,13 @@ import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
+import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
+import CashboxHistory from './CashboxHistory'
 import Wizard from './Wizard/Wizard'
 
 const useStyles = makeStyles(styles)
@@ -90,6 +93,7 @@ const SET_CASSETTE_BILLS = gql`
 
 const CashCassettes = () => {
   const classes = useStyles()
+  const [showHistory, setShowHistory] = useState(false)
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
   const [wizard, setWizard] = useState(false)
@@ -200,21 +204,37 @@ const CashCassettes = () => {
 
   return (
     <>
-      <TitleSection title="Cash Cassettes" />
+      <TitleSection
+        title="Cash Cassettes"
+        button={{
+          text: 'Cashbox history',
+          icon: ListingViewIcon,
+          inverseIcon: ReverseListingViewIcon,
+          toggle: setShowHistory
+        }}
+        iconClassName={classes.listViewButton}
+      />
       <div className={classes.tableContainer}>
-        <EditableTable
-          error={error?.message}
-          name="cashboxes"
-          stripeWhen={isCashOutDisabled}
-          elements={elements}
-          data={machines}
-          validationSchema={ValidationSchema}
-          tbodyWrapperClass={classes.tBody}
-        />
+        {!showHistory && (
+          <>
+            <EditableTable
+              error={error?.message}
+              name="cashboxes"
+              enableEdit
+              stripeWhen={isCashOutDisabled}
+              elements={elements}
+              data={machines}
+              save={onSave}
+              validationSchema={ValidationSchema}
+              tbodyWrapperClass={classes.tBody}
+            />
 
-        {data && R.isEmpty(machines) && (
-          <EmptyTable message="No machines so far" />
+            {data && R.isEmpty(machines) && (
+              <EmptyTable message="No machines so far" />
+            )}
+          </>
         )}
+        {showHistory && <CashboxHistory machines={machines} />}
       </div>
       <CashCassettesFooter
         currencyCode={fiatCurrency}
