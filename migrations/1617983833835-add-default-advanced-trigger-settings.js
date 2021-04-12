@@ -1,14 +1,19 @@
-const db = require('./db')
-
+const { saveConfig } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
+  const triggersDefault = {
+    triggersConfig_expirationTime: 'Forever',
+    triggersConfig_automation: 'Automatic'
+  }
 
-    const sql2 = [`insert into user_config (type, data, valid, schema_version) values ('config', '{"config":{
-        "triggersConfig_expirationTime": "Forever",
-        "triggersConfig_automation": "Automatic"
-    } }', true, 2)`]
-
-    db.multi(sql2, next)
+  return saveConfig(triggersDefault)
+    .then(() => next())
+    .catch(err => {
+      if (err.message === 'lamassu-server is not configured') {
+        next()
+      }
+      console.log(err.message)
+    })
 }
 
 exports.down = function (next) {
