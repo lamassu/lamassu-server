@@ -149,7 +149,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
     if (!coin) return setValue(curr)
 
     const namespaced = fromNamespace(coin)(wallets)
-    console.log(namespaced)
     if (!WalletSchema.isValidSync(namespaced)) {
       setOnChangeFunction(() => () => setValue(curr))
       setWizard(coin)
@@ -226,6 +225,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           accounts={accounts}
           accountsConfig={accountsConfig}
           locale={locale}
+          zeroConfLimit={wallets[`${wizard}_zeroConfLimit`]}
         />
       )}
     </>

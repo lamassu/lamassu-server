@@ -66,6 +66,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   }
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
@@ -95,7 +96,6 @@ const Wallet = ({ name: SCREEN_KEY }) => {
       setOnChangeFunction(null)
       return it
     })
-
   return (
     <>
       <TitleSection title="Wallet Settings" />
@@ -124,6 +124,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           accounts={accounts}
           accountsConfig={accountsConfig}
           locale={data?.config && fromNamespace('locale')(data.config)}
+          zeroConfLimit={config[`${wizard}_zeroConfLimit`]}
         />
       )}
       {editingSchema && (

@@ -40,7 +40,8 @@ const Wizard = ({
   accounts,
   save,
   error,
-  locale
+  locale,
+  zeroConfLimit
 }) => {
   const [{ step, config, accountsToSave }, setState] = useState({
     step: 0,
@@ -65,7 +66,7 @@ const Wizard = ({
       : accountsToSave
 
     if (isLastStep) {
-      newConfig.zeroConfLimit = 0
+      newConfig.zeroConfLimit = zeroConfLimit || 0
       return save(toNamespace(coin.code, newConfig), newAccounts)
     }
 

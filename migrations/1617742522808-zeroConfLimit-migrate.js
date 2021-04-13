@@ -3,45 +3,26 @@ var db = require('../lib/db')
 const settingsLoader = require('../lib/new-settings-loader')
 const configManager = require('../lib/new-config-manager')
 
-const stripl = _.curry((q, str) => _.startsWith(q, str) ? str.slice(q.length) : str)
-const filter = namespace => _.pickBy((value, key) => _.startsWith(`${namespace}_`)(key))
-const strip = key => _.mapKeys(stripl(`${key}_`))
-
-const fromNamespace = _.curry((key, config) => _.compose(strip(key), filter(key))(config))
-
-const split = _.curry(_.split)
-const composed = _.compose(_.head, split('_'))
-
-const getCryptoCodes = (config) => {
-  const walletKeys = _.keys(fromNamespace('wallets', config))
-  return _.uniq(_.map(composed, walletKeys))
-}
+const isNil = val => val == null
+const curriedGetCashout = _.curry(configManager.getCashOut)
 
 exports.up = function (next) {
   db.tx(async t => {
-    let min = Infinity
-    const sp = settingsLoader.loadLatest()
-    const mp = t.any('SELECT device_id FROM devices')
-    const [{ config }, machines] = await Promise.all([sp, mp])
-    const cryptoCodes = getCryptoCodes(config)
+    const settingsPromise = settingsLoader.loadLatest()
+    const machinesPromise = t.any('SELECT device_id FROM devices')
+    const [{ config }, machines] = await Promise.all([settingsPromise, machinesPromise])
+    const cryptoCodes = configManager.getCryptosFromWalletNamespace(config)
 
-    _.forEach(o => {
-      const machineId = o.device_id
-      const cashOutConfig = configManager.getCashOut(machineId, config)
-      const zeroConfLimit = cashOutConfig.zeroConfLimit || Infinity
-      if (zeroConfLimit < min) {
-        min = zeroConfLimit
-      }
-    }, machines)
-    if (min === Infinity) {
-      min = 0
-    }
+    const zeroConfLimits = _.map(_.flow(_.get('device_id'), curriedGetCashout(_, config), _.get('zeroConfLimit')), machines)
+    const minArr = _.min(zeroConfLimits)
+    const min = !isNil(minArr) && minArr < Infinity ? Number(minArr) : 0
+
     _.forEach(cryptoCode => {
       const walletConfig = configManager.getWalletSettings(cryptoCode, config)
-      const zeroConfLimit = walletConfig.zeroConfLimit || null
+      const zeroConfLimit = _.get('zeroConfLimit', walletConfig)
       const key = `wallets_${cryptoCode}_zeroConfLimit`
-      if (!zeroConfLimit) {
-        config[key] = Number(min)
+      if (isNil(zeroConfLimit)) {
+        config[key] = min
       }
     }, cryptoCodes)
 
