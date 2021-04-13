@@ -11,8 +11,8 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2, H2 } from 'src/components/typography'
-import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
-import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
+import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
+import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import styles from './Triggers.styles'
@@ -82,8 +82,8 @@ const Triggers = () => {
         title="Compliance Triggers"
         button={{
           text: 'Advanced settings',
-          icon: ListingViewIcon,
-          inverseIcon: ReverseListingViewIcon,
+          icon: SettingsIcon,
+          inverseIcon: ReverseSettingsIcon,
           toggle: setAdvancedSettings
         }}
         className={classes.tableWidth}>
