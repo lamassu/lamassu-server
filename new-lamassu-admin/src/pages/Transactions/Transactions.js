@@ -130,7 +130,7 @@ const Transactions = () => {
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
+        `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)} ${
           it.cryptoCode
         }`
     },
