@@ -198,9 +198,9 @@ const Transactions = () => {
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${coinUtils
-          .toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)
-          .toFormat(5)} ${it.cryptoCode}`
+        `${coinUtils.toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)} ${
+          it.cryptoCode
+        }`
     },
     {
       header: 'Address',
