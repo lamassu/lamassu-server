@@ -10,7 +10,7 @@ exports.up = function (next) {
 
     `ALTER TABLE bills ADD COLUMN legacy boolean DEFAULT false`,
 
-    `ALTER TABLE bills ADD COLUMN cashbox_batch_id int`,
+    `ALTER TABLE bills ADD COLUMN cashbox_batch_id uuid`,
 
     `ALTER TABLE bills ADD CONSTRAINT cashbox_batch_id
     FOREIGN KEY (cashbox_batch_id)
