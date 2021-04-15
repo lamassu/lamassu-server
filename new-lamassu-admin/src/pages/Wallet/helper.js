@@ -3,8 +3,14 @@ import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { disabledColor } from 'src/styling/variables'
 import { CURRENCY_MAX } from 'src/utils/constants'
 
+const classes = {
+  editDisabled: {
+    color: disabledColor
+  }
+}
 const filterClass = type => R.filter(it => it.class === type)
 const filterCoins = ({ id }) => R.filter(it => R.contains(id)(it.cryptos))
 
@@ -21,13 +27,16 @@ const WalletSchema = Yup.object().shape({
 })
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
+  let currentCurrency = ''
   const widthAdjust = wizard ? 11 : 0
-  const viewCryptoCurrency = it =>
-    R.compose(
+  const viewCryptoCurrency = it => {
+    const currencyDisplay = R.compose(
       R.prop(['display']),
       R.find(R.propEq('code', it))
     )(cryptoCurrencies)
-
+    currentCurrency = currencyDisplay
+    return currencyDisplay
+  }
   const filterOptions = type => filterClass(type)(accounts || [])
 
   const getDisplayName = type => it =>
@@ -39,6 +48,12 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
   const getOptions = R.curry((option, it) =>
     filterCoins(it)(filterOptions(option))
   )
+
+  const getZeroConfLimit = it => {
+    if (currentCurrency === 'Ethereum')
+      return <div style={classes.editDisabled}>{it}</div>
+    return it
+  }
 
   return [
     {
@@ -112,12 +127,13 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       name: 'zeroConfLimit',
       size: 'sm',
       stripe: true,
-      view: it => it,
+      view: getZeroConfLimit,
       input: NumberInput,
       width: 190 - widthAdjust,
       inputProps: {
         decimalPlaces: 0
-      }
+      },
+      editable: row => row.id !== 'ETH'
     }
   ]
 }

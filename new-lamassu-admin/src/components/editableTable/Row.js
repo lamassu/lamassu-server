@@ -136,8 +136,11 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
   } = config
 
   const { values } = useFormikContext()
-
-  const isEditing = editing && editable
+  const isEditable = editable => {
+    if (typeof editable === 'function') return editable(values)
+    return editable
+  }
+  const isEditing = editing && isEditable(editable)
   const isField = !bypassField
 
   const classes = useStyles({

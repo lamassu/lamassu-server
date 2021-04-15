@@ -19,10 +19,10 @@ exports.up = function (next) {
 
     _.forEach(cryptoCode => {
       const walletConfig = configManager.getWalletSettings(cryptoCode, config)
-      const zeroConfLimit = _.get('zeroConfLimit', walletConfig)
-
-      if (_.isNil(zeroConfLimit)) {
-        config[`wallets_${cryptoCode}_zeroConfLimit`] = smallerZeroConf
+      const zeroConfLimit = cryptoCode === 'ETH' ? 0 : _.get('zeroConfLimit', walletConfig)
+      const key = `wallets_${cryptoCode}_zeroConfLimit`
+      if (isNil(zeroConfLimit)) {
+        config[key] = min
       }
     }, cryptoCodes)
 
