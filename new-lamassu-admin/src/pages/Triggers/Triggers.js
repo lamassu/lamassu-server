@@ -11,7 +11,11 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2, H2 } from 'src/components/typography'
+import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circle buttons/filter/white.svg'
+import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
+
+import CustomInfoRequests from '../CustomInfoRequests'
 
 import styles from './Triggers.styles'
 import Wizard from './Wizard'
@@ -34,7 +38,7 @@ const GET_INFO = gql`
 const Triggers = () => {
   const classes = useStyles()
   const [wizard, setWizard] = useState(false)
-
+  const [showCustomInfoRequests, setShowCustomInfoRequests] = useState(false)
   const { data, loading } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
 
@@ -74,7 +78,15 @@ const Triggers = () => {
 
   return (
     <>
-      <TitleSection title="Compliance Triggers" className={classes.tableWidth}>
+      <TitleSection
+        title="Compliance Triggers"
+        className={classes.tableWidth}
+        button={{
+          text: 'Custom info requests',
+          icon: CustomInfoIcon,
+          inverseIcon: ReverseCustomInfoIcon,
+          toggle: setShowCustomInfoRequests
+        }}>
         <Box display="flex" alignItems="center">
           <Box
             display="flex"
@@ -102,44 +114,54 @@ const Triggers = () => {
           </Box>
         </Box>
       </TitleSection>
-      <Box
-        marginBottom={2}
-        className={classes.tableWidth}
-        display="flex"
-        justifyContent="flex-end">
-        {!loading && !R.isEmpty(triggers) && (
-          <Link color="primary" onClick={() => setWizard(true)}>
-            + Add new trigger
-          </Link>
-        )}
-      </Box>
-      <EditableTable
-        data={triggers}
-        name="triggers"
-        enableEdit
-        sortBy={sortBy}
-        groupBy="triggerType"
-        enableDelete
-        error={error?.message}
-        save={save}
-        validationSchema={Schema}
-        elements={getElements(currency, classes)}
-      />
-      {wizard && (
-        <Wizard
-          currency={currency}
-          error={error?.message}
-          save={add}
-          onClose={() => setWizard(null)}
-        />
-      )}
-      {!loading && R.isEmpty(triggers) && (
-        <Box display="flex" alignItems="center" flexDirection="column" mt={15}>
-          <H2>
-            It seems there are no active compliance triggers on your network
-          </H2>
-          <Button onClick={() => setWizard(true)}>Add first trigger</Button>
-        </Box>
+      {showCustomInfoRequests ? (
+        <CustomInfoRequests />
+      ) : (
+        <>
+          <Box
+            marginBottom={2}
+            className={classes.tableWidth}
+            display="flex"
+            justifyContent="flex-end">
+            {!loading && !R.isEmpty(triggers) && (
+              <Link color="primary" onClick={() => setWizard(true)}>
+                + Add new trigger
+              </Link>
+            )}
+          </Box>
+          <EditableTable
+            data={triggers}
+            name="triggers"
+            enableEdit
+            sortBy={sortBy}
+            groupBy="triggerType"
+            enableDelete
+            error={error?.message}
+            save={save}
+            validationSchema={Schema}
+            elements={getElements(currency, classes)}
+          />
+          {wizard && (
+            <Wizard
+              currency={currency}
+              error={error?.message}
+              save={add}
+              onClose={() => setWizard(null)}
+            />
+          )}
+          {!loading && R.isEmpty(triggers) && (
+            <Box
+              display="flex"
+              alignItems="center"
+              flexDirection="column"
+              mt={15}>
+              <H2>
+                It seems there are no active compliance triggers on your network
+              </H2>
+              <Button onClick={() => setWizard(true)}>Add first trigger</Button>
+            </Box>
+          )}
+        </>
       )}
     </>
   )
