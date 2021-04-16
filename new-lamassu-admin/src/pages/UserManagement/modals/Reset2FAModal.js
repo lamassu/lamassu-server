@@ -1,5 +1,7 @@
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import React from 'react'
+import gql from 'graphql-tag'
+import React, { useEffect, useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
@@ -7,17 +9,65 @@ import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 
 import styles from '../UserManagement.styles'
 
+import Input2FAModal from './Input2FAModal'
+
+const CREATE_RESET_2FA_TOKEN = gql`
+  mutation createReset2FAToken($confirmationCode: String, $userID: ID!) {
+    createReset2FAToken(confirmationCode: $confirmationCode, userID: $userID) {
+      token
+      user_id
+      expire
+    }
+  }
+`
+
 const useStyles = makeStyles(styles)
 
-const Reset2FAModal = ({ showModal, toggleModal, reset2FAURL, user }) => {
+const Reset2FAModal = ({
+  showModal,
+  toggleModal,
+  user,
+  requiresConfirmation
+}) => {
   const classes = useStyles()
+  const [reset2FAUrl, setReset2FAUrl] = useState('')
+
+  const [createReset2FAToken, { loading }] = useMutation(
+    CREATE_RESET_2FA_TOKEN,
+    {
+      onCompleted: ({ createReset2FAToken: token }) => {
+        setReset2FAUrl(`https://localhost:3001/reset2fa?t=${token.token}`)
+      }
+    }
+  )
+
+  const [confirmation, setConfirmation] = useState(null)
+
+  useEffect(() => {
+    showModal &&
+      (confirmation || !requiresConfirmation) &&
+      createReset2FAToken({
+        variables: {
+          confirmationCode: confirmation,
+          userID: user?.id
+        }
+      })
+  }, [confirmation, createReset2FAToken, requiresConfirmation, showModal, user])
 
   const handleClose = () => {
+    setConfirmation(null)
     toggleModal()
   }
 
   return (
-    showModal && (
+    (showModal && requiresConfirmation && !confirmation && (
+      <Input2FAModal
+        showModal={showModal}
+        handleClose={handleClose}
+        setConfirmation={setConfirmation}
+      />
+    )) ||
+    (showModal && (confirmation || !requiresConfirmation) && !loading && (
       <Modal
         closeOnBackdropClick={true}
         width={500}
@@ -38,13 +88,13 @@ const Reset2FAModal = ({ showModal, toggleModal, reset2FAURL, user }) => {
                 className={classes.link}
                 buttonClassname={classes.copyToClipboard}
                 wrapperClassname={classes.linkWrapper}>
-                {reset2FAURL}
+                {reset2FAUrl}
               </CopyToClipboard>
             </strong>
           </Mono>
         </div>
       </Modal>
-    )
+    ))
   )
 }
 

@@ -1,5 +1,7 @@
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
-import React from 'react'
+import gql from 'graphql-tag'
+import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
@@ -7,24 +9,75 @@ import { Info2, P } from 'src/components/typography'
 
 import styles from '../UserManagement.styles'
 
+import Input2FAModal from './Input2FAModal'
+
+const ENABLE_USER = gql`
+  mutation enableUser($confirmationCode: String, $id: ID!) {
+    enableUser(confirmationCode: $confirmationCode, id: $id) {
+      id
+    }
+  }
+`
+
+const DISABLE_USER = gql`
+  mutation disableUser($confirmationCode: String, $id: ID!) {
+    disableUser(confirmationCode: $confirmationCode, id: $id) {
+      id
+    }
+  }
+`
+
 const useStyles = makeStyles(styles)
 
 const EnableUserModal = ({
   showModal,
   toggleModal,
   user,
-  confirm,
-  inputConfirmToggle,
-  setAction
+  requiresConfirmation
 }) => {
   const classes = useStyles()
 
+  const [enableUser] = useMutation(ENABLE_USER, {
+    refetchQueries: () => ['users']
+  })
+
+  const [disableUser] = useMutation(DISABLE_USER, {
+    refetchQueries: () => ['users']
+  })
+
+  const [confirmation, setConfirmation] = useState(null)
+
+  const submit = () => {
+    user?.enabled
+      ? disableUser({
+          variables: {
+            confirmationCode: confirmation,
+            id: user.id
+          }
+        })
+      : enableUser({
+          variables: {
+            confirmationCode: confirmation,
+            id: user.id
+          }
+        })
+    handleClose()
+  }
+
   const handleClose = () => {
+    setConfirmation(null)
     toggleModal()
   }
 
   return (
-    showModal && (
+    (showModal && requiresConfirmation && !confirmation && (
+      <Input2FAModal
+        showModal={showModal}
+        handleClose={handleClose}
+        setConfirmation={setConfirmation}
+      />
+    )) ||
+    (showModal && (
       <Modal
         closeOnBackdropClick={true}
         width={450}
@@ -58,32 +111,12 @@ const EnableUserModal = ({
           </>
         )}
         <div className={classes.footer}>
-          <Button
-            className={classes.submit}
-            onClick={() => {
-              if (user.role === 'superuser') {
-                setAction(() =>
-                  confirm.bind(null, {
-                    variables: {
-                      id: user.id
-                    }
-                  })
-                )
-                inputConfirmToggle()
-              } else {
-                confirm({
-                  variables: {
-                    id: user.id
-                  }
-                })
-              }
-              handleClose()
-            }}>
+          <Button className={classes.submit} onClick={() => submit()}>
             Confirm
           </Button>
         </div>
       </Modal>
-    )
+    ))
   )
 }
 

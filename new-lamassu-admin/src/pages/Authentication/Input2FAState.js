@@ -10,6 +10,7 @@ import { CodeInput } from 'src/components/inputs/base'
 import { H2, P } from 'src/components/typography'
 
 import styles from './Login.styles'
+import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
 
@@ -47,7 +48,12 @@ const Input2FAState = ({ state, dispatch }) => {
   const [invalidToken, setInvalidToken] = useState(false)
 
   const handle2FAChange = value => {
-    dispatch({ type: 'twoFAField', payload: value })
+    dispatch({
+      type: STATES.INPUT_2FA,
+      payload: {
+        twoFAField: value
+      }
+    })
     setInvalidToken(false)
   }
 

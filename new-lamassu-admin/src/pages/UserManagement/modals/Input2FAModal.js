@@ -18,7 +18,7 @@ const CONFIRM_2FA = gql`
   }
 `
 
-const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
+const Input2FAModal = ({ showModal, handleClose, setConfirmation }) => {
   const classes = useStyles()
 
   const [twoFACode, setTwoFACode] = useState('')
@@ -29,21 +29,15 @@ const Input2FAModal = ({ showModal, toggleModal, action, vars }) => {
     setInvalidCode(false)
   }
 
-  const handleClose = () => {
+  const onContinue = () => {
+    setConfirmation(twoFACode)
     setTwoFACode('')
     setInvalidCode(false)
-    toggleModal()
   }
 
   const [confirm2FA, { error: queryError }] = useLazyQuery(CONFIRM_2FA, {
-    onCompleted: ({ confirm2FA: success }) => {
-      if (!success) {
-        setInvalidCode(true)
-      } else {
-        action()
-        handleClose()
-      }
-    }
+    onCompleted: ({ confirm2FA: success }) =>
+      !success ? setInvalidCode(true) : onContinue()
   })
 
   const getErrorMsg = () => {
