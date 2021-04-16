@@ -126,7 +126,7 @@ const Transactions = () => {
     },
     {
       header: 'Crypto',
-      width: 144,
+      width: 150,
       textAlign: 'right',
       size: 'sm',
       view: it =>
