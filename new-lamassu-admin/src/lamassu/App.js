@@ -1,6 +1,7 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useLazyQuery } from '@apollo/react-hooks'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
+import Slide from '@material-ui/core/Slide'
 import {
   StylesProvider,
   jssPreset,
@@ -10,8 +11,7 @@ import {
 import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import * as R from 'ramda'
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   useLocation,
   useHistory,
@@ -71,32 +71,36 @@ const useStyles = makeStyles({
   }
 })
 
+const GET_USER_DATA = gql`
+  query userData {
+    userData {
+      id
+      username
+      role
+      enabled
+      last_accessed
+      last_accessed_from
+      last_accessed_address
+    }
+  }
+`
+
 const Main = () => {
   const classes = useStyles()
   const location = useLocation()
   const history = useHistory()
   const { wizardTested, userData, setUserData } = useContext(AppContext)
 
-  const GET_USER_DATA = gql`
-    query userData {
-      userData {
-        id
-        username
-        role
-        enabled
-        last_accessed
-        last_accessed_from
-        last_accessed_address
-      }
+  const [getUserData, { loading }] = useLazyQuery(GET_USER_DATA, {
+    onCompleted: userResponse => {
+      if (!userData && userResponse?.userData)
+        setUserData(userResponse.userData)
     }
-  `
-
-  const { data: userResponse, loading } = useQuery(GET_USER_DATA)
+  })
 
   useEffect(() => {
-    if (!R.equals(userData, userResponse?.userData) && !loading)
-      setUserData(userResponse?.userData)
-  }, [loading, setUserData, userData, userResponse])
+    getUserData()
+  }, [getUserData])
 
   const route = location.pathname
 
@@ -120,7 +124,17 @@ const Main = () => {
       )}
       <main className={classes.wrapper}>
         {sidebar && !is404 && wizardTested && (
-          <TitleSection title={parent.title}></TitleSection>
+          <Slide
+            direction="left"
+            in={true}
+            mountOnEnter
+            unmountOnExit
+            children={
+              <div>
+                <TitleSection title={parent.title}></TitleSection>
+              </div>
+            }
+          />
         )}
 
         <Grid container className={classes.grid}>
@@ -143,9 +157,15 @@ const App = () => {
   const [wizardTested, setWizardTested] = useState(false)
   const [userData, setUserData] = useState(null)
 
+  const setRole = role => {
+    if (userData && userData.role !== role) {
+      setUserData({ ...userData, role })
+    }
+  }
+
   return (
     <AppContext.Provider
-      value={{ wizardTested, setWizardTested, userData, setUserData }}>
+      value={{ wizardTested, setWizardTested, userData, setUserData, setRole }}>
       <Router>
         <ApolloProvider>
           <StylesProvider jss={jss}>

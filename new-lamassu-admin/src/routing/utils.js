@@ -1,6 +1,11 @@
-export const isLoggedIn = userData => !!userData
+import * as R from 'ramda'
+
+export const isLoggedIn = userData =>
+  !R.isNil(userData?.id) &&
+  !R.isNil(userData?.username) &&
+  !R.isNil(userData?.role)
 
 export const ROLES = {
-  USER: { key: 'user' },
-  SUPERUSER: { key: 'superuser' }
+  USER: 'user',
+  SUPERUSER: 'superuser'
 }

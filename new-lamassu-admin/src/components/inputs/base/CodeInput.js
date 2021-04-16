@@ -3,9 +3,12 @@ import classnames from 'classnames'
 import React from 'react'
 import OtpInput from 'react-otp-input'
 
+import typographyStyles from 'src/components/typography/styles'
+
 import styles from './CodeInput.styles'
 
 const useStyles = makeStyles(styles)
+const useTypographyStyles = makeStyles(typographyStyles)
 
 const CodeInput = ({
   name,
@@ -18,6 +21,7 @@ const CodeInput = ({
   ...props
 }) => {
   const classes = useStyles()
+  const typographyClasses = useTypographyStyles()
 
   return (
     <OtpInput
@@ -27,7 +31,11 @@ const CodeInput = ({
       numInputs={numInputs}
       separator={<span> </span>}
       containerStyle={classnames(containerStyle, classes.container)}
-      inputStyle={classnames(inputStyle, classes.input)}
+      inputStyle={classnames(
+        inputStyle,
+        classes.input,
+        typographyClasses.confirmationCode
+      )}
       focusStyle={classes.focus}
       errorStyle={classes.error}
       hasErrored={error}

@@ -68,6 +68,7 @@ let fontSize2 = 20
 let fontSize3 = 16
 let fontSize4 = 14
 let fontSize5 = 13
+const fontSize2FA = 35
 
 if (version === 8) {
   fontSize1 = 32
@@ -158,6 +159,7 @@ export {
   fontPrimary,
   fontSecondary,
   fontMonospaced,
+  fontSize2FA,
   // named font sizes
   smallestFontSize,
   inputFontSize,
