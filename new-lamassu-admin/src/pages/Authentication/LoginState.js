@@ -10,6 +10,7 @@ import { Checkbox, SecretInput, TextInput } from 'src/components/inputs/formik'
 import { Label2, P } from 'src/components/typography'
 
 import styles from './Login.styles'
+import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
 
@@ -33,21 +34,10 @@ const initialValues = {
   rememberMe: false
 }
 
-const LoginState = ({
-  onClientChange,
-  onPasswordChange,
-  onRememberMeChange,
-  STATES,
-  handleLoginState
-}) => {
+const LoginState = ({ state, dispatch }) => {
   const classes = useStyles()
 
-  const [login, { error: mutationError }] = useMutation(LOGIN, {
-    onCompleted: ({ login }) => {
-      if (login === 'INPUT2FA') handleLoginState(STATES.INPUT_2FA)
-      if (login === 'SETUP2FA') handleLoginState(STATES.SETUP_2FA)
-    }
-  })
+  const [login, { error: mutationError }] = useMutation(LOGIN)
 
   const getErrorMsg = (formikErrors, formikTouched) => {
     if (!formikErrors || !formikTouched) return null
@@ -58,21 +48,36 @@ const LoginState = ({
     return null
   }
 
+  const submitLogin = async (username, password, rememberMe) => {
+    const { data: loginResponse } = await login({
+      variables: {
+        username,
+        password
+      }
+    })
+
+    if (!loginResponse.login) return
+
+    const stateVar =
+      loginResponse.login === 'INPUT2FA' ? STATES.INPUT_2FA : STATES.SETUP_2FA
+
+    return dispatch({
+      type: stateVar,
+      payload: {
+        clientField: username,
+        passwordField: password,
+        rememberMeField: rememberMe
+      }
+    })
+  }
+
   return (
     <Formik
       validationSchema={validationSchema}
       initialValues={initialValues}
-      onSubmit={values => {
-        onClientChange(values.client)
-        onPasswordChange(values.password)
-        onRememberMeChange(values.rememberMe)
-        login({
-          variables: {
-            username: values.client,
-            password: values.password
-          }
-        })
-      }}>
+      onSubmit={values =>
+        submitLogin(values.client, values.password, values.rememberMe)
+      }>
       {({ errors, touched }) => (
         <Form id="login-form">
           <Field

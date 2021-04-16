@@ -53,10 +53,9 @@ const SessionManagement = () => {
       textAlign: 'center',
       size: 'sm',
       view: s => {
+        if (R.isNil(s.sess.ua)) return 'No Record'
         const ua = parser(s.sess.ua)
-        return s.sess.ua
-          ? `${ua.browser.name} ${ua.browser.version} on ${ua.os.name} ${ua.os.version}`
-          : `No Record`
+        return `${ua.browser.name} ${ua.browser.version} on ${ua.os.name} ${ua.os.version}`
       }
     },
     {

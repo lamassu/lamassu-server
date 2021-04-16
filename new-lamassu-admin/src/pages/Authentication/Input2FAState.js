@@ -39,13 +39,7 @@ const GET_USER_DATA = gql`
   }
 `
 
-const Input2FAState = ({
-  twoFAField,
-  onTwoFAChange,
-  clientField,
-  passwordField,
-  rememberMeField
-}) => {
+const Input2FAState = ({ state, dispatch }) => {
   const classes = useStyles()
   const history = useHistory()
   const { setUserData } = useContext(AppContext)
@@ -53,8 +47,24 @@ const Input2FAState = ({
   const [invalidToken, setInvalidToken] = useState(false)
 
   const handle2FAChange = value => {
-    onTwoFAChange(value)
+    dispatch({ type: 'twoFAField', payload: value })
     setInvalidToken(false)
+  }
+
+  const handleSubmit = () => {
+    if (state.twoFAField.length !== 6) {
+      setInvalidToken(true)
+      return
+    }
+
+    input2FA({
+      variables: {
+        username: state.clientField,
+        password: state.passwordField,
+        code: state.twoFAField,
+        rememberMe: state.rememberMeField
+      }
+    })
   }
 
   const [input2FA, { error: mutationError }] = useMutation(INPUT_2FA, {
@@ -72,12 +82,14 @@ const Input2FAState = ({
 
   const getErrorMsg = () => {
     if (queryError) return 'Internal server error'
-    if (twoFAField.length !== 6 && invalidToken)
+    if (state.twoFAField.length !== 6 && invalidToken)
       return 'The code should have 6 characters!'
     if (mutationError || invalidToken)
       return 'Code is invalid. Please try again.'
     return null
   }
+
+  const errorMessage = getErrorMsg()
 
   return (
     <>
@@ -86,32 +98,15 @@ const Input2FAState = ({
       </H2>
       <CodeInput
         name="2fa"
-        value={twoFAField}
+        value={state.twoFAField}
         onChange={handle2FAChange}
         numInputs={6}
         error={invalidToken}
         shouldAutoFocus
       />
       <div className={classes.twofaFooter}>
-        {getErrorMsg() && (
-          <P className={classes.errorMessage}>{getErrorMsg()}</P>
-        )}
-        <Button
-          onClick={() => {
-            if (twoFAField.length !== 6) {
-              setInvalidToken(true)
-              return
-            }
-            input2FA({
-              variables: {
-                username: clientField,
-                password: passwordField,
-                code: twoFAField,
-                rememberMe: rememberMeField
-              }
-            })
-          }}
-          buttonClassName={classes.loginButton}>
+        {errorMessage && <P className={classes.errorMessage}>{errorMessage}</P>}
+        <Button onClick={handleSubmit} buttonClassName={classes.loginButton}>
           Login
         </Button>
       </div>

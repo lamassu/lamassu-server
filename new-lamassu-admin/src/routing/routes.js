@@ -12,7 +12,6 @@ import {
 } from 'react-router-dom'
 
 import AppContext from 'src/AppContext'
-// import AuthRegister from 'src/pages/AuthRegister'
 import Login from 'src/pages/Authentication/Login'
 import Register from 'src/pages/Authentication/Register'
 import Reset2FA from 'src/pages/Authentication/Reset2FA'
@@ -37,7 +36,6 @@ import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
-// import TokenManagement from 'src/pages/TokenManagement/TokenManagement'
 import SessionManagement from 'src/pages/SessionManagement/SessionManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
@@ -283,22 +281,6 @@ const tree = [
       }
     ]
   }
-  // {
-  //   key: 'system',
-  //   label: 'System',
-  //   route: '/system',
-  //   get component() {
-  //     return () => <Redirect to={this.children[0].route} />
-  //   },
-  //   children: [
-  //     {
-  //       key: 'token-management',
-  //       label: 'Token Management',
-  //       route: '/system/token-management',
-  //       component: TokenManagement
-  //     }
-  //   ]
-  // }
 ]
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
@@ -356,9 +338,7 @@ const Routes = () => {
     if (!userData) return []
 
     return flattened.filter(value => {
-      const keys = value.allowedRoles.map(v => {
-        return v.key
-      })
+      const keys = value.allowedRoles
       return R.includes(userData.role, keys)
     })
   }
@@ -379,7 +359,7 @@ const Routes = () => {
   return (
     <Switch>
       <PrivateRoute exact path="/">
-        <Redirect to={{ pathname: '/transactions' }} />
+        <Redirect to={{ pathname: '/dashboard' }} />
       </PrivateRoute>
       <PrivateRoute path={'/dashboard'}>
         <Transition

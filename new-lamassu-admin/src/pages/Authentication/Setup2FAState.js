@@ -1,9 +1,11 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
+import AppContext from 'src/AppContext'
 import { ActionButton, Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
 import { Label2, P } from 'src/components/typography'
@@ -15,12 +17,14 @@ const SETUP_2FA = gql`
   mutation setup2FA(
     $username: String!
     $password: String!
+    $rememberMe: Boolean!
     $secret: String!
     $codeConfirmation: String!
   ) {
     setup2FA(
       username: $username
       password: $password
+      rememberMe: $rememberMe
       secret: $secret
       codeConfirmation: $codeConfirmation
     )
@@ -36,15 +40,22 @@ const GET_2FA_SECRET = gql`
   }
 `
 
+const GET_USER_DATA = gql`
+  {
+    userData {
+      id
+      username
+      role
+    }
+  }
+`
+
 const useStyles = makeStyles(styles)
 
-const Setup2FAState = ({
-  clientField,
-  passwordField,
-  STATES,
-  handleLoginState
-}) => {
+const Setup2FAState = ({ state, dispatch }) => {
   const classes = useStyles()
+  const history = useHistory()
+  const { setUserData } = useContext(AppContext)
 
   const [secret, setSecret] = useState(null)
   const [otpauth, setOtpauth] = useState(null)
@@ -59,21 +70,28 @@ const Setup2FAState = ({
   }
 
   const { error: queryError } = useQuery(GET_2FA_SECRET, {
-    variables: { username: clientField, password: passwordField },
+    variables: { username: state.clientField, password: state.passwordField },
     onCompleted: ({ get2FASecret }) => {
       setSecret(get2FASecret.secret)
       setOtpauth(get2FASecret.otpauth)
     }
   })
 
+  const [getUserData] = useLazyQuery(GET_USER_DATA, {
+    onCompleted: ({ userData }) => {
+      setUserData(userData)
+      history.push('/')
+    }
+  })
+
   const [setup2FA, { error: mutationError }] = useMutation(SETUP_2FA, {
     onCompleted: ({ setup2FA: success }) => {
-      success ? handleLoginState(STATES.LOGIN) : setInvalidToken(true)
+      success ? getUserData() : setInvalidToken(true)
     }
   })
 
   const getErrorMsg = () => {
-    if (mutationError || queryError) return 'Internal server error'
+    if (mutationError || queryError) return 'Internal server error.'
     if (twoFAConfirmation.length !== 6 && invalidToken)
       return 'The code should have 6 characters!'
     if (invalidToken) return 'Code is invalid. Please try again.'
@@ -135,8 +153,9 @@ const Setup2FAState = ({
               }
               setup2FA({
                 variables: {
-                  username: clientField,
-                  password: passwordField,
+                  username: state.clientField,
+                  password: state.passwordField,
+                  rememberMe: state.rememberMeField,
                   secret: secret,
                   codeConfirmation: twoFAConfirmation
                 }

@@ -1,6 +1,6 @@
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
-import React, { useState } from 'react'
+import React, { useReducer } from 'react'
 
 import { H2 } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
@@ -9,75 +9,36 @@ import Input2FAState from './Input2FAState'
 import styles from './Login.styles'
 import LoginState from './LoginState'
 import Setup2FAState from './Setup2FAState'
+import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
-
-const STATES = {
-  LOGIN: 'Login',
-  SETUP_2FA: 'Setup 2FA',
-  INPUT_2FA: 'Input 2FA'
-}
 
 const LoginCard = () => {
   const classes = useStyles()
 
-  const [twoFAField, setTwoFAField] = useState('')
-  const [clientField, setClientField] = useState('')
-  const [passwordField, setPasswordField] = useState('')
-  const [rememberMeField, setRememberMeField] = useState(false)
-  const [loginState, setLoginState] = useState(STATES.LOGIN)
-
-  const onClientChange = newValue => {
-    setClientField(newValue)
+  const initialState = {
+    twoFAField: '',
+    clientField: '',
+    passwordField: '',
+    rememberMeField: false,
+    loginState: STATES.LOGIN
   }
 
-  const onPasswordChange = newValue => {
-    setPasswordField(newValue)
+  const reducer = (state, action) => {
+    const { type, payload } = action
+    return { ...state, ...payload, loginState: type }
   }
 
-  const onRememberMeChange = newValue => {
-    setRememberMeField(newValue)
-  }
-
-  const onTwoFAChange = newValue => {
-    setTwoFAField(newValue)
-  }
-
-  const handleLoginState = newState => {
-    setLoginState(newState)
-  }
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   const renderState = () => {
-    switch (loginState) {
+    switch (state.loginState) {
       case STATES.LOGIN:
-        return (
-          <LoginState
-            onClientChange={onClientChange}
-            onPasswordChange={onPasswordChange}
-            onRememberMeChange={onRememberMeChange}
-            STATES={STATES}
-            handleLoginState={handleLoginState}
-          />
-        )
+        return <LoginState state={state} dispatch={dispatch} />
       case STATES.INPUT_2FA:
-        return (
-          <Input2FAState
-            twoFAField={twoFAField}
-            onTwoFAChange={onTwoFAChange}
-            clientField={clientField}
-            passwordField={passwordField}
-            rememberMeField={rememberMeField}
-          />
-        )
+        return <Input2FAState state={state} dispatch={dispatch} />
       case STATES.SETUP_2FA:
-        return (
-          <Setup2FAState
-            clientField={clientField}
-            passwordField={passwordField}
-            STATES={STATES}
-            handleLoginState={handleLoginState}
-          />
-        )
+        return <Setup2FAState state={state} dispatch={dispatch} />
       default:
         break
     }

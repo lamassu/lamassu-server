@@ -12,7 +12,7 @@ import AppContext from 'src/AppContext'
 const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
-const getClient = (history, location, setUserData) =>
+const getClient = (history, location, setUserData, setRole) =>
   new ApolloClient({
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
@@ -27,6 +27,21 @@ const getClient = (history, location, setUserData) =>
             )
           })
         if (networkError) console.log(`[Network error]: ${networkError}`)
+      }),
+      new ApolloLink((operation, forward) => {
+        return forward(operation).map(response => {
+          const context = operation.getContext()
+          const {
+            response: { headers }
+          } = context
+
+          if (headers) {
+            const role = headers.get('role')
+            setRole(role)
+          }
+
+          return response
+        })
       }),
       new HttpLink({
         credentials: 'include',
@@ -52,8 +67,8 @@ const getClient = (history, location, setUserData) =>
 const Provider = ({ children }) => {
   const history = useHistory()
   const location = useLocation()
-  const { setUserData } = useContext(AppContext)
-  const client = getClient(history, location, setUserData)
+  const { setUserData, setRole } = useContext(AppContext)
+  const client = getClient(history, location, setUserData, setRole)
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>
 }

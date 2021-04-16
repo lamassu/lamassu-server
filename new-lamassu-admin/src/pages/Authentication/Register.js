@@ -3,7 +3,7 @@ import { makeStyles, Grid } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
-import React, { useState } from 'react'
+import React, { useReducer } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 
@@ -65,26 +65,33 @@ const Register = () => {
   const classes = useStyles()
   const history = useHistory()
   const token = QueryParams().get('t')
-  const [username, setUsername] = useState(null)
-  const [role, setRole] = useState(null)
-  const [isLoading, setLoading] = useState(true)
-  const [wasSuccessful, setSuccess] = useState(false)
 
-  const { error: queryError } = useQuery(VALIDATE_REGISTER_LINK, {
+  const initialState = {
+    username: null,
+    role: null,
+    wasSuccessful: false
+  }
+
+  const reducer = (state, action) => {
+    const { type, payload } = action
+    return { ...state, [type]: payload }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  const { error: queryError, loading } = useQuery(VALIDATE_REGISTER_LINK, {
     variables: { token: token },
     onCompleted: ({ validateRegisterLink: info }) => {
-      setLoading(false)
       if (!info) {
-        setSuccess(false)
+        dispatch({ type: 'wasSuccessful', payload: false })
       } else {
-        setSuccess(true)
-        setUsername(info.username)
-        setRole(info.role)
+        dispatch({ type: 'wasSuccessful', payload: true })
+        dispatch({ type: 'username', payload: info.username })
+        dispatch({ type: 'role', payload: info.role })
       }
     },
     onError: () => {
-      setLoading(false)
-      setSuccess(false)
+      dispatch({ type: 'wasSuccessful', payload: false })
     }
   })
 
@@ -120,7 +127,7 @@ const Register = () => {
                 <Logo className={classes.icon} />
                 <H2 className={classes.title}>Lamassu Admin</H2>
               </div>
-              {!isLoading && wasSuccessful && (
+              {!loading && state.wasSuccessful && (
                 <Formik
                   validationSchema={validationSchema}
                   initialValues={initialValues}
@@ -128,9 +135,9 @@ const Register = () => {
                     register({
                       variables: {
                         token: token,
-                        username: username,
+                        username: state.username,
                         password: values.password,
-                        role: role
+                        role: state.role
                       }
                     })
                   }}>
@@ -169,7 +176,7 @@ const Register = () => {
                   )}
                 </Formik>
               )}
-              {!isLoading && !wasSuccessful && (
+              {!loading && !state.wasSuccessful && (
                 <>
                   <Label2 className={classes.inputLabel}>
                     Link has expired

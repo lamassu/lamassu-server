@@ -36,15 +36,7 @@ const Subheader = ({ item, classes, user }) => {
         <nav>
           <ul className={classes.subheaderUl}>
             {item.children.map((it, idx) => {
-              if (
-                !R.includes(
-                  user.role,
-                  it.allowedRoles.map(v => {
-                    return v.key
-                  })
-                )
-              )
-                return <></>
+              if (!R.includes(user.role, it.allowedRoles)) return <></>
               return (
                 <li key={idx} className={classes.subheaderLi}>
                   <NavLink
@@ -131,15 +123,7 @@ const Header = memo(({ tree, user }) => {
           <nav className={classes.nav}>
             <ul className={classes.ul}>
               {tree.map((it, idx) => {
-                if (
-                  !R.includes(
-                    user.role,
-                    it.allowedRoles.map(v => {
-                      return v.key
-                    })
-                  )
-                )
-                  return <></>
+                if (!R.includes(user.role, it.allowedRoles)) return <></>
                 return (
                   <NavLink
                     key={idx}
