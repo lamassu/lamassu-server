@@ -61,7 +61,8 @@ const CustomerData = ({
   customer,
   updateCustomer,
   editCustomer,
-  deleteEditedData
+  deleteEditedData,
+  updateCustomRequest
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
@@ -79,8 +80,15 @@ const CustomerData = ({
     ? 'Passed'
     : 'Failed'
 
+  const sortByName = R.sortBy(
+    R.compose(R.toLower, R.path(['customInfoRequest', 'customRequest', 'name']))
+  )
+
   const customEntries = null // get customer custom entries
   const customRequirements = null // get customer custom requirements
+  const customInfoRequests = sortByName(
+    R.path(['customInfoRequests'])(customer) ?? []
+  )
 
   const isEven = elem => elem % 2 === 0
 
@@ -290,6 +298,36 @@ const CustomerData = ({
       initialValues: initialValues.usSsn
     }
   ]
+
+  R.forEach(it => {
+    cards.push({
+      data: [
+        {
+          value: it.customerData.data,
+          component: TextInput
+        }
+      ],
+      title: it.customInfoRequest.customRequest.name,
+      titleIcon: <CardIcon className={classes.cardIcon} />,
+      authorize: () =>
+        updateCustomRequest({
+          variables: {
+            customerId: it.customerId,
+            infoRequestId: it.customInfoRequest.id,
+            isAuthorized: true
+          }
+        }),
+      reject: () =>
+        updateCustomRequest({
+          variables: {
+            customerId: it.customerId,
+            infoRequestId: it.customInfoRequest.id,
+            isAuthorized: false
+          }
+        }),
+      save: () => {}
+    })
+  }, customInfoRequests)
 
   const editableCard = (
     {

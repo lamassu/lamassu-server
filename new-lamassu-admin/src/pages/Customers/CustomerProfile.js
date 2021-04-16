@@ -83,6 +83,16 @@ const GET_CUSTOMER = gql`
         txCustomerPhotoAt
         txCustomerPhotoPath
       }
+      customInfoRequests {
+        customerId
+        approved
+        customerData
+        customInfoRequest {
+          id
+          enabled
+          customRequest
+        }
+      }
     }
   }
 `
@@ -156,6 +166,20 @@ const DELETE_EDITED_CUSTOMER = gql`
   }
 `
 
+const SET_AUTHORIZED_REQUEST = gql`
+  mutation setAuthorizedCustomRequest(
+    $customerId: ID!
+    $infoRequestId: ID!
+    $isAuthorized: Boolean!
+  ) {
+    setAuthorizedCustomRequest(
+      customerId: $customerId
+      infoRequestId: $infoRequestId
+      isAuthorized: $isAuthorized
+    )
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -185,6 +209,9 @@ const CustomerProfile = memo(() => {
   })
 
   const [setCustomer] = useMutation(SET_CUSTOMER, {
+    onCompleted: () => getCustomer()
+  })
+  const [updateCustomRequest] = useMutation(SET_AUTHORIZED_REQUEST, {
     onCompleted: () => getCustomer()
   })
 
@@ -375,7 +402,8 @@ const CustomerProfile = memo(() => {
                 updateCustomer={updateCustomer}
                 replacePhoto={replacePhoto}
                 editCustomer={editCustomer}
-                deleteEditedData={deleteEditedData}></CustomerData>
+                deleteEditedData={deleteEditedData}
+                updateCustomRequest={updateCustomRequest}></CustomerData>
             </div>
           )}
         </div>
