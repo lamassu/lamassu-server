@@ -50,7 +50,6 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
 
   const getValue = code => R.find(R.propEq('code', code))(accounts)
 
-  const limit = zeroConfLimit && coin.code !== 'ETH' ? zeroConfLimit : 0
   const onContinue = async (stepConfig, stepAccount) => {
     const newConfig = R.merge(config, stepConfig)
     const newAccounts = stepAccount
@@ -58,8 +57,8 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
       : accountsToSave
 
     if (isLastStep) {
-      newConfig.zeroConfLimit = limit
-      return save(toNamespace(coin.code, newConfig), newAccounts)
+      const configToSave = { ...newConfig, zeroConfLimit: 0 }
+      return save(toNamespace(coin.code, configToSave), newAccounts)
     }
 
     setState({
