@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Box, Chip } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -14,7 +14,6 @@ import styles from './UserManagement.styles'
 import ChangeRoleModal from './modals/ChangeRoleModal'
 import CreateUserModal from './modals/CreateUserModal'
 import EnableUserModal from './modals/EnableUserModal'
-import Input2FAModal from './modals/Input2FAModal'
 import Reset2FAModal from './modals/Reset2FAModal'
 import ResetPasswordModal from './modals/ResetPasswordModal'
 
@@ -34,98 +33,21 @@ const GET_USERS = gql`
   }
 `
 
-const CHANGE_USER_ROLE = gql`
-  mutation changeUserRole($id: ID!, $newRole: String!) {
-    changeUserRole(id: $id, newRole: $newRole) {
-      id
-    }
-  }
-`
-
-const ENABLE_USER = gql`
-  mutation enableUser($id: ID!) {
-    enableUser(id: $id) {
-      id
-    }
-  }
-`
-
-const DISABLE_USER = gql`
-  mutation disableUser($id: ID!) {
-    disableUser(id: $id) {
-      id
-    }
-  }
-`
-
-const CREATE_RESET_PASSWORD_TOKEN = gql`
-  mutation createResetPasswordToken($userID: ID!) {
-    createResetPasswordToken(userID: $userID) {
-      token
-      user_id
-      expire
-    }
-  }
-`
-
-const CREATE_RESET_2FA_TOKEN = gql`
-  mutation createReset2FAToken($userID: ID!) {
-    createReset2FAToken(userID: $userID) {
-      token
-      user_id
-      expire
-    }
-  }
-`
-
 const Users = () => {
   const classes = useStyles()
-
   const { userData } = useContext(AppContext)
 
   const { data: userResponse } = useQuery(GET_USERS)
-
-  const [changeUserRole] = useMutation(CHANGE_USER_ROLE, {
-    refetchQueries: () => ['users']
-  })
-
-  const [enableUser] = useMutation(ENABLE_USER, {
-    refetchQueries: () => ['users']
-  })
-
-  const [disableUser] = useMutation(DISABLE_USER, {
-    refetchQueries: () => ['users']
-  })
-
-  const [createResetPasswordToken] = useMutation(CREATE_RESET_PASSWORD_TOKEN, {
-    onCompleted: ({ createResetPasswordToken: token }) => {
-      setResetPasswordUrl(
-        `https://localhost:3001/resetpassword?t=${token.token}`
-      )
-      toggleResetPasswordModal()
-    }
-  })
-
-  const [createReset2FAToken] = useMutation(CREATE_RESET_2FA_TOKEN, {
-    onCompleted: ({ createReset2FAToken: token }) => {
-      setReset2FAUrl(`https://localhost:3001/reset2fa?t=${token.token}`)
-      toggleReset2FAModal()
-    }
-  })
-
-  const [userInfo, setUserInfo] = useState(null)
 
   const [showCreateUserModal, setShowCreateUserModal] = useState(false)
   const toggleCreateUserModal = () =>
     setShowCreateUserModal(!showCreateUserModal)
 
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
-  const [resetPasswordUrl, setResetPasswordUrl] = useState('')
   const toggleResetPasswordModal = () =>
     setShowResetPasswordModal(!showResetPasswordModal)
 
   const [showReset2FAModal, setShowReset2FAModal] = useState(false)
-  const [reset2FAUrl, setReset2FAUrl] = useState('')
   const toggleReset2FAModal = () => setShowReset2FAModal(!showReset2FAModal)
 
   const [showRoleModal, setShowRoleModal] = useState(false)
@@ -135,11 +57,7 @@ const Users = () => {
   const toggleEnableUserModal = () =>
     setShowEnableUserModal(!showEnableUserModal)
 
-  const [showInputConfirmModal, setShowInputConfirmModal] = useState(false)
-  const toggleInputConfirmModal = () =>
-    setShowInputConfirmModal(!showInputConfirmModal)
-
-  const [action, setAction] = useState(null)
+  const [userInfo, setUserInfo] = useState(null)
 
   const elements = [
     {
@@ -212,22 +130,7 @@ const Users = () => {
               className={classes.actionChip}
               onClick={() => {
                 setUserInfo(u)
-                if (u.role === 'superuser') {
-                  setAction(() =>
-                    createResetPasswordToken.bind(null, {
-                      variables: {
-                        userID: u.id
-                      }
-                    })
-                  )
-                  toggleInputConfirmModal()
-                } else {
-                  createResetPasswordToken({
-                    variables: {
-                      userID: u.id
-                    }
-                  })
-                }
+                toggleResetPasswordModal()
               }}
             />
             <Chip
@@ -236,22 +139,7 @@ const Users = () => {
               className={classes.actionChip}
               onClick={() => {
                 setUserInfo(u)
-                if (u.role === 'superuser') {
-                  setAction(() => () =>
-                    createReset2FAToken({
-                      variables: {
-                        userID: u.id
-                      }
-                    })
-                  )
-                  toggleInputConfirmModal()
-                } else {
-                  createReset2FAToken({
-                    variables: {
-                      userID: u.id
-                    }
-                  })
-                }
+                toggleReset2FAModal()
               }}
             />
           </>
@@ -298,35 +186,26 @@ const Users = () => {
       <ResetPasswordModal
         showModal={showResetPasswordModal}
         toggleModal={toggleResetPasswordModal}
-        resetPasswordURL={resetPasswordUrl}
         user={userInfo}
+        requiresConfirmation={userInfo?.role === 'superuser'}
       />
       <Reset2FAModal
         showModal={showReset2FAModal}
         toggleModal={toggleReset2FAModal}
-        reset2FAURL={reset2FAUrl}
         user={userInfo}
+        requiresConfirmation={userInfo?.role === 'superuser'}
       />
       <ChangeRoleModal
         showModal={showRoleModal}
         toggleModal={toggleRoleModal}
         user={userInfo}
-        confirm={changeUserRole}
-        inputConfirmToggle={toggleInputConfirmModal}
-        setAction={setAction}
+        requiresConfirmation={userInfo?.role === 'superuser'}
       />
       <EnableUserModal
         showModal={showEnableUserModal}
         toggleModal={toggleEnableUserModal}
         user={userInfo}
-        confirm={userInfo?.enabled ? disableUser : enableUser}
-        inputConfirmToggle={toggleInputConfirmModal}
-        setAction={setAction}
-      />
-      <Input2FAModal
-        showModal={showInputConfirmModal}
-        toggleModal={toggleInputConfirmModal}
-        action={action}
+        requiresConfirmation={userInfo?.role === 'superuser'}
       />
     </>
   )
