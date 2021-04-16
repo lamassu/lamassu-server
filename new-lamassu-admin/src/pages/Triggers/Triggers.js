@@ -11,9 +11,13 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2, H2 } from 'src/components/typography'
+import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circle buttons/filter/white.svg'
+import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
+
+import CustomInfoRequests from '../CustomInfoRequests'
 
 import styles from './Triggers.styles'
 import Wizard from './Wizard'
@@ -39,6 +43,7 @@ const Triggers = () => {
   const [wizard, setWizard] = useState(false)
   const [advancedSettings, setAdvancedSettings] = useState(false)
 
+  const [showCustomInfoRequests, setShowCustomInfoRequests] = useState(false)
   const { data, loading } = useQuery(GET_INFO)
   const triggers = fromServer(data?.config?.triggers ?? [])
 
@@ -86,6 +91,12 @@ const Triggers = () => {
           inverseIcon: ReverseSettingsIcon,
           toggle: setAdvancedSettings
         }}
+        button={{
+          text: 'Custom info requests',
+          icon: CustomInfoIcon,
+          inverseIcon: ReverseCustomInfoIcon,
+          toggle: setShowCustomInfoRequests
+        }}
         className={classes.tableWidth}>
         {!advancedSettings && (
           <Box display="flex" alignItems="center">
@@ -116,7 +127,7 @@ const Triggers = () => {
           </Box>
         )}
       </TitleSection>
-      {!advancedSettings && (
+      {!(advancedSettings || showCustomInfoRequests) && (
         <>
           <Box
             marginBottom={2}
@@ -129,6 +140,12 @@ const Triggers = () => {
               </Link>
             )}
           </Box>
+        </>
+      )}
+      {showCustomInfoRequests ? (
+        <CustomInfoRequests />
+      ) : (
+        <>
           <EditableTable
             data={triggers}
             name="triggers"
