@@ -7,9 +7,9 @@ import { useHistory } from 'react-router-dom'
 import AppContext from 'src/AppContext'
 import { Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
-import { H2, P } from 'src/components/typography'
+import { TL1, P } from 'src/components/typography'
 
-import styles from './Login.styles'
+import styles from './shared.styles'
 import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
@@ -99,9 +99,9 @@ const Input2FAState = ({ state, dispatch }) => {
 
   return (
     <>
-      <H2 className={classes.info}>
+      <TL1 className={classes.info}>
         Enter your two-factor authentication code
-      </H2>
+      </TL1>
       <CodeInput
         name="2fa"
         value={state.twoFAField}

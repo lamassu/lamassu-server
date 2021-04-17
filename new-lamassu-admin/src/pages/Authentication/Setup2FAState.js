@@ -8,10 +8,10 @@ import { useHistory } from 'react-router-dom'
 import AppContext from 'src/AppContext'
 import { ActionButton, Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
-import { Label2, P } from 'src/components/typography'
+import { Label3, P } from 'src/components/typography'
 import { primaryColor } from 'src/styling/variables'
 
-import styles from './Login.styles'
+import styles from './shared.styles'
 
 const SETUP_2FA = gql`
   mutation setup2FA(
@@ -103,25 +103,25 @@ const Setup2FAState = ({ state, dispatch }) => {
     otpauth && (
       <>
         <div className={classes.infoWrapper}>
-          <Label2 className={classes.info2}>
+          <Label3 className={classes.info2}>
             We detected that this account does not have its two-factor
             authentication enabled. In order to protect the resources in the
             system, a two-factor authentication is enforced.
-          </Label2>
-          <Label2 className={classes.info2}>
+          </Label3>
+          <Label3 className={classes.info2}>
             To finish this process, please scan the following QR code or insert
             the secret further below on an authentication app of your choice,
             such as Google Authenticator or Authy.
-          </Label2>
+          </Label3>
         </div>
         <div className={classes.qrCodeWrapper}>
           <QRCode size={240} fgColor={primaryColor} value={otpauth} />
         </div>
         <div className={classes.secretWrapper}>
-          <Label2 className={classes.secretLabel}>Your secret:</Label2>
-          <Label2 className={isShowing ? classes.secret : classes.hiddenSecret}>
+          <Label3 className={classes.secretLabel}>Your secret:</Label3>
+          <Label3 className={isShowing ? classes.secret : classes.hiddenSecret}>
             {secret}
-          </Label2>
+          </Label3>
           <ActionButton
             disabled={!secret && !otpauth}
             color="primary"

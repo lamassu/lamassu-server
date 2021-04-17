@@ -8,7 +8,7 @@ import {
   fontPrimary,
   fontSecondary,
   fontMonospaced,
-  fontSize2FA
+  codeInputFontSize
 } from 'src/styling/variables'
 
 const base = {
@@ -128,7 +128,7 @@ export default {
   },
   confirmationCode: {
     extend: base,
-    fontSize: fontSize2FA,
+    fontSize: codeInputFontSize,
     fontFamily: fontPrimary,
     fontWeight: 900
   },

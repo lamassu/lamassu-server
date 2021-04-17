@@ -1,8 +1,8 @@
 import { makeStyles, Grid } from '@material-ui/core'
 import React from 'react'
 
-import styles from './Login.styles'
 import LoginCard from './LoginCard'
+import styles from './shared.styles'
 
 const useStyles = makeStyles(styles)
 

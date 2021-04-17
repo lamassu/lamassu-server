@@ -68,7 +68,6 @@ let fontSize2 = 20
 let fontSize3 = 16
 let fontSize4 = 14
 let fontSize5 = 13
-const fontSize2FA = 35
 
 if (version === 8) {
   fontSize1 = 32
@@ -85,6 +84,7 @@ const inputFontSizeLg = fontSize1
 const inputFontWeight = 500
 const inputFontWeightBold = 700
 const inputFontFamily = fontSecondary
+const codeInputFontSize = 35
 
 // Breakpoints
 const sm = 576
@@ -159,7 +159,6 @@ export {
   fontPrimary,
   fontSecondary,
   fontMonospaced,
-  fontSize2FA,
   // named font sizes
   smallestFontSize,
   inputFontSize,
@@ -168,6 +167,7 @@ export {
   inputFontFamily,
   inputFontWeight,
   inputFontWeightBold,
+  codeInputFontSize,
   // screen sizes
   sm,
   md,

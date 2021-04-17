@@ -7,9 +7,9 @@ import * as Yup from 'yup'
 
 import { Button } from 'src/components/buttons'
 import { Checkbox, SecretInput, TextInput } from 'src/components/inputs/formik'
-import { Label2, P } from 'src/components/typography'
+import { Label3, P } from 'src/components/typography'
 
-import styles from './Login.styles'
+import styles from './shared.styles'
 import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
@@ -104,7 +104,7 @@ const LoginState = ({ state, dispatch }) => {
               className={classes.checkbox}
               component={Checkbox}
             />
-            <Label2 className={classes.inputLabel}>Keep me logged in</Label2>
+            <Label3>Keep me logged in</Label3>
           </div>
           <div className={classes.footer}>
             {getErrorMsg(errors, touched) && (

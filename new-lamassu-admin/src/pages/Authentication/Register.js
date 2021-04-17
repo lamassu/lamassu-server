@@ -9,10 +9,10 @@ import * as Yup from 'yup'
 
 import { Button } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
-import { H2, Label2, P } from 'src/components/typography'
+import { H2, Label3, P } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
-import styles from './Login.styles'
+import styles from './shared.styles'
 
 const QueryParams = () => new URLSearchParams(useLocation().search)
 const useStyles = makeStyles(styles)
@@ -178,9 +178,7 @@ const Register = () => {
               )}
               {!loading && !state.wasSuccessful && (
                 <>
-                  <Label2 className={classes.inputLabel}>
-                    Link has expired
-                  </Label2>
+                  <Label3>Link has expired</Label3>
                 </>
               )}
             </div>
