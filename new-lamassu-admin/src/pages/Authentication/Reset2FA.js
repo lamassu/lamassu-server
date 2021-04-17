@@ -8,11 +8,11 @@ import { useLocation, useHistory } from 'react-router-dom'
 
 import { ActionButton, Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
-import { H2, Label2, P } from 'src/components/typography'
+import { H2, Label2, Label3, P } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 import { primaryColor } from 'src/styling/variables'
 
-import styles from './Login.styles'
+import styles from './shared.styles'
 
 const QueryParams = () => new URLSearchParams(useLocation().search)
 const useStyles = makeStyles(styles)
@@ -174,9 +174,7 @@ const Reset2FA = () => {
               )}
               {!isLoading && !wasSuccessful && (
                 <>
-                  <Label2 className={classes.inputLabel}>
-                    Link has expired
-                  </Label2>
+                  <Label3>Link has expired</Label3>
                 </>
               )}
             </div>

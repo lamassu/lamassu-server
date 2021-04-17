@@ -2,13 +2,13 @@ import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useReducer } from 'react'
 
-import { H2 } from 'src/components/typography'
+import { H5 } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import Input2FAState from './Input2FAState'
-import styles from './Login.styles'
 import LoginState from './LoginState'
 import Setup2FAState from './Setup2FAState'
+import styles from './shared.styles'
 import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
@@ -49,7 +49,7 @@ const LoginCard = () => {
       <div className={classes.wrapper}>
         <div className={classes.titleWrapper}>
           <Logo className={classes.icon} />
-          <H2 className={classes.title}>Lamassu Admin</H2>
+          <H5 className={classes.title}>Lamassu Admin</H5>
         </div>
         {renderState()}
       </div>

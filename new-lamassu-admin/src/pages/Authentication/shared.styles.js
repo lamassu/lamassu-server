@@ -1,22 +1,8 @@
-import {
-  fontPrimary,
-  fontSecondary,
-  primaryColor,
-  backgroundColor,
-  errorColor
-} from 'src/styling/variables'
+import { backgroundColor, errorColor } from 'src/styling/variables'
 
 const styles = {
   title: {
-    color: primaryColor,
-    fontFamily: fontPrimary,
-    fontSize: '18px',
-    fontWeight: 'normal',
     paddingTop: 8
-  },
-  inputLabel: {
-    fontSize: '16px',
-    fontWeight: 550
   },
   input: {
     marginBottom: 25,
@@ -44,7 +30,7 @@ const styles = {
     marginRight: 25
   },
   checkbox: {
-    transform: 'scale(2)',
+    transform: 'scale(1.5)',
     marginRight: 5,
     marginLeft: -5
   },
@@ -72,19 +58,15 @@ const styles = {
     minHeight: '100vh'
   },
   info: {
-    fontFamily: fontSecondary,
     marginBottom: '5vh'
   },
   info2: {
-    fontFamily: fontSecondary,
-    fontSize: '14px',
     textAlign: 'justify'
   },
   infoWrapper: {
     marginBottom: '3vh'
   },
   errorMessage: {
-    fontFamily: fontSecondary,
     color: errorColor
   },
   qrCodeWrapper: {
@@ -98,18 +80,12 @@ const styles = {
     alignItems: 'center'
   },
   secretLabel: {
-    fontSize: '16px',
-    fontWeight: 550,
     marginRight: 15
   },
   secret: {
-    fontSize: '16px',
-    fontWeight: 550,
     marginRight: 35
   },
   hiddenSecret: {
-    fontSize: '16px',
-    fontWeight: 550,
     marginRight: 35,
     filter: 'blur(8px)'
   },
