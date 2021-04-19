@@ -10,6 +10,7 @@ exports.up = function (next) {
       role role NOT NULL DEFAULT 'user',
       enabled BOOLEAN DEFAULT true,
       twofa_code VARCHAR(100),
+      temp_twofa_code VARCHAR(100),
       created TIMESTAMPTZ NOT NULL DEFAULT now(),
       last_accessed TIMESTAMPTZ NOT NULL DEFAULT now(),
       last_accessed_from TEXT,
