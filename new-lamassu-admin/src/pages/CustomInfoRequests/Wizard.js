@@ -1,6 +1,7 @@
+/* eslint-disable */
 import { makeStyles } from '@material-ui/core'
-import { Form, Formik, useFormikContext } from 'formik'
-import React, { useState, useEffect } from 'react'
+import { Form, Formik } from 'formik'
+import React, { useState } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
@@ -8,6 +9,14 @@ import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { comet } from 'src/styling/variables'
 
+import NameOfRequirement, {
+  validationSchema as nameOfReqSchema,
+  defaultValues as nameOfReqDefaults
+} from './Forms/NameOfRequirement'
+import ScreenInformation, {
+  validationSchema as screenInfoSchema,
+  defaultValues as screenInfoDefaults
+} from './Forms/ScreenInformation'
 import WizardSplash from './WizardSplash'
 
 const LAST_STEP = 5
@@ -44,44 +53,47 @@ const styles = {
 }
 
 const useStyles = makeStyles(styles)
-
 const getStep = step => {
-  return {
-    initialValues: {},
-    schema: {},
-    Component: () => {
-      return <h1>Component</h1>
-    }
+  switch (step) {
+    case 1:
+      return {
+        initialValues: nameOfReqDefaults,
+        schema: nameOfReqSchema,
+        Component: NameOfRequirement
+      }
+    case 2:
+      return {
+        initialValues: screenInfoDefaults,
+        schema: screenInfoSchema,
+        Component: ScreenInformation
+      }
+    default:
+      return {
+        initialValues: {},
+        schema: {},
+        Component: () => {
+          return <h1>Component step default</h1>
+        }
+      }
   }
-}
-
-const GetValues = ({ setValues }) => {
-  const { values } = useFormikContext()
-  useEffect(() => {
-    setValues && values && setValues(values)
-  }, [setValues, values])
-
-  return null
 }
 
 const Wizard = ({ onClose, error = false }) => {
   const classes = useStyles()
-  const [liveValues, setLiveValues] = useState({})
   const [step, setStep] = useState(0)
-  const onContinue = () => {
+  const onContinue = (values, actions) => {
+    /*     step > 0 && console.log(values) */
     setStep(step + 1)
   }
   const stepOptions = getStep(step)
   const isLastStep = step === LAST_STEP
-  console.log(liveValues)
   return (
     <>
       <Modal
-        title={step > 0 ? 'New custom info request' : ''}
+        title={step > 0 ? 'New custom requirement' : ''}
         handleClose={onClose}
         width={520}
-        height={520}
-        infoPanelHeight={172}
+        height={580}
         open={true}>
         {step > 0 && (
           <Stepper
@@ -97,9 +109,9 @@ const Wizard = ({ onClose, error = false }) => {
             validateOnChange={false}
             enableReinitialize
             onSubmit={onContinue}
-            initialValues={stepOptions.initialValues}>
-            <Form className={classes.form}>
-              <GetValues setValues={setLiveValues} />
+            initialValues={stepOptions.initialValues}
+            validationSchema={stepOptions.schema}>
+            <Form className={classes.form} id={'custom-requirement-form'}>
               <stepOptions.Component {...stepOptions.props} />
               <div className={classes.submit}>
                 {error && <ErrorMessage>Failed to save</ErrorMessage>}
