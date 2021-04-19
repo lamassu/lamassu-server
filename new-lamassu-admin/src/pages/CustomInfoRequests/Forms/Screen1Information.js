@@ -5,15 +5,15 @@ import * as Yup from 'yup'
 import { TextInput } from 'src/components/inputs'
 import { H4, P } from 'src/components/typography'
 
-const ScreenInformation = () => {
+const Screen1Information = () => {
   return (
     <>
-      <H4>Screen 1 Information</H4>
+      <H4>Screen 1 Information</H4> {/* TODO Add ? icon */}
       <P>
         On screen 1 you will request the user if he agrees on providing this
         information, or if he wishes to terminate the transaction instead.
       </P>
-      <Field name="screenTitle">
+      <Field name="screen1Title" value="aaaa">
         {({ field, form, meta }) => (
           <TextInput
             error={!!meta.error}
@@ -23,7 +23,7 @@ const ScreenInformation = () => {
           />
         )}
       </Field>
-      {/*       <Field name="screenText">
+      <Field name="screen1Text">
         {({ field, form, meta }) => (
           <TextInput
             error={!!meta.error}
@@ -34,20 +34,20 @@ const ScreenInformation = () => {
             {...field}
           />
         )}
-      </Field> */}
+      </Field>
     </>
   )
 }
 
 const validationSchema = Yup.object().shape({
-  screenTitle: Yup.string().required() /* ,
-  screenText: Yup.string().required() */
+  screen1Title: Yup.string().required(),
+  screen1Text: Yup.string().required()
 })
 
 const defaultValues = {
-  screenTitle: '' /* ,
-  screenText: '' */
+  screen1Title: '.',
+  screen1Text: '.'
 }
 
-export default ScreenInformation
+export default Screen1Information
 export { validationSchema, defaultValues }

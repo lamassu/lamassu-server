@@ -6,6 +6,7 @@ import RadioGroup from './RadioGroup'
 import SecretInput from './SecretInput'
 import Switch from './Switch'
 import TextInput from './TextInput'
+import ToggleButtonGroup from './ToggleButtonGroup'
 
 export {
   Checkbox,
@@ -15,5 +16,6 @@ export {
   Switch,
   SecretInput,
   RadioGroup,
-  Autocomplete
+  Autocomplete,
+  ToggleButtonGroup
 }
