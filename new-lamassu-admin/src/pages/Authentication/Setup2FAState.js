@@ -18,14 +18,12 @@ const SETUP_2FA = gql`
     $username: String!
     $password: String!
     $rememberMe: Boolean!
-    $secret: String!
     $codeConfirmation: String!
   ) {
     setup2FA(
       username: $username
       password: $password
       rememberMe: $rememberMe
-      secret: $secret
       codeConfirmation: $codeConfirmation
     )
   }
@@ -156,7 +154,6 @@ const Setup2FAState = ({ state, dispatch }) => {
                   username: state.clientField,
                   password: state.passwordField,
                   rememberMe: state.rememberMeField,
-                  secret: secret,
                   codeConfirmation: twoFAConfirmation
                 }
               })
