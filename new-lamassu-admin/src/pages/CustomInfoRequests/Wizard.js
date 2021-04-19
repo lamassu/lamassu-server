@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik } from 'formik'
 import React, { useState } from 'react'
@@ -9,14 +8,22 @@ import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { comet } from 'src/styling/variables'
 
+import ChooseType, {
+  validationSchema as chooseTypeSchema,
+  defaultValues as chooseTypeDefaults
+} from './Forms/ChooseType'
 import NameOfRequirement, {
   validationSchema as nameOfReqSchema,
   defaultValues as nameOfReqDefaults
 } from './Forms/NameOfRequirement'
-import ScreenInformation, {
-  validationSchema as screenInfoSchema,
-  defaultValues as screenInfoDefaults
-} from './Forms/ScreenInformation'
+import Screen1Information, {
+  validationSchema as screen1InfoSchema,
+  defaultValues as screen1InfoDefaults
+} from './Forms/Screen1Information'
+import Screen2Information, {
+  validationSchema as screen2InfoSchema,
+  defaultValues as screen2InfoDefaults
+} from './Forms/Screen2Information'
 import WizardSplash from './WizardSplash'
 
 const LAST_STEP = 5
@@ -57,16 +64,21 @@ const getStep = step => {
   switch (step) {
     case 1:
       return {
-        initialValues: nameOfReqDefaults,
         schema: nameOfReqSchema,
         Component: NameOfRequirement
       }
     case 2:
       return {
-        initialValues: screenInfoDefaults,
-        schema: screenInfoSchema,
-        Component: ScreenInformation
+        schema: screen1InfoSchema,
+        Component: Screen1Information
       }
+    case 3:
+      return {
+        schema: screen2InfoSchema,
+        Component: Screen2Information
+      }
+    case 4:
+      return { schema: chooseTypeSchema, Component: ChooseType }
     default:
       return {
         initialValues: {},
@@ -82,7 +94,7 @@ const Wizard = ({ onClose, error = false }) => {
   const classes = useStyles()
   const [step, setStep] = useState(0)
   const onContinue = (values, actions) => {
-    /*     step > 0 && console.log(values) */
+    step > 0 && console.log(values)
     setStep(step + 1)
   }
   const stepOptions = getStep(step)
@@ -109,7 +121,12 @@ const Wizard = ({ onClose, error = false }) => {
             validateOnChange={false}
             enableReinitialize
             onSubmit={onContinue}
-            initialValues={stepOptions.initialValues}
+            initialValues={{
+              ...nameOfReqDefaults,
+              ...screen1InfoDefaults,
+              ...screen2InfoDefaults,
+              ...chooseTypeDefaults
+            }}
             validationSchema={stepOptions.schema}>
             <Form className={classes.form} id={'custom-requirement-form'}>
               <stepOptions.Component {...stepOptions.props} />

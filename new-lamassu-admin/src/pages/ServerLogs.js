@@ -122,7 +122,7 @@ const Logs = () => {
 
     setLogLevel(logLevel)
   }
-
+  console.log(getLogLevels(data))
   return (
     <>
       <div className={classes.titleWrapper}>
