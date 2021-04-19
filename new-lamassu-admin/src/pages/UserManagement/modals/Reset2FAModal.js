@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
+import { URI } from 'src/utils/apollo'
 
 import styles from '../UserManagement.styles'
 
@@ -36,7 +37,7 @@ const Reset2FAModal = ({
     CREATE_RESET_2FA_TOKEN,
     {
       onCompleted: ({ createReset2FAToken: token }) => {
-        setReset2FAUrl(`https://localhost:3001/reset2fa?t=${token.token}`)
+        setReset2FAUrl(`${URI}/reset2fa?t=${token.token}`)
       }
     }
   )
