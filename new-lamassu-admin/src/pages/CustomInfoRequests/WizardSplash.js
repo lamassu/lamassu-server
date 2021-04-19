@@ -3,11 +3,11 @@ import React from 'react'
 
 import { Button } from 'src/components/buttons'
 import { H1, P } from 'src/components/typography'
-import { ReactComponent as BitcoinLogo } from 'src/styling/logos/icon-bitcoin-colour.svg'
+import { ReactComponent as BitcoinLogo } from 'src/styling/icons/compliance/custom-requirement.svg'
 
 const styles = {
   logo: {
-    maxHeight: 80,
+    maxHeight: 150,
     maxWidth: 200
   },
   title: {
