@@ -12,6 +12,7 @@ import { Button } from 'src/components/buttons'
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import { H1, H3, Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
+import { URI } from 'src/utils/apollo'
 
 import styles from '../UserManagement.styles'
 
@@ -62,7 +63,7 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
 
   const [createUser, { error }] = useMutation(CREATE_USER, {
     onCompleted: ({ createRegisterToken: token }) => {
-      setCreateUserURL(`https://localhost:3001/register?t=${token.token}`)
+      setCreateUserURL(`${URI}/register?t=${token.token}`)
     }
   })
 

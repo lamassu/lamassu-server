@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
+import { URI } from 'src/utils/apollo'
 
 import styles from '../UserManagement.styles'
 
@@ -39,9 +40,7 @@ const ResetPasswordModal = ({
     CREATE_RESET_PASSWORD_TOKEN,
     {
       onCompleted: ({ createResetPasswordToken: token }) => {
-        setResetPasswordUrl(
-          `https://localhost:3001/resetpassword?t=${token.token}`
-        )
+        setResetPasswordUrl(`${URI}/resetpassword?t=${token.token}`)
       }
     }
   )
