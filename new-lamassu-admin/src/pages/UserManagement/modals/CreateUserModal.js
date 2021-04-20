@@ -12,7 +12,7 @@ import { Button } from 'src/components/buttons'
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import { H1, H3, Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
-import { URI } from 'src/utils/apollo'
+import { urlResolver } from 'src/utils/urlResolver'
 
 import styles from '../UserManagement.styles'
 
@@ -39,7 +39,7 @@ const initialValues = {
   role: ''
 }
 
-const CreateUserModal = ({ showModal, toggleModal }) => {
+const CreateUserModal = ({ state, dispatch }) => {
   const classes = useStyles()
 
   const [usernameField, setUsernameField] = useState('')
@@ -58,12 +58,15 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
 
   const handleClose = () => {
     setCreateUserURL(null)
-    toggleModal()
+    dispatch({
+      type: 'close',
+      payload: 'showCreateUserModal'
+    })
   }
 
   const [createUser, { error }] = useMutation(CREATE_USER, {
     onCompleted: ({ createRegisterToken: token }) => {
-      setCreateUserURL(`${URI}/register?t=${token.token}`)
+      setCreateUserURL(urlResolver(`/register?t=${token.token}`))
     }
   })
 
@@ -81,7 +84,7 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
 
   return (
     <>
-      {showModal && !createUserURL && (
+      {state.showCreateUserModal && !createUserURL && (
         <Modal
           closeOnBackdropClick={true}
           width={600}
@@ -137,7 +140,7 @@ const CreateUserModal = ({ showModal, toggleModal }) => {
           </Formik>
         </Modal>
       )}
-      {showModal && createUserURL && (
+      {state.showCreateUserModal && createUserURL && (
         <Modal
           closeOnBackdropClick={true}
           width={500}

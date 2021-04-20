@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
-import { URI } from 'src/utils/apollo'
+import { urlResolver } from 'src/utils/urlResolver'
 
 import styles from '../UserManagement.styles'
 
@@ -28,8 +28,8 @@ const CREATE_RESET_PASSWORD_TOKEN = gql`
 const useStyles = makeStyles(styles)
 
 const ResetPasswordModal = ({
-  showModal,
-  toggleModal,
+  state,
+  dispatch,
   user,
   requiresConfirmation
 }) => {
@@ -40,7 +40,7 @@ const ResetPasswordModal = ({
     CREATE_RESET_PASSWORD_TOKEN,
     {
       onCompleted: ({ createResetPasswordToken: token }) => {
-        setResetPasswordUrl(`${URI}/resetpassword?t=${token.token}`)
+        setResetPasswordUrl(urlResolver(`/resetpassword?t=${token.token}`))
       }
     }
   )
@@ -48,7 +48,7 @@ const ResetPasswordModal = ({
   const [confirmation, setConfirmation] = useState(null)
 
   useEffect(() => {
-    showModal &&
+    state.showResetPasswordModal &&
       (confirmation || !requiresConfirmation) &&
       createResetPasswordToken({
         variables: {
@@ -59,51 +59,56 @@ const ResetPasswordModal = ({
   }, [
     confirmation,
     createResetPasswordToken,
-    showModal,
-    user,
-    requiresConfirmation
+    requiresConfirmation,
+    state.showResetPasswordModal,
+    user?.id
   ])
 
   const handleClose = () => {
     setConfirmation(null)
-    toggleModal()
+    dispatch({
+      type: 'close',
+      payload: 'showResetPasswordModal'
+    })
   }
 
   return (
-    (showModal && requiresConfirmation && !confirmation && (
+    (state.showResetPasswordModal && requiresConfirmation && !confirmation && (
       <Input2FAModal
-        showModal={showModal}
+        showModal={state.showResetPasswordModal}
         handleClose={handleClose}
         setConfirmation={setConfirmation}
       />
     )) ||
-    (showModal && (confirmation || !requiresConfirmation) && !loading && (
-      <Modal
-        closeOnBackdropClick={true}
-        width={500}
-        height={180}
-        handleClose={handleClose}
-        open={true}>
-        <Info2 className={classes.modalTitle}>
-          Reset password for {user.username}
-        </Info2>
-        <P className={classes.info}>
-          Safely share this link with {user.username} for a password reset.
-        </P>
-        <div className={classes.addressWrapper}>
-          <Mono className={classes.address}>
-            <strong>
-              <CopyToClipboard
-                className={classes.link}
-                buttonClassname={classes.copyToClipboard}
-                wrapperClassname={classes.linkWrapper}>
-                {resetPasswordUrl}
-              </CopyToClipboard>
-            </strong>
-          </Mono>
-        </div>
-      </Modal>
-    ))
+    (state.showResetPasswordModal &&
+      (confirmation || !requiresConfirmation) &&
+      !loading && (
+        <Modal
+          closeOnBackdropClick={true}
+          width={500}
+          height={180}
+          handleClose={handleClose}
+          open={true}>
+          <Info2 className={classes.modalTitle}>
+            Reset password for {user.username}
+          </Info2>
+          <P className={classes.info}>
+            Safely share this link with {user.username} for a password reset.
+          </P>
+          <div className={classes.addressWrapper}>
+            <Mono className={classes.address}>
+              <strong>
+                <CopyToClipboard
+                  className={classes.link}
+                  buttonClassname={classes.copyToClipboard}
+                  wrapperClassname={classes.linkWrapper}>
+                  {resetPasswordUrl}
+                </CopyToClipboard>
+              </strong>
+            </Mono>
+          </div>
+        </Modal>
+      ))
   )
 }
 

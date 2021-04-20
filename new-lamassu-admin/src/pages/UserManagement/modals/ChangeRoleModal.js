@@ -29,12 +29,7 @@ const CHANGE_USER_ROLE = gql`
 
 const useStyles = makeStyles(styles)
 
-const ChangeRoleModal = ({
-  showModal,
-  toggleModal,
-  user,
-  requiresConfirmation
-}) => {
+const ChangeRoleModal = ({ state, dispatch, user, requiresConfirmation }) => {
   const classes = useStyles()
 
   const [changeUserRole] = useMutation(CHANGE_USER_ROLE, {
@@ -56,18 +51,21 @@ const ChangeRoleModal = ({
 
   const handleClose = () => {
     setConfirmation(null)
-    toggleModal()
+    dispatch({
+      type: 'close',
+      payload: 'showRoleModal'
+    })
   }
 
   return (
-    (showModal && requiresConfirmation && !confirmation && (
+    (state.showRoleModal && requiresConfirmation && !confirmation && (
       <Input2FAModal
-        showModal={showModal}
+        showModal={state.showRoleModal}
         handleClose={handleClose}
         setConfirmation={setConfirmation}
       />
     )) ||
-    (showModal && (
+    (state.showRoleModal && (
       <Modal
         closeOnBackdropClick={true}
         width={450}

@@ -47,6 +47,19 @@ const Input2FAState = ({ state, dispatch }) => {
 
   const [invalidToken, setInvalidToken] = useState(false)
 
+  const [getUserData, { error: queryError }] = useLazyQuery(GET_USER_DATA, {
+    onCompleted: ({ userData }) => {
+      setUserData(userData)
+      history.push('/')
+    }
+  })
+
+  const [input2FA, { error: mutationError }] = useMutation(INPUT_2FA, {
+    onCompleted: ({ input2FA: success }) => {
+      success ? getUserData() : setInvalidToken(true)
+    }
+  })
+
   const handle2FAChange = value => {
     dispatch({
       type: STATES.INPUT_2FA,
@@ -72,19 +85,6 @@ const Input2FAState = ({ state, dispatch }) => {
       }
     })
   }
-
-  const [input2FA, { error: mutationError }] = useMutation(INPUT_2FA, {
-    onCompleted: ({ input2FA: success }) => {
-      success ? getUserData() : setInvalidToken(true)
-    }
-  })
-
-  const [getUserData, { error: queryError }] = useLazyQuery(GET_USER_DATA, {
-    onCompleted: ({ userData }) => {
-      setUserData(userData)
-      history.push('/')
-    }
-  })
 
   const getErrorMsg = () => {
     if (queryError) return 'Internal server error'

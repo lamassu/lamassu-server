@@ -3,7 +3,7 @@ import { makeStyles, Grid } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
-import React, { useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 
 import { ActionButton, Button } from 'src/components/buttons'
@@ -28,13 +28,8 @@ const VALIDATE_RESET_2FA_LINK = gql`
 `
 
 const RESET_2FA = gql`
-  mutation reset2FA(
-    $token: String!
-    $userID: ID!
-    $secret: String!
-    $code: String!
-  ) {
-    reset2FA(token: $token, userID: $userID, secret: $secret, code: $code)
+  mutation reset2FA($token: String!, $userID: ID!, $code: String!) {
+    reset2FA(token: $token, userID: $userID, code: $code)
   }
 `
 
@@ -42,37 +37,52 @@ const Reset2FA = () => {
   const classes = useStyles()
   const history = useHistory()
   const token = QueryParams().get('t')
-  const [userID, setUserID] = useState(null)
-  const [isLoading, setLoading] = useState(true)
-  const [wasSuccessful, setSuccess] = useState(false)
-  const [secret, setSecret] = useState(null)
-  const [otpauth, setOtpauth] = useState(null)
 
   const [isShowing, setShowing] = useState(false)
   const [invalidToken, setInvalidToken] = useState(false)
   const [twoFAConfirmation, setTwoFAConfirmation] = useState('')
+
+  const initialState = {
+    userID: null,
+    secret: null,
+    otpauth: null,
+    result: null
+  }
+
+  const reducer = (state, action) => {
+    const { type, payload } = action
+    return { ...state, ...payload, result: type }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   const handle2FAChange = value => {
     setTwoFAConfirmation(value)
     setInvalidToken(false)
   }
 
-  const { error: queryError } = useQuery(VALIDATE_RESET_2FA_LINK, {
+  const { error: queryError, loading } = useQuery(VALIDATE_RESET_2FA_LINK, {
     variables: { token: token },
     onCompleted: ({ validateReset2FALink: info }) => {
-      setLoading(false)
       if (!info) {
-        setSuccess(false)
+        dispatch({
+          type: 'failure'
+        })
       } else {
-        setUserID(info.user_id)
-        setSecret(info.secret)
-        setOtpauth(info.otpauth)
-        setSuccess(true)
+        dispatch({
+          type: 'success',
+          payload: {
+            userID: info.user_id,
+            secret: info.secret,
+            otpauth: info.otpauth
+          }
+        })
       }
     },
     onError: () => {
-      setLoading(false)
-      setSuccess(false)
+      dispatch({
+        type: 'failure'
+      })
     }
   })
 
@@ -107,7 +117,7 @@ const Reset2FA = () => {
                 <Logo className={classes.icon} />
                 <H2 className={classes.title}>Lamassu Admin</H2>
               </div>
-              {!isLoading && wasSuccessful && (
+              {!loading && state.result === 'success' && (
                 <>
                   <div className={classes.infoWrapper}>
                     <Label2 className={classes.info2}>
@@ -117,7 +127,11 @@ const Reset2FA = () => {
                     </Label2>
                   </div>
                   <div className={classes.qrCodeWrapper}>
-                    <QRCode size={240} fgColor={primaryColor} value={otpauth} />
+                    <QRCode
+                      size={240}
+                      fgColor={primaryColor}
+                      value={state.otpauth}
+                    />
                   </div>
                   <div className={classes.secretWrapper}>
                     <Label2 className={classes.secretLabel}>
@@ -127,7 +141,7 @@ const Reset2FA = () => {
                       className={
                         isShowing ? classes.secret : classes.hiddenSecret
                       }>
-                      {secret}
+                      {state.secret}
                     </Label2>
                     <ActionButton
                       color="primary"
@@ -160,8 +174,7 @@ const Reset2FA = () => {
                         reset2FA({
                           variables: {
                             token: token,
-                            userID: userID,
-                            secret: secret,
+                            userID: state.userID,
                             code: twoFAConfirmation
                           }
                         })
@@ -172,7 +185,7 @@ const Reset2FA = () => {
                   </div>
                 </>
               )}
-              {!isLoading && !wasSuccessful && (
+              {!loading && state.result === 'failure' && (
                 <>
                   <Label3>Link has expired</Label3>
                 </>

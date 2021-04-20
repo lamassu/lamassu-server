@@ -29,12 +29,7 @@ const DISABLE_USER = gql`
 
 const useStyles = makeStyles(styles)
 
-const EnableUserModal = ({
-  showModal,
-  toggleModal,
-  user,
-  requiresConfirmation
-}) => {
+const EnableUserModal = ({ state, dispatch, user, requiresConfirmation }) => {
   const classes = useStyles()
 
   const [enableUser] = useMutation(ENABLE_USER, {
@@ -47,37 +42,46 @@ const EnableUserModal = ({
 
   const [confirmation, setConfirmation] = useState(null)
 
+  const disable = () => {
+    disableUser({
+      variables: {
+        confirmationCode: confirmation,
+        id: user.id
+      }
+    })
+  }
+
+  const enable = () => {
+    enableUser({
+      variables: {
+        confirmationCode: confirmation,
+        id: user.id
+      }
+    })
+  }
+
   const submit = () => {
-    user?.enabled
-      ? disableUser({
-          variables: {
-            confirmationCode: confirmation,
-            id: user.id
-          }
-        })
-      : enableUser({
-          variables: {
-            confirmationCode: confirmation,
-            id: user.id
-          }
-        })
+    user?.enabled ? disable() : enable()
     handleClose()
   }
 
   const handleClose = () => {
     setConfirmation(null)
-    toggleModal()
+    dispatch({
+      type: 'close',
+      payload: 'showEnableUserModal'
+    })
   }
 
   return (
-    (showModal && requiresConfirmation && !confirmation && (
+    (state.showEnableUserModal && requiresConfirmation && !confirmation && (
       <Input2FAModal
-        showModal={showModal}
+        showModal={state.showEnableUserModal}
         handleClose={handleClose}
         setConfirmation={setConfirmation}
       />
     )) ||
-    (showModal && (
+    (state.showEnableUserModal && (
       <Modal
         closeOnBackdropClick={true}
         width={450}
