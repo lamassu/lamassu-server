@@ -61,21 +61,21 @@ const initialValues = {
   confirmPassword: ''
 }
 
+const initialState = {
+  username: null,
+  role: null,
+  result: ''
+}
+
+const reducer = (state, action) => {
+  const { type, payload } = action
+  return { ...state, ...payload, result: type }
+}
+
 const Register = () => {
   const classes = useStyles()
   const history = useHistory()
   const token = QueryParams().get('t')
-
-  const initialState = {
-    username: null,
-    role: null,
-    result: ''
-  }
-
-  const reducer = (state, action) => {
-    const { type, payload } = action
-    return { ...state, ...payload, result: type }
-  }
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -83,24 +83,22 @@ const Register = () => {
     variables: { token: token },
     onCompleted: ({ validateRegisterLink: info }) => {
       if (!info) {
-        dispatch({
+        return dispatch({
           type: 'failure'
         })
-      } else {
-        dispatch({
-          type: 'success',
-          payload: {
-            username: info.username,
-            role: info.role
-          }
-        })
       }
+      dispatch({
+        type: 'success',
+        payload: {
+          username: info.username,
+          role: info.role
+        }
+      })
     },
-    onError: () => {
+    onError: () =>
       dispatch({
         type: 'failure'
       })
-    }
   })
 
   const [register, { error: mutationError }] = useMutation(REGISTER, {

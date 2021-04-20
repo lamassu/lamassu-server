@@ -39,22 +39,22 @@ const initialValues = {
   role: ''
 }
 
+const radioOptions = [
+  {
+    code: 'user',
+    display: 'Regular user'
+  },
+  {
+    code: 'superuser',
+    display: 'Superuser'
+  }
+]
+
 const CreateUserModal = ({ state, dispatch }) => {
   const classes = useStyles()
 
   const [usernameField, setUsernameField] = useState('')
   const [createUserURL, setCreateUserURL] = useState(null)
-
-  const radioOptions = [
-    {
-      code: 'user',
-      display: 'Regular user'
-    },
-    {
-      code: 'superuser',
-      display: 'Superuser'
-    }
-  ]
 
   const handleClose = () => {
     setCreateUserURL(null)

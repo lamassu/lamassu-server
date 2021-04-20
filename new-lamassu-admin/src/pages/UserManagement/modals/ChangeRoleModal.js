@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
 import { Info2, P } from 'src/components/typography'
@@ -32,7 +33,8 @@ const useStyles = makeStyles(styles)
 const ChangeRoleModal = ({ state, dispatch, user, requiresConfirmation }) => {
   const classes = useStyles()
 
-  const [changeUserRole] = useMutation(CHANGE_USER_ROLE, {
+  const [changeUserRole, { error }] = useMutation(CHANGE_USER_ROLE, {
+    onCompleted: () => handleClose(),
     refetchQueries: () => ['users']
   })
 
@@ -46,7 +48,6 @@ const ChangeRoleModal = ({ state, dispatch, user, requiresConfirmation }) => {
         newRole: user.role === 'superuser' ? 'user' : 'superuser'
       }
     })
-    handleClose()
   }
 
   const handleClose = () => {
@@ -81,6 +82,7 @@ const ChangeRoleModal = ({ state, dispatch, user, requiresConfirmation }) => {
         </P>
         <P className={classes.info}>Do you wish to proceed?</P>
         <div className={classes.footer}>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
           <Button className={classes.submit} onClick={() => submit()}>
             Confirm
           </Button>

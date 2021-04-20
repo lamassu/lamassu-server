@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React, { useEffect, useState } from 'react'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
@@ -36,7 +37,7 @@ const ResetPasswordModal = ({
   const classes = useStyles()
   const [resetPasswordUrl, setResetPasswordUrl] = useState('')
 
-  const [createResetPasswordToken, { loading }] = useMutation(
+  const [createResetPasswordToken, { loading, error }] = useMutation(
     CREATE_RESET_PASSWORD_TOKEN,
     {
       onCompleted: ({ createResetPasswordToken: token }) => {
@@ -95,18 +96,21 @@ const ResetPasswordModal = ({
           <P className={classes.info}>
             Safely share this link with {user.username} for a password reset.
           </P>
-          <div className={classes.addressWrapper}>
-            <Mono className={classes.address}>
-              <strong>
-                <CopyToClipboard
-                  className={classes.link}
-                  buttonClassname={classes.copyToClipboard}
-                  wrapperClassname={classes.linkWrapper}>
-                  {resetPasswordUrl}
-                </CopyToClipboard>
-              </strong>
-            </Mono>
-          </div>
+          {!error && (
+            <div className={classes.addressWrapper}>
+              <Mono className={classes.address}>
+                <strong>
+                  <CopyToClipboard
+                    className={classes.link}
+                    buttonClassname={classes.copyToClipboard}
+                    wrapperClassname={classes.linkWrapper}>
+                    {resetPasswordUrl}
+                  </CopyToClipboard>
+                </strong>
+              </Mono>
+            </div>
+          )}
+          {error && <ErrorMessage>{error}</ErrorMessage>}
         </Modal>
       ))
   )

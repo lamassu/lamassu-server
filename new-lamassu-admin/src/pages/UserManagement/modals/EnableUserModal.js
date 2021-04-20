@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
 import { Info2, P } from 'src/components/typography'
@@ -32,11 +33,13 @@ const useStyles = makeStyles(styles)
 const EnableUserModal = ({ state, dispatch, user, requiresConfirmation }) => {
   const classes = useStyles()
 
-  const [enableUser] = useMutation(ENABLE_USER, {
+  const [enableUser, { error: enableError }] = useMutation(ENABLE_USER, {
+    onCompleted: () => handleClose(),
     refetchQueries: () => ['users']
   })
 
-  const [disableUser] = useMutation(DISABLE_USER, {
+  const [disableUser, { error: disableError }] = useMutation(DISABLE_USER, {
+    onCompleted: () => handleClose(),
     refetchQueries: () => ['users']
   })
 
@@ -62,7 +65,6 @@ const EnableUserModal = ({ state, dispatch, user, requiresConfirmation }) => {
 
   const submit = () => {
     user?.enabled ? disable() : enable()
-    handleClose()
   }
 
   const handleClose = () => {
@@ -115,6 +117,8 @@ const EnableUserModal = ({ state, dispatch, user, requiresConfirmation }) => {
           </>
         )}
         <div className={classes.footer}>
+          {disableError && <ErrorMessage>{disableError}</ErrorMessage>}
+          {enableError && <ErrorMessage>{enableError}</ErrorMessage>}
           <Button className={classes.submit} onClick={() => submit()}>
             Confirm
           </Button>
