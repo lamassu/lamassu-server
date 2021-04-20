@@ -50,6 +50,14 @@ const radioOptions = [
   }
 ]
 
+const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
+  if (!formikErrors || !formikTouched) return null
+  if (mutationError) return 'Internal server error'
+  if (formikErrors.username && formikTouched.username)
+    return formikErrors.username
+  return null
+}
+
 const CreateUserModal = ({ state, dispatch }) => {
   const classes = useStyles()
 
@@ -73,14 +81,6 @@ const CreateUserModal = ({ state, dispatch }) => {
   const roleClass = (formikErrors, formikTouched) => ({
     [classes.error]: formikErrors.role && formikTouched.role
   })
-
-  const getErrorMsg = (formikErrors, formikTouched) => {
-    if (!formikErrors || !formikTouched) return null
-    if (error) return 'Internal server error'
-    if (formikErrors.username && formikTouched.username)
-      return formikErrors.username
-    return null
-  }
 
   return (
     <>
@@ -125,8 +125,10 @@ const CreateUserModal = ({ state, dispatch }) => {
                   options={radioOptions}
                 />
                 <div className={classes.footer}>
-                  {getErrorMsg(errors, touched) && (
-                    <ErrorMessage>{getErrorMsg(errors, touched)}</ErrorMessage>
+                  {getErrorMsg(errors, touched, error) && (
+                    <ErrorMessage>
+                      {getErrorMsg(errors, touched, error)}
+                    </ErrorMessage>
                   )}
                   <Button
                     type="submit"

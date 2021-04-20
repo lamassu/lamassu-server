@@ -49,6 +49,16 @@ const initialValues = {
   confirmPassword: ''
 }
 
+const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
+  if (!formikErrors || !formikTouched) return null
+  if (mutationError) return 'Internal server error'
+  if (formikErrors.password && formikTouched.password)
+    return formikErrors.password
+  if (formikErrors.confirmPassword && formikTouched.confirmPassword)
+    return formikErrors.confirmPassword
+  return null
+}
+
 const ResetPassword = () => {
   const classes = useStyles()
   const history = useHistory()
@@ -80,16 +90,6 @@ const ResetPassword = () => {
       if (success) history.push('/')
     }
   })
-
-  const getErrorMsg = (formikErrors, formikTouched) => {
-    if (!formikErrors || !formikTouched) return null
-    if (error) return 'Internal server error'
-    if (formikErrors.password && formikTouched.password)
-      return formikErrors.password
-    if (formikErrors.confirmPassword && formikTouched.confirmPassword)
-      return formikErrors.confirmPassword
-    return null
-  }
 
   return (
     <Grid
@@ -139,9 +139,9 @@ const ResetPassword = () => {
                         fullWidth
                       />
                       <div className={classes.footer}>
-                        {getErrorMsg(errors, touched) && (
+                        {getErrorMsg(errors, touched, error) && (
                           <P className={classes.errorMessage}>
-                            {getErrorMsg(errors, touched)}
+                            {getErrorMsg(errors, touched, error)}
                           </P>
                         )}
                         <Button
