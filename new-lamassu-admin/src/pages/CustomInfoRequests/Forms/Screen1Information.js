@@ -2,7 +2,7 @@ import { Field } from 'formik'
 import React from 'react'
 import * as Yup from 'yup'
 
-import { TextInput } from 'src/components/inputs'
+import TextInputFormik from 'src/components/inputs/formik/TextInput'
 import { H4, P } from 'src/components/typography'
 
 const Screen1Information = () => {
@@ -13,28 +13,20 @@ const Screen1Information = () => {
         On screen 1 you will request the user if he agrees on providing this
         information, or if he wishes to terminate the transaction instead.
       </P>
-      <Field name="screen1Title" value="aaaa">
-        {({ field, form, meta }) => (
-          <TextInput
-            error={!!meta.error}
-            fullWidth
-            label="Screen title"
-            {...field}
-          />
-        )}
-      </Field>
-      <Field name="screen1Text">
-        {({ field, form, meta }) => (
-          <TextInput
-            error={!!meta.error}
-            multiline
-            fullWidth
-            rows={5}
-            label="Screen text"
-            {...field}
-          />
-        )}
-      </Field>
+      <Field
+        component={TextInputFormik}
+        label="Screen title"
+        name="screen1Title"
+        fullWidth
+      />
+      <Field
+        component={TextInputFormik}
+        label="Screen text"
+        name="screen1Text"
+        multiline
+        fullWidth
+        rows={5}
+      />
     </>
   )
 }

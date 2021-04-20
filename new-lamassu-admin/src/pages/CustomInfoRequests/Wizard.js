@@ -24,9 +24,12 @@ import Screen2Information, {
   validationSchema as screen2InfoSchema,
   defaultValues as screen2InfoDefaults
 } from './Forms/Screen2Information'
+import TypeFieldsSetup, {
+  defaultValues as typeFieldsSetupDefaults,
+  validationSchema as typeFieldsValidationSchema
+} from './Forms/TypeFieldsSetup'
 import WizardSplash from './WizardSplash'
-
-const LAST_STEP = 5
+const LAST_STEP = 6
 
 const styles = {
   stepper: {
@@ -79,12 +82,16 @@ const getStep = step => {
       }
     case 4:
       return { schema: chooseTypeSchema, Component: ChooseType }
+    case 5:
+      return {
+        schema: typeFieldsValidationSchema,
+        Component: TypeFieldsSetup
+      }
     default:
       return {
-        initialValues: {},
         schema: {},
         Component: () => {
-          return <h1>Component step default</h1>
+          return <h1>Default component step</h1>
         }
       }
   }
@@ -105,7 +112,7 @@ const Wizard = ({ onClose, error = false }) => {
         title={step > 0 ? 'New custom requirement' : ''}
         handleClose={onClose}
         width={520}
-        height={580}
+        height={620}
         open={true}>
         {step > 0 && (
           <Stepper
@@ -125,7 +132,8 @@ const Wizard = ({ onClose, error = false }) => {
               ...nameOfReqDefaults,
               ...screen1InfoDefaults,
               ...screen2InfoDefaults,
-              ...chooseTypeDefaults
+              ...chooseTypeDefaults,
+              ...typeFieldsSetupDefaults
             }}
             validationSchema={stepOptions.schema}>
             <Form className={classes.form} id={'custom-requirement-form'}>

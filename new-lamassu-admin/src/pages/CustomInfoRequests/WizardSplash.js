@@ -3,7 +3,7 @@ import React from 'react'
 
 import { Button } from 'src/components/buttons'
 import { H1, P } from 'src/components/typography'
-import { ReactComponent as BitcoinLogo } from 'src/styling/icons/compliance/custom-requirement.svg'
+import { ReactComponent as CustomReqLogo } from 'src/styling/icons/compliance/custom-requirement.svg'
 
 const styles = {
   logo: {
@@ -35,7 +35,7 @@ const WizardSplash = ({ onContinue }) => {
   const classes = useStyles()
   return (
     <div className={classes.modalContent}>
-      <BitcoinLogo className={classes.logo} />
+      <CustomReqLogo className={classes.logo} />
       <H1 className={classes.title}>Custom information request</H1>
       <P className={classes.text}>
         A custom information request allows you to have an extra option to ask
