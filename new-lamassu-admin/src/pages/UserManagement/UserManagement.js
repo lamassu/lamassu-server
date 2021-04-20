@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Box, Chip } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState, useContext } from 'react'
+import React, { useReducer, useState, useContext } from 'react'
 
 import AppContext from 'src/AppContext'
 import { Link } from 'src/components/buttons'
@@ -39,23 +39,27 @@ const Users = () => {
 
   const { data: userResponse } = useQuery(GET_USERS)
 
-  const [showCreateUserModal, setShowCreateUserModal] = useState(false)
-  const toggleCreateUserModal = () =>
-    setShowCreateUserModal(!showCreateUserModal)
+  const initialState = {
+    showCreateUserModal: false,
+    showResetPasswordModal: false,
+    showReset2FAModal: false,
+    showRoleModal: false,
+    showEnableUserModal: false
+  }
 
-  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
-  const toggleResetPasswordModal = () =>
-    setShowResetPasswordModal(!showResetPasswordModal)
+  const reducer = (_, action) => {
+    const { type, payload } = action
+    switch (type) {
+      case 'close':
+        return initialState
+      case 'open':
+        return { ...initialState, [payload]: true }
+      default:
+        return initialState
+    }
+  }
 
-  const [showReset2FAModal, setShowReset2FAModal] = useState(false)
-  const toggleReset2FAModal = () => setShowReset2FAModal(!showReset2FAModal)
-
-  const [showRoleModal, setShowRoleModal] = useState(false)
-  const toggleRoleModal = () => setShowRoleModal(!showRoleModal)
-
-  const [showEnableUserModal, setShowEnableUserModal] = useState(false)
-  const toggleEnableUserModal = () =>
-    setShowEnableUserModal(!showEnableUserModal)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   const [userInfo, setUserInfo] = useState(null)
 
@@ -103,7 +107,10 @@ const Users = () => {
           checked={u.role === 'superuser'}
           onClick={() => {
             setUserInfo(u)
-            toggleRoleModal()
+            dispatch({
+              type: 'open',
+              payload: 'showRoleModal'
+            })
           }}
           value={u.role === 'superuser'}
         />
@@ -130,7 +137,10 @@ const Users = () => {
               className={classes.actionChip}
               onClick={() => {
                 setUserInfo(u)
-                toggleResetPasswordModal()
+                dispatch({
+                  type: 'open',
+                  payload: 'showResetPasswordModal'
+                })
               }}
             />
             <Chip
@@ -139,7 +149,10 @@ const Users = () => {
               className={classes.actionChip}
               onClick={() => {
                 setUserInfo(u)
-                toggleReset2FAModal()
+                dispatch({
+                  type: 'open',
+                  payload: 'showReset2FAModal'
+                })
               }}
             />
           </>
@@ -157,7 +170,10 @@ const Users = () => {
           checked={u.enabled}
           onClick={() => {
             setUserInfo(u)
-            toggleEnableUserModal()
+            dispatch({
+              type: 'open',
+              payload: 'showEnableUserModal'
+            })
           }}
           value={u.enabled}
         />
@@ -174,36 +190,40 @@ const Users = () => {
         className={classes.tableWidth}
         display="flex"
         justifyContent="flex-end">
-        <Link color="primary" onClick={toggleCreateUserModal}>
+        <Link
+          color="primary"
+          onClick={() => {
+            dispatch({
+              type: 'open',
+              payload: 'showCreateUserModal'
+            })
+          }}>
           Add new user
         </Link>
       </Box>
       <DataTable elements={elements} data={R.path(['users'])(userResponse)} />
-      <CreateUserModal
-        showModal={showCreateUserModal}
-        toggleModal={toggleCreateUserModal}
-      />
+      <CreateUserModal state={state} dispatch={dispatch} />
       <ResetPasswordModal
-        showModal={showResetPasswordModal}
-        toggleModal={toggleResetPasswordModal}
+        state={state}
+        dispatch={dispatch}
         user={userInfo}
         requiresConfirmation={userInfo?.role === 'superuser'}
       />
       <Reset2FAModal
-        showModal={showReset2FAModal}
-        toggleModal={toggleReset2FAModal}
+        state={state}
+        dispatch={dispatch}
         user={userInfo}
         requiresConfirmation={userInfo?.role === 'superuser'}
       />
       <ChangeRoleModal
-        showModal={showRoleModal}
-        toggleModal={toggleRoleModal}
+        state={state}
+        dispatch={dispatch}
         user={userInfo}
         requiresConfirmation={userInfo?.role === 'superuser'}
       />
       <EnableUserModal
-        showModal={showEnableUserModal}
-        toggleModal={toggleEnableUserModal}
+        state={state}
+        dispatch={dispatch}
         user={userInfo}
         requiresConfirmation={userInfo?.role === 'superuser'}
       />

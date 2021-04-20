@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
-import { URI } from 'src/utils/apollo'
+import { urlResolver } from 'src/utils/urlResolver'
 
 import styles from '../UserManagement.styles'
 
@@ -24,12 +24,7 @@ const CREATE_RESET_2FA_TOKEN = gql`
 
 const useStyles = makeStyles(styles)
 
-const Reset2FAModal = ({
-  showModal,
-  toggleModal,
-  user,
-  requiresConfirmation
-}) => {
+const Reset2FAModal = ({ state, dispatch, user, requiresConfirmation }) => {
   const classes = useStyles()
   const [reset2FAUrl, setReset2FAUrl] = useState('')
 
@@ -37,7 +32,7 @@ const Reset2FAModal = ({
     CREATE_RESET_2FA_TOKEN,
     {
       onCompleted: ({ createReset2FAToken: token }) => {
-        setReset2FAUrl(`${URI}/reset2fa?t=${token.token}`)
+        setReset2FAUrl(urlResolver(`/reset2fa?t=${token.token}`))
       }
     }
   )
@@ -45,7 +40,7 @@ const Reset2FAModal = ({
   const [confirmation, setConfirmation] = useState(null)
 
   useEffect(() => {
-    showModal &&
+    state.showReset2FAModal &&
       (confirmation || !requiresConfirmation) &&
       createReset2FAToken({
         variables: {
@@ -53,49 +48,60 @@ const Reset2FAModal = ({
           userID: user?.id
         }
       })
-  }, [confirmation, createReset2FAToken, requiresConfirmation, showModal, user])
+  }, [
+    confirmation,
+    createReset2FAToken,
+    requiresConfirmation,
+    state.showReset2FAModal,
+    user?.id
+  ])
 
   const handleClose = () => {
     setConfirmation(null)
-    toggleModal()
+    dispatch({
+      type: 'close',
+      payload: 'showReset2FAModal'
+    })
   }
 
   return (
-    (showModal && requiresConfirmation && !confirmation && (
+    (state.showReset2FAModal && requiresConfirmation && !confirmation && (
       <Input2FAModal
-        showModal={showModal}
+        showModal={state.showReset2FAModal}
         handleClose={handleClose}
         setConfirmation={setConfirmation}
       />
     )) ||
-    (showModal && (confirmation || !requiresConfirmation) && !loading && (
-      <Modal
-        closeOnBackdropClick={true}
-        width={500}
-        height={200}
-        handleClose={handleClose}
-        open={true}>
-        <Info2 className={classes.modalTitle}>
-          Reset 2FA for {user.username}
-        </Info2>
-        <P className={classes.info}>
-          Safely share this link with {user.username} for a two-factor
-          authentication reset.
-        </P>
-        <div className={classes.addressWrapper}>
-          <Mono className={classes.address}>
-            <strong>
-              <CopyToClipboard
-                className={classes.link}
-                buttonClassname={classes.copyToClipboard}
-                wrapperClassname={classes.linkWrapper}>
-                {reset2FAUrl}
-              </CopyToClipboard>
-            </strong>
-          </Mono>
-        </div>
-      </Modal>
-    ))
+    (state.showReset2FAModal &&
+      (confirmation || !requiresConfirmation) &&
+      !loading && (
+        <Modal
+          closeOnBackdropClick={true}
+          width={500}
+          height={200}
+          handleClose={handleClose}
+          open={true}>
+          <Info2 className={classes.modalTitle}>
+            Reset 2FA for {user.username}
+          </Info2>
+          <P className={classes.info}>
+            Safely share this link with {user.username} for a two-factor
+            authentication reset.
+          </P>
+          <div className={classes.addressWrapper}>
+            <Mono className={classes.address}>
+              <strong>
+                <CopyToClipboard
+                  className={classes.link}
+                  buttonClassname={classes.copyToClipboard}
+                  wrapperClassname={classes.linkWrapper}>
+                  {reset2FAUrl}
+                </CopyToClipboard>
+              </strong>
+            </Mono>
+          </div>
+        </Modal>
+      ))
   )
 }
 

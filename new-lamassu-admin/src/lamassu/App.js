@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import Slide from '@material-ui/core/Slide'
@@ -11,7 +11,7 @@ import {
 import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   useLocation,
   useHistory,
@@ -91,16 +91,12 @@ const Main = () => {
   const history = useHistory()
   const { wizardTested, userData, setUserData } = useContext(AppContext)
 
-  const [getUserData, { loading }] = useLazyQuery(GET_USER_DATA, {
+  const { loading } = useQuery(GET_USER_DATA, {
     onCompleted: userResponse => {
       if (!userData && userResponse?.userData)
         setUserData(userResponse.userData)
     }
   })
-
-  useEffect(() => {
-    getUserData()
-  }, [getUserData])
 
   const route = location.pathname
 

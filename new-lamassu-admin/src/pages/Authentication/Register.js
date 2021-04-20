@@ -69,12 +69,12 @@ const Register = () => {
   const initialState = {
     username: null,
     role: null,
-    wasSuccessful: false
+    result: ''
   }
 
   const reducer = (state, action) => {
     const { type, payload } = action
-    return { ...state, [type]: payload }
+    return { ...state, ...payload, result: type }
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -83,15 +83,23 @@ const Register = () => {
     variables: { token: token },
     onCompleted: ({ validateRegisterLink: info }) => {
       if (!info) {
-        dispatch({ type: 'wasSuccessful', payload: false })
+        dispatch({
+          type: 'failure'
+        })
       } else {
-        dispatch({ type: 'wasSuccessful', payload: true })
-        dispatch({ type: 'username', payload: info.username })
-        dispatch({ type: 'role', payload: info.role })
+        dispatch({
+          type: 'success',
+          payload: {
+            username: info.username,
+            role: info.role
+          }
+        })
       }
     },
     onError: () => {
-      dispatch({ type: 'wasSuccessful', payload: false })
+      dispatch({
+        type: 'failure'
+      })
     }
   })
 
@@ -127,7 +135,7 @@ const Register = () => {
                 <Logo className={classes.icon} />
                 <H2 className={classes.title}>Lamassu Admin</H2>
               </div>
-              {!loading && state.wasSuccessful && (
+              {!loading && state.result === 'success' && (
                 <Formik
                   validationSchema={validationSchema}
                   initialValues={initialValues}
@@ -176,7 +184,7 @@ const Register = () => {
                   )}
                 </Formik>
               )}
-              {!loading && !state.wasSuccessful && (
+              {!loading && state.result === 'failure' && (
                 <>
                   <Label3>Link has expired</Label3>
                 </>
