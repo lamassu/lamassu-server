@@ -14,7 +14,6 @@ import { primaryColor } from 'src/styling/variables'
 
 import styles from './shared.styles'
 
-const QueryParams = () => new URLSearchParams(useLocation().search)
 const useStyles = makeStyles(styles)
 
 const VALIDATE_RESET_2FA_LINK = gql`
@@ -33,26 +32,27 @@ const RESET_2FA = gql`
   }
 `
 
+const initialState = {
+  userID: null,
+  secret: null,
+  otpauth: null,
+  result: null
+}
+
+const reducer = (state, action) => {
+  const { type, payload } = action
+  return { ...state, ...payload, result: type }
+}
+
 const Reset2FA = () => {
   const classes = useStyles()
   const history = useHistory()
+  const QueryParams = () => new URLSearchParams(useLocation().search)
   const token = QueryParams().get('t')
 
   const [isShowing, setShowing] = useState(false)
   const [invalidToken, setInvalidToken] = useState(false)
   const [twoFAConfirmation, setTwoFAConfirmation] = useState('')
-
-  const initialState = {
-    userID: null,
-    secret: null,
-    otpauth: null,
-    result: null
-  }
-
-  const reducer = (state, action) => {
-    const { type, payload } = action
-    return { ...state, ...payload, result: type }
-  }
 
   const [state, dispatch] = useReducer(reducer, initialState)
 

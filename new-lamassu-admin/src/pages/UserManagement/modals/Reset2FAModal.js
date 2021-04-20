@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React, { useEffect, useState } from 'react'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
@@ -28,7 +29,7 @@ const Reset2FAModal = ({ state, dispatch, user, requiresConfirmation }) => {
   const classes = useStyles()
   const [reset2FAUrl, setReset2FAUrl] = useState('')
 
-  const [createReset2FAToken, { loading }] = useMutation(
+  const [createReset2FAToken, { loading, error }] = useMutation(
     CREATE_RESET_2FA_TOKEN,
     {
       onCompleted: ({ createReset2FAToken: token }) => {
@@ -88,18 +89,21 @@ const Reset2FAModal = ({ state, dispatch, user, requiresConfirmation }) => {
             Safely share this link with {user.username} for a two-factor
             authentication reset.
           </P>
-          <div className={classes.addressWrapper}>
-            <Mono className={classes.address}>
-              <strong>
-                <CopyToClipboard
-                  className={classes.link}
-                  buttonClassname={classes.copyToClipboard}
-                  wrapperClassname={classes.linkWrapper}>
-                  {reset2FAUrl}
-                </CopyToClipboard>
-              </strong>
-            </Mono>
-          </div>
+          {!error && (
+            <div className={classes.addressWrapper}>
+              <Mono className={classes.address}>
+                <strong>
+                  <CopyToClipboard
+                    className={classes.link}
+                    buttonClassname={classes.copyToClipboard}
+                    wrapperClassname={classes.linkWrapper}>
+                    {reset2FAUrl}
+                  </CopyToClipboard>
+                </strong>
+              </Mono>
+            </div>
+          )}
+          {error && <ErrorMessage>{error}</ErrorMessage>}
         </Modal>
       ))
   )

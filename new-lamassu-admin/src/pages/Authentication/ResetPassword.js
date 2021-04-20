@@ -14,7 +14,6 @@ import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import styles from './shared.styles'
 
-const QueryParams = () => new URLSearchParams(useLocation().search)
 const useStyles = makeStyles(styles)
 
 const VALIDATE_RESET_PASSWORD_LINK = gql`
@@ -53,6 +52,7 @@ const initialValues = {
 const ResetPassword = () => {
   const classes = useStyles()
   const history = useHistory()
+  const QueryParams = () => new URLSearchParams(useLocation().search)
   const token = QueryParams().get('t')
   const [userID, setUserID] = useState(null)
   const [isLoading, setLoading] = useState(true)

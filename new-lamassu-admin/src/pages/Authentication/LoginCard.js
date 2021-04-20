@@ -13,21 +13,21 @@ import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
 
+const initialState = {
+  twoFAField: '',
+  clientField: '',
+  passwordField: '',
+  rememberMeField: false,
+  loginState: STATES.LOGIN
+}
+
+const reducer = (state, action) => {
+  const { type, payload } = action
+  return { ...state, ...payload, loginState: type }
+}
+
 const LoginCard = () => {
   const classes = useStyles()
-
-  const initialState = {
-    twoFAField: '',
-    clientField: '',
-    passwordField: '',
-    rememberMeField: false,
-    loginState: STATES.LOGIN
-  }
-
-  const reducer = (state, action) => {
-    const { type, payload } = action
-    return { ...state, ...payload, loginState: type }
-  }
 
   const [state, dispatch] = useReducer(reducer, initialState)
 

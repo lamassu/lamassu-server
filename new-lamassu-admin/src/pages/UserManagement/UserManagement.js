@@ -33,32 +33,31 @@ const GET_USERS = gql`
   }
 `
 
+const initialState = {
+  showCreateUserModal: false,
+  showResetPasswordModal: false,
+  showReset2FAModal: false,
+  showRoleModal: false,
+  showEnableUserModal: false
+}
+
+const reducer = (_, action) => {
+  const { type, payload } = action
+  switch (type) {
+    case 'close':
+      return initialState
+    case 'open':
+      return { ...initialState, [payload]: true }
+    default:
+      return initialState
+  }
+}
+
 const Users = () => {
   const classes = useStyles()
   const { userData } = useContext(AppContext)
 
   const { data: userResponse } = useQuery(GET_USERS)
-
-  const initialState = {
-    showCreateUserModal: false,
-    showResetPasswordModal: false,
-    showReset2FAModal: false,
-    showRoleModal: false,
-    showEnableUserModal: false
-  }
-
-  const reducer = (_, action) => {
-    const { type, payload } = action
-    switch (type) {
-      case 'close':
-        return initialState
-      case 'open':
-        return { ...initialState, [payload]: true }
-      default:
-        return initialState
-    }
-  }
-
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const [userInfo, setUserInfo] = useState(null)
