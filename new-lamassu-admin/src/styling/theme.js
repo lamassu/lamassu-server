@@ -10,7 +10,10 @@ import {
   offColor,
   subheaderColor,
   fontSize3,
-  fontSize5
+  fontSize5,
+  zircon,
+  zircon2,
+  primaryColor
 } from './variables'
 
 const { p } = typographyStyles
@@ -113,6 +116,44 @@ export default createMuiTheme({
       root: {
         '&:nth-of-type(odd)': {
           backgroundColor: backgroundColor
+        }
+      }
+    },
+    MuiToggleButton: {
+      root: {
+        '&$selected': {
+          backgroundColor: zircon,
+          borderColor: primaryColor,
+          borderTopColor: [primaryColor, '!important'],
+          '&:hover': {
+            backgroundColor: zircon2
+          }
+        },
+        '&:hover': {
+          backgroundColor: zircon2
+        }
+      }
+    },
+    MuiToggleButtonGroup: {
+      groupedVertical: {
+        borderRadius: 8,
+        border: '1px solid',
+        borderColor: zircon,
+        '&:not(:first-child)': {
+          borderTop: '1px solid',
+          borderTopColor: zircon,
+          borderTopRightRadius: 8,
+          borderTopLeftRadius: 8,
+          borderBottomRightRadius: 8,
+          borderBottomLeftRadius: 8
+        },
+        '&:not(:last-child)': {
+          borderTop: '1px solid',
+          borderTopColor: zircon,
+          borderTopRightRadius: 8,
+          borderTopLeftRadius: 8,
+          borderBottomRightRadius: 8,
+          borderBottomLeftRadius: 8
         }
       }
     }
