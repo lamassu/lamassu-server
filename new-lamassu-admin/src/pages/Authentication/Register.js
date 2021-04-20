@@ -72,6 +72,21 @@ const reducer = (state, action) => {
   return { ...state, ...payload, result: type }
 }
 
+const getErrorMsg = (
+  formikErrors,
+  formikTouched,
+  queryError,
+  mutationError
+) => {
+  if (!formikErrors || !formikTouched) return null
+  if (queryError || mutationError) return 'Internal server error'
+  if (formikErrors.password && formikTouched.password)
+    return formikErrors.password
+  if (formikErrors.confirmPassword && formikTouched.confirmPassword)
+    return formikErrors.confirmPassword
+  return null
+}
+
 const Register = () => {
   const classes = useStyles()
   const history = useHistory()
@@ -106,16 +121,6 @@ const Register = () => {
       if (success) history.push('/wizard', { fromAuthRegister: true })
     }
   })
-
-  const getErrorMsg = (formikErrors, formikTouched) => {
-    if (!formikErrors || !formikTouched) return null
-    if (queryError || mutationError) return 'Internal server error'
-    if (formikErrors.password && formikTouched.password)
-      return formikErrors.password
-    if (formikErrors.confirmPassword && formikTouched.confirmPassword)
-      return formikErrors.confirmPassword
-    return null
-  }
 
   return (
     <Grid
@@ -166,9 +171,19 @@ const Register = () => {
                         fullWidth
                       />
                       <div className={classes.footer}>
-                        {getErrorMsg(errors, touched) && (
+                        {getErrorMsg(
+                          errors,
+                          touched,
+                          queryError,
+                          mutationError
+                        ) && (
                           <P className={classes.errorMessage}>
-                            {getErrorMsg(errors, touched)}
+                            {getErrorMsg(
+                              errors,
+                              touched,
+                              queryError,
+                              mutationError
+                            )}
                           </P>
                         )}
                         <Button

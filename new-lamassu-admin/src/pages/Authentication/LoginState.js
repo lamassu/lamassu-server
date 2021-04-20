@@ -34,19 +34,19 @@ const initialValues = {
   rememberMe: false
 }
 
+const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
+  if (!formikErrors || !formikTouched) return null
+  if (mutationError) return 'Invalid login/password combination'
+  if (formikErrors.client && formikTouched.client) return formikErrors.client
+  if (formikErrors.password && formikTouched.password)
+    return formikErrors.password
+  return null
+}
+
 const LoginState = ({ state, dispatch }) => {
   const classes = useStyles()
 
   const [login, { error: mutationError }] = useMutation(LOGIN)
-
-  const getErrorMsg = (formikErrors, formikTouched) => {
-    if (!formikErrors || !formikTouched) return null
-    if (mutationError) return 'Invalid login/password combination'
-    if (formikErrors.client && formikTouched.client) return formikErrors.client
-    if (formikErrors.password && formikTouched.password)
-      return formikErrors.password
-    return null
-  }
 
   const submitLogin = async (username, password, rememberMe) => {
     const { data: loginResponse } = await login({
@@ -88,7 +88,7 @@ const LoginState = ({ state, dispatch }) => {
             fullWidth
             autoFocus
             className={classes.input}
-            error={getErrorMsg(errors, touched)}
+            error={getErrorMsg(errors, touched, mutationError)}
           />
           <Field
             name="password"
@@ -96,7 +96,7 @@ const LoginState = ({ state, dispatch }) => {
             component={SecretInput}
             label="Password"
             fullWidth
-            error={getErrorMsg(errors, touched)}
+            error={getErrorMsg(errors, touched, mutationError)}
           />
           <div className={classes.rememberMeWrapper}>
             <Field
@@ -107,9 +107,9 @@ const LoginState = ({ state, dispatch }) => {
             <Label3>Keep me logged in</Label3>
           </div>
           <div className={classes.footer}>
-            {getErrorMsg(errors, touched) && (
+            {getErrorMsg(errors, touched, mutationError) && (
               <P className={classes.errorMessage}>
-                {getErrorMsg(errors, touched)}
+                {getErrorMsg(errors, touched, mutationError)}
               </P>
             )}
             <Button
