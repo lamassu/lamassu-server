@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="160px" height="160px" viewBox="0 0 160 160" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <circle id="path-100" cx="80" cy="80" r="80"></circle>
+        <rect id="path-300" x="28" y="44" width="104" height="116" rx="4"></rect>
+        <filter x="-23.1%" y="-20.7%" width="146.2%" height="141.4%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.08 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-5" x="37" y="66" width="84" height="8" rx="2"></rect>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="84" height="8" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <rect id="path-7" x="37" y="78" width="84" height="8" rx="2"></rect>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="84" height="8" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <rect id="path-9" x="37" y="90" width="84" height="8" rx="2"></rect>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="84" height="8" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <rect id="path-11" x="37" y="102" width="84" height="8" rx="2"></rect>
+        <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="84" height="8" fill="white">
+            <use xlink:href="#path-11"></use>
+        </mask>
+    </defs>
+    <g id="↳-v13a" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="transactions_v13a#1-(empty-table)" transform="translate(-640.000000, -220.000000)">
+            <g id="Group-2" transform="translate(640.000000, 220.000000)">
+                <g id="Rectangle">
+                    <mask id="mask-200" fill="white">
+                        <use xlink:href="#path-100"></use>
+                    </mask>
+                    <use id="Mask" fill="#EBEFFF" xlink:href="#path-100"></use>
+                    <g mask="url(#mask-200)">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-300"></use>
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-300"></use>
+                    </g>
+                </g>
+                <use id="Rectangle" stroke="#5F668A" mask="url(#mask-6)" stroke-dasharray="1" xlink:href="#path-5"></use>
+                <use id="Rectangle-Copy" stroke="#5F668A" mask="url(#mask-8)" stroke-dasharray="1" xlink:href="#path-7"></use>
+                <use id="Rectangle-Copy-2" stroke="#5F668A" mask="url(#mask-10)" stroke-dasharray="1" xlink:href="#path-9"></use>
+                <use id="Rectangle-Copy-3" stroke="#5F668A" mask="url(#mask-12)" stroke-dasharray="1" xlink:href="#path-11"></use>
+                <rect id="Rectangle" fill="#EBEFFF" x="37" y="56" width="84" height="6" rx="2"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

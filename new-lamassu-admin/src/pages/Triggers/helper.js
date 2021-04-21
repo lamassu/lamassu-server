@@ -85,40 +85,58 @@ const useStyles = makeStyles({
 })
 
 // const direction = Yup.string().required()
+
 const triggerType = Yup.string().required()
 const threshold = Yup.object().shape({
-  threshold: Yup.number(),
-  thresholdDays: Yup.number().test({
-    test(val) {
-      const { triggerType } = this.parent
-      const requireThrehsold = ['txVolume', 'txVelocity', 'consecutiveDays']
-
-      if (R.isEmpty(val) && R.includes(triggerType, requireThrehsold)) {
-        return this.createError()
-      }
-
-      return true
-    }
-  })
+  threshold: Yup.number()
+    .nullable()
+    .transform(transformNumber)
+    .label('Invalid threshold'),
+  thresholdDays: Yup.number()
+    .transform(transformNumber)
+    .nullable()
+    .label('Invalid threshold days')
 })
 
 const requirement = Yup.object().shape({
   requirement: Yup.string().required(),
   suspensionDays: Yup.number().when('requirement', {
     is: 'suspend',
-    then: Yup.number().required(),
+    then: Yup.number()
+      .required()
+      .min(1)
+      .label('Invalid value'),
     otherwise: Yup.number()
       .nullable()
       .transform(() => null)
   })
 })
 
-const Schema = Yup.object().shape({
-  triggerType,
-  requirement,
-  threshold
-  // direction
-})
+const Schema = Yup.object()
+  .shape({
+    triggerType,
+    requirement,
+    threshold
+    // direction
+  })
+  .test(
+    'are-fields-set',
+    'Invalid values',
+    ({ threshold, triggerType }, context) => {
+      const validator = {
+        txAmount: threshold => threshold.threshold >= 0,
+        txVolume: threshold =>
+          threshold.threshold >= 0 && threshold.thresholdDays > 0,
+        txVelocity: threshold =>
+          threshold.threshold > 0 && threshold.thresholdDays > 0,
+        consecutiveDays: threshold => threshold.thresholdDays > 0
+      }
+      return (
+        (triggerType && validator?.[triggerType](threshold)) ||
+        context.createError({ path: 'threshold' })
+      )
+    }
+  )
 
 // Direction V2 only
 // const directionSchema = Yup.object().shape({ direction })
@@ -226,10 +244,10 @@ const typeSchema = Yup.object()
       const validator = {
         txAmount: threshold => threshold.threshold >= 0,
         txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
+          threshold.threshold >= 0 && threshold.thresholdDays > 0,
         txVelocity: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays >= 0,
-        consecutiveDays: threshold => threshold.thresholdDays >= 0
+          threshold.threshold > 0 && threshold.thresholdDays > 0,
+        consecutiveDays: threshold => threshold.thresholdDays > 0
       }
 
       return (
@@ -377,7 +395,9 @@ const requirementSchema = Yup.object().shape({
     requirement: Yup.string().required(),
     suspensionDays: Yup.number().when('requirement', {
       is: value => value === 'suspend',
-      then: Yup.number().required(),
+      then: Yup.number()
+        .required()
+        .min(1),
       otherwise: Yup.number()
         .nullable()
         .transform(() => null)
@@ -429,7 +449,7 @@ const Requirement = () => {
       {isSuspend && (
         <Field
           className={classes.thresholdField}
-          component={TextInput}
+          component={NumberInput}
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
@@ -528,7 +548,7 @@ const DisplayThreshold = ({ config, currency, isEdit }) => {
       bold
       className={classnames(inputClasses)}
       name="threshold.threshold"
-      component={TextInput}
+      component={NumberInput}
       textAlign="right"
     />
   ) : (
@@ -539,7 +559,7 @@ const DisplayThreshold = ({ config, currency, isEdit }) => {
       bold
       className={classnames(inputClasses)}
       name="threshold.thresholdDays"
-      component={TextInput}
+      component={NumberInput}
       textAlign="right"
     />
   ) : (

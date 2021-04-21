@@ -51,9 +51,11 @@ const CashIn = ({ currency, notes, total }) => {
             <Info2 className={classes.noMarginText}>{notes} notes</Info2>
           </div>
           <div className={classes.innerRow}>
+            {/* Feature on hold until this can be calculated
             <Label1 className={classes.noMarginText}>
               {total} {currency.code}
             </Label1>
+            */}
           </div>
         </div>
       </div>

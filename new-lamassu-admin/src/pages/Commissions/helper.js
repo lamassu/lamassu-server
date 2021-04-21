@@ -40,9 +40,9 @@ const getView = (data, code, compare) => it => {
   if (!data) return ''
 
   // The following boolean should come undefined if it is rendering an unpaired machine
-  const hasValue = R.find(R.propEq(compare ?? 'code', it))(data)
+  const attribute = R.find(R.propEq(compare ?? 'code', it))(data)
 
-  return hasValue ? R.compose(R.prop(code), hasValue)(data) : 'Unpaired machine'
+  return attribute ? R.prop(code, attribute) : 'Unpaired machine'
 }
 
 const displayCodeArray = data => it => {
@@ -103,7 +103,8 @@ const getOverridesFields = (getData, currency, auxElements) => {
         valueProp: 'code',
         labelProp: 'display',
         multiple: true,
-        onChange: onCryptoChange
+        onChange: onCryptoChange,
+        shouldStayOpen: true
       }
     },
     {
