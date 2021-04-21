@@ -2,16 +2,29 @@ import { useFormikContext } from 'formik'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
-import TypeFieldsSetupInternal from './TypeFieldsSetup'
+import NumericalEntry from './NumericalEntry'
+import TextEntry from './TextEntry'
+
+const getForm = dataType => {
+  switch (dataType) {
+    case 'numerical':
+      return <NumericalEntry />
+    case 'text':
+      return <TextEntry />
+    default:
+      return <NumericalEntry />
+  }
+}
 
 const TypeFieldsSetup = () => {
   const dataType = R.path(['values', 'dataType'])(useFormikContext()) ?? null
-  return dataType && <TypeFieldsSetupInternal dataType={dataType} />
+  return dataType && getForm(dataType)
 }
 
 const defaultValues = {
   numericalConstraintType: '',
-  numberInputLength: ''
+  numberInputLength: '',
+  textConstraintType: ''
 }
 
 const validationSchema = Yup.lazy(values => {
@@ -26,6 +39,10 @@ const validationSchema = Yup.lazy(values => {
             .required(),
           else: Yup.mixed().notRequired()
         })
+      })
+    case 'text':
+      return Yup.object({
+        textConstraintType: Yup.string().required()
       })
     default:
       return Yup.mixed().notRequired()
