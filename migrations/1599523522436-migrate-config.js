@@ -6,12 +6,12 @@ const { migrate } = require('../lib/config-migration')
 
 module.exports.up = function (next) {
   function migrateConfig(settings) {
-    return migrate(settings.config, settings.accounts)
-      .then(newSettings => Promise.all([
-        saveConfig(newSettings.config),
-        saveAccounts(newSettings.accounts)
-      ]))
-      .then(() => next())
+    const newSettings = migrate(settings.config, settings.accounts)
+    return Promise.all([
+      saveConfig(newSettings.config),
+      saveAccounts(newSettings.accounts)
+    ])
+    .then(() => next())
   }
 
   settingsLoader.loadLatest(false)

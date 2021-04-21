@@ -75,13 +75,22 @@ const ThDoubleLevel = ({ title, children, className, width }) => {
   )
 }
 
-const Tr = ({ onClick, error, errorMessage, children, className, size }) => {
+const Tr = ({
+  onClick,
+  error,
+  errorMessage,
+  children,
+  className,
+  size,
+  newRow
+}) => {
   const classes = useStyles({ size })
   const cardClasses = { root: classes.cardContentRoot }
   const classNames = {
     [classes.tr]: true,
     [classes.trError]: error,
     [classes.card]: true,
+    [classes.trAdding]: newRow,
     className
   }
 
