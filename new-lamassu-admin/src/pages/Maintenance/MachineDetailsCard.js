@@ -17,6 +17,7 @@ import { ReactComponent as ShutdownReversedIcon } from 'src/styling/icons/button
 import { ReactComponent as ShutdownIcon } from 'src/styling/icons/button/shut down/zodiac.svg'
 import { ReactComponent as UnpairReversedIcon } from 'src/styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zodiac.svg'
+import { modelPrettifier } from 'src/utils/machine'
 
 import { labelStyles, machineDetailsStyles } from './MachineDetailsCard.styles'
 
@@ -208,7 +209,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
         <Container className={classes.row}>
           <Item xs={2}>
             <Label>Machine Model</Label>
-            <span>{machine.model}</span>
+            <span>{modelPrettifier[machine.model]}</span>
           </Item>
           <Item xs={4}>
             <Label>Paired at</Label>
