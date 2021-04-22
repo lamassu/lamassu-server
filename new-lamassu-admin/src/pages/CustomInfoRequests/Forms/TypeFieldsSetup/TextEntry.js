@@ -1,25 +1,16 @@
 import { makeStyles } from '@material-ui/core'
-import { Field } from 'formik'
+import classnames from 'classnames'
+import { Field, useFormikContext } from 'formik'
+import * as R from 'ramda'
 import React from 'react'
 
 import RadioGroup from 'src/components/inputs/formik/RadioGroup'
+import TextInput from 'src/components/inputs/formik/TextInput'
+import { H4 } from 'src/components/typography'
 
-const styles = {
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginTop: 28
-  },
-  flex: {
-    display: 'flex'
-  },
-  tl1: {
-    marginLeft: 8,
-    marginTop: 25
-  }
-}
-
+import styles from './formStyles.styles'
 const useStyles = makeStyles(styles)
+
 const options = [
   { display: 'None', code: 'none' },
   { display: 'Email', code: 'email' },
@@ -32,14 +23,29 @@ const options = [
 
 const TextEntry = () => {
   const classes = useStyles()
-
+  const context = useFormikContext()
+  const showErrorColor = {
+    [classes.radioSubtitle]: true,
+    [classes.error]:
+      !R.path(['values', 'constraintType'])(context) &&
+      R.path(['errors', 'constraintType'])(context)
+  }
   return (
-    <Field
-      className={classes.row}
-      component={RadioGroup}
-      options={options}
-      name="textConstraintType"
-    />
+    <>
+      <H4 className={classnames(showErrorColor)}>Text entry constraints</H4>
+      <Field
+        className={classes.row}
+        component={RadioGroup}
+        options={options}
+        name="constraintType"
+      />
+      <Field
+        className={classes.label}
+        component={TextInput}
+        name={'inputLabel'}
+        label={'Label (optional)'}
+      />
+    </>
   )
 }
 

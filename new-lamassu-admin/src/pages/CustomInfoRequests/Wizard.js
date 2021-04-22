@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik } from 'formik'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
@@ -63,6 +64,7 @@ const styles = {
 }
 
 const useStyles = makeStyles(styles)
+
 const getStep = step => {
   switch (step) {
     case 1:
@@ -97,15 +99,58 @@ const getStep = step => {
   }
 }
 
+const nonEmptyStr = obj => obj.text && obj.text.length
+
+const formatValues = values => {
+  const isChoiceList = values.inputType === 'choiceList'
+  const choices = isChoiceList
+    ? R.map(o => o.text)(R.filter(nonEmptyStr)(values.listChoices) ?? [])
+    : []
+
+  const hasInputLength = values.constraintType === 'length'
+  const inputLength = hasInputLength ? values.inputLength : ''
+
+  let resObj = {
+    name: values.requirementName,
+    screen1: {
+      text: values.screen1Text,
+      title: values.screen1Title
+    },
+    screen2: {
+      title: values.screen2Title
+    },
+    input: {
+      type: values.inputType,
+      constraintType: values.constraintType
+    }
+  }
+
+  if (isChoiceList) {
+    resObj = R.assocPath(['input', 'choiceList'], choices, resObj)
+  }
+
+  if (hasInputLength) {
+    resObj = R.assocPath(['input', 'numDigits'], inputLength, resObj)
+  }
+
+  console.log(resObj)
+}
+
 const Wizard = ({ onClose, error = false }) => {
   const classes = useStyles()
   const [step, setStep] = useState(0)
-  const onContinue = (values, actions) => {
-    step > 0 && console.log(values)
-    setStep(step + 1)
-  }
   const stepOptions = getStep(step)
   const isLastStep = step === LAST_STEP
+
+  const onContinue = (values, actions) => {
+    if (!(step + 1 === LAST_STEP)) {
+      step > 0 && console.log(values)
+      return setStep(step + 1)
+    }
+    console.log(values)
+    if (step + 1 === LAST_STEP) formatValues(values)
+  }
+
   return (
     <>
       <Modal
@@ -126,7 +171,7 @@ const Wizard = ({ onClose, error = false }) => {
           <Formik
             validateOnBlur={false}
             validateOnChange={false}
-            enableReinitialize
+            enableReinitialize={true}
             onSubmit={onContinue}
             initialValues={{
               ...nameOfReqDefaults,
@@ -137,7 +182,7 @@ const Wizard = ({ onClose, error = false }) => {
             }}
             validationSchema={stepOptions.schema}>
             <Form className={classes.form} id={'custom-requirement-form'}>
-              <stepOptions.Component {...stepOptions.props} />
+              <stepOptions.Component />
               <div className={classes.submit}>
                 {error && <ErrorMessage>Failed to save</ErrorMessage>}
                 <Button className={classes.button} type="submit">

@@ -1,28 +1,17 @@
 import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
 import * as R from 'ramda'
 import React from 'react'
 
 import NumberInput from 'src/components/inputs/formik/NumberInput'
 import RadioGroup from 'src/components/inputs/formik/RadioGroup'
-import { TL1 } from 'src/components/typography'
+import TextInput from 'src/components/inputs/formik/TextInput'
+import { TL1, H4 } from 'src/components/typography'
 
-const styles = {
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginTop: 28
-  },
-  flex: {
-    display: 'flex'
-  },
-  tl1: {
-    marginLeft: 8,
-    marginTop: 25
-  }
-}
-
+import styles from './formStyles.styles'
 const useStyles = makeStyles(styles)
+
 const options = [
   { display: 'None', code: 'none' },
   { display: 'Date', code: 'date' },
@@ -31,24 +20,42 @@ const options = [
 
 const NumericalEntry = () => {
   const classes = useStyles()
+  const context = useFormikContext()
+
   const isLength =
-    (R.path(['values', 'numericalConstraintType'])(useFormikContext()) ??
-      null) === 'length'
+    (R.path(['values', 'constraintType'])(useFormikContext()) ?? null) ===
+    'length'
+
+  const showErrorColor = {
+    [classes.radioSubtitle]: true,
+    [classes.error]:
+      !R.path(['values', 'constraintType'])(context) &&
+      R.path(['errors', 'constraintType'])(context)
+  }
+
   return (
     <>
+      <H4 className={classnames(showErrorColor)}>
+        Numerical entry constraints
+      </H4>
       <Field
         className={classes.row}
         component={RadioGroup}
         options={options}
-        name="numericalConstraintType"
+        name="constraintType"
+      />
+      <Field
+        className={classes.label}
+        component={TextInput}
+        name={'inputLabel'}
+        label={'Label (optional)'}
       />
       {isLength && (
-        <div className={classes.flex}>
+        <div className={classnames(classes.flex, classes.numberField)}>
           <Field
             component={NumberInput}
-            name={'numberInputLength'}
+            name={'inputLength'}
             label={'Length'}
-            style={{ maxWidth: 56 }}
             decimalPlaces={0}
             allowNegative={false}
           />
