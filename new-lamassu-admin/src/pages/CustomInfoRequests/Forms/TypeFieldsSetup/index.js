@@ -1,38 +1,46 @@
 import { useFormikContext } from 'formik'
 import * as R from 'ramda'
+import React from 'react'
 import * as Yup from 'yup'
 
+import ChoiceList from './ChoiceList'
 import NumericalEntry from './NumericalEntry'
 import TextEntry from './TextEntry'
 
-const getForm = dataType => {
-  switch (dataType) {
+const nonEmptyStr = obj => obj.text && obj.text.length
+
+const getForm = inputType => {
+  switch (inputType) {
     case 'numerical':
-      return <NumericalEntry />
+      return NumericalEntry
     case 'text':
-      return <TextEntry />
+      return TextEntry
+    case 'choiceList':
+      return ChoiceList
     default:
-      return <NumericalEntry />
+      return NumericalEntry
   }
 }
 
 const TypeFieldsSetup = () => {
-  const dataType = R.path(['values', 'dataType'])(useFormikContext()) ?? null
-  return dataType && getForm(dataType)
+  const inputType = R.path(['values', 'inputType'])(useFormikContext()) ?? null
+  const Component = getForm(inputType)
+  return inputType && <Component />
 }
 
 const defaultValues = {
-  numericalConstraintType: '',
-  numberInputLength: '',
-  textConstraintType: ''
+  constraintType: '',
+  inputLabel: '',
+  inputLength: '',
+  listChoices: [{ text: '' }, { text: '' }]
 }
 
 const validationSchema = Yup.lazy(values => {
-  switch (values.dataType) {
+  switch (values.inputType) {
     case 'numerical':
       return Yup.object({
-        numericalConstraintType: Yup.string().required(),
-        numberInputLength: Yup.number().when('numericalConstraintType', {
+        constraintType: Yup.string().required(),
+        inputLength: Yup.number().when('constraintType', {
           is: 'length',
           then: Yup.number()
             .min(0)
@@ -42,7 +50,18 @@ const validationSchema = Yup.lazy(values => {
       })
     case 'text':
       return Yup.object({
-        textConstraintType: Yup.string().required()
+        constraintType: Yup.string().required()
+      })
+    case 'choiceList':
+      return Yup.object({
+        constraintType: Yup.string().required(),
+        listChoices: Yup.array().test(
+          'has-2-or-more',
+          'Choice list needs to have two or more non empty fields',
+          (values, ctx) => {
+            return R.filter(nonEmptyStr)(values).length > 1
+          }
+        )
       })
     default:
       return Yup.mixed().notRequired()

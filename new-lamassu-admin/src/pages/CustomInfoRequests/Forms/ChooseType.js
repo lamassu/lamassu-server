@@ -33,7 +33,7 @@ const ChooseType = () => {
     <>
       <H4>Choose the type of data entry</H4>
       <Field
-        name="dataType"
+        name="inputType"
         component={ToggleButtonGroup}
         orientation="vertical"
         exclusive
@@ -44,11 +44,11 @@ const ChooseType = () => {
 }
 
 const validationSchema = Yup.object().shape({
-  dataType: Yup.string().required()
+  inputType: Yup.string().required()
 })
 
 const defaultValues = {
-  dataType: ''
+  inputType: ''
 }
 
 export default ChooseType
