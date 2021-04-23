@@ -133,6 +133,10 @@ const formatValues = values => {
     resObj = R.assocPath(['input', 'numDigits'], inputLength, resObj)
   }
 
+  if (values.inputLabel) {
+    resObj = R.assocPath(['input', 'label'], values.inputLabel, resObj)
+  }
+
   console.log(resObj)
 }
 
