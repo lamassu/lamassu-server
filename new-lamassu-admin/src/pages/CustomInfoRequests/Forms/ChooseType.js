@@ -4,7 +4,28 @@ import * as Yup from 'yup'
 
 import ToggleButtonGroup from 'src/components/inputs/formik/ToggleButtonGroup'
 import { H4 } from 'src/components/typography'
-import { ReactComponent as CustomReqLogo } from 'src/styling/icons/compliance/custom-requirement.svg'
+import { ReactComponent as Keyboard } from 'src/styling/icons/compliance/keyboard.svg'
+import { ReactComponent as Keypad } from 'src/styling/icons/compliance/keypad.svg'
+import { ReactComponent as List } from 'src/styling/icons/compliance/list.svg'
+import { zircon } from 'src/styling/variables'
+
+const MakeIcon = IconSvg => (
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: zircon,
+      borderRadius: 4,
+      maxWidth: 104,
+      maxHeight: 64,
+      minWidth: 104,
+      minHeight: 64
+    }}>
+    <IconSvg style={{ maxWidth: 80 }} />
+  </div>
+)
+
 const ChooseType = () => {
   const options = [
     {
@@ -12,20 +33,20 @@ const ChooseType = () => {
       title: 'Numerical entry',
       description:
         'User will enter information with a keypad. Good for dates, ID numbers, etc.',
-      icon: () => <CustomReqLogo style={{ maxWidth: 50 }} />
+      icon: () => MakeIcon(Keypad)
     },
     {
       value: 'text',
       title: 'Text entry',
       description:
         'User will entry information with a keyboard. Good for names, email, address, etc.',
-      icon: () => <CustomReqLogo style={{ maxWidth: 50 }} />
+      icon: () => MakeIcon(Keyboard)
     },
     {
       value: 'choiceList',
       title: 'Choice list',
       description: 'Gives user multiple options to choose from.',
-      icon: () => <CustomReqLogo style={{ maxWidth: 50 }} />
+      icon: () => MakeIcon(List)
     }
   ]
 

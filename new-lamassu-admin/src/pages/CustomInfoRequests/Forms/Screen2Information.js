@@ -28,7 +28,7 @@ const validationSchema = Yup.object().shape({
 })
 
 const defaultValues = {
-  screen2Title: '.'
+  screen2Title: ''
 }
 
 export default ScreenInformation
