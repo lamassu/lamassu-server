@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="44px" viewBox="0 0 72 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>entry-icon/keypad</title>
+    <g id="entry-icon/keypad" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(20.000000, 0.000000)" fill="#1B2559">
+            <rect id="Rectangle" x="0" y="0" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-5" x="0" y="12" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-8" x="0" y="24" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-3" x="12" y="0" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-6" x="12" y="12" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-9" x="12" y="24" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-11" x="12" y="36" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-4" x="24" y="0" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-7" x="24" y="12" width="8" height="8" rx="2"></rect>
+            <rect id="Rectangle-Copy-10" x="24" y="24" width="8" height="8" rx="2"></rect>
+        </g>
+    </g>
+</svg>

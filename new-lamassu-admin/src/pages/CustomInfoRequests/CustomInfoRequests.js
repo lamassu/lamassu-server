@@ -1,8 +1,9 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
-import React from 'react'
+import React, { useState } from 'react'
 
-import { Button, Link } from 'src/components/buttons'
+import { DeleteDialog } from 'src/components/DeleteDialog'
+import { IconButton, Button, Link } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { Info1, Info3 } from 'src/components/typography'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
@@ -29,12 +30,20 @@ const constraintTypeDisplay = {
   spaceSeparation: 'Space separation'
 }
 
-const CustomInfoRequests = ({ customRequests, showWizard, toggleWizard }) => {
+const CustomInfoRequests = ({
+  customRequests,
+  showWizard,
+  toggleWizard,
+  handleDelete,
+  handleSave
+}) => {
   const classes = useStyles()
-
+  const [toBeDeleted, setToBeDeleted] = useState()
+  const [toBeEdited, setToBeEdited] = useState()
+  const [deleteDialog, setDeleteDialog] = useState(false)
   return (
     <>
-      {customRequests.length && (
+      {customRequests.length > 0 && (
         <DataTable
           loading={false}
           emptyText="No custom info requests so far"
@@ -65,14 +74,34 @@ const CustomInfoRequests = ({ customRequests, showWizard, toggleWizard }) => {
               width: 100,
               textAlign: 'center',
               size: 'sm',
-              view: () => <EditIcon onClick={() => console.log('EDIT')} />
+              view: it => {
+                return (
+                  <IconButton
+                    onClick={() => {
+                      setToBeEdited(it)
+                      return toggleWizard()
+                    }}>
+                    <EditIcon />
+                  </IconButton>
+                )
+              }
             },
             {
               header: 'Delete',
               width: 100,
               textAlign: 'center',
               size: 'sm',
-              view: () => <DeleteIcon onClick={() => console.log('DELETE')} />
+              view: it => {
+                return (
+                  <IconButton
+                    onClick={() => {
+                      setToBeDeleted(it)
+                      return setDeleteDialog(true)
+                    }}>
+                    <DeleteIcon />
+                  </IconButton>
+                )
+              }
             }
           ]}
           data={customRequests}
@@ -96,7 +125,28 @@ const CustomInfoRequests = ({ customRequests, showWizard, toggleWizard }) => {
           <Button onClick={toggleWizard}>Add custom information request</Button>
         </div>
       )}
-      {showWizard && <Wizard onClose={toggleWizard} />}
+      {showWizard && (
+        <Wizard
+          onClose={() => {
+            setToBeEdited(null)
+            return toggleWizard()
+          }}
+          toBeEdited={toBeEdited}
+          onSave={(...args) => {
+            handleSave(...args)
+            toggleWizard()
+          }}
+        />
+      )}
+
+      <DeleteDialog
+        open={deleteDialog}
+        onDismissed={() => setDeleteDialog(false)}
+        onConfirmed={() => {
+          handleDelete(toBeDeleted)
+          return setDeleteDialog(false)
+        }}
+      />
     </>
   )
 }

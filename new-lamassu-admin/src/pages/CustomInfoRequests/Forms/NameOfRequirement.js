@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
 })
 
 const defaultValues = {
-  requirementName: '.'
+  requirementName: ''
 }
 
 export default NameOfRequirement

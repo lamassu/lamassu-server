@@ -7,7 +7,6 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
-import { comet } from 'src/styling/variables'
 
 import ChooseType, {
   validationSchema as chooseTypeSchema,
@@ -30,7 +29,8 @@ import TypeFieldsSetup, {
   validationSchema as typeFieldsValidationSchema
 } from './Forms/TypeFieldsSetup'
 import WizardSplash from './WizardSplash'
-const LAST_STEP = 6
+
+const LAST_STEP = 5
 
 const styles = {
   stepper: {
@@ -48,18 +48,6 @@ const styles = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column'
-  },
-  infoTitle: {
-    margin: [[18, 0, 20, 0]]
-  },
-  infoCurrentText: {
-    color: comet
-  },
-  blankSpace: {
-    padding: [[0, 30]],
-    margin: [[0, 4, 0, 2]],
-    borderBottom: `1px solid ${comet}`,
-    display: 'inline-block'
   }
 }
 
@@ -101,7 +89,7 @@ const getStep = step => {
 
 const nonEmptyStr = obj => obj.text && obj.text.length
 
-const formatValues = values => {
+const formatValues = (values, isEditing) => {
   const isChoiceList = values.inputType === 'choiceList'
   const choices = isChoiceList
     ? R.map(o => o.text)(R.filter(nonEmptyStr)(values.listChoices) ?? [])
@@ -137,67 +125,96 @@ const formatValues = values => {
     resObj = R.assocPath(['input', 'label'], values.inputLabel, resObj)
   }
 
-  console.log(resObj)
+  if (isEditing) {
+    resObj = R.assocPath(['id'], values.id, resObj)
+  }
+
+  return resObj
 }
 
-const Wizard = ({ onClose, error = false }) => {
+const makeEditingValues = it => {
+  return {
+    id: it.id,
+    requirementName: it.name,
+    screen1Title: it.screen1.title,
+    screen1Text: it.screen1.text,
+    screen2Title: it.screen2.title,
+    inputType: it.input.type,
+    inputLabel: it.input.inputLabel,
+    listChoices: it.input.choiceList,
+    constraintType: '',
+    inputLength: ''
+  }
+}
+
+const chooseNotNull = (a, b) => {
+  if (!R.isNil(b)) return b
+  return a
+}
+
+const Wizard = ({ onClose, error = false, toBeEdited, onSave }) => {
   const classes = useStyles()
-  const [step, setStep] = useState(0)
+  const isEditing = !R.isNil(toBeEdited)
+  const [step, setStep] = useState(isEditing ? 1 : 0)
   const stepOptions = getStep(step)
   const isLastStep = step === LAST_STEP
 
   const onContinue = (values, actions) => {
-    if (!(step + 1 === LAST_STEP)) {
-      step > 0 && console.log(values)
+    if (!isLastStep) {
       return setStep(step + 1)
     }
-    console.log(values)
-    if (step + 1 === LAST_STEP) formatValues(values)
+    return onSave(formatValues(values, isEditing), isEditing)
   }
 
+  const editingValues = isEditing ? makeEditingValues(toBeEdited) : {}
+  const wizardTitle = isEditing
+    ? 'Editing custom requirement'
+    : 'New custom requirement'
   return (
-    <>
-      <Modal
-        title={step > 0 ? 'New custom requirement' : ''}
-        handleClose={onClose}
-        width={520}
-        height={620}
-        open={true}>
-        {step > 0 && (
-          <Stepper
-            className={classes.stepper}
-            steps={LAST_STEP}
-            currentStep={step}
-          />
-        )}
-        {step === 0 && <WizardSplash onContinue={onContinue} />}
-        {step > 0 && (
-          <Formik
-            validateOnBlur={false}
-            validateOnChange={false}
-            enableReinitialize={true}
-            onSubmit={onContinue}
-            initialValues={{
+    <Modal
+      title={step > 0 ? wizardTitle : ''}
+      handleClose={onClose}
+      width={520}
+      height={620}
+      open={true}>
+      {step > 0 && (
+        <Stepper
+          className={classes.stepper}
+          steps={LAST_STEP}
+          currentStep={step}
+        />
+      )}
+      {step === 0 && !isEditing && <WizardSplash onContinue={onContinue} />}
+      {step > 0 && (
+        <Formik
+          validateOnBlur={false}
+          validateOnChange={false}
+          enableReinitialize={true}
+          onSubmit={onContinue}
+          initialValues={R.mergeWith(
+            chooseNotNull,
+            {
               ...nameOfReqDefaults,
               ...screen1InfoDefaults,
               ...screen2InfoDefaults,
               ...chooseTypeDefaults,
               ...typeFieldsSetupDefaults
-            }}
-            validationSchema={stepOptions.schema}>
-            <Form className={classes.form} id={'custom-requirement-form'}>
-              <stepOptions.Component />
-              <div className={classes.submit}>
-                {error && <ErrorMessage>Failed to save</ErrorMessage>}
-                <Button className={classes.button} type="submit">
-                  {isLastStep ? 'Save' : 'Next'}
-                </Button>
-              </div>
-            </Form>
-          </Formik>
-        )}
-      </Modal>
-    </>
+            },
+            editingValues
+          )}
+          validationSchema={stepOptions.schema}>
+          <Form className={classes.form} id={'custom-requirement-form'}>
+            <stepOptions.Component />
+            <div className={classes.submit}>
+              {error && <ErrorMessage>Failed to save</ErrorMessage>}
+              <Button className={classes.button} type="submit">
+                {isLastStep ? 'Save' : 'Next'}
+              </Button>
+            </div>
+          </Form>
+        </Formik>
+      )}
+    </Modal>
   )
 }
 
