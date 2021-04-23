@@ -95,6 +95,75 @@ const Triggers = () => {
         type: 'numerical',
         constraintType: 'date'
       }
+    },
+    {
+      name: 'Choose your profession',
+      screen1: {
+        text:
+          'I need to know your profession because etc etc etc lorem ipsum dolor sit amet I need to know your profession because etc etc etc lorem ipsum dolor sit amet I need to know your profession because etc etc etc lorem ipsum dolor sit amet ',
+        title: 'Please choose your profession'
+      },
+      screen2: {
+        title: 'Profession choice'
+      },
+      input: {
+        type: 'choiceList',
+        constraintType: 'selectOne',
+        choiceList: [
+          'Unemployed',
+          'Engineer',
+          'Nurse',
+          'Doctor',
+          'Carpenter',
+          'Artist'
+        ]
+      }
+    },
+    {
+      name: 'SSN',
+      screen1: {
+        text: 'We need your Social Security Number.',
+        title: 'Enter your SSN'
+      },
+      screen2: {
+        title: 'SSN Number'
+      },
+      input: {
+        type: 'numerical',
+        constraintType: 'length',
+        numDigits: '8',
+        label: 'SSN'
+      }
+    },
+    {
+      name: 'Client Name',
+      screen1: {
+        text: 'In the next screen please enter your first and last name',
+        title: 'We need your first and last name'
+      },
+      screen2: {
+        title: 'First and last name'
+      },
+      input: {
+        type: 'text',
+        constraintType: 'spaceSeparation',
+        label: 'First and last name:'
+      }
+    },
+    {
+      name: 'Dont know',
+      screen1: {
+        text: '.ddddd',
+        title: 'asdasd'
+      },
+      screen2: {
+        title: 'gggggg'
+      },
+      input: {
+        type: 'text',
+        constraintType: 'email',
+        label: 'Email entry'
+      }
     }
   ]
 
