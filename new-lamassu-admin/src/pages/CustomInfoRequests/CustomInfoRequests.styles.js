@@ -11,5 +11,9 @@ export default {
     alignItems: 'center',
     height: '50%',
     justifyContent: 'center'
+  },
+  alignWithTitleSection: {
+    marginTop: -47,
+    display: 'flex'
   }
 }
