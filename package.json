@@ -8,6 +8,7 @@
   "dependencies": {
     "@fczbkk/uuid4": "^3.0.0",
     "apollo-server-express": "^2.9.14",
+    "argon2": "^0.27.2",
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
     "bchaddrjs": "^0.3.0",

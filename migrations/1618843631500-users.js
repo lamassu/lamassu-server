@@ -5,7 +5,7 @@ exports.up = function (next) {
     `CREATE TYPE role AS ENUM('user', 'superuser')`,
     `CREATE TABLE users (
       id UUID PRIMARY KEY,
-      username VARCHAR(50) NOT NULL UNIQUE,
+      username TEXT NOT NULL UNIQUE,
       password VARCHAR(100),
       role role NOT NULL DEFAULT 'user',
       enabled BOOLEAN DEFAULT true,
@@ -18,7 +18,7 @@ exports.up = function (next) {
     `CREATE TABLE "user_sessions" (
       "sid" VARCHAR NOT NULL COLLATE "default",
       "sess" JSON NOT NULL,
-      "expire" TIMESTAMP(6) NOT NULL )
+      "expire" TIMESTAMPTZ NOT NULL )
       WITH (OIDS=FALSE)`,
     `ALTER TABLE "user_sessions" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE`,
     `CREATE INDEX "IDX_session_expire" ON "user_sessions" ("expire")`,
