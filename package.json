@@ -12,7 +12,6 @@
     "axios": "^0.16.1",
     "base-x": "^3.0.2",
     "bchaddrjs": "^0.3.0",
-    "bcrypt": "^5.0.0",
     "bignumber.js": "^4.1.0",
     "bip39": "^2.3.1",
     "bitcoind-rpc": "^0.7.0",
