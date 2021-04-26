@@ -1,4 +1,5 @@
 var db = require('./db')
+const constants = require('../lib/constants')
 
 exports.up = function (next) {
   var sql = [
@@ -27,14 +28,14 @@ exports.up = function (next) {
       token TEXT NOT NULL PRIMARY KEY,
       type auth_token_type NOT NULL,
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes',
+      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '${constants.AUTH_TOKEN_EXPIRATION_TIME}',
       CONSTRAINT unique_userid_type UNIQUE (user_id, type)
     )`,
     `CREATE TABLE user_register_tokens (
       token TEXT NOT NULL PRIMARY KEY,
       username TEXT NOT NULL UNIQUE,
       role role DEFAULT 'user',
-      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '30 minutes'
+      expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '${constants.REGISTRATION_TOKEN_EXPIRATION_TIME}'
     )`,
     // migrate values from customers which reference user_tokens for data persistence
     `ALTER TABLE customers ADD COLUMN sms_override_by_old TEXT`,
