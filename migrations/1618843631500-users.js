@@ -38,27 +38,28 @@ exports.up = function (next) {
       expire TIMESTAMPTZ NOT NULL DEFAULT now() + interval '${constants.REGISTRATION_TOKEN_EXPIRATION_TIME}'
     )`,
     // migrate values from customers which reference user_tokens for data persistence
-    `ALTER TABLE customers ADD COLUMN sms_override_by_old TEXT`,
-    `ALTER TABLE customers ADD COLUMN id_card_data_override_by_old TEXT`,
-    `ALTER TABLE customers ADD COLUMN id_card_photo_override_by_old TEXT`,
-    `ALTER TABLE customers ADD COLUMN front_camera_override_by_old TEXT`,
-    `ALTER TABLE customers ADD COLUMN sanctions_override_by_old TEXT`,
-    `ALTER TABLE customers ADD COLUMN authorized_override_by_old TEXT`,
-    `ALTER TABLE customers ADD COLUMN us_ssn_override_by_old TEXT`,
-    `UPDATE customers SET sms_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.sms_override_by=ut.token`,
-    `UPDATE customers SET id_card_data_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.id_card_data_override_by=ut.token`,
-    `UPDATE customers SET id_card_photo_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.id_card_photo_override_by=ut.token`,
-    `UPDATE customers SET front_camera_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.front_camera_override_by=ut.token`,
-    `UPDATE customers SET sanctions_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.sanctions_override_by=ut.token`,
-    `UPDATE customers SET authorized_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.authorized_override_by=ut.token`,
-    `UPDATE customers SET us_ssn_override_by_old=ut.name FROM user_tokens ut
-      WHERE customers.us_ssn_override_by=ut.token`,
+    `CREATE TABLE customer_compliance_persistence (
+      customer_id UUID NOT NULL PRIMARY KEY REFERENCES customers(id),
+      sms_override_by_old TEXT,
+      id_card_data_override_by_old TEXT,
+      id_card_photo_override_by_old TEXT,
+      front_camera_override_by_old TEXT,
+      sanctions_override_by_old TEXT,
+      authorized_override_by_old TEXT,
+      us_ssn_override_by_old TEXT
+    )`,
+    `INSERT INTO customer_compliance_persistence (
+      customer_id,
+      sms_override_by_old,
+      id_card_data_override_by_old,
+      id_card_photo_override_by_old,
+      front_camera_override_by_old,
+      sanctions_override_by_old,
+      authorized_override_by_old,
+      us_ssn_override_by_old
+    ) SELECT id, sms_override_by, id_card_data_override_by, id_card_photo_override_by,
+    front_camera_override_by, sanctions_override_by, authorized_override_by, us_ssn_override_by
+    FROM customers`,
     `ALTER TABLE customers DROP COLUMN sms_override_by`,
     `ALTER TABLE customers DROP COLUMN id_card_data_override_by`,
     `ALTER TABLE customers DROP COLUMN id_card_photo_override_by`,
@@ -74,9 +75,14 @@ exports.up = function (next) {
     `ALTER TABLE customers ADD COLUMN authorized_override_by UUID REFERENCES users(id)`,
     `ALTER TABLE customers ADD COLUMN us_ssn_override_by UUID REFERENCES users(id)`,
     // migrate values from compliance_overrides which reference user_tokens for data persistence
-    `ALTER TABLE compliance_overrides ADD COLUMN override_by_old TEXT`,
-    `UPDATE compliance_overrides SET override_by_old=ut.name FROM user_tokens ut
-      WHERE compliance_overrides.override_by=ut.token`,
+    `CREATE TABLE compliance_overrides_persistence (
+      override_id UUID NOT NULL PRIMARY KEY REFERENCES compliance_overrides(id),
+      override_by_old TEXT
+    )`,
+    `INSERT INTO compliance_overrides_persistence (
+      override_id,
+      override_by_old
+    ) SELECT id, override_by FROM compliance_overrides`,
     `ALTER TABLE compliance_overrides DROP COLUMN override_by`,
     `ALTER TABLE compliance_overrides ADD COLUMN override_by UUID REFERENCES users(id)`,
     `DROP TABLE IF EXISTS one_time_passes`,
