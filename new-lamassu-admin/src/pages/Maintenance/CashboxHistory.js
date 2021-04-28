@@ -175,7 +175,7 @@ const CashboxHistory = ({ machines, currency }) => {
     {
       name: 'date',
       header: 'Date',
-      width: 125,
+      width: 135,
       textAlign: 'right',
       view: it => moment.utc(it.created).format('YYYY-MM-DD')
     },
@@ -189,7 +189,7 @@ const CashboxHistory = ({ machines, currency }) => {
     {
       name: 'performedBy',
       header: 'Performed by',
-      width: 190,
+      width: 180,
       textAlign: 'left',
       view: it => {
         if (!editing)
@@ -239,7 +239,12 @@ const CashboxHistory = ({ machines, currency }) => {
   return (
     <>
       {!loading && (
-        <DataTable name="cashboxHistory" elements={elements} data={batches} />
+        <DataTable
+          name="cashboxHistory"
+          elements={elements}
+          data={batches}
+          emptyText="No cashbox batches so far"
+        />
       )}
     </>
   )
