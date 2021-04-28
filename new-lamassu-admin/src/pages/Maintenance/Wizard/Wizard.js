@@ -1,3 +1,5 @@
+import { useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
@@ -11,22 +13,47 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
 
+const CREATE_BATCH = gql`
+  mutation createBatch($deviceId: ID) {
+    createBatch(deviceId: $deviceId) {
+      id
+    }
+  }
+`
+
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
   })
 
-  const LAST_STEP = R.isEmpty(cashoutSettings) ? 1 : 3
+  const [createBatch] = useMutation(CREATE_BATCH)
+
+  const isCashOutDisabled =
+    R.isEmpty(cashoutSettings) || !cashoutSettings?.active
+
+  const LAST_STEP = isCashOutDisabled ? 1 : 3
 
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
 
   const onContinue = it => {
-    const cashbox = config?.wasCashboxEmptied === 'YES' ? 0 : machine?.cashbox
+    console.log('it?.wasCashboxEmptied', it?.wasCashboxEmptied)
+    const wasCashboxEmptied = it?.wasCashboxEmptied === 'YES'
+
+    const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
 
     const newConfig = R.merge(config, it)
     if (isLastStep) {
+      if (wasCashboxEmptied) {
+        console.log('cashbox was emptied')
+        createBatch({
+          variables: {
+            deviceId: machine.id
+          }
+        })
+      }
+
       save(
         machine.id,
         parseInt(cashbox),
@@ -73,9 +100,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   ]
 
   const filteredSteps = R.filter(it => {
-    return (
-      !it.cashoutRequired || (!R.isEmpty(cashoutSettings) && it.cashoutRequired)
-    )
+    return !it.cashoutRequired || (!isCashOutDisabled && it.cashoutRequired)
   }, steps)
 
   return (
