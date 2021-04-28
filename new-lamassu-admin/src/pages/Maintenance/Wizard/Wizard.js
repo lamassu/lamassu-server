@@ -14,8 +14,8 @@ const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
 
 const CREATE_BATCH = gql`
-  mutation createBatch($deviceId: ID) {
-    createBatch(deviceId: $deviceId) {
+  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
+    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
       id
     }
   }
@@ -38,7 +38,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const isLastStep = step === LAST_STEP
 
   const onContinue = it => {
-    console.log('it?.wasCashboxEmptied', it?.wasCashboxEmptied)
     const wasCashboxEmptied = it?.wasCashboxEmptied === 'YES'
 
     const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
@@ -46,10 +45,10 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     const newConfig = R.merge(config, it)
     if (isLastStep) {
       if (wasCashboxEmptied) {
-        console.log('cashbox was emptied')
         createBatch({
           variables: {
-            deviceId: machine.id
+            deviceId: machine.id,
+            cashboxCount: machine.cashbox
           }
         })
       }
