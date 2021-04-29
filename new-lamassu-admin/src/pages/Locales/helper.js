@@ -1,3 +1,4 @@
+import * as ct from 'countries-and-timezones'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
@@ -36,6 +37,55 @@ const allFields = (getData, onChange, auxElements = []) => {
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
   const cryptoData = getData(['cryptoCurrencies'])
+  const timezonesData = R.values(ct.getAllTimezones())
+
+  const possibleUTCDSTPairs = R.map(
+    it => ({
+      utcOffset: it.utcOffset,
+      dstOffset: it.dstOffset,
+      utcOffsetStr: it.utcOffsetStr,
+      dstOffsetStr: it.dstOffsetStr
+    }),
+    R.uniqBy(
+      it => [it.utcOffset, it.dstOffset, it.utcOffsetStr, it.dstOffsetStr],
+      timezonesData
+    )
+  )
+
+  const finalTimezones = R.sort(
+    R.ascend(R.prop('utcOffset')),
+    R.map(
+      it => ({
+        utcOffset: it.utcOffset,
+        dstOffset: it.dstOffset,
+        utcOffsetStr: it.utcOffsetStr,
+        dstOffsetStr: it.dstOffsetStr,
+        cities: R.map(
+          ite => ite.name,
+          R.filter(
+            itx =>
+              R.eqProps('utcOffset', it, itx) &&
+              R.eqProps('dstOffset', it, itx),
+            timezonesData
+          )
+        )
+      }),
+      possibleUTCDSTPairs
+    )
+  )
+
+  const buildLabel = tz => {
+    return `UTC ${tz.utcOffsetStr}${
+      tz.utcOffset !== tz.dstOffset ? ' (Daylight Saving Time)' : ''
+    }`
+  }
+
+  const tzLabels = R.map(
+    it => ({ label: buildLabel(it), code: it }),
+    finalTimezones
+  )
+
+  console.log(tzLabels)
 
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
@@ -95,7 +145,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'cryptoCurrencies',
-      width: 290,
+      width: 220,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
@@ -107,6 +157,18 @@ const allFields = (getData, onChange, auxElements = []) => {
         optionsLimit: null,
         onChange
       }
+    },
+    {
+      name: 'timezone',
+      width: 220,
+      size: 'sm',
+      view: getView(tzLabels, 'label'),
+      input: Autocomplete,
+      inputProps: {
+        options: tzLabels,
+        valueProp: 'code',
+        labelProp: 'label'
+      }
     }
   ]
 }
@@ -116,7 +178,7 @@ const mainFields = (auxData, configureCoin) => {
 
   return getFields(
     getData,
-    ['country', 'fiatCurrency', 'languages', 'cryptoCurrencies'],
+    ['country', 'fiatCurrency', 'languages', 'cryptoCurrencies', 'timezone'],
     configureCoin
   )
 }
@@ -147,7 +209,10 @@ const LocaleSchema = Yup.object().shape({
   cryptoCurrencies: Yup.array()
     .label('Crypto Currencies')
     .required()
-    .min(1)
+    .min(1),
+  timezone: Yup.object()
+    .label('Timezone')
+    .required()
 })
 
 const OverridesSchema = Yup.object().shape({
@@ -171,7 +236,8 @@ const localeDefaults = {
   country: '',
   fiatCurrency: '',
   languages: [],
-  cryptoCurrencies: []
+  cryptoCurrencies: [],
+  timezone: ''
 }
 
 const overridesDefaults = {
