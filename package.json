@@ -24,6 +24,7 @@
     "console-log-level": "^1.4.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
+    "countries-and-timezones": "^2.4.0",
     "dataloader": "^2.0.0",
     "ed25519": "git+https://github.com/lamassu/ed25519#3140c985fee9828ce6707202f9f7d55cb1f0b46d",
     "ethereumjs-tx": "^1.3.3",
