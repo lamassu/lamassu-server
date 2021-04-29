@@ -3,6 +3,7 @@ import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { getTzLabels } from 'src/utils/timezones'
 
 const getFields = (getData, names, onChange, auxElements = []) => {
   return R.filter(
@@ -39,53 +40,7 @@ const allFields = (getData, onChange, auxElements = []) => {
   const cryptoData = getData(['cryptoCurrencies'])
   const timezonesData = R.values(ct.getAllTimezones())
 
-  const possibleUTCDSTPairs = R.map(
-    it => ({
-      utcOffset: it.utcOffset,
-      dstOffset: it.dstOffset,
-      utcOffsetStr: it.utcOffsetStr,
-      dstOffsetStr: it.dstOffsetStr
-    }),
-    R.uniqBy(
-      it => [it.utcOffset, it.dstOffset, it.utcOffsetStr, it.dstOffsetStr],
-      timezonesData
-    )
-  )
-
-  const finalTimezones = R.sort(
-    R.ascend(R.prop('utcOffset')),
-    R.map(
-      it => ({
-        utcOffset: it.utcOffset,
-        dstOffset: it.dstOffset,
-        utcOffsetStr: it.utcOffsetStr,
-        dstOffsetStr: it.dstOffsetStr,
-        cities: R.map(
-          ite => ite.name,
-          R.filter(
-            itx =>
-              R.eqProps('utcOffset', it, itx) &&
-              R.eqProps('dstOffset', it, itx),
-            timezonesData
-          )
-        )
-      }),
-      possibleUTCDSTPairs
-    )
-  )
-
-  const buildLabel = tz => {
-    return `UTC ${tz.utcOffsetStr}${
-      tz.utcOffset !== tz.dstOffset ? ' (Daylight Saving Time)' : ''
-    }`
-  }
-
-  const tzLabels = R.map(
-    it => ({ label: buildLabel(it), code: it }),
-    finalTimezones
-  )
-
-  console.log(tzLabels)
+  const tzLabels = getTzLabels(timezonesData)
 
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
