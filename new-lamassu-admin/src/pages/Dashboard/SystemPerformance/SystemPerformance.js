@@ -76,21 +76,25 @@ const SystemPerformance = () => {
   const [selectedRange, setSelectedRange] = useState('Day')
   const { data, loading } = useQuery(GET_DATA)
   const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
+  const timezone = fromNamespace('locale')(data?.config).timezone
 
   const isInRangeAndNoError = getLastTimePeriod => t => {
     if (t.error !== null) return false
     if (!getLastTimePeriod) {
       return (
         t.error === null &&
-        moment(t.created).isBetween(ranges[selectedRange].right, moment())
+        moment
+          .utc(t.created)
+          .utcOffset(timezone.dstOffset)
+          .isBetween(ranges[selectedRange].right, moment())
       )
     }
     return (
       t.error === null &&
-      moment(t.created).isBetween(
-        ranges[selectedRange].left,
-        ranges[selectedRange].right
-      )
+      moment
+        .utc(t.created)
+        .utcOffset(timezone.dstOffset)
+        .isBetween(ranges[selectedRange].left, ranges[selectedRange].right)
     )
   }
 
@@ -194,6 +198,7 @@ const SystemPerformance = () => {
               <Scatterplot
                 timeFrame={selectedRange}
                 data={transactionsToShow}
+                timezone={timezone}
               />
             </Grid>
           </Grid>
