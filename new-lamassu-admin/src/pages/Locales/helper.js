@@ -42,6 +42,8 @@ const allFields = (getData, onChange, auxElements = []) => {
 
   const tzLabels = getTzLabels(timezonesData)
 
+  console.log(tzLabels)
+
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
     return machine ? [machine] : []
@@ -100,7 +102,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'cryptoCurrencies',
-      width: 220,
+      width: 170,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
@@ -115,7 +117,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'timezone',
-      width: 220,
+      width: 320,
       size: 'sm',
       view: getView(tzLabels, 'label'),
       input: Autocomplete,
