@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useCallback } from 'react'
 
 import { backgroundColor, java, neon } from 'src/styling/variables'
 
-const RefScatterplot = ({ data: realData, timeFrame }) => {
+const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
   const svgRef = useRef()
   const cashIns = R.filter(R.propEq('txClass', 'cashIn'))(realData)
   const cashOuts = R.filter(R.propEq('txClass', 'cashOut'))(realData)
@@ -92,8 +92,11 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
       .domain([
         moment()
           .add(-xAxisSettings.subtractDays, 'day')
+          .add(timezone.dstOffset, 'minutes')
           .valueOf(),
-        moment().valueOf()
+        moment()
+          .add(timezone.dstOffset, 'minutes')
+          .valueOf()
       ])
       .range(xAxisSettings.timeRange)
       .nice(xAxisSettings.nice)
@@ -168,7 +171,8 @@ const RefScatterplot = ({ data: realData, timeFrame }) => {
       .enter()
       .append('circle')
       .attr('cx', function(d) {
-        return x(new Date(d.created))
+        const date = new Date(d.created)
+        return x(date.setMinutes(date.getMinutes() + timezone.dstOffset))
       })
       .attr('cy', function(d) {
         return y(d.fiat)
