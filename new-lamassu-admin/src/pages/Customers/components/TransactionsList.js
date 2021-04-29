@@ -1,6 +1,5 @@
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
-import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -10,16 +9,19 @@ import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { toUnit } from 'src/utils/coin'
 import { ifNotNull } from 'src/utils/nullCheck'
+import { formatDate } from 'src/utils/timezones'
 
 import CopyToClipboard from '../../Transactions/CopyToClipboard'
 import mainStyles from '../CustomersList.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-const TransactionsList = ({ customer, data, loading }) => {
+const TransactionsList = ({ customer, data, loading, locale }) => {
   const classes = useStyles()
   const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
   const hasData = !(R.isEmpty(data) || R.isNil(data))
+
+  const timezone = locale.timezone
 
   const summaryElements = [
     {
@@ -41,10 +43,12 @@ const TransactionsList = ({ customer, data, loading }) => {
     {
       header: 'Last active',
       size: 142,
-      value: ifNotNull(
-        customer.lastActive,
-        moment.utc(customer.lastActive).format('YYYY-MM-D')
-      )
+      value:
+        !R.isNil(timezone) &&
+        ifNotNull(
+          customer.lastActive,
+          formatDate(customer.lastActive, timezone.dstOffset, 'YYYY-MM-D')
+        )
     },
     {
       header: 'Last transaction',
@@ -109,12 +113,12 @@ const TransactionsList = ({ customer, data, loading }) => {
     {
       header: 'Date',
       width: 157,
-      view: it => moment.utc(it.created).format('YYYY-MM-D')
+      view: it => formatDate(it.created, timezone.dstOffset, 'YYYY-MM-D')
     },
     {
       header: 'Time (h:m:s)',
       width: 134,
-      view: it => moment.utc(it.created).format('hh:mm:ss')
+      view: it => formatDate(it.created, timezone.dstOffset, 'HH:mm:ss')
     }
   ]
 

@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -17,6 +16,7 @@ import {
   TableCell
 } from 'src/components/table'
 import { Info3, H4 } from 'src/components/typography'
+import { formatDate } from 'src/utils/timezones'
 
 import styles from './Logs.styles'
 
@@ -70,9 +70,11 @@ const GET_MACHINE_LOGS = gql`
   }
 `
 
-const formatDate = date => {
-  return moment(date).format('YYYY-MM-DD HH:mm')
-}
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
 
 const Logs = () => {
   const classes = useStyles()
@@ -83,6 +85,9 @@ const Logs = () => {
   const deviceId = selected?.deviceId
 
   const { data: machineResponse } = useQuery(GET_MACHINES)
+
+  const { data: configResponse } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const { data: logsResponse, loading } = useQuery(GET_MACHINE_LOGS, {
     variables: { deviceId, limit: NUM_LOG_RESULTS },
@@ -137,7 +142,14 @@ const Logs = () => {
               {logsResponse &&
                 logsResponse.machineLogs.map((log, idx) => (
                   <TableRow key={idx} size="sm">
-                    <TableCell>{formatDate(log.timestamp)}</TableCell>
+                    <TableCell>
+                      {timezone &&
+                        formatDate(
+                          log.timestamp,
+                          timezone.dstOffset,
+                          'YYYY-MM-DD HH:mm'
+                        )}
+                    </TableCell>
                     <TableCell>{log.logLevel}</TableCell>
                     <TableCell>{log.message}</TableCell>
                   </TableRow>

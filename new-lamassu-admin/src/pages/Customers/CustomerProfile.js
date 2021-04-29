@@ -192,6 +192,7 @@ const CustomerProfile = memo(() => {
         <TransactionsList
           customer={customerData}
           data={sortedTransactions}
+          locale={locale}
           loading={loading}
         />
       )}
