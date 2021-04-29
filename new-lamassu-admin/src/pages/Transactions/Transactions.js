@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
@@ -14,6 +13,7 @@ import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { ReactComponent as CustomerLinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { toUnit, formatCryptoAddress } from 'src/utils/coin'
+import { formatDate } from 'src/utils/timezones'
 
 import DetailsRow from './DetailsCard'
 import { mainStyles } from './Transactions.styles'
@@ -22,6 +22,12 @@ import { getStatus } from './helper'
 const useStyles = makeStyles(mainStyles)
 
 const NUM_LOG_RESULTS = 1000
+
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
 
 const GET_TRANSACTIONS_CSV = gql`
   query transactions($limit: Int, $from: DateTime, $until: DateTime) {
@@ -72,6 +78,9 @@ const Transactions = () => {
     },
     pollInterval: 10000
   })
+
+  const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const redirect = customerId => {
     return history.push(`/compliance/customer/${customerId}`)
@@ -143,7 +152,9 @@ const Transactions = () => {
     },
     {
       header: 'Date (UTC)',
-      view: it => moment.utc(it.created).format('YYYY-MM-DD HH:mm:ss'),
+      view: it =>
+        timezone &&
+        formatDate(it.created, timezone.dstOffset, 'YYYY-MM-DD HH:mm:ss'),
       textAlign: 'right',
       size: 'sm',
       width: 195
@@ -185,7 +196,7 @@ const Transactions = () => {
         </div>
       </div>
       <DataTable
-        loading={loading}
+        loading={loading && configLoading}
         emptyText="No transactions so far"
         elements={elements}
         data={R.path(['transactions'])(txResponse)}

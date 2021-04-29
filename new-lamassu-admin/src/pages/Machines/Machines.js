@@ -53,6 +53,7 @@ const Machines = () => {
 
   const machines = getMachines(data) ?? []
   const machineInfo = getMachineInfo(selectedMachine)(machines) ?? {}
+  const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
 
   // pre-selects first machine from the list, if there is a machine configured.
   useEffect(() => {
@@ -98,7 +99,7 @@ const Machines = () => {
           <div
             className={classnames(classes.detailItem, classes.detailsMargin)}>
             <TL1 className={classes.subtitle}>{'Details'}</TL1>
-            <Details data={machineInfo} />
+            <Details data={machineInfo} timezone={timezone} />
           </div>
           <div className={classes.detailItem}>
             <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>

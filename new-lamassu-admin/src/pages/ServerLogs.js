@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState, useRef } from 'react'
 
@@ -21,6 +20,7 @@ import { Info3, H4 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
 import { offColor } from 'src/styling/variables'
 import { startCase } from 'src/utils/string'
+import { formatDate } from 'src/utils/timezones'
 
 import logsStyles from './Logs.styles'
 
@@ -54,10 +54,6 @@ const useStyles = makeStyles(styles)
 
 const SHOW_ALL = { code: 'SHOW_ALL', display: 'Show all' }
 
-const formatDate = date => {
-  return moment(date).format('YYYY-MM-DD HH:mm')
-}
-
 const NUM_LOG_RESULTS = 500
 
 const GET_CSV = gql`
@@ -66,7 +62,7 @@ const GET_CSV = gql`
   }
 `
 
-const GET_DATA = gql`
+const GET_SERVER_DATA = gql`
   query ServerData($limit: Int, $from: DateTime, $until: DateTime) {
     serverVersion
     uptime {
@@ -83,6 +79,12 @@ const GET_DATA = gql`
   }
 `
 
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
+
 const Logs = () => {
   const classes = useStyles()
 
@@ -91,12 +93,14 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data, loading } = useQuery(GET_DATA, {
+  const { data, loading } = useQuery(GET_SERVER_DATA, {
     onCompleted: () => setSaveMessage(''),
     variables: {
       limit: NUM_LOG_RESULTS
     }
   })
+  const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const defaultLogLevels = [
     { code: 'error', display: 'Error' },
@@ -181,15 +185,22 @@ const Logs = () => {
                   )
                   .map((log, idx) => (
                     <TableRow key={idx} size="sm">
-                      <TableCell>{formatDate(log.timestamp)}</TableCell>
+                      <TableCell>
+                        {timezone &&
+                          formatDate(
+                            log.timestamp,
+                            timezone.dstOffset,
+                            'YYYY-MM-DD HH:mm'
+                          )}
+                      </TableCell>
                       <TableCell>{log.logLevel}</TableCell>
                       <TableCell>{log.message}</TableCell>
                     </TableRow>
                   ))}
             </TableBody>
           </Table>
-          {loading && <H4>{'Loading...'}</H4>}
-          {!loading && !data?.serverLogs?.length && (
+          {loading && configLoading && <H4>{'Loading...'}</H4>}
+          {!loading && !configLoading && !data?.serverLogs?.length && (
             <H4>{'No activity so far'}</H4>
           )}
         </div>

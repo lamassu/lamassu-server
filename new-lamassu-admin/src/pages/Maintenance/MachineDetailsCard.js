@@ -2,7 +2,6 @@ import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { Grid /*, Divider */ } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import React, { useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
@@ -18,6 +17,7 @@ import { ReactComponent as ShutdownIcon } from 'src/styling/icons/button/shut do
 import { ReactComponent as UnpairReversedIcon } from 'src/styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zodiac.svg'
 import { modelPrettifier } from 'src/utils/machine'
+import { formatDate } from 'src/utils/timezones'
 
 import { labelStyles, machineDetailsStyles } from './MachineDetailsCard.styles'
 
@@ -101,7 +101,7 @@ const getState = machineEventsLazy =>
   JSON.parse(machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}')
     .state
 
-const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
+const MachineDetailsRow = ({ it: machine, onActionSuccess, timezone }) => {
   const [action, setAction] = useState({ command: null })
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useMDStyles()
@@ -214,7 +214,12 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
           <Item xs={4}>
             <Label>Paired at</Label>
             <span>
-              {moment(machine.pairedAt).format('YYYY-MM-DD HH:mm:ss')}
+              {timezone &&
+                formatDate(
+                  machine.pairedAt,
+                  timezone.dstOffset,
+                  'YYYY-MM-DD HH:mm:ss'
+                )}
             </span>
           </Item>
           <Item xs={6}>

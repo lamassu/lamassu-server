@@ -37,6 +37,12 @@ const GET_MACHINES = gql`
   }
 `
 
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
+
 const useStyles = makeStyles(mainStyles)
 
 const MachineStatus = () => {
@@ -44,6 +50,8 @@ const MachineStatus = () => {
   const { state } = useLocation()
   const addedMachineId = state?.id
   const { data: machinesResponse, refetch, loading } = useQuery(GET_MACHINES)
+  const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const elements = [
     {
@@ -82,7 +90,7 @@ const MachineStatus = () => {
   )
 
   const InnerMachineDetailsRow = ({ it }) => (
-    <MachineDetailsRow it={it} onActionSuccess={refetch} />
+    <MachineDetailsRow it={it} onActionSuccess={refetch} timezone={timezone} />
   )
 
   return (
@@ -103,7 +111,7 @@ const MachineStatus = () => {
         </div>
       </div>
       <DataTable
-        loading={loading}
+        loading={loading && configLoading}
         elements={elements}
         data={machines}
         Details={InnerMachineDetailsRow}

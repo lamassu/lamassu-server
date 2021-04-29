@@ -1,13 +1,14 @@
 import { makeStyles } from '@material-ui/core/styles'
-import moment from 'moment'
 import React from 'react'
 
 import { Label3, P } from 'src/components/typography'
+import { formatDate } from 'src/utils/timezones'
 
 import styles from '../Machines.styles'
 const useStyles = makeStyles(styles)
 
-const Details = ({ data }) => {
+const Details = ({ data, timezone }) => {
+  console.log(timezone)
   const classes = useStyles()
   return (
     <div className={classes.row}>
@@ -15,7 +16,11 @@ const Details = ({ data }) => {
         <Label3 className={classes.label3}>Paired at</Label3>
         <P>
           {data.pairedAt
-            ? moment(data.pairedAt).format('YYYY-MM-DD HH:mm:ss')
+            ? formatDate(
+                data.pairedAt,
+                timezone.dstOffset,
+                'YYYY-MM-DD HH:mm:ss'
+              )
             : ''}
         </P>
       </div>

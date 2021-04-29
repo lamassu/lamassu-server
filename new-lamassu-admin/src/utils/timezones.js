@@ -1,3 +1,4 @@
+import moment from 'moment'
 import * as R from 'ramda'
 
 const getPossibleUTCDSTPairs = timezones =>
@@ -73,4 +74,10 @@ const getTzLabels = timezones =>
     getFinalTimezones(timezones)
   )
 
-export { getTzLabels }
+const formatDate = (date, offset, format) =>
+  moment
+    .utc(date)
+    .utcOffset(offset)
+    .format(format)
+
+export { getTzLabels, formatDate }
