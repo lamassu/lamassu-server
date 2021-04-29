@@ -63,7 +63,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'country',
-      width: 200,
+      width: 150,
       size: 'sm',
       view: getView(countryData, 'display'),
       input: Autocomplete,
