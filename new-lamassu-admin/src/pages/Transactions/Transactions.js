@@ -7,6 +7,7 @@ import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { utils } from 'lamassu-coins'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
