@@ -73,7 +73,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       name: 'cashbox',
       header: 'Cashbox',
       width: 240,
-      stripe: true,
+      stripe: false,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
@@ -145,7 +145,6 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       disableRowEdit={isCashOutDisabled}
       name="cashboxes"
       elements={elements}
-      enableEdit
       data={[machine] || []}
       save={onSave}
       validationSchema={ValidationSchema}
