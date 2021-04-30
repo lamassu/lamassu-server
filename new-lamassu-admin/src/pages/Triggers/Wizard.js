@@ -9,6 +9,7 @@ import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { H5, Info3 } from 'src/components/typography'
 import { comet } from 'src/styling/variables'
+import { singularOrPlural } from 'src/utils/string'
 
 import { type, requirements } from './helper'
 
@@ -105,21 +106,29 @@ const getTypeText = (config, currency, classes) => {
         <>
           makes {orUnderline(config.threshold.threshold, classes)} {currency}{' '}
           worth of transactions within{' '}
-          {orUnderline(config.threshold.thresholdDays, classes)} days
+          {orUnderline(config.threshold.thresholdDays, classes)}{' '}
+          {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
       )
     case 'txVelocity':
       return (
         <>
-          makes {orUnderline(config.threshold.threshold, classes)} transactions
-          in {orUnderline(config.threshold.thresholdDays, classes)} days
+          makes {orUnderline(config.threshold.threshold, classes)}{' '}
+          {singularOrPlural(
+            config.threshold.threshold,
+            'transaction',
+            'transactions'
+          )}{' '}
+          in {orUnderline(config.threshold.thresholdDays, classes)}{' '}
+          {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
       )
     case 'consecutiveDays':
       return (
         <>
           at least one transaction every day for{' '}
-          {orUnderline(config.threshold.thresholdDays, classes)} days
+          {orUnderline(config.threshold.thresholdDays, classes)}{' '}
+          {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
       )
     default:
@@ -147,7 +156,8 @@ const getRequirementText = (config, classes) => {
       return (
         <>
           suspended for{' '}
-          {orUnderline(config.requirement.suspensionDays, classes)} days
+          {orUnderline(config.requirement.suspensionDays, classes)}{' '}
+          {singularOrPlural(config.requirement.suspensionDays, 'day', 'days')}
         </>
       )
     case 'block':
