@@ -197,7 +197,7 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
       .style('fill', neon)
 
     /* ************************** */
-  }, [cashIns, cashOuts, realData, timeFrame])
+  }, [cashIns, cashOuts, realData, timeFrame, timezone])
 
   useEffect(() => {
     // first we clear old chart DOM elements on component update
