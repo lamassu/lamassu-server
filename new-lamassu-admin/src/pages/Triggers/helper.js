@@ -5,11 +5,7 @@ import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
 
-import {
-  NumberInput,
-  TextInput,
-  RadioGroup
-} from 'src/components/inputs/formik'
+import { NumberInput, RadioGroup } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 import { transformNumber } from 'src/utils/number'
@@ -100,16 +96,9 @@ const threshold = Yup.object().shape({
 
 const requirement = Yup.object().shape({
   requirement: Yup.string().required(),
-  suspensionDays: Yup.number().when('requirement', {
-    is: 'suspend',
-    then: Yup.number()
-      .required()
-      .min(1)
-      .label('Invalid value'),
-    otherwise: Yup.number()
-      .nullable()
-      .transform(() => null)
-  })
+  suspensionDays: Yup.number()
+    .transform(transformNumber)
+    .nullable()
 })
 
 const Schema = Yup.object()
@@ -119,24 +108,56 @@ const Schema = Yup.object()
     threshold
     // direction
   })
-  .test(
-    'are-fields-set',
-    'Invalid values',
-    ({ threshold, triggerType }, context) => {
-      const validator = {
-        txAmount: threshold => threshold.threshold >= 0,
-        txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays > 0,
-        txVelocity: threshold =>
-          threshold.threshold > 0 && threshold.thresholdDays > 0,
-        consecutiveDays: threshold => threshold.thresholdDays > 0
-      }
-      return (
-        (triggerType && validator?.[triggerType](threshold)) ||
-        context.createError({ path: 'threshold' })
-      )
+  .test(({ threshold, triggerType }, context) => {
+    const errorMessages = {
+      txAmount: threshold => 'Amount must be greater than or equal to 0',
+      txVolume: threshold => {
+        const thresholdMessage = 'Volume must be greater than or equal to 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
+        const message = []
+        if (threshold.threshold < 0) message.push(thresholdMessage)
+        if (threshold.thresholdDays <= 0) message.push(thresholdDaysMessage)
+        return message.join(', ')
+      },
+      txVelocity: threshold => {
+        const thresholdMessage = 'Transactions must be greater than 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
+        const message = []
+        if (threshold.threshold <= 0) message.push(thresholdMessage)
+        if (threshold.thresholdDays <= 0) message.push(thresholdDaysMessage)
+        return message.join(', ')
+      },
+      consecutiveDays: threshold => 'Days must be greater than 0'
     }
-  )
+    const thresholdValidator = {
+      txAmount: threshold => threshold.threshold >= 0,
+      txVolume: threshold =>
+        threshold.threshold >= 0 && threshold.thresholdDays > 0,
+      txVelocity: threshold =>
+        threshold.threshold > 0 && threshold.thresholdDays > 0,
+      consecutiveDays: threshold => threshold.thresholdDays > 0
+    }
+
+    if (triggerType && thresholdValidator[triggerType](threshold)) return
+
+    return context.createError({
+      path: 'threshold',
+      message: errorMessages[triggerType](threshold)
+    })
+  })
+  .test(({ requirement }, context) => {
+    const requirementValidator = requirement =>
+      requirement.requirement === 'suspend'
+        ? requirement.suspensionDays > 0
+        : true
+
+    if (requirement && requirementValidator(requirement)) return
+
+    return context.createError({
+      path: 'requirement',
+      message: 'Suspension days must be greater than 0'
+    })
+  })
 
 // Direction V2 only
 // const directionSchema = Yup.object().shape({ direction })
@@ -504,7 +525,7 @@ const RequirementInput = () => {
           bold
           className={classes.suspensionDays}
           name="requirement.suspensionDays"
-          component={TextInput}
+          component={NumberInput}
           textAlign="center"
         />
       )}
