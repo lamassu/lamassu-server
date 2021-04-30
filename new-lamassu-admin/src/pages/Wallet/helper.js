@@ -88,11 +88,12 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
     },
     {
       name: 'zeroConf',
+      header: 'Confidence Checking',
       size: 'sm',
       stripe: true,
       view: getDisplayName('zeroConf'),
       input: Autocomplete,
-      width: 190 - widthAdjust,
+      width: 220 - widthAdjust,
       inputProps: {
         options: getOptions('zeroConf'),
         valueProp: 'code',
