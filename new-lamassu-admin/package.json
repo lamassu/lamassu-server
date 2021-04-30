@@ -25,6 +25,7 @@
     "graphql-tag": "^2.10.3",
     "jss-plugin-extend": "^10.0.0",
     "jszip": "^3.6.0",
+    "lamassu-coins": "file:../../lamassu-coins",
     "libphonenumber-js": "^1.7.50",
     "match-sorter": "^4.2.0",
     "moment": "2.24.0",
