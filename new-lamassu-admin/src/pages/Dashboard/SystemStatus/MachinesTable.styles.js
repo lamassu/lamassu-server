@@ -87,6 +87,14 @@ const styles = {
     marginBottom: 0,
     padding: 0,
     textAlign: 'center'
+  },
+  machineNameWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  machineRedirectIcon: {
+    marginLeft: 10
   }
 }
 
