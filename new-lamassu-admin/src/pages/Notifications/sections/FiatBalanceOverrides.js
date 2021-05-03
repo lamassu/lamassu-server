@@ -9,8 +9,8 @@ import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
-const CASSETTE_1_KEY = 'fiatBalanceCassette1'
-const CASSETTE_2_KEY = 'fiatBalanceCassette2'
+const CASSETTE_1_KEY = 'fillingPercentageCassette1'
+const CASSETTE_2_KEY = 'fillingPercentageCassette2'
 const MACHINE_KEY = 'machine'
 const NAME = 'fiatBalanceOverrides'
 
@@ -44,8 +44,8 @@ const FiatBalanceOverrides = ({ section }) => {
     [CASSETTE_2_KEY]: ''
   }
 
-  const notesMin = 0
-  const notesMax = 9999999
+  const percentMin = 0
+  const percentMax = 100
   const validationSchema = Yup.object().shape(
     {
       [MACHINE_KEY]: Yup.string()
@@ -60,8 +60,8 @@ const FiatBalanceOverrides = ({ section }) => {
         })
         .transform(transformNumber)
         .integer()
-        .min(notesMin)
-        .max(notesMax)
+        .min(percentMin)
+        .max(percentMax)
         .nullable(),
       [CASSETTE_2_KEY]: Yup.number()
         .label('Cassette 2 (bottom)')
@@ -71,8 +71,8 @@ const FiatBalanceOverrides = ({ section }) => {
         })
         .transform(transformNumber)
         .integer()
-        .min(notesMin)
-        .max(notesMax)
+        .min(percentMin)
+        .max(percentMax)
         .nullable()
     },
     [CASSETTE_1_KEY, CASSETTE_2_KEY]
@@ -102,7 +102,7 @@ const FiatBalanceOverrides = ({ section }) => {
       doubleHeader: 'Cash-out (Cassette Empty)',
       bold: true,
       input: NumberInput,
-      suffix: 'notes',
+      suffix: '%',
       inputProps: {
         decimalPlaces: 0
       }
@@ -115,7 +115,7 @@ const FiatBalanceOverrides = ({ section }) => {
       doubleHeader: 'Cash-out (Cassette Empty)',
       bold: true,
       input: NumberInput,
-      suffix: 'notes',
+      suffix: '%',
       inputProps: {
         decimalPlaces: 0
       }

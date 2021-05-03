@@ -116,7 +116,7 @@ const Notifications = ({
         <Section
           title="Fiat balance alerts"
           error={error && section === 'fiat'}>
-          <FiatBalanceAlerts section="fiat" max={500} fieldWidth={50} />
+          <FiatBalanceAlerts section="fiat" max={100} fieldWidth={50} />
           {displayOverrides && <FiatBalanceOverrides section="fiat" />}
         </Section>
       )}
