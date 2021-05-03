@@ -18,12 +18,7 @@ const useStyles = makeStyles(styles)
 
 const NAME = 'fiatBalanceAlerts'
 
-const FiatBalance = ({
-  section,
-  min = 0,
-  max = Number.MAX_SAFE_INTEGER,
-  fieldWidth = 80
-}) => {
+const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
   const { isEditing, isDisabled, setEditing, data, save } = useContext(
     NotificationsCtx
   )
@@ -32,13 +27,13 @@ const FiatBalance = ({
   const editing = isEditing(NAME)
 
   const schema = Yup.object().shape({
-    fiatBalanceCassette1: Yup.number()
+    fillingPercentageCassette1: Yup.number()
       .transform(transformNumber)
       .integer()
       .min(min)
       .max(max)
       .nullable(),
-    fiatBalanceCassette2: Yup.number()
+    fillingPercentageCassette2: Yup.number()
       .transform(transformNumber)
       .integer()
       .min(min)
@@ -46,19 +41,14 @@ const FiatBalance = ({
       .nullable()
   })
 
-  const fiatBalanceCassette1Percent =
-    (100 * (data?.fiatBalanceCassette1 ?? 0)) / max
-  const fiatBalanceCassette2Percent =
-    (100 * (data?.fiatBalanceCassette2 ?? 0)) / max
-
   return (
     <Formik
       validateOnBlur={false}
       validateOnChange={false}
       enableReinitialize
       initialValues={{
-        fiatBalanceCassette1: data?.fiatBalanceCassette1 ?? '',
-        fiatBalanceCassette2: data?.fiatBalanceCassette2 ?? ''
+        fillingPercentageCassette1: data?.fillingPercentageCassette1 ?? '',
+        fillingPercentageCassette2: data?.fillingPercentageCassette2 ?? ''
       }}
       validationSchema={schema}
       onSubmit={it => save(section, schema.cast(it))}
@@ -79,17 +69,18 @@ const FiatBalance = ({
               <Cashbox
                 labelClassName={classes.cashboxLabel}
                 emptyPartClassName={classes.cashboxEmptyPart}
-                percent={fiatBalanceCassette1Percent}
+                percent={data?.fillingPercentageCassette1}
+                inFiatBalanceAlerts={true}
                 cashOut
               />
               <div className={classes.col2}>
                 <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
                 <EditableNumber
                   label="Alert me under"
-                  name="fiatBalanceCassette1"
+                  name="fillingPercentageCassette1"
                   editing={editing}
                   displayValue={x => (x === '' ? '-' : x)}
-                  decoration="notes"
+                  decoration="%"
                   width={fieldWidth}
                 />
               </div>
@@ -99,17 +90,18 @@ const FiatBalance = ({
             <Cashbox
               labelClassName={classes.cashboxLabel}
               emptyPartClassName={classes.cashboxEmptyPart}
-              percent={fiatBalanceCassette2Percent}
+              percent={data?.fillingPercentageCassette2}
+              inFiatBalanceAlerts={true}
               cashOut
             />
             <div className={classes.col2}>
               <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
               <EditableNumber
                 label="Alert me under"
-                name="fiatBalanceCassette2"
+                name="fillingPercentageCassette2"
                 editing={editing}
                 displayValue={x => (x === '' ? '-' : x)}
-                decoration="notes"
+                decoration="%"
                 width={fieldWidth}
               />
             </div>

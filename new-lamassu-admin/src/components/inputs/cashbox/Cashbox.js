@@ -18,20 +18,26 @@ const Cashbox = ({
   cashOut = false,
   className,
   emptyPartClassName,
-  labelClassName
+  labelClassName,
+  inFiatBalanceAlerts
 }) => {
   const classes = cashboxClasses({ percent, cashOut })
   const threshold = 51
 
   return (
-    <div className={classnames(className, classes.cashbox)}>
+    <div
+      className={
+        inFiatBalanceAlerts
+          ? classnames(className, classes.fiatBalanceAlertCashbox)
+          : classnames(className, classes.cashbox)
+      }>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
-        {percent <= threshold && (
+        {!inFiatBalanceAlerts && percent <= threshold && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
       <div className={classes.fullPart}>
-        {percent > threshold && (
+        {!inFiatBalanceAlerts && percent > threshold && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>

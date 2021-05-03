@@ -24,6 +24,13 @@ const cashboxStyles = {
     textAlign: 'end',
     display: 'inline-block'
   },
+  fiatBalanceAlertCashbox: {
+    borderColor: colorPicker,
+    backgroundColor: colorPicker,
+    height: 118,
+    width: 80,
+    border: '4px solid'
+  },
   emptyPart: {
     backgroundColor: 'white',
     height: ({ percent }) => `${100 - percent}%`,
