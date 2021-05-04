@@ -30,6 +30,38 @@ const TextEntry = () => {
       !R.path(['values', 'constraintType'])(context) &&
       R.path(['errors', 'constraintType'])(context)
   }
+
+  const getLabelInputs = () => {
+    switch (context.values.constraintType) {
+      case 'spaceSeparation':
+        return (
+          <div className={classes.flex}>
+            <Field
+              className={classes.label}
+              component={TextInput}
+              name={'inputLabel1'}
+              label={'First word label'}
+            />
+            <Field
+              className={classes.label}
+              component={TextInput}
+              name={'inputLabel2'}
+              label={'Second word label'}
+            />
+          </div>
+        )
+      default:
+        return (
+          <Field
+            className={classes.label}
+            component={TextInput}
+            name={'inputLabel1'}
+            label={'Text entry label'}
+          />
+        )
+    }
+  }
+
   return (
     <>
       <H4 className={classnames(showErrorColor)}>Text entry constraints</H4>
@@ -39,12 +71,7 @@ const TextEntry = () => {
         options={options}
         name="constraintType"
       />
-      <Field
-        className={classes.label}
-        component={TextInput}
-        name={'inputLabel'}
-        label={'Label (optional)'}
-      />
+      {getLabelInputs()}
     </>
   )
 }

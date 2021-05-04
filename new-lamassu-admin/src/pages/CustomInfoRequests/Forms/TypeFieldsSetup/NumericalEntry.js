@@ -6,7 +6,6 @@ import React from 'react'
 
 import NumberInput from 'src/components/inputs/formik/NumberInput'
 import RadioGroup from 'src/components/inputs/formik/RadioGroup'
-import TextInput from 'src/components/inputs/formik/TextInput'
 import { TL1, H4 } from 'src/components/typography'
 
 import styles from './formStyles.styles'
@@ -43,12 +42,6 @@ const NumericalEntry = () => {
         component={RadioGroup}
         options={options}
         name="constraintType"
-      />
-      <Field
-        className={classes.label}
-        component={TextInput}
-        name={'inputLabel'}
-        label={'Label (optional)'}
       />
       {isLength && (
         <div className={classnames(classes.flex, classes.numberField)}>
