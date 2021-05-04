@@ -24,10 +24,10 @@ import Screen2Information, {
   validationSchema as screen2InfoSchema,
   defaultValues as screen2InfoDefaults
 } from './Forms/Screen2Information'
-import TypeFieldsSetup, {
-  defaultValues as typeFieldsSetupDefaults,
+import TypeFields, {
+  defaultValues as typeFieldsDefaults,
   validationSchema as typeFieldsValidationSchema
-} from './Forms/TypeFieldsSetup'
+} from './Forms/TypeFields'
 import WizardSplash from './WizardSplash'
 
 const LAST_STEP = 5
@@ -75,7 +75,7 @@ const getStep = step => {
     case 5:
       return {
         schema: typeFieldsValidationSchema,
-        Component: TypeFieldsSetup
+        Component: TypeFields
       }
     default:
       return {
@@ -220,7 +220,7 @@ const Wizard = ({ onClose, error = false, toBeEdited, onSave }) => {
               ...screen1InfoDefaults,
               ...screen2InfoDefaults,
               ...chooseTypeDefaults,
-              ...typeFieldsSetupDefaults
+              ...typeFieldsDefaults
             },
             editingValues
           )}

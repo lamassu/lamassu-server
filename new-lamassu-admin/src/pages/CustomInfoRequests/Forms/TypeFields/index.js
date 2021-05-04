@@ -22,7 +22,7 @@ const getForm = inputType => {
   }
 }
 
-const TypeFieldsSetup = () => {
+const TypeFields = () => {
   const inputType = R.path(['values', 'inputType'])(useFormikContext()) ?? null
   const Component = getForm(inputType)
   return inputType && <Component />
@@ -75,5 +75,5 @@ const validationSchema = Yup.lazy(values => {
   }
 })
 
-export default TypeFieldsSetup
+export default TypeFields
 export { defaultValues, validationSchema }
