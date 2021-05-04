@@ -15,8 +15,14 @@ const ScreenInformation = () => {
       </P>
       <Field
         component={TextInputFormik}
-        label="Screen 2 title"
+        label="Screen 2 input title"
         name="screen2Title"
+        fullWidth
+      />
+      <Field
+        component={TextInputFormik}
+        label="Screen 2 input description"
+        name="screen2Text"
         fullWidth
       />
     </>
@@ -24,11 +30,13 @@ const ScreenInformation = () => {
 }
 
 const validationSchema = Yup.object().shape({
-  screen2Title: Yup.string().required()
+  screen2Title: Yup.string().required(),
+  screen2Text: Yup.string().required()
 })
 
 const defaultValues = {
-  screen2Title: ''
+  screen2Title: '',
+  screen2Text: ''
 }
 
 export default ScreenInformation

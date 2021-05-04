@@ -133,8 +133,9 @@ const CustomInfoRequests = ({
           }}
           toBeEdited={toBeEdited}
           onSave={(...args) => {
+            setToBeEdited(null)
             handleSave(...args)
-            toggleWizard()
+            return toggleWizard()
           }}
         />
       )}

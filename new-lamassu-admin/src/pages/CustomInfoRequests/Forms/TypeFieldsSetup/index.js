@@ -30,8 +30,9 @@ const TypeFieldsSetup = () => {
 
 const defaultValues = {
   constraintType: '',
-  inputLabel: '',
   inputLength: '',
+  inputLabel1: '',
+  inputLabel2: '',
   listChoices: [{ text: '' }, { text: '' }]
 }
 
@@ -50,7 +51,13 @@ const validationSchema = Yup.lazy(values => {
       })
     case 'text':
       return Yup.object({
-        constraintType: Yup.string().required()
+        constraintType: Yup.string().required(),
+        inputLabel1: Yup.string().required(),
+        inputLabel2: Yup.string().when('constraintType', {
+          is: 'spaceSeparation',
+          then: Yup.string().required(),
+          else: Yup.mixed().notRequired()
+        })
       })
     case 'choiceList':
       return Yup.object({

@@ -1,4 +1,4 @@
-import { errorColor } from 'src/styling/variables'
+import { errorColor, spacer } from 'src/styling/variables'
 
 const styles = {
   flex: {
@@ -42,7 +42,8 @@ const styles = {
     maxWidth: 115
   },
   label: {
-    width: 200
+    width: 200,
+    marginRight: spacer
   }
 }
 

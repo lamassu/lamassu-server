@@ -66,12 +66,12 @@ const getStep = step => {
         Component: Screen1Information
       }
     case 3:
+      return { schema: chooseTypeSchema, Component: ChooseType }
+    case 4:
       return {
         schema: screen2InfoSchema,
         Component: Screen2Information
       }
-    case 4:
-      return { schema: chooseTypeSchema, Component: ChooseType }
     case 5:
       return {
         schema: typeFieldsValidationSchema,
@@ -92,7 +92,9 @@ const nonEmptyStr = obj => obj.text && obj.text.length
 const formatValues = (values, isEditing) => {
   const isChoiceList = values.inputType === 'choiceList'
   const choices = isChoiceList
-    ? R.map(o => o.text)(R.filter(nonEmptyStr)(values.listChoices) ?? [])
+    ? isEditing
+      ? R.path(['listChoices'])(values)
+      : R.map(o => o.text)(R.filter(nonEmptyStr)(values.listChoices) ?? [])
     : []
 
   const hasInputLength = values.constraintType === 'length'
@@ -105,7 +107,8 @@ const formatValues = (values, isEditing) => {
       title: values.screen1Title
     },
     screen2: {
-      title: values.screen2Title
+      title: values.screen2Title,
+      text: values.screen2Text
     },
     input: {
       type: values.inputType,
@@ -121,8 +124,12 @@ const formatValues = (values, isEditing) => {
     resObj = R.assocPath(['input', 'numDigits'], inputLength, resObj)
   }
 
-  if (values.inputLabel) {
-    resObj = R.assocPath(['input', 'label'], values.inputLabel, resObj)
+  if (values.inputLabel1) {
+    resObj = R.assocPath(['input', 'label1'], values.inputLabel1, resObj)
+  }
+
+  if (values.inputLabel2) {
+    resObj = R.assocPath(['input', 'label2'], values.inputLabel2, resObj)
   }
 
   if (isEditing) {
@@ -139,11 +146,13 @@ const makeEditingValues = it => {
     screen1Title: it.screen1.title,
     screen1Text: it.screen1.text,
     screen2Title: it.screen2.title,
+    screen2Text: it.screen2.text,
     inputType: it.input.type,
-    inputLabel: it.input.inputLabel,
+    inputLabel1: it.input.label1,
+    inputLabel2: it.input.label2,
     listChoices: it.input.choiceList,
-    constraintType: '',
-    inputLength: ''
+    constraintType: it.input.constraintType,
+    inputLength: it.input.numDigits
   }
 }
 
@@ -160,6 +169,19 @@ const Wizard = ({ onClose, error = false, toBeEdited, onSave }) => {
   const isLastStep = step === LAST_STEP
 
   const onContinue = (values, actions) => {
+    const showScreen2 =
+      values.inputType === 'numerical' || values.inputType === 'choiceList'
+    if (isEditing && step === 2) {
+      return showScreen2
+        ? setStep(4)
+        : onSave(formatValues(values, isEditing), isEditing)
+    }
+    if (isEditing && step === 4) {
+      return onSave(formatValues(values, isEditing), isEditing)
+    }
+    if (step === 3) {
+      return showScreen2 ? setStep(step + 1) : setStep(step + 2)
+    }
     if (!isLastStep) {
       return setStep(step + 1)
     }
