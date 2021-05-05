@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik } from 'formik'
+import * as R from 'ramda'
 import React, { useContext } from 'react'
 import * as Yup from 'yup'
 
@@ -47,8 +48,10 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
       validateOnChange={false}
       enableReinitialize
       initialValues={{
-        fillingPercentageCassette1: data?.fillingPercentageCassette1 ?? '',
-        fillingPercentageCassette2: data?.fillingPercentageCassette2 ?? ''
+        fillingPercentageCassette1:
+          R.path(['fillingPercentageCassette1'])(data) ?? '',
+        fillingPercentageCassette2:
+          R.path(['fillingPercentageCassette2'])(data) ?? ''
       }}
       validationSchema={schema}
       onSubmit={it => save(section, schema.cast(it))}
