@@ -34,7 +34,7 @@ exports.up = function (next) {
         }, config.notifications_fiatBalanceOverrides)
       }
       return saveConfig(newConfig)
-        .then(() => {})
+        .then(() => next())
     })
     .catch(err => {
       if (err.message === 'lamassu-server is not configured') {
