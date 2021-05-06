@@ -42,6 +42,8 @@ const allFields = (getData, onChange, auxElements = []) => {
 
   const tzLabels = getTzLabels(timezonesData)
 
+  console.log(tzLabels)
+
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
     return machine ? [machine] : []
@@ -63,7 +65,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'country',
-      width: 150,
+      width: 200,
       size: 'sm',
       view: getView(countryData, 'display'),
       input: Autocomplete,
@@ -87,7 +89,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'languages',
-      width: 240,
+      width: 200,
       size: 'sm',
       view: displayCodeArray(languageData),
       input: Autocomplete,
@@ -165,7 +167,7 @@ const LocaleSchema = Yup.object().shape({
     .label('Crypto Currencies')
     .required()
     .min(1),
-  timezone: Yup.object()
+  timezone: Yup.string()
     .label('Timezone')
     .required()
 })

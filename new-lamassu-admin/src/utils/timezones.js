@@ -70,7 +70,7 @@ const buildLabel = tz => {
 
 const getTzLabels = timezones =>
   R.map(
-    it => ({ label: buildLabel(it), code: it }),
+    it => ({ label: buildLabel(it), code: `${it.utcOffset}:${it.dstOffset}` }),
     getFinalTimezones(timezones)
   )
 
