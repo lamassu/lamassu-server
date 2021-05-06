@@ -42,6 +42,8 @@ const allFields = (getData, onChange, auxElements = []) => {
 
   const tzLabels = getTzLabels(timezonesData)
 
+  console.log(tzLabels)
+
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
     return machine ? [machine] : []
