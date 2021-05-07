@@ -1,5 +1,8 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
+import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { DeleteDialog } from 'src/components/DeleteDialog'
@@ -30,18 +33,56 @@ const constraintTypeDisplay = {
   spaceSeparation: 'Space separation'
 }
 
-const CustomInfoRequests = ({
-  customRequests,
-  showWizard,
-  toggleWizard,
-  handleDelete,
-  handleSave
-}) => {
+const GET_CUSTOM_REQUESTS = gql`
+  query customInfoRequests {
+    customInfoRequests {
+      id
+      customRequest
+    }
+  }
+`
+/* const ADD_ROW = gql`
+  mutation insertCustomInfoRequest($customRequest: JSON!) {
+    insertCustomInfoRequest(customRequest: $customRequest) {
+      cryptoCode
+      address
+    }
+  }
+` */
+
+const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
   const classes = useStyles()
+  const { data, loading } = useQuery(GET_CUSTOM_REQUESTS)
   const [toBeDeleted, setToBeDeleted] = useState()
   const [toBeEdited, setToBeEdited] = useState()
   const [deleteDialog, setDeleteDialog] = useState(false)
-  return (
+  // const [, setCustomRequests] = useState([])
+
+  /*   const alter = R.curry((values, key, items) => {
+    const merge = R.mergeLeft(values)
+    return R.map(R.when(R.propEq('id', key), merge), items)
+  }) */
+
+  const handleDelete = req => {
+    // return setCustomRequests(R.reject(o => o.id === req.id)(customRequests))
+  }
+
+  const handleSave = (values, isEditing) => {
+    /*     console.log(JSON.stringify(values))
+    if (!isEditing) {
+      return setCustomRequests([
+        ...customRequests,
+        { id: customRequests.length, ...values }
+      ])
+    }
+    return setCustomRequests(alter(values, values.id, customRequests)) */
+  }
+
+  const customRequests = R.path(['customInfoRequests'])(data) ?? []
+  console.log(customRequests)
+  return loading ? (
+    <></>
+  ) : (
     <>
       {customRequests.length > 0 && (
         <DataTable
@@ -53,21 +94,22 @@ const CustomInfoRequests = ({
               width: 300,
               textAlign: 'left',
               size: 'sm',
-              view: it => it.name
+              view: it => it.customRequest.name
             },
             {
               header: 'Data entry type',
               width: 300,
               textAlign: 'left',
               size: 'sm',
-              view: it => inputTypeDisplay[it.input.type]
+              view: it => inputTypeDisplay[it.customRequest.input.type]
             },
             {
               header: 'Constraints',
               width: 300,
               textAlign: 'left',
               size: 'sm',
-              view: it => constraintTypeDisplay[it.input.constraintType]
+              view: it =>
+                constraintTypeDisplay[it.customRequest.input.constraintType]
             },
             {
               header: 'Edit',
@@ -78,7 +120,7 @@ const CustomInfoRequests = ({
                 return (
                   <IconButton
                     onClick={() => {
-                      setToBeEdited(it)
+                      setToBeEdited(it.customRequest)
                       return toggleWizard()
                     }}>
                     <EditIcon />
@@ -95,7 +137,7 @@ const CustomInfoRequests = ({
                 return (
                   <IconButton
                     onClick={() => {
-                      setToBeDeleted(it)
+                      setToBeDeleted(it.customRequest)
                       return setDeleteDialog(true)
                     }}>
                     <DeleteIcon />

@@ -24,7 +24,8 @@ const styles = {
   }
 }
 const useStyles = makeStyles(styles)
-const DetailsCard = ({ it: customRequest }) => {
+const DetailsCard = ({ it }) => {
+  const customRequest = it.customRequest
   const classes = useStyles()
 
   const getScreen2Data = () => {

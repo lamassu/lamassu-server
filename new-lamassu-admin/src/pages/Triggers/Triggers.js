@@ -85,27 +85,6 @@ const Triggers = () => {
     [classes.tableWidth]: !showCustomInfoRequests
   }
 
-  const [customRequests, setCustomRequests] = useState([])
-
-  const alter = R.curry((values, key, items) => {
-    const merge = R.mergeLeft(values)
-    return R.map(R.when(R.propEq('id', key), merge), items)
-  })
-
-  const handleDeleteCustomRequest = req => {
-    return setCustomRequests(R.reject(o => o.id === req.id)(customRequests))
-  }
-
-  const handleSaveCustomRequest = (values, isEditing) => {
-    if (!isEditing) {
-      return setCustomRequests([
-        ...customRequests,
-        { id: customRequests.length, ...values }
-      ])
-    }
-    return setCustomRequests(alter(values, values.id, customRequests))
-  }
-
   const toggleCustomRequestWizard = () => {
     document.querySelector('#root').classList.toggle('root-blur')
     const wizardOpen = !!wizardType
@@ -157,7 +136,7 @@ const Triggers = () => {
             </Box>
           </Box>
         )}
-        {showCustomInfoRequests && customRequests.length > 0 && (
+        {showCustomInfoRequests && (
           <Box display="flex" justifyContent="flex-end">
             <Link color="primary" onClick={toggleCustomRequestWizard}>
               Add new custom info request
@@ -167,11 +146,8 @@ const Triggers = () => {
       </TitleSection>
       {showCustomInfoRequests ? (
         <CustomInfoRequests
-          handleDelete={handleDeleteCustomRequest}
-          customRequests={customRequests}
           showWizard={wizardType === 'newCustomRequest'}
           toggleWizard={toggleCustomRequestWizard}
-          handleSave={handleSaveCustomRequest}
         />
       ) : (
         <>
