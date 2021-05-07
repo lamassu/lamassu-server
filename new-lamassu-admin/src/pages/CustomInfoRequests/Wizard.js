@@ -140,19 +140,20 @@ const formatValues = (values, isEditing) => {
 }
 
 const makeEditingValues = it => {
+  const { customRequest } = it
   return {
     id: it.id,
-    requirementName: it.name,
-    screen1Title: it.screen1.title,
-    screen1Text: it.screen1.text,
-    screen2Title: it.screen2.title,
-    screen2Text: it.screen2.text,
-    inputType: it.input.type,
-    inputLabel1: it.input.label1,
-    inputLabel2: it.input.label2,
-    listChoices: it.input.choiceList,
-    constraintType: it.input.constraintType,
-    inputLength: it.input.numDigits
+    requirementName: customRequest.name,
+    screen1Title: customRequest.screen1.title,
+    screen1Text: customRequest.screen1.text,
+    screen2Title: customRequest.screen2.title,
+    screen2Text: customRequest.screen2.text,
+    inputType: customRequest.input.type,
+    inputLabel1: customRequest.input.label1,
+    inputLabel2: customRequest.input.label2,
+    listChoices: customRequest.input.choiceList,
+    constraintType: customRequest.input.constraintType,
+    inputLength: customRequest.input.numDigits
   }
 }
 

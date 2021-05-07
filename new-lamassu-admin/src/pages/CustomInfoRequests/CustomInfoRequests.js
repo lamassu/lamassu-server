@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
@@ -41,14 +41,31 @@ const GET_CUSTOM_REQUESTS = gql`
     }
   }
 `
-/* const ADD_ROW = gql`
-  mutation insertCustomInfoRequest($customRequest: JSON!) {
+const ADD_ROW = gql`
+  mutation insertCustomInfoRequest($customRequest: CustomRequestInput!) {
     insertCustomInfoRequest(customRequest: $customRequest) {
-      cryptoCode
-      address
+      id
     }
   }
-` */
+`
+const EDIT_ROW = gql`
+  mutation editCustomInfoRequest(
+    $id: ID!
+    $customRequest: CustomRequestInput!
+  ) {
+    editCustomInfoRequest(id: $id, customRequest: $customRequest) {
+      id
+    }
+  }
+`
+
+const REMOVE_ROW = gql`
+  mutation removeCustomInfoRequest($id: ID!) {
+    removeCustomInfoRequest(id: $id) {
+      id
+    }
+  }
+`
 
 const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
   const classes = useStyles()
@@ -56,37 +73,53 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
   const [toBeDeleted, setToBeDeleted] = useState()
   const [toBeEdited, setToBeEdited] = useState()
   const [deleteDialog, setDeleteDialog] = useState(false)
-  // const [, setCustomRequests] = useState([])
 
-  /*   const alter = R.curry((values, key, items) => {
-    const merge = R.mergeLeft(values)
-    return R.map(R.when(R.propEq('id', key), merge), items)
-  }) */
+  const [addEntry] = useMutation(ADD_ROW, {
+    onError: () => console.log('Error while adding custom info request'),
+    refetchQueries: () => ['customInfoRequests']
+  })
 
-  const handleDelete = req => {
-    // return setCustomRequests(R.reject(o => o.id === req.id)(customRequests))
+  const [editEntry] = useMutation(EDIT_ROW, {
+    onError: () => console.log('Error while editing custom info request'),
+    refetchQueries: () => ['customInfoRequests']
+  })
+
+  const [removeEntry] = useMutation(REMOVE_ROW, {
+    onError: () => console.log('Error while removing custom info request'),
+    refetchQueries: () => ['customInfoRequests']
+  })
+
+  const handleDelete = id => {
+    removeEntry({
+      variables: {
+        id
+      }
+    })
   }
-
   const handleSave = (values, isEditing) => {
-    /*     console.log(JSON.stringify(values))
-    if (!isEditing) {
-      return setCustomRequests([
-        ...customRequests,
-        { id: customRequests.length, ...values }
-      ])
+    if (isEditing) {
+      return editEntry({
+        variables: {
+          id: values.id,
+          customRequest: R.omit(['id'])(values)
+        }
+      })
     }
-    return setCustomRequests(alter(values, values.id, customRequests)) */
+    return addEntry({
+      variables: {
+        customRequest: {
+          ...values
+        }
+      }
+    })
   }
 
   const customRequests = R.path(['customInfoRequests'])(data) ?? []
-  console.log(customRequests)
-  return loading ? (
-    <></>
-  ) : (
+  return (
     <>
       {customRequests.length > 0 && (
         <DataTable
-          loading={false}
+          loading={loading}
           emptyText="No custom info requests so far"
           elements={[
             {
@@ -120,7 +153,7 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
                 return (
                   <IconButton
                     onClick={() => {
-                      setToBeEdited(it.customRequest)
+                      setToBeEdited(it)
                       return toggleWizard()
                     }}>
                     <EditIcon />
@@ -137,7 +170,7 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
                 return (
                   <IconButton
                     onClick={() => {
-                      setToBeDeleted(it.customRequest)
+                      setToBeDeleted(it.id)
                       return setDeleteDialog(true)
                     }}>
                     <DeleteIcon />
@@ -152,7 +185,7 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
           rowSize="sm"
         />
       )}
-      {!customRequests.length && (
+      {!loading && !customRequests.length && (
         <div className={classes.centerItems}>
           <Info1 className={classnames(classes.m0, classes.mb10)}>
             It seems you haven't added any custom information requests yet.
