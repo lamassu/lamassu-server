@@ -69,7 +69,7 @@ const Header = memo(({ tree, user }) => {
   const [active, setActive] = useState()
   const [hasUnread, setHasUnread] = useState(false)
 
-  const { data, refetch } = useQuery(HAS_UNREAD, { pollInterval: 60000 })
+  const { data, refetch, startPolling, stopPolling } = useQuery(HAS_UNREAD)
   const notifCenterButtonRef = useRef()
   const popperRef = useRef()
   const history = useHistory()
@@ -80,6 +80,11 @@ const Header = memo(({ tree, user }) => {
     // if not true, make sure it's false and not undefined
     if (notNil(data?.hasUnreadNotifications)) return setHasUnread(false)
   }, [data])
+
+  useEffect(() => {
+    startPolling(60000)
+    return stopPolling
+  })
 
   const onPaired = machine => {
     setOpen(false)
