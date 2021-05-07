@@ -6,10 +6,14 @@ import { H5 } from 'src/components/typography'
 import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 
 import Input2FAState from './Input2FAState'
+import InputFIDOState from './InputFIDOState'
 import LoginState from './LoginState'
 import Setup2FAState from './Setup2FAState'
 import styles from './shared.styles'
 import { STATES } from './states'
+
+// FIDO2FA, FIDOPasswordless or FIDOUsernameless
+const AUTHENTICATION_STRATEGY = 'FIDOPasswordless'
 
 const useStyles = makeStyles(styles)
 
@@ -34,11 +38,21 @@ const LoginCard = () => {
   const renderState = () => {
     switch (state.loginState) {
       case STATES.LOGIN:
-        return <LoginState state={state} dispatch={dispatch} />
+        return (
+          <LoginState
+            state={state}
+            dispatch={dispatch}
+            strategy={AUTHENTICATION_STRATEGY}
+          />
+        )
       case STATES.INPUT_2FA:
         return <Input2FAState state={state} dispatch={dispatch} />
       case STATES.SETUP_2FA:
         return <Setup2FAState state={state} dispatch={dispatch} />
+      case STATES.FIDO:
+        return (
+          <InputFIDOState state={state} strategy={AUTHENTICATION_STRATEGY} />
+        )
       default:
         break
     }

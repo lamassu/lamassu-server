@@ -1,5 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, Box, Chip } from '@material-ui/core'
+import { startAttestation } from '@simplewebauthn/browser'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useReducer, useState, useContext } from 'react'
@@ -33,6 +34,24 @@ const GET_USERS = gql`
   }
 `
 
+const GENERATE_ATTESTATION = gql`
+  query generateAttestationOptions($userID: ID!) {
+    generateAttestationOptions(userID: $userID)
+  }
+`
+
+const VALIDATE_ATTESTATION = gql`
+  mutation validateAttestation(
+    $userID: ID!
+    $attestationResponse: JSONObject!
+  ) {
+    validateAttestation(
+      userID: $userID
+      attestationResponse: $attestationResponse
+    )
+  }
+`
+
 const initialState = {
   showCreateUserModal: false,
   showResetPasswordModal: false,
@@ -61,6 +80,26 @@ const Users = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const [userInfo, setUserInfo] = useState(null)
+
+  const [validateAttestation] = useMutation(VALIDATE_ATTESTATION, {
+    onCompleted: res => {
+      console.log(res)
+      // success ? console.log('success') : console.log('failure')
+    }
+  })
+
+  const [generateAttestationOptions] = useLazyQuery(GENERATE_ATTESTATION, {
+    onCompleted: ({ generateAttestationOptions: options }) => {
+      startAttestation(options).then(res => {
+        validateAttestation({
+          variables: {
+            userID: userInfo.id,
+            attestationResponse: res
+          }
+        })
+      })
+    }
+  })
 
   const elements = [
     {
@@ -151,6 +190,19 @@ const Users = () => {
                 dispatch({
                   type: 'open',
                   payload: 'showReset2FAModal'
+                })
+              }}
+            />
+            <Chip
+              size="small"
+              label="Add FIDO"
+              className={classes.actionChip}
+              onClick={() => {
+                setUserInfo(u)
+                generateAttestationOptions({
+                  variables: {
+                    userID: u.id
+                  }
                 })
               }}
             />
