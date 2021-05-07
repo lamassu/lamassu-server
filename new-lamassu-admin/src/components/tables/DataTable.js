@@ -182,7 +182,11 @@ const DataTable = ({
             {({ height }) => (
               <List
                 // this has to be in a style because of how the component works
-                style={{ overflow: 'inherit', outline: 'none' }}
+                style={{
+                  overflowX: 'inherit',
+                  overflowY: 'inherit',
+                  outline: 'none'
+                }}
                 {...props}
                 height={loading ? 0 : height}
                 width={width}
