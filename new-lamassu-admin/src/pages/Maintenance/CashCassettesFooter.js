@@ -25,10 +25,15 @@ const CashCassettesFooter = ({
   const classes = useStyles()
   const cashout = config && fromNamespace('cashOut')(config)
   const getCashoutSettings = id => fromNamespace(id)(cashout)
-  const reducerFn = (acc, { cassette1, cassette2, id }) => [
-    (acc[0] += cassette1 * getCashoutSettings(id).top),
-    (acc[1] += cassette2 * getCashoutSettings(id).bottom)
-  ]
+  const reducerFn = (acc, { cassette1, cassette2, id }) => {
+    const topDenomination = getCashoutSettings(id).top ?? 0
+    const bottomDenomination = getCashoutSettings(id).bottom ?? 0
+    return [
+      (acc[0] += cassette1 * topDenomination),
+      (acc[1] += cassette2 * bottomDenomination)
+    ]
+  }
+
   const totalInCassettes = R.sum(R.reduce(reducerFn, [0, 0], machines))
 
   /*   const totalInCashBox = R.sum(

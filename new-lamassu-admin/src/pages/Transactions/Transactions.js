@@ -126,11 +126,11 @@ const Transactions = () => {
     },
     {
       header: 'Crypto',
-      width: 144,
+      width: 150,
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode).toFormat(5)} ${
+        `${toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)} ${
           it.cryptoCode
         }`
     },
