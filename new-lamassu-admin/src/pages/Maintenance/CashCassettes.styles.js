@@ -10,5 +10,10 @@ export default {
   tBody: {
     maxHeight: '65vh',
     overflow: 'auto'
+  },
+  tableWidth: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: 90
   }
 }

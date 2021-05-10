@@ -1,20 +1,23 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import { Tooltip } from 'src/components/Tooltip'
 import { IconButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
+import { Switch } from 'src/components/inputs'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
+import { P, Label2 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
-import { fromNamespace } from 'src/utils/config'
+import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
@@ -55,6 +58,11 @@ const GET_MACHINES_AND_CONFIG = gql`
       cassette2
     }
     config
+  }
+`
+const SAVE_CONFIG = gql`
+  mutation Save($config: JSONObject) {
+    saveConfig(config: $config)
   }
 `
 
@@ -104,6 +112,10 @@ const CashCassettes = () => {
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    onCompleted: () => setWizard(false),
+    refetchQueries: () => ['getData']
+  })
   const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
     R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
@@ -111,6 +123,15 @@ const CashCassettes = () => {
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
+
+  const cashInConfig = data?.config && fromNamespace('cashIn')(data.config)
+  const automaticCashboxReset =
+    R.path(['automaticCashboxReset'])(cashInConfig) ?? false
+
+  const cashboxResetSave = rawConfig => {
+    const config = toNamespace('cashIn')(rawConfig)
+    return saveConfig({ variables: { config } })
+  }
 
   const onSave = (id, cashbox, cassette1, cassette2) => {
     return setCassetteBills({
@@ -214,7 +235,32 @@ const CashCassettes = () => {
           toggle: setShowHistory
         }}
         iconClassName={classes.listViewButton}
-      />
+        className={classes.tableWidth}>
+        <Box display="flex" alignItems="center">
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="end"
+            mr="-5px">
+            <P>Set automatic cashbox reset</P>
+            <Switch
+              checked={automaticCashboxReset}
+              onChange={event => {
+                cashboxResetSave({
+                  automaticCashboxReset: event.target.checked
+                })
+              }}
+              value={automaticCashboxReset}
+            />
+            <Label2 className={classes.switchLabel}>
+              {automaticCashboxReset ? 'Automatic' : 'Manual'}
+            </Label2>
+            <Tooltip width={304}>
+              <P>Tooltip text</P>
+            </Tooltip>
+          </Box>
+        </Box>
+      </TitleSection>
       <div className={classes.tableContainer}>
         {!showHistory && (
           <>
