@@ -36,7 +36,6 @@ const RadioGroup = ({
   radioClassName
 }) => {
   const classes = useStyles()
-
   return (
     <>
       {label && <Label1 className={classes.label}>{label}</Label1>}
@@ -49,6 +48,7 @@ const RadioGroup = ({
           <React.Fragment key={idx}>
             <div>
               <FormControlLabel
+                disabled={option.disabled}
                 value={option.code}
                 control={<Radio className={radioClassName} />}
                 label={option.display}

@@ -152,6 +152,8 @@ const getRequirementText = (config, classes) => {
       )
     case 'block':
       return <>blocked</>
+    case 'custom':
+      return <>asked to fulfill a custom requirement</>
     default:
       return orUnderline(null, classes)
   }
@@ -160,9 +162,11 @@ const getRequirementText = (config, classes) => {
 const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
   const classes = useStyles()
 
-  const oldText = R.range(1, step).map(it =>
-    getText(it, config, currency, classes)
-  )
+  const oldText = R.range(1, step).map((it, idx) => (
+    <React.Fragment key={idx}>
+      {getText(it, config, currency, classes)}
+    </React.Fragment>
+  ))
   const newText = getText(step, liveValues, currency, classes)
   const isLastStep = step === LAST_STEP
 
@@ -201,6 +205,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
+    console.log(newConfig)
 
     if (isLastStep) {
       return save(newConfig)
@@ -217,7 +222,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
       <Modal
         title="New compliance trigger"
         handleClose={onClose}
-        width={520}
+        width={560}
         height={520}
         infoPanel={
           <InfoPanel

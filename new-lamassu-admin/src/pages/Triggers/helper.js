@@ -1,6 +1,8 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
@@ -13,6 +15,7 @@ import {
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 import { transformNumber } from 'src/utils/number'
+
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 // import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -37,7 +40,7 @@ const useStyles = makeStyles({
   },
   specialGrid: {
     display: 'grid',
-    gridTemplateColumns: [[182, 162, 141]]
+    gridTemplateColumns: [[182, 162, 181]]
   },
   directionIcon: {
     marginRight: 2
@@ -417,10 +420,28 @@ const requirementOptions = [
   { display: 'Block', code: 'block' }
 ]
 
+const GET_CUSTOM_REQUESTS = gql`
+  query customInfoRequests {
+    customInfoRequests {
+      id
+      customRequest
+    }
+  }
+`
+
 const Requirement = () => {
   const classes = useStyles()
   const { touched, errors, values } = useFormikContext()
-
+  const { data } = useQuery(GET_CUSTOM_REQUESTS)
+  const customInfoRequests = R.path(['customInfoRequests'])(data) ?? []
+  const enableCustomRequirement = customInfoRequests.length > 0
+  const customInfoOption = {
+    display: 'Custom information requirement',
+    code: 'custom'
+  }
+  const options = enableCustomRequirement
+    ? [...requirementOptions, customInfoOption]
+    : [...requirementOptions, { ...customInfoOption, disabled: true }]
   const titleClass = {
     [classes.error]:
       !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
@@ -431,7 +452,7 @@ const Requirement = () => {
   }
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
-
+  const isCustom = values?.requirement?.requirement === 'custom'
   return (
     <>
       <Box display="flex" alignItems="center">
@@ -440,12 +461,11 @@ const Requirement = () => {
       <Field
         component={RadioGroup}
         name="requirement.requirement"
-        options={requirementOptions}
+        options={options}
         labelClassName={classes.specialLabel}
         radioClassName={classes.radio}
         className={classnames(classes.radioGroup, classes.specialGrid)}
       />
-
       {isSuspend && (
         <Field
           className={classes.thresholdField}
@@ -455,6 +475,7 @@ const Requirement = () => {
           name="requirement.suspensionDays"
         />
       )}
+      {isCustom && <p>Placeholder</p>}
     </>
   )
 }
@@ -463,7 +484,13 @@ const requirements = {
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  initialValues: { requirement: { requirement: '', suspensionDays: '' } }
+  initialValues: {
+    requirement: {
+      requirement: '',
+      suspensionDays: '',
+      customRequirementId: ''
+    }
+  }
 }
 
 const getView = (data, code, compare) => it => {
