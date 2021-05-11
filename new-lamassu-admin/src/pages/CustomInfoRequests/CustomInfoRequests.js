@@ -33,9 +33,9 @@ const constraintTypeDisplay = {
   spaceSeparation: 'Space separation'
 }
 
-const GET_CUSTOM_REQUESTS = gql`
-  query customInfoRequests {
-    customInfoRequests {
+const GET_ACTIVE_CUSTOM_REQUESTS = gql`
+  query customInfoRequests($onlyEnabled: Boolean) {
+    customInfoRequests(onlyEnabled: $onlyEnabled) {
       id
       customRequest
     }
@@ -69,7 +69,11 @@ const REMOVE_ROW = gql`
 
 const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
   const classes = useStyles()
-  const { data, loading } = useQuery(GET_CUSTOM_REQUESTS)
+  const { data, loading } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
+    variables: {
+      onlyEnabled: true
+    }
+  })
   const [toBeDeleted, setToBeDeleted] = useState()
   const [toBeEdited, setToBeEdited] = useState()
   const [deleteDialog, setDeleteDialog] = useState(false)

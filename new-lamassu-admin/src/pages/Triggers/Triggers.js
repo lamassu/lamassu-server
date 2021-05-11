@@ -39,14 +39,26 @@ const GET_INFO = gql`
   }
 `
 
+const GET_CUSTOM_REQUESTS = gql`
+  query customInfoRequests {
+    customInfoRequests {
+      id
+      customRequest
+    }
+  }
+`
+
 const Triggers = () => {
   const classes = useStyles()
   const [advancedSettings, setAdvancedSettings] = useState(false)
   const [wizardType, setWizard] = useState(false)
   const [showCustomInfoRequests, setShowCustomInfoRequests] = useState(false)
   const { data, loading } = useQuery(GET_INFO)
-  const triggers = fromServer(data?.config?.triggers ?? [])
+  const { data: customInfoReqData } = useQuery(GET_CUSTOM_REQUESTS)
 
+  const customInfoRequests =
+    R.path(['customInfoRequests'])(customInfoReqData) ?? []
+  const triggers = fromServer(data?.config?.triggers ?? [])
   const complianceConfig =
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
@@ -85,8 +97,11 @@ const Triggers = () => {
     [classes.tableWidth]: !showCustomInfoRequests
   }
 
-  const toggleCustomRequestWizard = () => {
+  const toggleBlur = () =>
     document.querySelector('#root').classList.toggle('root-blur')
+
+  const toggleCustomRequestWizard = () => {
+    toggleBlur()
     const wizardOpen = !!wizardType
     return wizardOpen ? setWizard(false) : setWizard('newCustomRequest')
   }
@@ -178,7 +193,7 @@ const Triggers = () => {
             error={error?.message}
             save={save}
             validationSchema={Schema}
-            elements={getElements(currency, classes)}
+            elements={getElements(currency, classes, customInfoRequests)}
           />
           {wizardType === 'newTrigger' && (
             <Wizard
@@ -197,7 +212,9 @@ const Triggers = () => {
               <H2>
                 It seems there are no active compliance triggers on your network
               </H2>
-              <Button onClick={() => setWizard(true)}>Add first trigger</Button>
+              <Button onClick={() => setWizard('newTrigger')}>
+                Add first trigger
+              </Button>
             </Box>
           )}
         </>

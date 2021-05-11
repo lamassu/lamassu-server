@@ -10,7 +10,8 @@ import * as Yup from 'yup'
 import {
   NumberInput,
   TextInput,
-  RadioGroup
+  RadioGroup,
+  Dropdown
 } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
@@ -84,6 +85,10 @@ const useStyles = makeStyles({
   },
   daysInput: {
     width: 60
+  },
+  dropdownField: {
+    marginTop: 16,
+    minWidth: 155
   }
 })
 
@@ -420,9 +425,9 @@ const requirementOptions = [
   { display: 'Block', code: 'block' }
 ]
 
-const GET_CUSTOM_REQUESTS = gql`
-  query customInfoRequests {
-    customInfoRequests {
+const GET_ACTIVE_CUSTOM_REQUESTS = gql`
+  query customInfoRequests($onlyEnabled: Boolean) {
+    customInfoRequests(onlyEnabled: $onlyEnabled) {
       id
       customRequest
     }
@@ -432,7 +437,12 @@ const GET_CUSTOM_REQUESTS = gql`
 const Requirement = () => {
   const classes = useStyles()
   const { touched, errors, values } = useFormikContext()
-  const { data } = useQuery(GET_CUSTOM_REQUESTS)
+  const { data } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
+    variables: {
+      onlyEnabled: true
+    }
+  })
+
   const customInfoRequests = R.path(['customInfoRequests'])(data) ?? []
   const enableCustomRequirement = customInfoRequests.length > 0
   const customInfoOption = {
@@ -453,6 +463,11 @@ const Requirement = () => {
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
   const isCustom = values?.requirement?.requirement === 'custom'
+  const makeCustomReqOptions = () =>
+    customInfoRequests.map(it => ({
+      value: it.id,
+      display: it.customRequest.name
+    }))
   return (
     <>
       <Box display="flex" alignItems="center">
@@ -475,7 +490,17 @@ const Requirement = () => {
           name="requirement.suspensionDays"
         />
       )}
-      {isCustom && <p>Placeholder</p>}
+      {isCustom && (
+        <div>
+          <Field
+            className={classes.dropdownField}
+            component={Dropdown}
+            label="Available requests"
+            name="requirement.customRequirementId"
+            options={makeCustomReqOptions()}
+          />
+        </div>
+      )}
     </>
   )
 }
@@ -514,14 +539,23 @@ const getView = (data, code, compare) => it => {
 //   )
 // }
 
-const RequirementInput = () => {
+const customReqIdMatches = customReqId => it => {
+  return it.id === customReqId
+}
+
+const RequirementInput = ({ customInfoRequests }) => {
   const { values } = useFormikContext()
   const classes = useStyles()
 
   const requirement = values?.requirement?.requirement
+  const customRequestId =
+    R.path(['requirement', 'customRequirementId'])(values) ?? ''
   const isSuspend = requirement === 'suspend'
-
-  const display = getView(requirementOptions, 'display')(requirement)
+  const display = customRequestId
+    ? R.path(['customRequest', 'name'])(
+        R.find(customReqIdMatches(customRequestId))(customInfoRequests)
+      ) ?? ''
+    : getView(requirementOptions, 'display')(requirement)
 
   return (
     <Box display="flex" alignItems="baseline">
@@ -540,11 +574,20 @@ const RequirementInput = () => {
   )
 }
 
-const RequirementView = ({ requirement, suspensionDays }) => {
+const RequirementView = ({
+  requirement,
+  suspensionDays,
+  customRequirementId,
+  customInfoRequests
+}) => {
   const classes = useStyles()
-  const display = getView(requirementOptions, 'display')(requirement)
+  const display =
+    requirement === 'custom'
+      ? R.path(['customRequest', 'name'])(
+          R.find(customReqIdMatches(customRequirementId))(customInfoRequests)
+        ) ?? ''
+      : getView(requirementOptions, 'display')(requirement)
   const isSuspend = requirement === 'suspend'
-
   return (
     <Box display="flex" alignItems="baseline">
       {`${display} ${isSuspend ? 'for' : ''}`}
@@ -656,7 +699,7 @@ const ThresholdView = ({ config, currency }) => {
   return <DisplayThreshold config={config} currency={currency} />
 }
 
-const getElements = (currency, classes) => [
+const getElements = (currency, classes, customInfoRequests) => [
   {
     name: 'triggerType',
     size: 'sm',
@@ -677,8 +720,10 @@ const getElements = (currency, classes) => [
     size: 'sm',
     width: 230,
     bypassField: true,
-    input: RequirementInput,
-    view: it => <RequirementView {...it} />
+    input: () => <RequirementInput customInfoRequests={customInfoRequests} />,
+    view: it => (
+      <RequirementView {...it} customInfoRequests={customInfoRequests} />
+    )
   },
   {
     name: 'threshold',
@@ -710,12 +755,20 @@ const sortBy = [
   )
 ]
 
-const fromServer = triggers =>
-  R.map(
-    ({ requirement, suspensionDays, threshold, thresholdDays, ...rest }) => ({
+const fromServer = (triggers, customInfoRequests) => {
+  return R.map(
+    ({
+      requirement,
+      suspensionDays,
+      threshold,
+      thresholdDays,
+      customRequirementId,
+      ...rest
+    }) => ({
       requirement: {
         requirement,
-        suspensionDays
+        suspensionDays,
+        customRequirementId
       },
       threshold: {
         threshold,
@@ -724,6 +777,7 @@ const fromServer = triggers =>
       ...rest
     })
   )(triggers)
+}
 
 const toServer = triggers =>
   R.map(({ requirement, threshold, ...rest }) => ({
@@ -731,6 +785,7 @@ const toServer = triggers =>
     suspensionDays: requirement.suspensionDays,
     threshold: threshold.threshold,
     thresholdDays: threshold.thresholdDays,
+    customRequirementId: requirement.customRequirementId,
     ...rest
   }))(triggers)
 
