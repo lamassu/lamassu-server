@@ -20,17 +20,17 @@ exports.up = function (next) {
 
       if (overrides) {
         newConfig.notifications_fiatBalanceOverrides = _.map(override => {
+          const newOverride = {}
           if (override.fiatBalanceCassette1) {
-            override.fiatBalanceCassette1 = (100 * (override.fiatBalanceCassette1 / cassetteMaxCapacity)).toFixed(0)
+            newOverride.fillingPercentageCassette1 = (100 * (override.fiatBalanceCassette1 / cassetteMaxCapacity)).toFixed(0)
           }
           if (override.fiatBalanceCassette2) {
-            override.fiatBalanceCassette2 = (100 * (override.fiatBalanceCassette2 / cassetteMaxCapacity)).toFixed(0)
+            newOverride.fillingPercentageCassette2 = (100 * (override.fiatBalanceCassette2 / cassetteMaxCapacity)).toFixed(0)
           }
-          const {
-            fiatBalanceCassette1: fillingPercentageCassette1,
-            fiatBalanceCassette2: fillingPercentageCassette2,
-            ...rest } = override
-          return { fillingPercentageCassette1, fillingPercentageCassette2, ...rest }
+          newOverride.machine = override.machine
+          newOverride.id = override.id
+
+          return newOverride
         }, config.notifications_fiatBalanceOverrides)
       }
       return saveConfig(newConfig)
