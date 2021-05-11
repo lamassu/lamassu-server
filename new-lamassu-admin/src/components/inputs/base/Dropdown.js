@@ -9,15 +9,11 @@ const Dropdown = ({ label, name, options, onChange, value, className }) => {
     <FormControl className={classnames(className)}>
       <InputLabel>{label}</InputLabel>
       <Select
-        // displayEmpty
         autoWidth={true}
         labelId={label}
         id={name}
         value={value}
         onChange={onChange}>
-        {/*         <MenuItem key={'-1'} value={''}>
-          <em>{label}</em>
-        </MenuItem> */}
         {options.map((option, index) => {
           return (
             <MenuItem key={index} value={option.value}>

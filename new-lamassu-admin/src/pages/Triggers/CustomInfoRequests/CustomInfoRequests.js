@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
@@ -33,14 +33,6 @@ const constraintTypeDisplay = {
   spaceSeparation: 'Space separation'
 }
 
-const GET_ACTIVE_CUSTOM_REQUESTS = gql`
-  query customInfoRequests($onlyEnabled: Boolean) {
-    customInfoRequests(onlyEnabled: $onlyEnabled) {
-      id
-      customRequest
-    }
-  }
-`
 const ADD_ROW = gql`
   mutation insertCustomInfoRequest($customRequest: CustomRequestInput!) {
     insertCustomInfoRequest(customRequest: $customRequest) {
@@ -67,13 +59,13 @@ const REMOVE_ROW = gql`
   }
 `
 
-const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
+const CustomInfoRequests = ({
+  showWizard,
+  toggleWizard,
+  data: customRequests
+}) => {
   const classes = useStyles()
-  const { data, loading } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
-    variables: {
-      onlyEnabled: true
-    }
-  })
+
   const [toBeDeleted, setToBeDeleted] = useState()
   const [toBeEdited, setToBeEdited] = useState()
   const [deleteDialog, setDeleteDialog] = useState(false)
@@ -118,12 +110,10 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
     })
   }
 
-  const customRequests = R.path(['customInfoRequests'])(data) ?? []
   return (
     <>
       {customRequests.length > 0 && (
         <DataTable
-          loading={loading}
           emptyText="No custom info requests so far"
           elements={[
             {
@@ -189,7 +179,7 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
           rowSize="sm"
         />
       )}
-      {!loading && !customRequests.length && (
+      {!customRequests.length && (
         <div className={classes.centerItems}>
           <Info1 className={classnames(classes.m0, classes.mb10)}>
             It seems you haven't added any custom information requests yet.
@@ -201,7 +191,9 @@ const CustomInfoRequests = ({ showWizard, toggleWizard }) => {
             </a>{' '}
             on Compliance before adding new information requests.
           </Info3>
-          <Button onClick={toggleWizard}>Add custom information request</Button>
+          <Button onClick={() => toggleWizard()}>
+            Add custom information request
+          </Button>
         </div>
       )}
       {showWizard && (

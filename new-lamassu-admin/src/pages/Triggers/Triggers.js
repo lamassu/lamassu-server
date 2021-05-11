@@ -4,27 +4,24 @@ import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-import { v4 } from 'uuid'
 
 import { Tooltip } from 'src/components/Tooltip'
-import { Link, Button } from 'src/components/buttons'
-import { Table as EditableTable } from 'src/components/editableTable'
+import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
-import { P, Label2, H2 } from 'src/components/typography'
+import { P, Label2 } from 'src/components/typography'
 import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circle buttons/filter/white.svg'
 import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
-import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
+import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import CustomInfoRequests from '../CustomInfoRequests'
 
+import TriggerView from './TriggerView'
 import styles from './Triggers.styles'
-import Wizard from './Wizard'
 import AdvancedTriggers from './components/AdvancedTriggers'
-import { Schema, getElements, sortBy, fromServer, toServer } from './helper'
-
+import { fromServer } from './helper'
 const useStyles = makeStyles(styles)
 
 const SAVE_CONFIG = gql`
@@ -33,7 +30,7 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const GET_INFO = gql`
+const GET_CONFIG = gql`
   query getData {
     config
   }
@@ -44,6 +41,7 @@ const GET_CUSTOM_REQUESTS = gql`
     customInfoRequests {
       id
       customRequest
+      enabled
     }
   }
 `
@@ -53,16 +51,20 @@ const Triggers = () => {
   const [advancedSettings, setAdvancedSettings] = useState(false)
   const [wizardType, setWizard] = useState(false)
   const [showCustomInfoRequests, setShowCustomInfoRequests] = useState(false)
-  const { data, loading } = useQuery(GET_INFO)
+  const { data, loading } = useQuery(GET_CONFIG)
   const { data: customInfoReqData } = useQuery(GET_CUSTOM_REQUESTS)
+  const [error, setError] = useState(null)
 
   const customInfoRequests =
     R.path(['customInfoRequests'])(customInfoReqData) ?? []
+  const enabledCustomInfoRequests = R.filter(R.propEq('enabled', true))(
+    customInfoRequests
+  )
+
   const triggers = fromServer(data?.config?.triggers ?? [])
   const complianceConfig =
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
-  const [error, setError] = useState(null)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
@@ -70,40 +72,32 @@ const Triggers = () => {
     onError: error => setError(error)
   })
 
-  const add = rawConfig => {
-    const toSave = R.concat([{ id: v4(), direction: 'both', ...rawConfig }])(
-      triggers
-    )
-    return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
-  }
-
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
     return saveConfig({ variables: { config } })
   }
 
-  const save = config => {
-    setError(null)
-    return saveConfig({
-      variables: { config: { triggers: toServer(config.triggers) } }
-    })
-  }
-
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
-  )
-
   const titleSectionWidth = {
     [classes.tableWidth]: !showCustomInfoRequests
   }
 
-  const toggleBlur = () =>
-    document.querySelector('#root').classList.toggle('root-blur')
+  const setBlur = shouldBlur => {
+    return shouldBlur
+      ? document.querySelector('#root').classList.add('root-blur')
+      : document.querySelector('#root').classList.remove('root-blur')
+  }
 
-  const toggleCustomRequestWizard = () => {
-    toggleBlur()
-    const wizardOpen = !!wizardType
-    return wizardOpen ? setWizard(false) : setWizard('newCustomRequest')
+  const toggleWizard = wizardName => forceDisable => {
+    if (forceDisable) {
+      setBlur(false)
+      return setWizard(null)
+    }
+    if (wizardType === wizardName) {
+      setBlur(false)
+      return setWizard(null)
+    }
+    setBlur(true)
+    return setWizard(wizardName)
   }
 
   return (
@@ -151,73 +145,38 @@ const Triggers = () => {
             </Box>
           </Box>
         )}
-        {showCustomInfoRequests && (
+        {showCustomInfoRequests && !R.isEmpty(enabledCustomInfoRequests) && (
           <Box display="flex" justifyContent="flex-end">
-            <Link color="primary" onClick={toggleCustomRequestWizard}>
-              Add new custom info request
+            <Link
+              color="primary"
+              onClick={() => toggleWizard('newCustomRequest')()}>
+              + Add new custom info request
+            </Link>
+          </Box>
+        )}
+        {!loading && !showCustomInfoRequests && !R.isEmpty(triggers) && (
+          <Box display="flex" justifyContent="flex-end">
+            <Link color="primary" onClick={() => toggleWizard('newTrigger')()}>
+              + Add new trigger
             </Link>
           </Box>
         )}
       </TitleSection>
-      {showCustomInfoRequests ? (
+      {!loading && showCustomInfoRequests && (
         <CustomInfoRequests
+          data={enabledCustomInfoRequests}
           showWizard={wizardType === 'newCustomRequest'}
-          toggleWizard={toggleCustomRequestWizard}
+          toggleWizard={toggleWizard('newCustomRequest')}
         />
-      ) : (
-        <>
-          <Box
-            marginBottom={2}
-            className={classes.tableWidth}
-            display="flex"
-            justifyContent="flex-end">
-            {!loading && !R.isEmpty(triggers) && (
-              <Link color="primary" onClick={() => setWizard('newTrigger')}>
-                + Add new trigger
-              </Link>
-            )}
-          </Box>
-        </>
       )}
-      {showCustomInfoRequests ? (
-        <CustomInfoRequests />
-      ) : (
-        <>
-          <EditableTable
-            data={triggers}
-            name="triggers"
-            enableEdit
-            sortBy={sortBy}
-            groupBy="triggerType"
-            enableDelete
-            error={error?.message}
-            save={save}
-            validationSchema={Schema}
-            elements={getElements(currency, classes, customInfoRequests)}
-          />
-          {wizardType === 'newTrigger' && (
-            <Wizard
-              currency={currency}
-              error={error?.message}
-              save={add}
-              onClose={() => setWizard(null)}
-            />
-          )}
-          {!loading && R.isEmpty(triggers) && (
-            <Box
-              display="flex"
-              alignItems="center"
-              flexDirection="column"
-              mt={15}>
-              <H2>
-                It seems there are no active compliance triggers on your network
-              </H2>
-              <Button onClick={() => setWizard('newTrigger')}>
-                Add first trigger
-              </Button>
-            </Box>
-          )}
-        </>
+      {!loading && !showCustomInfoRequests && (
+        <TriggerView
+          triggers={triggers}
+          showWizard={wizardType === 'newTrigger'}
+          config={data?.config ?? {}}
+          toggleWizard={toggleWizard('newTrigger')}
+          customInfoRequests={customInfoRequests}
+        />
       )}
       {advancedSettings && (
         <AdvancedTriggers
