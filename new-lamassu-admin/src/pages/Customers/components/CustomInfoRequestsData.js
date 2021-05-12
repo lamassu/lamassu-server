@@ -2,8 +2,9 @@ import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
-import React from 'react'
+import React, { useState } from 'react'
 
+import Modal from 'src/components/Modal'
 import { MainStatus } from 'src/components/Status'
 import { ActionButton } from 'src/components/buttons'
 import {
@@ -14,7 +15,6 @@ import {
   Td,
   TBody
 } from 'src/components/fake-table/Table'
-// import DataTable from 'src/components/tables/DataTable'
 import { H3, Label1 } from 'src/components/typography'
 import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
@@ -22,6 +22,8 @@ import { ReactComponent as RejectReversedIcon } from 'src/styling/icons/button/c
 import { ReactComponent as RejectIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
 import { ReactComponent as LinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { white, disabledColor } from 'src/styling/variables'
+
+import DetailsCard from '../../Triggers/CustomInfoRequests/DetailsCard'
 const styles = {
   white: {
     color: white
@@ -64,6 +66,7 @@ const SET_AUTHORIZED_REQUEST = gql`
 const useStyles = makeStyles(styles)
 const CustomInfoRequestsData = ({ data }) => {
   const classes = useStyles()
+  const [toView, setToView] = useState(null)
   const [setAuthorized] = useMutation(SET_AUTHORIZED_REQUEST, {
     onError: () => console.error('Error while clearing notification'),
     refetchQueries: () => ['customer']
@@ -134,50 +137,6 @@ const CustomInfoRequestsData = ({ data }) => {
       : { label: 'Accepted', type: 'success' }
   }
 
-  /* const tableElements = [
-    {
-      name: 'customRequestName',
-      header: (
-        <Label1 className={classes.white}>{'Custom Request Name'}</Label1>
-      ),
-      width: 250,
-      textAlign: 'left',
-      size: 'sm',
-      view: it => {
-        return <div>{it.customInfoRequest.customRequest.name}</div>
-      }
-    },
-    {
-      name: 'customRequestData',
-      header: (
-        <Label1 className={classes.white}>{'Custom Request Data'}</Label1>
-      ),
-      width: 500,
-      textAlign: 'left',
-      size: 'sm',
-      view: it => <div>{JSON.stringify(it.customerData.data, null, 2)}</div>
-    },
-    {
-      name: 'status',
-      header: <Label1 className={classes.white}>{'Status'}</Label1>,
-      width: 200,
-      textAlign: 'left',
-      size: 'sm',
-      view: it => {
-        return <MainStatus statuses={[getAuthorizedStatus(it)]} />
-      }
-    },
-    {
-      name: 'actions',
-      header: <Label1 className={classes.white}>{'Actions'}</Label1>,
-      width: 250,
-      textAlign: 'center',
-      size: 'sm',
-      view: it => {
-        return <div className={classes.flex}>{getActionButtons(it)}</div>
-      }
-    }
-  ] */
   return (
     <>
       <H3>Custom Info Requests Data</H3>
@@ -193,7 +152,6 @@ const CustomInfoRequestsData = ({ data }) => {
           </THead>
           <TBody>
             {data.map((it, idx) => {
-              console.log(it)
               return (
                 <React.Fragment hey={idx}>
                   <Tr>
@@ -202,7 +160,7 @@ const CustomInfoRequestsData = ({ data }) => {
                         <Label1>
                           {it.customInfoRequest.customRequest.name}
                         </Label1>
-                        <div onClick={() => console.log(it)}>
+                        <div onClick={() => setToView(it)}>
                           <LinkIcon className={classes.linkIcon} />
                         </div>
                       </div>
@@ -222,12 +180,16 @@ const CustomInfoRequestsData = ({ data }) => {
             })}
           </TBody>
         </Table>
-        {/*         <DataTable
-          data={data}
-          elements={tableElements}
-          emptyText="No custom information requests so far"
-          name="customInfoRequestsData"
-        /> */}
+        {toView && (
+          <Modal
+            width={900}
+            height={400}
+            open={true}
+            handleClose={() => setToView(null)}>
+            <H3>Custom Information Request Details</H3>
+            <DetailsCard it={{ ...toView.customInfoRequest }} />
+          </Modal>
+        )}
       </div>
     </>
   )
