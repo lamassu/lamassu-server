@@ -41,13 +41,10 @@ import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import UserManagement from 'src/pages/UserManagement/UserManagement'
 import Wizard from 'src/pages/Wizard'
-<<<<<<< HEAD
+import ATMWallet from 'src/pazuz/pages/ATMWallet/ATMWallet'
 import PrivateRoute from 'src/routing/PrivateRoute'
 import PublicRoute from 'src/routing/PublicRoute'
 import { ROLES } from 'src/routing/utils'
-=======
-import ATMWallet from 'src/pazuz/pages/ATMWallet/ATMWallet'
->>>>>>> feat: pazuz ATM wallet screen
 import { namespaces } from 'src/utils/config'
 
 const useStyles = makeStyles({
@@ -264,6 +261,7 @@ const tree = [
         key: 'atmwallets',
         label: 'ATM Wallets',
         route: '/accounting/wallets',
+        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: ATMWallet
       }
     ]
