@@ -33,16 +33,7 @@ const getItems = (accountsConfig, accounts, type, crypto) => {
   return { filled, unfilled }
 }
 
-const Wizard = ({
-  coin,
-  onClose,
-  accountsConfig,
-  accounts,
-  save,
-  error,
-  locale,
-  zeroConfLimit
-}) => {
+const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
   const [{ step, config, accountsToSave }, setState] = useState({
     step: 0,
     config: { active: true },
@@ -66,8 +57,8 @@ const Wizard = ({
       : accountsToSave
 
     if (isLastStep) {
-      newConfig.zeroConfLimit = zeroConfLimit || 0
-      return save(toNamespace(coin.code, newConfig), newAccounts)
+      const configToSave = { ...newConfig, zeroConfLimit: 0 }
+      return save(toNamespace(coin.code, configToSave), newAccounts)
     }
 
     setState({
@@ -113,7 +104,6 @@ const Wizard = ({
           {...getStepData()}
           onContinue={onContinue}
           getValue={getValue}
-          locale={locale}
         />
       )}
     </Modal>

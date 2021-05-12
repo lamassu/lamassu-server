@@ -123,8 +123,6 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           userAccounts={data?.config?.accounts}
           accounts={accounts}
           accountsConfig={accountsConfig}
-          locale={data?.config && fromNamespace('locale')(data.config)}
-          zeroConfLimit={config[`${wizard}_zeroConfLimit`]}
         />
       )}
       {editingSchema && (

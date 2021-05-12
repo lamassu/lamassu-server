@@ -52,12 +52,11 @@ const AllSet = ({ data: currentData, doContinue }) => {
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
-  currentData.zeroConfLimit = 0
-
   const save = () => {
-    if (!WalletSchema.isValidSync(currentData)) return setError(true)
+    const adjustedData = { zeroConfLimit: 0, ...currentData }
+    if (!WalletSchema.isValidSync(adjustedData)) return setError(true)
 
-    const withCoin = toNamespace(coin, R.omit('coin', currentData))
+    const withCoin = toNamespace(coin, R.omit('coin', adjustedData))
     const config = toNamespace(namespaces.WALLETS)(withCoin)
     setError(false)
     return saveConfig({ variables: { config } })
