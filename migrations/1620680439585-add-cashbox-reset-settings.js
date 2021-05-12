@@ -2,7 +2,7 @@ const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   const newConfig = {
-    cashIn_automaticCashboxReset: false
+    cashIn_cashboxReset: 'Manual'
   }
   return loadLatest()
     .then(config => {

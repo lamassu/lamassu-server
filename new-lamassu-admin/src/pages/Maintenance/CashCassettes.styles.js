@@ -1,3 +1,5 @@
+import { offColor } from 'src/styling/variables'
+
 export default {
   cashbox: {
     width: 80,
@@ -15,5 +17,8 @@ export default {
     display: 'flex',
     alignItems: 'center',
     marginRight: 90
+  },
+  descriptions: {
+    color: offColor
   }
 }
