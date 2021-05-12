@@ -59,8 +59,7 @@ const WizardStep = ({
   onContinue,
   filled,
   unfilled,
-  getValue,
-  locale
+  getValue
 }) => {
   const classes = useStyles()
   const [{ innerError, selected, form, isNew }, dispatch] = useReducer(
@@ -69,9 +68,6 @@ const WizardStep = ({
   )
 
   useEffect(() => {
-    if (step === 5) {
-      return dispatch({ type: 'form', form: { code: 'zeroConfLimit' } })
-    }
     dispatch({ type: 'reset' })
   }, [step])
 
