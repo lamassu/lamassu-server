@@ -1,19 +1,19 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Box } from '@material-ui/core'
+import { DialogActions, makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
-import { Tooltip } from 'src/components/Tooltip'
-import { IconButton } from 'src/components/buttons'
+import Modal from 'src/components/Modal'
+import { IconButton, Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
-import { Switch } from 'src/components/inputs'
+import { RadioGroup } from 'src/components/inputs'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
-import { P, Label2 } from 'src/components/typography'
+import { P } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
@@ -102,6 +102,8 @@ const SET_CASSETTE_BILLS = gql`
 const CashCassettes = () => {
   const classes = useStyles()
   const [showHistory, setShowHistory] = useState(false)
+  const [editingSchema, setEditingSchema] = useState(null)
+  const [selectedRadio, setSelectedRadio] = useState(null)
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
   const [wizard, setWizard] = useState(false)
@@ -113,9 +115,10 @@ const CashCassettes = () => {
     refetchQueries: () => ['getData']
   })
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: () => setWizard(false),
+    onCompleted: () => setEditingSchema(false),
     refetchQueries: () => ['getData']
   })
+
   const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
     R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
@@ -124,15 +127,20 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
 
-  const cashInConfig = data?.config && fromNamespace('cashIn')(data.config)
-  const automaticCashboxReset =
-    R.path(['automaticCashboxReset'])(cashInConfig) ?? false
+  const cashboxReset =
+    data?.config && fromNamespace('cashIn')(data.config).cashboxReset
 
   const cashboxResetSave = rawConfig => {
     const config = toNamespace('cashIn')(rawConfig)
     return saveConfig({ variables: { config } })
   }
 
+  const saveCashboxOption = selection => {
+    if (selection) {
+      cashboxResetSave({ cashboxReset: selection })
+      setEditingSchema(false)
+    }
+  }
   const onSave = (id, cashbox, cassette1, cassette2) => {
     return setCassetteBills({
       variables: {
@@ -146,6 +154,16 @@ const CashCassettes = () => {
   }
   const getCashoutSettings = id => fromNamespace(id)(cashout)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
+
+  const radioButtonOptions = [
+    { display: 'Automatic', code: 'Automatic' },
+    { display: 'Manual', code: 'Manual' }
+  ]
+
+  const handleRadioButtons = evt => {
+    const selectedRadio = R.path(['target', 'value'])(evt)
+    setSelectedRadio(selectedRadio)
+  }
 
   const elements = [
     {
@@ -236,28 +254,19 @@ const CashCassettes = () => {
         }}
         iconClassName={classes.listViewButton}
         className={classes.tableWidth}>
+        <P className={classes.descriptions}>Cashbox reset</P>
         <Box display="flex" alignItems="center">
           <Box
             display="flex"
             alignItems="center"
             justifyContent="end"
             mr="-5px">
-            <P>Set automatic cashbox reset</P>
-            <Switch
-              checked={automaticCashboxReset}
-              onChange={event => {
-                cashboxResetSave({
-                  automaticCashboxReset: event.target.checked
-                })
-              }}
-              value={automaticCashboxReset}
-            />
-            <Label2 className={classes.switchLabel}>
-              {automaticCashboxReset ? 'Automatic' : 'Manual'}
-            </Label2>
-            <Tooltip width={304}>
-              <P>Tooltip text</P>
-            </Tooltip>
+            <P>{cashboxReset}</P>
+            <IconButton
+              onClick={() => setEditingSchema(true)}
+              className={classes.button}>
+              <EditIcon />
+            </IconButton>
           </Box>
         </Box>
       </TitleSection>
@@ -302,6 +311,46 @@ const CashCassettes = () => {
           save={onSave}
           locale={locale}
         />
+      )}
+      {editingSchema && (
+        <Modal
+          title={'Cashbox reset'}
+          width={478}
+          handleClose={() => setEditingSchema(null)}
+          open={true}>
+          <P className={classes.descriptions}>
+            Specify if you want your cash-in counts to be reset automatically or
+            manually.
+          </P>
+          <RadioGroup
+            name="set-automatic-reset"
+            value={selectedRadio}
+            options={[radioButtonOptions[0]]}
+            onChange={handleRadioButtons}
+            className={classes.radioButtons}
+          />
+          <P className={classes.descriptions}>
+            Choose this option if you want your cash-in cashbox count to be
+            automatically when it is physically removed from the machine.
+          </P>
+          <RadioGroup
+            name="set-manual-reset"
+            value={selectedRadio}
+            options={[radioButtonOptions[1]]}
+            onChange={handleRadioButtons}
+            className={classes.radioButtons}
+          />
+          <P className={classes.descriptions}>
+            Choose this option if you want to edit your cash-in counts manually
+            on Lamassu Admin, after you physically remove the bills from the
+            cashbox.
+          </P>
+          <DialogActions className={classes.actions}>
+            <Button onClick={() => saveCashboxOption(selectedRadio)}>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Modal>
       )}
     </>
   )
