@@ -6,12 +6,21 @@ import React from 'react'
 
 import { MainStatus } from 'src/components/Status'
 import { ActionButton } from 'src/components/buttons'
-import DataTable from 'src/components/tables/DataTable'
+import {
+  Table,
+  THead,
+  Th,
+  Tr,
+  Td,
+  TBody
+} from 'src/components/fake-table/Table'
+// import DataTable from 'src/components/tables/DataTable'
 import { H3, Label1 } from 'src/components/typography'
 import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as RejectReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
 import { ReactComponent as RejectIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
+import { ReactComponent as LinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { white, disabledColor } from 'src/styling/variables'
 const styles = {
   white: {
@@ -30,6 +39,11 @@ const styles = {
     '&:hover': {
       backgroundColor: disabledColor
     }
+  },
+  linkIcon: {
+    marginTop: 12,
+    marginLeft: 4,
+    cursor: 'pointer'
   }
 }
 
@@ -50,7 +64,6 @@ const SET_AUTHORIZED_REQUEST = gql`
 const useStyles = makeStyles(styles)
 const CustomInfoRequestsData = ({ data }) => {
   const classes = useStyles()
-
   const [setAuthorized] = useMutation(SET_AUTHORIZED_REQUEST, {
     onError: () => console.error('Error while clearing notification'),
     refetchQueries: () => ['customer']
@@ -121,7 +134,7 @@ const CustomInfoRequestsData = ({ data }) => {
       : { label: 'Accepted', type: 'success' }
   }
 
-  const tableElements = [
+  /* const tableElements = [
     {
       name: 'customRequestName',
       header: (
@@ -145,8 +158,8 @@ const CustomInfoRequestsData = ({ data }) => {
       view: it => <div>{JSON.stringify(it.customerData.data, null, 2)}</div>
     },
     {
-      name: 'authorized',
-      header: <Label1 className={classes.white}>{'Authorized'}</Label1>,
+      name: 'status',
+      header: <Label1 className={classes.white}>{'Status'}</Label1>,
       width: 200,
       textAlign: 'left',
       size: 'sm',
@@ -164,16 +177,58 @@ const CustomInfoRequestsData = ({ data }) => {
         return <div className={classes.flex}>{getActionButtons(it)}</div>
       }
     }
-  ]
+  ] */
   return (
     <>
       <H3>Custom Info Requests Data</H3>
-      <DataTable
-        data={data}
-        elements={tableElements}
-        emptyText="No custom information requests so far"
-        name="customInfoRequestsData"
-      />
+      <div>
+        <Table>
+          <THead>
+            <Th width={250}>Custom Request Name</Th>
+            <Th width={500}>Custom Request Data</Th>
+            <Th width={200}>Status</Th>
+            <Th width={250} textAlign="center">
+              Actions
+            </Th>
+          </THead>
+          <TBody>
+            {data.map((it, idx) => {
+              console.log(it)
+              return (
+                <React.Fragment hey={idx}>
+                  <Tr>
+                    <Td size="sm" width={250}>
+                      <div className={classes.flex}>
+                        <Label1>
+                          {it.customInfoRequest.customRequest.name}
+                        </Label1>
+                        <div onClick={() => console.log(it)}>
+                          <LinkIcon className={classes.linkIcon} />
+                        </div>
+                      </div>
+                    </Td>
+                    <Td size="sm" width={500}>
+                      <div>{JSON.stringify(it.customerData.data, null, 2)}</div>
+                    </Td>
+                    <Td size="sm" width={200}>
+                      <MainStatus statuses={[getAuthorizedStatus(it)]} />
+                    </Td>
+                    <Td size="sm" width={250}>
+                      <div className={classes.flex}>{getActionButtons(it)}</div>
+                    </Td>
+                  </Tr>
+                </React.Fragment>
+              )
+            })}
+          </TBody>
+        </Table>
+        {/*         <DataTable
+          data={data}
+          elements={tableElements}
+          emptyText="No custom information requests so far"
+          name="customInfoRequestsData"
+        /> */}
+      </div>
     </>
   )
 }
