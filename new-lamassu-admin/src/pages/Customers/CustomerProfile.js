@@ -66,6 +66,16 @@ const GET_CUSTOMER = gql`
         errorMessage: error
         error: errorCode
       }
+      customInfoRequests {
+        customerId
+        approved
+        customerData
+        customInfoRequest {
+          id
+          enabled
+          customRequest
+        }
+      }
     }
   }
 `
@@ -111,7 +121,6 @@ const CustomerProfile = memo(() => {
       variables: { customerId }
     }
   )
-
   const [setCustomer] = useMutation(SET_CUSTOMER, {
     onCompleted: () => getCustomer()
   })

@@ -14,6 +14,7 @@ import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/
 import { URI } from 'src/utils/apollo'
 
 import { complianceDetailsStyles } from './ComplianceDetails.styles'
+import CustomInfoRequestsData from './CustomInfoRequestsData'
 import Field from './Field'
 
 import { IdDataCard } from './'
@@ -57,74 +58,77 @@ const ComplianceDetails = ({ customer, updateCustomer }) => {
     : sanctions
     ? 'Passed'
     : 'Failed'
-
+  const customInfoRequests = R.path(['customInfoRequests'])(customer) ?? []
   return (
-    <div>
-      <H3>Compliance details</H3>
+    <>
       <div>
-        <IdDataCard customerData={customer} updateCustomer={updateCustomer} />
-        <Box className={classes.complianceDetailsGrid}>
-          <Box className={classes.firstColumn}>
-            <PropertyCard
-              title={'ID photo'}
-              state={R.path(['idCardPhotoOverride'])(customer)}
-              authorize={() =>
-                updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED })
-              }
-              reject={() =>
-                updateCustomer({ idCardPhotoOverride: OVERRIDE_REJECTED })
-              }>
-              <Photo
-                show={customer.idCardPhotoPath}
-                src={`${URI}/id-card-photo/${R.path(['idCardPhotoPath'])(
-                  customer
-                )}`}
-              />
-            </PropertyCard>
-            <PropertyCard
-              title={'Front facing camera'}
-              state={R.path(['frontCameraOverride'])(customer)}
-              authorize={() =>
-                updateCustomer({ frontCameraOverride: OVERRIDE_AUTHORIZED })
-              }
-              reject={() =>
-                updateCustomer({ frontCameraOverride: OVERRIDE_REJECTED })
-              }>
-              <Photo
-                show={customer.frontCameraPath}
-                src={`${URI}/front-camera-photo/${R.path(['frontCameraPath'])(
-                  customer
-                )}`}
-              />
-            </PropertyCard>
+        <H3>Compliance details</H3>
+        <div>
+          <IdDataCard customerData={customer} updateCustomer={updateCustomer} />
+          <Box className={classes.complianceDetailsGrid}>
+            <Box className={classes.firstColumn}>
+              <PropertyCard
+                title={'ID photo'}
+                state={R.path(['idCardPhotoOverride'])(customer)}
+                authorize={() =>
+                  updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED })
+                }
+                reject={() =>
+                  updateCustomer({ idCardPhotoOverride: OVERRIDE_REJECTED })
+                }>
+                <Photo
+                  show={customer.idCardPhotoPath}
+                  src={`${URI}/id-card-photo/${R.path(['idCardPhotoPath'])(
+                    customer
+                  )}`}
+                />
+              </PropertyCard>
+              <PropertyCard
+                title={'Front facing camera'}
+                state={R.path(['frontCameraOverride'])(customer)}
+                authorize={() =>
+                  updateCustomer({ frontCameraOverride: OVERRIDE_AUTHORIZED })
+                }
+                reject={() =>
+                  updateCustomer({ frontCameraOverride: OVERRIDE_REJECTED })
+                }>
+                <Photo
+                  show={customer.frontCameraPath}
+                  src={`${URI}/front-camera-photo/${R.path(['frontCameraPath'])(
+                    customer
+                  )}`}
+                />
+              </PropertyCard>
+            </Box>
+            <Box className={classes.lastColumn}>
+              <PropertyCard
+                title={'US SSN'}
+                state={R.path(['usSsnOverride'])(customer)}
+                authorize={() =>
+                  updateCustomer({ usSsnOverride: OVERRIDE_AUTHORIZED })
+                }
+                reject={() =>
+                  updateCustomer({ usSsnOverride: OVERRIDE_REJECTED })
+                }>
+                <Field label={'US SSN'} display={customer.usSsn} />
+              </PropertyCard>
+              <PropertyCard
+                title={'Sanctions check'}
+                state={R.path(['sanctionsOverride'])(customer)}
+                authorize={() =>
+                  updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED })
+                }
+                reject={() =>
+                  updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED })
+                }>
+                <Info3>{sanctionsDisplay}</Info3>
+              </PropertyCard>
+            </Box>
           </Box>
-          <Box className={classes.lastColumn}>
-            <PropertyCard
-              title={'US SSN'}
-              state={R.path(['usSsnOverride'])(customer)}
-              authorize={() =>
-                updateCustomer({ usSsnOverride: OVERRIDE_AUTHORIZED })
-              }
-              reject={() =>
-                updateCustomer({ usSsnOverride: OVERRIDE_REJECTED })
-              }>
-              <Field label={'US SSN'} display={customer.usSsn} />
-            </PropertyCard>
-            <PropertyCard
-              title={'Sanctions check'}
-              state={R.path(['sanctionsOverride'])(customer)}
-              authorize={() =>
-                updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED })
-              }
-              reject={() =>
-                updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED })
-              }>
-              <Info3>{sanctionsDisplay}</Info3>
-            </PropertyCard>
-          </Box>
-        </Box>
+        </div>
       </div>
-    </div>
+      <CustomInfoRequestsData data={customInfoRequests} />
+    </>
   )
 }
 
