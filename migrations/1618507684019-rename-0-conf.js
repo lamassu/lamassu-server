@@ -13,7 +13,7 @@ exports.up = async function (next) {
       config[key] = 'none'
     }
   }, cryptoCodes)
-  return settingsLoader.saveConfig(config).then(() => next()).catch(err => next(err))
+  return settingsLoader.saveConfig(config)
 }
 
 exports.down = function (next) {
