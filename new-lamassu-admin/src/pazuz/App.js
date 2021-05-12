@@ -1,15 +1,17 @@
+import { useQuery } from '@apollo/react-hooks'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
+import Slide from '@material-ui/core/Slide'
 import {
   StylesProvider,
   jssPreset,
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
-import { axios } from '@use-hooks/axios'
+import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   useLocation,
   useHistory,
@@ -69,11 +71,32 @@ const useStyles = makeStyles({
   }
 })
 
+const GET_USER_DATA = gql`
+  query userData {
+    userData {
+      id
+      username
+      role
+      enabled
+      last_accessed
+      last_accessed_from
+      last_accessed_address
+    }
+  }
+`
+
 const Main = () => {
   const classes = useStyles()
   const location = useLocation()
   const history = useHistory()
-  const { wizardTested, userData } = useContext(AppContext)
+  const { wizardTested, userData, setUserData } = useContext(AppContext)
+
+  const { loading } = useQuery(GET_USER_DATA, {
+    onCompleted: userResponse => {
+      if (!userData && userResponse?.userData)
+        setUserData(userResponse.userData)
+    }
+  })
 
   const route = location.pathname
 
@@ -97,7 +120,17 @@ const Main = () => {
       )}
       <main className={classes.wrapper}>
         {sidebar && !is404 && wizardTested && (
-          <TitleSection title={parent.title}></TitleSection>
+          <Slide
+            direction="left"
+            in={true}
+            mountOnEnter
+            unmountOnExit
+            children={
+              <div>
+                <TitleSection title={parent.title}></TitleSection>
+              </div>
+            }
+          />
         )}
 
         <Grid container className={classes.grid}>
@@ -109,9 +142,7 @@ const Main = () => {
               onClick={onClick}
             />
           )}
-          <div className={contentClassName}>
-            <Routes />
-          </div>
+          <div className={contentClassName}>{!loading && <Routes />}</div>
         </Grid>
       </main>
     </div>
@@ -121,46 +152,26 @@ const Main = () => {
 const App = () => {
   const [wizardTested, setWizardTested] = useState(false)
   const [userData, setUserData] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  const url =
-    process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
-
-  useEffect(() => {
-    getUserData()
-  }, [])
-
-  const getUserData = () => {
-    axios({
-      method: 'GET',
-      url: `${url}/user-data`,
-      withCredentials: true
-    })
-      .then(res => {
-        setLoading(false)
-        if (res.status === 200) setUserData(res.data.user)
-      })
-      .catch(err => {
-        setLoading(false)
-        if (err.status === 403) setUserData(null)
-      })
+  const setRole = role => {
+    if (userData && userData.role !== role) {
+      setUserData({ ...userData, role })
+    }
   }
 
   return (
     <AppContext.Provider
-      value={{ wizardTested, setWizardTested, userData, setUserData }}>
-      {!loading && (
-        <Router>
-          <ApolloProvider>
-            <StylesProvider jss={jss}>
-              <MuiThemeProvider theme={theme}>
-                <CssBaseline />
-                <Main />
-              </MuiThemeProvider>
-            </StylesProvider>
-          </ApolloProvider>
-        </Router>
-      )}
+      value={{ wizardTested, setWizardTested, userData, setUserData, setRole }}>
+      <Router>
+        <ApolloProvider>
+          <StylesProvider jss={jss}>
+            <MuiThemeProvider theme={theme}>
+              <CssBaseline />
+              <Main />
+            </MuiThemeProvider>
+          </StylesProvider>
+        </ApolloProvider>
+      </Router>
     </AppContext.Provider>
   )
 }
