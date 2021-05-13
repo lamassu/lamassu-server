@@ -19,6 +19,14 @@ export default {
     marginRight: 90
   },
   descriptions: {
-    color: offColor
+    color: offColor,
+    marginTop: '0px'
+  },
+  cashboxReset: {
+    color: offColor,
+    margin: '13px 0px -5px 20px'
+  },
+  selection: {
+    marginRight: '12px'
   }
 }
