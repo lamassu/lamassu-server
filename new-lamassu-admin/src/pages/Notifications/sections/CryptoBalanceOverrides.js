@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import { CURRENCY_MAX } from 'src/utils/constants'
 import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
@@ -54,7 +55,6 @@ const CryptoBalanceOverrides = ({ section }) => {
   }
 
   const notesMin = 0
-  const currencyMax = 9999999
   const validationSchema = Yup.object().shape(
     {
       [CRYPTOCURRENCY_KEY]: Yup.string()
@@ -70,7 +70,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         .transform(transformNumber)
         .integer()
         .min(notesMin)
-        .max(currencyMax)
+        .max(CURRENCY_MAX)
         .nullable(),
       [HIGH_BALANCE_KEY]: Yup.number()
         .label('High Balance')
@@ -81,7 +81,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         .transform(transformNumber)
         .integer()
         .min(notesMin)
-        .max(currencyMax)
+        .max(CURRENCY_MAX)
         .nullable()
     },
     [LOW_BALANCE_KEY, HIGH_BALANCE_KEY]
