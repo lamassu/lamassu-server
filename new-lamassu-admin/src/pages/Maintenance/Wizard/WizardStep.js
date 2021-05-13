@@ -120,16 +120,12 @@ const WizardStep = ({
     denomination: step === 2 ? cashoutSettings.top : cashoutSettings.bottom
   }
 
-  const getPercentage = values =>
-    R.clamp(
-      0,
-      100,
-      (100 *
-        (step === 2
-          ? values.cassette1Count ?? cassetteInfo.amount
-          : values.cassette2Count ?? cassetteInfo.amount)) /
-        cassetteCapacity
-    )
+  const getPercentage = values => {
+    const cassetteCount =
+      step === 2 ? values.cassette1Count : values.cassette2Count
+    const value = cassetteCount ?? cassetteInfo.amount
+    return R.clamp(0, 100, 100 * (value / cassetteCapacity))
+  }
 
   return (
     <div className={classes.content}>
@@ -173,7 +169,12 @@ const WizardStep = ({
                         classes.centerAlignment
                       )}>
                       <P>Since previous update</P>
-                      <Tooltip>Insert tooltip text here.</Tooltip>
+                      <Tooltip width={215}>
+                        <P>
+                          Number of bills inside the cashbox, since the last
+                          cashbox changes.
+                        </P>
+                      </Tooltip>
                     </div>
                     <div
                       className={classnames(
@@ -185,11 +186,6 @@ const WizardStep = ({
                       </Info1>
                       <P noMargin>accepted bills</P>
                     </div>
-                    {steps[step - 1].fiatAmount && (
-                      <P noMargin className={classes.fiatTotal}>
-                        = {steps[step - 1].fiatAmount} {fiatCurrency}
-                      </P>
-                    )}
                   </div>
                 </div>
               </div>
