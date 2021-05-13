@@ -260,16 +260,13 @@ const DetailsRow = ({ it: tx }) => {
         </div>
         <div>
           {
-            <div
-              onClick={() => {
-                downloadRawLogs(tx)
-              }}>
+            <div onClick={() => downloadRawLogs(tx)}>
               <Label>Other actions</Label>
               <ActionButton
                 color="primary"
                 Icon={Download}
                 className={classes.downloadRawLogs}>
-                {'Download raw logs'}
+                Download raw logs
               </ActionButton>
             </div>
           }
