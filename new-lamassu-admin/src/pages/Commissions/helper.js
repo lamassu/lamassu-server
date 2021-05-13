@@ -10,6 +10,7 @@ import { bold } from 'src/styling/helpers'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { primaryColor, secondaryColorDark } from 'src/styling/variables'
+import { CURRENCY_MAX } from 'src/utils/constants'
 
 const ALL_MACHINES = {
   name: 'All Machines',
@@ -225,7 +226,6 @@ const overrides = (auxData, currency, auxElements) => {
 }
 
 const percentMax = 100
-const currencyMax = 9999999
 const schema = Yup.object().shape({
   cashIn: Yup.number()
     .label('Cash-in')
@@ -240,12 +240,12 @@ const schema = Yup.object().shape({
   fixedFee: Yup.number()
     .label('Fixed Fee')
     .min(0)
-    .max(currencyMax)
+    .max(CURRENCY_MAX)
     .required(),
   minimumTx: Yup.number()
     .label('Minimum Tx')
     .min(0)
-    .max(currencyMax)
+    .max(CURRENCY_MAX)
     .required()
 })
 
@@ -329,12 +329,12 @@ const getOverridesSchema = (values, rawData) => {
     fixedFee: Yup.number()
       .label('Fixed Fee')
       .min(0)
-      .max(currencyMax)
+      .max(CURRENCY_MAX)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
       .min(0)
-      .max(currencyMax)
+      .max(CURRENCY_MAX)
       .required()
   })
 }
@@ -435,12 +435,12 @@ const getListCommissionsSchema = () => {
     fixedFee: Yup.number()
       .label('Fixed Fee')
       .min(0)
-      .max(currencyMax)
+      .max(CURRENCY_MAX)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
       .min(0)
-      .max(currencyMax)
+      .max(CURRENCY_MAX)
       .required()
   })
 }

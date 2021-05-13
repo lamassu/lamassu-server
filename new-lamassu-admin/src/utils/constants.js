@@ -1,0 +1,3 @@
+const CURRENCY_MAX = 9999999
+
+export { CURRENCY_MAX }
