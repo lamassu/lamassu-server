@@ -13,7 +13,7 @@ import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
-import { P } from 'src/components/typography'
+import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
@@ -254,14 +254,14 @@ const CashCassettes = () => {
         }}
         iconClassName={classes.listViewButton}
         className={classes.tableWidth}>
-        <P className={classes.descriptions}>Cashbox reset</P>
-        <Box display="flex" alignItems="center">
+        <Box alignItems="center" justifyContent="end">
+          <Label1 className={classes.cashboxReset}>Cashbox reset</Label1>
           <Box
             display="flex"
             alignItems="center"
             justifyContent="end"
-            mr="-5px">
-            <P>{cashboxReset}</P>
+            mr="-4px">
+            <P className={classes.selection}>{cashboxReset}</P>
             <IconButton
               onClick={() => setEditingSchema(true)}
               className={classes.button}>
@@ -331,7 +331,7 @@ const CashCassettes = () => {
           />
           <P className={classes.descriptions}>
             Choose this option if you want your cash-in cashbox count to be
-            automatically when it is physically removed from the machine.
+            reset automatically when it is physically removed from the machine.
           </P>
           <RadioGroup
             name="set-manual-reset"
