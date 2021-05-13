@@ -35,8 +35,8 @@ const TX_SUMMARY = gql`
     $txId: ID!
     $deviceId: ID!
     $limit: Int
-    $from: Date
-    $until: Date
+    $from: DateTime
+    $until: DateTime
     $txClass: String
   ) {
     serverLogsCsv(limit: $limit, from: $from, until: $until)
