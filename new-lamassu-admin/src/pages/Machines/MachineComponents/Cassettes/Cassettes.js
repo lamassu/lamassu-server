@@ -90,7 +90,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       view: (value, { deviceId }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(deviceId)?.bottom}
+          denomination={getCashoutSettings(deviceId)?.top}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -109,7 +109,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
         return (
           <CashOut
             className={classes.cashbox}
-            denomination={getCashoutSettings(deviceId)?.top}
+            denomination={getCashoutSettings(deviceId)?.bottom}
             currency={{ code: fiatCurrency }}
             notes={value}
           />
