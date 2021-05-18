@@ -10,8 +10,8 @@ exports.up = function (next) {
     CREATE TABLE customers_custom_info_requests(
       customer_id UUID REFERENCES customers,
       info_request_id UUID REFERENCES custom_info_requests,
-      approved BOOLEAN,
-      customer_data JSONB,
+      approved BOOLEAN NOT NULL DEFAULT true,
+      customer_data JSONB NOT NULL,
       PRIMARY KEY(customer_id, info_request_id)
     );`
   ]

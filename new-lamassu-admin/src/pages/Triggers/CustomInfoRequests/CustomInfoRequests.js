@@ -69,19 +69,42 @@ const CustomInfoRequests = ({
   const [toBeDeleted, setToBeDeleted] = useState()
   const [toBeEdited, setToBeEdited] = useState()
   const [deleteDialog, setDeleteDialog] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const [addEntry] = useMutation(ADD_ROW, {
-    onError: () => console.log('Error while adding custom info request'),
+    onError: () => {
+      console.log('Error while adding custom info request')
+      setHasError(true)
+    },
+    onCompleted: () => {
+      setHasError(false)
+      toggleWizard()
+    },
     refetchQueries: () => ['customInfoRequests']
   })
 
   const [editEntry] = useMutation(EDIT_ROW, {
-    onError: () => console.log('Error while editing custom info request'),
+    onError: () => {
+      console.log('Error while editing custom info request')
+      setHasError(true)
+    },
+    onCompleted: () => {
+      setHasError(false)
+      setToBeEdited(null)
+      toggleWizard()
+    },
     refetchQueries: () => ['customInfoRequests']
   })
 
   const [removeEntry] = useMutation(REMOVE_ROW, {
-    onError: () => console.log('Error while removing custom info request'),
+    onError: () => {
+      console.log('Error while removing custom info request')
+      setHasError(true)
+    },
+    onCompleted: () => {
+      setDeleteDialog(false)
+      setHasError(false)
+    },
     refetchQueries: () => ['customInfoRequests']
   })
 
@@ -92,6 +115,7 @@ const CustomInfoRequests = ({
       }
     })
   }
+
   const handleSave = (values, isEditing) => {
     if (isEditing) {
       return editEntry({
@@ -198,26 +222,25 @@ const CustomInfoRequests = ({
       )}
       {showWizard && (
         <Wizard
+          hasError={hasError}
           onClose={() => {
             setToBeEdited(null)
-            return toggleWizard()
+            setHasError(false)
+            toggleWizard()
           }}
           toBeEdited={toBeEdited}
-          onSave={(...args) => {
-            setToBeEdited(null)
-            handleSave(...args)
-            return toggleWizard()
-          }}
+          onSave={(...args) => handleSave(...args)}
         />
       )}
 
       <DeleteDialog
+        errorMessage={hasError ? 'Failed to delete' : ''}
         open={deleteDialog}
-        onDismissed={() => setDeleteDialog(false)}
-        onConfirmed={() => {
-          handleDelete(toBeDeleted)
-          return setDeleteDialog(false)
+        onDismissed={() => {
+          setDeleteDialog(false)
+          setHasError(false)
         }}
+        onConfirmed={() => handleDelete(toBeDeleted)}
       />
     </>
   )

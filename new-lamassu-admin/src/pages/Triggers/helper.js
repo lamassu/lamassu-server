@@ -496,7 +496,7 @@ const Requirement = () => {
             className={classes.dropdownField}
             component={Dropdown}
             label="Available requests"
-            name="requirement.customRequirementId"
+            name="requirement.customInfoRequestId"
             options={makeCustomReqOptions()}
           />
         </div>
@@ -513,7 +513,7 @@ const requirements = {
     requirement: {
       requirement: '',
       suspensionDays: '',
-      customRequirementId: ''
+      customInfoRequestId: ''
     }
   }
 }
@@ -549,7 +549,7 @@ const RequirementInput = ({ customInfoRequests }) => {
 
   const requirement = values?.requirement?.requirement
   const customRequestId =
-    R.path(['requirement', 'customRequirementId'])(values) ?? ''
+    R.path(['requirement', 'customInfoRequestId'])(values) ?? ''
   const isSuspend = requirement === 'suspend'
   const display = customRequestId
     ? R.path(['customRequest', 'name'])(
@@ -577,14 +577,14 @@ const RequirementInput = ({ customInfoRequests }) => {
 const RequirementView = ({
   requirement,
   suspensionDays,
-  customRequirementId,
+  customInfoRequestId,
   customInfoRequests
 }) => {
   const classes = useStyles()
   const display =
     requirement === 'custom'
       ? R.path(['customRequest', 'name'])(
-          R.find(customReqIdMatches(customRequirementId))(customInfoRequests)
+          R.find(customReqIdMatches(customInfoRequestId))(customInfoRequests)
         ) ?? ''
       : getView(requirementOptions, 'display')(requirement)
   const isSuspend = requirement === 'suspend'
@@ -762,13 +762,13 @@ const fromServer = (triggers, customInfoRequests) => {
       suspensionDays,
       threshold,
       thresholdDays,
-      customRequirementId,
+      customInfoRequestId,
       ...rest
     }) => ({
       requirement: {
         requirement,
         suspensionDays,
-        customRequirementId
+        customInfoRequestId
       },
       threshold: {
         threshold,
@@ -785,7 +785,7 @@ const toServer = triggers =>
     suspensionDays: requirement.suspensionDays,
     threshold: threshold.threshold,
     thresholdDays: threshold.thresholdDays,
-    customRequirementId: requirement.customRequirementId,
+    customInfoRequestId: requirement.customInfoRequestId,
     ...rest
   }))(triggers)
 

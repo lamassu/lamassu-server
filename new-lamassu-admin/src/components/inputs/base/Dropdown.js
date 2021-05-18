@@ -4,6 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import classnames from 'classnames'
 import React from 'react'
+
 const Dropdown = ({ label, name, options, onChange, value, className }) => {
   return (
     <FormControl className={classnames(className)}>
@@ -14,13 +15,11 @@ const Dropdown = ({ label, name, options, onChange, value, className }) => {
         id={name}
         value={value}
         onChange={onChange}>
-        {options.map((option, index) => {
-          return (
-            <MenuItem key={index} value={option.value}>
-              {option.display}
-            </MenuItem>
-          )
-        })}
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option.value}>
+            {option.display}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   )

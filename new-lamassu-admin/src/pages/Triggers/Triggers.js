@@ -88,11 +88,7 @@ const Triggers = () => {
   }
 
   const toggleWizard = wizardName => forceDisable => {
-    if (forceDisable) {
-      setBlur(false)
-      return setWizard(null)
-    }
-    if (wizardType === wizardName) {
+    if (wizardType === wizardName || forceDisable) {
       setBlur(false)
       return setWizard(null)
     }

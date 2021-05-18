@@ -80,6 +80,7 @@ const CustomInfoRequestsData = ({ data }) => {
         isAuthorized: true
       }
     })
+
   const reject = it =>
     setAuthorized({
       variables: {
@@ -151,33 +152,29 @@ const CustomInfoRequestsData = ({ data }) => {
             </Th>
           </THead>
           <TBody>
-            {data.map((it, idx) => {
-              return (
-                <React.Fragment hey={idx}>
-                  <Tr>
-                    <Td size="sm" width={250}>
-                      <div className={classes.flex}>
-                        <Label1>
-                          {it.customInfoRequest.customRequest.name}
-                        </Label1>
-                        <div onClick={() => setToView(it)}>
-                          <LinkIcon className={classes.linkIcon} />
-                        </div>
+            {data.map((it, idx) => (
+              <React.Fragment key={idx}>
+                <Tr>
+                  <Td size="sm" width={250}>
+                    <div className={classes.flex}>
+                      <Label1>{it.customInfoRequest.customRequest.name}</Label1>
+                      <div onClick={() => setToView(it)}>
+                        <LinkIcon className={classes.linkIcon} />
                       </div>
-                    </Td>
-                    <Td size="sm" width={500}>
-                      <div>{JSON.stringify(it.customerData.data, null, 2)}</div>
-                    </Td>
-                    <Td size="sm" width={200}>
-                      <MainStatus statuses={[getAuthorizedStatus(it)]} />
-                    </Td>
-                    <Td size="sm" width={250}>
-                      <div className={classes.flex}>{getActionButtons(it)}</div>
-                    </Td>
-                  </Tr>
-                </React.Fragment>
-              )
-            })}
+                    </div>
+                  </Td>
+                  <Td size="sm" width={500}>
+                    <div>{JSON.stringify(it.customerData.data, null, 2)}</div>
+                  </Td>
+                  <Td size="sm" width={200}>
+                    <MainStatus statuses={[getAuthorizedStatus(it)]} />
+                  </Td>
+                  <Td size="sm" width={250}>
+                    <div className={classes.flex}>{getActionButtons(it)}</div>
+                  </Td>
+                </Tr>
+              </React.Fragment>
+            ))}
           </TBody>
         </Table>
         {toView && (

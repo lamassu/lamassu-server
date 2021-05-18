@@ -162,7 +162,7 @@ const chooseNotNull = (a, b) => {
   return a
 }
 
-const Wizard = ({ onClose, error = false, toBeEdited, onSave }) => {
+const Wizard = ({ onClose, error = false, toBeEdited, onSave, hasError }) => {
   const classes = useStyles()
   const isEditing = !R.isNil(toBeEdited)
   const [step, setStep] = useState(isEditing ? 1 : 0)
@@ -229,7 +229,7 @@ const Wizard = ({ onClose, error = false, toBeEdited, onSave }) => {
           <Form className={classes.form} id={'custom-requirement-form'}>
             <stepOptions.Component />
             <div className={classes.submit}>
-              {error && <ErrorMessage>Failed to save</ErrorMessage>}
+              {hasError && <ErrorMessage>Failed to save</ErrorMessage>}
               <Button className={classes.button} type="submit">
                 {isLastStep ? 'Save' : 'Next'}
               </Button>
