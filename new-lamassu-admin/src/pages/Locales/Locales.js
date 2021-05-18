@@ -121,8 +121,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const locale = config && !R.isEmpty(config) ? config : localeDefaults
   const localeOverrides = locale.overrides ?? []
 
-  console.log(data)
-
   const handleSave = it => {
     const newConfig = toNamespace(SCREEN_KEY)(it.locale[0])
 

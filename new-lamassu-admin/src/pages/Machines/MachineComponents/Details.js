@@ -8,7 +8,6 @@ import styles from '../Machines.styles'
 const useStyles = makeStyles(styles)
 
 const Details = ({ data, timezone }) => {
-  console.log(timezone)
   const classes = useStyles()
   return (
     <div className={classes.row}>
