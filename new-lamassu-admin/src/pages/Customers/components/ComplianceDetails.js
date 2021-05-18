@@ -48,6 +48,10 @@ const Photo = ({ show, src }) => {
   )
 }
 
+const sortByName = R.sortBy(
+  R.compose(R.toLower, R.path(['customInfoRequest', 'customRequest', 'name']))
+)
+
 const ComplianceDetails = ({ customer, updateCustomer }) => {
   const classes = useStyles({ width: imageWidth })
 
@@ -58,7 +62,11 @@ const ComplianceDetails = ({ customer, updateCustomer }) => {
     : sanctions
     ? 'Passed'
     : 'Failed'
-  const customInfoRequests = R.path(['customInfoRequests'])(customer) ?? []
+
+  const customInfoRequests = sortByName(
+    R.path(['customInfoRequests'])(customer) ?? []
+  )
+
   return (
     <>
       <div>
