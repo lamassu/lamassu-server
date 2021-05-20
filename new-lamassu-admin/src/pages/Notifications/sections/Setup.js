@@ -22,6 +22,7 @@ const sizes = {
   transactions: 184,
   compliance: 178,
   errors: 142,
+  security: 152,
   active: 263
 }
 
@@ -57,6 +58,7 @@ const Row = ({ namespace, forceDisable }) => {
       <Cell name="transactions" disabled={disabled} />
       <Cell name="compliance" disabled={disabled} />
       <Cell name="errors" disabled={disabled} />
+      <Cell name="security" disabled={disabled} />
       <Cell name="active" disabled={forceDisable} />
     </Tr>
   )
