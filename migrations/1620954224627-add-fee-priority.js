@@ -7,9 +7,8 @@ exports.up = function (next) {
   return loadLatest()
     .then(config => {
       return saveConfig(newConfig)
-        .then(() => next())
+        .then(next)
         .catch(err => {
-          console.log(err.message)
           return next(err)
         })
     })
