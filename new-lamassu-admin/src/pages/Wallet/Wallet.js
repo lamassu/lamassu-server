@@ -128,11 +128,11 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   }
 
   const radioButtonOptions = [
-    { display: '-20%', code: '-20' },
-    { display: 'Default', code: 'Default' },
-    { display: '+20%', code: '+20' },
-    { display: '+40%', code: '+40' },
-    { display: '+60%', code: '+60' }
+    { display: '+20%', code: '1.2' },
+    { display: 'Default', code: '1' },
+    { display: '-20%', code: '0.8' },
+    { display: '-40%', code: '0.6' },
+    { display: '-60%', code: '0.4' }
   ]
 
   return (
