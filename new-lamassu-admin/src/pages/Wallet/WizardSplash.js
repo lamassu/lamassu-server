@@ -8,8 +8,12 @@ import { ReactComponent as BitcoinCashLogo } from 'src/styling/logos/icon-bitcoi
 import { ReactComponent as DashLogo } from 'src/styling/logos/icon-dash-colour.svg'
 import { ReactComponent as EthereumLogo } from 'src/styling/logos/icon-ethereum-colour.svg'
 import { ReactComponent as LitecoinLogo } from 'src/styling/logos/icon-litecoin-colour.svg'
+<<<<<<< HEAD
 import { ReactComponent as TetherLogo } from 'src/styling/logos/icon-tether-colour.svg'
 import { ReactComponent as ZCashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
+=======
+import { ReactComponent as ZcashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
+>>>>>>> 8daa184b (chore: order coins alphabetically, bch logo green)
 
 const styles = {
   logo: {
