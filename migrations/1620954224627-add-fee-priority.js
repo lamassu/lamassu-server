@@ -2,7 +2,7 @@ const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   const newConfig = {
-    wallets_BTC_feeDiscount: 'Default'
+    wallets_BTC_feeDiscount: '1'
   }
   return loadLatest()
     .then(config => {
