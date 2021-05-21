@@ -8,7 +8,7 @@ import { ReactComponent as BitcoinCashLogo } from 'src/styling/logos/icon-bitcoi
 import { ReactComponent as DashLogo } from 'src/styling/logos/icon-dash-colour.svg'
 import { ReactComponent as EthereumLogo } from 'src/styling/logos/icon-ethereum-colour.svg'
 import { ReactComponent as LitecoinLogo } from 'src/styling/logos/icon-litecoin-colour.svg'
-import { ReactComponent as ZCashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
+import { ReactComponent as ZcashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
 
 const styles = {
   logo: {
@@ -49,7 +49,7 @@ const getLogo = code => {
     case 'LTC':
       return LitecoinLogo
     case 'ZEC':
-      return ZCashLogo
+      return ZcashLogo
     default:
       return null
   }
