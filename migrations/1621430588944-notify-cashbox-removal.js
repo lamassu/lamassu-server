@@ -22,9 +22,6 @@ exports.up = function (next) {
       return saveConfig(newConfig)
         .then(() => db.multi(sql, next))
         .catch(err => {
-          if (err.message === 'lamassu-server is not configured') {
-            return next()
-          }
           return next(err)
         })
     })
