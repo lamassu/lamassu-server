@@ -6,7 +6,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { TL1, TL2, Label3 } from 'src/components/typography'
@@ -51,24 +51,20 @@ const getMachineID = path => path.slice(path.lastIndexOf('/') + 1)
 
 const Machines = () => {
   const location = useLocation()
-  const [machine, setMachine] = useState({})
-  const [config, setConfig] = useState({})
   const { data, refetch } = useQuery(GET_INFO, {
     variables: {
       deviceId: getMachineID(location.pathname)
-    },
-    onCompleted: () => {
-      setMachine(data.machine)
-      setConfig(data.config)
     }
   })
   const classes = useStyles()
 
   const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
 
-  useEffect(() => {
-    if (data) setMachine(data.machine)
-  }, [data])
+  const machine = R.path(['machine'])(data) ?? {}
+  const config = R.path(['config'])(data) ?? {}
+
+  const machineName = R.path(['name'])(machine) ?? null
+  const machineID = R.path(['deviceId'])(machine) ?? null
 
   return (
     <Grid container className={classes.grid}>
@@ -82,7 +78,7 @@ const Machines = () => {
                 </Label3>
               </Link>
               <TL2 noMargin className={classes.subtitle}>
-                {machine.name}
+                {machineName}
               </TL2>
             </Breadcrumbs>
             <Overview data={machine} onActionSuccess={refetch} />
@@ -115,11 +111,11 @@ const Machines = () => {
           </div>
           <div className={classes.transactionsItem}>
             <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
-            <Transactions id={machine?.deviceId ?? null} />
+            <Transactions id={machineID} />
           </div>
           <div className={classes.detailItem}>
             <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
-            <Commissions name={'commissions'} id={machine?.deviceId ?? null} />
+            <Commissions name={'commissions'} id={machineID} />
           </div>
         </div>
       </Grid>
