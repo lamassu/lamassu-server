@@ -1,12 +1,10 @@
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-// import moment from 'moment'
 import React, { memo, useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import ActionButton from 'src/components/buttons/ActionButton'
-// // import { Status } from 'src/components/Status'
 import { ReactComponent as EditReversedIcon } from 'src/styling/icons/button/edit/white.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/button/edit/zodiac.svg'
 import { ReactComponent as RebootReversedIcon } from 'src/styling/icons/button/reboot/white.svg'
