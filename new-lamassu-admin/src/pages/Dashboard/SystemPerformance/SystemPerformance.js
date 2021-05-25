@@ -85,7 +85,7 @@ const SystemPerformance = () => {
         t.error === null &&
         moment
           .utc(t.created)
-          .utcOffset(timezone.dstOffset)
+          .utcOffset(timezone)
           .isBetween(ranges[selectedRange].right, moment())
       )
     }
@@ -93,7 +93,7 @@ const SystemPerformance = () => {
       t.error === null &&
       moment
         .utc(t.created)
-        .utcOffset(timezone.dstOffset)
+        .utcOffset(timezone)
         .isBetween(ranges[selectedRange].left, ranges[selectedRange].right)
     )
   }
