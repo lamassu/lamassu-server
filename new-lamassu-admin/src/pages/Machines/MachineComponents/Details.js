@@ -15,11 +15,7 @@ const Details = ({ data, timezone }) => {
         <Label3 className={classes.label3}>Paired at</Label3>
         <P>
           {data.pairedAt
-            ? formatDate(
-                data.pairedAt,
-                timezone.dstOffset,
-                'YYYY-MM-DD HH:mm:ss'
-              )
+            ? formatDate(data.pairedAt, timezone, 'YYYY-MM-DD HH:mm:ss')
             : ''}
         </P>
       </div>

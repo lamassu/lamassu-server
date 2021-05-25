@@ -74,10 +74,12 @@ const getTzLabels = timezones =>
     getFinalTimezones(timezones)
   )
 
-const formatDate = (date, offset, format) =>
-  moment
+const formatDate = (date, timezoneCode, format) => {
+  const dstOffset = timezoneCode.split(':')[1]
+  return moment
     .utc(date)
-    .utcOffset(offset)
+    .utcOffset(parseInt(dstOffset))
     .format(format)
+}
 
 export { getTzLabels, formatDate }
