@@ -57,8 +57,18 @@ const SHOW_ALL = { code: 'SHOW_ALL', display: 'Show all' }
 const NUM_LOG_RESULTS = 500
 
 const GET_CSV = gql`
-  query ServerData($limit: Int, $from: DateTime, $until: DateTime) {
-    serverLogsCsv(limit: $limit, from: $from, until: $until)
+  query ServerData(
+    $limit: Int
+    $from: DateTime
+    $until: DateTime
+    $timezone: String
+  ) {
+    serverLogsCsv(
+      limit: $limit
+      from: $from
+      until: $until
+      timezone: $timezone
+    )
   }
 `
 
@@ -138,8 +148,10 @@ const Logs = () => {
                 title="Download logs"
                 name="server-logs"
                 query={GET_CSV}
+                args={{ timezone }}
                 logs={data.serverLogs}
                 getLogs={logs => R.path(['serverLogsCsv'])(logs)}
+                timezone={timezone}
               />
               <Info3>{saveMessage}</Info3>
             </div>

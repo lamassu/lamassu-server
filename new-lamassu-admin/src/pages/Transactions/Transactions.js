@@ -35,8 +35,18 @@ const GET_DATA = gql`
 `
 
 const GET_TRANSACTIONS_CSV = gql`
-  query transactions($limit: Int, $from: DateTime, $until: DateTime) {
-    transactionsCsv(limit: $limit, from: $from, until: $until)
+  query transactions(
+    $limit: Int
+    $from: DateTime
+    $until: DateTime
+    $timezone: String
+  ) {
+    transactionsCsv(
+      limit: $limit
+      from: $from
+      until: $until
+      timezone: $timezone
+    )
   }
 `
 
@@ -271,7 +281,9 @@ const Transactions = () => {
                 title="Download logs"
                 name="transactions"
                 query={GET_TRANSACTIONS_CSV}
+                args={{ timezone }}
                 getLogs={logs => R.path(['transactionsCsv'])(logs)}
+                timezone={timezone}
               />
             </div>
           )}
