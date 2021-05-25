@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
 const authentication = require('../lib/new-admin/graphql/modules/authentication')
 const options = require('../lib/options')
 
@@ -29,20 +30,22 @@ if (role !== 'user' && role !== 'superuser') {
   process.exit(2)
 }
 
-authentication.createRegisterToken(name, role).then(token => {
-  if (!token) {
-    console.log(`A user named ${name} already exists!`)
-    process.exit(2)
-  }
+asyncLocalStorage.run(defaultStore(), () => {
+  authentication.createRegisterToken(name, role).then(token => {
+    if (!token) {
+      console.log(`A user named ${name} already exists!`)
+      process.exit(2)
+    }
 
-  if (domain === 'localhost') {
-    console.log(`https://${domain}:3001/register?t=${token.token}`)
-  } else {
-    console.log(`https://${domain}/register?t=${token.token}`)
-  }
+    if (domain === 'localhost') {
+      console.log(`https://${domain}:3001/register?t=${token.token}`)
+    } else {
+      console.log(`https://${domain}/register?t=${token.token}`)
+    }
 
-  process.exit(0)
-}).catch(err => {
-  console.log('Error: %s', err)
-  process.exit(3)
+    process.exit(0)
+  }).catch(err => {
+    console.log('Error: %s', err)
+    process.exit(3)
+  })
 })
