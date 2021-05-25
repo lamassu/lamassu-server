@@ -153,8 +153,7 @@ const Transactions = () => {
     {
       header: 'Date (UTC)',
       view: it =>
-        timezone &&
-        formatDate(it.created, timezone.dstOffset, 'YYYY-MM-DD HH:mm:ss'),
+        timezone && formatDate(it.created, timezone, 'YYYY-MM-DD HH:mm:ss'),
       textAlign: 'right',
       size: 'sm',
       width: 195

@@ -189,7 +189,7 @@ const Logs = () => {
                         {timezone &&
                           formatDate(
                             log.timestamp,
-                            timezone.dstOffset,
+                            timezone,
                             'YYYY-MM-DD HH:mm'
                           )}
                       </TableCell>
