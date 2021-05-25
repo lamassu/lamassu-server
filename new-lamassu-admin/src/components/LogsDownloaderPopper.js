@@ -134,10 +134,7 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
   const [range, setRange] = useState({ from: null, until: null })
   const [anchorEl, setAnchorEl] = useState(null)
   const [fetchLogs] = useLazyQuery(query, {
-    onCompleted: data => {
-      console.log(data)
-      return createLogsFile(getLogs(data), range)
-    }
+    onCompleted: data => createLogsFile(getLogs(data), range)
   })
 
   const classes = useStyles()
