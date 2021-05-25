@@ -11,6 +11,7 @@ import { ReactComponent as Arrow } from 'src/styling/icons/arrow/download_logs.s
 import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { primaryColor, offColor, zircon } from 'src/styling/variables'
+import { formatDate } from 'src/utils/timezones'
 
 import Popper from './Popper'
 import DateRangePicker from './date-range-picker/DateRangePicker'
@@ -129,7 +130,14 @@ const useStyles = makeStyles(styles)
 const ALL = 'all'
 const RANGE = 'range'
 
-const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
+const LogsDownloaderPopover = ({
+  name,
+  query,
+  args,
+  title,
+  getLogs,
+  timezone
+}) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
   const [range, setRange] = useState({ from: null, until: null })
   const [anchorEl, setAnchorEl] = useState(null)
@@ -183,7 +191,7 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
 
   const createLogsFile = (logs, range) => {
     const formatDateFile = date => {
-      return moment(date).format('YYYY-MM-DD_HH-mm')
+      return formatDate(date, timezone, 'YYYY-MM-DD_HH-mm')
     }
 
     const blob = new window.Blob([logs], {

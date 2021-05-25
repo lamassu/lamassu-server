@@ -39,12 +39,14 @@ const GET_MACHINE_LOGS_CSV = gql`
     $limit: Int
     $from: DateTime
     $until: DateTime
+    $timezone: String
   ) {
     machineLogsCsv(
       deviceId: $deviceId
       limit: $limit
       from: $from
       until: $until
+      timezone: $timezone
     )
   }
 `
@@ -114,8 +116,9 @@ const Logs = () => {
                 title="Download logs"
                 name={selected.name}
                 query={GET_MACHINE_LOGS_CSV}
-                args={{ deviceId }}
+                args={{ deviceId, timezone }}
                 getLogs={logs => R.path(['machineLogsCsv'])(logs)}
+                timezone={timezone}
               />
               <Info3>{saveMessage}</Info3>
             </div>
