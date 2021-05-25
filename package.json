@@ -18,6 +18,7 @@
     "bitcore-lib-cash": "git+https://github.com/bitpay/bitcore-lib.git#cash",
     "bitgo": "4.47.0",
     "body-parser": "^1.15.1",
+    "ccxt": "^1.50.35",
     "coinbase": "^2.0.6",
     "compression": "^1.7.4",
     "connect-pg-simple": "^6.2.1",
