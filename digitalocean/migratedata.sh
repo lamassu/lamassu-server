@@ -122,13 +122,3 @@ fi
 
 
 echo "Migration completed!"
-
-
-
-
-
-
-
-
-
-
