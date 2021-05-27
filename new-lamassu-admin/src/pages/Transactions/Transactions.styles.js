@@ -92,6 +92,16 @@ const mainStyles = {
   },
   customerLinkIcon: {
     marginLeft: 2
+  },
+  flexRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  machineRedirectContainer: {
+    marginLeft: 10,
+    paddingLeft: 5,
+    paddingRight: 5
   }
 }
 
