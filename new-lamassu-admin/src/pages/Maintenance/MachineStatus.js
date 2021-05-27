@@ -4,12 +4,13 @@ import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import { MainStatus } from 'src/components/Status'
 import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
 import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
+import { ReactComponent as MachineRedirectIcon } from 'src/styling/icons/month arrows/right.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/status/pumpkin.svg'
 import { ReactComponent as ErrorIcon } from 'src/styling/icons/status/tomato.svg'
 
@@ -41,6 +42,7 @@ const useStyles = makeStyles(mainStyles)
 
 const MachineStatus = () => {
   const classes = useStyles()
+  const history = useHistory()
   const { state } = useLocation()
   const addedMachineId = state?.id
   const { data: machinesResponse, refetch, loading } = useQuery(GET_MACHINES)
@@ -51,7 +53,20 @@ const MachineStatus = () => {
       width: 250,
       size: 'sm',
       textAlign: 'left',
-      view: m => m.name
+      view: m => (
+        <div className={classes.flexRow}>
+          {m.name}
+          <div
+            className={classes.machineRedirectContainer}
+            onClick={() => {
+              history.push(`/machines/${m.deviceId}`, {
+                selectedMachine: m.name
+              })
+            }}>
+            <MachineRedirectIcon />
+          </div>
+        </div>
+      )
     },
     {
       header: 'Status',
