@@ -168,6 +168,7 @@ const LogsDownloaderPopover = ({ name, query, args, title, getLogs }) => {
 
     if (!range || !range.from) return
     if (range.from && !range.until) range.until = moment()
+    if (moment(range.from).isSame(range.until, 'day')) range.until = moment()
 
     if (selectedRadio === RANGE) {
       fetchLogs({
