@@ -17,6 +17,7 @@ import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone
 import { ReactComponent as PhoneIdIcon } from 'src/styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as CamIdInverseIcon } from 'src/styling/icons/ID/photo/white.svg'
 import { ReactComponent as CamIdIcon } from 'src/styling/icons/ID/photo/zodiac.svg'
+import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -259,17 +260,15 @@ const DetailsRow = ({ it: tx }) => {
           )}
         </div>
         <div>
-          {
-            <div onClick={() => downloadRawLogs(tx)}>
-              <Label>Other actions</Label>
-              <ActionButton
-                color="primary"
-                Icon={Download}
-                className={classes.downloadRawLogs}>
-                Download raw logs
-              </ActionButton>
-            </div>
-          }
+          <Label>Other actions</Label>
+          <ActionButton
+            color="primary"
+            Icon={Download}
+            InverseIcon={DownloadInverseIcon}
+            className={classes.downloadRawLogs}
+            onClick={() => downloadRawLogs(tx)}>
+            Download raw logs
+          </ActionButton>
         </div>
       </div>
     </div>
