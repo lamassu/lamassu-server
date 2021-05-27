@@ -77,6 +77,10 @@ export default {
   downloadRawLogs: {
     width: 180
   },
+  cancelTransaction: {
+    width: 160,
+    marginLeft: 8
+  },
   status: {
     width: 230
   },
@@ -103,5 +107,9 @@ export default {
   },
   chipLabel: {
     color: white
+  },
+  otherActionsGroup: {
+    display: 'flex',
+    flexDirection: 'row'
   }
 }
