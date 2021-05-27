@@ -72,9 +72,3 @@ echo
 echo "New block storage volume successfully installed!"
 echo "Can be accessed at: /mnt/lamassu-data"
 echo
-
-
-
-
-
-
