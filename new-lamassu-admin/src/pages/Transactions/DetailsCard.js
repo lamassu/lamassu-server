@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import FileSaver from 'file-saver'
@@ -18,6 +18,8 @@ import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone
 import { ReactComponent as PhoneIdIcon } from 'src/styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as CamIdInverseIcon } from 'src/styling/icons/ID/photo/white.svg'
 import { ReactComponent as CamIdIcon } from 'src/styling/icons/ID/photo/zodiac.svg'
+import { ReactComponent as CancelInverseIcon } from 'src/styling/icons/button/cancel/white.svg'
+import { ReactComponent as CancelIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
 import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/download/white.svg'
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -59,6 +61,14 @@ const TX_SUMMARY = gql`
   }
 `
 
+const CANCEL_TRANSACTION = gql`
+  mutation cancelCashOutTransaction($id: ID!) {
+    cancelCashOutTransaction(id: $id) {
+      id
+    }
+  }
+`
+
 const formatAddress = (cryptoCode = '', address = '') =>
   coinUtils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
@@ -74,6 +84,11 @@ const DetailsRow = ({ it: tx, timezone }) => {
 
   const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
     onCompleted: data => createCsv(data)
+  })
+
+  const [cancelCashOutTransaction] = useMutation(CANCEL_TRANSACTION, {
+    onError: () => console.error('Error cancelling transaction'),
+    refetchQueries: () => ['transactions']
   })
 
   const fiat = Number.parseFloat(tx.fiat)
@@ -270,14 +285,32 @@ const DetailsRow = ({ it: tx, timezone }) => {
         </div>
         <div>
           <Label>Other actions</Label>
-          <ActionButton
-            color="primary"
-            Icon={Download}
-            InverseIcon={DownloadInverseIcon}
-            className={classes.downloadRawLogs}
-            onClick={() => downloadRawLogs(tx, timezone)}>
-            Download raw logs
-          </ActionButton>
+          <div className={classes.otherActionsGroup}>
+            <ActionButton
+              color="primary"
+              Icon={Download}
+              InverseIcon={DownloadInverseIcon}
+              className={classes.downloadRawLogs}
+              onClick={() => downloadRawLogs(tx, timezone)}>
+              Download raw logs
+            </ActionButton>
+            {tx.txClass === 'cashOut' && (
+              <ActionButton
+                color="primary"
+                Icon={CancelIcon}
+                InverseIcon={CancelInverseIcon}
+                className={classes.cancelTransaction}
+                onClick={() =>
+                  cancelCashOutTransaction({
+                    variables: {
+                      id: tx.id
+                    }
+                  })
+                }>
+                Cancel transaction
+              </ActionButton>
+            )}
+          </div>
         </div>
       </div>
     </div>

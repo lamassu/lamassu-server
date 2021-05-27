@@ -1,4 +1,5 @@
 const getCashOutStatus = it => {
+  if (it.hasError === 'Operator cancel') return 'Cancelled'
   if (it.hasError) return 'Error'
   if (it.dispense) return 'Success'
   if (it.expired) return 'Expired'
