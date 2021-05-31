@@ -17,13 +17,16 @@ const TitleSection = ({
   error,
   labels,
   button,
-  children
+  children,
+  appendix,
+  appendixClassName
 }) => {
   const classes = useStyles()
   return (
     <div className={classnames(classes.titleWrapper, className)}>
       <div className={classes.titleAndButtonsContainer}>
         <Title>{title}</Title>
+        {appendix && <div className={appendixClassName}>{appendix}</div>}
         {error && (
           <ErrorMessage className={classes.error}>Failed to save</ErrorMessage>
         )}
