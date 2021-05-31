@@ -4,7 +4,6 @@ import * as R from 'ramda'
 import React from 'react'
 
 import { MainStatus } from 'src/components/Status'
-import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -74,13 +73,6 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
 
   return (
     <>
-      <TitleSection
-        title="Customers"
-        labels={[
-          { label: 'Cash-in', icon: <TxInIcon /> },
-          { label: 'Cash-out', icon: <TxOutIcon /> }
-        ]}
-      />
       <DataTable
         loading={loading}
         emptyText="No customers so far"
