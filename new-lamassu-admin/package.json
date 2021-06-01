@@ -26,6 +26,7 @@
     "libphonenumber-js": "^1.7.50",
     "match-sorter": "^4.2.0",
     "moment": "2.24.0",
+    "pretty-ms": "^2.1.0",
     "qrcode.react": "0.9.3",
     "ramda": "^0.26.1",
     "react": "^16.12.0",
