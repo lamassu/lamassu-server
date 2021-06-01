@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import Chip from 'src/components/Chip'
@@ -21,7 +21,7 @@ import { formatDate } from 'src/utils/timezones'
 
 import DetailsRow from './DetailsCard'
 import { mainStyles, chipStyles } from './Transactions.styles'
-import { getStatus /*, getStatusProperties */ } from './helper'
+import { getStatus } from './helper'
 
 const useStyles = makeStyles(mainStyles)
 const useChipStyles = makeStyles(chipStyles)
@@ -116,15 +116,21 @@ const Transactions = () => {
   )
   const [filteredTransactions, setFilteredTransactions] = useState([])
   const [variables, setVariables] = useState({ limit: NUM_LOG_RESULTS })
-  const { data: txResponse, loading: loadingTransactions, refetch } = useQuery(
-    GET_TRANSACTIONS,
-    {
-      variables,
-      onCompleted: data =>
-        setFilteredTransactions(R.path(['transactions'])(data)),
-      pollInterval: 10000
-    }
-  )
+  const {
+    data: txResponse,
+    loading: loadingTransactions,
+    refetch,
+    startPolling,
+    stopPolling
+  } = useQuery(GET_TRANSACTIONS, {
+    variables,
+    onCompleted: data => setFilteredTransactions(R.path(['transactions'])(data))
+  })
+
+  useEffect(() => {
+    startPolling(10000)
+    return stopPolling
+  })
 
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)

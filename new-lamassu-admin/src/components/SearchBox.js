@@ -3,7 +3,7 @@ import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import MAutocomplete from '@material-ui/lab/Autocomplete'
 import classnames from 'classnames'
-import React, { memo, useState, useEffect } from 'react'
+import React, { memo, useState } from 'react'
 
 import { P } from 'src/components/typography'
 import { ReactComponent as SearchIcon } from 'src/styling/icons/circle buttons/search/zodiac.svg'
@@ -32,9 +32,6 @@ const SearchBox = memo(
     }
 
     const innerOnChange = filters => onChange(filters)
-
-    // eslint-disable-next-line
-    useEffect(() => innerOnChange(filters), [filters])
 
     return (
       <MAutocomplete
