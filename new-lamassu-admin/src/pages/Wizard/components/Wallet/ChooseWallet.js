@@ -14,6 +14,7 @@ import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/co
 
 import styles from './Shared.styles'
 import { getItems } from './getItems'
+import cryptx from "../../../Services/schemas/cryptx";
 
 const useStyles = makeStyles(styles)
 
@@ -132,6 +133,28 @@ const ChooseWallet = ({ data: currentData, addData }) => {
             save={saveWallet(selected)}
             elements={bitgo(coin).elements}
             validationSchema={bitgo(coin).validationSchema}
+            buttonLabel={'Continue'}
+            buttonClass={classes.formButton}
+          />
+        </>
+      )}
+      {selected === 'cryptx' && (
+        <>
+          <div className={classes.infoMessage}>
+            <WarningIcon />
+            <Info3>
+              Make sure you set up a CryptX wallet to enter the necessary
+              information below.
+            </Info3>
+          </div>
+          <H4 noMargin>Enter wallet information</H4>
+          <FormRenderer
+            value={accounts.cryptx}
+            save={saveWallet(selected)}
+            elements={schema.cryptx.elements}
+            validationSchema={schema.cryptx.getValidationSchema(
+                accounts.cryptx
+            )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}
           />
