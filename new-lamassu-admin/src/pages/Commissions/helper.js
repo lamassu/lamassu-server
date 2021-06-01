@@ -385,7 +385,7 @@ const createCommissions = (cryptoCode, deviceId, isDefault, config) => {
 }
 
 const getCommissions = (cryptoCode, deviceId, config) => {
-  const overrides = R.prop('overrides', config)
+  const overrides = R.prop('overrides', config) ?? []
 
   if (!overrides && R.isEmpty(overrides)) {
     return createCommissions(cryptoCode, deviceId, true, config)
