@@ -59,9 +59,7 @@ const MachineStatus = () => {
           <div
             className={classes.machineRedirectContainer}
             onClick={() => {
-              history.push(`/machines/${m.deviceId}`, {
-                selectedMachine: m.name
-              })
+              history.push(`/machines/${m.deviceId}`)
             }}>
             <MachineRedirectIcon />
           </div>
