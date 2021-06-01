@@ -101,7 +101,6 @@
     "bip39": "./bin/bip39",
     "lamassu-backup-pg": "./bin/lamassu-backup-pg",
     "lamassu-mnemonic": "./bin/lamassu-mnemonic",
-    "lamassu-cancel": "./bin/lamassu-cancel",
     "lamassu-coins": "./bin/lamassu-coins",
     "lamassu-ofac-update": "./bin/lamassu-ofac-update",
     "lamassu-send-coins": "./bin/lamassu-send-coins",
