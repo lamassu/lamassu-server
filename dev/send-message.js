@@ -1,6 +1,6 @@
 require('es6-promise').polyfill()
 
-var config = require('../lib/settings-loader')
+var config = require('../lib/new-settings-loader')
 var sms = require('../lib/sms')
 
 var rand = Math.floor(Math.random() * 1e6)

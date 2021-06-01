@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="icon/action/delete/enabled" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <line x1="9" y1="9" x2="9" y2="18" id="Stroke-1" stroke="#1B2559" stroke-width="2"></line>
+        <line x1="13" y1="9" x2="13" y2="18" id="Stroke-2" stroke="#1B2559" stroke-width="2"></line>
+        <polyline id="Stroke-3" stroke="#1B2559" stroke-width="2" stroke-linejoin="round" points="3 6 5 21 17 21 19 6"></polyline>
+        <line x1="1" y1="5" x2="21" y2="5" id="Stroke-5" stroke="#1B2559" stroke-width="2"></line>
+        <path d="M14,4 C14,2.343 12.657,1 11,1 C9.343,1 8,2.343 8,4" id="Stroke-7" stroke="#1B2559" stroke-width="2"></path>
+    </g>
+</svg>

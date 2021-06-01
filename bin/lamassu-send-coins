@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const settingsLoader = require('../lib/settings-loader')
-const configManager = require('../lib/config-manager')
+const settingsLoader = require('../lib/new-settings-loader')
+const configManager = require('../lib/new-config-manager')
 const wallet = require('../lib/wallet')
 const coinUtils = require('../lib/coin-utils')
 const BN = require('../lib/bn')
@@ -40,8 +40,7 @@ console.log('Loading ticker...')
 
 settingsLoader.loadLatest()
   .then(settings => {
-    const config = configManager.unscoped(settings.config)
-    const fiatCode = config.fiatCurrency
+    const fiatCode = configManager.getGlobalLocale(settings.config).fiatCurrency
 
     return wallet.isStrictAddress(settings, cryptoCode, toAddress)
       .then(isValid => {

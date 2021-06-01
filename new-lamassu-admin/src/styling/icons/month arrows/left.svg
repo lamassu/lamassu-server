@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="10" cy="10" r="10"></circle>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="pop-up/action/download-logs/date-range-copy-2" transform="translate(-20.000000, -187.000000)">
+            <g id="icon/sf-contain-b-copy-5" transform="translate(30.000000, 197.000000) rotate(-270.000000) translate(-30.000000, -197.000000) translate(20.000000, 187.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#EBEFFF" fill-rule="nonzero" xlink:href="#path-1"></use>
+                <g id="icon/sf-small/wizzard" mask="url(#mask-2)" stroke-linecap="round" stroke-linejoin="round">
+                    <g transform="translate(6.666667, 6.000000)" id="Group">
+                        <g>
+                            <polyline id="Path-3" stroke="#1B2559" stroke-width="2" points="0 4.83333333 3.33333333 8.16666667 6.66666667 4.83333333"></polyline>
+                            <line x1="3.33333333" y1="0.25" x2="3.33333333" y2="6.5" id="Path-4" stroke="#1B2559" stroke-width="2"></line>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

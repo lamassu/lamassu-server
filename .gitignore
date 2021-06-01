@@ -32,7 +32,11 @@ scratch/
 seeds/
 mnemonics/
 certs/
+test/stress/machines
+test/stress/config.json
 lamassu.json
 
 terraform.*
 .terraform
+
+db.json

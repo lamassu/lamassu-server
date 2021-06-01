@@ -1,0 +1,136 @@
+{
+  "config": {
+    "triggers": [
+      {
+        "id": "ce8f240f-7235-4948-b833-4af56ccfa90f",
+        "direction": "cash-out",
+        "triggerType": "volume",
+        "threshold": "12",
+        "requirement": "block"
+      }
+    ],
+    "denominations_9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a_bottom": 12,
+    "denominations_9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a_top": 12,
+    "denominations_9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a_active": true,
+    "locale_country": "US",
+    "locale_fiatCurrency": "USD",
+    "locale_languages": [
+      "en-US"
+    ],
+    "locale_cryptoCurrencies": [
+      "BTC"
+    ],
+    "commissions_minimumTx": 12,
+    "commissions_fixedFee": 12,
+    "commissions_cashOut": 12,
+    "commissions_cashIn": 12,
+    "operatorInfo_companyNumber": "123",
+    "operatorInfo_website": "123",
+    "operatorInfo_email": "123@gmail.com",
+    "operatorInfo_phone": "123",
+    "operatorInfo_name": "123",
+    "operatorInfo_active": true,
+    "receiptPrinting": {
+      "active": "on",
+      "operatorWebsite": true,
+      "operatorEmail": false,
+      "operatorPhone": false,
+      "companyNumber": false,
+      "machineLocation": true,
+      "customerNameOrPhoneNumber": true,
+      "exchangeRate": false,
+      "addressQRCode": true
+    },
+    "coinAtmRadar_active": true,
+    "coinAtmRadar_commissions": true,
+    "coinAtmRadar_limitsAndVerification": true,
+    "termsConditions_active": true,
+    "termsConditions_title": "Rasdkl",
+    "termsConditions_text": "123oh12",
+    "termsConditions_acceptButtonText": "op1i2jh3po",
+    "termsConditions_cancelButtonText": "12341",
+    "wallets_BTC_active": true,
+    "wallets_BTC_ticker": "mock-ticker",
+    "wallets_BTC_wallet": "mock-wallet",
+    "wallets_BTC_exchange": "mock-exchange",
+    "wallets_BTC_zeroConf": "mock-zero-conf",
+    "commissions_overrides": [
+      {
+        "minimumTx": 33,
+        "fixedFee": 33,
+        "cashOut": 33,
+        "cashIn": 33,
+        "cryptoCurrencies": [
+          "BTC"
+        ],
+        "machine": "9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a",
+        "id": "423a32a9-0bbb-4997-b15a-c6db12334195",
+        "country": "",
+        "languages": []
+      }
+    ],
+    "cashOut_9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a_bottom": 33,
+    "cashOut_9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a_top": 12,
+    "cashOut_9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a_active": true,
+    "notifications_email_active": true,
+    "notifications_sms_active": true,
+    "notifications_sms_transactions": true,
+    "notifications_email_compliance": true,
+    "notifications_highValueTransaction": 12,
+    "notifications_fiatBalanceCassette2": 42,
+    "notifications_fiatBalanceCassette1": 32,
+    "notifications_fiatBalanceOverrides": [
+      {
+        "cassette2": 67,
+        "cassette1": 556,
+        "machine": "9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a",
+        "id": "18114e5b-e6e6-4e0e-a7bc-2cc4ad605d12"
+      }
+    ],
+    "notifications_cryptoLowBalance": 23,
+    "notifications_cryptoHighBalance": 56,
+    "notifications_cryptoBalanceOverrides": [
+      {
+        "highBalance": 66,
+        "lowBalance": 545,
+        "cryptoCurrency": "ETH",
+        "id": "b59e4310-bca1-435c-a89e-b861a7de9b93"
+      },
+      {
+        "highBalance": 23,
+        "lowBalance": 51,
+        "cryptoCurrency": "DASH",
+        "id": "a1f5ac7a-4b05-4ec7-8744-4d77c0555f5b"
+      }
+    ],
+    "locale_overrides": [
+      {
+        "id": "f0f9248d-96da-4db5-b592-625251da0203",
+        "machine": "9682f15e40539e40d3e4050a993cf74e3e157d6d9b7866fb1ebd5206024ae68a",
+        "country": "US",
+        "languages": [
+          "en-CA"
+        ],
+        "cryptoCurrencies": [
+          "ETH"
+        ]
+      }
+    ],
+    "receipt_active": "on",
+    "receipt_operatorWebsite": false,
+    "receipt_operatorEmail": false,
+    "receipt_operatorPhone": false,
+    "receipt_companyNumber": true,
+    "receipt_machineLocation": false,
+    "receipt_customerNameOrPhoneNumber": true,
+    "receipt_exchangeRate": false,
+    "receipt_addressQRCode": false,
+    "notifications_sms_balance": true,
+    "notifications_sms_compliance": true,
+    "notifications_sms_errors": true,
+    "notifications_email_errors": true,
+    "notifications_email_transactions": true,
+    "notifications_email_balance": true
+  },
+  "accounts": {}
+}

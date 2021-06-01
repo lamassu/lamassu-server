@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="icon/button/upload/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="icon/sf-small/wizzard" transform="translate(0.000000, 1.000000)" stroke="#FFFFFF">
+            <g id="Group" transform="translate(6.100000, 4.000000) scale(1, -1) translate(-6.100000, -4.000000) translate(3.600000, 0.000000)">
+                <polyline id="Path-3" points="-3.64153152e-13 5.4 2.4 7.8 4.8 5.4"></polyline>
+                <line x1="2.4" y1="0.5" x2="2.4" y2="7.4" id="Path-4"></line>
+            </g>
+            <path d="M0,9 L0,9 C0,9.9942 0.8058,10.8 1.8,10.8 L10.2,10.8 C11.1942,10.8 12,9.9942 12,9" id="Stroke-1"></path>
+        </g>
+    </g>
+</svg>

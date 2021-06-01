@@ -8,13 +8,9 @@ const customer = {
   idCardData: {firstName, lastName, dateOfBirth}
 }
 
-const config = {
-  sanctionsVerificationActive: true
-}
-
 const deviceId = 'test-device'
 
 ofac.load()
-  .then(() => compliance.validationPatch(deviceId, config, customer))
+  .then(() => compliance.validationPatch(deviceId, true, customer))
   .then(console.log)
   .catch(err => console.log(err))
