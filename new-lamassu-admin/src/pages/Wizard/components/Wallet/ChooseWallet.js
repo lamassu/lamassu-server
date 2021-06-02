@@ -12,9 +12,10 @@ import schema from 'src/pages/Services/schemas'
 import bitgo from 'src/pages/Services/schemas/singlebitgo'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
+import cryptx from '../../../Services/schemas/cryptx'
+
 import styles from './Shared.styles'
 import { getItems } from './getItems'
-import cryptx from "../../../Services/schemas/cryptx";
 
 const useStyles = makeStyles(styles)
 
@@ -40,7 +41,7 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it => R.contains(it)(['infura', 'bitgo'])
+const isConfigurable = it => R.contains(it)(['infura', 'cryptx', 'bitgo'])
 
 const isLocalHosted = it =>
   R.contains(it)([
@@ -153,7 +154,7 @@ const ChooseWallet = ({ data: currentData, addData }) => {
             save={saveWallet(selected)}
             elements={schema.cryptx.elements}
             validationSchema={schema.cryptx.getValidationSchema(
-                accounts.cryptx
+              accounts.cryptx
             )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}
