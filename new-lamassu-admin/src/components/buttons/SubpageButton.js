@@ -9,15 +9,21 @@ import subpageButtonStyles from './SubpageButton.styles'
 const useStyles = makeStyles(subpageButtonStyles)
 
 const SubpageButton = memo(
-  ({ className, Icon, InverseIcon, toggle, children }) => {
+  ({
+    className,
+    Icon,
+    InverseIcon,
+    toggle,
+    forceDisable = false,
+    children
+  }) => {
     const [active, setActive] = useState(false)
-
+    const isActive = forceDisable ? false : active
     const classes = useStyles()
-
     const classNames = {
       [classes.button]: true,
-      [classes.normalButton]: !active,
-      [classes.activeButton]: active
+      [classes.normalButton]: !isActive,
+      [classes.activeButton]: isActive
     }
 
     const normalButton = <Icon className={classes.buttonIcon} />
@@ -41,7 +47,8 @@ const SubpageButton = memo(
     )
 
     const innerToggle = () => {
-      const newActiveState = !active
+      forceDisable = false
+      const newActiveState = !isActive
       toggle(newActiveState)
       setActive(newActiveState)
     }
@@ -50,7 +57,7 @@ const SubpageButton = memo(
       <button
         className={classnames(classNames, className)}
         onClick={innerToggle}>
-        {active ? activeButton : normalButton}
+        {isActive ? activeButton : normalButton}
       </button>
     )
   }

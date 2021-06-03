@@ -16,7 +16,7 @@ const TitleSection = ({
   title,
   error,
   labels,
-  button,
+  buttons = [],
   children
 }) => {
   const classes = useStyles()
@@ -27,14 +27,20 @@ const TitleSection = ({
         {error && (
           <ErrorMessage className={classes.error}>Failed to save</ErrorMessage>
         )}
-        {button && (
-          <SubpageButton
-            className={classes.subpageButton}
-            Icon={button.icon}
-            InverseIcon={button.inverseIcon}
-            toggle={button.toggle}>
-            <Info1 className={classes.buttonText}>{button.text}</Info1>
-          </SubpageButton>
+        {buttons.length > 0 && (
+          <>
+            {buttons.map((button, idx) => (
+              <SubpageButton
+                key={idx}
+                className={classes.subpageButton}
+                Icon={button.icon}
+                InverseIcon={button.inverseIcon}
+                toggle={button.toggle}
+                forceDisable={button.forceDisable}>
+                <Info1 className={classes.buttonText}>{button.text}</Info1>
+              </SubpageButton>
+            ))}
+          </>
         )}
       </div>
       <Box display="flex" flexDirection="row">

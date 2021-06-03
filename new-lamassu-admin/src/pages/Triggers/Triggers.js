@@ -16,8 +16,7 @@ import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle 
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
-import CustomInfoRequests from '../CustomInfoRequests'
-
+import CustomInfoRequests from './CustomInfoRequests'
 import TriggerView from './TriggerView'
 import styles from './Triggers.styles'
 import AdvancedTriggers from './components/AdvancedTriggers'
@@ -48,12 +47,11 @@ const GET_CUSTOM_REQUESTS = gql`
 
 const Triggers = () => {
   const classes = useStyles()
-  const [advancedSettings, setAdvancedSettings] = useState(false)
   const [wizardType, setWizard] = useState(false)
-  const [showCustomInfoRequests, setShowCustomInfoRequests] = useState(false)
   const { data, loading } = useQuery(GET_CONFIG)
   const { data: customInfoReqData } = useQuery(GET_CUSTOM_REQUESTS)
   const [error, setError] = useState(null)
+  const [subMenu, setSubMenu] = useState(false)
 
   const customInfoRequests =
     R.path(['customInfoRequests'])(customInfoReqData) ?? []
@@ -78,7 +76,7 @@ const Triggers = () => {
   }
 
   const titleSectionWidth = {
-    [classes.tableWidth]: !showCustomInfoRequests
+    [classes.tableWidth]: !subMenu === 'customInfoRequests'
   }
 
   const setBlur = shouldBlur => {
@@ -100,20 +98,28 @@ const Triggers = () => {
     <>
       <TitleSection
         title="Compliance Triggers"
-        button={{
-          text: 'Advanced settings',
-          icon: SettingsIcon,
-          inverseIcon: ReverseSettingsIcon,
-          toggle: setAdvancedSettings
-        }}
-        button={{
-          text: 'Custom info requests',
-          icon: CustomInfoIcon,
-          inverseIcon: ReverseCustomInfoIcon,
-          toggle: setShowCustomInfoRequests
-        }}
+        buttons={[
+          {
+            text: 'Advanced settings',
+            icon: SettingsIcon,
+            inverseIcon: ReverseSettingsIcon,
+            forceDisable: !(subMenu === 'advancedSettings'),
+            toggle: show => {
+              setSubMenu(show ? 'advancedSettings' : false)
+            }
+          },
+          {
+            text: 'Custom info requests',
+            icon: CustomInfoIcon,
+            inverseIcon: ReverseCustomInfoIcon,
+            forceDisable: !(subMenu === 'customInfoRequests'),
+            toggle: show => {
+              setSubMenu(show ? 'customInfoRequests' : false)
+            }
+          }
+        ]}
         className={classnames(titleSectionWidth)}>
-        {!advancedSettings && (
+        {!subMenu && (
           <Box display="flex" alignItems="center">
             <Box
               display="flex"
@@ -141,16 +147,17 @@ const Triggers = () => {
             </Box>
           </Box>
         )}
-        {showCustomInfoRequests && !R.isEmpty(enabledCustomInfoRequests) && (
-          <Box display="flex" justifyContent="flex-end">
-            <Link
-              color="primary"
-              onClick={() => toggleWizard('newCustomRequest')()}>
-              + Add new custom info request
-            </Link>
-          </Box>
-        )}
-        {!loading && !showCustomInfoRequests && !R.isEmpty(triggers) && (
+        {subMenu === 'customInfoRequests' &&
+          !R.isEmpty(enabledCustomInfoRequests) && (
+            <Box display="flex" justifyContent="flex-end">
+              <Link
+                color="primary"
+                onClick={() => toggleWizard('newCustomRequest')()}>
+                + Add new custom info request
+              </Link>
+            </Box>
+          )}
+        {!loading && !subMenu && !R.isEmpty(triggers) && (
           <Box display="flex" justifyContent="flex-end">
             <Link color="primary" onClick={() => toggleWizard('newTrigger')()}>
               + Add new trigger
@@ -158,14 +165,14 @@ const Triggers = () => {
           </Box>
         )}
       </TitleSection>
-      {!loading && showCustomInfoRequests && (
+      {!loading && subMenu === 'customInfoRequests' && (
         <CustomInfoRequests
           data={enabledCustomInfoRequests}
           showWizard={wizardType === 'newCustomRequest'}
           toggleWizard={toggleWizard('newCustomRequest')}
         />
       )}
-      {!loading && !showCustomInfoRequests && (
+      {!loading && !subMenu && (
         <TriggerView
           triggers={triggers}
           showWizard={wizardType === 'newTrigger'}
@@ -174,7 +181,7 @@ const Triggers = () => {
           customInfoRequests={customInfoRequests}
         />
       )}
-      {advancedSettings && (
+      {!loading && subMenu === 'advancedSettings' && (
         <AdvancedTriggers
           error={error}
           save={saveConfig}

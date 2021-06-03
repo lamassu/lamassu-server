@@ -109,12 +109,14 @@ const Commissions = ({ name: SCREEN_KEY }) => {
       <TitleSection
         title="Commissions"
         labels={labels}
-        button={{
-          text: 'List view',
-          icon: ListingViewIcon,
-          inverseIcon: ReverseListingViewIcon,
-          toggle: setShowMachines
-        }}
+        buttons={[
+          {
+            text: 'List view',
+            icon: ListingViewIcon,
+            inverseIcon: ReverseListingViewIcon,
+            toggle: setShowMachines
+          }
+        ]}
         iconClassName={classes.listViewButton}
       />
 
