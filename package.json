@@ -44,7 +44,7 @@
     "inquirer": "^5.2.0",
     "json2csv": "^5.0.3",
     "kraken-api": "github:DeX3/npm-kraken-api",
-    "lamassu-coins": "file:../lamassu-coins",
+    "lamassu-coins": "git+https://github.com/lamassu/lamassu-coins.git",
     "libphonenumber-js": "^1.7.38",
     "lnd-async": "^1.8.0",
     "lodash": "^4.17.10",
