@@ -12,8 +12,6 @@ import schema from 'src/pages/Services/schemas'
 import bitgo from 'src/pages/Services/schemas/singlebitgo'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
-import cryptx from '../../../Services/schemas/cryptx'
-
 import styles from './Shared.styles'
 import { getItems } from './getItems'
 
