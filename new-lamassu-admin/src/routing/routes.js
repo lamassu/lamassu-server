@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom'
 
 import AppContext from 'src/AppContext'
+import ATMWallet from 'src/pages/ATMWallet/ATMWallet'
 import Login from 'src/pages/Authentication/Login'
 import Register from 'src/pages/Authentication/Register'
 import Reset2FA from 'src/pages/Authentication/Reset2FA'
@@ -46,7 +47,7 @@ import { namespaces } from 'src/utils/config'
 
 import PrivateRoute from './PrivateRoute'
 import PublicRoute from './PublicRoute'
-import { ROLES } from './utils'
+import { BUILD_TARGETS, ROLES } from './utils'
 
 const useStyles = makeStyles({
   wrapper: {
@@ -63,6 +64,7 @@ const tree = [
     label: 'Transactions',
     route: '/transactions',
     allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
     component: Transactions
   },
   {
@@ -70,6 +72,7 @@ const tree = [
     label: 'Maintenance',
     route: '/maintenance',
     allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
     get component() {
       return () => <Redirect to={this.children[0].route} />
     },
@@ -79,6 +82,7 @@ const tree = [
         label: 'Cash Cassettes',
         route: '/maintenance/cash-cassettes',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: CashCassettes
       },
       {
@@ -86,6 +90,7 @@ const tree = [
         label: 'Funding',
         route: '/maintenance/funding',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Funding
       },
       {
@@ -93,6 +98,7 @@ const tree = [
         label: 'Machine Logs',
         route: '/maintenance/logs',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: MachineLogs
       },
       {
@@ -100,6 +106,7 @@ const tree = [
         label: 'Machine Status',
         route: '/maintenance/machine-status',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: MachineStatus
       },
       {
@@ -107,6 +114,7 @@ const tree = [
         label: 'Server',
         route: '/maintenance/server-logs',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: ServerLogs
       }
     ]
@@ -116,6 +124,7 @@ const tree = [
     label: 'Settings',
     route: '/settings',
     allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
     get component() {
       return () => <Redirect to={this.children[0].route} />
     },
@@ -125,6 +134,7 @@ const tree = [
         label: 'Commissions',
         route: '/settings/commissions',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Commissions
       },
       {
@@ -132,6 +142,7 @@ const tree = [
         label: 'Locales',
         route: '/settings/locale',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Locales
       },
       {
@@ -139,6 +150,7 @@ const tree = [
         label: 'Cash-out',
         route: '/settings/cash-out',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Cashout
       },
       {
@@ -146,6 +158,7 @@ const tree = [
         label: 'Notifications',
         route: '/settings/notifications',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Notifications
       },
       {
@@ -153,6 +166,7 @@ const tree = [
         label: '3rd party services',
         route: '/settings/3rd-party-services',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Services
       },
       {
@@ -160,6 +174,7 @@ const tree = [
         label: 'Wallet',
         route: '/settings/wallet-settings',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU],
         component: WalletSettings
       },
       {
@@ -168,6 +183,7 @@ const tree = [
         route: '/settings/operator-info',
         title: 'Operator Information',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         get component() {
           return () => (
             <Redirect
@@ -184,6 +200,7 @@ const tree = [
             label: 'Contact information',
             route: '/settings/operator-info/contact-info',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
             component: ContactInfo
           },
           {
@@ -191,6 +208,7 @@ const tree = [
             label: 'Receipt',
             route: '/settings/operator-info/receipt-printing',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
             component: ReceiptPrinting
           },
           {
@@ -198,6 +216,7 @@ const tree = [
             label: 'Coin ATM Radar',
             route: '/settings/operator-info/coin-atm-radar',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
             component: CoinAtmRadar
           },
           {
@@ -205,6 +224,7 @@ const tree = [
             label: 'Terms & Conditions',
             route: '/settings/operator-info/terms-conditions',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
             component: TermsConditions
           }
         ]
@@ -216,6 +236,7 @@ const tree = [
     label: 'Compliance',
     route: '/compliance',
     allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
     get component() {
       return () => <Redirect to={this.children[0].route} />
     },
@@ -225,6 +246,7 @@ const tree = [
         label: 'Triggers',
         route: '/compliance/triggers',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Triggers
       },
       {
@@ -232,6 +254,7 @@ const tree = [
         label: 'Customers',
         route: '/compliance/customers',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Customers
       },
       {
@@ -239,6 +262,7 @@ const tree = [
         label: 'Blacklist',
         route: '/compliance/blacklist',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: Blacklist
       },
       {
@@ -246,13 +270,35 @@ const tree = [
         label: 'Promo Codes',
         route: '/compliance/loyalty/codes',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: PromoCodes
       },
       {
         key: 'customer',
         route: '/compliance/customer/:id',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: CustomerProfile
+      }
+    ]
+  },
+  {
+    key: 'accounting',
+    label: 'Accounting',
+    route: '/accounting',
+    allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    targets: [BUILD_TARGETS.PAZUZ],
+    get component() {
+      return () => <Redirect to={this.children[0].route} />
+    },
+    children: [
+      {
+        key: 'atmwallets',
+        label: 'ATM Wallets',
+        route: '/accounting/wallets',
+        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.PAZUZ],
+        component: ATMWallet
       }
     ]
   },
@@ -261,6 +307,7 @@ const tree = [
     label: 'System',
     route: '/system',
     allowedRoles: [ROLES.SUPERUSER],
+    targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
     get component() {
       return () => <Redirect to={this.children[0].route} />
     },
@@ -270,6 +317,7 @@ const tree = [
         label: 'User Management',
         route: '/system/user-management',
         allowedRoles: [ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: UserManagement
       },
       {
@@ -277,6 +325,7 @@ const tree = [
         label: 'Session Management',
         route: '/system/session-management',
         allowedRoles: [ROLES.SUPERUSER],
+        targets: [BUILD_TARGETS.LAMASSU, BUILD_TARGETS.PAZUZ],
         component: SessionManagement
       }
     ]
@@ -337,10 +386,19 @@ const Routes = () => {
   const getFilteredRoutes = () => {
     if (!userData) return []
 
-    return flattened.filter(value => {
+    const currentBuildTarget = process.env.REACT_APP_BUILD_TARGET
+
+    const roleFilter = flattened.filter(value => {
       const keys = value.allowedRoles
       return R.includes(userData.role, keys)
     })
+
+    const buildFilter = roleFilter.filter(value => {
+      const keys = value.targets
+      return R.includes(currentBuildTarget, keys)
+    })
+
+    return buildFilter
   }
 
   const Transition = location.state ? Slide : Fade

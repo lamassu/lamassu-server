@@ -9,3 +9,8 @@ export const ROLES = {
   USER: 'user',
   SUPERUSER: 'superuser'
 }
+
+export const BUILD_TARGETS = {
+  LAMASSU: 'LAMASSU',
+  PAZUZ: 'PAZUZ'
+}
