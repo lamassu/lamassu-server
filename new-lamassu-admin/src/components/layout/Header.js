@@ -21,8 +21,6 @@ import styles from './Header.styles'
 
 const useStyles = makeStyles(styles)
 
-const buildTarget = process.env.REACT_APP_BUILD_TARGET
-
 const HAS_UNREAD = gql`
   query getUnread {
     hasUnreadNotifications
@@ -39,7 +37,6 @@ const Subheader = ({ item, classes, user }) => {
           <ul className={classes.subheaderUl}>
             {item.children.map((it, idx) => {
               if (!R.includes(user.role, it.allowedRoles)) return <></>
-              if (!R.includes(buildTarget, it.targets)) return <></>
               return (
                 <li key={idx} className={classes.subheaderLi}>
                   <NavLink
@@ -132,7 +129,6 @@ const Header = memo(({ tree, user }) => {
             <ul className={classes.ul}>
               {tree.map((it, idx) => {
                 if (!R.includes(user.role, it.allowedRoles)) return <></>
-                if (!R.includes(buildTarget, it.targets)) return <></>
                 return (
                   <NavLink
                     key={idx}
