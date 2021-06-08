@@ -1,24 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import App from './App'
 import * as serviceWorker from './serviceWorker'
 
-function importBuildTarget() {
-  if (process.env.REACT_APP_BUILD_TARGET === 'LAMASSU') {
-    return import('./lamassu/App')
-  } else if (process.env.REACT_APP_BUILD_TARGET === 'PAZUZ') {
-    return import('./pazuz/App')
-  } else {
+function checkBuildTarget() {
+  const buildTarget = process.env.REACT_APP_BUILD_TARGET
+
+  if (buildTarget !== 'LAMASSU' && buildTarget !== 'PAZUZ') {
     return Promise.reject(
       new Error('No such build target: ' + process.env.REACT_APP_BUILD_TARGET)
     )
   }
+
+  return Promise.resolve()
 }
 
-importBuildTarget().then(({ default: Environment }) =>
+checkBuildTarget().then(() =>
   ReactDOM.render(
     <React.StrictMode>
-      <Environment />
+      <App />
     </React.StrictMode>,
     document.getElementById('root')
   )
