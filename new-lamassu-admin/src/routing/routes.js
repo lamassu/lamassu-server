@@ -16,7 +16,6 @@ import Login from 'src/pages/Authentication/Login'
 import Register from 'src/pages/Authentication/Register'
 import Reset2FA from 'src/pages/Authentication/Reset2FA'
 import ResetPassword from 'src/pages/Authentication/ResetPassword'
-// import ConfigMigration from 'src/pages/ConfigMigration'
 import Dashboard from 'src/pages/Dashboard'
 import Machines from 'src/pages/Machines'
 import Wizard from 'src/pages/Wizard'
@@ -48,8 +47,6 @@ const getTree = () => {
 }
 
 const tree = getTree()
-
-console.log('tree', tree)
 
 const map = R.map(R.when(R.has('children'), R.prop('children')))
 const mappedRoutes = R.compose(R.flatten, map)(tree)
