@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
-import { utils } from 'lamassu-coins'
+import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
@@ -139,13 +139,13 @@ const Transactions = () => {
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${utils
+        `${coinUtils
           .toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)
           .toFormat(5)} ${it.cryptoCode}`
     },
     {
       header: 'Address',
-      view: it => utils.formatCryptoAddress(it.cryptoCode, it.toAddress),
+      view: it => coinUtils.formatCryptoAddress(it.cryptoCode, it.toAddress),
       className: classes.overflowTd,
       size: 'sm',
       width: 140

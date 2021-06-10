@@ -2,7 +2,7 @@ import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
-import { utils } from 'lamassu-coins'
+import { utils as coinUtils } from 'lamassu-coins'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
@@ -118,13 +118,13 @@ const Transactions = ({ id }) => {
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${utils
+        `${coinUtils
           .toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)
           .toFormat(5)} ${it.cryptoCode}`
     },
     {
       header: 'Address',
-      view: it => utils.formatCryptoAddress(it.cryptoCode, it.toAddress),
+      view: it => coinUtils.formatCryptoAddress(it.cryptoCode, it.toAddress),
       className: classes.overflowTd,
       size: 'sm',
       textAlign: 'left',
