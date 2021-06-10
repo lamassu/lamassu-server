@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
-import { utils } from 'lamassu-coins'
+import { utils as coinUtils } from 'lamassu-coins'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo } from 'react'
@@ -53,7 +53,7 @@ const TX_SUMMARY = gql`
 `
 
 const formatAddress = (cryptoCode = '', address = '') =>
-  utils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
+  coinUtils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
 const Label = ({ children }) => {
   const classes = useStyles()
@@ -70,7 +70,7 @@ const DetailsRow = ({ it: tx }) => {
   })
 
   const fiat = Number.parseFloat(tx.fiat)
-  const crypto = utils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
+  const crypto = coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
   const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
   const commission = Number(fiat * commissionPercentage).toFixed(2)
   const discount = tx.discount ? `-${tx.discount}%` : null
