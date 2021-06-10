@@ -107,7 +107,7 @@ const Funding = () => {
     return selected && selected.cryptoCode === it.cryptoCode
   }
 
-  const { data: fundingResponse } = useQuery(GET_FUNDING)
+  const { data: fundingResponse, loading } = useQuery(GET_FUNDING)
   const funding = R.path(['funding'])(fundingResponse) ?? []
 
   if (funding.length && !selected) {
@@ -156,7 +156,8 @@ const Funding = () => {
           isSelected={isSelected}
           onClick={setSelected}
           displayName={it => it.display}
-          itemRender={itemRender}>
+          itemRender={itemRender}
+          loading={loading}>
           {funding.length && (
             <div className={classes.total}>
               <Label1 className={classes.totalTitle}>

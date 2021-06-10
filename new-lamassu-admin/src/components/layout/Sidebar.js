@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import React from 'react'
 
+import { P } from 'src/components/typography'
 import { ReactComponent as CompleteStageIconZodiac } from 'src/styling/icons/stage/zodiac/complete.svg'
 import { ReactComponent as CurrentStageIconZodiac } from 'src/styling/icons/stage/zodiac/current.svg'
 import { ReactComponent as EmptyStageIconZodiac } from 'src/styling/icons/stage/zodiac/empty.svg'
@@ -16,13 +17,15 @@ const Sidebar = ({
   isSelected,
   onClick,
   children,
-  itemRender
+  itemRender,
+  loading = false
 }) => {
   const classes = useStyles()
 
   return (
     <div className={classes.sidebar}>
-      {data &&
+      {loading && <P>Loading...</P>}
+      {!loading &&
         data.map((it, idx) => (
           <div
             key={idx}
@@ -36,7 +39,7 @@ const Sidebar = ({
             {itemRender ? itemRender(it, isSelected(it)) : displayName(it)}
           </div>
         ))}
-      {children}
+      {!loading && children}
     </div>
   )
 }
