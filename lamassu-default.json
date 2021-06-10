@@ -15,5 +15,5 @@
   },
   "idPhotoCardDir": "/opt/lamassu-server/idphotocard",
   "frontCameraDir": "/opt/lamassu-server/frontcamera",
-  "idCardDataDir": "/opt/lamassu-server/idcarddata"
+  "operatorDataDir": "/opt/lamassu-server/operatordata"
 }
