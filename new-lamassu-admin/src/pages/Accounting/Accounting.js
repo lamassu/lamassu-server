@@ -45,6 +45,9 @@ const mockData = [
   }
 ]
 
+const formatCurrency = amount =>
+  amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
+
 const useStyles = makeStyles(styles)
 
 const Assets = ({ balance, hedgingReserve, currency }) => {
@@ -56,7 +59,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
         <P className={classes.fieldHeader}>Pazuz fiat balance</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {balance.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+            {formatCurrency(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {currency}
@@ -68,9 +71,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
         <P className={classes.fieldHeader}>Hedging reserve</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {hedgingReserve.toLocaleString('en-US', {
-              maximumFractionDigits: 2
-            })}
+            {formatCurrency(hedgingReserve)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {currency}
@@ -82,9 +83,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
         <P className={classes.fieldHeader}>Available balance</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {(balance - hedgingReserve).toLocaleString('en-US', {
-              maximumFractionDigits: 2
-            })}
+            {formatCurrency(balance - hedgingReserve)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {currency}
@@ -123,14 +122,18 @@ const Accounting = () => {
       size: 'sm',
       textAlign: 'right',
       view: it =>
-        `${it.direction === 'in' ? it.amount : -it.amount} ${it.currency}`
+        `${
+          it.direction === 'in'
+            ? formatCurrency(it.amount)
+            : formatCurrency(-it.amount)
+        } ${it.currency}`
     },
     {
       header: 'Balance after operation',
       width: 250,
       size: 'sm',
       textAlign: 'right',
-      view: it => `${it.balanceAfterTx} ${it.currency}`
+      view: it => `${formatCurrency(it.balanceAfterTx)} ${it.currency}`
     },
     {
       header: 'Date',
