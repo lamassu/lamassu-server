@@ -27,14 +27,12 @@ const WalletSchema = Yup.object().shape({
 })
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
-  let currentCurrency = ''
   const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it => {
     const currencyDisplay = R.compose(
       R.prop(['display']),
       R.find(R.propEq('code', it))
     )(cryptoCurrencies)
-    currentCurrency = currencyDisplay
     return currencyDisplay
   }
   const filterOptions = type => filterClass(type)(accounts || [])
@@ -48,12 +46,6 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
   const getOptions = R.curry((option, it) =>
     filterCoins(it)(filterOptions(option))
   )
-
-  const getZeroConfLimit = it => {
-    if (currentCurrency === 'Ethereum')
-      return <div style={classes.editDisabled}>{it}</div>
-    return it
-  }
 
   return [
     {
@@ -127,7 +119,8 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       name: 'zeroConfLimit',
       size: 'sm',
       stripe: true,
-      view: getZeroConfLimit,
+      view: (it, row) =>
+        row.id === 'ETH' ? <span style={classes.editDisabled}>{it}</span> : it,
       input: NumberInput,
       width: 190 - widthAdjust,
       inputProps: {
