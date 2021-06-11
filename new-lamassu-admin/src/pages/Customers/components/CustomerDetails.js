@@ -18,23 +18,30 @@ const useStyles = makeStyles(mainStyles)
 const CustomerDetails = memo(({ customer, locale, setShowCompliance }) => {
   const classes = useStyles()
 
+  const idNumber = R.path(['idCardData', 'documentNumber'])(customer)
+  const usSsn = R.path(['usSsn'])(customer)
+
   const elements = [
     {
       header: 'Phone number',
       size: 172,
       value: getFormattedPhone(customer.phone, locale.country)
-    },
-    {
-      header: 'ID number',
-      size: 172,
-      value: R.path(['idCardData', 'documentNumber'])(customer) ?? ''
-    },
-    {
-      header: 'US SSN',
-      size: 127,
-      value: R.path(['usSsn'])(customer) ?? ''
     }
   ]
+
+  if (idNumber)
+    elements.push({
+      header: 'ID number',
+      size: 172,
+      value: idNumber
+    })
+
+  if (usSsn)
+    elements.push({
+      header: 'US SSN',
+      size: 127,
+      value: usSsn
+    })
 
   const name = getName(customer)
 

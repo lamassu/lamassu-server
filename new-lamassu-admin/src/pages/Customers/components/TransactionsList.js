@@ -131,7 +131,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
             <Label1
               noMargin
               key={idx}
-              className={classes.label}
+              className={classes.txSummaryLabel}
               style={{ width: size }}>
               {header}
             </Label1>
@@ -142,7 +142,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
             <P
               noMargin
               key={idx}
-              className={classes.value}
+              className={classes.txSummaryValue}
               style={{ width: size }}>
               {value}
             </P>
@@ -152,11 +152,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
           <H4>
-            {loading
-              ? 'Loading'
-              : hasData
-              ? 'All transactions from this customer'
-              : 'No transactions so far'}
+            {loading ? 'Loading' : hasData ? '' : 'No transactions so far'}
           </H4>
         </div>
       </div>

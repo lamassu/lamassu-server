@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="22px" height="16px" viewBox="0 0 22 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
-    <desc>Created with Sketch.</desc>
-    <g id="icon/ID/photo/tomato" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11,13 C8.7912,13 7,11.2088 7,9 C7,6.7912 8.7912,5 11,5 C13.2088,5 15,6.7912 15,9 C15,11.2088 13.2088,13 11,13 Z M15.7142857,2.4 L13.3571429,0 L8.64285714,0 L6.28571429,2.4 L0,2.4 L0,16 L22,16 L22,2.4 L15.7142857,2.4 Z" id="Stroke-1" stroke="#FF584A" stroke-width="1.6"></path>
+<svg width="24px" height="18px" viewBox="0 0 24 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/ID/photo/new/tomato</title>
+    <g id="icon/ID/photo/new/tomato" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12,14 C9.7912,14 8,12.2088 8,10 C8,7.7912 9.7912,6 12,6 C14.2088,6 16,7.7912 16,10 C16,12.2088 14.2088,14 12,14 Z M16.7142857,3.4 L14.3571429,1 L9.64285714,1 L7.28571429,3.4 L1,3.4 L1,17 L23,17 L23,3.4 L16.7142857,3.4 Z" id="Stroke-1" stroke="#FF7311" stroke-width="1.6"></path>
     </g>
 </svg>
