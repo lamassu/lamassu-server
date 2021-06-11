@@ -98,7 +98,7 @@ const CommissionsList = memo(
     const [coinFilter, setCoinFilter] = useState(SHOW_ALL)
     const [orderProp, setOrderProp] = useState(ORDER_OPTIONS[0])
 
-    const coins = R.prop('cryptoCurrencies', localeConfig)
+    const coins = R.prop('cryptoCurrencies', localeConfig) ?? []
 
     const getMachineCoins = deviceId => {
       const override = R.prop('overrides', localeConfig)?.find(

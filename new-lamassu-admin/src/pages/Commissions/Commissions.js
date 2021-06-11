@@ -49,7 +49,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const classes = useStyles()
   const [showMachines, setShowMachines] = useState(false)
   const [error, setError] = useState(null)
-  const { data } = useQuery(GET_DATA)
+  const { data, loading } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
@@ -118,7 +118,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
         iconClassName={classes.listViewButton}
       />
 
-      {!showMachines && (
+      {!showMachines && !loading && (
         <CommissionsDetails
           config={config}
           locale={localeConfig}
@@ -130,7 +130,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           classes={classes}
         />
       )}
-      {showMachines && (
+      {showMachines && !loading && (
         <CommissionsList
           config={config}
           localeConfig={localeConfig}
