@@ -39,5 +39,8 @@ export default {
   buttonIconActiveRight: {
     marginRight: 5,
     marginLeft: 20
+  },
+  white: {
+    color: white
   }
 }

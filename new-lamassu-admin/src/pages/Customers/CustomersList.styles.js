@@ -96,6 +96,15 @@ export default {
     marginBottom: 4,
     color: comet
   },
+  txSummaryValue: {
+    height: 16,
+    marginRight: 25
+  },
+  txSummaryLabel: {
+    marginBottom: 4,
+    color: comet,
+    marginRight: 25
+  },
   idIcon: {
     marginRight: 10
   },
