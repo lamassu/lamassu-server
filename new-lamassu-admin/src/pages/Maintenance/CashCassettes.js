@@ -187,7 +187,8 @@ const CashCassettes = () => {
     {
       name: 'edit',
       header: 'Edit',
-      width: 87,
+      width: 175,
+      textAlign: 'center',
       view: (value, { id }) => {
         return (
           <IconButton
@@ -220,7 +221,6 @@ const CashCassettes = () => {
             <EditableTable
               error={error?.message}
               name="cashboxes"
-              enableEdit
               stripeWhen={isCashOutDisabled}
               elements={elements}
               data={machines}
