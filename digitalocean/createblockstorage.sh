@@ -3,10 +3,11 @@ set -e
 
 if [ $# -eq 0 ]
   then
-    echo "usage: bash createblockstorage.sh [droplet-name]" && exit 1
+    echo "usage: bash createblockstorage.sh [droplet-name] [token]" && exit 1
 fi
 
 DROPLET_NAME=$1
+TOKEN=$2
 
 #Install doctl
 
@@ -21,8 +22,7 @@ sudo mkdir -p ~/.config
 #Access doctl account
 
 echo "Accessing digital ocean account..."
-doctl auth init --context data-migration
-doctl auth switch --context data-migration
+doctl auth init --access-token $TOKEN
 
 #Get droplet region and id
 echo "Fetching droplet information..."
