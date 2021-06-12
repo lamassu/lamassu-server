@@ -38,7 +38,8 @@ const useStyles = makeStyles(theme => ({
       }
     },
     '&$focusVisible $thumb': {
-      border: '6px solid #fff'
+      border: '6px solid #fff',
+      boxShadow: '0 0 4px 0 rgba(0,0,0,0.24)'
     }
   },
   thumb: {
