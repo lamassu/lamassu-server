@@ -9,9 +9,9 @@ import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import { mainStyles } from './ReceiptPrinting.styles'
+import { global } from './OperatorInfo.styles'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(global)
 
 const GET_CONFIG = gql`
   query getData {
@@ -45,12 +45,12 @@ const ReceiptPrinting = memo(({ wizard }) => {
 
   return (
     <>
-      <div className={classes.rowWrapper}>
+      <div className={classes.header}>
         <H4>Receipt options</H4>
       </div>
-      <div className={classes.rowWrapper}>
+      <div className={classes.switchRow}>
         <P>Enable receipt printing?</P>
-        <div className={classes.switchWrapper}>
+        <div className={classes.switch}>
           <Switch
             checked={receiptPrintingConfig.active}
             onChange={event =>
@@ -66,8 +66,8 @@ const ReceiptPrinting = memo(({ wizard }) => {
               })
             }
           />
+          <Label2>{receiptPrintingConfig.active ? 'Yes' : 'No'}</Label2>
         </div>
-        <Label2>{receiptPrintingConfig.active ? 'Yes' : 'No'}</Label2>
       </div>
       <BooleanPropertiesTable
         editing={wizard}

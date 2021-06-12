@@ -4,13 +4,14 @@ import gql from 'graphql-tag'
 import React, { memo } from 'react'
 
 import { Tooltip } from 'src/components/Tooltip'
+import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import { mainStyles } from './CoinATMRadar.styles'
+import { global } from './OperatorInfo.styles'
 
-const useStyles = makeStyles(mainStyles)
+const useStyles = makeStyles(global)
 
 const GET_CONFIG = gql`
   query getData {
@@ -28,21 +29,21 @@ const Row = memo(({ title, disabled = false, checked, save, label }) => {
   const classes = useStyles()
 
   return (
-    <div className={classes.rowWrapper}>
-      <div className={classes.rowTextAndSwitch}>
-        <P>{title}</P>
+    <div className={classes.switchRow}>
+      <P>{title}</P>
+      <div className={classes.switch}>
         <Switch
           disabled={disabled}
           checked={checked}
           onChange={event => save && save(event.target.checked)}
         />
+        {label && <Label2>{label}</Label2>}
       </div>
-      {label && <Label2>{label}</Label2>}
     </div>
   )
 })
 
-const CoinATMRadar = memo(() => {
+const CoinATMRadar = memo(({ wizard }) => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_CONFIG)
@@ -63,7 +64,7 @@ const CoinATMRadar = memo(() => {
   return (
     <div className={classes.content}>
       <div>
-        <div className={classes.titleWrapper}>
+        <div className={classes.header}>
           <H4>Coin ATM Radar share settings</H4>
           <Tooltip width={304}>
             <P>
@@ -85,18 +86,21 @@ const CoinATMRadar = memo(() => {
           save={value => save({ active: value })}
           label={coinAtmRadarConfig.active ? 'Yes' : 'No'}
         />
-        <H4>{'Machine info'}</H4>
-        <Row
-          title={'Commissions'}
-          disabled={!coinAtmRadarConfig.active}
-          checked={coinAtmRadarConfig.commissions}
-          save={value => save({ commissions: value })}
-        />
-        <Row
-          title={'Limits and verification'}
-          disabled={!coinAtmRadarConfig.active}
-          checked={coinAtmRadarConfig.limitsAndVerification}
-          save={value => save({ limitsAndVerification: value })}
+        <BooleanPropertiesTable
+          editing={wizard}
+          title="Machine info"
+          data={coinAtmRadarConfig}
+          elements={[
+            {
+              name: 'commissions',
+              display: 'Commissions'
+            },
+            {
+              name: 'limitsAndVerification',
+              display: 'Limits and verification'
+            }
+          ]}
+          save={save}
         />
       </div>
     </div>

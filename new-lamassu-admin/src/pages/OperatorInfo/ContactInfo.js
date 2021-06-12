@@ -18,10 +18,7 @@ import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/co
 import { fontSize5 } from 'src/styling/variables'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import {
-  styles as globalStyles,
-  contactInfoStyles
-} from './OperatorInfo.styles'
+import { global } from './OperatorInfo.styles'
 
 const FIELD_WIDTH = 280
 
@@ -98,9 +95,7 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const styles = R.merge(globalStyles, contactInfoStyles)
-
-const contactUseStyles = makeStyles(styles)
+const contactUseStyles = makeStyles(global)
 
 const ContactInfo = ({ wizard }) => {
   const classes = contactUseStyles()
@@ -189,10 +184,10 @@ const ContactInfo = ({ wizard }) => {
 
   return (
     <>
-      <div className={classes.rowWrapper}>
+      <div className={classes.header}>
         <H4>Contact information</H4>
       </div>
-      <div className={classes.rowWrapper}>
+      <div className={classes.switchRow}>
         <P>Info card enabled?</P>
         <div className={classes.switch}>
           <Switch
@@ -207,7 +202,7 @@ const ContactInfo = ({ wizard }) => {
         </div>
       </div>
       <div className={classes.section}>
-        <div className={classes.rowWrapper}>
+        <div className={classes.header}>
           <H4>Info card</H4>
           {!editing && (
             <IconButton
@@ -275,11 +270,7 @@ const ContactInfo = ({ wizard }) => {
                   <Link color="secondary" type="reset">
                     Cancel
                   </Link>
-                  {error && (
-                    <ErrorMessage className={classes.errorMessage}>
-                      Failed to save changes
-                    </ErrorMessage>
-                  )}
+                  {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
                 </>
               )}
             </div>

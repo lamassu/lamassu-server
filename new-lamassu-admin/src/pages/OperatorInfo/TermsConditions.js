@@ -12,15 +12,11 @@ import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { Link, IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
-import { H4, Info2, Info3, Label2, Label3 } from 'src/components/typography'
+import { H4, Info2, Info3, Label2, Label3, P } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import {
-  styles as globalStyles,
-  termsConditionsStyles,
-  fieldStyles
-} from './OperatorInfo.styles'
+import { global, fieldStyles } from './OperatorInfo.styles'
 
 const useFieldStyles = makeStyles(fieldStyles)
 
@@ -50,7 +46,7 @@ const Field = ({
       {!editing && (
         <>
           <Label3>{label}</Label3>
-          <Info3 className={classes.multiLineText}>{value}</Info3>
+          <Info3>{value}</Info3>
         </>
       )}
       {editing && (
@@ -85,9 +81,7 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const styles = R.merge(globalStyles, termsConditionsStyles)
-
-const useTermsConditionsStyles = makeStyles(styles)
+const useTermsConditionsStyles = makeStyles(global)
 
 const TermsConditions = () => {
   const [error, setError] = useState(null)
@@ -171,12 +165,12 @@ const TermsConditions = () => {
 
   return (
     <>
-      <div className={classes.rowWrapper}>
+      <div className={classes.header}>
         <H4>Terms &amp; Conditions</H4>
       </div>
-      <div className={classes.section}>
-        <div className={classes.enable}>
-          <span>Show on screen</span>
+      <div className={classes.switchRow}>
+        <P>Show on screen</P>
+        <div className={classes.switch}>
           <Switch
             checked={showOnScreen}
             onChange={event =>
@@ -187,64 +181,60 @@ const TermsConditions = () => {
           />
           <Label2>{showOnScreen ? 'Yes' : 'No'}</Label2>
         </div>
-        <div className={classes.header}>
-          <Info2>Info card</Info2>
-          {!editing && (
-            <IconButton
-              className={classes.transparentButton}
-              onClick={() => setEditing(true)}>
-              <EditIcon />
-            </IconButton>
-          )}
-        </div>
-        <Formik
-          validateOnBlur={false}
-          validateOnChange={false}
-          enableReinitialize
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={values => save(values)}
-          onReset={() => {
-            setEditing(false)
-            setError(null)
-          }}>
-          <Form>
-            <PromptWhenDirty />
-            {fields.map((f, idx) => (
-              <div className={classes.row} key={idx}>
-                <Field
-                  editing={editing}
-                  name={f.name}
-                  width={f.width}
-                  placeholder={f.placeholder}
-                  label={f.label}
-                  value={f.value}
-                  multiline={f.multiline}
-                  rows={f.rows}
-                  onFocus={() => setError(null)}
-                />
-              </div>
-            ))}
-            <div className={classnames(classes.row, classes.submit)}>
-              {editing && (
-                <>
-                  <Link color="primary" type="submit">
-                    Save
-                  </Link>
-                  <Link color="secondary" type="reset">
-                    Cancel
-                  </Link>
-                  {error && (
-                    <ErrorMessage className={classes.errorMessage}>
-                      Failed to save changes
-                    </ErrorMessage>
-                  )}
-                </>
-              )}
-            </div>
-          </Form>
-        </Formik>
       </div>
+      <div className={classes.header}>
+        <Info2>Info card</Info2>
+        {!editing && (
+          <IconButton
+            className={classes.transparentButton}
+            onClick={() => setEditing(true)}>
+            <EditIcon />
+          </IconButton>
+        )}
+      </div>
+      <Formik
+        validateOnBlur={false}
+        validateOnChange={false}
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={values => save(values)}
+        onReset={() => {
+          setEditing(false)
+          setError(null)
+        }}>
+        <Form>
+          <PromptWhenDirty />
+          {fields.map((f, idx) => (
+            <div className={classes.row} key={idx}>
+              <Field
+                editing={editing}
+                name={f.name}
+                width={f.width}
+                placeholder={f.placeholder}
+                label={f.label}
+                value={f.value}
+                multiline={f.multiline}
+                rows={f.rows}
+                onFocus={() => setError(null)}
+              />
+            </div>
+          ))}
+          <div className={classnames(classes.row, classes.submit)}>
+            {editing && (
+              <>
+                <Link color="primary" type="submit">
+                  Save
+                </Link>
+                <Link color="secondary" type="reset">
+                  Cancel
+                </Link>
+                {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
+              </>
+            )}
+          </div>
+        </Form>
+      </Formik>
     </>
   )
 }
