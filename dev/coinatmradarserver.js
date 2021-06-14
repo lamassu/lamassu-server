@@ -1,8 +1,7 @@
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
 
-app.use(bodyParser.raw({type: '*/*'}))
+app.use(express.raw({ type: '*/*' }))
 
 app.post('/api/lamassu', (req, res) => {
   console.log(req.headers)
