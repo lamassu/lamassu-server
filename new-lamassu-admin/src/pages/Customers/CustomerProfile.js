@@ -55,6 +55,7 @@ const GET_CUSTOMER = gql`
       lastTxFiat
       lastTxFiatCode
       lastTxClass
+      daysSuspended
       transactions {
         txClass
         id
@@ -135,6 +136,8 @@ const CustomerProfile = memo(() => {
   const blocked =
     R.path(['authorizedOverride'])(customerData) === OVERRIDE_REJECTED
 
+  const suspended = R.gt(R.path(['daysSuspended'])(customerData), 0)
+
   return (
     <>
       <Breadcrumbs
@@ -169,21 +172,38 @@ const CustomerProfile = memo(() => {
           {!loading && !customerData.isAnonymous && (
             <div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
-              <ActionButton
-                color="primary"
-                Icon={blocked ? AuthorizeIcon : BlockIcon}
-                InverseIcon={
-                  blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                }
-                onClick={() =>
-                  updateCustomer({
-                    authorizedOverride: blocked
-                      ? OVERRIDE_AUTHORIZED
-                      : OVERRIDE_REJECTED
-                  })
-                }>
-                {`${blocked ? 'Authorize' : 'Block'} customer`}
-              </ActionButton>
+              <div className={classes.customerActions}>
+                {suspended && (
+                  <ActionButton
+                    color="primary"
+                    Icon={suspended ? AuthorizeIcon : BlockIcon}
+                    InverseIcon={
+                      suspended ? AuthorizeReversedIcon : BlockReversedIcon
+                    }
+                    onClick={() =>
+                      updateCustomer({
+                        suspendedUntil: null
+                      })
+                    }>
+                    {`Unsuspend customer`}
+                  </ActionButton>
+                )}
+                <ActionButton
+                  color="primary"
+                  Icon={blocked ? AuthorizeIcon : BlockIcon}
+                  InverseIcon={
+                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                  }
+                  onClick={() =>
+                    updateCustomer({
+                      authorizedOverride: blocked
+                        ? OVERRIDE_AUTHORIZED
+                        : OVERRIDE_REJECTED
+                    })
+                  }>
+                  {`${blocked ? 'Authorize' : 'Block'} customer`}
+                </ActionButton>
+              </div>
             </div>
           )}
         </Box>

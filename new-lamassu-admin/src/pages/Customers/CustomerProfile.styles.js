@@ -14,5 +14,15 @@ export default {
   },
   customerDetails: {
     marginBottom: 18
+  },
+  customerActions: {
+    display: 'flex',
+    flexDirection: 'row',
+    '& button': {
+      marginRight: 15
+    },
+    '& > :last-child': {
+      marginRight: 0
+    }
   }
 }
