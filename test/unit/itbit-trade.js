@@ -28,7 +28,7 @@ test('should handle itbit error response', async t => {
 
   const trade = rewireTrade(commonMock)
 
-  trade('buy', { walletId: 'id' }, BN('93410'), 'USD', 'BTC')
+  trade('buy', { walletId: 'id' }, new BN('93410'), 'USD', 'BTC')
     .catch(err => {
       t.regex(err.message, /wallet provided/g)
     })

@@ -15,7 +15,7 @@ function computeCrypto (cryptoCode, value) {
     const cryptoRec = coinUtils.getCryptoCurrency(cryptoCode)
     const unitScale = cryptoRec.unitScale
 
-    return BN(value).shift(unitScale)
+    return new BN(value).shiftedBy(unitScale)
   } catch (err) {
     return null
   }
