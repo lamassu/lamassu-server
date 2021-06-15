@@ -3,7 +3,7 @@ const BN = require('../lib/bn')
 
 const account = {token: 'xxx'}
 
-strike.newAddress(account, {cryptoCode: 'BTC', cryptoAtoms: BN(10000)})
+strike.newAddress(account, { cryptoCode: 'BTC', cryptoAtoms: new BN(10000) })
   .then(r => {
     console.log(r)
 

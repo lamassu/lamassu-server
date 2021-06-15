@@ -11,7 +11,7 @@
     "axios": "0.21.1",
     "base-x": "3.0.8",
     "bchaddrjs": "^0.3.0",
-    "bignumber.js": "^4.1.0",
+    "bignumber.js": "9.0.1",
     "bip39": "^2.3.1",
     "bitcoind-rpc": "^0.7.0",
     "bitcore-lib": "^0.15.0",
