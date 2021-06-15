@@ -13,7 +13,7 @@ import styles from './shared.styles'
 import { STATES } from './states'
 
 // FIDO2FA, FIDOPasswordless or FIDOUsernameless
-const AUTHENTICATION_STRATEGY = 'FIDOPasswordless'
+const AUTHENTICATION_STRATEGY = 'FIDO2FA'
 
 const useStyles = makeStyles(styles)
 

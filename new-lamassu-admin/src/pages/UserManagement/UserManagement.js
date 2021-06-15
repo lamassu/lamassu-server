@@ -83,8 +83,7 @@ const Users = () => {
 
   const [validateAttestation] = useMutation(VALIDATE_ATTESTATION, {
     onCompleted: res => {
-      console.log(res)
-      // success ? console.log('success') : console.log('failure')
+      // TODO: show a brief popup to have UX feedback?
     }
   })
 
