@@ -3,6 +3,7 @@ import { Box } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
+import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -120,8 +121,21 @@ const Blacklist = () => {
     deleteEntry({ variables: { cryptoCode, address } })
   }
 
+  const validateAddress = (cryptoCode, address) => {
+    try {
+      console.log(errorMsg)
+      return !R.isNil(coinUtils.parseUrl(cryptoCode, 'main', address))
+    } catch {
+      return false
+    }
+  }
+
   const addToBlacklist = async (cryptoCode, address) => {
     setErrorMsg(null)
+    if (!validateAddress(cryptoCode, address)) {
+      setErrorMsg('Invalid address')
+      return
+    }
     const res = await addEntry({ variables: { cryptoCode, address } })
     if (!res.errors) {
       return setShowModal(false)
