@@ -1,9 +1,8 @@
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
-import * as d3 from 'd3'
 import * as R from 'ramda'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Select } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -11,6 +10,7 @@ import { H2, Info2, P } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 
 import styles from './Analytics.styles'
+import Graph from './Graph'
 
 const useStyles = makeStyles(styles)
 
@@ -20,6 +20,55 @@ const PERIOD_OPTIONS = [
   { code: 'week', display: 'Last 7 days' },
   { code: 'month', display: 'Last 30 days' }
 ]
+
+const createRandomTx = () => {
+  const directions = ['cash-in', 'cash-out']
+  const now = new Date(Date.now())
+  const twoMonthsAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
+  return {
+    direction: directions[Math.floor(Math.random() * directions.length)],
+    created: new Date(
+      twoMonthsAgo.getTime() +
+        Math.random() * (now.getTime() - twoMonthsAgo.getTime())
+    ),
+    amount: Math.random() * (1500 - 5) + 5
+  }
+}
+
+const dummyData = R.times(createRandomTx, 1000)
+
+const filteredData = {
+  day: {
+    current: dummyData.filter(
+      d => d.created >= Date.now() - 24 * 60 * 60 * 1000
+    ),
+    previous: dummyData.filter(
+      d =>
+        d.created < Date.now() - 24 * 60 * 60 * 1000 &&
+        d.created >= Date.now() - 2 * 24 * 60 * 60 * 1000
+    )
+  },
+  week: {
+    current: dummyData.filter(
+      d => d.created.getTime() >= Date.now() - 7 * 24 * 60 * 60 * 1000
+    ),
+    previous: dummyData.filter(
+      d =>
+        d.created.getTime() < Date.now() - 7 * 24 * 60 * 60 * 1000 &&
+        d.created.getTime() >= Date.now() - 2 * 7 * 24 * 60 * 60 * 1000
+    )
+  },
+  month: {
+    current: dummyData.filter(
+      d => d.created.getTime() >= Date.now() - 30 * 24 * 60 * 60 * 1000
+    ),
+    previous: dummyData.filter(
+      d =>
+        d.created.getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000 &&
+        d.created.getTime() >= Date.now() - 2 * 30 * 24 * 60 * 60 * 1000
+    )
+  }
+}
 
 const LegendEntry = ({ IconComponent, label }) => {
   const classes = useStyles()
@@ -60,119 +109,11 @@ const OverviewEntry = ({ label, value, oldValue, currency }) => {
       <span className={classes.overviewGrowth}>
         <CloseIcon height={10} />
         <P noMargin className={classnames(growthClasses)}>
-          {growthRate}%
+          {growthRate.toLocaleString('en-US', { maximumFractionDigits: 2 })}%
         </P>
       </span>
     </div>
   )
-}
-
-const Graph = ({ data, representing, period }) => {
-  const ref = useRef(null)
-
-  const GRAPH_HEIGHT = 401
-  const GRAPH_WIDTH = 1163
-  const GRAPH_MARGIN = useMemo(
-    () => ({
-      top: 25,
-      right: 0.5,
-      bottom: 27,
-      left: 36.5
-    }),
-    []
-  )
-
-  const periodDomains = {
-    day: [Date.now() - 24 * 60 * 60 * 1000, Date.now()],
-    week: [Date.now() - 7 * 24 * 60 * 60 * 1000, Date.now()],
-    month: [Date.now() - 30 * 24 * 60 * 60 * 1000, Date.now()]
-  }
-
-  const x = d3
-    .scaleUtc()
-    .domain(periodDomains[period.code])
-    .range([GRAPH_MARGIN.left, GRAPH_WIDTH - GRAPH_MARGIN.right])
-
-  const y = d3
-    .scaleLinear()
-    .domain([0, 1000])
-    .nice()
-    .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
-
-  const z = useCallback(() => {
-    const max = d3.max(data, d => Math.abs(d.amount))
-    return d3.scaleSequential(d3.interpolateRdBu).domain([max, -max])
-  }, [data])
-
-  const buildXAxis = useCallback(
-    g =>
-      g
-        .attr(
-          'transform',
-          `translate(0, ${GRAPH_HEIGHT - GRAPH_MARGIN.bottom})`
-        )
-        .call(d3.axisBottom(x).ticks(GRAPH_WIDTH / 80))
-        .call(g => g.select('.domain').remove()),
-    [GRAPH_MARGIN, x]
-  )
-
-  const buildYAxis = useCallback(
-    g =>
-      g
-        .attr('transform', `translate(${GRAPH_MARGIN.left}, 0)`)
-        .call(d3.axisLeft(y).ticks(4))
-        .call(g => g.select('.domain').remove())
-        .call(g =>
-          g
-            .selectAll('.tick line')
-            .filter(d => d === 0)
-            .clone()
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right - GRAPH_MARGIN.left)
-            .attr('stroke', '#5F668A')
-        )
-        .call(g =>
-          g
-            .append('text')
-            .attr('fill', '#5F668A')
-            .attr('x', 5)
-            .attr('y', GRAPH_MARGIN.top)
-            .attr('dy', '0.32em')
-            .attr('text-anchor', 'start')
-            .attr('font-weight', 'bold')
-        ),
-    [GRAPH_MARGIN, y]
-  )
-
-  const drawChart = useCallback(() => {
-    const svg = d3
-      .select(ref.current)
-      .attr('viewBox', [0, 0, GRAPH_WIDTH, GRAPH_HEIGHT])
-
-    svg.append('g').call(buildXAxis)
-    svg.append('g').call(buildYAxis)
-    svg
-      .append('g')
-      .attr('stroke', '#000')
-      .attr('stroke-opacity', 0.2)
-      .selectAll('circle')
-      .data(data)
-      .join('circle')
-      .attr('cx', d => x(d.date))
-      .attr('cy', d => y(d.amount))
-      .attr('fill', d => z(d.amount))
-      .attr('r', 2.5)
-
-    return svg.node()
-  }, [buildXAxis, buildYAxis, data, x, y, z])
-
-  useEffect(() => {
-    d3.select(ref.current)
-      .selectAll('*')
-      .remove()
-    drawChart()
-  }, [drawChart])
-
-  return <svg ref={ref} />
 }
 
 const AnalyticsGraph = ({ title, representing, period }) => {
@@ -180,15 +121,6 @@ const AnalyticsGraph = ({ title, representing, period }) => {
 
   const MACHINE_OPTIONS = [{ code: 'all', display: 'All machines' }]
   const [machines, setMachines] = useState(MACHINE_OPTIONS[0])
-
-  const data = [
-    { direction: 'in', date: '2021-06-14', amount: 100 },
-    { direction: 'in', date: '2021-06-14', amount: 200 },
-    { direction: 'out', date: '2021-06-14', amount: 300 },
-    { direction: 'out', date: '2021-06-14', amount: 400 },
-    { direction: 'in', date: '2021-06-14', amount: 500 },
-    { direction: 'in', date: '2021-06-14', amount: 600 }
-  ]
 
   return (
     <>
@@ -212,7 +144,11 @@ const AnalyticsGraph = ({ title, representing, period }) => {
           />
         </div>
       </div>
-      <Graph representing={representing} period={period} data={data} />
+      <Graph
+        representing={representing}
+        period={period}
+        data={filteredData[period.code].current}
+      />
     </>
   )
 }
@@ -222,6 +158,32 @@ const Analytics = () => {
 
   const [representing, setRepresenting] = useState(REPRESENTING_OPTIONS[0])
   const [period, setPeriod] = useState(PERIOD_OPTIONS[0])
+
+  const txs = {
+    current: filteredData[period.code].current.length,
+    previous: filteredData[period.code].previous.length
+  }
+
+  const avgAmount = {
+    current:
+      R.sum(R.map(d => d.amount, filteredData[period.code].current)) /
+      txs.current,
+    previous:
+      R.sum(R.map(d => d.amount, filteredData[period.code].previous)) /
+      txs.previous
+  }
+
+  const txVolume = {
+    current: R.sum(R.map(d => d.amount, filteredData[period.code].current)),
+    previous: R.sum(R.map(d => d.amount, filteredData[period.code].previous))
+  }
+
+  const commissions = {
+    current: 10,
+    previous: 20
+  }
+
+  console.log('dummyData', dummyData)
 
   return (
     <>
@@ -259,26 +221,30 @@ const Analytics = () => {
           />
         </div>
         <div className={classes.overview}>
-          <OverviewEntry label="Transactions" value={1235} oldValue={0} />
+          <OverviewEntry
+            label="Transactions"
+            value={txs.current}
+            oldValue={txs.previous}
+          />
           <div className={classes.verticalLine} />
           <OverviewEntry
             label="Avg. txn amount"
-            value={254}
-            oldValue={0}
+            value={avgAmount.current}
+            oldValue={avgAmount.previous}
             currency="EUR"
           />
           <div className={classes.verticalLine} />
           <OverviewEntry
             label="Volume"
-            value={313690}
-            oldValue={0}
+            value={txVolume.current}
+            oldValue={txVolume.previous}
             currency="EUR"
           />
           <div className={classes.verticalLine} />
           <OverviewEntry
             label="Commissions"
-            value={25298}
-            oldValue={0}
+            value={commissions.current}
+            oldValue={commissions.previous}
             currency="EUR"
           />
         </div>
