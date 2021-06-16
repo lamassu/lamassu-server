@@ -34,14 +34,19 @@ exports.up = function (next) {
   const sql =
     [
       `CREATE TABLE operator_ids (
-        id TEXT PRIMARY KEY,
-        description TEXT NOT NULL)`
+        id serial PRIMARY KEY,
+        operator_id TEXT NOT NULL,
+        service TEXT NOT NULL
+      )`
     ]
   generateOperatorId()
     .then(operatorId => {
-      const sql2 = `INSERT INTO operator_ids (id, description) VALUES ('${operatorId}','mnemonic' )`
-      sql.push(sql2)
-      db.multi(sql, next)
+      const sql2 = [
+        `INSERT INTO operator_ids (operator_id, service) VALUES ('${operatorId}','middleware')`,
+        `INSERT INTO operator_ids (operator_id, service) VALUES ('${operatorId}','coinatmradar')`,
+        `INSERT INTO operator_ids (operator_id, service) VALUES ('${operatorId}','authentication')`
+      ]
+      db.multi(sql.concat(sql2), next)
         .then(() => next())
     })
     .catch(e => {
