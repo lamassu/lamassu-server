@@ -1,3 +1,4 @@
+import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { Formik, Form, Field } from 'formik'
 import * as R from 'ramda'
@@ -57,7 +58,7 @@ const BlackListModal = ({
           resetForm()
         }}>
         <Form id="address-form">
-          <H3>
+          <H3 className={classes.modalTitle}>
             {selectedCoin.display
               ? `Blacklist ${R.toLower(selectedCoin.display)} address`
               : ''}
@@ -74,9 +75,11 @@ const BlackListModal = ({
         </Form>
       </Formik>
       <div className={classes.footer}>
-        <Link type="submit" form="address-form">
-          Blacklist address
-        </Link>
+        <Box display="flex" justifyContent="flex-end">
+          <Link type="submit" form="address-form">
+            Blacklist address
+          </Link>
+        </Box>
       </div>
     </Modal>
   )
