@@ -123,7 +123,6 @@ const Blacklist = () => {
 
   const validateAddress = (cryptoCode, address) => {
     try {
-      console.log(errorMsg)
       return !R.isNil(coinUtils.parseUrl(cryptoCode, 'main', address))
     } catch {
       return false
