@@ -42,9 +42,6 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
       .nullable()
   })
 
-  const getPercentage = fillingPercentage =>
-    fillingPercentage ?? data?.fillingPercentageCassette1
-
   return (
     <Formik
       validateOnBlur={false}
@@ -76,7 +73,10 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                 <Cashbox
                   labelClassName={classes.cashboxLabel}
                   emptyPartClassName={classes.cashboxEmptyPart}
-                  percent={getPercentage(values.fillingPercentageCassette1)}
+                  percent={
+                    values.fillingPercentageCassette1 ??
+                    data?.fillingPercentageCassette1
+                  }
                   inFiatBalanceAlerts={true}
                   cashOut
                 />
@@ -97,7 +97,10 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
               <Cashbox
                 labelClassName={classes.cashboxLabel}
                 emptyPartClassName={classes.cashboxEmptyPart}
-                percent={getPercentage(values.fillingPercentageCassette2)}
+                percent={
+                  values.fillingPercentageCassette2 ??
+                  data?.fillingPercentageCassette2
+                }
                 inFiatBalanceAlerts={true}
                 cashOut
               />
