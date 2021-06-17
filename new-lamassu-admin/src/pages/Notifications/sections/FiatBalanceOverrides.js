@@ -96,7 +96,7 @@ const FiatBalanceOverrides = ({ section }) => {
     },
     {
       name: CASSETTE_1_KEY,
-      display: 'Cash-out 1',
+      header: 'Cash-out 1',
       width: 155,
       textAlign: 'right',
       doubleHeader: 'Cash-out (Cassette Empty)',
@@ -109,7 +109,7 @@ const FiatBalanceOverrides = ({ section }) => {
     },
     {
       name: CASSETTE_2_KEY,
-      display: 'Cash-out 2',
+      header: 'Cash-out 2',
       width: 155,
       textAlign: 'right',
       doubleHeader: 'Cash-out (Cassette Empty)',

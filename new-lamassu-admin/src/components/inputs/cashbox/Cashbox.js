@@ -21,7 +21,7 @@ const Cashbox = ({
   labelClassName,
   inFiatBalanceAlerts
 }) => {
-  const classes = cashboxClasses({ percent, cashOut })
+  const classes = cashboxClasses({ percent, cashOut, inFiatBalanceAlerts })
   const threshold = 51
 
   const showCashBox = {
