@@ -42,6 +42,9 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
       .nullable()
   })
 
+  const getPercentage = fillingPercentage =>
+    fillingPercentage ?? data?.fillingPercentageCassette1
+
   return (
     <Formik
       validateOnBlur={false}
@@ -58,29 +61,51 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
       onReset={() => {
         setEditing(NAME, false)
       }}>
-      <Form className={classes.form}>
-        <PromptWhenDirty />
-        <Header
-          title="Cash out (Empty)"
-          editing={editing}
-          disabled={isDisabled(NAME)}
-          setEditing={it => setEditing(NAME, it)}
-        />
-        <div className={classes.wrapper}>
-          <div className={classes.first}>
+      {({ values }) => (
+        <Form className={classes.form}>
+          <PromptWhenDirty />
+          <Header
+            title="Cash out (Empty)"
+            editing={editing}
+            disabled={isDisabled(NAME)}
+            setEditing={it => setEditing(NAME, it)}
+          />
+          <div className={classes.wrapper}>
+            <div className={classes.first}>
+              <div className={classes.row}>
+                <Cashbox
+                  labelClassName={classes.cashboxLabel}
+                  emptyPartClassName={classes.cashboxEmptyPart}
+                  percent={getPercentage(values.fillingPercentageCassette1)}
+                  inFiatBalanceAlerts={true}
+                  cashOut
+                />
+                <div className={classes.col2}>
+                  <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
+                  <EditableNumber
+                    label="Alert me under"
+                    name="fillingPercentageCassette1"
+                    editing={editing}
+                    displayValue={x => (x === '' ? '-' : x)}
+                    decoration="%"
+                    width={fieldWidth}
+                  />
+                </div>
+              </div>
+            </div>
             <div className={classes.row}>
               <Cashbox
                 labelClassName={classes.cashboxLabel}
                 emptyPartClassName={classes.cashboxEmptyPart}
-                percent={data?.fillingPercentageCassette1}
+                percent={getPercentage(values.fillingPercentageCassette2)}
                 inFiatBalanceAlerts={true}
                 cashOut
               />
               <div className={classes.col2}>
-                <TL2 className={classes.title}>Cassette 1 (Top)</TL2>
+                <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
                 <EditableNumber
                   label="Alert me under"
-                  name="fillingPercentageCassette1"
+                  name="fillingPercentageCassette2"
                   editing={editing}
                   displayValue={x => (x === '' ? '-' : x)}
                   decoration="%"
@@ -89,28 +114,8 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
               </div>
             </div>
           </div>
-          <div className={classes.row}>
-            <Cashbox
-              labelClassName={classes.cashboxLabel}
-              emptyPartClassName={classes.cashboxEmptyPart}
-              percent={data?.fillingPercentageCassette2}
-              inFiatBalanceAlerts={true}
-              cashOut
-            />
-            <div className={classes.col2}>
-              <TL2 className={classes.title}>Cassette 2 (Bottom)</TL2>
-              <EditableNumber
-                label="Alert me under"
-                name="fillingPercentageCassette2"
-                editing={editing}
-                displayValue={x => (x === '' ? '-' : x)}
-                decoration="%"
-                width={fieldWidth}
-              />
-            </div>
-          </div>
-        </div>
-      </Form>
+        </Form>
+      )}
     </Formik>
   )
 }

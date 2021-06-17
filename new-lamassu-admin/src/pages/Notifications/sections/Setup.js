@@ -24,7 +24,6 @@ const sizes = {
   errors: 142,
   active: 263
 }
-const width = R.sum(R.values(sizes)) + channelSize
 
 const Row = ({ namespace, forceDisable }) => {
   const { data: rawData, save: rawSave } = useContext(NotificationsCtx)
@@ -64,9 +63,6 @@ const Row = ({ namespace, forceDisable }) => {
 }
 
 const useStyles = makeStyles({
-  mainTable: {
-    width
-  },
   wizardTable: {
     width: 930
   }
@@ -75,7 +71,7 @@ const Setup = ({ wizard, forceDisable }) => {
   const widthAdjust = wizard ? 20 : 0
   const classes = useStyles()
   return (
-    <Table className={wizard ? classes.wizardTable : classes.mainTable}>
+    <Table className={wizard ? classes.wizardTable : null}>
       <THead>
         <Th width={channelSize - widthAdjust}>Channel</Th>
         {Object.keys(sizes).map(it => (
