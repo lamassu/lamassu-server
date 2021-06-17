@@ -110,5 +110,8 @@ export default {
   },
   subpageButton: {
     marginLeft: 16
+  },
+  txTableSpacing: {
+    marginTop: 40
   }
 }
