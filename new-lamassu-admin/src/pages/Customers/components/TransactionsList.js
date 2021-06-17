@@ -1,5 +1,6 @@
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
+import classnames from 'classnames'
 import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React from 'react'
@@ -22,6 +23,10 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
   const hasData = !(R.isEmpty(data) || R.isNil(data))
 
   const timezone = locale.timezone
+  const tableSpacingClasses = {
+    [classes.titleAndButtonsContainer]: loading || (!loading && !hasData),
+    [classes.txTableSpacing]: !loading && hasData
+  }
 
   const summaryElements = [
     {
@@ -150,10 +155,14 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
         </Box>
       </Box>
       <div className={classes.titleWrapper}>
-        <div className={classes.titleAndButtonsContainer}>
-          <H4>
-            {loading ? 'Loading' : hasData ? '' : 'No transactions so far'}
-          </H4>
+        <div className={classnames(tableSpacingClasses)}>
+          {loading ? (
+            <H4>Loading</H4>
+          ) : hasData ? (
+            ''
+          ) : (
+            <H4>No transactions so far</H4>
+          )}
         </div>
       </div>
       {hasData && <DataTable elements={tableElements} data={data} />}
