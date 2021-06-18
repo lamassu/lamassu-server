@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -11,7 +12,12 @@ import {
   fontSecondary
 } from 'src/styling/variables'
 
-const Graph = ({ data, representing, period }) => {
+const MINUTE = 60 * 1000
+const DAY = 24 * 60 * 60 * 1000
+const WEEK = 7 * 24 * 60 * 60 * 1000
+const MONTH = 30 * 24 * 60 * 60 * 1000
+
+const Graph = ({ data, representing, period, timezone }) => {
   const ref = useRef(null)
 
   const GRAPH_HEIGHT = 401
@@ -26,10 +32,13 @@ const Graph = ({ data, representing, period }) => {
     []
   )
 
+  const offset = parseInt(timezone.split(':')[1]) * MINUTE
+  const NOW = Date.now() + offset
+
   const periodDomains = {
-    day: [Date.now() - 24 * 60 * 60 * 1000, Date.now()],
-    week: [Date.now() - 7 * 24 * 60 * 60 * 1000, Date.now()],
-    month: [Date.now() - 30 * 24 * 60 * 60 * 1000, Date.now()]
+    day: [NOW - DAY, NOW],
+    week: [NOW - WEEK, NOW],
+    month: [NOW - MONTH, NOW]
   }
 
   const dataPoints = useMemo(
@@ -58,16 +67,16 @@ const Graph = ({ data, representing, period }) => {
 
   const getPastAndCurrentDayLabels = useCallback(d => {
     const currentDate = new Date(d)
-    const currentDateDay = currentDate.getDate()
-    const currentDateWeekday = currentDate.getDay()
-    const currentDateMonth = currentDate.getMonth()
+    const currentDateDay = currentDate.getUTCDate()
+    const currentDateWeekday = currentDate.getUTCDay()
+    const currentDateMonth = currentDate.getUTCMonth()
 
     const previousDate = new Date(currentDate.getTime())
-    previousDate.setDate(currentDateDay - 1)
+    previousDate.setUTCDate(currentDateDay - 1)
 
-    const previousDateDay = previousDate.getDate()
-    const previousDateWeekday = previousDate.getDay()
-    const previousDateMonth = previousDate.getMonth()
+    const previousDateDay = previousDate.getUTCDate()
+    const previousDateWeekday = previousDate.getUTCDay()
+    const previousDateMonth = previousDate.getUTCMonth()
 
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const months = [
@@ -99,23 +108,23 @@ const Graph = ({ data, representing, period }) => {
 
   const buildTicks = useCallback(
     domain => {
-      const now = Date.now()
       const points = []
 
       const roundDate = d => {
+        // console.log('d', d)
         const step = dataPoints[period.code].step
-        return new Date(Math.ceil(d.getTime() / step) * step)
+        return new Date(Math.ceil(d.valueOf() / step) * step)
       }
 
       for (let i = 0; i <= dataPoints[period.code].freq; i++) {
-        const stepDate = new Date(now - i * dataPoints[period.code].step)
+        const stepDate = new Date(NOW - i * dataPoints[period.code].step)
         if (stepDate < domain[0]) continue
         points.push(roundDate(stepDate))
       }
 
       return points
     },
-    [dataPoints, period]
+    [NOW, dataPoints, period.code]
   )
 
   const x = d3
@@ -125,7 +134,7 @@ const Graph = ({ data, representing, period }) => {
 
   const y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, d => d.amount) * 1.03])
+    .domain([0, d3.max(data, d => new BigNumber(d.fiat).toNumber()) * 1.03])
     .nice()
     .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
 
@@ -140,7 +149,11 @@ const Graph = ({ data, representing, period }) => {
           d3
             .axisBottom(x)
             .ticks(dataPoints[period.code].tick)
-            .tickFormat(d3.timeFormat(dataPoints[period.code].labelFormat))
+            .tickFormat(d => {
+              return d3.timeFormat(dataPoints[period.code].labelFormat)(
+                d.getTime() + d.getTimezoneOffset() * MINUTE
+              )
+            })
         )
         .call(g => g.select('.domain').remove())
         .call(g =>
@@ -186,7 +199,9 @@ const Graph = ({ data, representing, period }) => {
             .selectAll('line')
             .data(buildTicks(x.domain()))
             .join('line')
-            .attr('x1', d => 0.5 + x(d))
+            .attr('x1', d => {
+              return 0.5 + x(d)
+            })
             .attr('x2', d => 0.5 + x(d))
             .attr('y1', GRAPH_MARGIN.top)
             .attr('y2', GRAPH_HEIGHT - GRAPH_MARGIN.bottom)
@@ -215,8 +230,8 @@ const Graph = ({ data, representing, period }) => {
             .selectAll('line')
             .data(
               buildTicks(x.domain()).filter(x => {
-                if (period.code === 'day') return x.getHours() === 0
-                return x.getDate() === 1
+                if (period.code === 'day') return x.getUTCHours() === 0
+                return x.getUTCDate() === 1
               })
             )
             .join('line')
@@ -238,8 +253,8 @@ const Graph = ({ data, representing, period }) => {
           if (!separator) return
 
           const breakpoint = buildTicks(x.domain()).filter(x => {
-            if (period.code === 'day') return x.getHours() === 0
-            return x.getDate() === 1
+            if (period.code === 'day') return x.getUTCHours() === 0
+            return x.getUTCDate() === 1
           })
 
           const labels = getPastAndCurrentDayLabels(breakpoint)
@@ -262,8 +277,8 @@ const Graph = ({ data, representing, period }) => {
           if (!separator) return
 
           const breakpoint = buildTicks(x.domain()).filter(x => {
-            if (period.code === 'day') return x.getHours() === 0
-            return x.getDate() === 1
+            if (period.code === 'day') return x.getUTCHours() === 0
+            return x.getUTCDate() === 1
           })
 
           const labels = getPastAndCurrentDayLabels(breakpoint)
@@ -317,8 +332,14 @@ const Graph = ({ data, representing, period }) => {
         .call(g =>
           g
             .append('line')
-            .attr('y1', 0.5 + y(d3.mean(data, d => d.amount)))
-            .attr('y2', 0.5 + y(d3.mean(data, d => d.amount)))
+            .attr(
+              'y1',
+              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()))
+            )
+            .attr(
+              'y2',
+              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()))
+            )
             .attr('x1', GRAPH_MARGIN.left)
             .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
         )
@@ -343,10 +364,13 @@ const Graph = ({ data, representing, period }) => {
       .selectAll('circle')
       .data(data)
       .join('circle')
-      .attr('stroke', d => (d.direction === 'cash-in' ? java : neon))
-      .attr('cx', d => x(d.created))
-      .attr('cy', d => y(d.amount))
-      .attr('fill', d => (d.direction === 'cash-in' ? java : neon))
+      .attr('stroke', d => (d.txClass === 'cash-in' ? java : neon))
+      .attr('cx', d => {
+        const created = new Date(d.created)
+        return x(created.setTime(created.getTime() + offset))
+      })
+      .attr('cy', d => y(new BigNumber(d.fiat).toNumber()))
+      .attr('fill', d => (d.txClass === 'cash-in' ? java : neon))
       .attr('r', 2.5)
 
     return svg.node()
@@ -359,6 +383,7 @@ const Graph = ({ data, representing, period }) => {
     formatText,
     formatTicks,
     formatTicksText,
+    offset,
     x,
     y
   ])
