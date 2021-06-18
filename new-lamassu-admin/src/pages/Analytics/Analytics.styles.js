@@ -1,4 +1,4 @@
-import { offDarkColor, tomato } from 'src/styling/variables'
+import { offDarkColor, tomato, neon, java } from 'src/styling/variables'
 
 const styles = {
   overviewLegend: {
@@ -102,6 +102,24 @@ const styles = {
   },
   machineSelector: {
     width: 248
+  },
+  cashInIcon: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+    backgroundColor: java
+  },
+  cashOutIcon: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+    backgroundColor: neon
+  },
+  txIcon: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+    backgroundColor: '#000'
   }
 }
 

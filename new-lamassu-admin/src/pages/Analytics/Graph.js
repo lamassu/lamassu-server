@@ -41,8 +41,6 @@ const Graph = ({ data, representing, period, timezone }) => {
     month: [NOW - MONTH, NOW]
   }
 
-  console.log('data', data)
-
   const dataPoints = useMemo(
     () => ({
       day: {

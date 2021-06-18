@@ -9,7 +9,10 @@ import React, { useState } from 'react'
 import { Select } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { H2, Info2, P } from 'src/components/typography'
-import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { ReactComponent as DownIcon } from 'src/styling/icons/dashboard/down.svg'
+import { ReactComponent as EqualIcon } from 'src/styling/icons/dashboard/equal.svg'
+import { ReactComponent as UpIcon } from 'src/styling/icons/dashboard/up.svg'
+import { primaryColor } from 'src/styling/variables'
 
 import styles from './Analytics.styles'
 import Graph from './Graph'
@@ -72,12 +75,13 @@ const GET_DATA = gql`
   }
 `
 
-const LegendEntry = ({ IconComponent, label }) => {
+const LegendEntry = ({ IconElement, IconComponent, label }) => {
   const classes = useStyles()
 
   return (
     <span className={classes.legendEntry}>
-      <IconComponent height={10} />
+      {!!IconComponent && <IconComponent height={12} />}
+      {!!IconElement && IconElement}
       <P>{label}</P>
     </span>
   )
@@ -117,10 +121,12 @@ const OverviewEntry = ({
             : value}
         </span>
         {isCurrency &&
-          ` ${mainCurrency} ${R.length(currencies) > 1 ? '*' : ''}`}
+          ` ${mainCurrency} ${R.length(R.keys(currencies)) > 1 ? '*' : ''}`}
       </Info2>
       <span className={classes.overviewGrowth}>
-        <CloseIcon height={10} />
+        {R.gt(growthRate, 0) && <UpIcon height={10} />}
+        {R.lt(growthRate, 0) && <DownIcon height={10} />}
+        {R.equals(growthRate, 0) && <EqualIcon height={10} />}
         <P noMargin className={classnames(growthClasses)}>
           {growthRate.toLocaleString('en-US', { maximumFractionDigits: 2 })}%
         </P>
@@ -141,16 +147,32 @@ const AnalyticsGraph = ({
 }) => {
   const classes = useStyles()
 
+  const legend = {
+    cashIn: <div className={classes.cashInIcon}></div>,
+    cashOut: <div className={classes.cashOutIcon}></div>,
+    transaction: <div className={classes.txIcon}></div>,
+    average: (
+      <svg height="12" width="18">
+        <g fill="none" stroke={primaryColor} strokeWidth="3">
+          <path strokeDasharray="5, 2" d="M 5 6 l 20 0" />
+        </g>
+      </svg>
+    )
+  }
+
   return (
     <>
       <div className={classes.graphHeaderWrapper}>
         <div className={classes.graphHeaderLeft}>
           <H2 noMargin>{title}</H2>
           <Box className={classes.graphLegend}>
-            <LegendEntry IconComponent={CloseIcon} label={'Cash-in'} />
-            <LegendEntry IconComponent={CloseIcon} label={'Cash-out'} />
-            <LegendEntry IconComponent={CloseIcon} label={'One transaction'} />
-            <LegendEntry IconComponent={CloseIcon} label={'Average'} />
+            <LegendEntry IconElement={legend.cashIn} label={'Cash-in'} />
+            <LegendEntry IconElement={legend.cashOut} label={'Cash-out'} />
+            <LegendEntry
+              IconElement={legend.transaction}
+              label={'One transaction'}
+            />
+            <LegendEntry IconElement={legend.average} label={'Average'} />
           </Box>
         </div>
         <div className={classes.graphHeaderRight}>
@@ -198,15 +220,6 @@ const Analytics = () => {
     transactions?.filter(
       tx => !tx.expired && (tx.sendConfirmed || tx.dispense)
     ) ?? []
-
-  const usedCurrencies = R.reduce(
-    (acc, v) => {
-      acc[v.fiatCode] ? (acc[v.fiatCode] += 1) : (acc[v.fiatCode] = 1)
-      return acc
-    },
-    {},
-    data
-  )
 
   const machineOptions = R.clone(MACHINE_OPTIONS)
 
@@ -257,6 +270,15 @@ const Analytics = () => {
     }
   }
 
+  const usedCurrencies = R.reduce(
+    (acc, v) => {
+      acc[v.fiatCode] ? (acc[v.fiatCode] += 1) : (acc[v.fiatCode] = 1)
+      return acc
+    },
+    {},
+    filteredData[period.code].current
+  )
+
   const txs = {
     current: filteredData[period.code].current.length,
     previous: filteredData[period.code].previous.length
@@ -297,15 +319,15 @@ const Analytics = () => {
         <TitleSection title="Analytics">
           <Box className={classes.overviewLegend}>
             <LegendEntry
-              IconComponent={CloseIcon}
+              IconComponent={UpIcon}
               label={'Up since last period'}
             />
             <LegendEntry
-              IconComponent={CloseIcon}
+              IconComponent={DownIcon}
               label={'Down since last period'}
             />
             <LegendEntry
-              IconComponent={CloseIcon}
+              IconComponent={EqualIcon}
               label={'Same since last period'}
             />
           </Box>
