@@ -41,6 +41,8 @@ const Graph = ({ data, representing, period, timezone }) => {
     month: [NOW - MONTH, NOW]
   }
 
+  console.log('data', data)
+
   const dataPoints = useMemo(
     () => ({
       day: {
@@ -111,7 +113,6 @@ const Graph = ({ data, representing, period, timezone }) => {
       const points = []
 
       const roundDate = d => {
-        // console.log('d', d)
         const step = dataPoints[period.code].step
         return new Date(Math.ceil(d.valueOf() / step) * step)
       }
@@ -134,7 +135,10 @@ const Graph = ({ data, representing, period, timezone }) => {
 
   const y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, d => new BigNumber(d.fiat).toNumber()) * 1.03])
+    .domain([
+      0,
+      (d3.max(data, d => new BigNumber(d.fiat).toNumber()) ?? 1000) * 1.03
+    ])
     .nice()
     .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
 
@@ -334,11 +338,11 @@ const Graph = ({ data, representing, period, timezone }) => {
             .append('line')
             .attr(
               'y1',
-              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()))
+              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0)
             )
             .attr(
               'y2',
-              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()))
+              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0)
             )
             .attr('x1', GRAPH_MARGIN.left)
             .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
@@ -364,13 +368,13 @@ const Graph = ({ data, representing, period, timezone }) => {
       .selectAll('circle')
       .data(data)
       .join('circle')
-      .attr('stroke', d => (d.txClass === 'cash-in' ? java : neon))
+      .attr('stroke', d => (d.txClass === 'cashIn' ? java : neon))
       .attr('cx', d => {
         const created = new Date(d.created)
         return x(created.setTime(created.getTime() + offset))
       })
       .attr('cy', d => y(new BigNumber(d.fiat).toNumber()))
-      .attr('fill', d => (d.txClass === 'cash-in' ? java : neon))
+      .attr('fill', d => (d.txClass === 'cashIn' ? java : neon))
       .attr('r', 2.5)
 
     return svg.node()
