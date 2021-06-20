@@ -212,7 +212,6 @@ const Analytics = () => {
   const config = R.path(['config'])(configResponse) ?? []
 
   const timezone = config?.locale_timezone
-  const formattedTimezone = `${timezone?.utcOffset}:${timezone?.dstOffset}`
 
   const primaryFiat = config?.locale_fiatCurrency
 
@@ -389,7 +388,7 @@ const Analytics = () => {
           machines={machineOptions}
           selectedMachine={machine}
           handleMachineChange={m => setMachine(m)}
-          timezone={formattedTimezone}
+          timezone={timezone}
         />
       </>
     )
