@@ -8,8 +8,11 @@ import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schemas from 'src/pages/Services/schemas'
+import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
+import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
+import AdvancedWallet from './AdvancedWallet'
 import Wizard from './Wizard'
 import { WalletSchema, getElements } from './helper'
 
@@ -48,6 +51,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const [editingSchema, setEditingSchema] = useState(null)
   const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [wizard, setWizard] = useState(false)
+  const [advancedSettings, setAdvancedSettings] = useState(false)
   const { data } = useQuery(GET_INFO)
 
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
@@ -99,47 +103,60 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <TitleSection title="Wallet Settings" />
-      <EditableTable
-        name="test"
-        namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
-        data={config}
-        error={error?.message}
-        stripeWhen={it => !WalletSchema.isValidSync(it)}
-        enableEdit
-        shouldOverrideEdit={shouldOverrideEdit}
-        editOverride={setWizard}
-        editWidth={174}
-        save={save}
-        validationSchema={WalletSchema}
-        elements={getElements(cryptoCurrencies, accountsConfig, onChange)}
+      <TitleSection
+        title="Wallet Settings"
+        button={{
+          text: 'Advanced settings',
+          icon: SettingsIcon,
+          inverseIcon: ReverseSettingsIcon,
+          toggle: setAdvancedSettings
+        }}
       />
-      {wizard && (
-        <Wizard
-          coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
-          onClose={() => setWizard(false)}
-          save={save}
-          error={error?.message}
-          cryptoCurrencies={cryptoCurrencies}
-          userAccounts={data?.config?.accounts}
-          accounts={accounts}
-          accountsConfig={accountsConfig}
-        />
-      )}
-      {editingSchema && (
-        <Modal
-          title={`Edit ${editingSchema.name}`}
-          width={478}
-          handleClose={() => setEditingSchema(null)}
-          open={true}>
-          <FormRenderer
-            save={wizardSave}
-            elements={editingSchema.elements}
-            validationSchema={editingSchema.validationSchema}
-            value={accounts[editingSchema.code]}
+      {!advancedSettings && (
+        <>
+          <EditableTable
+            name="test"
+            namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
+            data={config}
+            error={error?.message}
+            stripeWhen={it => !WalletSchema.isValidSync(it)}
+            enableEdit
+            shouldOverrideEdit={shouldOverrideEdit}
+            editOverride={setWizard}
+            editWidth={174}
+            save={save}
+            validationSchema={WalletSchema}
+            elements={getElements(cryptoCurrencies, accountsConfig, onChange)}
           />
-        </Modal>
+          {wizard && (
+            <Wizard
+              coin={R.find(R.propEq('code', wizard))(cryptoCurrencies)}
+              onClose={() => setWizard(false)}
+              save={save}
+              error={error?.message}
+              cryptoCurrencies={cryptoCurrencies}
+              userAccounts={data?.config?.accounts}
+              accounts={accounts}
+              accountsConfig={accountsConfig}
+            />
+          )}
+          {editingSchema && (
+            <Modal
+              title={`Edit ${editingSchema.name}`}
+              width={478}
+              handleClose={() => setEditingSchema(null)}
+              open={true}>
+              <FormRenderer
+                save={wizardSave}
+                elements={editingSchema.elements}
+                validationSchema={editingSchema.validationSchema}
+                value={accounts[editingSchema.code]}
+              />
+            </Modal>
+          )}
+        </>
       )}
+      {advancedSettings && <AdvancedWallet></AdvancedWallet>}
     </>
   )
 }

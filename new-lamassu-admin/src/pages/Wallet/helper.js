@@ -28,6 +28,45 @@ const WalletSchema = Yup.object().shape({
     .transform(transformNumber)
 })
 
+const AdvancedWalletSchema = Yup.object().shape({
+  cryptoUnits: Yup.string().required()
+})
+
+const getAdvancedWalletElements = (cryptoCurrencies, config) => {
+  const viewCryptoCurrency = it =>
+    R.compose(
+      R.prop(['display']),
+      R.find(R.propEq('code', it))
+    )(cryptoCurrencies)
+
+  return [
+    {
+      name: 'id',
+      header: 'Cryptocurrency',
+      width: 180,
+      view: viewCryptoCurrency,
+      size: 'sm',
+      editable: false
+    },
+    {
+      name: 'cryptoUnits',
+      size: 'sm',
+      stripe: true,
+      view: it => it,
+      width: 190,
+      input: Autocomplete,
+      inputProps: {
+        options: [
+          { code: 'mUnits', display: 'mUnits' },
+          { code: 'fUnits', display: 'fUnits' }
+        ],
+        valueProp: 'code',
+        labelProp: 'display'
+      }
+    }
+  ]
+}
+
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
   const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it => {
@@ -133,4 +172,10 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
   ]
 }
 
-export { WalletSchema, getElements, filterClass }
+export {
+  WalletSchema,
+  AdvancedWalletSchema,
+  getElements,
+  filterClass,
+  getAdvancedWalletElements
+}
