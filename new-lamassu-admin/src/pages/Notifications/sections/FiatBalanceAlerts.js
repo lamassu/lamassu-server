@@ -79,7 +79,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                   }
                   applyColorVariant
                   applyFiatBalanceAlertsStyling
-                  removeInnerPercentage
+                  omitInnerPercentage
                   cashOut
                 />
                 <div className={classes.col2}>
@@ -105,7 +105,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                 }
                 applyColorVariant
                 applyFiatBalanceAlertsStyling
-                removeInnerPercentage
+                omitInnerPercentage
                 cashOut
               />
               <div className={classes.col2}>
