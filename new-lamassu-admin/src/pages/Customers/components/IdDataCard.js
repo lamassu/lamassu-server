@@ -34,7 +34,6 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
   const rawExpirationDate = R.path(['expirationDate'])(idData)
   const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
-  console.log('customer', customerData)
 
   const elements = [
     {
