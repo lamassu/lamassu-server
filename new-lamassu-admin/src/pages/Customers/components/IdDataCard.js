@@ -15,6 +15,7 @@ import { getName } from '../helper'
 import Field from './Field'
 
 const formatGender = field => {
+  // In US cards, gender comes as a number. In BC and ZA cards, gender comes as a letter
   const genderMap = {
     1: 'M',
     2: 'F'
