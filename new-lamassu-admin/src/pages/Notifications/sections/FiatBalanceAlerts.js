@@ -77,7 +77,9 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                     values.fillingPercentageCassette1 ??
                     data?.fillingPercentageCassette1
                   }
-                  inFiatBalanceAlerts={true}
+                  applyColorVariant
+                  applyFiatBalanceAlertsStyling
+                  removeInnerPercentage
                   cashOut
                 />
                 <div className={classes.col2}>
@@ -101,7 +103,9 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                   values.fillingPercentageCassette2 ??
                   data?.fillingPercentageCassette2
                 }
-                inFiatBalanceAlerts={true}
+                applyColorVariant
+                applyFiatBalanceAlertsStyling
+                removeInnerPercentage
                 cashOut
               />
               <div className={classes.col2}>

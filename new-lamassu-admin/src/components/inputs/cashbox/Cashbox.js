@@ -19,25 +19,32 @@ const Cashbox = ({
   className,
   emptyPartClassName,
   labelClassName,
-  inFiatBalanceAlerts
+  applyColorVariant,
+  applyFiatBalanceAlertsStyling,
+  removeInnerPercentage
 }) => {
-  const classes = cashboxClasses({ percent, cashOut, inFiatBalanceAlerts })
+  console.log(
+    applyColorVariant,
+    applyFiatBalanceAlertsStyling,
+    removeInnerPercentage
+  )
+  const classes = cashboxClasses({ percent, cashOut, applyColorVariant })
   const threshold = 51
 
   const showCashBox = {
-    [classes.fiatBalanceAlertCashbox]: inFiatBalanceAlerts,
-    [classes.cashbox]: !inFiatBalanceAlerts
+    [classes.fiatBalanceAlertCashbox]: applyFiatBalanceAlertsStyling,
+    [classes.cashbox]: !applyFiatBalanceAlertsStyling
   }
 
   return (
     <div className={classnames(className, showCashBox)}>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
-        {!inFiatBalanceAlerts && percent <= threshold && (
+        {!removeInnerPercentage && percent <= threshold && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
       <div className={classes.fullPart}>
-        {!inFiatBalanceAlerts && percent > threshold && (
+        {!removeInnerPercentage && percent > threshold && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>

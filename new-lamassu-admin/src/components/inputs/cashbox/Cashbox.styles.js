@@ -11,8 +11,8 @@ const colors = {
   }
 }
 
-const colorPicker = ({ percent, cashOut, inFiatBalanceAlerts }) => {
-  if (inFiatBalanceAlerts) return colors[cashOut ? 'cashOut' : 'cashIn'].full
+const colorPicker = ({ percent, cashOut, applyColorVariant }) => {
+  if (applyColorVariant) return colors[cashOut ? 'cashOut' : 'cashIn'].full
   return colors[cashOut ? 'cashOut' : 'cashIn'][
     percent >= 50 ? 'full' : 'empty'
   ]
