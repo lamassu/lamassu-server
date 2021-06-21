@@ -14,11 +14,26 @@ import { getName } from '../helper'
 
 import Field from './Field'
 
+const formatGender = field => {
+  const genderMap = {
+    1: 'M',
+    2: 'F'
+  }
+
+  const isNumber = s => {
+    if (typeof s !== 'string') return false
+    return !isNaN(s) && !isNaN(parseInt(s))
+  }
+
+  return !isNumber(field) ? field : genderMap[field]
+}
+
 const IdDataCard = memo(({ customerData, updateCustomer }) => {
   const idData = R.path(['idCardData'])(customerData)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
   const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
+  console.log('customer', customerData)
 
   const elements = [
     {
@@ -46,7 +61,9 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
     },
     {
       header: 'Gender',
-      display: R.path(['gender'])(idData),
+      display: formatGender(
+        R.path(['gender'])(idData) ?? R.path(['sex'])(idData)
+      ),
       size: 80
     },
     {
