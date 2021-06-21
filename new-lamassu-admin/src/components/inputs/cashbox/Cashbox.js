@@ -23,11 +23,6 @@ const Cashbox = ({
   applyFiatBalanceAlertsStyling,
   removeInnerPercentage
 }) => {
-  console.log(
-    applyColorVariant,
-    applyFiatBalanceAlertsStyling,
-    removeInnerPercentage
-  )
   const classes = cashboxClasses({ percent, cashOut, applyColorVariant })
   const threshold = 51
 
