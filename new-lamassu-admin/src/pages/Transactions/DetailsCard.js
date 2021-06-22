@@ -7,8 +7,9 @@ import JSZip from 'jszip'
 import { utils as coinUtils } from 'lamassu-coins'
 import moment from 'moment'
 import * as R from 'ramda'
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 
+import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import { HoverableTooltip } from 'src/components/Tooltip'
 import { IDButton, ActionButton } from 'src/components/buttons'
 import { P, Label1 } from 'src/components/typography'
@@ -79,6 +80,8 @@ const Label = ({ children }) => {
 
 const DetailsRow = ({ it: tx, timezone }) => {
   const classes = useStyles()
+  const [action, setAction] = useState({ command: null })
+  const [errorMessage, setErrorMessage] = useState('')
 
   const zip = new JSZip()
 
@@ -87,7 +90,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
   })
 
   const [cancelCashOutTransaction] = useMutation(CANCEL_TRANSACTION, {
-    onError: () => console.error('Error cancelling transaction'),
+    onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
     refetchQueries: () => ['transactions']
   })
 
@@ -301,10 +304,8 @@ const DetailsRow = ({ it: tx, timezone }) => {
                 InverseIcon={CancelInverseIcon}
                 className={classes.cancelTransaction}
                 onClick={() =>
-                  cancelCashOutTransaction({
-                    variables: {
-                      id: tx.id
-                    }
+                  setAction({
+                    command: 'cancelTx'
                   })
                 }>
                 Cancel transaction
@@ -313,6 +314,25 @@ const DetailsRow = ({ it: tx, timezone }) => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={action.command === 'cancelTx'}
+        title={`Cancel this transaction?`}
+        errorMessage={errorMessage}
+        toBeConfirmed={tx.machineName}
+        message={`The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`}
+        onConfirmed={() => {
+          setErrorMessage(null)
+          cancelCashOutTransaction({
+            variables: {
+              id: tx.id
+            }
+          })
+        }}
+        onDissmised={() => {
+          setAction({ command: null })
+          setErrorMessage(null)
+        }}
+      />
     </div>
   )
 }
