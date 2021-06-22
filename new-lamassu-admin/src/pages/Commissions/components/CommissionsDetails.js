@@ -6,7 +6,7 @@ import Section from 'src/components/layout/Section'
 import {
   mainFields,
   overrides,
-  schema,
+  getSchema,
   getOverridesSchema,
   defaults,
   overridesDefaults,
@@ -41,9 +41,9 @@ const CommissionsDetails = memo(
             enableEdit
             initialValues={commission}
             save={save}
-            validationSchema={schema}
+            validationSchema={getSchema(locale)}
             data={R.of(commission)}
-            elements={mainFields(currency, locale, classes)}
+            elements={mainFields(currency)}
             setEditing={onEditingDefault}
             forceDisable={isEditingOverrides}
           />
@@ -62,16 +62,11 @@ const CommissionsDetails = memo(
             save={saveOverrides}
             validationSchema={getOverridesSchema(
               orderedCommissionsOverrides,
-              data
+              data,
+              locale
             )}
             data={orderedCommissionsOverrides}
-            elements={overrides(
-              data,
-              currency,
-              orderedCommissionsOverrides,
-              locale,
-              classes
-            )}
+            elements={overrides(data, currency, orderedCommissionsOverrides)}
             setEditing={onEditingOverrides}
             forceDisable={isEditingDefault}
           />

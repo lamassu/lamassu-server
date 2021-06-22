@@ -8,7 +8,7 @@ import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
 import styles from 'src/pages/AddMachine/styles'
-import { mainFields, defaults, schema } from 'src/pages/Commissions/helper'
+import { mainFields, defaults, getSchema } from 'src/pages/Commissions/helper'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 const useStyles = makeStyles(styles)
@@ -62,7 +62,7 @@ function Commissions({ isActive, doContinue }) {
           enableEdit
           forceAdd={isActive}
           save={save}
-          validationSchema={schema}
+          validationSchema={getSchema(locale)}
           data={[]}
           elements={mainFields(currency, locale, commissionClasses)}
         />
