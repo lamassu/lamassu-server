@@ -297,7 +297,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
               onClick={() => downloadRawLogs(tx, timezone)}>
               Download raw logs
             </ActionButton>
-            {tx.txClass === 'cashOut' && (
+            {tx.txClass === 'cashOut' && getStatus(tx) !== 'Cancelled' && (
               <ActionButton
                 color="primary"
                 Icon={CancelIcon}
@@ -327,6 +327,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
               id: tx.id
             }
           })
+          setAction({ command: null })
         }}
         onDissmised={() => {
           setAction({ command: null })
