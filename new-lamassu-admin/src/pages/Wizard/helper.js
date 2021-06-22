@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 import React from 'react'
 
-import { schema as CommissionsSchema } from 'src/pages/Commissions/helper'
+import { getSchema as CommissionsSchema } from 'src/pages/Commissions/helper'
 import { LocaleSchema } from 'src/pages/Locales/helper'
 import { WalletSchema } from 'src/pages/Wallet/helper'
 import { fromNamespace, namespaces } from 'src/utils/config'
@@ -40,7 +40,8 @@ const hasValidLocale = config => {
 
 const hasValidCommissions = config => {
   const commission = fromNamespace(namespaces.COMMISSIONS, config)
-  return CommissionsSchema.isValidSync(commission)
+  const locale = fromNamespace(namespaces.LOCALE, config)
+  return CommissionsSchema(locale).isValidSync(commission)
 }
 
 const getWizardStep = (config, crypto) => {

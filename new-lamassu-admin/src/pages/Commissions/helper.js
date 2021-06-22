@@ -9,6 +9,8 @@ import { bold } from 'src/styling/helpers'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { primaryColor, secondaryColorDark } from 'src/styling/variables'
+import denominations from 'src/utils/bill-denominations'
+import { getBillOptions } from 'src/utils/bill-options'
 import { CURRENCY_MAX } from 'src/utils/constants'
 
 const ALL_MACHINES = {
@@ -227,28 +229,35 @@ const overrides = (auxData, currency, auxElements) => {
 }
 
 const percentMax = 100
-const schema = Yup.object().shape({
-  cashIn: Yup.number()
-    .label('Cash-in')
-    .min(0)
-    .max(percentMax)
-    .required(),
-  cashOut: Yup.number()
-    .label('Cash-out')
-    .min(0)
-    .max(percentMax)
-    .required(),
-  fixedFee: Yup.number()
-    .label('Fixed Fee')
-    .min(0)
-    .max(CURRENCY_MAX)
-    .required(),
-  minimumTx: Yup.number()
-    .label('Minimum Tx')
-    .min(0)
-    .max(CURRENCY_MAX)
-    .required()
-})
+const getSchema = locale => {
+  const bills = getBillOptions(locale, denominations).map(it =>
+    parseInt(it.code)
+  )
+  const highestBill = R.isEmpty(bills) ? CURRENCY_MAX : Math.max(...bills)
+
+  return Yup.object().shape({
+    cashIn: Yup.number()
+      .label('Cash-in')
+      .min(0)
+      .max(percentMax)
+      .required(),
+    cashOut: Yup.number()
+      .label('Cash-out')
+      .min(0)
+      .max(percentMax)
+      .required(),
+    fixedFee: Yup.number()
+      .label('Fixed Fee')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    minimumTx: Yup.number()
+      .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required()
+  })
+}
 
 const getAlreadyUsed = (id, machine, values) => {
   const getCrypto = R.prop('cryptoCurrencies')
@@ -271,13 +280,18 @@ const getAlreadyUsed = (id, machine, values) => {
   return R.difference(alreadyUsed, originalCryptos)
 }
 
-const getOverridesSchema = (values, rawData) => {
+const getOverridesSchema = (values, rawData, locale) => {
   const getData = R.path(R.__, rawData)
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const rawCryptos = getData(['cryptoCurrencies'])
   const cryptoData = [ALL_COINS].concat(
     R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
   )
+
+  const bills = getBillOptions(locale, denominations).map(it =>
+    parseInt(it.code)
+  )
+  const highestBill = R.isEmpty(bills) ? CURRENCY_MAX : Math.max(...bills)
 
   return Yup.object().shape({
     machine: Yup.string()
@@ -330,12 +344,12 @@ const getOverridesSchema = (values, rawData) => {
     fixedFee: Yup.number()
       .label('Fixed Fee')
       .min(0)
-      .max(CURRENCY_MAX)
+      .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
       .min(0)
-      .max(CURRENCY_MAX)
+      .max(highestBill)
       .required()
   })
 }
@@ -414,7 +428,12 @@ const getCommissions = (cryptoCode, deviceId, config) => {
   return createCommissions(cryptoCode, deviceId, true, config)
 }
 
-const getListCommissionsSchema = () => {
+const getListCommissionsSchema = locale => {
+  const bills = getBillOptions(locale, denominations).map(it =>
+    parseInt(it.code)
+  )
+  const highestBill = R.isEmpty(bills) ? CURRENCY_MAX : Math.max(...bills)
+
   return Yup.object().shape({
     machine: Yup.string()
       .label('Machine')
@@ -436,12 +455,12 @@ const getListCommissionsSchema = () => {
     fixedFee: Yup.number()
       .label('Fixed Fee')
       .min(0)
-      .max(CURRENCY_MAX)
+      .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
       .min(0)
-      .max(CURRENCY_MAX)
+      .max(highestBill)
       .required()
   })
 }
@@ -534,7 +553,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
 export {
   mainFields,
   overrides,
-  schema,
+  getSchema,
   getOverridesSchema,
   defaults,
   overridesDefaults,

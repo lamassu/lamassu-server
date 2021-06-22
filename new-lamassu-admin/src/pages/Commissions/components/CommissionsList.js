@@ -169,7 +169,7 @@ const CommissionsList = memo(
             enableEdit
             save={saveOverrides}
             initialValues={overridesDefaults}
-            validationSchema={getListCommissionsSchema()}
+            validationSchema={getListCommissionsSchema(localeConfig)}
             data={tableData}
             elements={commissionsList(data, currency)}
           />
