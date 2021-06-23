@@ -9,7 +9,7 @@ import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import {
   defaultSchema,
-  overridesSchema,
+  getOverridesSchema,
   defaults,
   overridesDefaults,
   getDefaultSettings,
@@ -95,7 +95,7 @@ const AdvancedTriggersSettings = memo(() => {
           enableCreate
           initialValues={overridesDefaults}
           save={saveOverrides}
-          validationSchema={overridesSchema}
+          validationSchema={getOverridesSchema(requirementsOverrides)}
           data={requirementsOverrides}
           elements={getOverrides()}
           setEditing={onEditingOverrides}
