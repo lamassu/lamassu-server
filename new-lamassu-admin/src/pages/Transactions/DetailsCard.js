@@ -285,6 +285,20 @@ const DetailsRow = ({ it: tx, timezone }) => {
           ) : (
             errorElements
           )}
+          {tx.txClass === 'cashOut' && getStatus(tx) !== 'Cancelled' && (
+            <ActionButton
+              color="primary"
+              Icon={CancelIcon}
+              InverseIcon={CancelInverseIcon}
+              className={classes.cancelTransaction}
+              onClick={() =>
+                setAction({
+                  command: 'cancelTx'
+                })
+              }>
+              Cancel transaction
+            </ActionButton>
+          )}
         </div>
         <div>
           <Label>Other actions</Label>
@@ -297,20 +311,6 @@ const DetailsRow = ({ it: tx, timezone }) => {
               onClick={() => downloadRawLogs(tx, timezone)}>
               Download raw logs
             </ActionButton>
-            {tx.txClass === 'cashOut' && getStatus(tx) !== 'Cancelled' && (
-              <ActionButton
-                color="primary"
-                Icon={CancelIcon}
-                InverseIcon={CancelInverseIcon}
-                className={classes.cancelTransaction}
-                onClick={() =>
-                  setAction({
-                    command: 'cancelTx'
-                  })
-                }>
-                Cancel transaction
-              </ActionButton>
-            )}
           </div>
         </div>
       </div>
@@ -322,12 +322,12 @@ const DetailsRow = ({ it: tx, timezone }) => {
         message={`The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`}
         onConfirmed={() => {
           setErrorMessage(null)
+          setAction({ command: null })
           cancelCashOutTransaction({
             variables: {
               id: tx.id
             }
           })
-          setAction({ command: null })
         }}
         onDissmised={() => {
           setAction({ command: null })
@@ -338,4 +338,4 @@ const DetailsRow = ({ it: tx, timezone }) => {
   )
 }
 
-export default memo(DetailsRow, (prev, next) => prev.id === next.id)
+export default memo(DetailsRow)
