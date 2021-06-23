@@ -12,10 +12,6 @@ const advancedRequirementOptions = [
   { display: 'US SSN', code: 'usSsn' }
 ]
 
-const alreadyExists = (values, requirement) => {
-  return R.isEmpty(R.filter(value => value.requirement === requirement)(values))
-}
-
 const displayRequirement = code => {
   return R.prop(
     'display',
@@ -41,7 +37,7 @@ const getOverridesSchema = values => {
       .test({
         test() {
           const { requirement } = this.parent
-          if (!alreadyExists(values, requirement)) {
+          if (R.find(R.propEq('requirement', requirement))(values)) {
             return this.createError({
               message: `Requirement ${displayRequirement(
                 requirement
