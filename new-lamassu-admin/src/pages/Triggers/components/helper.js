@@ -1,7 +1,27 @@
+import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-import { getView, requirementOptions } from 'src/pages/Triggers/helper'
+import { getView } from 'src/pages/Triggers/helper'
+
+const advancedRequirementOptions = [
+  { display: 'SMS verification', code: 'sms' },
+  { display: 'ID card image', code: 'idCardPhoto' },
+  { display: 'ID data', code: 'idCardData' },
+  { display: 'Customer camera', code: 'facephoto' },
+  { display: 'US SSN', code: 'usSsn' }
+]
+
+const alreadyExists = (values, requirement) => {
+  return R.isEmpty(R.filter(value => value.requirement === requirement)(values))
+}
+
+const displayRequirement = code => {
+  return R.prop(
+    'display',
+    R.find(R.propEq('code', code))(advancedRequirementOptions)
+  )
+}
 
 const defaultSchema = Yup.object().shape({
   expirationTime: Yup.string()
@@ -13,18 +33,33 @@ const defaultSchema = Yup.object().shape({
     .required()
 })
 
-const overridesSchema = Yup.object().shape({
-  id: Yup.string()
-    .label('Requirement')
-    .required(),
-  expirationTime: Yup.string()
-    .label('Expiration time')
-    .required(),
-  automation: Yup.string()
-    .label('Automation')
-    .matches(/(Manual|Automatic)/)
-    .required()
-})
+const getOverridesSchema = values => {
+  return Yup.object().shape({
+    id: Yup.string()
+      .label('Requirement')
+      .required()
+      .test({
+        test() {
+          const { requirement } = this.parent
+          if (!alreadyExists(values, requirement)) {
+            return this.createError({
+              message: `Requirement ${displayRequirement(
+                requirement
+              )} already overriden`
+            })
+          }
+          return true
+        }
+      }),
+    expirationTime: Yup.string()
+      .label('Expiration time')
+      .required(),
+    automation: Yup.string()
+      .label('Automation')
+      .matches(/(Manual|Automatic)/)
+      .required()
+  })
+}
 
 const getDefaultSettings = () => {
   return [
@@ -60,10 +95,10 @@ const getOverrides = () => {
       header: 'Requirement',
       width: 196,
       size: 'sm',
-      view: getView(requirementOptions, 'display'),
+      view: getView(advancedRequirementOptions, 'display'),
       input: Autocomplete,
       inputProps: {
-        options: requirementOptions,
+        options: advancedRequirementOptions,
         labelProp: 'display',
         valueProp: 'code'
       }
@@ -108,7 +143,7 @@ const overridesDefaults = {
 
 export {
   defaultSchema,
-  overridesSchema,
+  getOverridesSchema,
   defaults,
   overridesDefaults,
   getDefaultSettings,
