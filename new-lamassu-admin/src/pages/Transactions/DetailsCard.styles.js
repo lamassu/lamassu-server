@@ -78,11 +78,13 @@ export default {
     width: 180
   },
   cancelTransaction: {
-    width: 160,
-    marginLeft: 8
+    width: 160
   },
   status: {
-    width: 230
+    width: 230,
+    '& > button': {
+      marginTop: 20
+    }
   },
   transactionId: {
     width: 280
