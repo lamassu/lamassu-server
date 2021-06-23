@@ -21,9 +21,10 @@ const WalletSchema = Yup.object().shape({
   zeroConf: Yup.string().required(),
   zeroConfLimit: Yup.number()
     .integer()
-    .required()
+    .required('Zero Conf Limit is a required field')
     .min(0)
     .max(CURRENCY_MAX)
+    .transform(value => (isNaN(value) ? 0 : value))
 })
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
