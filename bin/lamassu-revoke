@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const pgp = require('pg-promise')()
+const _ = require('lodash/fp')
 const db = require('../lib/db')
 
 const argv = process.argv.slice(2)
@@ -12,9 +14,49 @@ if (argv.length !== 1) {
 
 const name = argv[0]
 
-const sql = `delete from user_tokens where name = $1 RETURNING *;`
+const userTokenSql = `select * from user_tokens where name = $1`
 
-return db.result(sql, [name], r => r.rowCount)
-    .then(r => {if(r==0){console.log('could not find user.')}
-            else{console.log(name + ' removed successfully.')}})
-.then(() => process.exit(0))
+return db.result(userTokenSql, [name])
+  .then(res => {
+    if (res.rowCount === 0) {
+      console.log(`User ${name} was not found!`)
+      process.exit(0)
+    }
+
+    return _.map(t => t.token, res.rows)
+  })
+  .then(tokens => {
+    const tokenClause = _.map(pgp.as.text, tokens).join(',')
+
+    return db.task('get-touched-customers', t => {
+      const smsOverride = t.any(`update customers set sms_override_by = null where sms_override_by in ($1^) returning *`, tokenClause)
+      const idDataOverride = t.any(`update customers set id_card_data_override_by = null where id_card_data_override_by in ($1^) returning *`, tokenClause)
+      const idPhotoOverride = t.any(`update customers set id_card_photo_override_by = null where id_card_photo_override_by in ($1^) returning *`, tokenClause)
+      const cameraOverride = t.any(`update customers set front_camera_override_by = null where front_camera_override_by in ($1^) returning *`, tokenClause)
+      const sanctionsOverride = t.any(`update customers set sanctions_override_by = null where sanctions_override_by in ($1^) returning *`, tokenClause)
+      const authorizedOverride = t.any(`update customers set authorized_override_by = null where authorized_override_by in ($1^) returning *`, tokenClause)
+      const usSsnOverride = t.any(`update customers set us_ssn_override_by = null where us_ssn_override_by in ($1^)`, tokenClause)
+
+      return Promise.all([
+        smsOverride,
+        idDataOverride,
+        idPhotoOverride,
+        cameraOverride,
+        sanctionsOverride,
+        authorizedOverride,
+        usSsnOverride
+      ])
+    })
+  })
+  .then(result => {
+    const count = _.reduce((acc, v) => acc + v.length, 0, result)
+    if (count > 0) {
+      console.log(`Removed ${count} ${count === 1 ? `entry` : `entries`} on the customer table, related with the user ${name}!`)
+    }
+  })
+  .then(() => {
+    const sql = `delete from user_tokens where name = $1 returning *`
+    return db.result(sql, [name], r => r.rowCount)
+  })
+  .then(res => console.log(`User ${name} (with ${res === 1 ? `token` : `tokens`} associated) successfully removed from the system!`))
+  .then(() => process.exit(0))
