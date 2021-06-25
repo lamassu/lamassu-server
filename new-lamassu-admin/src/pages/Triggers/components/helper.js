@@ -5,7 +5,7 @@ import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 import { getView } from 'src/pages/Triggers/helper'
 
 const advancedRequirementOptions = [
-  { display: 'SMS verification', code: 'sms' },
+  { display: 'Sanctions', code: 'sanctions' },
   { display: 'ID card image', code: 'idCardPhoto' },
   { display: 'ID data', code: 'idCardData' },
   { display: 'Customer camera', code: 'facephoto' },
