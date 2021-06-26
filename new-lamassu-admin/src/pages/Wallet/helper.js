@@ -32,12 +32,19 @@ const AdvancedWalletSchema = Yup.object().shape({
   cryptoUnits: Yup.string().required()
 })
 
-const getAdvancedWalletElements = (cryptoCurrencies, config) => {
+const getAdvancedWalletElements = (cryptoCurrencies, coinUtils) => {
   const viewCryptoCurrency = it =>
     R.compose(
       R.prop(['display']),
       R.find(R.propEq('code', it))
     )(cryptoCurrencies)
+
+  const getOptions = R.curry((coinUtils, it) => {
+    const options = R.keys(coinUtils.getCryptoCurrency(it.id).units)
+    return R.map(option => {
+      return { code: option, display: option }
+    })(options)
+  })
 
   return [
     {
@@ -52,14 +59,10 @@ const getAdvancedWalletElements = (cryptoCurrencies, config) => {
       name: 'cryptoUnits',
       size: 'sm',
       stripe: true,
-      view: it => it,
       width: 190,
       input: Autocomplete,
       inputProps: {
-        options: [
-          { code: 'mUnits', display: 'mUnits' },
-          { code: 'fUnits', display: 'fUnits' }
-        ],
+        options: getOptions(coinUtils),
         valueProp: 'code',
         labelProp: 'display'
       }

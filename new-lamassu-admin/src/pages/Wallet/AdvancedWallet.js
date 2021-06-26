@@ -8,6 +8,8 @@ import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { AdvancedWalletSchema, getAdvancedWalletElements } from './helper'
 
+const { utils: coinUtils } = require('lamassu-coins')
+
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
     saveConfig(config: $config)
@@ -52,7 +54,7 @@ const AdvancedWallet = () => {
         editWidth={174}
         save={save}
         validationSchema={AdvancedWalletSchema}
-        elements={getAdvancedWalletElements(cryptoCurrencies)}
+        elements={getAdvancedWalletElements(cryptoCurrencies, coinUtils)}
       />
     </>
   )
