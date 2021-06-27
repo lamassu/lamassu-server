@@ -14,21 +14,6 @@ import { getName } from '../helper'
 
 import Field from './Field'
 
-const formatGender = field => {
-  // In US cards, gender comes as a number. In BC and ZA cards, gender comes as a letter
-  const genderMap = {
-    1: 'M',
-    2: 'F'
-  }
-
-  const isNumber = s => {
-    if (typeof s !== 'string') return false
-    return !isNaN(s) && !isNaN(parseInt(s))
-  }
-
-  return !isNumber(field) ? field : genderMap[field]
-}
-
 const IdDataCard = memo(({ customerData, updateCustomer }) => {
   const idData = R.path(['idCardData'])(customerData)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
@@ -61,9 +46,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
     },
     {
       header: 'Gender',
-      display: formatGender(
-        R.path(['gender'])(idData) ?? R.path(['sex'])(idData)
-      ),
+      display: R.path(['gender'])(idData) ?? R.path(['sex'])(idData),
       size: 80
     },
     {
