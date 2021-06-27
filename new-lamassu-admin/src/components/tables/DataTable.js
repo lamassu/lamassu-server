@@ -37,7 +37,8 @@ const Row = ({
   expWidth,
   expandable,
   onClick,
-  size
+  size,
+  ...props
 }) => {
   const classes = useStyles()
 
@@ -80,7 +81,7 @@ const Row = ({
         <div className={classes.after}>
           <Tr className={classnames({ [classes.expanded]: expanded })}>
             <Td width={width}>
-              <Details it={data} />
+              <Details it={data} timezone={props.timezone} />
             </Td>
           </Tr>
         </div>
@@ -153,6 +154,7 @@ const DataTable = ({
               expandRow={expandRow}
               expandable={expandable}
               onClick={onClick}
+              timezone={props.timezone}
             />
           </div>
         )}

@@ -39,16 +39,23 @@ const TX_SUMMARY = gql`
     $from: DateTime
     $until: DateTime
     $txClass: String
+    $timezone: String
   ) {
-    serverLogsCsv(limit: $limit, from: $from, until: $until)
+    serverLogsCsv(
+      limit: $limit
+      from: $from
+      until: $until
+      timezone: $timezone
+    )
     machineLogsCsv(
       deviceId: $deviceId
       limit: $limit
       from: $from
       until: $until
+      timezone: $timezone
     )
-    transactionCsv(id: $txId, txClass: $txClass)
-    txAssociatedDataCsv(id: $txId, txClass: $txClass)
+    transactionCsv(id: $txId, txClass: $txClass, timezone: $timezone)
+    txAssociatedDataCsv(id: $txId, txClass: $txClass, timezone: $timezone)
   }
 `
 
@@ -60,7 +67,7 @@ const Label = ({ children }) => {
   return <Label1 className={classes.label}>{children}</Label1>
 }
 
-const DetailsRow = ({ it: tx }) => {
+const DetailsRow = ({ it: tx, timezone }) => {
   const classes = useStyles()
 
   const zip = new JSZip()
@@ -96,8 +103,10 @@ const DetailsRow = ({ it: tx }) => {
     .add(MINUTES_OFFSET, 'm')
     .format()
 
-  const downloadRawLogs = ({ id: txId, deviceId, txClass }) => {
-    fetchSummary({ variables: { txId, from, until, deviceId, txClass } })
+  const downloadRawLogs = ({ id: txId, deviceId, txClass }, timezone) => {
+    fetchSummary({
+      variables: { txId, from, until, deviceId, txClass, timezone }
+    })
   }
 
   const createCsv = async logs => {
@@ -266,7 +275,7 @@ const DetailsRow = ({ it: tx }) => {
             Icon={Download}
             InverseIcon={DownloadInverseIcon}
             className={classes.downloadRawLogs}
-            onClick={() => downloadRawLogs(tx)}>
+            onClick={() => downloadRawLogs(tx, timezone)}>
             Download raw logs
           </ActionButton>
         </div>
