@@ -329,6 +329,7 @@ const Transactions = () => {
         Details={DetailsRow}
         expandable
         rowSize="sm"
+        timezone={timezone}
       />
     </>
   )
