@@ -13,6 +13,7 @@ import { ReactComponent as DownIcon } from 'src/styling/icons/dashboard/down.svg
 import { ReactComponent as EqualIcon } from 'src/styling/icons/dashboard/equal.svg'
 import { ReactComponent as UpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { primaryColor } from 'src/styling/variables'
+import { fromNamespace } from 'src/utils/config'
 
 import styles from './Analytics.styles'
 import Graph from './Graph'
@@ -72,6 +73,11 @@ const GET_DATA = gql`
       name
       deviceId
     }
+    fiatRates {
+      code
+      name
+      rate
+    }
   }
 `
 
@@ -87,26 +93,14 @@ const LegendEntry = ({ IconElement, IconComponent, label }) => {
   )
 }
 
-const OverviewEntry = ({
-  label,
-  value,
-  oldValue,
-  currencies,
-  mainCurrency
-}) => {
+const OverviewEntry = ({ label, value, oldValue, currency }) => {
   const classes = useStyles()
-
-  const isCurrency = !!currencies
-  // const mostUsedCurrency = R.reduce(
-  //   (acc, v) => (acc === '' ? v : currencies[v] > currencies[acc] ? v : acc),
-  //   '',
-  //   R.keys(currencies)
-  // )
 
   const _oldValue = !oldValue || R.equals(oldValue, 0) ? 1 : oldValue
   const growthRate = ((value - oldValue) * 100) / _oldValue
 
   const growthClasses = {
+    [classes.growthPercentage]: true,
     [classes.growth]: R.gt(value, oldValue),
     [classes.decline]: R.gt(oldValue, value)
   }
@@ -116,12 +110,9 @@ const OverviewEntry = ({
       <P noMargin>{label}</P>
       <Info2 noMargin className={classes.overviewFieldWrapper}>
         <span>
-          {isCurrency
-            ? value.toLocaleString('en-US', { maximumFractionDigits: 2 })
-            : value}
+          {value.toLocaleString('en-US', { maximumFractionDigits: 2 })}
         </span>
-        {isCurrency &&
-          ` ${mainCurrency} ${R.length(R.keys(currencies)) > 1 ? '*' : ''}`}
+        {!!currency && ` ${currency}`}
       </Info2>
       <span className={classes.overviewGrowth}>
         {R.gt(growthRate, 0) && <UpIcon height={10} />}
@@ -210,14 +201,24 @@ const Analytics = () => {
   const transactions = R.path(['transactions'])(txResponse) ?? []
   const machines = R.path(['machines'])(configResponse) ?? []
   const config = R.path(['config'])(configResponse) ?? []
+  const rates = R.path(['fiatRates'])(configResponse) ?? []
+  const fiatLocale = fromNamespace('locale')(config).fiatCurrency
 
   const timezone = config?.locale_timezone
 
-  const primaryFiat = config?.locale_fiatCurrency
+  const convertFiatToLocale = item => {
+    if (item.fiatCode === fiatLocale) return item
+    const itemRate = R.find(R.propEq('code', item.fiatCode))(rates)
+    const localeRate = R.find(R.propEq('code', fiatLocale))(rates)
+    const multiplier = localeRate?.rate / itemRate?.rate
+    return { ...item, fiat: parseFloat(item.fiat) * multiplier }
+  }
 
   const data =
-    transactions?.filter(
-      tx => !tx.expired && (tx.sendConfirmed || tx.dispense)
+    R.map(convertFiatToLocale)(
+      transactions?.filter(
+        tx => !tx.expired && (tx.sendConfirmed || tx.dispense)
+      )
     ) ?? []
 
   const machineOptions = R.clone(MACHINE_OPTIONS)
@@ -268,15 +269,6 @@ const Analytics = () => {
         ) ?? []
     }
   }
-
-  const usedCurrencies = R.reduce(
-    (acc, v) => {
-      acc[v.fiatCode] ? (acc[v.fiatCode] += 1) : (acc[v.fiatCode] = 1)
-      return acc
-    },
-    {},
-    filteredData[period.code].current
-  )
 
   const txs = {
     current: filteredData[period.code].current.length,
@@ -359,24 +351,21 @@ const Analytics = () => {
               label="Avg. txn amount"
               value={avgAmount.current}
               oldValue={avgAmount.previous}
-              currencies={usedCurrencies}
-              mainCurrency={primaryFiat}
+              currency={fiatLocale}
             />
             <div className={classes.verticalLine} />
             <OverviewEntry
               label="Volume"
               value={txVolume.current}
               oldValue={txVolume.previous}
-              currencies={usedCurrencies}
-              mainCurrency={primaryFiat}
+              currency={fiatLocale}
             />
             <div className={classes.verticalLine} />
             <OverviewEntry
               label="Commissions"
               value={commissions.current}
               oldValue={commissions.previous}
-              currencies={usedCurrencies}
-              mainCurrency={primaryFiat}
+              currency={fiatLocale}
             />
           </div>
         </div>
@@ -384,7 +373,7 @@ const Analytics = () => {
           title="Transactions over time"
           representing={representing}
           period={period}
-          data={filteredData[period.code].current}
+          data={R.map(convertFiatToLocale)(filteredData[period.code].current)}
           machines={machineOptions}
           selectedMachine={machine}
           handleMachineChange={m => setMachine(m)}

@@ -69,6 +69,9 @@ const styles = {
       marginLeft: 10
     }
   },
+  growthPercentage: {
+    fontWeight: 'bold'
+  },
   growth: {
     color: '#00CD5A'
   },
