@@ -7,24 +7,21 @@ import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import Chip from 'src/components/Chip'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
+import SearchFilter from 'src/components/SearchFilter'
 import Title from 'src/components/Title'
 import DataTable from 'src/components/tables/DataTable'
-import { P } from 'src/components/typography'
-import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { ReactComponent as CustomerLinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { formatDate } from 'src/utils/timezones'
 
 import DetailsRow from './DetailsCard'
-import { mainStyles, chipStyles } from './Transactions.styles'
+import { mainStyles } from './Transactions.styles'
 import { getStatus } from './helper'
 
 const useStyles = makeStyles(mainStyles)
-const useChipStyles = makeStyles(chipStyles)
 
 const NUM_LOG_RESULTS = 1000
 
@@ -118,7 +115,6 @@ const GET_TRANSACTIONS = gql`
 const Transactions = () => {
   const classes = useStyles()
   const history = useHistory()
-  const chipClasses = useChipStyles()
 
   const [filters, setFilters] = useState([])
   const { data: filtersResponse, loading: loadingFilters } = useQuery(
@@ -300,26 +296,11 @@ const Transactions = () => {
         </div>
       </div>
       {filters.length > 0 && (
-        <>
-          <P className={classes.text}>{'Filters:'}</P>
-          <div>
-            {filters.map((f, idx) => (
-              <Chip
-                key={idx}
-                classes={chipClasses}
-                label={`${f.type}: ${f.value}`}
-                onDelete={() => onFilterDelete(f)}
-                deleteIcon={<CloseIcon className={classes.button} />}
-              />
-            ))}
-            <Chip
-              classes={chipClasses}
-              label={`Delete filters`}
-              onDelete={() => setFilters([])}
-              deleteIcon={<CloseIcon className={classes.button} />}
-            />
-          </div>
-        </>
+        <SearchFilter
+          filters={filters}
+          onFilterDelete={onFilterDelete}
+          setFilters={setFilters}
+        />
       )}
       <DataTable
         loading={loadingTransactions && configLoading}

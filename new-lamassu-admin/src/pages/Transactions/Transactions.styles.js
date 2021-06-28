@@ -73,10 +73,6 @@ const mainStyles = {
   titleWrapper,
   titleAndButtonsContainer,
   buttonsWrapper,
-  text: {
-    marginTop: 0,
-    marginBottom: 0
-  },
   headerLabels: {
     display: 'flex',
     flexDirection: 'row',
@@ -115,11 +111,6 @@ const mainStyles = {
     marginLeft: 10,
     paddingLeft: 5,
     paddingRight: 5
-  },
-  button: {
-    width: 8,
-    height: 8,
-    marginLeft: 8
   }
 }
 
