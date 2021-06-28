@@ -96,6 +96,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
       setOnChangeFunction(null)
       return it
     })
+
   return (
     <>
       <TitleSection title="Wallet Settings" />

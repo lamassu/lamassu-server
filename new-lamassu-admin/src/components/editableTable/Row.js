@@ -216,7 +216,7 @@ const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
 
   const classes = useStyles()
 
-  const shouldStripe = stripeWhen && stripeWhen(values)
+  const shouldStripe = !editing && stripeWhen && stripeWhen(values)
 
   const innerElements = shouldStripe ? groupStriped(elements) : elements
   const [toSHeader] = R.partition(R.has('doubleHeader'))(elements)

@@ -4,6 +4,7 @@ import * as Yup from 'yup'
 import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 import { CURRENCY_MAX } from 'src/utils/constants'
+import { transformNumber } from 'src/utils/number'
 
 const filterClass = type => R.filter(it => it.class === type)
 const filterCoins = ({ id }) => R.filter(it => R.contains(id)(it.cryptos))
@@ -18,7 +19,7 @@ const WalletSchema = Yup.object().shape({
     .required('Zero Conf Limit is a required field')
     .min(0)
     .max(CURRENCY_MAX)
-    .transform(value => (isNaN(value) ? 0 : value))
+    .transform(transformNumber)
 })
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
