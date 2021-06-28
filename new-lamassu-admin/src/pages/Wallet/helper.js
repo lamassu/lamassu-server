@@ -5,6 +5,7 @@ import { NumberInput } from 'src/components/inputs/formik'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 import { disabledColor } from 'src/styling/variables'
 import { CURRENCY_MAX } from 'src/utils/constants'
+import { transformNumber } from 'src/utils/number'
 
 const classes = {
   editDisabled: {
@@ -24,7 +25,7 @@ const WalletSchema = Yup.object().shape({
     .required('Zero Conf Limit is a required field')
     .min(0)
     .max(CURRENCY_MAX)
-    .transform(value => (isNaN(value) ? 0 : value))
+    .transform(transformNumber)
 })
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
