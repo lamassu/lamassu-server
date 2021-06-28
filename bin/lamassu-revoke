@@ -14,7 +14,7 @@ if (argv.length !== 1) {
 
 const name = argv[0]
 
-const userTokenSql = `select * from user_tokens where name = $1`
+const userTokenSql = `SELECT * FROM user_tokens WHERE name = $1`
 
 return db.result(userTokenSql, [name])
   .then(res => {
@@ -29,13 +29,13 @@ return db.result(userTokenSql, [name])
     const tokenClause = _.map(pgp.as.text, tokens).join(',')
 
     return db.task('get-touched-customers', t => {
-      const smsOverride = t.any(`update customers set sms_override_by = null where sms_override_by in ($1^) returning *`, tokenClause)
-      const idDataOverride = t.any(`update customers set id_card_data_override_by = null where id_card_data_override_by in ($1^) returning *`, tokenClause)
-      const idPhotoOverride = t.any(`update customers set id_card_photo_override_by = null where id_card_photo_override_by in ($1^) returning *`, tokenClause)
-      const cameraOverride = t.any(`update customers set front_camera_override_by = null where front_camera_override_by in ($1^) returning *`, tokenClause)
-      const sanctionsOverride = t.any(`update customers set sanctions_override_by = null where sanctions_override_by in ($1^) returning *`, tokenClause)
-      const authorizedOverride = t.any(`update customers set authorized_override_by = null where authorized_override_by in ($1^) returning *`, tokenClause)
-      const usSsnOverride = t.any(`update customers set us_ssn_override_by = null where us_ssn_override_by in ($1^)`, tokenClause)
+      const smsOverride = t.any(`UPDATE customers SET sms_override_by = null WHERE sms_override_by IN ($1^) RETURNING *`, tokenClause)
+      const idDataOverride = t.any(`UPDATE customers SET id_card_data_override_by = null WHERE id_card_data_override_by IN ($1^) RETURNING *`, tokenClause)
+      const idPhotoOverride = t.any(`UPDATE customers SET id_card_photo_override_by = null WHERE id_card_photo_override_by IN ($1^) RETURNING *`, tokenClause)
+      const cameraOverride = t.any(`UPDATE customers SET front_camera_override_by = null WHERE front_camera_override_by IN ($1^) RETURNING *`, tokenClause)
+      const sanctionsOverride = t.any(`UPDATE customers SET sanctions_override_by = null WHERE sanctions_override_by IN ($1^) RETURNING *`, tokenClause)
+      const authorizedOverride = t.any(`UPDATE customers SET authorized_override_by = null WHERE authorized_override_by IN ($1^) RETURNING *`, tokenClause)
+      const usSsnOverride = t.any(`UPDATE customers SET us_ssn_override_by = null WHERE us_ssn_override_by IN ($1^)`, tokenClause)
 
       return Promise.all([
         smsOverride,
@@ -49,13 +49,13 @@ return db.result(userTokenSql, [name])
     })
   })
   .then(result => {
-    const count = _.reduce((acc, v) => acc + v.length, 0, result)
+    const count = _.sumBy(_.size, result)
     if (count > 0) {
       console.log(`Removed ${count} ${count === 1 ? `entry` : `entries`} on the customer table, related with the user ${name}!`)
     }
   })
   .then(() => {
-    const sql = `delete from user_tokens where name = $1 returning *`
+    const sql = `DELETE FROM user_tokens WHERE name = $1 RETURNING *`
     return db.result(sql, [name], r => r.rowCount)
   })
   .then(res => console.log(`User ${name} (with ${res === 1 ? `token` : `tokens`} associated) successfully removed from the system!`))
