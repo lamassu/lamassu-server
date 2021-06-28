@@ -5,20 +5,15 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import Chip from 'src/components/Chip'
 import SearchBox from 'src/components/SearchBox'
+import SearchFilter from 'src/components/SearchFilter'
 import TitleSection from 'src/components/layout/TitleSection'
-import { P } from 'src/components/typography'
 import baseStyles from 'src/pages/Logs.styles'
-import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
-import { chipStyles } from '../Transactions/Transactions.styles'
-
 import CustomersList from './CustomersList'
-import styles from './CustomersList.styles'
 
 const GET_CUSTOMER_FILTERS = gql`
   query filters {
@@ -54,13 +49,9 @@ const GET_CUSTOMERS = gql`
   }
 `
 
-const useStyles = makeStyles(styles)
-const useChipStyles = makeStyles(chipStyles)
 const useBaseStyles = makeStyles(baseStyles)
 
 const Customers = () => {
-  const classes = useStyles()
-  const chipClasses = useChipStyles()
   const baseStyles = useBaseStyles()
   const history = useHistory()
 
@@ -107,13 +98,6 @@ const Customers = () => {
       id: filtersObject.id
     })
 
-    console.log({
-      phone: filtersObject.phone,
-      name: filtersObject.name,
-      address: filtersObject.address,
-      id: filtersObject.id
-    })
-
     refetch && refetch()
   }
 
@@ -146,26 +130,11 @@ const Customers = () => {
         ]}
       />
       {filters.length > 0 && (
-        <>
-          <P className={classes.text}>{'Filters:'}</P>
-          <div>
-            {filters.map((f, idx) => (
-              <Chip
-                key={idx}
-                classes={chipClasses}
-                label={`${f.type}: ${f.value}`}
-                onDelete={() => onFilterDelete(f)}
-                deleteIcon={<CloseIcon className={classes.button} />}
-              />
-            ))}
-            <Chip
-              classes={chipClasses}
-              label={`Delete filters`}
-              onDelete={() => setFilters([])}
-              deleteIcon={<CloseIcon className={classes.button} />}
-            />
-          </div>
-        </>
+        <SearchFilter
+          filters={filters}
+          onFilterDelete={onFilterDelete}
+          setFilters={setFilters}
+        />
       )}
       <CustomersList
         data={customersData}
