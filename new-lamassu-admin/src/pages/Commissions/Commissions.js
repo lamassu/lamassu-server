@@ -16,13 +16,6 @@ import CommissionsList from './components/CommissionsList'
 const styles = {
   listViewButton: {
     marginLeft: 4
-  },
-  autoComplete: {
-    width: '100%'
-  },
-  bold: {
-    fontWeight: 'bold',
-    height: 200
   }
 }
 

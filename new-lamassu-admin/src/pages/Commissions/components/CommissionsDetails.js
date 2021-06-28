@@ -14,7 +14,7 @@ import {
 } from 'src/pages/Commissions/helper'
 
 const CommissionsDetails = memo(
-  ({ config, locale, currency, data, error, save, saveOverrides, classes }) => {
+  ({ config, locale, currency, data, error, save, saveOverrides }) => {
     const [isEditingDefault, setEditingDefault] = useState(false)
     const [isEditingOverrides, setEditingOverrides] = useState(false)
 
