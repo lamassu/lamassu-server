@@ -30,9 +30,14 @@ const GET_CUSTOMER_FILTERS = gql`
 `
 
 const GET_CUSTOMERS = gql`
-  {
+  query configAndCustomers(
+    $phone: String
+    $name: String
+    $address: String
+    $id: String
+  ) {
     config
-    customers {
+    customers(phone: $phone, name: $name, address: $address, id: $id) {
       id
       idCardData
       phone
@@ -96,6 +101,13 @@ const Customers = () => {
     setFilters(filters)
 
     setVariables({
+      phone: filtersObject.phone,
+      name: filtersObject.name,
+      address: filtersObject.address,
+      id: filtersObject.id
+    })
+
+    console.log({
       phone: filtersObject.phone,
       name: filtersObject.name,
       address: filtersObject.address,
