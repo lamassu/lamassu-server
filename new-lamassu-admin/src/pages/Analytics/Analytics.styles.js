@@ -66,7 +66,7 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     '& p': {
-      marginLeft: 10
+      marginLeft: 4
     }
   },
   growthPercentage: {
