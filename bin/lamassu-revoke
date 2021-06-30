@@ -36,7 +36,6 @@ return db.result(userTokenSql, [name])
       const sanctionsOverride = t.any(`UPDATE customers SET sanctions_override_by = null WHERE sanctions_override_by IN ($1^) RETURNING *`, tokenClause)
       const authorizedOverride = t.any(`UPDATE customers SET authorized_override_by = null WHERE authorized_override_by IN ($1^) RETURNING *`, tokenClause)
       const usSsnOverride = t.any(`UPDATE customers SET us_ssn_override_by = null WHERE us_ssn_override_by IN ($1^)`, tokenClause)
-      const tokenDeletion = t.result(`DELETE FROM user_tokens WHERE name = $1 RETURNING *`, [name], r => r.rowCount)
 
       return t.batch([
         smsOverride,
@@ -45,18 +44,16 @@ return db.result(userTokenSql, [name])
         cameraOverride,
         sanctionsOverride,
         authorizedOverride,
-        usSsnOverride,
-        tokenDeletion
+        usSsnOverride
       ])
+        .then(result => {
+          const count = _.sumBy(_.size, result)
+          if (count > 0) {
+            console.log(`Removed ${count} ${count === 1 ? `reference` : `references`} in the database, related with the user ${name}!`)
+          }
+          return t.result(`DELETE FROM user_tokens WHERE name = $1 RETURNING *`, [name], r => r.rowCount)
+        })
     })
-  })
-  .then(result => {
-    const occurrences = result.slice(0, result.length - 1)
-    const count = _.sumBy(_.size, occurrences)
-    if (count > 0) {
-      console.log(`Removed ${count} ${count === 1 ? `entry` : `entries`} on the customer table, related with the user ${name}!`)
-    }
-    return result[result.length - 1]
   })
   .then(res => console.log(`User ${name} (with ${res === 1 ? `token` : `tokens`} associated) successfully removed from the system!`))
   .catch(console.error)
