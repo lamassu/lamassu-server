@@ -35,7 +35,7 @@ return db.result(userTokenSql, [name])
       const cameraOverride = t.any(`UPDATE customers SET front_camera_override_by = null WHERE front_camera_override_by IN ($1^) RETURNING *`, tokenClause)
       const sanctionsOverride = t.any(`UPDATE customers SET sanctions_override_by = null WHERE sanctions_override_by IN ($1^) RETURNING *`, tokenClause)
       const authorizedOverride = t.any(`UPDATE customers SET authorized_override_by = null WHERE authorized_override_by IN ($1^) RETURNING *`, tokenClause)
-      const usSsnOverride = t.any(`UPDATE customers SET us_ssn_override_by = null WHERE us_ssn_override_by IN ($1^)`, tokenClause)
+      const usSsnOverride = t.any(`UPDATE customers SET us_ssn_override_by = null WHERE us_ssn_override_by IN ($1^) RETURNING *`, tokenClause)
 
       return t.batch([
         smsOverride,
