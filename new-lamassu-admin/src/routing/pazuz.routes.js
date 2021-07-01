@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 
 import ATMWallet from 'src/pages/ATMWallet/ATMWallet'
 import Accounting from 'src/pages/Accounting/Accounting'
+import Assets from 'src/pages/Assets/Assets'
 import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
@@ -242,6 +243,13 @@ const getPazuzRoutes = () => [
         route: '/accounting/wallets',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: ATMWallet
+      },
+      {
+        key: 'assetspage',
+        label: 'Assets',
+        route: '/accounting/assets',
+        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        component: Assets
       }
     ]
   },
