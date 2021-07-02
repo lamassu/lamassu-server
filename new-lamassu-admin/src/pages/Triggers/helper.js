@@ -657,7 +657,7 @@ const getElements = (currency, classes) => [
     name: 'threshold',
     size: 'sm',
     width: 284,
-    textAlign: 'left',
+    textAlign: 'right',
     input: () => <ThresholdInput currency={currency} />,
     view: (it, config) => <ThresholdView config={config} currency={currency} />
   }
