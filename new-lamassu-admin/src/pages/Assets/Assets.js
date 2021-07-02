@@ -15,7 +15,7 @@ import { H4, Label2, P, Info2 } from 'src/components/typography'
 import styles from './Assets.styles'
 const useStyles = makeStyles(styles)
 
-const StyledCell = withStyles({
+const Cell = withStyles({
   root: {
     borderBottom: '4px solid white',
     padding: 0,
@@ -67,27 +67,27 @@ const AssetsAmountTable = ({ title, data = [], numToRender }) => {
                 if (idx < numToRender) {
                   return (
                     <TableRow className={classes.row} key={idx}>
-                      <StyledCell align="left">
+                      <Cell align="left">
                         <P>{asset.display}</P>
-                      </StyledCell>
-                      <StyledCell align="right">
+                      </Cell>
+                      <Cell align="right">
                         <P>{`${selectAmountPrefix(asset)}
                          ${formatCurrency(Math.abs(asset.amount))} ${
                           asset.currency
                         }`}</P>
-                      </StyledCell>
+                      </Cell>
                     </TableRow>
                   )
                 }
                 return null
               })}
               <TableRow className={classes.totalRow} key={data?.length + 1}>
-                <StyledCell align="left">
+                <Cell align="left">
                   <Info2>{`Total ${R.toLower(title)}`}</Info2>
-                </StyledCell>
-                <StyledCell align="right">
+                </Cell>
+                <Cell align="right">
                   <Info2>{`${formatCurrency(totalAmount)} ${currency}`}</Info2>
-                </StyledCell>
+                </Cell>
               </TableRow>
             </TableBody>
           </Table>
