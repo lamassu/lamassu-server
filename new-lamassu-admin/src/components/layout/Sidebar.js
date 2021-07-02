@@ -26,7 +26,7 @@ const Sidebar = ({
     <div className={classes.sidebar}>
       {loading && <P>Loading...</P>}
       {!loading &&
-        data?.map((it, idx) => (
+        data.map((it, idx) => (
           <div
             key={idx}
             className={classnames({
