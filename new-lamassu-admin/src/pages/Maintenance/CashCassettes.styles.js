@@ -16,7 +16,7 @@ export default {
   tableWidth: {
     display: 'flex',
     alignItems: 'center',
-    marginRight: 90
+    marginRight: 1
   },
   descriptions: {
     color: offColor,

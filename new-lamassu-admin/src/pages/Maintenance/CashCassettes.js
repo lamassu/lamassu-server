@@ -254,21 +254,23 @@ const CashCassettes = () => {
         }}
         iconClassName={classes.listViewButton}
         className={classes.tableWidth}>
-        <Box alignItems="center" justifyContent="end">
-          <Label1 className={classes.cashboxReset}>Cashbox reset</Label1>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="end"
-            mr="-4px">
-            <P className={classes.selection}>{cashboxReset}</P>
-            <IconButton
-              onClick={() => setEditingSchema(true)}
-              className={classes.button}>
-              <EditIcon />
-            </IconButton>
+        {!showHistory && (
+          <Box alignItems="center" justifyContent="end">
+            <Label1 className={classes.cashboxReset}>Cashbox reset</Label1>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="end"
+              mr="-4px">
+              <P className={classes.selection}>{cashboxReset}</P>
+              <IconButton
+                onClick={() => setEditingSchema(true)}
+                className={classes.button}>
+                <EditIcon />
+              </IconButton>
+            </Box>
           </Box>
-        </Box>
+        )}
       </TitleSection>
       <div className={classes.tableContainer}>
         {!showHistory && (
