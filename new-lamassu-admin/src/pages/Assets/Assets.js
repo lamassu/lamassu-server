@@ -15,6 +15,70 @@ import { H4, Label2, P, Info2 } from 'src/components/typography'
 import styles from './Assets.styles'
 const useStyles = makeStyles(styles)
 
+const mockData = [
+  {
+    id: 'fiatBalance',
+    display: 'Fiat balance',
+    amount: 10438,
+    currency: 'USD',
+    class: 'Available balance'
+  },
+  {
+    id: 'hedgingReserve',
+    display: 'Hedging reserve',
+    amount: -1486,
+    currency: 'USD',
+    class: 'Available balance',
+    direction: 'out'
+  },
+  {
+    id: 'hedgedWalletAssets',
+    display: 'Hedged wallet assets',
+    amount: 96446,
+    currency: 'USD',
+    class: 'Wallet assets',
+    direction: 'in'
+  },
+  {
+    id: 'unhedgedWalletAssets',
+    display: 'Unhedged wallet assets',
+    amount: 3978,
+    currency: 'USD',
+    class: 'Wallet assets',
+    direction: 'in'
+  }
+]
+
+const mockDataTotal = [
+  {
+    id: 'fiatBalance',
+    display: 'Fiat balance',
+    amount: 10438,
+    currency: 'USD'
+  },
+  {
+    id: 'hedgingReserve',
+    display: 'Hedging reserve',
+    amount: -1486,
+    currency: 'USD',
+    direction: 'out'
+  },
+  {
+    id: 'hedgedWalletAssets',
+    display: 'Market value of hedged wallet assets',
+    amount: 94980,
+    currency: 'USD',
+    direction: 'in'
+  },
+  {
+    id: 'unhedgedWalletAssets',
+    display: 'Unhedged wallet assets',
+    amount: 3978,
+    currency: 'USD',
+    direction: 'in'
+  }
+]
+
 const cellStyling = {
   borderBottom: '4px solid white',
   padding: 0,
@@ -99,70 +163,6 @@ const formatCurrency = amount =>
 
 const Assets = () => {
   const classes = useStyles()
-
-  const mockData = [
-    {
-      id: 'fiatBalance',
-      display: 'Fiat balance',
-      amount: 10438,
-      currency: 'USD',
-      class: 'Available balance'
-    },
-    {
-      id: 'hedgingReserve',
-      display: 'Hedging reserve',
-      amount: -1486,
-      currency: 'USD',
-      class: 'Available balance',
-      direction: 'out'
-    },
-    {
-      id: 'hedgedWalletAssets',
-      display: 'Hedged wallet assets',
-      amount: 96446,
-      currency: 'USD',
-      class: 'Wallet assets',
-      direction: 'in'
-    },
-    {
-      id: 'unhedgedWalletAssets',
-      display: 'Unhedged wallet assets',
-      amount: 3978,
-      currency: 'USD',
-      class: 'Wallet assets',
-      direction: 'in'
-    }
-  ]
-
-  const mockDataTotal = [
-    {
-      id: 'fiatBalance',
-      display: 'Fiat balance',
-      amount: 10438,
-      currency: 'USD'
-    },
-    {
-      id: 'hedgingReserve',
-      display: 'Hedging reserve',
-      amount: -1486,
-      currency: 'USD',
-      direction: 'out'
-    },
-    {
-      id: 'hedgedWalletAssets',
-      display: 'Market value of hedged wallet assets',
-      amount: 94980,
-      currency: 'USD',
-      direction: 'in'
-    },
-    {
-      id: 'unhedgedWalletAssets',
-      display: 'Unhedged wallet assets',
-      amount: 3978,
-      currency: 'USD',
-      direction: 'in'
-    }
-  ]
 
   const filterByClass = x =>
     R.filter(it => R.path(['class'])(it) === x)(mockData)
