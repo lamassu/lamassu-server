@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -7,8 +8,6 @@ import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import { AdvancedWalletSchema, getAdvancedWalletElements } from './helper'
-
-const { utils: coinUtils } = require('lamassu-coins')
 
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
@@ -44,19 +43,17 @@ const AdvancedWallet = () => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
   return (
-    <>
-      <EditableTable
-        name="advancedWallet"
-        namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
-        data={config}
-        error={error?.message}
-        enableEdit
-        editWidth={174}
-        save={save}
-        validationSchema={AdvancedWalletSchema}
-        elements={getAdvancedWalletElements(cryptoCurrencies, coinUtils)}
-      />
-    </>
+    <EditableTable
+      name="advancedWallet"
+      namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
+      data={config}
+      error={error?.message}
+      enableEdit
+      editWidth={174}
+      save={save}
+      validationSchema={AdvancedWalletSchema}
+      elements={getAdvancedWalletElements(cryptoCurrencies, coinUtils)}
+    />
   )
 }
 
