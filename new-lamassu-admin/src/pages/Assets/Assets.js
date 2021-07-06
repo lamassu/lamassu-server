@@ -15,21 +15,20 @@ import { H4, Label2, P, Info2 } from 'src/components/typography'
 import styles from './Assets.styles'
 const useStyles = makeStyles(styles)
 
+const cellStyling = {
+  borderBottom: '4px solid white',
+  padding: 0,
+  paddingLeft: 20,
+  paddingRight: 20
+}
+
 const Cell = withStyles({
-  root: {
-    borderBottom: '4px solid white',
-    padding: 0,
-    paddingLeft: 20,
-    paddingRight: 20
-  }
+  root: cellStyling
 })(TableCell)
 
 const HeaderCell = withStyles({
   root: {
-    borderBottom: '4px solid white',
-    padding: 0,
-    paddingLeft: 20,
-    paddingRight: 20,
+    ...cellStyling,
     backgroundColor: 'white'
   }
 })(TableCell)
@@ -64,22 +63,20 @@ const AssetsAmountTable = ({ title, data = [], numToRender }) => {
             </TableHead>
             <TableBody>
               {data?.map((asset, idx) => {
-                if (idx < numToRender) {
-                  return (
-                    <TableRow className={classes.row} key={idx}>
-                      <Cell align="left">
-                        <P>{asset.display}</P>
-                      </Cell>
-                      <Cell align="right">
-                        <P>{`${selectAmountPrefix(asset)}
+                if (!(idx < numToRender)) return <></>
+                return (
+                  <TableRow className={classes.row} key={idx}>
+                    <Cell align="left">
+                      <P>{asset.display}</P>
+                    </Cell>
+                    <Cell align="right">
+                      <P>{`${selectAmountPrefix(asset)}
                          ${formatCurrency(Math.abs(asset.amount))} ${
-                          asset.currency
-                        }`}</P>
-                      </Cell>
-                    </TableRow>
-                  )
-                }
-                return null
+                        asset.currency
+                      }`}</P>
+                    </Cell>
+                  </TableRow>
+                )
               })}
               <TableRow className={classes.totalRow} key={data?.length + 1}>
                 <Cell align="left">
