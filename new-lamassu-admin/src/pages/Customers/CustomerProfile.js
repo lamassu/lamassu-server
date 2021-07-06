@@ -176,10 +176,8 @@ const CustomerProfile = memo(() => {
                 {suspended && (
                   <ActionButton
                     color="primary"
-                    Icon={suspended ? AuthorizeIcon : BlockIcon}
-                    InverseIcon={
-                      suspended ? AuthorizeReversedIcon : BlockReversedIcon
-                    }
+                    Icon={AuthorizeIcon}
+                    InverseIcon={AuthorizeReversedIcon}
                     onClick={() =>
                       updateCustomer({
                         suspendedUntil: null
