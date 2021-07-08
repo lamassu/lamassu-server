@@ -4,29 +4,10 @@ import {
   detailsRowStyles,
   labelStyles
 } from 'src/pages/Transactions/Transactions.styles'
-import {
-  spacer,
-  comet,
-  primaryColor,
-  fontSize4,
-  errorColor
-} from 'src/styling/variables'
+import { spacer, comet, primaryColor, fontSize4 } from 'src/styling/variables'
 
 const machineDetailsStyles = {
   ...detailsRowStyles,
-  colDivider: {
-    width: 1,
-    margin: [[spacer * 2, spacer * 4]],
-    backgroundColor: comet,
-    border: 'none'
-  },
-  inlineChip: {
-    marginInlineEnd: '0.25em'
-  },
-  stack: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
   wrapper: {
     display: 'flex',
     // marginTop: 24,
@@ -53,12 +34,6 @@ const machineDetailsStyles = {
     color: primaryColor,
     textDecoration: 'none'
   },
-  divider: {
-    margin: '0 1rem'
-  },
-  mr: {
-    marginRight: spacer
-  },
   separator: {
     width: 1,
     height: 170,
@@ -66,9 +41,6 @@ const machineDetailsStyles = {
     marginRight: 60,
     marginLeft: 'auto',
     background: fade(comet, 0.5)
-  },
-  warning: {
-    color: errorColor
   }
 }
 
