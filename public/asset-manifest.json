@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/static/js/main.22ad94dd.chunk.js",
-    "main.js.map": "/static/js/main.22ad94dd.chunk.js.map",
+    "main.js": "/static/js/main.e33bd315.chunk.js",
+    "main.js.map": "/static/js/main.e33bd315.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.ee1cbb9c.js",
     "runtime-main.js.map": "/static/js/runtime-main.ee1cbb9c.js.map",
-    "static/js/2.fad6faa4.chunk.js": "/static/js/2.fad6faa4.chunk.js",
-    "static/js/2.fad6faa4.chunk.js.map": "/static/js/2.fad6faa4.chunk.js.map",
+    "static/js/2.e7f31b8c.chunk.js": "/static/js/2.e7f31b8c.chunk.js",
+    "static/js/2.e7f31b8c.chunk.js.map": "/static/js/2.e7f31b8c.chunk.js.map",
     "index.html": "/index.html",
-    "static/js/2.fad6faa4.chunk.js.LICENSE.txt": "/static/js/2.fad6faa4.chunk.js.LICENSE.txt",
+    "static/js/2.e7f31b8c.chunk.js.LICENSE.txt": "/static/js/2.e7f31b8c.chunk.js.LICENSE.txt",
     "static/media/cash-in.c06970a7.svg": "/static/media/cash-in.c06970a7.svg",
     "static/media/cash-out.f029ae96.svg": "/static/media/cash-out.f029ae96.svg",
     "static/media/cashbox-empty.828bd3b9.svg": "/static/media/cashbox-empty.828bd3b9.svg",
@@ -95,7 +95,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.ee1cbb9c.js",
-    "static/js/2.fad6faa4.chunk.js",
-    "static/js/main.22ad94dd.chunk.js"
+    "static/js/2.e7f31b8c.chunk.js",
+    "static/js/main.e33bd315.chunk.js"
   ]
 }
