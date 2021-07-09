@@ -78,7 +78,6 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
         emptyText="No customers so far"
         elements={elements}
         data={data}
-        width={'1200'}
         onClick={onClick}
       />
     </>
