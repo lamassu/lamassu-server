@@ -20,13 +20,13 @@ export default {
   },
   descriptions: {
     color: offColor,
-    marginTop: '0px'
+    marginTop: 0
   },
   cashboxReset: {
     color: offColor,
-    margin: '13px 0px -5px 20px'
+    margin: [[13, 0, -5, 20]]
   },
   selection: {
-    marginRight: '12px'
+    marginRight: 12
   }
 }

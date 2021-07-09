@@ -18,6 +18,8 @@ import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enable
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
+import { MANUAL, AUTOMATIC } from 'src/utils/constants.js'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
@@ -156,8 +158,8 @@ const CashCassettes = () => {
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const radioButtonOptions = [
-    { display: 'Automatic', code: 'Automatic' },
-    { display: 'Manual', code: 'Manual' }
+    { display: 'Automatic', code: AUTOMATIC },
+    { display: 'Manual', code: MANUAL }
   ]
 
   const handleRadioButtons = evt => {
@@ -262,7 +264,11 @@ const CashCassettes = () => {
               alignItems="center"
               justifyContent="end"
               mr="-4px">
-              <P className={classes.selection}>{cashboxReset}</P>
+              {cashboxReset && (
+                <P className={classes.selection}>
+                  {onlyFirstToUpper(cashboxReset)}
+                </P>
+              )}
               <IconButton
                 onClick={() => setEditingSchema(true)}
                 className={classes.button}>
@@ -326,7 +332,7 @@ const CashCassettes = () => {
           </P>
           <RadioGroup
             name="set-automatic-reset"
-            value={selectedRadio}
+            value={selectedRadio ?? cashboxReset}
             options={[radioButtonOptions[0]]}
             onChange={handleRadioButtons}
             className={classes.radioButtons}
@@ -337,7 +343,7 @@ const CashCassettes = () => {
           </P>
           <RadioGroup
             name="set-manual-reset"
-            value={selectedRadio}
+            value={selectedRadio ?? cashboxReset}
             options={[radioButtonOptions[1]]}
             onChange={handleRadioButtons}
             className={classes.radioButtons}
