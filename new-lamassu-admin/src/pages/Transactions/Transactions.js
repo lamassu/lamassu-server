@@ -286,17 +286,18 @@ const Transactions = () => {
         </div>
         <div className={classes.headerLabels}>
           <div>
-            <TxOutIcon />
-            <span>Cash-out</span>
-          </div>
-          <div>
             <TxInIcon />
             <span>Cash-in</span>
+          </div>
+          <div>
+            <TxOutIcon />
+            <span>Cash-out</span>
           </div>
         </div>
       </div>
       {filters.length > 0 && (
         <SearchFilter
+          entries={filteredTransactions.length}
           filters={filters}
           onFilterDelete={onFilterDelete}
           setFilters={setFilters}
