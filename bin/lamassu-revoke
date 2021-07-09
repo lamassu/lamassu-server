@@ -37,6 +37,8 @@ return db.result(userTokenSql, [name])
       const authorizedOverride = t.any(`UPDATE customers SET authorized_override_by = null WHERE authorized_override_by IN ($1^) RETURNING *`, tokenClause)
       const usSsnOverride = t.any(`UPDATE customers SET us_ssn_override_by = null WHERE us_ssn_override_by IN ($1^) RETURNING *`, tokenClause)
 
+      const complianceOverride = t.any(`UPDATE compliance_overrides SET override_by = null WHERE override_by IN ($1^) RETURNING *`, tokenClause)
+
       return t.batch([
         smsOverride,
         idDataOverride,
@@ -44,7 +46,8 @@ return db.result(userTokenSql, [name])
         cameraOverride,
         sanctionsOverride,
         authorizedOverride,
-        usSsnOverride
+        usSsnOverride,
+        complianceOverride
       ])
         .then(result => {
           const count = _.sumBy(_.size, result)
