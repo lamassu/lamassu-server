@@ -1,3 +1,6 @@
 const CURRENCY_MAX = 9999999
 
-export { CURRENCY_MAX }
+const AUTOMATIC = 'automatic'
+const MANUAL = 'manual'
+
+export { CURRENCY_MAX, AUTOMATIC, MANUAL }
