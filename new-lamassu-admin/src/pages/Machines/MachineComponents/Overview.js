@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -86,6 +87,37 @@ const Overview = ({ data, onActionSuccess }) => {
         <div className={classes.rowItem}>
           <Label3 className={classes.label3}>Last ping</Label3>
           <P>{makeLastPing(data.lastPing)}</P>
+        </div>
+      </div>
+      <div className={classes.row}>
+        <div className={classes.rowItem}>
+          <Label3 className={classes.label3}>Network speed</Label3>
+          <P>
+            {data.downloadSpeed
+              ? new BigNumber(data.downloadSpeed).toFixed(4).toString() +
+                '  MB/s'
+              : 'unavailable'}
+          </P>
+        </div>
+      </div>
+      <div className={classes.row}>
+        <div className={classes.rowItem}>
+          <Label3 className={classes.label3}>Latency</Label3>
+          <P>
+            {data.responseTime
+              ? new BigNumber(data.responseTime).toFixed(3).toString() + '  ms'
+              : 'unavailable'}
+          </P>
+        </div>
+      </div>
+      <div className={classes.row}>
+        <div className={classes.rowItem}>
+          <Label3 className={classes.label3}>Loss</Label3>
+          <P>
+            {data.packetLoss
+              ? new BigNumber(data.packetLoss).toFixed(3).toString() + '  %'
+              : 'unavailable'}
+          </P>
         </div>
       </div>
       <div className={classes.row}>
