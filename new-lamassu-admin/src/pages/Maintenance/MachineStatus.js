@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
+import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
@@ -34,6 +35,9 @@ const GET_MACHINES = gql`
         label
         type
       }
+      downloadSpeed
+      responseTime
+      packetLoss
     }
   }
 `
@@ -58,7 +62,7 @@ const MachineStatus = () => {
   const elements = [
     {
       header: 'Machine Name',
-      width: 250,
+      width: 150,
       size: 'sm',
       textAlign: 'left',
       view: m => (
@@ -76,17 +80,47 @@ const MachineStatus = () => {
     },
     {
       header: 'Status',
-      width: 350,
+      width: 150,
       size: 'sm',
       textAlign: 'left',
       view: m => <MainStatus statuses={m.statuses} />
     },
     {
       header: 'Last ping',
-      width: 200,
+      width: 175,
       size: 'sm',
       textAlign: 'left',
       view: m => (m.lastPing ? moment(m.lastPing).fromNow() : 'unknown')
+    },
+    {
+      header: 'Network speed',
+      width: 150,
+      size: 'sm',
+      textAlign: 'left',
+      view: m =>
+        m.downloadSpeed
+          ? new BigNumber(m.downloadSpeed).toFixed(4).toString() + '  MB/s'
+          : 'unavailable'
+    },
+    {
+      header: 'Latency',
+      width: 150,
+      size: 'sm',
+      textAlign: 'left',
+      view: m =>
+        m.responseTime
+          ? new BigNumber(m.responseTime).toFixed(3).toString() + '  ms'
+          : 'unavailable'
+    },
+    {
+      header: 'Loss',
+      width: 125,
+      size: 'sm',
+      textAlign: 'left',
+      view: m =>
+        m.packetLoss
+          ? new BigNumber(m.packetLoss).toFixed(3).toString() + '  %'
+          : 'unavailable'
     },
     {
       header: 'Software Version',

@@ -38,6 +38,9 @@ const GET_INFO = gql`
         label
         type
       }
+      downloadSpeed
+      responseTime
+      packetLoss
     }
     config
   }
