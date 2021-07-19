@@ -66,7 +66,7 @@ const ComplianceDetails = ({ customer, updateCustomer }) => {
         <Box className={classes.complianceDetailsGrid}>
           <Box className={classes.firstColumn}>
             <PropertyCard
-              title={'ID photo'}
+              title={'ID card image'}
               state={R.path(['idCardPhotoOverride'])(customer)}
               authorize={() =>
                 updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED })
