@@ -23,6 +23,7 @@ const GET_CUSTOMERS = gql`
       lastTxClass
       authorizedOverride
       daysSuspended
+      isSuspended
     }
   }
 `
