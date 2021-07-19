@@ -29,7 +29,7 @@ const IdCardPhotoCard = memo(({ customerData, updateCustomer }) => {
 
   return (
     <PropertyCard
-      title={'ID photo'}
+      title={'ID card image'}
       state={R.path(['idCardPhotoOverride'])(customerData)}
       authorize={() =>
         updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED })
