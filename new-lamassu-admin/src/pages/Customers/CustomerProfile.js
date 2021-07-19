@@ -56,6 +56,7 @@ const GET_CUSTOMER = gql`
       lastTxFiatCode
       lastTxClass
       daysSuspended
+      isSuspended
       transactions {
         txClass
         id
@@ -136,7 +137,7 @@ const CustomerProfile = memo(() => {
   const blocked =
     R.path(['authorizedOverride'])(customerData) === OVERRIDE_REJECTED
 
-  const suspended = R.gt(R.path(['daysSuspended'])(customerData), 0)
+  const isSuspended = customerData.isSuspended
 
   return (
     <>
@@ -173,13 +174,11 @@ const CustomerProfile = memo(() => {
             <div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
               <div className={classes.customerActions}>
-                {suspended && (
+                {isSuspended && (
                   <ActionButton
                     color="primary"
-                    Icon={suspended ? AuthorizeIcon : BlockIcon}
-                    InverseIcon={
-                      suspended ? AuthorizeReversedIcon : BlockReversedIcon
-                    }
+                    Icon={AuthorizeIcon}
+                    InverseIcon={AuthorizeReversedIcon}
                     onClick={() =>
                       updateCustomer({
                         suspendedUntil: null
