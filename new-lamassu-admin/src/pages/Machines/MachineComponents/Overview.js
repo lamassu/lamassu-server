@@ -112,7 +112,7 @@ const Overview = ({ data, onActionSuccess }) => {
       </div>
       <div className={classes.row}>
         <div className={classes.rowItem}>
-          <Label3 className={classes.label3}>Loss</Label3>
+          <Label3 className={classes.label3}>Packet Loss</Label3>
           <P>
             {data.packetLoss
               ? new BigNumber(data.packetLoss).toFixed(3).toString() + '  %'

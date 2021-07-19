@@ -113,7 +113,7 @@ const MachineStatus = () => {
           : 'unavailable'
     },
     {
-      header: 'Loss',
+      header: 'Packet Loss',
       width: 125,
       size: 'sm',
       textAlign: 'left',
