@@ -6,9 +6,8 @@ import React, { useState } from 'react'
 
 import { DeleteDialog } from 'src/components/DeleteDialog'
 import { Link, Button, IconButton } from 'src/components/buttons'
-import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
-import { H2, TL1 } from 'src/components/typography'
+import { Label3, TL1 } from 'src/components/typography'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 
 import styles from './PromoCodes.styles'
@@ -131,7 +130,6 @@ const PromoCodes = () => {
 
   return (
     <>
-      <TitleSection title="Promo Codes"></TitleSection>
       {!loading && !R.isEmpty(codeResponse.promoCodes) && (
         <Box
           marginBottom={4}
@@ -166,7 +164,9 @@ const PromoCodes = () => {
       )}
       {!loading && R.isEmpty(codeResponse.promoCodes) && (
         <Box display="flex" alignItems="left" flexDirection="column">
-          <H2>Currently, there are no active promo codes on your network.</H2>
+          <Label3>
+            Currently, there are no active promo codes on your network.
+          </Label3>
           <Button onClick={toggleModal}>Add Code</Button>
         </Box>
       )}
