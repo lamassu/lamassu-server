@@ -133,7 +133,7 @@ const PromoCodes = () => {
       {!loading && !R.isEmpty(codeResponse.promoCodes) && (
         <Box
           marginBottom={4}
-          marginTop={-5}
+          marginTop={-7}
           className={classes.tableWidth}
           display="flex"
           justifyContent="flex-end">
