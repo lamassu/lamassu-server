@@ -7,7 +7,7 @@ const psqlUrl = require('../lib/options').postgresql
 
 const db = pgp(psqlUrl)
 
-db.$many('select data from user_config', 'exchanges')
+db.many('select data from user_config', 'exchanges')
   .then(rows => {
     const config = rows.filter(r => r.type === 'exchanges')[0].data
     const brain = rows.filter(r => r.type === 'unit')[0].data
@@ -33,7 +33,7 @@ db.$many('select data from user_config', 'exchanges')
       accounts: settings.plugins.settings
     }
 
-    db.$none('insert into user_config (type, data) values ($1, $2)', ['global', newConfig])
+    db.none('insert into user_config (type, data) values ($1, $2)', ['global', newConfig])
       .then(() => {
         console.log('Success.')
         process.exit(0)
