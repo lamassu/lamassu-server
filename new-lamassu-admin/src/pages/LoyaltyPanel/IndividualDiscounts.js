@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -52,6 +52,16 @@ const CREATE_DISCOUNT = gql`
   }
 `
 
+const GET_CUSTOMERS_WITH_DISCOUNTS = gql`
+  query getCustomersWithDiscounts($discounts: [IndividualDiscountInput]!) {
+    getCustomersWithDiscounts(discounts: $discounts) {
+      id
+      phone
+      idCardData
+    }
+  }
+`
+
 const IndividualDiscounts = () => {
   const classes = useStyles()
 
@@ -62,7 +72,27 @@ const IndividualDiscounts = () => {
   const [showModal, setShowModal] = useState(false)
   const toggleModal = () => setShowModal(!showModal)
 
-  const { data: discountResponse, loading } = useQuery(GET_INDIVIDUAL_DISCOUNTS)
+  const [
+    getCustomers,
+    { data: customerData, loading: customerLoading }
+  ] = useLazyQuery(GET_CUSTOMERS_WITH_DISCOUNTS)
+
+  const { data: discountResponse, loading } = useQuery(
+    GET_INDIVIDUAL_DISCOUNTS,
+    {
+      onCompleted: res => {
+        const discounts = R.map(it =>
+          R.pick(['id', 'idType', 'value', 'discount'])(it)
+        )(res.individualDiscounts)
+
+        return getCustomers({
+          variables: {
+            discounts: discounts
+          }
+        })
+      }
+    }
+  )
 
   const [createDiscount, { error: creationError }] = useMutation(
     CREATE_DISCOUNT,
@@ -79,6 +109,13 @@ const IndividualDiscounts = () => {
     onCompleted: () => setDeleteDialog(false),
     refetchQueries: () => ['individualDiscounts']
   })
+
+  const findCustomer = (customers = [], idType, value) =>
+    R.find(it =>
+      idType === 'phone'
+        ? it.phone === value
+        : it.idCardData.documentNumber === value
+    )(customers)
 
   const elements = [
     {
@@ -98,7 +135,17 @@ const IndividualDiscounts = () => {
       width: 300,
       textAlign: 'left',
       size: 'sm',
-      view: t => <>{'-'}</>
+      view: t => {
+        const customer = findCustomer(
+          customerData?.getCustomersWithDiscounts,
+          t.idType,
+          t.value
+        )
+        if (R.isNil(customer)) return <>{'-'}</>
+        return (
+          <>{`${customer.idCardData.firstName} ${customer.idCardData.lastName}`}</>
+        )
+      }
     },
     {
       header: 'Discount rate',
@@ -128,9 +175,11 @@ const IndividualDiscounts = () => {
     }
   ]
 
+  const isLoading = loading || customerLoading
+
   return (
     <>
-      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
+      {!isLoading && !R.isEmpty(discountResponse.individualDiscounts) && (
         <Box
           marginBottom={4}
           marginTop={-7}
@@ -142,7 +191,7 @@ const IndividualDiscounts = () => {
           </Link>
         </Box>
       )}
-      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
+      {!isLoading && !R.isEmpty(discountResponse.individualDiscounts) && (
         <>
           <DataTable
             elements={elements}
@@ -162,7 +211,7 @@ const IndividualDiscounts = () => {
           />
         </>
       )}
-      {!loading && R.isEmpty(discountResponse.individualDiscounts) && (
+      {!isLoading && R.isEmpty(discountResponse.individualDiscounts) && (
         <Box display="flex" alignItems="left" flexDirection="column">
           <Label3>
             It seems there are no active individual customer discounts on your
