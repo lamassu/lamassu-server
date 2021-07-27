@@ -1,15 +1,22 @@
-const { saveConfig } = require('../lib/new-settings-loader')
+const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { getAllCryptoCurrencies } = require('../lib/new-config-manager.js')
+const { utils: coinUtils } = require('lamassu-coins')
+const _ = require('lodash/fp')
 
 exports.up = function (next) {
-  const cryptoUnits = {
-    wallets_BTC_cryptoUnits: 'mili',
-    wallets_ETH_cryptoUnits: 'mili',
-    wallets_LTC_cryptoUnits: 'mili',
-    wallets_ZEC_cryptoUnits: 'mili',
-    wallets_BCH_cryptoUnits: 'mili'
-  }
-
-  return saveConfig(cryptoUnits)
+  loadLatest()
+    .then(settings => {
+      const newSettings = {}
+      const activeCryptos = getAllCryptoCurrencies(settings.config)
+      if (_.head(activeCryptos)) {
+        _.map(crypto => {
+          const defaultUnit = _.head(_.keys(coinUtils.getCryptoCurrency(crypto).units))
+          newSettings[`wallets_${crypto}_cryptoUnits`] = defaultUnit
+          return newSettings
+        }, activeCryptos)
+      }
+      return saveConfig(newSettings)
+    })
     .then(() => next())
     .catch(err => {
       console.log(err.message)
