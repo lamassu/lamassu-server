@@ -102,10 +102,10 @@ const IndividualDiscounts = () => {
           <div className={classes.identification}>
             <PhoneIdIcon />
             <span>{customer.phone}</span>
-            {customer.idCardData?.documentNumber && (
+            {customer?.idCardData?.documentNumber && (
               <>
                 <CardIdIcon />
-                <span>{customer.idCardData.documentNumber}</span>
+                <span>{customer?.idCardData?.documentNumber}</span>
               </>
             )}
           </div>

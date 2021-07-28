@@ -86,11 +86,11 @@ const IndividualDiscountModal = ({
                     fullWidth
                     options={R.map(it => ({
                       code: it.id,
-                      display: `${it.idCardData.firstName ?? ``}${
-                        it.idCardData.firstName && it.idCardData.lastName
+                      display: `${it?.idCardData?.firstName ?? ``}${
+                        it?.idCardData?.firstName && it?.idCardData?.lastName
                           ? ` `
                           : ``
-                      }${it.idCardData.lastName ?? ``} (${it.phone})`
+                      }${it?.idCardData?.lastName ?? ``} (${it.phone})`
                     }))(customers)}
                     labelProp="display"
                     valueProp="code"
