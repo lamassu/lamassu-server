@@ -6,26 +6,28 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     '& > *:first-child': {
-      marginRight: 10
+      marginLeft: 0
+    },
+    '& > *': {
+      marginLeft: 6
+    },
+    '& > *:nth-child(3)': {
+      marginLeft: 15
     }
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
+    '& > *:first-child': {
+      marginTop: 10
+    },
     '& > *': {
       marginBottom: 20
     }
   },
-  radioGroup: {
-    display: 'flex',
-    flexDirection: 'row',
-    '& > *': {
-      marginLeft: 15
-    },
-    '& > *:first-child': {
-      marginLeft: 0
-    }
+  customerAutocomplete: {
+    width: 350
   },
   discountRateWrapper: {
     display: 'flex',
