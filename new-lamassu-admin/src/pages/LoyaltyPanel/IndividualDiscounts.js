@@ -1,4 +1,4 @@
-import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -21,8 +21,7 @@ const GET_INDIVIDUAL_DISCOUNTS = gql`
   query individualDiscounts {
     individualDiscounts {
       id
-      idType
-      value
+      customerId
       discount
     }
   }
@@ -37,27 +36,20 @@ const DELETE_DISCOUNT = gql`
 `
 
 const CREATE_DISCOUNT = gql`
-  mutation createIndividualDiscount(
-    $idType: DiscountIdentificationType!
-    $value: String!
-    $discount: Int!
-  ) {
-    createIndividualDiscount(
-      idType: $idType
-      value: $value
-      discount: $discount
-    ) {
+  mutation createIndividualDiscount($customerId: ID!, $discount: Int!) {
+    createIndividualDiscount(customerId: $customerId, discount: $discount) {
       id
     }
   }
 `
 
-const GET_CUSTOMERS_WITH_DISCOUNTS = gql`
-  query getCustomersWithDiscounts($discounts: [IndividualDiscountInput]!) {
-    getCustomersWithDiscounts(discounts: $discounts) {
+const GET_CUSTOMERS = gql`
+  {
+    customers {
       id
       phone
       idCardData
+      phone
     }
   }
 `
@@ -72,26 +64,9 @@ const IndividualDiscounts = () => {
   const [showModal, setShowModal] = useState(false)
   const toggleModal = () => setShowModal(!showModal)
 
-  const [
-    getCustomers,
-    { data: customerData, loading: customerLoading }
-  ] = useLazyQuery(GET_CUSTOMERS_WITH_DISCOUNTS)
-
-  const { data: discountResponse, loading } = useQuery(
-    GET_INDIVIDUAL_DISCOUNTS,
-    {
-      onCompleted: res => {
-        const discounts = R.map(it =>
-          R.pick(['id', 'idType', 'value', 'discount'])(it)
-        )(res.individualDiscounts)
-
-        return getCustomers({
-          variables: {
-            discounts: discounts
-          }
-        })
-      }
-    }
+  const { data: discountResponse, loading } = useQuery(GET_INDIVIDUAL_DISCOUNTS)
+  const { data: customerData, loading: customerLoading } = useQuery(
+    GET_CUSTOMERS
   )
 
   const [createDiscount, { error: creationError }] = useMutation(
@@ -100,6 +75,11 @@ const IndividualDiscounts = () => {
       refetchQueries: () => ['individualDiscounts']
     }
   )
+
+  const getCustomer = id => {
+    const customers = R.path(['customers'])(customerData)
+    return R.find(R.propEq('id', id))(customers)
+  }
 
   const [deleteDiscount] = useMutation(DELETE_DISCOUNT, {
     onError: ({ message }) => {
@@ -110,25 +90,27 @@ const IndividualDiscounts = () => {
     refetchQueries: () => ['individualDiscounts']
   })
 
-  const findCustomer = (customers = [], idType, value) =>
-    R.find(it =>
-      idType === 'phone'
-        ? it.phone === value
-        : it.idCardData.documentNumber === value
-    )(customers)
-
   const elements = [
     {
       header: 'Identification',
       width: 312,
       textAlign: 'left',
       size: 'sm',
-      view: t => (
-        <div className={classes.identification}>
-          {t.idType === 'phone' ? <PhoneIdIcon /> : <CardIdIcon />}
-          {t.value}
-        </div>
-      )
+      view: t => {
+        const customer = getCustomer(t.customerId)
+        return (
+          <div className={classes.identification}>
+            <PhoneIdIcon />
+            <span>{customer.phone}</span>
+            {customer.idCardData?.documentNumber && (
+              <>
+                <CardIdIcon />
+                <span>{customer.idCardData.documentNumber}</span>
+              </>
+            )}
+          </div>
+        )
+      }
     },
     {
       header: 'Name',
@@ -136,14 +118,17 @@ const IndividualDiscounts = () => {
       textAlign: 'left',
       size: 'sm',
       view: t => {
-        const customer = findCustomer(
-          customerData?.getCustomersWithDiscounts,
-          t.idType,
-          t.value
-        )
-        if (R.isNil(customer)) return <>{'-'}</>
+        const customer = getCustomer(t.customerId)
+        if (R.isNil(customer.idCardData)) {
+          return <>{'-'}</>
+        }
+
         return (
-          <>{`${customer.idCardData.firstName} ${customer.idCardData.lastName}`}</>
+          <>{`${customer.idCardData.firstName ?? ``}${
+            customer.idCardData.firstName && customer.idCardData.lastName
+              ? ` `
+              : ``
+          }${customer.idCardData.lastName ?? ``}`}</>
         )
       }
     },
@@ -228,6 +213,7 @@ const IndividualDiscounts = () => {
         }}
         creationError={creationError}
         addDiscount={createDiscount}
+        customers={R.path(['customers'])(customerData)}
       />
     </>
   )
