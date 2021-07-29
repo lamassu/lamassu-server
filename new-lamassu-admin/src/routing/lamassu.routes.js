@@ -16,6 +16,7 @@ import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
 import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
+import CustomSMS from 'src/pages/OperatorInfo/CustomSMS/CustomSMS'
 import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
@@ -171,6 +172,13 @@ const getLamassuRoutes = () => [
             route: '/settings/operator-info/receipt-printing',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: ReceiptPrinting
+          },
+          {
+            key: 'custom-sms',
+            label: 'Custom SMS',
+            route: '/settings/operator-info/custom-sms',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: CustomSMS
           },
           {
             key: 'coin-atm-radar',
