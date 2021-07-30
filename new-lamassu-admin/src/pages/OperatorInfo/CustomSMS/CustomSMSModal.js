@@ -28,7 +28,6 @@ const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
 
 const prefill = {
   smsCode: {
-    tags: [],
     validator: Yup.string()
       .required('The message content is required!')
       .trim()
@@ -46,7 +45,6 @@ const prefill = {
       })
   },
   cashOutDispenseReady: {
-    tags: [],
     validator: Yup.string()
       .required('The message content is required!')
       .trim()
