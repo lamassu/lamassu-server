@@ -10,13 +10,6 @@ const global = {
     position: 'relative',
     flex: 'wrap'
   },
-  headerWithLink: {
-    display: 'flex',
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: 640
-  },
   section: {
     marginBottom: 52
   },

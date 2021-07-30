@@ -7,9 +7,11 @@ exports.up = function (next) {
       id UUID PRIMARY KEY,
       event custom_message_event NOT NULL,
       device_id TEXT REFERENCES devices(device_id),
-      message TEXT NOT NULL
+      message TEXT NOT NULL,
+      created TIMESTAMPTZ NOT NULL DEFAULT now()
     )`,
-    `CREATE UNIQUE INDEX uq_custom_message_per_device ON custom_messages (event, device_id)`
+    `CREATE UNIQUE INDEX uq_custom_message_per_device ON custom_messages (event, device_id) WHERE device_id IS NOT NULL`,
+    `CREATE UNIQUE INDEX uq_custom_message_all_devices ON custom_messages (event) WHERE device_id IS NULL`
   ]
 
   db.multi(sql, next)
