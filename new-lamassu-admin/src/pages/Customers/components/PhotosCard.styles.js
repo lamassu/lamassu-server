@@ -47,8 +47,7 @@ export default {
     margin: [[0, 0, 6, 0]]
   },
   firstRow: {
-    padding: [[8]],
-    marginBottom: 10
+    padding: [[8]]
   },
   secondRow: {
     extend: p,
@@ -64,5 +63,19 @@ export default {
         marginRight: 55
       }
     }
+  },
+  carousel: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    width: 550,
+    height: 550
+  },
+  carouselImg: {
+    objectFit: 'cover',
+    objectPosition: 'center',
+    width: 550,
+    height: 550,
+    marginBottom: 40
   }
 }

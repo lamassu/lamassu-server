@@ -2,32 +2,19 @@ import { Dialog, DialogContent, makeStyles } from '@material-ui/core'
 import React, { memo } from 'react'
 
 import { IconButton } from 'src/components/buttons'
-import { H4, P } from 'src/components/typography'
+import { H2 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { spacer } from 'src/styling/variables'
 
 const useStyles = makeStyles({
-  dialogContent: {
-    width: 434,
-    padding: spacer * 2,
-    paddingRight: spacer * 3.5
-  },
-  dialogTitle: {
-    padding: spacer * 2,
-    paddingRight: spacer * 1.5,
+  closeButton: {
     display: 'flex',
-    'justify-content': 'space-between',
-    '& > h4': {
-      margin: 0
-    },
-    '& > button': {
-      padding: 0,
-      marginTop: -(spacer / 2)
-    }
+    padding: [[spacer * 2, spacer * 2, 0, spacer * 2]],
+    paddingRight: spacer * 1.5,
+    justifyContent: 'end'
   },
-  dialogActions: {
-    padding: spacer * 4,
-    paddingTop: spacer * 2
+  title: {
+    margin: [[0, spacer * 2, spacer * 2, spacer * 2]]
   }
 })
 
@@ -54,13 +41,18 @@ export const InformativeDialog = memo(
     }
 
     return (
-      <Dialog open={open} aria-labelledby="form-dialog-title" {...props}>
-        <DialogTitle id="customized-dialog-title" onClose={innerOnClose}>
-          <H4>{title}</H4>
-        </DialogTitle>
-        <DialogContent className={classes.dialogContent}>
-          {data && <P>{data}</P>}
-        </DialogContent>
+      <Dialog
+        fullWidth
+        open={open}
+        aria-labelledby="form-dialog-title"
+        {...props}>
+        <div className={classes.closeButton}>
+          <IconButton size={16} aria-label="close" onClick={innerOnClose}>
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <H2 className={classes.title}>{title}</H2>
+        <DialogContent className={classes.dialogContent}>{data}</DialogContent>
       </Dialog>
     )
   }

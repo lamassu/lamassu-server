@@ -64,7 +64,7 @@ const PhotosCard = memo(({ frontCameraPath, txData }) => {
       </Paper>
       <InformativeDialog
         open={photosDialog}
-        title={`Photos roll`}
+        title={`Photo roll`}
         data={<PhotosCarousel txData={txData}></PhotosCarousel>}
         onDissmised={() => {
           setPhotosDialog(false)
@@ -79,6 +79,15 @@ export const PhotosCarousel = memo(({ txData }) => {
 
   return (
     <>
+      <div className={classes.carousel}>
+        <img
+          className={classes.carouselImg}
+          src={`${URI}/operator-data/customersphotos/${
+            R.head(txData)?.txCustomerPhotoPath
+          }`}
+          alt=""
+        />
+      </div>
       <div className={classes.firstRow}>
         <div>
           <div>
