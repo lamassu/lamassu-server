@@ -69,6 +69,7 @@ const GET_CUSTOMER = gql`
         label
         value
       }
+      notes
       transactions {
         txClass
         id
