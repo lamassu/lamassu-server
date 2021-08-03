@@ -49,11 +49,11 @@ const PhotosCard = memo(({ frontCameraData, txPhotosData }) => {
     R.compose(R.fromPairs, R.map(mapKeys), R.toPairs)
   )
 
-  const filterByPhotoAvaiable = R.filter(
+  const filterByPhotoAvailable = R.filter(
     tx => !R.isNil(tx.date) && !R.isNil(tx.path)
   )
 
-  const photosData = filterByPhotoAvaiable(
+  const photosData = filterByPhotoAvailable(
     addPhotoDir(standardizeKeys(R.append(frontCameraData, txPhotosData)))
   )
 
