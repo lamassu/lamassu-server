@@ -3,6 +3,7 @@ import Paper from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
+import Carousel from 'react-material-ui-carousel'
 
 import { InformativeDialog } from 'src/components/InformativeDialog'
 import { Info2, Label1 } from 'src/components/typography'
@@ -20,40 +21,67 @@ const Label = ({ children }) => {
   return <Label1 className={classes.label}>{children}</Label1>
 }
 
-const PhotosCard = memo(({ frontCameraPath, txData }) => {
+const PhotosCard = memo(({ frontCameraData, txPhotosData }) => {
   const classes = useStyles()
 
   const [photosDialog, setPhotosDialog] = useState(false)
 
-  const txsWithCustomerPhoto = R.filter(
-    tx => !R.isNil(tx.txCustomerPhotoAt) && !R.isNil(tx.txCustomerPhotoPath)
-  )(txData)
+  const mapKeys = pair => {
+    const key = R.head(pair)
+    const value = R.last(pair)
+    if (key === 'txCustomerPhotoPath' || key === 'frontCameraPath') {
+      return ['path', value]
+    }
+    if (key === 'txCustomerPhotoAt' || key === 'frontCameraAt') {
+      return ['date', value]
+    }
+    return pair
+  }
 
-  const photoDir = frontCameraPath
-    ? 'front-camera-photo'
-    : 'operator-data/customersphotos'
+  const addPhotoDir = R.map(it => {
+    const hasFrontCameraData = R.has('id')(it)
+    return hasFrontCameraData
+      ? { ...it, photoDir: 'operator-data/customersphotos' }
+      : { ...it, photoDir: 'front-camera-photo' }
+  })
 
-  const photo =
-    frontCameraPath ?? R.head(txsWithCustomerPhoto)?.txCustomerPhotoPath
+  const standardizeKeys = R.map(
+    R.compose(R.fromPairs, R.map(mapKeys), R.toPairs)
+  )
+
+  const filterByPhotoAvaiable = R.filter(
+    tx => !R.isNil(tx.date) && !R.isNil(tx.path)
+  )
+
+  const photosData = filterByPhotoAvaiable(
+    addPhotoDir(standardizeKeys(R.append(frontCameraData, txPhotosData)))
+  )
+
+  const singlePhoto = R.head(photosData)
+
+  const isPhotoRollAvailable = () => {
+    return !singlePhoto
+  }
 
   return (
     <>
       <Paper className={classes.photo} elevation={0}>
         <ButtonBase
+          disabled={isPhotoRollAvailable()}
           className={classes.button}
           onClick={() => {
             setPhotosDialog(true)
           }}>
-          {photo ? (
+          {singlePhoto ? (
             <div className={classes.container}>
               <img
                 className={classes.img}
-                src={`${URI}/${photoDir}/${photo}`}
+                src={`${URI}/${singlePhoto.photoDir}/${singlePhoto.path}`}
                 alt=""
               />
               <circle className={classes.circle}>
                 <div>
-                  <Info2>{txsWithCustomerPhoto.length}</Info2>
+                  <Info2>{photosData.length}</Info2>
                 </div>
               </circle>
             </div>
@@ -65,7 +93,7 @@ const PhotosCard = memo(({ frontCameraPath, txData }) => {
       <InformativeDialog
         open={photosDialog}
         title={`Photo roll`}
-        data={<PhotosCarousel txData={txData}></PhotosCarousel>}
+        data={<PhotosCarousel photosData={photosData} />}
         onDissmised={() => {
           setPhotosDialog(false)
         }}
@@ -74,38 +102,62 @@ const PhotosCard = memo(({ frontCameraPath, txData }) => {
   )
 })
 
-export const PhotosCarousel = memo(({ txData }) => {
+export const PhotosCarousel = memo(({ photosData }) => {
   const classes = useStyles()
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  const isFaceCustomerPhoto = !R.has('id')(photosData[currentIndex])
+
+  const slidePhoto = index => setCurrentIndex(index)
 
   return (
     <>
-      <div className={classes.carousel}>
-        <img
-          className={classes.carouselImg}
-          src={`${URI}/operator-data/customersphotos/${
-            R.head(txData)?.txCustomerPhotoPath
-          }`}
-          alt=""
-        />
-      </div>
-      <div className={classes.firstRow}>
-        <div>
+      <Carousel
+        navButtonsProps={{
+          style: {
+            backgroundColor: 'transparent',
+            borderRadius: 0,
+            fontSize: 100
+          }
+        }}
+        className={classes.slideButtons}
+        autoPlay={false}
+        indicators={false}
+        navButtonsAlwaysVisible={true}
+        next={activeIndex => slidePhoto(activeIndex)}
+        prev={activeIndex => slidePhoto(activeIndex)}>
+        {photosData.map((item, i) => (
           <div>
-            <Label>Session ID</Label>
-            <CopyToClipboard>{txData && R.head(txData)?.id}</CopyToClipboard>
+            <div className={classes.imgWrapper}>
+              <img
+                className={classes.imgInner}
+                src={`${URI}/${item?.photoDir}/${item?.path}`}
+                alt=""
+              />
+            </div>
           </div>
+        ))}
+      </Carousel>
+      {!isFaceCustomerPhoto && (
+        <div className={classes.firstRow}>
+          <Label>Session ID</Label>
+          <CopyToClipboard>
+            {photosData && photosData[currentIndex]?.id}
+          </CopyToClipboard>
         </div>
-      </div>
+      )}
       <div className={classes.secondRow}>
         <div>
           <div>
             <Label>Date</Label>
-            <div>{txData && R.head(txData)?.txCustomerPhotoAt}</div>
+            <div>{photosData && photosData[currentIndex]?.date}</div>
           </div>
         </div>
         <div>
           <Label>Taken by</Label>
-          <div>{'Acceptance of T&C'}</div>
+          <div>
+            {!isFaceCustomerPhoto ? 'Acceptance of T&C' : 'Compliance scan'}
+          </div>
         </div>
       </div>
     </>

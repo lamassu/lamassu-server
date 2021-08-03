@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     justifyContent: 'end'
   },
   title: {
-    margin: [[0, spacer * 2, spacer * 2, spacer * 2]]
+    margin: [[0, spacer * 2, spacer * 2, spacer * 2 + 4]]
   }
 })
 

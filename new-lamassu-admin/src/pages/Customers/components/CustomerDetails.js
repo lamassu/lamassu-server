@@ -49,8 +49,15 @@ const CustomerDetails = memo(
     return (
       <Box display="flex">
         <PhotosCard
-          frontCameraPath={R.path(['frontCameraPath'])(customer)}
-          txData={txData}
+          frontCameraData={R.pick(['frontCameraPath', 'frontCameraAt'])(
+            customer
+          )}
+          txPhotosData={
+            txData &&
+            R.map(R.pick(['id', 'txCustomerPhotoPath', 'txCustomerPhotoAt']))(
+              txData
+            )
+          }
         />
         <Box display="flex" flexDirection="column">
           <div className={classes.name}>

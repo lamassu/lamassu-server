@@ -47,7 +47,9 @@ export default {
     margin: [[0, 0, 6, 0]]
   },
   firstRow: {
-    padding: [[8]]
+    padding: [[8]],
+    display: 'flex',
+    flexDirection: 'column'
   },
   secondRow: {
     extend: p,
@@ -64,14 +66,14 @@ export default {
       }
     }
   },
-  carousel: {
+  imgWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex',
     width: 550,
     height: 550
   },
-  carouselImg: {
+  imgInner: {
     objectFit: 'cover',
     objectPosition: 'center',
     width: 550,
