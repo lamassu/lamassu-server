@@ -114,7 +114,6 @@ const Services = () => {
           </Grid>
         ))}
       </Grid>
-      {console.log(editingSchema)}
       {editingSchema && (
         <Modal
           title={`Edit ${editingSchema.name}`}
