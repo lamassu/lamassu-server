@@ -96,7 +96,6 @@ const InputFIDOState = ({ state, strategy }) => {
               username: localClientField
             },
       onCompleted: ({ generateAssertionOptions: options }) => {
-        console.log(options)
         startAssertion(options)
           .then(res => {
             const variables =
