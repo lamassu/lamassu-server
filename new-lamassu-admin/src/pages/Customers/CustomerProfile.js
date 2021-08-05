@@ -97,6 +97,7 @@ const SET_CUSTOMER = gql`
       lastTxFiat
       lastTxFiatCode
       lastTxClass
+      subscriberInfo
     }
   }
 `
@@ -201,6 +202,24 @@ const CustomerProfile = memo(() => {
                     })
                   }>
                   {`${blocked ? 'Authorize' : 'Block'} customer`}
+                </ActionButton>
+                <ActionButton
+                  color="primary"
+                  Icon={blocked ? AuthorizeIcon : BlockIcon}
+                  InverseIcon={
+                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                  }
+                  onClick={() =>
+                    setCustomer({
+                      variables: {
+                        customerId,
+                        customerInput: {
+                          subscriberInfo: true
+                        }
+                      }
+                    })
+                  }>
+                  {`Retrieve information`}
                 </ActionButton>
               </div>
             </div>
