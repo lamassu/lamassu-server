@@ -103,6 +103,7 @@ const TermsConditions = () => {
     data?.config && fromNamespace(namespaces.TERMS_CONDITIONS, data.config)
   const formData = termsAndConditions ?? {}
   const showOnScreen = termsAndConditions?.active ?? false
+  const addDelayOnScreen = termsAndConditions?.delay ?? false
 
   const save = it =>
     saveConfig({
@@ -180,6 +181,20 @@ const TermsConditions = () => {
             }
           />
           <Label2>{showOnScreen ? 'Yes' : 'No'}</Label2>
+        </div>
+      </div>
+      <div className={classes.switchRow}>
+        <P>Add 7 seconds delay on screen</P>
+        <div className={classes.switch}>
+          <Switch
+            checked={addDelayOnScreen}
+            onChange={event =>
+              save({
+                delay: event.target.checked
+              })
+            }
+          />
+          <Label2>{addDelayOnScreen ? 'Yes' : 'No'}</Label2>
         </div>
       </div>
       <div className={classes.header}>
