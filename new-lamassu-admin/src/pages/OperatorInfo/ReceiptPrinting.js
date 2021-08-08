@@ -49,7 +49,7 @@ const ReceiptPrinting = memo(({ wizard }) => {
         <H4>Receipt options</H4>
       </div>
       <div className={classes.switchRow}>
-        <P>Enable receipt printing?</P>
+        <P>Enable receipt printing</P>
         <div className={classes.switch}>
           <Switch
             checked={receiptPrintingConfig.active}
@@ -67,6 +67,27 @@ const ReceiptPrinting = memo(({ wizard }) => {
             }
           />
           <Label2>{receiptPrintingConfig.active ? 'Yes' : 'No'}</Label2>
+        </div>
+      </div>
+      <div className={classes.switchRow}>
+        <P>Offer SMS receipt</P>
+        <div className={classes.switch}>
+          <Switch
+            checked={receiptPrintingConfig.sms}
+            onChange={event =>
+              saveConfig({
+                variables: {
+                  config: toNamespace(
+                    namespaces.RECEIPT,
+                    R.merge(receiptPrintingConfig, {
+                      sms: event.target.checked
+                    })
+                  )
+                }
+              })
+            }
+          />
+          <Label2>{receiptPrintingConfig.sms ? 'Yes' : 'No'}</Label2>
         </div>
       </div>
       <BooleanPropertiesTable
