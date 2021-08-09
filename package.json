@@ -103,7 +103,7 @@
     "lamassu-devices": "./bin/lamassu-devices",
     "lamassu-operator": "./bin/lamassu-operator",
     "lamassu-coinatmradar": "./bin/lamassu-coinatmradar",
-    "lamassu-eth-recovery": ".bin/lamassu-eth-recovery"
+    "lamassu-eth-recovery": "./bin/lamassu-eth-recovery"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
