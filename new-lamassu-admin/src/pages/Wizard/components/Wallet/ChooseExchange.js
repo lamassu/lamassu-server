@@ -38,8 +38,7 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it =>
-  R.contains(it)(['kraken', 'itbit', 'bitstamp', 'binanceus', 'cex', 'ftx'])
+const isConfigurable = it => !R.contains(it)(['mock-exchange'])
 
 const ChooseExchange = ({ data: currentData, addData }) => {
   const classes = useStyles()
