@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const hdkey = require('ethereumjs-wallet/hdkey')
 const hkdf = require('futoin-hkdf')
 const db = require('../lib/db')
@@ -8,19 +10,30 @@ const fs = pify(require('fs'))
 
 const options = require('../lib/options')
 
-const paymentPrefixPath = "m/44'/60'/0'/0'"
 const defaultPrefixPath = "m/44'/60'/1'/0'"
 
 const address = process.argv[2]
 
+if (!options || !options.mnemonicPath) {
+  console.error(`Unable to fetch mnemonic from your account!`)
+  process.exit(1)
+}
+
+if (!address) {
+  console.log('Usage: lamassu-eth-recovery <cash-out address>')
+  process.exit(2)
+}
+
 function run (address) {
   Promise.all([fetchMnemonic(), searchForHdIndex(address)])
     .then(([mnemonic, hdIndex]) => {
-      if (!mnemonic || !hdIndex) {
-        console.log(`Error while retrieving private key!`)
-        return
+      try {
+        console.log(`Private key: `, defaultHdNode(mnemonic).deriveChild(hdIndex).getWallet().getPrivateKeyString())
+        process.exit(0)
+      } catch (err) {
+        console.error(`Error while retrieving private key!`)
+        process.exit(3)
       }
-      console.log(`Private key: `, paymentHdNode(mnemonic).deriveChild(hdIndex).getWallet().getPrivateKeyString())
     })
 }
 
@@ -37,12 +50,6 @@ function fetchMnemonic () {
 function computeSeed (seed) {
   const masterSeed = mnemonicHelpers.toEntropyBuffer(seed)
   return hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: 'wallet-seed' })
-}
-
-function paymentHdNode (masterSeed) {
-  if (!masterSeed) throw new Error('No master seed!')
-  const key = hdkey.fromMasterSeed(masterSeed)
-  return key.derivePath(paymentPrefixPath)
 }
 
 function defaultHdNode (masterSeed) {
