@@ -3,8 +3,8 @@ import Paper from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
-import Carousel from 'react-material-ui-carousel'
 
+import { Carousel } from 'src/components/Carousel'
 import { InformativeDialog } from 'src/components/InformativeDialog'
 import { Info2, Label1 } from 'src/components/typography'
 import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
@@ -27,8 +27,7 @@ const PhotosCard = memo(({ frontCameraData, txPhotosData }) => {
   const [photosDialog, setPhotosDialog] = useState(false)
 
   const mapKeys = pair => {
-    const key = R.head(pair)
-    const value = R.last(pair)
+    const [key, value] = pair
     if (key === 'txCustomerPhotoPath' || key === 'frontCameraPath') {
       return ['path', value]
     }
@@ -59,15 +58,11 @@ const PhotosCard = memo(({ frontCameraData, txPhotosData }) => {
 
   const singlePhoto = R.head(photosData)
 
-  const isPhotoRollAvailable = () => {
-    return !singlePhoto
-  }
-
   return (
     <>
       <Paper className={classes.photo} elevation={0}>
         <ButtonBase
-          disabled={isPhotoRollAvailable()}
+          disabled={!singlePhoto}
           className={classes.button}
           onClick={() => {
             setPhotosDialog(true)
@@ -112,32 +107,7 @@ export const PhotosCarousel = memo(({ photosData }) => {
 
   return (
     <>
-      <Carousel
-        navButtonsProps={{
-          style: {
-            backgroundColor: 'transparent',
-            borderRadius: 0,
-            fontSize: 100
-          }
-        }}
-        className={classes.slideButtons}
-        autoPlay={false}
-        indicators={false}
-        navButtonsAlwaysVisible={true}
-        next={activeIndex => slidePhoto(activeIndex)}
-        prev={activeIndex => slidePhoto(activeIndex)}>
-        {photosData.map((item, i) => (
-          <div>
-            <div className={classes.imgWrapper}>
-              <img
-                className={classes.imgInner}
-                src={`${URI}/${item?.photoDir}/${item?.path}`}
-                alt=""
-              />
-            </div>
-          </div>
-        ))}
-      </Carousel>
+      <Carousel photosData={photosData} slidePhoto={slidePhoto} />
       {!isFaceCustomerPhoto && (
         <div className={classes.firstRow}>
           <Label>Session ID</Label>
