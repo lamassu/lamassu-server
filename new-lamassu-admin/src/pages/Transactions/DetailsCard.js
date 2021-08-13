@@ -1,10 +1,13 @@
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
+import gql from 'graphql-tag'
 import moment from 'moment'
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 
+import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { IDButton } from 'src/components/buttons'
+import { IDButton, ActionButton } from 'src/components/buttons'
 import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
 import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
@@ -12,6 +15,8 @@ import { ReactComponent as PhoneIdInverseIcon } from 'src/styling/icons/ID/phone
 import { ReactComponent as PhoneIdIcon } from 'src/styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as CamIdInverseIcon } from 'src/styling/icons/ID/photo/white.svg'
 import { ReactComponent as CamIdIcon } from 'src/styling/icons/ID/photo/zodiac.svg'
+import { ReactComponent as CancelInverseIcon } from 'src/styling/icons/button/cancel/white.svg'
+import { ReactComponent as CancelIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { URI } from 'src/utils/apollo'
@@ -24,6 +29,14 @@ import { getStatus, getStatusDetails } from './helper'
 
 const useStyles = makeStyles(styles)
 
+const CANCEL_TRANSACTION = gql`
+  mutation cancelCashOutTransaction($id: ID!) {
+    cancelCashOutTransaction(id: $id) {
+      id
+    }
+  }
+`
+
 const formatAddress = (cryptoCode = '', address = '') =>
   formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
@@ -34,6 +47,13 @@ const Label = ({ children }) => {
 
 const DetailsRow = ({ it: tx }) => {
   const classes = useStyles()
+  const [action, setAction] = useState({ command: null })
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const [cancelCashOutTransaction] = useMutation(CANCEL_TRANSACTION, {
+    onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
+    refetchQueries: () => ['transactions']
+  })
 
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
@@ -197,7 +217,7 @@ const DetailsRow = ({ it: tx }) => {
         </div>
       </div>
       <div className={classes.lastRow}>
-        <div>
+        <div className={classes.status}>
           {getStatusDetails(tx) ? (
             <HoverableTooltip parentElements={errorElements} width={200}>
               <P>{getStatusDetails(tx)}</P>
@@ -205,8 +225,42 @@ const DetailsRow = ({ it: tx }) => {
           ) : (
             errorElements
           )}
+          {tx.txClass === 'cashOut' && getStatus(tx) !== 'Cancelled' && (
+            <ActionButton
+              color="primary"
+              Icon={CancelIcon}
+              InverseIcon={CancelInverseIcon}
+              className={classes.cancelTransaction}
+              onClick={() =>
+                setAction({
+                  command: 'cancelTx'
+                })
+              }>
+              Cancel transaction
+            </ActionButton>
+          )}
         </div>
       </div>
+      <ConfirmDialog
+        open={action.command === 'cancelTx'}
+        title={`Cancel this transaction?`}
+        errorMessage={errorMessage}
+        toBeConfirmed={tx.machineName}
+        message={`The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`}
+        onConfirmed={() => {
+          setErrorMessage(null)
+          setAction({ command: null })
+          cancelCashOutTransaction({
+            variables: {
+              id: tx.id
+            }
+          })
+        }}
+        onDissmised={() => {
+          setAction({ command: null })
+          setErrorMessage(null)
+        }}
+      />
     </div>
   )
 }
