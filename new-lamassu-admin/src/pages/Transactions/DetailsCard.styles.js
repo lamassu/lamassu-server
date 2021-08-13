@@ -74,6 +74,15 @@ export default {
   address: {
     width: 280
   },
+  cancelTransaction: {
+    width: 160
+  },
+  status: {
+    width: 230,
+    '& > button': {
+      marginTop: 20
+    }
+  },
   transactionId: {
     width: 280
   },
