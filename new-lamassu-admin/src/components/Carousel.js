@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import React, { memo } from 'react'
 import ReactCarousel from 'react-material-ui-carousel'
 
+import { ReactComponent as Arrow } from 'src/styling/icons/arrow/carousel-arrow.svg'
 import { URI } from 'src/utils/apollo'
 
 const useStyles = makeStyles({
@@ -27,11 +28,13 @@ export const Carousel = memo(({ photosData, slidePhoto }) => {
   return (
     <>
       <ReactCarousel
+        PrevIcon={<Arrow />}
+        NextIcon={<Arrow />}
         navButtonsProps={{
           style: {
             backgroundColor: 'transparent',
             borderRadius: 0,
-            fontSize: 100
+            width: 50
           }
         }}
         className={classes.slideButtons}
