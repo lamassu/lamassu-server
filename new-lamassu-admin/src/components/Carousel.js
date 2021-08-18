@@ -10,14 +10,12 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex',
-    width: 550,
-    height: 550
+    width: 550
   },
   imgInner: {
     objectFit: 'cover',
     objectPosition: 'center',
     width: 550,
-    height: 550,
     marginBottom: 40
   }
 })
@@ -34,7 +32,7 @@ export const Carousel = memo(({ photosData, slidePhoto }) => {
           style: {
             backgroundColor: 'transparent',
             borderRadius: 0,
-            width: 50
+            fontSize: 150
           }
         }}
         className={classes.slideButtons}
