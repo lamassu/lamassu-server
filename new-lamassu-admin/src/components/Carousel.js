@@ -32,10 +32,11 @@ export const Carousel = memo(({ photosData, slidePhoto }) => {
           style: {
             backgroundColor: 'transparent',
             borderRadius: 0,
-            fontSize: 150
+            width: 50,
+            color: 'transparent',
+            opacity: 1
           }
         }}
-        className={classes.slideButtons}
         autoPlay={false}
         indicators={false}
         navButtonsAlwaysVisible={true}

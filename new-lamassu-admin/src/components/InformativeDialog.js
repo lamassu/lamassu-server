@@ -2,7 +2,7 @@ import { Dialog, DialogContent, makeStyles } from '@material-ui/core'
 import React, { memo } from 'react'
 
 import { IconButton } from 'src/components/buttons'
-import { H2 } from 'src/components/typography'
+import { H1 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { spacer } from 'src/styling/variables'
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     justifyContent: 'end'
   },
   title: {
-    margin: [[0, spacer * 2, spacer * 2, spacer * 2 + 4]]
+    margin: [[0, spacer * 2, spacer, spacer * 2 + 4]]
   }
 })
 
@@ -42,6 +42,11 @@ export const InformativeDialog = memo(
 
     return (
       <Dialog
+        PaperProps={{
+          style: {
+            borderRadius: 8
+          }
+        }}
         fullWidth
         open={open}
         aria-labelledby="form-dialog-title"
@@ -51,7 +56,7 @@ export const InformativeDialog = memo(
             <CloseIcon />
           </IconButton>
         </div>
-        <H2 className={classes.title}>{title}</H2>
+        <H1 className={classes.title}>{title}</H1>
         <DialogContent className={classes.dialogContent}>{data}</DialogContent>
       </Dialog>
     )
