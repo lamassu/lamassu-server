@@ -257,12 +257,12 @@ const CashCassettes = () => {
         iconClassName={classes.listViewButton}
         className={classes.tableWidth}>
         {!showHistory && (
-          <Box alignItems="center" justifyContent="end">
+          <Box alignItems="center" justifyContent="flex-end">
             <Label1 className={classes.cashboxReset}>Cashbox reset</Label1>
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="end"
+              justifyContent="flex-end"
               mr="-4px">
               {cashboxReset && (
                 <P className={classes.selection}>
