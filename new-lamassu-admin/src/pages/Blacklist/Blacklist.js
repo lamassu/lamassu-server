@@ -175,7 +175,7 @@ const Blacklist = () => {
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="end"
+              justifyContent="flex-end"
               mr="-5px">
               <P>Reject reused addresses</P>
               <Switch
