@@ -21,19 +21,14 @@ const GET_CUSTOM_MESSAGES = gql`
     customMessages {
       id
       event
-      deviceId
       message
     }
   }
 `
 
 const CREATE_CUSTOM_MESSAGE = gql`
-  mutation createCustomMessage(
-    $event: CustomMessageEvent!
-    $deviceId: String!
-    $message: String!
-  ) {
-    createCustomMessage(event: $event, deviceId: $deviceId, message: $message) {
+  mutation createCustomMessage($event: CustomMessageEvent!, $message: String!) {
+    createCustomMessage(event: $event, message: $message) {
       id
     }
   }
@@ -43,15 +38,9 @@ const EDIT_CUSTOM_MESSAGE = gql`
   mutation editCustomMessage(
     $id: ID!
     $event: CustomMessageEvent!
-    $deviceId: String!
     $message: String!
   ) {
-    editCustomMessage(
-      id: $id
-      event: $event
-      deviceId: $deviceId
-      message: $message
-    ) {
+    editCustomMessage(id: $id, event: $event, message: $message) {
       id
     }
   }
@@ -61,15 +50,6 @@ const DELETE_CUSTOM_MESSAGE = gql`
   mutation deleteCustomMessage($id: ID!) {
     deleteCustomMessage(id: $id) {
       id
-    }
-  }
-`
-
-const GET_MACHINES = gql`
-  {
-    machines {
-      name
-      deviceId
     }
   }
 `
@@ -91,10 +71,6 @@ const CustomSMS = () => {
     GET_CUSTOM_MESSAGES
   )
 
-  const { data: machinesData, loading: machinesLoading } = useQuery(
-    GET_MACHINES
-  )
-
   const [createMessage] = useMutation(CREATE_CUSTOM_MESSAGE, {
     onError: ({ msg }) => setErrorMsg(msg),
     refetchQueries: () => ['customMessages']
@@ -110,15 +86,7 @@ const CustomSMS = () => {
     refetchQueries: () => ['customMessages']
   })
 
-  const loading = messagesLoading && machinesLoading
-
-  const machineOptions =
-    (machinesData &&
-      R.map(
-        it => ({ code: it.deviceId, display: it.name }),
-        R.path(['machines'])(machinesData)
-      )) ??
-    []
+  const loading = messagesLoading
 
   const handleClose = () => {
     setSelectedSMS(null)
@@ -134,20 +102,11 @@ const CustomSMS = () => {
   const elements = [
     {
       header: 'Event',
-      width: 400,
+      width: 600,
       size: 'sm',
       textAlign: 'left',
       view: it =>
         R.find(ite => R.propEq('event', ite.code, it), EVENT_OPTIONS).display
-    },
-    {
-      header: 'Machine',
-      width: 200,
-      size: 'sm',
-      textAlign: 'left',
-      view: it =>
-        R.find(ite => R.propEq('deviceId', ite.code, it), machineOptions)
-          ?.display ?? `All Machines`
     },
     {
       header: 'Edit',
@@ -195,7 +154,6 @@ const CustomSMS = () => {
         <CustomSMSModal
           showModal={showModal}
           onClose={handleClose}
-          machineOptions={machineOptions}
           eventOptions={EVENT_OPTIONS}
           sms={selectedSMS}
           creationError={errorMsg}

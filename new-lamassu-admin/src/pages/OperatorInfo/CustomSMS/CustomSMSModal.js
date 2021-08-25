@@ -13,11 +13,6 @@ import styles from './CustomSMS.styles'
 
 const useStyles = makeStyles(styles)
 
-const ALL_MACHINES = {
-  code: 'ALL_MACHINES',
-  display: 'All Machines'
-}
-
 const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
   if (!formikErrors || !formikTouched) return null
   if (mutationError) return 'Internal server error'
@@ -67,7 +62,6 @@ const CustomSMSModal = ({
   showModal,
   onClose,
   sms,
-  machineOptions,
   eventOptions,
   creationError,
   submit
@@ -78,17 +72,11 @@ const CustomSMSModal = ({
 
   const initialValues = {
     event: !R.isNil(sms) ? sms.event : '',
-    device: !R.isNil(sms)
-      ? !R.isNil(sms.deviceId)
-        ? sms.deviceId
-        : 'ALL_MACHINES'
-      : '',
     message: !R.isNil(sms) ? sms.message : ''
   }
 
   const validationSchema = Yup.object().shape({
     event: Yup.string().required('An event is required!'),
-    device: Yup.string().required('A machine is required!'),
     message:
       prefill[selectedEvent]?.validator ??
       Yup.string()
@@ -102,14 +90,12 @@ const CustomSMSModal = ({
           variables: {
             id: sms.id,
             event: values.event,
-            deviceId: values.device,
             message: values.message
           }
         })
       : submit({
           variables: {
             event: values.event,
-            deviceId: values.device,
             message: values.message
           }
         })
@@ -142,15 +128,6 @@ const CustomSMSModal = ({
                   fullWidth
                   onChange={setSelectedEvent(values.event)}
                   options={eventOptions}
-                  labelProp="display"
-                  valueProp="code"
-                  component={Autocomplete}
-                />
-                <Field
-                  name="device"
-                  label="Machine"
-                  fullWidth
-                  options={[ALL_MACHINES].concat(machineOptions)}
                   labelProp="display"
                   valueProp="code"
                   component={Autocomplete}
