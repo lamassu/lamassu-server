@@ -33,12 +33,14 @@ const GET_DATA = gql`
 
 const GET_TRANSACTIONS_CSV = gql`
   query transactions(
+    $simplified: Boolean
     $limit: Int
     $from: Date
     $until: Date
     $timezone: String
   ) {
     transactionsCsv(
+      simplified: $simplified
       limit: $limit
       from: $from
       until: $until
@@ -53,12 +55,6 @@ const GET_TRANSACTION_FILTERS = gql`
       type
       value
     }
-  }
-`
-
-const GET_SIMPLIFIED_TRANSACTIONS_CSV = gql`
-  query transactions($limit: Int, $from: Date, $until: Date) {
-    simplifiedTransactionsCsv(limit: $limit, from: $from, until: $until)
   }
 `
 
@@ -282,14 +278,9 @@ const Transactions = () => {
               <LogsDowloaderPopover
                 title="Download logs"
                 name="transactions"
-                queries={[
-                  GET_TRANSACTIONS_CSV,
-                  GET_SIMPLIFIED_TRANSACTIONS_CSV
-                ]}
+                query={GET_TRANSACTIONS_CSV}
                 getLogs={logs => R.path(['transactionsCsv'])(logs)}
-                getSimplifiedLogs={logs =>
-                  R.path(['simplifiedTransactionsCsv'])(logs)
-                }
+                simplified
               />
             </div>
           )}
