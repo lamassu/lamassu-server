@@ -134,24 +134,20 @@ const SIMPLIFIED = 'simplified'
 
 const LogsDownloaderPopover = ({
   name,
-  queries,
+  query,
   args,
   title,
   getLogs,
   timezone,
-  getSimplifiedLogs
+  simplified
 }) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
   const [selectedAdvancedRadio, setSelectedAdvancedRadio] = useState(ADVANCED)
 
   const [range, setRange] = useState({ from: null, until: null })
   const [anchorEl, setAnchorEl] = useState(null)
-  const [fetchLogs] = useLazyQuery(queries[0], {
+  const [fetchLogs] = useLazyQuery(query, {
     onCompleted: data => createLogsFile(getLogs(data), range)
-  })
-
-  const [fetchSimplifiedLogs] = useLazyQuery(queries[1], {
-    onCompleted: data => createLogsFile(getSimplifiedLogs(data), range)
   })
 
   const classes = useStyles()
@@ -170,7 +166,6 @@ const LogsDownloaderPopover = ({
   const handleAdvancedRadioButtons = evt => {
     const selectedAdvancedRadio = R.path(['target', 'value'])(evt)
     setSelectedAdvancedRadio(selectedAdvancedRadio)
-    if (selectedAdvancedRadio === ALL) setRange({ from: null, until: null })
   }
 
   const handleRangeChange = useCallback(
@@ -181,12 +176,11 @@ const LogsDownloaderPopover = ({
   )
 
   const downloadLogs = (range, args) => {
-    const fetch =
-      selectedAdvancedRadio === SIMPLIFIED ? fetchSimplifiedLogs : fetchLogs
     if (selectedRadio === ALL) {
-      fetch({
+      fetchLogs({
         variables: {
-          ...args
+          ...args,
+          simplified: selectedAdvancedRadio === SIMPLIFIED
         }
       })
     }
@@ -196,11 +190,12 @@ const LogsDownloaderPopover = ({
     if (moment(range.from).isSame(range.until, 'day')) range.until = moment()
 
     if (selectedRadio === RANGE) {
-      fetch({
+      fetchLogs({
         variables: {
           ...args,
           from: range.from,
-          until: range.until
+          until: range.until,
+          simplified: selectedAdvancedRadio === SIMPLIFIED
         }
       })
     }
@@ -235,7 +230,10 @@ const LogsDownloaderPopover = ({
 
   const radioButtonOptions = [
     { display: 'All logs', code: ALL },
-    { display: 'Date range', code: RANGE },
+    { display: 'Date range', code: RANGE }
+  ]
+
+  const advancedRadioButtonOptions = [
     { display: 'Advanced logs', code: ADVANCED },
     { display: 'Simplified logs', code: SIMPLIFIED }
   ]
@@ -259,7 +257,7 @@ const LogsDownloaderPopover = ({
               <RadioGroup
                 name="logs-select"
                 value={selectedRadio}
-                options={radioButtonOptions.slice(0, 2)}
+                options={radioButtonOptions}
                 ariaLabel="logs-select"
                 onChange={handleRadioButtons}
                 className={classes.radioButtons}
@@ -284,16 +282,18 @@ const LogsDownloaderPopover = ({
                 />
               </div>
             )}
-            <div className={classes.radioButtonsContainer}>
-              <RadioGroup
-                name="simplified-tx-logs"
-                value={selectedAdvancedRadio}
-                options={radioButtonOptions.slice(2, 4)}
-                ariaLabel="simplified-tx-logs"
-                onChange={handleAdvancedRadioButtons}
-                className={classes.radioButtons}
-              />
-            </div>
+            {simplified && (
+              <div className={classes.radioButtonsContainer}>
+                <RadioGroup
+                  name="simplified-tx-logs"
+                  value={selectedAdvancedRadio}
+                  options={advancedRadioButtonOptions}
+                  ariaLabel="simplified-tx-logs"
+                  onChange={handleAdvancedRadioButtons}
+                  className={classes.radioButtons}
+                />
+              </div>
+            )}
             <div className={classes.download}>
               <Link color="primary" onClick={() => downloadLogs(range, args)}>
                 Download
