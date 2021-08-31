@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const pgp = require('pg-promise')()
+const _ = require('lodash/fp')
 const db = require('../lib/db')
 
 const argv = process.argv.slice(2)
@@ -12,9 +14,50 @@ if (argv.length !== 1) {
 
 const name = argv[0]
 
-const sql = `delete from user_tokens where name = $1 RETURNING *;`
+const userTokenSql = `SELECT * FROM user_tokens WHERE name = $1`
 
-return db.result(sql, [name], r => r.rowCount)
-    .then(r => {if(r==0){console.log('could not find user.')}
-            else{console.log(name + ' removed successfully.')}})
-.then(() => process.exit(0))
+return db.result(userTokenSql, [name])
+  .then(res => {
+    if (res.rowCount === 0) {
+      console.log(`User ${name} was not found!`)
+      process.exit(0)
+    }
+
+    return _.map(t => t.token, res.rows)
+  })
+  .then(tokens => {
+    const tokenClause = _.map(pgp.as.text, tokens).join(',')
+
+    return db.tx(t => {
+      const smsOverride = t.any(`UPDATE customers SET sms_override_by = null WHERE sms_override_by IN ($1^) RETURNING *`, tokenClause)
+      const idDataOverride = t.any(`UPDATE customers SET id_card_data_override_by = null WHERE id_card_data_override_by IN ($1^) RETURNING *`, tokenClause)
+      const idPhotoOverride = t.any(`UPDATE customers SET id_card_photo_override_by = null WHERE id_card_photo_override_by IN ($1^) RETURNING *`, tokenClause)
+      const cameraOverride = t.any(`UPDATE customers SET front_camera_override_by = null WHERE front_camera_override_by IN ($1^) RETURNING *`, tokenClause)
+      const sanctionsOverride = t.any(`UPDATE customers SET sanctions_override_by = null WHERE sanctions_override_by IN ($1^) RETURNING *`, tokenClause)
+      const authorizedOverride = t.any(`UPDATE customers SET authorized_override_by = null WHERE authorized_override_by IN ($1^) RETURNING *`, tokenClause)
+      const usSsnOverride = t.any(`UPDATE customers SET us_ssn_override_by = null WHERE us_ssn_override_by IN ($1^) RETURNING *`, tokenClause)
+
+      const complianceOverride = t.any(`UPDATE compliance_overrides SET override_by = null WHERE override_by IN ($1^) RETURNING *`, tokenClause)
+
+      return t.batch([
+        smsOverride,
+        idDataOverride,
+        idPhotoOverride,
+        cameraOverride,
+        sanctionsOverride,
+        authorizedOverride,
+        usSsnOverride,
+        complianceOverride
+      ])
+        .then(result => {
+          const count = _.sumBy(_.size, result)
+          if (count > 0) {
+            console.log(`Removed ${count} ${count === 1 ? `reference` : `references`} in the database, related with the user ${name}!`)
+          }
+          return t.result(`DELETE FROM user_tokens WHERE name = $1 RETURNING *`, [name], r => r.rowCount)
+        })
+    })
+  })
+  .then(res => console.log(`User ${name} (with ${res === 1 ? `token` : `tokens`} associated) successfully removed from the system!`))
+  .catch(console.error)
+  .finally(() => process.exit(0))

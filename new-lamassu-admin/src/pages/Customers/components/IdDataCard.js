@@ -46,7 +46,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
     },
     {
       header: 'Gender',
-      display: R.path(['gender'])(idData),
+      display: R.path(['gender'])(idData) ?? R.path(['sex'])(idData),
       size: 80
     },
     {
