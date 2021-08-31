@@ -4,13 +4,23 @@ import { NumberInput } from 'src/components/inputs/formik'
 
 const currencyMax = 999999999
 const DenominationsSchema = Yup.object().shape({
-  top: Yup.number()
-    .label('Cassette 1 (Top)')
+  cassette1: Yup.number()
+    .label('Cassette 1')
     .required()
     .min(1)
     .max(currencyMax),
-  bottom: Yup.number()
-    .label('Cassette 2 (Bottom)')
+  cassette2: Yup.number()
+    .label('Cassette 2')
+    .required()
+    .min(1)
+    .max(currencyMax),
+  cassette3: Yup.number()
+    .label('Cassette 3')
+    .required()
+    .min(1)
+    .max(currencyMax),
+  cassette4: Yup.number()
+    .label('Cassette 4')
     .required()
     .min(1)
     .max(currencyMax),
@@ -32,8 +42,8 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       editable: false
     },
     {
-      name: 'top',
-      header: 'Cassette 1 (Top)',
+      name: 'cassette1',
+      header: 'Cassette 1',
       size: 'sm',
       stripe: true,
       width: 200,
@@ -45,8 +55,34 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       suffix: fiatCurrency
     },
     {
-      name: 'bottom',
-      header: 'Cassette 2 (Bottom)',
+      name: 'cassette2',
+      header: 'Cassette 2',
+      size: 'sm',
+      stripe: true,
+      textAlign: 'right',
+      width: 200,
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      },
+      suffix: fiatCurrency
+    },
+    {
+      name: 'cassette3',
+      header: 'Cassette 3',
+      size: 'sm',
+      stripe: true,
+      textAlign: 'right',
+      width: 200,
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      },
+      suffix: fiatCurrency
+    },
+    {
+      name: 'cassette4',
+      header: 'Cassette 4',
       size: 'sm',
       stripe: true,
       textAlign: 'right',

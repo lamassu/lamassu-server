@@ -31,22 +31,29 @@ const WizardStep = ({
 
   const cassetesArtworks = {
     1: cassetteOne,
-    2: cassetteTwo
+    2: cassetteTwo,
+    3: cassetteOne,
+    4: cassetteTwo
   }
 
   return (
     <div className={classes.content}>
       <div className={classes.titleDiv}>
         <Info2 className={classes.title}>{name}</Info2>
-        <Stepper steps={4} currentStep={step} />
+        <Stepper steps={6} currentStep={step} />
       </div>
 
-      {step <= 2 && (
+      {step <= 4 && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
           onSubmit={onContinue}
-          initialValues={{ top: '', bottom: '' }}
+          initialValues={{
+            cassette1: '',
+            cassette2: '',
+            cassette3: '',
+            cassette4: ''
+          }}
           enableReinitialize
           validationSchema={schema}>
           <Form>
@@ -95,7 +102,7 @@ const WizardStep = ({
         </Formik>
       )}
 
-      {step === 3 && (
+      {step === 5 && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}

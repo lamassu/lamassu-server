@@ -11,7 +11,7 @@ import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 import { DenominationsSchema } from './helper'
 
-const LAST_STEP = 4
+const LAST_STEP = 6
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
@@ -52,8 +52,8 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
 
   const steps = [
     {
-      type: 'top',
-      display: 'Cassette 1 (Top)',
+      type: 'cassette1',
+      display: 'Cassette 1',
       component: Autocomplete,
       inputProps: {
         options: R.map(it => ({ code: it, display: it }))(options),
@@ -62,8 +62,28 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
       }
     },
     {
-      type: 'bottom',
+      type: 'cassette2',
       display: 'Cassette 2',
+      component: Autocomplete,
+      inputProps: {
+        options: R.map(it => ({ code: it, display: it }))(options),
+        labelProp: 'display',
+        valueProp: 'code'
+      }
+    },
+    {
+      type: 'cassette3',
+      display: 'Cassette 3',
+      component: Autocomplete,
+      inputProps: {
+        options: R.map(it => ({ code: it, display: it }))(options),
+        labelProp: 'display',
+        valueProp: 'code'
+      }
+    },
+    {
+      type: 'cassette4',
+      display: 'Cassette 4',
       component: Autocomplete,
       inputProps: {
         options: R.map(it => ({ code: it, display: it }))(options),
@@ -82,8 +102,10 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
 
   const schema = () =>
     Yup.object().shape({
-      top: Yup.number().required(),
-      bottom: step >= 2 ? Yup.number().required() : Yup.number()
+      cassette1: Yup.number().required(),
+      cassette2: step >= 2 ? Yup.number().required() : Yup.number(),
+      cassette3: step >= 3 ? Yup.number().required() : Yup.number(),
+      cassette4: step >= 4 ? Yup.number().required() : Yup.number()
     })
 
   return (

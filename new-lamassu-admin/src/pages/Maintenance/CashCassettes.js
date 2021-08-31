@@ -26,13 +26,25 @@ const ValidationSchema = Yup.object().shape({
     .min(0)
     .max(1000),
   cassette1: Yup.number()
-    .label('Cassette 1 (top)')
+    .label('Cassette 1')
     .required()
     .integer()
     .min(0)
     .max(500),
   cassette2: Yup.number()
-    .label('Cassette 2 (bottom)')
+    .label('Cassette 2')
+    .required()
+    .integer()
+    .min(0)
+    .max(500),
+  cassette3: Yup.number()
+    .label('Cassette 3')
+    .required()
+    .integer()
+    .min(0)
+    .max(500),
+  cassette4: Yup.number()
+    .label('Cassette 4')
     .required()
     .integer()
     .min(0)
@@ -47,6 +59,8 @@ const GET_MACHINES_AND_CONFIG = gql`
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
     }
     config
   }
@@ -69,6 +83,8 @@ const SET_CASSETTE_BILLS = gql`
     $cashbox: Int!
     $cassette1: Int!
     $cassette2: Int!
+    $cassette3: Int!
+    $cassette4: Int!
   ) {
     machineAction(
       deviceId: $deviceId
@@ -76,11 +92,15 @@ const SET_CASSETTE_BILLS = gql`
       cashbox: $cashbox
       cassette1: $cassette1
       cassette2: $cassette2
+      cassette3: $cassette3
+      cassette4: $cassette4
     ) {
       deviceId
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
     }
   }
 `
@@ -103,14 +123,18 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
 
-  const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
+  const onSave = (
+    ...[, { id, cashbox, cassette1, cassette2, cassette3, cassette4 }]
+  ) => {
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: id,
         cashbox,
         cassette1,
-        cassette2
+        cassette2,
+        cassette3,
+        cassette4
       }
     })
   }
@@ -139,13 +163,13 @@ const CashCassettes = () => {
     },
     {
       name: 'cassette1',
-      header: 'Cassette 1 (Top)',
+      header: 'Cassette 1',
       width: 265,
       stripe: true,
       view: (value, { id }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.top}
+          denomination={getCashoutSettings(id)?.cassette1}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -157,14 +181,54 @@ const CashCassettes = () => {
     },
     {
       name: 'cassette2',
-      header: 'Cassette 2 (Bottom)',
+      header: 'Cassette 2',
       width: 265,
       stripe: true,
       view: (value, { id }) => {
         return (
           <CashOut
             className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.bottom}
+            denomination={getCashoutSettings(id)?.cassette2}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        )
+      },
+      input: CashCassetteInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
+    },
+    {
+      name: 'cassette3',
+      header: 'Cassette 3',
+      width: 265,
+      stripe: true,
+      view: (value, { id }) => {
+        return (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(id)?.cassette3}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        )
+      },
+      input: CashCassetteInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
+    },
+    {
+      name: 'cassette4',
+      header: 'Cassette 4',
+      width: 265,
+      stripe: true,
+      view: (value, { id }) => {
+        return (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(id)?.cassette4}
             currency={{ code: fiatCurrency }}
             notes={value}
           />
