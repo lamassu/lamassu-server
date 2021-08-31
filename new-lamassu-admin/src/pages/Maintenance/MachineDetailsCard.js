@@ -1,5 +1,6 @@
 import { Grid /*, Divider */ } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import BigNumber from 'bignumber.js'
 import React from 'react'
 
 import MachineActions from 'src/components/machineActions/MachineActions'
@@ -106,6 +107,33 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess, timezone }) => {
             <MachineActions
               machine={machine}
               onActionSuccess={onActionSuccess}></MachineActions>
+          </Item>
+          <Item xs={2}>
+            <Label>Network speed</Label>
+            <span>
+              {machine.downloadSpeed
+                ? new BigNumber(machine.downloadSpeed).toFixed(4).toString() +
+                  '  MB/s'
+                : 'unavailable'}
+            </span>
+          </Item>
+          <Item xs={2}>
+            <Label>Latency</Label>
+            <span>
+              {machine.responseTime
+                ? new BigNumber(machine.responseTime).toFixed(3).toString() +
+                  '  ms'
+                : 'unavailable'}
+            </span>
+          </Item>
+          <Item xs={2}>
+            <Label>Packet Loss</Label>
+            <span>
+              {machine.packetLoss
+                ? new BigNumber(machine.packetLoss).toFixed(3).toString() +
+                  '  %'
+                : 'unavailable'}
+            </span>
           </Item>
         </Container>
       </Item>
