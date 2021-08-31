@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <desc>Created with Sketch.</desc>
+    <g id="icon/button/download/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="icon/sf-small/wizzard" stroke="#1B2559">
+            <polyline id="Path-3" points="3.6 5.4 6 7.8 8.4 5.4"></polyline>
+            <line x1="6" y1="0.5" x2="6" y2="7.4" id="Path-4"></line>
+            <path d="M0,10 L0,10 C0,10.9942 0.8058,11.8 1.8,11.8 L10.2,11.8 C11.1942,11.8 12,10.9942 12,10" id="Stroke-1"></path>
+        </g>
+    </g>
+</svg>
