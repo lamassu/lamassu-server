@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import moment from 'moment'
 import React, { useState, useEffect } from 'react'
 
 import Calendar from './Calendar'
@@ -37,7 +38,7 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
     }
 
     if (from && !to && day.isSameOrAfter(from, 'day')) {
-      setTo(day)
+      setTo(moment(day.toDate().setHours(23, 59, 59, 999)))
       return
     }
 
