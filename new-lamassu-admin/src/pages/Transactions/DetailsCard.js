@@ -39,8 +39,8 @@ const TX_SUMMARY = gql`
     $txId: ID!
     $deviceId: ID!
     $limit: Int
-    $from: DateTime
-    $until: DateTime
+    $from: Date
+    $until: Date
     $txClass: String
     $timezone: String
   ) {
