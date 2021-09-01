@@ -37,8 +37,8 @@ const GET_MACHINE_LOGS_CSV = gql`
   query MachineLogs(
     $deviceId: ID!
     $limit: Int
-    $from: DateTime
-    $until: DateTime
+    $from: Date
+    $until: Date
     $timezone: String
   ) {
     machineLogsCsv(
@@ -52,12 +52,7 @@ const GET_MACHINE_LOGS_CSV = gql`
 `
 
 const GET_MACHINE_LOGS = gql`
-  query MachineLogs(
-    $deviceId: ID!
-    $limit: Int
-    $from: DateTime
-    $until: DateTime
-  ) {
+  query MachineLogs($deviceId: ID!, $limit: Int, $from: Date, $until: Date) {
     machineLogs(
       deviceId: $deviceId
       limit: $limit
