@@ -10,7 +10,8 @@ exports.up = function (next) {
     'ALTER TABLE cash_out_txs ADD COLUMN provisioned_3 INTEGER',
     'ALTER TABLE cash_out_txs ADD COLUMN provisioned_4 INTEGER',
     'ALTER TABLE cash_out_txs ADD COLUMN denomination_3 INTEGER',
-    'ALTER TABLE cash_out_txs ADD COLUMN denomination_4 INTEGER'
+    'ALTER TABLE cash_out_txs ADD COLUMN denomination_4 INTEGER',
+    'ALTER TABLE devices ADD COLUMN number_of_cassettes INTEGER NOT NULL DEFAULT 2'
   ]
 
   return Promise.all([loadLatest(), getMachines()])

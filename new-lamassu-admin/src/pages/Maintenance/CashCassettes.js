@@ -61,6 +61,7 @@ const GET_MACHINES_AND_CONFIG = gql`
       cassette2
       cassette3
       cassette4
+      numberOfCassettes
     }
     config
   }
@@ -160,86 +161,38 @@ const CashCassettes = () => {
       inputProps: {
         decimalPlaces: 0
       }
-    },
-    {
-      name: 'cassette1',
-      header: 'Cassette 1',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => (
-        <CashOut
-          className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.cassette1}
-          currency={{ code: fiatCurrency }}
-          notes={value}
-        />
-      ),
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
-    },
-    {
-      name: 'cassette2',
-      header: 'Cassette 2',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => {
-        return (
-          <CashOut
-            className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.cassette2}
-            currency={{ code: fiatCurrency }}
-            notes={value}
-          />
-        )
-      },
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
-    },
-    {
-      name: 'cassette3',
-      header: 'Cassette 3',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => {
-        return (
-          <CashOut
-            className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.cassette3}
-            currency={{ code: fiatCurrency }}
-            notes={value}
-          />
-        )
-      },
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
-    },
-    {
-      name: 'cassette4',
-      header: 'Cassette 4',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => {
-        return (
-          <CashOut
-            className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.cassette4}
-            currency={{ code: fiatCurrency }}
-            notes={value}
-          />
-        )
-      },
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
     }
   ]
+
+  R.until(
+    R.gt(R.__, Math.max(...R.map(it => it.numberOfCassettes, machines))),
+    it => {
+      elements.push({
+        name: `cassette${it}`,
+        header: `Cassette ${it}`,
+        width: 265,
+        stripe: true,
+        view: (value, { id, numberOfCassettes }) => {
+          return it > numberOfCassettes ? (
+            <></>
+          ) : (
+            <CashOut
+              className={classes.cashbox}
+              denomination={getCashoutSettings(id)?.[`cassette${it}`]}
+              currency={{ code: fiatCurrency }}
+              notes={value}
+            />
+          )
+        },
+        input: CashCassetteInput,
+        inputProps: {
+          decimalPlaces: 0
+        }
+      })
+      return R.add(1, it)
+    },
+    1
+  )
 
   return (
     <>
