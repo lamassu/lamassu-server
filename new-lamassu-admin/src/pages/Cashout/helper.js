@@ -1,3 +1,4 @@
+import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
@@ -16,12 +17,10 @@ const DenominationsSchema = Yup.object().shape({
     .max(currencyMax),
   cassette3: Yup.number()
     .label('Cassette 3')
-    .required()
     .min(1)
     .max(currencyMax),
   cassette4: Yup.number()
     .label('Cassette 4')
-    .required()
     .min(1)
     .max(currencyMax),
   zeroConfLimit: Yup.number()
@@ -32,7 +31,7 @@ const DenominationsSchema = Yup.object().shape({
 })
 
 const getElements = (machines, { fiatCurrency } = {}) => {
-  return [
+  const elements = [
     {
       name: 'id',
       header: 'Machine',
@@ -40,73 +39,49 @@ const getElements = (machines, { fiatCurrency } = {}) => {
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
-    },
-    {
-      name: 'cassette1',
-      header: 'Cassette 1',
-      size: 'sm',
-      stripe: true,
-      width: 200,
-      textAlign: 'right',
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency
-    },
-    {
-      name: 'cassette2',
-      header: 'Cassette 2',
-      size: 'sm',
-      stripe: true,
-      textAlign: 'right',
-      width: 200,
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency
-    },
-    {
-      name: 'cassette3',
-      header: 'Cassette 3',
-      size: 'sm',
-      stripe: true,
-      textAlign: 'right',
-      width: 200,
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency
-    },
-    {
-      name: 'cassette4',
-      header: 'Cassette 4',
-      size: 'sm',
-      stripe: true,
-      textAlign: 'right',
-      width: 200,
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency
-    },
-    {
-      name: 'zeroConfLimit',
-      header: '0-conf Limit',
-      size: 'sm',
-      stripe: true,
-      textAlign: 'right',
-      width: 200,
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      },
-      suffix: fiatCurrency
     }
   ]
+
+  R.until(
+    R.gt(R.__, Math.max(...R.map(it => it.numberOfCassettes, machines))),
+    it => {
+      elements.push({
+        name: `cassette${it}`,
+        header: `Cassette ${it}`,
+        size: 'sm',
+        stripe: true,
+        textAlign: 'right',
+        width: 200,
+        input: NumberInput,
+        inputProps: {
+          decimalPlaces: 0
+        },
+        suffix: fiatCurrency,
+        isHidden: machine =>
+          it >
+          machines.find(({ deviceId }) => deviceId === machine.id)
+            .numberOfCassettes
+      })
+      return R.add(1, it)
+    },
+    1
+  )
+
+  elements.push({
+    name: 'zeroConfLimit',
+    header: '0-conf Limit',
+    size: 'sm',
+    stripe: true,
+    textAlign: 'right',
+    width: 200,
+    input: NumberInput,
+    inputProps: {
+      decimalPlaces: 0
+    },
+    suffix: fiatCurrency
+  })
+
+  return elements
 }
 
 export { DenominationsSchema, getElements }

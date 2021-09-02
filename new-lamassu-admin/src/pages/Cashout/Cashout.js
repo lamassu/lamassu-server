@@ -43,6 +43,7 @@ const GET_INFO = gql`
       cassette2
       cassette3
       cassette4
+      numberOfCassettes
     }
     config
   }
@@ -64,8 +65,6 @@ const CashOut = ({ name: SCREEN_KEY }) => {
   }
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
-
-  console.log('config', config)
 
   const fudgeFactorActive = config?.fudgeFactorActive ?? false
   const locale = data?.config && fromNamespace('locale')(data.config)

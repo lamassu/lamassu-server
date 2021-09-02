@@ -23,7 +23,8 @@ const WizardStep = ({
   onContinue,
   steps,
   fiatCurrency,
-  options
+  options,
+  numberOfCassettes
 }) => {
   const classes = useStyles()
 
@@ -40,10 +41,10 @@ const WizardStep = ({
     <div className={classes.content}>
       <div className={classes.titleDiv}>
         <Info2 className={classes.title}>{name}</Info2>
-        <Stepper steps={6} currentStep={step} />
+        <Stepper steps={steps.length + 1} currentStep={step} />
       </div>
 
-      {step <= 4 && (
+      {step <= numberOfCassettes && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
@@ -102,7 +103,7 @@ const WizardStep = ({
         </Formik>
       )}
 
-      {step === 5 && (
+      {step === numberOfCassettes + 1 && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}

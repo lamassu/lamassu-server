@@ -172,18 +172,15 @@ const CashCassettes = () => {
         header: `Cassette ${it}`,
         width: 265,
         stripe: true,
-        view: (value, { id, numberOfCassettes }) => {
-          return it > numberOfCassettes ? (
-            <></>
-          ) : (
-            <CashOut
-              className={classes.cashbox}
-              denomination={getCashoutSettings(id)?.[`cassette${it}`]}
-              currency={{ code: fiatCurrency }}
-              notes={value}
-            />
-          )
-        },
+        view: (value, { id }) => (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(id)?.[`cassette${it}`]}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        ),
+        isHidden: ({ numberOfCassettes }) => it > numberOfCassettes,
         input: CashCassetteInput,
         inputProps: {
           decimalPlaces: 0
