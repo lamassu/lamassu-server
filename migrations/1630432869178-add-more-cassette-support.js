@@ -11,6 +11,14 @@ exports.up = function (next) {
     'ALTER TABLE cash_out_txs ADD COLUMN provisioned_4 INTEGER',
     'ALTER TABLE cash_out_txs ADD COLUMN denomination_3 INTEGER',
     'ALTER TABLE cash_out_txs ADD COLUMN denomination_4 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN provisioned_3 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN provisioned_4 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN dispensed_3 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN dispensed_4 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN rejected_3 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN rejected_4 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN denomination_3 INTEGER',
+    'ALTER TABLE cash_out_actions ADD COLUMN denomination_4 INTEGER',
     'ALTER TABLE devices ADD COLUMN number_of_cassettes INTEGER NOT NULL DEFAULT 2'
   ]
 
