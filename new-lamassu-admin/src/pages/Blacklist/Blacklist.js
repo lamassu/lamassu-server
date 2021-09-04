@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { Box } from '@material-ui/core'
+import { Box, Dialog, DialogContent, DialogActions } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
@@ -8,11 +8,12 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { Link } from 'src/components/buttons'
+import { Link, Button, IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
-import { H4, Label2, P } from 'src/components/typography'
+import { H4, H2, Label2, P, Info3, Info2 } from 'src/components/typography'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import styles from './Blacklist.styles'
@@ -66,6 +67,50 @@ const ADD_ROW = gql`
   }
 `
 
+const PaperWalletDialog = ({ onConfirmed, onDissmised, open, props }) => {
+  const classes = useStyles()
+
+  return (
+    <>
+      <Dialog
+        open={open}
+        aria-labelledby="form-dialog-title"
+        PaperProps={{
+          style: {
+            borderRadius: 8,
+            minWidth: 656,
+            bottom: 125,
+            right: 7
+          }
+        }}
+        {...props}>
+        <div className={classes.closeButton}>
+          <IconButton size={16} aria-label="close" onClick={onDissmised}>
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <H2 className={classes.dialogTitle}>
+          {'Are you sure you want to enable this?'}
+        </H2>
+        <DialogContent className={classes.dialogContent}>
+          <Info3>{`This mode means that only paper wallets will be printed for users, and they won't be permitted to scan an address from their own wallet.`}</Info3>
+          <Info3>{`This mode is only useful for countries like Switzerland which mandates such a feature.\n`}</Info3>
+          <Info2>{`Don't enable this if you want users to be able to scan an address of their choosing.`}</Info2>
+        </DialogContent>
+        <DialogActions className={classes.dialogActions}>
+          <Button
+            backgroundColor="grey"
+            className={classes.cancelButton}
+            onClick={() => onDissmised()}>
+            Cancel
+          </Button>
+          <Button onClick={() => onConfirmed(true)}>Confirm</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  )
+}
+
 const Blacklist = () => {
   const { data: blacklistResponse } = useQuery(GET_BLACKLIST)
   const { data: configData } = useQuery(GET_INFO)
@@ -76,6 +121,7 @@ const Blacklist = () => {
   })
   const [errorMsg, setErrorMsg] = useState(null)
   const [deleteDialog, setDeleteDialog] = useState(false)
+  const [confirmDialog, setConfirmDialog] = useState(false)
 
   const [deleteEntry] = useMutation(DELETE_ROW, {
     onError: ({ message }) => {
@@ -108,6 +154,8 @@ const Blacklist = () => {
 
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
 
+  const enablePaperWalletOnly = complianceConfig?.enablePaperWalletOnly ?? false
+
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
     return saveConfig({ variables: { config } })
@@ -119,6 +167,13 @@ const Blacklist = () => {
 
   const handleDeleteEntry = (cryptoCode, address) => {
     deleteEntry({ variables: { cryptoCode, address } })
+  }
+
+  const handleConfirmDialog = confirm => {
+    addressReuseSave({
+      enablePaperWalletOnly: confirm
+    })
+    setConfirmDialog(false)
   }
 
   const validateAddress = (cryptoCode, address) => {
@@ -151,6 +206,13 @@ const Blacklist = () => {
 
   return (
     <>
+      <PaperWalletDialog
+        open={confirmDialog}
+        onConfirmed={handleConfirmDialog}
+        onDissmised={() => {
+          setConfirmDialog(false)
+        }}
+      />
       <TitleSection title="Blacklisted addresses">
         <Box display="flex" justifyContent="flex-end">
           <Link color="primary" onClick={() => setShowModal(true)}>
@@ -172,6 +234,35 @@ const Blacklist = () => {
                 ? `${clickedItem.display} blacklisted addresses`
                 : ''}{' '}
             </H4>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="end"
+              mr="-140px">
+              <P>Enable paper wallet (only)</P>
+              <Switch
+                checked={enablePaperWalletOnly}
+                onChange={event => {
+                  if (enablePaperWalletOnly) {
+                    addressReuseSave({
+                      enablePaperWalletOnly: event.target.checked
+                    })
+                  } else {
+                    setConfirmDialog(true)
+                  }
+                }}
+                value={enablePaperWalletOnly}
+              />
+              <Label2>{enablePaperWalletOnly ? 'On' : 'Off'}</Label2>
+              <HoverableTooltip width={304}>
+                <P>
+                  The "Enable paper wallet (only)" option means that all only
+                  paper wallets paper wallets will be printed for users, and
+                  they won't be permitted to scan an address from their own
+                  wallet.
+                </P>
+              </HoverableTooltip>
+            </Box>
             <Box
               display="flex"
               alignItems="center"

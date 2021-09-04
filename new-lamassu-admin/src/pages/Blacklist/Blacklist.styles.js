@@ -33,6 +33,27 @@ const styles = {
   },
   error: {
     marginTop: 20
+  },
+  closeButton: {
+    display: 'flex',
+    padding: [[spacer * 2, spacer * 2, 0, spacer * 2]],
+    paddingRight: spacer * 1.5,
+    justifyContent: 'end'
+  },
+  dialogTitle: {
+    margin: [[0, spacer * 2, spacer, spacer * 2 + 4]]
+  },
+  dialogContent: {
+    width: 610,
+    paddingLeft: 20
+  },
+  dialogActions: {
+    padding: spacer * 4,
+    paddingTop: spacer * 2
+  },
+  cancelButton: {
+    marginRight: 8,
+    padding: 0
   }
 }
 
