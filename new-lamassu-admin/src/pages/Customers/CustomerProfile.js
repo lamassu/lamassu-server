@@ -64,6 +64,11 @@ const GET_CUSTOMER = gql`
       lastTxClass
       daysSuspended
       isSuspended
+      customFields {
+        id
+        label
+        value
+      }
       transactions {
         txClass
         id
@@ -158,6 +163,8 @@ const CustomerProfile = memo(() => {
   const isOverview = clickedItem === 'overview'
 
   const classes = useStyles({ blocked })
+
+  console.log('customer', customerData)
 
   return (
     <>
