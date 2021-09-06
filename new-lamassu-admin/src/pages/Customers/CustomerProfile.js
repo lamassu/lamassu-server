@@ -164,8 +164,6 @@ const CustomerProfile = memo(() => {
 
   const classes = useStyles({ blocked })
 
-  console.log('customer', customerData)
-
   return (
     <>
       <Breadcrumbs
