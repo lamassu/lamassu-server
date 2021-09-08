@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "7.5.2",
+  "version": "7.5.3",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
