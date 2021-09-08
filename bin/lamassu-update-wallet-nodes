@@ -24,9 +24,11 @@ function plugin (crypto) {
 
 function run () {
   _.forEach((crypto) => {
-    const cryptoPlugin = plugin(crypto)
+    if (!_.includes(crypto.cryptoCode, _.keys(PLUGINS))) return
 
-    const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`)
+    const cryptoPlugin = plugin(crypto)
+    const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`).trim()
+
     if (status === 'RUNNING') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), true)
     if (status === 'STOPPED') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), false)
   }, cryptos)
