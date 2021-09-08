@@ -225,7 +225,7 @@ const DetailsRow = ({ it: tx }) => {
           ) : (
             errorElements
           )}
-          {tx.txClass === 'cashOut' && getStatus(tx) !== 'Cancelled' && (
+          {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
             <ActionButton
               color="primary"
               Icon={CancelIcon}
@@ -265,4 +265,8 @@ const DetailsRow = ({ it: tx }) => {
   )
 }
 
-export default memo(DetailsRow, (prev, next) => prev.id === next.id)
+export default memo(
+  DetailsRow,
+  (prev, next) =>
+    prev.it.id === next.it.id && prev.it.hasError === next.it.hasError
+)
