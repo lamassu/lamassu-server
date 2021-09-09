@@ -128,7 +128,7 @@ const ContactInfo = ({ wizard }) => {
     phone: Yup.string(),
     email: Yup.string()
       .email('Please enter a valid email address')
-      .required(),
+      .required('An email is required'),
     website: Yup.string(),
     companyNumber: Yup.string()
   })
@@ -182,6 +182,9 @@ const ContactInfo = ({ wizard }) => {
     }
   }
 
+  const getErrorMsg = formikErrors =>
+    !R.isNil(formikErrors.email) ? formikErrors.email : null
+
   return (
     <>
       <div className={classes.header}>
@@ -223,58 +226,67 @@ const ContactInfo = ({ wizard }) => {
             setEditing(false)
             setError(null)
           }}>
-          <Form>
-            <PromptWhenDirty />
-            <div className={classes.row}>
-              <Field
-                field={findField('name')}
-                editing={editing}
-                displayValue={displayTextValue}
-                onFocus={() => setError(null)}
-              />
-              <Field
-                field={findField('phone')}
-                editing={editing}
-                displayValue={displayTextValue}
-                onFocus={() => setError(null)}
-              />
-            </div>
-            <div className={classes.row}>
-              <Field
-                field={findField('email')}
-                editing={editing}
-                displayValue={displayTextValue}
-                onFocus={() => setError(null)}
-              />
-              <Field
-                field={findField('website')}
-                editing={editing}
-                displayValue={displayTextValue}
-                onFocus={() => setError(null)}
-              />
-            </div>
-            <div className={classes.row}>
-              <Field
-                field={findField('companyNumber')}
-                editing={editing}
-                displayValue={displayTextValue}
-                onFocus={() => setError(null)}
-              />
-            </div>
-            <div className={classnames(classes.row, classes.submit)}>
-              {editing && (
-                <>
-                  <Link color="primary" type="submit">
-                    Save
-                  </Link>
-                  <Link color="secondary" type="reset">
-                    Cancel
-                  </Link>
-                  {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
-                </>
+          {({ errors }) => (
+            <Form>
+              <PromptWhenDirty />
+              <div className={classes.row}>
+                <Field
+                  field={findField('name')}
+                  editing={editing}
+                  displayValue={displayTextValue}
+                  onFocus={() => setError(null)}
+                />
+                <Field
+                  field={findField('phone')}
+                  editing={editing}
+                  displayValue={displayTextValue}
+                  onFocus={() => setError(null)}
+                />
+              </div>
+              <div className={classes.row}>
+                <Field
+                  field={findField('email')}
+                  editing={editing}
+                  displayValue={displayTextValue}
+                  onFocus={() => setError(null)}
+                />
+                <Field
+                  field={findField('website')}
+                  editing={editing}
+                  displayValue={displayTextValue}
+                  onFocus={() => setError(null)}
+                />
+              </div>
+              <div className={classes.row}>
+                <Field
+                  field={findField('companyNumber')}
+                  editing={editing}
+                  displayValue={displayTextValue}
+                  onFocus={() => setError(null)}
+                />
+              </div>
+              {editing && !!getErrorMsg(errors) && (
+                <ErrorMessage className={classes.formErrorMsg}>
+                  {getErrorMsg(errors)}
+                </ErrorMessage>
               )}
-            </div>
-          </Form>
+              <div className={classnames(classes.row, classes.submit)}>
+                {editing && (
+                  <>
+                    <Link color="primary" type="submit">
+                      Save
+                    </Link>
+                    <Link color="secondary" type="reset">
+                      Cancel
+                    </Link>
+                    {error && (
+                      <ErrorMessage>Failed to save changes</ErrorMessage>
+                    )}
+                  </>
+                )}
+              </div>
+            </Form>
+          )}
         </Formik>
       </div>
       {!wizard && (
