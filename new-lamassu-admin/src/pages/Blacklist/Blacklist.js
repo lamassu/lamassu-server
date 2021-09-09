@@ -71,43 +71,41 @@ const PaperWalletDialog = ({ onConfirmed, onDissmised, open, props }) => {
   const classes = useStyles()
 
   return (
-    <>
-      <Dialog
-        open={open}
-        aria-labelledby="form-dialog-title"
-        PaperProps={{
-          style: {
-            borderRadius: 8,
-            minWidth: 656,
-            bottom: 125,
-            right: 7
-          }
-        }}
-        {...props}>
-        <div className={classes.closeButton}>
-          <IconButton size={16} aria-label="close" onClick={onDissmised}>
-            <CloseIcon />
-          </IconButton>
-        </div>
-        <H2 className={classes.dialogTitle}>
-          {'Are you sure you want to enable this?'}
-        </H2>
-        <DialogContent className={classes.dialogContent}>
-          <Info3>{`This mode means that only paper wallets will be printed for users, and they won't be permitted to scan an address from their own wallet.`}</Info3>
-          <Info3>{`This mode is only useful for countries like Switzerland which mandates such a feature.\n`}</Info3>
-          <Info2>{`Don't enable this if you want users to be able to scan an address of their choosing.`}</Info2>
-        </DialogContent>
-        <DialogActions className={classes.dialogActions}>
-          <Button
-            backgroundColor="grey"
-            className={classes.cancelButton}
-            onClick={() => onDissmised()}>
-            Cancel
-          </Button>
-          <Button onClick={() => onConfirmed(true)}>Confirm</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <Dialog
+      open={open}
+      aria-labelledby="form-dialog-title"
+      PaperProps={{
+        style: {
+          borderRadius: 8,
+          minWidth: 656,
+          bottom: 125,
+          right: 7
+        }
+      }}
+      {...props}>
+      <div className={classes.closeButton}>
+        <IconButton size={16} aria-label="close" onClick={onDissmised}>
+          <CloseIcon />
+        </IconButton>
+      </div>
+      <H2 className={classes.dialogTitle}>
+        {'Are you sure you want to enable this?'}
+      </H2>
+      <DialogContent className={classes.dialogContent}>
+        <Info3>{`This mode means that only paper wallets will be printed for users, and they won't be permitted to scan an address from their own wallet.`}</Info3>
+        <Info3>{`This mode is only useful for countries like Switzerland which mandates such a feature.\n`}</Info3>
+        <Info2>{`Don't enable this if you want users to be able to scan an address of their choosing.`}</Info2>
+      </DialogContent>
+      <DialogActions className={classes.dialogActions}>
+        <Button
+          backgroundColor="grey"
+          className={classes.cancelButton}
+          onClick={() => onDissmised()}>
+          Cancel
+        </Button>
+        <Button onClick={() => onConfirmed(true)}>Confirm</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
@@ -154,7 +152,7 @@ const Blacklist = () => {
 
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
 
-  const enablePaperWalletOnly = complianceConfig?.enablePaperWalletOnly ?? false
+  const enablePaperWalletOnly = !!complianceConfig.enablePaperWalletOnly
 
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
@@ -242,15 +240,13 @@ const Blacklist = () => {
               <P>Enable paper wallet (only)</P>
               <Switch
                 checked={enablePaperWalletOnly}
-                onChange={event => {
-                  if (enablePaperWalletOnly) {
-                    addressReuseSave({
-                      enablePaperWalletOnly: event.target.checked
-                    })
-                  } else {
-                    setConfirmDialog(true)
-                  }
-                }}
+                onChange={e =>
+                  enablePaperWalletOnly
+                    ? addressReuseSave({
+                        enablePaperWalletOnly: e.target.checked
+                      })
+                    : setConfirmDialog(true)
+                }
                 value={enablePaperWalletOnly}
               />
               <Label2>{enablePaperWalletOnly ? 'On' : 'Off'}</Label2>
