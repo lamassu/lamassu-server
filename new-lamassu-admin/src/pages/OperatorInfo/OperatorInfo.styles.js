@@ -62,6 +62,9 @@ const global = {
       marginTop: 4,
       marginLeft: 16
     }
+  },
+  formErrorMsg: {
+    margin: [[0, 0, 20, 0]]
   }
 }
 
