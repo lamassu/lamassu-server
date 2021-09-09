@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 const _ = require('lodash/fp')
-
-const { utils: coinUtils } = require('lamassu-coins')
-const cryptos = coinUtils.cryptoCurrencies()
 const common = require('../lib/blockchain/common')
+const { utils: coinUtils } = require('lamassu-coins')
+
+const cryptos = coinUtils.cryptoCurrencies()
 
 const PLUGINS = {
   BTC: require('../lib/blockchain/bitcoin.js'),
