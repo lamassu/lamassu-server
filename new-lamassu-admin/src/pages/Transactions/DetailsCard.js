@@ -62,9 +62,17 @@ const TX_SUMMARY = gql`
   }
 `
 
-const CANCEL_TRANSACTION = gql`
+const CANCEL_CASH_OUT_TRANSACTION = gql`
   mutation cancelCashOutTransaction($id: ID!) {
     cancelCashOutTransaction(id: $id) {
+      id
+    }
+  }
+`
+
+const CANCEL_CASH_IN_TRANSACTION = gql`
+  mutation cancelCashInTransaction($id: ID!) {
+    cancelCashInTransaction(id: $id) {
       id
     }
   }
@@ -89,7 +97,12 @@ const DetailsRow = ({ it: tx, timezone }) => {
     onCompleted: data => createCsv(data)
   })
 
-  const [cancelCashOutTransaction] = useMutation(CANCEL_TRANSACTION, {
+  const [cancelCashOutTransaction] = useMutation(CANCEL_CASH_OUT_TRANSACTION, {
+    onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
+    refetchQueries: () => ['transactions']
+  })
+
+  const [cancelCashInTransaction] = useMutation(CANCEL_CASH_IN_TRANSACTION, {
     onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
     refetchQueries: () => ['transactions']
   })
@@ -285,6 +298,20 @@ const DetailsRow = ({ it: tx, timezone }) => {
           ) : (
             errorElements
           )}
+          {tx.txClass === 'cashIn' && getStatus(tx) === 'Pending' && (
+            <ActionButton
+              color="primary"
+              Icon={CancelIcon}
+              InverseIcon={CancelInverseIcon}
+              className={classes.cancelTransaction}
+              onClick={() =>
+                setAction({
+                  command: 'cancelTx'
+                })
+              }>
+              Cancel transaction
+            </ActionButton>
+          )}
           {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
             <ActionButton
               color="primary"
@@ -319,15 +346,29 @@ const DetailsRow = ({ it: tx, timezone }) => {
         title={`Cancel this transaction?`}
         errorMessage={errorMessage}
         toBeConfirmed={tx.machineName}
-        message={`The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`}
+        message={`The user will not be able to redeem the ${
+          tx.txClass === 'cashIn' ? `inserted bills` : `cash`
+        }, even if they subsequently ${
+          tx.txClass === 'cashIn'
+            ? `confirm the transaction`
+            : `send the required coins`
+        }. If they've already ${
+          tx.txClass === 'cashIn' ? `deposited bills` : `sent you coins`
+        }, you'll need to reconcile this transaction with them manually.`}
         onConfirmed={() => {
           setErrorMessage(null)
           setAction({ command: null })
-          cancelCashOutTransaction({
-            variables: {
-              id: tx.id
-            }
-          })
+          tx.txClass === 'cashIn'
+            ? cancelCashInTransaction({
+                variables: {
+                  id: tx.id
+                }
+              })
+            : cancelCashOutTransaction({
+                variables: {
+                  id: tx.id
+                }
+              })
         }}
         onDissmised={() => {
           setAction({ command: null })
