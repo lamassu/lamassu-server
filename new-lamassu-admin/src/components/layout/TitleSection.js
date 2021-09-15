@@ -19,14 +19,14 @@ const TitleSection = ({
   buttons = [],
   children,
   appendix,
-  appendixClassName
+  appendixRight
 }) => {
   const classes = useStyles()
   return (
     <div className={classnames(classes.titleWrapper, className)}>
       <div className={classes.titleAndButtonsContainer}>
         <Title>{title}</Title>
-        {appendix && <div className={appendixClassName}>{appendix}</div>}
+        {!!appendix && appendix}
         {error && (
           <ErrorMessage className={classes.error}>Failed to save</ErrorMessage>
         )}
@@ -46,13 +46,14 @@ const TitleSection = ({
           </>
         )}
       </div>
-      <Box display="flex" flexDirection="row">
+      <Box display="flex" flexDirection="row" alignItems="center">
         {(labels ?? []).map(({ icon, label }, idx) => (
           <Box key={idx} display="flex" alignItems="center">
             <div className={classes.icon}>{icon}</div>
             <Label1 className={classes.label}>{label}</Label1>
           </Box>
         ))}
+        {appendixRight}
       </Box>
       {children}
     </div>

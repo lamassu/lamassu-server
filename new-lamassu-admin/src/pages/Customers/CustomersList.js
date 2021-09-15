@@ -19,7 +19,7 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
   const elements = [
     {
       header: 'Phone',
-      width: 175,
+      width: 199,
       view: it => getFormattedPhone(it.phone, locale.country)
     },
     {
