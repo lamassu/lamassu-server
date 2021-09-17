@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import { Field, Form, Formik } from 'formik'
-import { PhoneNumberUtil } from 'google-libphonenumber'
+import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber'
+import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
@@ -34,16 +35,36 @@ const styles = {
 
 const pnUtilInstance = PhoneNumberUtil.getInstance()
 
-const validationSchema = Yup.object().shape({
-  phoneNumber: Yup.string()
-    .required('A phone number is required')
-    .test('is-valid-number', 'That is not a valid phone number', value => {
-      try {
-        const number = pnUtilInstance.parseAndKeepRawInput(value, 'US')
-        return pnUtilInstance.isValidNumber(number)
-      } catch (e) {}
-    })
-})
+const getValidationSchema = countryCodes =>
+  Yup.object().shape({
+    phoneNumber: Yup.string()
+      .required('A phone number is required')
+      .test('is-valid-number', 'That is not a valid phone number', value => {
+        try {
+          const validMap = R.map(it => {
+            const number = pnUtilInstance.parseAndKeepRawInput(value, it)
+            return pnUtilInstance.isValidNumber(number)
+          }, countryCodes)
+
+          return R.any(it => it === true, validMap)
+        } catch (e) {}
+      })
+      .trim()
+  })
+
+const formatPhoneNumber = (countryCodes, numberStr) => {
+  const matchedCountry = R.find(it => {
+    const number = pnUtilInstance.parseAndKeepRawInput(numberStr, it)
+    return pnUtilInstance.isValidNumber(number)
+  }, countryCodes)
+
+  const matchedNumber = pnUtilInstance.parseAndKeepRawInput(
+    numberStr,
+    matchedCountry
+  )
+
+  return pnUtilInstance.format(matchedNumber, PhoneNumberFormat.E164)
+}
 
 const initialValues = {
   phoneNumber: ''
@@ -58,8 +79,13 @@ const getErrorMsg = (formikErrors, formikTouched) => {
   return null
 }
 
-const CreateCustomerModal = ({ showModal, handleClose, onSubmit }) => {
+const CreateCustomerModal = ({ showModal, handleClose, onSubmit, locale }) => {
   const classes = useStyles()
+
+  const possibleCountries = R.append(
+    locale?.country,
+    R.map(it => it.country, locale?.overrides ?? [])
+  )
 
   return (
     <Modal
@@ -69,12 +95,17 @@ const CreateCustomerModal = ({ showModal, handleClose, onSubmit }) => {
       handleClose={handleClose}
       open={showModal}>
       <Formik
-        validationSchema={validationSchema}
+        validationSchema={getValidationSchema(possibleCountries)}
         initialValues={initialValues}
         validateOnChange={false}
         onSubmit={values => {
           onSubmit({
-            variables: { phoneNumber: values.phoneNumber }
+            variables: {
+              phoneNumber: formatPhoneNumber(
+                possibleCountries,
+                values.phoneNumber
+              )
+            }
           })
         }}>
         {({ errors, touched }) => (

@@ -194,6 +194,7 @@ const Customers = () => {
       <CreateCustomerModal
         showModal={showCreationModal}
         handleClose={() => setShowCreationModal(false)}
+        locale={locale}
         onSubmit={createNewCustomer}
       />
     </>
