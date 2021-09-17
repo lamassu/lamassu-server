@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
+// import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
@@ -241,6 +242,38 @@ const CustomerProfile = memo(() => {
                     })
                   }>
                   {`Retrieve information`}
+                </ActionButton>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className={classes.rightSidePanel}>
+          {isOverview && (
+            <div>
+              <Box
+                className={classes.customerDetails}
+                display="flex"
+                justifyContent="space-between">
+                <CustomerDetails
+                  customer={customerData}
+                  locale={locale}
+                  setShowCompliance={() => setShowCompliance(!showCompliance)}
+                />
+              </Box>
+              <div>
+                <TransactionsList
+                  customer={customerData}
+                  data={sortedTransactions}
+                  locale={locale}
+                  loading={loading}
+                />
+              </div>
+              <div>
+                <ActionButton
+                  className={classes.customerDiscount}
+                  color="primary"
+                  onClick={() => {}}>
+                  {`Add individual discount`}
                 </ActionButton>
               </div>
             </div>
