@@ -75,7 +75,6 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
       view: R.path(['machineName'])
     },
     {
-      header: 'Direction',
       width: 125,
       view: it => (
         <>

@@ -30,10 +30,10 @@ export default {
     color: white,
     backgroundColor: offDarkColor,
     '&:first-child': {
-      borderRadius: [5, 5, 0, 0]
+      borderRadius: [[5, 5, 0, 0]]
     },
     '&:last-child': {
-      borderRadius: [0, 0, 5, 5]
+      borderRadius: [[0, 0, 5, 5]]
     }
   },
   icon: {
