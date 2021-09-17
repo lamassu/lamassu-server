@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
+// import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
@@ -18,11 +19,13 @@ import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/bl
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
+import CustomerData from './CustomerData'
 import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
   TransactionsList,
-  ComplianceDetails
+  ComplianceDetails,
+  CustomerSidebar
 } from './components'
 import { getFormattedPhone, getName } from './helper'
 
@@ -109,6 +112,7 @@ const CustomerProfile = memo(() => {
   const classes = useStyles()
   const history = useHistory()
   const [showCompliance, setShowCompliance] = useState(false)
+  const [clickedItem, setClickedItem] = useState('overview')
   const { id: customerId } = useParams()
 
   const { data: customerResponse, refetch: getCustomer, loading } = useQuery(
@@ -130,6 +134,8 @@ const CustomerProfile = memo(() => {
       }
     })
 
+  const onClickSidebarItem = e => setClickedItem(e.code)
+
   const configData = R.path(['config'])(customerResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
   const customerData = R.path(['customer'])(customerResponse) ?? []
@@ -142,6 +148,8 @@ const CustomerProfile = memo(() => {
     R.path(['authorizedOverride'])(customerData) === OVERRIDE_REJECTED
 
   const isSuspended = customerData.isSuspended
+  const isCustomerData = clickedItem === 'customerData'
+  const isOverview = clickedItem === 'overview'
 
   return (
     <>
@@ -164,21 +172,18 @@ const CustomerProfile = memo(() => {
               )}
         </Label2>
       </Breadcrumbs>
-      <div>
-        <Box
-          className={classes.customerDetails}
-          display="flex"
-          justifyContent="space-between">
-          <CustomerDetails
-            customer={customerData}
-            txData={sortedTransactions}
-            locale={locale}
-            setShowCompliance={() => setShowCompliance(!showCompliance)}
-          />
+      <div className={classes.panels}>
+        <div className={classes.leftSidePanel}>
           {!loading && !customerData.isAnonymous && (
             <div>
+              <div>
+                <CustomerSidebar
+                  isSelected={it => it.code === clickedItem}
+                  onClick={onClickSidebarItem}
+                />
+              </div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
-              <div className={classes.customerActions}>
+              <div>
                 {isSuspended && (
                   <ActionButton
                     color="primary"
@@ -194,6 +199,7 @@ const CustomerProfile = memo(() => {
                 )}
                 <ActionButton
                   color="primary"
+                  className={classes.customerBlock}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
@@ -226,24 +232,57 @@ const CustomerProfile = memo(() => {
                   {`Retrieve information`}
                 </ActionButton>
               </div>
+              <div>
+                <ActionButton
+                  className={classes.customerDiscount}
+                  color="primary"
+                  onClick={() => {}}>
+                  {`Add individual discount`}
+                </ActionButton>
+              </div>
             </div>
           )}
-        </Box>
+        </div>
+        <div className={classes.rightSidePanel}>
+          {isOverview && (
+            <div>
+              <Box
+                className={classes.customerDetails}
+                display="flex"
+                justifyContent="space-between">
+                <CustomerDetails
+                  customer={customerData}
+                  locale={locale}
+                  setShowCompliance={() => setShowCompliance(!showCompliance)}
+                />
+              </Box>
+              {!showCompliance && (
+                <div>
+                  <TransactionsList
+                    customer={customerData}
+                    data={sortedTransactions}
+                    locale={locale}
+                    loading={loading}
+                  />
+                </div>
+              )}
+              {showCompliance && (
+                <ComplianceDetails
+                  customer={customerData}
+                  updateCustomer={updateCustomer}
+                />
+              )}
+            </div>
+          )}
+          {isCustomerData && (
+            <div>
+              <CustomerData
+                customer={customerData}
+                updateCustomer={updateCustomer}></CustomerData>
+            </div>
+          )}
+        </div>
       </div>
-      {!showCompliance && (
-        <TransactionsList
-          customer={customerData}
-          data={sortedTransactions}
-          locale={locale}
-          loading={loading}
-        />
-      )}
-      {showCompliance && (
-        <ComplianceDetails
-          customer={customerData}
-          updateCustomer={updateCustomer}
-        />
-      )}
     </>
   )
 })
