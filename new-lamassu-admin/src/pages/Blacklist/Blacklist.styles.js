@@ -41,11 +41,11 @@ const styles = {
     justifyContent: 'end'
   },
   dialogTitle: {
-    margin: [[0, spacer * 2, spacer, spacer * 2 + 4]]
+    margin: [[0, spacer * 2, spacer, spacer * 4 + spacer]]
   },
   dialogContent: {
-    width: 610,
-    paddingLeft: 20
+    width: 615,
+    marginLeft: 16
   },
   dialogActions: {
     padding: spacer * 4,
