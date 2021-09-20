@@ -152,7 +152,7 @@ const Blacklist = () => {
 
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
 
-  const enablePaperWalletOnly = !!complianceConfig.enablePaperWalletOnly
+  const enablePaperWalletOnly = !!complianceConfig?.enablePaperWalletOnly
 
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
