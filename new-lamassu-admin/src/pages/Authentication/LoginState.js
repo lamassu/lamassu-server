@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import React from 'react'
@@ -56,7 +57,7 @@ const LoginState = ({ state, dispatch }) => {
       },
       context: {
         headers: {
-          email: username
+          pazuz_operatoridentifier: base64.encode(username)
         }
       }
     })
