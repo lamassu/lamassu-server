@@ -69,6 +69,7 @@ const Setup2FAState = ({ state, dispatch }) => {
 
   const { error: queryError } = useQuery(GET_2FA_SECRET, {
     variables: { username: state.clientField, password: state.passwordField },
+    context: { headers: { email: state.clientField } },
     onCompleted: ({ get2FASecret }) => {
       setSecret(get2FASecret.secret)
       setOtpauth(get2FASecret.otpauth)
@@ -84,7 +85,16 @@ const Setup2FAState = ({ state, dispatch }) => {
 
   const [setup2FA, { error: mutationError }] = useMutation(SETUP_2FA, {
     onCompleted: ({ setup2FA: success }) => {
-      success ? getUserData() : setInvalidToken(true)
+      success
+        ? getUserData({
+            context: {
+              headers: {
+                email: state.clientField,
+                'Access-Control-Expose-Headers': 'email'
+              }
+            }
+          })
+        : setInvalidToken(true)
     }
   })
 
@@ -155,7 +165,8 @@ const Setup2FAState = ({ state, dispatch }) => {
                   password: state.passwordField,
                   rememberMe: state.rememberMeField,
                   codeConfirmation: twoFAConfirmation
-                }
+                },
+                context: { headers: { email: state.clientField } }
               })
             }}
             buttonClassName={classes.loginButton}>
