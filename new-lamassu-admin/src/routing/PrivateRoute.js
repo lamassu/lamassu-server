@@ -8,6 +8,8 @@ import { isLoggedIn } from './utils'
 const PrivateRoute = ({ ...rest }) => {
   const { userData } = useContext(AppContext)
 
+  console.log('isLoggedIn', isLoggedIn(userData))
+
   return isLoggedIn(userData) ? <Route {...rest} /> : <Redirect to="/login" />
 }
 

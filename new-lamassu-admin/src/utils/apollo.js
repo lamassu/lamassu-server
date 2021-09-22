@@ -12,7 +12,7 @@ import AppContext from 'src/AppContext'
 const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
-const getClient = (history, location, setUserData, setRole) =>
+const getClient = (history, location, getUserData, setUserData, setRole) =>
   new ApolloClient({
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
@@ -67,8 +67,14 @@ const getClient = (history, location, setUserData, setRole) =>
 const Provider = ({ children }) => {
   const history = useHistory()
   const location = useLocation()
-  const { setUserData, setRole } = useContext(AppContext)
-  const client = getClient(history, location, setUserData, setRole)
+  const { userData, setUserData, setRole } = useContext(AppContext)
+  const client = getClient(
+    history,
+    location,
+    () => userData,
+    setUserData,
+    setRole
+  )
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>
 }

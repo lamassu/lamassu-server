@@ -53,6 +53,11 @@ const LoginState = ({ state, dispatch }) => {
       variables: {
         username,
         password
+      },
+      context: {
+        headers: {
+          email: username
+        }
       }
     })
 

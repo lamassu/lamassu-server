@@ -56,7 +56,17 @@ const Input2FAState = ({ state, dispatch }) => {
 
   const [input2FA, { error: mutationError }] = useMutation(INPUT_2FA, {
     onCompleted: ({ input2FA: success }) => {
-      success ? getUserData() : setInvalidToken(true)
+      if (success) {
+        return getUserData({
+          context: {
+            headers: {
+              email: state.clientField,
+              'Access-Control-Expose-Headers': 'email'
+            }
+          }
+        })
+      }
+      return setInvalidToken(true)
     }
   })
 
@@ -82,6 +92,11 @@ const Input2FAState = ({ state, dispatch }) => {
         password: state.passwordField,
         code: state.twoFAField,
         rememberMe: state.rememberMeField
+      },
+      context: {
+        headers: {
+          email: state.clientField
+        }
       }
     })
   }
