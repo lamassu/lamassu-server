@@ -154,8 +154,6 @@ const App = () => {
   const [userData, setUserData] = useState(null)
 
   const setRole = role => {
-    console.log('role', role)
-    console.log('userData', userData)
     if (userData && role && userData.role !== role) {
       setUserData({ ...userData, role })
     }
