@@ -1,5 +1,6 @@
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import gql from 'graphql-tag'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -60,8 +61,7 @@ const Input2FAState = ({ state, dispatch }) => {
         return getUserData({
           context: {
             headers: {
-              email: state.clientField,
-              'Access-Control-Expose-Headers': 'email'
+              pazuz_operatoridentifier: base64.encode(state.clientField)
             }
           }
         })
@@ -95,7 +95,7 @@ const Input2FAState = ({ state, dispatch }) => {
       },
       context: {
         headers: {
-          email: state.clientField
+          pazuz_operatoridentifier: base64.encode(state.clientField)
         }
       }
     })

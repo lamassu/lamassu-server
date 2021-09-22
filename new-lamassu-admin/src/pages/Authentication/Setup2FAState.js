@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import React, { useContext, useState } from 'react'
@@ -69,7 +70,11 @@ const Setup2FAState = ({ state, dispatch }) => {
 
   const { error: queryError } = useQuery(GET_2FA_SECRET, {
     variables: { username: state.clientField, password: state.passwordField },
-    context: { headers: { email: state.clientField } },
+    context: {
+      headers: {
+        pazuz_operatoridentifier: base64.encode(state.clientField)
+      }
+    },
     onCompleted: ({ get2FASecret }) => {
       setSecret(get2FASecret.secret)
       setOtpauth(get2FASecret.otpauth)
@@ -89,8 +94,7 @@ const Setup2FAState = ({ state, dispatch }) => {
         ? getUserData({
             context: {
               headers: {
-                email: state.clientField,
-                'Access-Control-Expose-Headers': 'email'
+                pazuz_operatoridentifier: base64.encode(state.clientField)
               }
             }
           })
@@ -166,7 +170,11 @@ const Setup2FAState = ({ state, dispatch }) => {
                   rememberMe: state.rememberMeField,
                   codeConfirmation: twoFAConfirmation
                 },
-                context: { headers: { email: state.clientField } }
+                context: {
+                  headers: {
+                    pazuz_operatoridentifier: base64.encode(state.clientField)
+                  }
+                }
               })
             }}
             buttonClassName={classes.loginButton}>

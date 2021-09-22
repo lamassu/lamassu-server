@@ -36,7 +36,7 @@ const getClient = (history, location, getUserData, setUserData, setRole) =>
           } = context
 
           if (headers) {
-            const role = headers.get('role')
+            const role = headers.get('lamassu_role')
             setRole(role)
           }
 
