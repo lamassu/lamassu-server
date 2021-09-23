@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import base64 from 'base-64'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
@@ -50,17 +51,22 @@ const LoginState = ({ state, dispatch }) => {
   const [login, { error: mutationError }] = useMutation(LOGIN)
 
   const submitLogin = async (username, password, rememberMe) => {
-    const { data: loginResponse } = await login({
+    const options = {
       variables: {
         username,
         password
       },
       context: {
         headers: {
-          pazuz_operatoridentifier: base64.encode(username)
+          'Pazuz-Operator-Identifier': base64.encode(username)
         }
       }
-    })
+    }
+    const { data: loginResponse } = await login(
+      process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
+        ? R.omit(['context'], options)
+        : options
+    )
 
     if (!loginResponse.login) return
 
