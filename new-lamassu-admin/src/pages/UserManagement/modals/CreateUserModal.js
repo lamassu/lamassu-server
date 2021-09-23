@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import classnames from 'classnames'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
@@ -74,7 +75,11 @@ const CreateUserModal = ({ state, dispatch }) => {
 
   const [createUser, { error }] = useMutation(CREATE_USER, {
     onCompleted: ({ createRegisterToken: token }) => {
-      setCreateUserURL(urlResolver(`/register?t=${token.token}`))
+      const queryParams =
+        process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
+          ? `t=${token.token}`
+          : `t=${token.token}&id=${base64.encode(usernameField)}`
+      setCreateUserURL(urlResolver(`/register?${queryParams}`))
     }
   })
 
