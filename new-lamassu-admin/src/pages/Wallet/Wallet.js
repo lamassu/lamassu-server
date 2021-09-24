@@ -227,7 +227,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           <DialogActions className={classes.actions}>
             <Button
               onClick={() =>
-                saveFeeDiscount({ BTC_feeDiscount: selectedDiscount })
+                saveFeeDiscount({ BTC_feeMultiplier: selectedDiscount })
               }>
               Confirm
             </Button>
