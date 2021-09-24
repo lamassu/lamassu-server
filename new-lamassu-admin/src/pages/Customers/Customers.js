@@ -98,13 +98,6 @@ const Customers = () => {
       id: filtersObject.id
     })
 
-    console.log({
-      phone: filtersObject.phone,
-      name: filtersObject.name,
-      address: filtersObject.address,
-      id: filtersObject.id
-    })
-
     refetch && refetch()
   }
 
