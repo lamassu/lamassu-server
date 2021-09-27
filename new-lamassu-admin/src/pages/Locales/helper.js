@@ -180,7 +180,8 @@ const OverridesSchema = Yup.object().shape({
   languages: Yup.array()
     .label('Languages')
     .required()
-    .min(1),
+    .min(1)
+    .max(4),
   cryptoCurrencies: Yup.array()
     .label('Crypto Currencies')
     .required()
