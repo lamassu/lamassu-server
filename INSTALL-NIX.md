@@ -33,7 +33,7 @@ npm install
 ## Generate certificates
 
 ```
-bash bin/cert-gen.sh
+bash tools/cert-gen.sh
 ```
 
 Notes: 

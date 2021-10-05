@@ -33,12 +33,14 @@ const GET_DATA = gql`
 
 const GET_TRANSACTIONS_CSV = gql`
   query transactions(
+    $simplified: Boolean
     $limit: Int
     $from: Date
     $until: Date
     $timezone: String
   ) {
     transactionsCsv(
+      simplified: $simplified
       limit: $limit
       from: $from
       until: $until
@@ -194,13 +196,13 @@ const Transactions = () => {
     },
     {
       header: 'Crypto',
-      width: 144,
+      width: 150,
       textAlign: 'right',
       size: 'sm',
       view: it =>
-        `${coinUtils
-          .toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)
-          .toFormat(5)} ${it.cryptoCode}`
+        `${coinUtils.toUnit(new BigNumber(it.cryptoAtoms), it.cryptoCode)} ${
+          it.cryptoCode
+        }`
     },
     {
       header: 'Address',
@@ -277,9 +279,8 @@ const Transactions = () => {
                 title="Download logs"
                 name="transactions"
                 query={GET_TRANSACTIONS_CSV}
-                args={{ timezone }}
                 getLogs={logs => R.path(['transactionsCsv'])(logs)}
-                timezone={timezone}
+                simplified
               />
             </div>
           )}

@@ -5,11 +5,7 @@ import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
 
-import {
-  NumberInput,
-  TextInput,
-  RadioGroup
-} from 'src/components/inputs/formik'
+import { NumberInput, RadioGroup } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 import { transformNumber } from 'src/utils/number'
@@ -100,16 +96,9 @@ const threshold = Yup.object().shape({
 
 const requirement = Yup.object().shape({
   requirement: Yup.string().required(),
-  suspensionDays: Yup.number().when('requirement', {
-    is: 'suspend',
-    then: Yup.number()
-      .required()
-      .min(1)
-      .label('Invalid value'),
-    otherwise: Yup.number()
-      .nullable()
-      .transform(() => null)
-  })
+  suspensionDays: Yup.number()
+    .transform(transformNumber)
+    .nullable()
 })
 
 const Schema = Yup.object()
@@ -119,24 +108,56 @@ const Schema = Yup.object()
     threshold
     // direction
   })
-  .test(
-    'are-fields-set',
-    'Invalid values',
-    ({ threshold, triggerType }, context) => {
-      const validator = {
-        txAmount: threshold => threshold.threshold >= 0,
-        txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays > 0,
-        txVelocity: threshold =>
-          threshold.threshold > 0 && threshold.thresholdDays > 0,
-        consecutiveDays: threshold => threshold.thresholdDays > 0
-      }
-      return (
-        (triggerType && validator?.[triggerType](threshold)) ||
-        context.createError({ path: 'threshold' })
-      )
+  .test(({ threshold, triggerType }, context) => {
+    const errorMessages = {
+      txAmount: threshold => 'Amount must be greater than or equal to 0',
+      txVolume: threshold => {
+        const thresholdMessage = 'Volume must be greater than or equal to 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
+        const message = []
+        if (threshold.threshold < 0) message.push(thresholdMessage)
+        if (threshold.thresholdDays <= 0) message.push(thresholdDaysMessage)
+        return message.join(', ')
+      },
+      txVelocity: threshold => {
+        const thresholdMessage = 'Transactions must be greater than 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
+        const message = []
+        if (threshold.threshold <= 0) message.push(thresholdMessage)
+        if (threshold.thresholdDays <= 0) message.push(thresholdDaysMessage)
+        return message.join(', ')
+      },
+      consecutiveDays: threshold => 'Days must be greater than 0'
     }
-  )
+    const thresholdValidator = {
+      txAmount: threshold => threshold.threshold >= 0,
+      txVolume: threshold =>
+        threshold.threshold >= 0 && threshold.thresholdDays > 0,
+      txVelocity: threshold =>
+        threshold.threshold > 0 && threshold.thresholdDays > 0,
+      consecutiveDays: threshold => threshold.thresholdDays > 0
+    }
+
+    if (triggerType && thresholdValidator[triggerType](threshold)) return
+
+    return context.createError({
+      path: 'threshold',
+      message: errorMessages[triggerType](threshold)
+    })
+  })
+  .test(({ requirement }, context) => {
+    const requirementValidator = requirement =>
+      requirement.requirement === 'suspend'
+        ? requirement.suspensionDays > 0
+        : true
+
+    if (requirement && requirementValidator(requirement)) return
+
+    return context.createError({
+      path: 'requirement',
+      message: 'Suspension days must be greater than 0'
+    })
+  })
 
 // Direction V2 only
 // const directionSchema = Yup.object().shape({ direction })
@@ -237,25 +258,47 @@ const typeSchema = Yup.object()
         .nullable()
     })
   })
-  .test(
-    'are-fields-set',
-    'All fields must be set.',
-    ({ triggerType, threshold }, context) => {
-      const validator = {
-        txAmount: threshold => threshold.threshold >= 0,
-        txVolume: threshold =>
-          threshold.threshold >= 0 && threshold.thresholdDays > 0,
-        txVelocity: threshold =>
-          threshold.threshold > 0 && threshold.thresholdDays > 0,
-        consecutiveDays: threshold => threshold.thresholdDays > 0
-      }
-
-      return (
-        (triggerType && validator?.[triggerType](threshold)) ||
-        context.createError({ path: 'threshold' })
-      )
+  .test(({ threshold, triggerType }, context) => {
+    const errorMessages = {
+      txAmount: threshold => 'Amount must be greater than or equal to 0',
+      txVolume: threshold => {
+        const thresholdMessage = 'Volume must be greater than or equal to 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
+        const message = []
+        if (!threshold.threshold || threshold.threshold < 0)
+          message.push(thresholdMessage)
+        if (!threshold.thresholdDays || threshold.thresholdDays <= 0)
+          message.push(thresholdDaysMessage)
+        return message.join(', ')
+      },
+      txVelocity: threshold => {
+        const thresholdMessage = 'Transactions must be greater than 0'
+        const thresholdDaysMessage = 'Days must be greater than 0'
+        const message = []
+        if (!threshold.threshold || threshold.threshold <= 0)
+          message.push(thresholdMessage)
+        if (!threshold.thresholdDays || threshold.thresholdDays <= 0)
+          message.push(thresholdDaysMessage)
+        return message.join(', ')
+      },
+      consecutiveDays: threshold => 'Days must be greater than 0'
     }
-  )
+    const thresholdValidator = {
+      txAmount: threshold => threshold.threshold >= 0,
+      txVolume: threshold =>
+        threshold.threshold >= 0 && threshold.thresholdDays > 0,
+      txVelocity: threshold =>
+        threshold.threshold > 0 && threshold.thresholdDays > 0,
+      consecutiveDays: threshold => threshold.thresholdDays > 0
+    }
+
+    if (triggerType && thresholdValidator[triggerType](threshold)) return
+
+    return context.createError({
+      path: 'threshold',
+      message: errorMessages[triggerType](threshold)
+    })
+  })
 
 const typeOptions = [
   { display: 'Transaction amount', code: 'txAmount' },
@@ -266,7 +309,13 @@ const typeOptions = [
 
 const Type = ({ ...props }) => {
   const classes = useStyles()
-  const { errors, touched, values } = useFormikContext()
+  const {
+    errors,
+    touched,
+    values,
+    setTouched,
+    handleChange
+  } = useFormikContext()
 
   const typeClass = {
     [classes.error]: errors.triggerType && touched.triggerType
@@ -278,11 +327,21 @@ const Type = ({ ...props }) => {
   const isThresholdDaysEnabled = containsType(['txVolume', 'txVelocity'])
   const isConsecutiveDaysEnabled = containsType(['consecutiveDays'])
 
+  const hasAmountError =
+    !!errors.threshold &&
+    !!touched.threshold?.threshold &&
+    !isConsecutiveDaysEnabled &&
+    (!values.threshold?.threshold || values.threshold?.threshold < 0)
+  const hasDaysError =
+    !!errors.threshold &&
+    !!touched.threshold?.thresholdDays &&
+    !containsType(['txAmount']) &&
+    (!values.threshold?.thresholdDays || values.threshold?.thresholdDays < 0)
+
+  const triggerTypeError = !!(hasDaysError || hasAmountError)
+
   const thresholdClass = {
-    [classes.error]:
-      errors.threshold &&
-      ((!containsType(['consecutiveDays']) && touched.threshold?.threshold) ||
-        (!containsType(['txAmount']) && touched.threshold?.thresholdDays))
+    [classes.error]: triggerTypeError
   }
 
   const isRadioGroupActive = () => {
@@ -306,6 +365,13 @@ const Type = ({ ...props }) => {
         labelClassName={classes.radioLabel}
         radioClassName={classes.radio}
         className={classes.radioGroup}
+        onChange={e => {
+          handleChange(e)
+          setTouched({
+            threshold: false,
+            thresholdDays: false
+          })
+        }}
       />
 
       <div className={classes.thresholdWrapper}>
@@ -322,6 +388,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.threshold"
+                error={hasAmountError}
               />
               <Info1 className={classnames(classes.description)}>
                 {props.currency}
@@ -335,6 +402,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.threshold"
+                error={hasAmountError}
               />
               <Info1 className={classnames(classes.description)}>
                 transactions
@@ -356,6 +424,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.thresholdDays"
+                error={hasDaysError}
               />
               <Info1 className={classnames(classes.description)}>days</Info1>
             </>
@@ -367,6 +436,7 @@ const Type = ({ ...props }) => {
                 component={NumberInput}
                 size="lg"
                 name="threshold.thresholdDays"
+                error={hasDaysError}
               />
               <Info1 className={classnames(classes.description)}>
                 consecutive days
@@ -390,20 +460,34 @@ const type = currency => ({
   }
 })
 
-const requirementSchema = Yup.object().shape({
-  requirement: Yup.object({
-    requirement: Yup.string().required(),
-    suspensionDays: Yup.number().when('requirement', {
-      is: value => value === 'suspend',
-      then: Yup.number()
-        .required()
-        .min(1),
-      otherwise: Yup.number()
-        .nullable()
-        .transform(() => null)
+const requirementSchema = Yup.object()
+  .shape({
+    requirement: Yup.object({
+      requirement: Yup.string().required(),
+      suspensionDays: Yup.number().when('requirement', {
+        is: value => value === 'suspend',
+        then: Yup.number()
+          .nullable()
+          .transform(transformNumber),
+        otherwise: Yup.number()
+          .nullable()
+          .transform(() => null)
+      })
+    }).required()
+  })
+  .test(({ requirement }, context) => {
+    const requirementValidator = requirement =>
+      requirement.requirement === 'suspend'
+        ? requirement.suspensionDays > 0
+        : true
+
+    if (requirement && requirementValidator(requirement)) return
+
+    return context.createError({
+      path: 'requirement',
+      message: 'Suspension days must be greater than 0'
     })
-  }).required()
-})
+  })
 
 const requirementOptions = [
   { display: 'SMS verification', code: 'sms' },
@@ -419,18 +503,26 @@ const requirementOptions = [
 
 const Requirement = () => {
   const classes = useStyles()
-  const { touched, errors, values } = useFormikContext()
+  const {
+    touched,
+    errors,
+    values,
+    handleChange,
+    setTouched
+  } = useFormikContext()
+
+  const hasRequirementError =
+    !!errors.requirement &&
+    !!touched.requirement?.suspensionDays &&
+    (!values.requirement?.suspensionDays ||
+      values.requirement?.suspensionDays < 0)
+
+  const isSuspend = values?.requirement?.requirement === 'suspend'
 
   const titleClass = {
     [classes.error]:
-      !R.isEmpty(R.omit(['suspensionDays'], errors.requirement)) ||
-      (errors.requirement &&
-        touched.requirement &&
-        errors.requirement.suspensionDays &&
-        touched.requirement.suspensionDays)
+      (!!errors.requirement && !isSuspend) || (isSuspend && hasRequirementError)
   }
-
-  const isSuspend = values?.requirement?.requirement === 'suspend'
 
   return (
     <>
@@ -444,6 +536,12 @@ const Requirement = () => {
         labelClassName={classes.specialLabel}
         radioClassName={classes.radio}
         className={classnames(classes.radioGroup, classes.specialGrid)}
+        onChange={e => {
+          handleChange(e)
+          setTouched({
+            suspensionDays: false
+          })
+        }}
       />
 
       {isSuspend && (
@@ -453,6 +551,7 @@ const Requirement = () => {
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
+          error={hasRequirementError}
         />
       )}
     </>
@@ -504,7 +603,7 @@ const RequirementInput = () => {
           bold
           className={classes.suspensionDays}
           name="requirement.suspensionDays"
-          component={TextInput}
+          component={NumberInput}
           textAlign="center"
         />
       )}

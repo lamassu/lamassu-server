@@ -73,7 +73,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       name: 'cashbox',
       header: 'Cashbox',
       width: 240,
-      stripe: true,
+      stripe: false,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
@@ -90,7 +90,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       view: (value, { deviceId }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(deviceId)?.bottom}
+          denomination={getCashoutSettings(deviceId)?.top}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -109,7 +109,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
         return (
           <CashOut
             className={classes.cashbox}
-            denomination={getCashoutSettings(deviceId)?.top}
+            denomination={getCashoutSettings(deviceId)?.bottom}
             currency={{ code: fiatCurrency }}
             notes={value}
           />
@@ -145,7 +145,6 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       disableRowEdit={isCashOutDisabled}
       name="cashboxes"
       elements={elements}
-      enableEdit
       data={[machine] || []}
       save={onSave}
       validationSchema={ValidationSchema}

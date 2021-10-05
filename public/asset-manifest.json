@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/static/js/main.b833e621.chunk.js",
-    "main.js.map": "/static/js/main.b833e621.chunk.js.map",
+    "main.js": "/static/js/main.fc66d358.chunk.js",
+    "main.js.map": "/static/js/main.fc66d358.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.ee1cbb9c.js",
     "runtime-main.js.map": "/static/js/runtime-main.ee1cbb9c.js.map",
-    "static/js/2.346a7f7f.chunk.js": "/static/js/2.346a7f7f.chunk.js",
-    "static/js/2.346a7f7f.chunk.js.map": "/static/js/2.346a7f7f.chunk.js.map",
+    "static/js/2.ee7f7ea2.chunk.js": "/static/js/2.ee7f7ea2.chunk.js",
+    "static/js/2.ee7f7ea2.chunk.js.map": "/static/js/2.ee7f7ea2.chunk.js.map",
     "index.html": "/index.html",
-    "static/js/2.346a7f7f.chunk.js.LICENSE.txt": "/static/js/2.346a7f7f.chunk.js.LICENSE.txt",
+    "static/js/2.ee7f7ea2.chunk.js.LICENSE.txt": "/static/js/2.ee7f7ea2.chunk.js.LICENSE.txt",
     "static/media/cash-in.c06970a7.svg": "/static/media/cash-in.c06970a7.svg",
     "static/media/cash-out.f029ae96.svg": "/static/media/cash-out.f029ae96.svg",
     "static/media/cashbox-empty.828bd3b9.svg": "/static/media/cashbox-empty.828bd3b9.svg",
@@ -34,7 +34,7 @@
     "static/media/false.7f926859.svg": "/static/media/false.7f926859.svg",
     "static/media/full.67b8cd67.svg": "/static/media/full.67b8cd67.svg",
     "static/media/icon-bitcoin-colour.bd8da481.svg": "/static/media/icon-bitcoin-colour.bd8da481.svg",
-    "static/media/icon-bitcoincash-colour.3b27f3ed.svg": "/static/media/icon-bitcoincash-colour.3b27f3ed.svg",
+    "static/media/icon-bitcoincash-colour.ed917caa.svg": "/static/media/icon-bitcoincash-colour.ed917caa.svg",
     "static/media/icon-dash-colour.e01c021b.svg": "/static/media/icon-dash-colour.e01c021b.svg",
     "static/media/icon-ethereum-colour.761723a2.svg": "/static/media/icon-ethereum-colour.761723a2.svg",
     "static/media/icon-litecoin-colour.bd861b5e.svg": "/static/media/icon-litecoin-colour.bd861b5e.svg",
@@ -95,7 +95,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.ee1cbb9c.js",
-    "static/js/2.346a7f7f.chunk.js",
-    "static/js/main.b833e621.chunk.js"
+    "static/js/2.ee7f7ea2.chunk.js",
+    "static/js/main.fc66d358.chunk.js"
   ]
 }

@@ -129,6 +129,8 @@ const styles = {
 const useStyles = makeStyles(styles)
 const ALL = 'all'
 const RANGE = 'range'
+const ADVANCED = 'advanced'
+const SIMPLIFIED = 'simplified'
 
 const LogsDownloaderPopover = ({
   name,
@@ -136,9 +138,12 @@ const LogsDownloaderPopover = ({
   args,
   title,
   getLogs,
-  timezone
+  timezone,
+  simplified
 }) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
+  const [selectedAdvancedRadio, setSelectedAdvancedRadio] = useState(ADVANCED)
+
   const [range, setRange] = useState({ from: null, until: null })
   const [anchorEl, setAnchorEl] = useState(null)
   const [fetchLogs] = useLazyQuery(query, {
@@ -158,6 +163,11 @@ const LogsDownloaderPopover = ({
     if (selectedRadio === ALL) setRange({ from: null, until: null })
   }
 
+  const handleAdvancedRadioButtons = evt => {
+    const selectedAdvancedRadio = R.path(['target', 'value'])(evt)
+    setSelectedAdvancedRadio(selectedAdvancedRadio)
+  }
+
   const handleRangeChange = useCallback(
     (from, until) => {
       setRange({ from, until })
@@ -165,11 +175,12 @@ const LogsDownloaderPopover = ({
     [setRange]
   )
 
-  const downloadLogs = (range, args, fetchLogs) => {
+  const downloadLogs = (range, args) => {
     if (selectedRadio === ALL) {
       fetchLogs({
         variables: {
-          ...args
+          ...args,
+          simplified: selectedAdvancedRadio === SIMPLIFIED
         }
       })
     }
@@ -183,7 +194,8 @@ const LogsDownloaderPopover = ({
         variables: {
           ...args,
           from: range.from,
-          until: range.until
+          until: range.until,
+          simplified: selectedAdvancedRadio === SIMPLIFIED
         }
       })
     }
@@ -219,6 +231,11 @@ const LogsDownloaderPopover = ({
   const radioButtonOptions = [
     { display: 'All logs', code: ALL },
     { display: 'Date range', code: RANGE }
+  ]
+
+  const advancedRadioButtonOptions = [
+    { display: 'Advanced logs', code: ADVANCED },
+    { display: 'Simplified logs', code: SIMPLIFIED }
   ]
 
   const open = Boolean(anchorEl)
@@ -265,10 +282,20 @@ const LogsDownloaderPopover = ({
                 />
               </div>
             )}
+            {simplified && (
+              <div className={classes.radioButtonsContainer}>
+                <RadioGroup
+                  name="simplified-tx-logs"
+                  value={selectedAdvancedRadio}
+                  options={advancedRadioButtonOptions}
+                  ariaLabel="simplified-tx-logs"
+                  onChange={handleAdvancedRadioButtons}
+                  className={classes.radioButtons}
+                />
+              </div>
+            )}
             <div className={classes.download}>
-              <Link
-                color="primary"
-                onClick={() => downloadLogs(range, args, fetchLogs)}>
+              <Link color="primary" onClick={() => downloadLogs(range, args)}>
                 Download
               </Link>
             </div>

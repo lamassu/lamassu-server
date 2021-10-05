@@ -104,7 +104,7 @@ const DataTable = ({
   useEffect(() => setExpanded(initialExpanded), [initialExpanded])
 
   const coreWidth = R.compose(R.sum, R.map(R.prop('width')))(elements)
-  const expWidth = 1000 - coreWidth
+  const expWidth = 850 - coreWidth
   const width = coreWidth + (expandable ? expWidth : 0)
 
   const classes = useStyles({ width })
@@ -166,7 +166,7 @@ const DataTable = ({
             {() => (
               <List
                 // this has to be in a style because of how the component works
-                style={{ overflow: 'inherit', outline: 'none' }}
+                style={{ overflowX: 'inherit', outline: 'none' }}
                 {...props}
                 height={data.length * 62 + extraHeight}
                 width={width}

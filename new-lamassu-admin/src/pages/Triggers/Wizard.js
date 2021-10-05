@@ -9,6 +9,7 @@ import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { H5, Info3 } from 'src/components/typography'
 import { comet } from 'src/styling/variables'
+import { singularOrPlural } from 'src/utils/string'
 
 import { type, requirements } from './helper'
 
@@ -105,21 +106,29 @@ const getTypeText = (config, currency, classes) => {
         <>
           makes {orUnderline(config.threshold.threshold, classes)} {currency}{' '}
           worth of transactions within{' '}
-          {orUnderline(config.threshold.thresholdDays, classes)} days
+          {orUnderline(config.threshold.thresholdDays, classes)}{' '}
+          {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
       )
     case 'txVelocity':
       return (
         <>
-          makes {orUnderline(config.threshold.threshold, classes)} transactions
-          in {orUnderline(config.threshold.thresholdDays, classes)} days
+          makes {orUnderline(config.threshold.threshold, classes)}{' '}
+          {singularOrPlural(
+            config.threshold.threshold,
+            'transaction',
+            'transactions'
+          )}{' '}
+          in {orUnderline(config.threshold.thresholdDays, classes)}{' '}
+          {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
       )
     case 'consecutiveDays':
       return (
         <>
           at least one transaction every day for{' '}
-          {orUnderline(config.threshold.thresholdDays, classes)} days
+          {orUnderline(config.threshold.thresholdDays, classes)}{' '}
+          {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
       )
     default:
@@ -147,7 +156,8 @@ const getRequirementText = (config, classes) => {
       return (
         <>
           suspended for{' '}
-          {orUnderline(config.requirement.suspensionDays, classes)} days
+          {orUnderline(config.requirement.suspensionDays, classes)}{' '}
+          {singularOrPlural(config.requirement.suspensionDays, 'day', 'days')}
         </>
       )
     case 'block':
@@ -212,6 +222,41 @@ const Wizard = ({ onClose, save, error, currency }) => {
     })
   }
 
+  const createErrorMessage = (errors, touched, values) => {
+    const triggerType = values?.triggerType
+    const containsType = R.contains(triggerType)
+    const isSuspend = values?.requirement?.requirement === 'suspend'
+
+    const hasRequirementError =
+      !!errors.requirement &&
+      !!touched.requirement?.suspensionDays &&
+      (!values.requirement?.suspensionDays ||
+        values.requirement?.suspensionDays < 0)
+
+    const hasAmountError =
+      !!errors.threshold &&
+      !!touched.threshold?.threshold &&
+      !containsType(['consecutiveDays']) &&
+      (!values.threshold?.threshold || values.threshold?.threshold < 0)
+
+    const hasDaysError =
+      !!errors.threshold &&
+      !!touched.threshold?.thresholdDays &&
+      !containsType(['txAmount']) &&
+      (!values.threshold?.thresholdDays || values.threshold?.thresholdDays < 0)
+
+    if (containsType(['txAmount', 'txVolume', 'txVelocity']) && hasAmountError)
+      return errors.threshold
+
+    if (
+      containsType(['txVolume', 'txVelocity', 'consecutiveDays']) &&
+      hasDaysError
+    )
+      return errors.threshold
+
+    if (isSuspend && hasRequirementError) return errors.requirement
+  }
+
   return (
     <>
       <Modal
@@ -236,21 +281,28 @@ const Wizard = ({ onClose, save, error, currency }) => {
         />
         <Formik
           validateOnBlur={false}
-          validateOnChange={false}
+          validateOnChange={true}
           enableReinitialize
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          <Form className={classes.form}>
-            <GetValues setValues={setLiveValues} />
-            <stepOptions.Component {...stepOptions.props} />
-            <div className={classes.submit}>
-              {error && <ErrorMessage>Failed to save</ErrorMessage>}
-              <Button className={classes.button} type="submit">
-                {isLastStep ? 'Finish' : 'Next'}
-              </Button>
-            </div>
-          </Form>
+          {({ errors, touched, values }) => (
+            <Form className={classes.form}>
+              <GetValues setValues={setLiveValues} />
+              <stepOptions.Component {...stepOptions.props} />
+              <div className={classes.submit}>
+                {error && <ErrorMessage>Failed to save</ErrorMessage>}
+                {createErrorMessage(errors, touched, values) && (
+                  <ErrorMessage>
+                    {createErrorMessage(errors, touched, values)}
+                  </ErrorMessage>
+                )}
+                <Button className={classes.button} type="submit">
+                  {isLastStep ? 'Finish' : 'Next'}
+                </Button>
+              </div>
+            </Form>
+          )}
         </Formik>
       </Modal>
     </>
