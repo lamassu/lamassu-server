@@ -56,7 +56,6 @@ bash tools/cert-gen.sh
 
 Notes: 
   - This will create a ``.lamassu`` directory in your home directory.
-  - The script uses the current openssl LTS version (1.0.2g) and will not work on v1.1.
   
 ## Set up database
 
@@ -96,7 +95,7 @@ You'll use this generated URL in the brower in a moment.
 
 Paste the URL from lamassu-register exactly as output, into a browser (chrome or firefox).
 
-**Important**: the host must be localhost. Tell your browser to trust the certificate even though it's not signed by a recognized CA.
+**Important**: the host must be localhost. Tell your browser to trust the certificate even though it's not signed by a recognized CA. If you get an "expired" error, try opening https://localhost:8070/graphql in another tab and trust the certificate.
 
 Go to all the required, unconfigured red fields and choose some values. Choose mock services whenever available.
 
