@@ -150,7 +150,7 @@ const Blacklist = () => {
   const complianceConfig =
     configData?.config && fromNamespace('compliance')(configData.config)
 
-  const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
+  const rejectAddressReuse = !!complianceConfig?.rejectAddressReuse
 
   const enablePaperWalletOnly = !!complianceConfig?.enablePaperWalletOnly
 
@@ -252,10 +252,9 @@ const Blacklist = () => {
               <Label2>{enablePaperWalletOnly ? 'On' : 'Off'}</Label2>
               <HoverableTooltip width={304}>
                 <P>
-                  The "Enable paper wallet (only)" option means that all only
-                  paper wallets paper wallets will be printed for users, and
-                  they won't be permitted to scan an address from their own
-                  wallet.
+                  The "Enable paper wallet (only)" option means that only paper
+                  wallets will be printed for users, and they won't be permitted
+                  to scan an address from their own wallet.
                 </P>
               </HoverableTooltip>
             </Box>
