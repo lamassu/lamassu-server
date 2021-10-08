@@ -3,6 +3,7 @@
 const hdkey = require('ethereumjs-wallet/hdkey')
 const hkdf = require('futoin-hkdf')
 const db = require('../lib/db')
+const _ = require('lodash/fp')
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 
 const pify = require('pify')
@@ -40,6 +41,12 @@ function run (address) {
 function searchForHdIndex (address) {
   const sql = `SELECT hd_index FROM cash_out_txs WHERE to_address = $1`
   return db.oneOrNone(sql, [address])
+    .then(result => {
+      const index = _.get('hd_index', result)
+      if (!_.isNil(index)) return index
+      console.error(`Error: Unable to find the HD index for this given address: ${address}`)
+      process.exit(3)
+    })
 }
 
 function fetchMnemonic () {
