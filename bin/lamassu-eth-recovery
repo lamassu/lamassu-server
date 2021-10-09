@@ -12,6 +12,7 @@ const fs = pify(require('fs'))
 const options = require('../lib/options')
 
 const defaultPrefixPath = "m/44'/60'/1'/0'"
+const paymentPrefixPath = "m/44'/60'/0'/0'"
 
 const address = process.argv[2]
 
@@ -29,7 +30,8 @@ function run (address) {
   Promise.all([fetchMnemonic(), searchForHdIndex(address)])
     .then(([mnemonic, hdIndex]) => {
       try {
-        console.log(`Private key: `, defaultHdNode(mnemonic).deriveChild(hdIndex).getWallet().getPrivateKeyString())
+        const prefix = !_.isNil(hdIndex) ? defaultPrefixPath : paymentPrefixPath
+        console.log(`Private key: `, defaultHdNode(mnemonic, prefix).deriveChild(hdIndex).getWallet().getPrivateKeyString())
         process.exit(0)
       } catch (err) {
         console.error(`Error while retrieving private key!`)
@@ -41,12 +43,7 @@ function run (address) {
 function searchForHdIndex (address) {
   const sql = `SELECT hd_index FROM cash_out_txs WHERE to_address = $1`
   return db.oneOrNone(sql, [address])
-    .then(result => {
-      const index = _.get('hd_index', result)
-      if (!_.isNil(index)) return index
-      console.error(`Error: Unable to find the HD index for this given address: ${address}`)
-      process.exit(3)
-    })
+    .then(result => _.get('hd_index', result))
 }
 
 function fetchMnemonic () {
@@ -59,10 +56,10 @@ function computeSeed (seed) {
   return hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: 'wallet-seed' })
 }
 
-function defaultHdNode (masterSeed) {
+function defaultHdNode (masterSeed, prefix) {
   if (!masterSeed) throw new Error('No master seed!')
   const key = hdkey.fromMasterSeed(masterSeed)
-  return key.derivePath(defaultPrefixPath)
+  return key.derivePath(prefix)
 }
 
 run(address)
