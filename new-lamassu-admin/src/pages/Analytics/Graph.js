@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
+import moment from 'moment'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import {
@@ -11,11 +12,7 @@ import {
   primaryColor,
   fontSecondary
 } from 'src/styling/variables'
-
-const MINUTE = 60 * 1000
-const DAY = 24 * 60 * 60 * 1000
-const WEEK = 7 * 24 * 60 * 60 * 1000
-const MONTH = 30 * 24 * 60 * 60 * 1000
+import { MINUTE, DAY, WEEK, MONTH } from 'src/utils/time'
 
 const Graph = ({ data, representing, period, timezone }) => {
   const ref = useRef(null)
@@ -78,21 +75,8 @@ const Graph = ({ data, representing, period, timezone }) => {
     const previousDateWeekday = previousDate.getUTCDay()
     const previousDateMonth = previousDate.getUTCMonth()
 
-    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ]
+    const daysOfWeek = moment.weekdaysShort()
+    const months = moment.monthsShort()
 
     return {
       previous:

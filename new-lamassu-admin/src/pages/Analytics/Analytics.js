@@ -14,15 +14,12 @@ import { ReactComponent as EqualIcon } from 'src/styling/icons/dashboard/equal.s
 import { ReactComponent as UpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { primaryColor } from 'src/styling/variables'
 import { fromNamespace } from 'src/utils/config'
+import { DAY, WEEK, MONTH } from 'src/utils/time'
 
 import styles from './Analytics.styles'
 import Graph from './Graph'
 
 const useStyles = makeStyles(styles)
-
-const DAY = 24 * 60 * 60 * 1000
-const WEEK = 7 * 24 * 60 * 60 * 1000
-const MONTH = 30 * 24 * 60 * 60 * 1000
 
 const MACHINE_OPTIONS = [{ code: 'all', display: 'All machines' }]
 const REPRESENTING_OPTIONS = [{ code: 'overTime', display: 'Over time' }]
@@ -31,6 +28,11 @@ const PERIOD_OPTIONS = [
   { code: 'week', display: 'Last 7 days' },
   { code: 'month', display: 'Last 30 days' }
 ]
+const TIME_OPTIONS = {
+  day: DAY,
+  week: WEEK,
+  month: MONTH
+}
 
 const GET_TRANSACTIONS = gql`
   query transactions($limit: Int, $from: DateTime, $until: DateTime) {
@@ -233,73 +235,49 @@ const Analytics = () => {
     data
   )
 
-  const filteredData = {
-    day: {
-      current:
-        machineTxs.filter(d => new Date(d.created) >= Date.now() - DAY) ?? [],
-      previous:
-        machineTxs.filter(
-          d =>
-            new Date(d.created) < Date.now() - DAY &&
-            new Date(d.created) >= Date.now() - 2 * DAY
-        ) ?? []
-    },
-    week: {
-      current:
-        machineTxs.filter(
-          d => new Date(d.created).getTime() >= Date.now() - WEEK
-        ) ?? [],
-      previous:
-        machineTxs.filter(
-          d =>
-            new Date(d.created).getTime() < Date.now() - WEEK &&
-            new Date(d.created).getTime() >= Date.now() - 2 * WEEK
-        ) ?? []
-    },
-    month: {
-      current:
-        machineTxs.filter(
-          d => new Date(d.created).getTime() >= Date.now() - MONTH
-        ) ?? [],
-      previous:
-        machineTxs.filter(
-          d =>
-            new Date(d.created).getTime() < Date.now() - MONTH &&
-            new Date(d.created).getTime() >= Date.now() - 2 * MONTH
-        ) ?? []
-    }
-  }
+  const filteredData = timeInterval => ({
+    current:
+      machineTxs.filter(
+        d => new Date(d.created) >= Date.now() - TIME_OPTIONS[timeInterval]
+      ) ?? [],
+    previous:
+      machineTxs.filter(
+        d =>
+          new Date(d.created) < Date.now() - TIME_OPTIONS[timeInterval] &&
+          new Date(d.created) >= Date.now() - 2 * TIME_OPTIONS[timeInterval]
+      ) ?? []
+  })
 
   const txs = {
-    current: filteredData[period.code].current.length,
-    previous: filteredData[period.code].previous.length
+    current: filteredData(period.code).current.length,
+    previous: filteredData(period.code).previous.length
   }
 
   const avgAmount = {
     current:
-      R.sum(R.map(d => d.fiat, filteredData[period.code].current)) /
+      R.sum(R.map(d => d.fiat, filteredData(period.code).current)) /
       (txs.current === 0 ? 1 : txs.current),
     previous:
-      R.sum(R.map(d => d.fiat, filteredData[period.code].previous)) /
+      R.sum(R.map(d => d.fiat, filteredData(period.code).previous)) /
       (txs.previous === 0 ? 1 : txs.previous)
   }
 
   const txVolume = {
-    current: R.sum(R.map(d => d.fiat, filteredData[period.code].current)),
-    previous: R.sum(R.map(d => d.fiat, filteredData[period.code].previous))
+    current: R.sum(R.map(d => d.fiat, filteredData(period.code).current)),
+    previous: R.sum(R.map(d => d.fiat, filteredData(period.code).previous))
   }
 
   const commissions = {
     current: R.sum(
       R.map(
         d => d.fiat * d.commissionPercentage,
-        filteredData[period.code].current
+        filteredData(period.code).current
       )
     ),
     previous: R.sum(
       R.map(
         d => d.fiat * d.commissionPercentage,
-        filteredData[period.code].previous
+        filteredData(period.code).previous
       )
     )
   }
@@ -373,7 +351,7 @@ const Analytics = () => {
           title="Transactions over time"
           representing={representing}
           period={period}
-          data={R.map(convertFiatToLocale)(filteredData[period.code].current)}
+          data={R.map(convertFiatToLocale)(filteredData(period.code).current)}
           machines={machineOptions}
           selectedMachine={machine}
           handleMachineChange={m => setMachine(m)}
