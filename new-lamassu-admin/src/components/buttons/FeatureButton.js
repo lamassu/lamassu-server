@@ -32,8 +32,8 @@ const styles = {
 const useStyles = makeStyles(styles)
 
 const FeatureButton = memo(
-  ({ className, Icon, InverseIcon, children, ...props }) => {
-    const classes = useStyles()
+  ({ className, Icon, InverseIcon, children, active, ...props }) => {
+    const classes = useStyles({ active })
 
     const classNames = {
       [classes.featureButton]: true,

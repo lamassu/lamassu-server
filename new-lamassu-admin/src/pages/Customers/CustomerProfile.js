@@ -1,7 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
-// import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
@@ -264,14 +263,6 @@ const CustomerProfile = memo(() => {
                     })
                   }>
                   {`Retrieve information`}
-                </ActionButton>
-              </div>
-              <div>
-                <ActionButton
-                  className={classes.customerDiscount}
-                  color="primary"
-                  onClick={() => {}}>
-                  {`Add individual discount`}
                 </ActionButton>
               </div>
             </div>
