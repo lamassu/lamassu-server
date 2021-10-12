@@ -15,17 +15,17 @@ export default {
   customerDetails: {
     marginBottom: 18
   },
-  customerBlock: {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: [[8, 0, 4, 0]],
-    padding: [[0, 35, 0]]
-  },
-  customerDiscount: {
+  customerBlock: props => ({
     display: 'flex',
     flexDirection: 'row',
     margin: [[0, 0, 4, 0]],
-    padding: [[0, 34, 0]]
+    padding: [[0, props.blocked ? 35 : 48, 0]]
+  }),
+  customerDiscount: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [[8, 0, 4, 0]],
+    padding: [[0, 24, 0]]
   },
   panels: {
     display: 'flex'

@@ -1,7 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
-// import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
@@ -17,6 +16,8 @@ import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/butto
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
+import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
+import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
@@ -109,7 +110,6 @@ const SET_CUSTOMER = gql`
 `
 
 const CustomerProfile = memo(() => {
-  const classes = useStyles()
   const history = useHistory()
   const [showCompliance, setShowCompliance] = useState(false)
   const [clickedItem, setClickedItem] = useState('overview')
@@ -134,7 +134,7 @@ const CustomerProfile = memo(() => {
       }
     })
 
-  const onClickSidebarItem = e => setClickedItem(e.code)
+  const onClickSidebarItem = code => setClickedItem(code)
 
   const configData = R.path(['config'])(customerResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
@@ -150,6 +150,8 @@ const CustomerProfile = memo(() => {
   const isSuspended = customerData.isSuspended
   const isCustomerData = clickedItem === 'customerData'
   const isOverview = clickedItem === 'overview'
+
+  const classes = useStyles({ blocked })
 
   return (
     <>
@@ -178,11 +180,21 @@ const CustomerProfile = memo(() => {
             <div>
               <div>
                 <CustomerSidebar
-                  isSelected={it => it.code === clickedItem}
+                  isSelected={code => code === clickedItem}
                   onClick={onClickSidebarItem}
                 />
               </div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
+              <div>
+                <ActionButton
+                  className={classes.customerDiscount}
+                  color="primary"
+                  Icon={Discount}
+                  InverseIcon={DiscountReversedIcon}
+                  onClick={() => {}}>
+                  {`Add individual discount`}
+                </ActionButton>
+              </div>
               <div>
                 {isSuspended && (
                   <ActionButton
@@ -230,14 +242,6 @@ const CustomerProfile = memo(() => {
                     })
                   }>
                   {`Retrieve information`}
-                </ActionButton>
-              </div>
-              <div>
-                <ActionButton
-                  className={classes.customerDiscount}
-                  color="primary"
-                  onClick={() => {}}>
-                  {`Add individual discount`}
                 </ActionButton>
               </div>
             </div>

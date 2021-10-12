@@ -15,6 +15,8 @@ export default {
     marginBottom: 50
   },
   link: {
+    alignItems: 'center',
+    display: 'flex',
     extend: p,
     position: 'relative',
     color: offDarkColor,
@@ -22,6 +24,8 @@ export default {
     cursor: 'pointer'
   },
   activeLink: {
+    display: 'flex',
+    alignItems: 'center',
     extend: tl2,
     color: white,
     backgroundColor: offDarkColor,
@@ -31,5 +35,8 @@ export default {
     '&:last-child': {
       borderRadius: '0px 0px 5px 5px'
     }
+  },
+  icon: {
+    marginRight: 15
   }
 }

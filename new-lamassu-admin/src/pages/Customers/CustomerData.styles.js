@@ -6,7 +6,7 @@ export default {
   },
   title: {
     marginTop: 7,
-    marginRight: 20
+    marginRight: 24
   },
   leftSideCard: {
     borderRadius: 10,
@@ -30,5 +30,8 @@ export default {
   },
   cardTitle: {
     margin: [[8, 15, 15, 15]]
+  },
+  viewIcons: {
+    marginRight: 12
   }
 }
