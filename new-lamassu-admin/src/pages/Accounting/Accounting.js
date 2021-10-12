@@ -1,7 +1,11 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import gql from 'graphql-tag'
 import moment from 'moment'
-import React from 'react'
+import * as R from 'ramda'
+import React, { useContext } from 'react'
 
+import AppContext from 'src/AppContext'
 import { Tooltip } from 'src/components/Tooltip'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
@@ -9,46 +13,41 @@ import { H4, Info2, P } from 'src/components/typography'
 
 import styles from './Accounting.styles'
 
-const mockData = [
-  {
-    operation: 'Hedging summary',
-    direction: 'in',
-    extraInfo: 'This is mocked information',
-    amount: 486,
-    currency: 'USD',
-    balanceAfterTx: 10438,
-    date: '2021-02-22T20:16:12.020Z'
-  },
-  {
-    operation: 'Funding transaction',
-    direction: 'in',
-    amount: 2000,
-    currency: 'USD',
-    balanceAfterTx: 9952,
-    date: '2021-02-22T12:40:32.020Z'
-  },
-  {
-    operation: 'ZEC hot wallet top up',
-    direction: 'out',
-    amount: 1000,
-    currency: 'USD',
-    balanceAfterTx: 7952,
-    date: '2021-02-21T16:30:44.020Z'
-  },
-  {
-    operation: 'Funding transaction',
-    direction: 'in',
-    amount: 8000,
-    currency: 'USD',
-    balanceAfterTx: 8952,
-    date: '2021-02-21T08:16:20.020Z'
-  }
-]
-
 const formatCurrency = amount =>
   amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
 const useStyles = makeStyles(styles)
+
+const GET_OPERATOR_BY_USERNAME = gql`
+  query operatorByUsername($username: String) {
+    operatorByUsername(username: $username) {
+      id
+      entityId
+      name
+      fiatBalances
+      cryptoBalances
+      machines
+      joined
+      assetValue
+      preferredFiatCurrency
+      contactInfo {
+        name
+        email
+      }
+      fundings {
+        id
+        origin
+        destination
+        fiatAmount
+        fiatBalanceAfter
+        fiatCurrency
+        created
+        status
+        description
+      }
+    }
+  }
+`
 
 const Assets = ({ balance, hedgingReserve, currency }) => {
   const classes = useStyles()
@@ -62,7 +61,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
             {formatCurrency(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
-            {currency}
+            {R.toUpper(currency)}
           </Info2>
         </div>
       </div>
@@ -74,7 +73,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
             {formatCurrency(hedgingReserve)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
-            {currency}
+            {R.toUpper(currency)}
           </Info2>
         </div>
       </div>
@@ -86,7 +85,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
             {formatCurrency(balance - hedgingReserve)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
-            {currency}
+            {R.toUpper(currency)}
           </Info2>
         </div>
       </div>
@@ -96,6 +95,14 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
 
 const Accounting = () => {
   const classes = useStyles()
+  const { userData } = useContext(AppContext)
+
+  const { data, loading } = useQuery(GET_OPERATOR_BY_USERNAME, {
+    context: { clientName: 'pazuz' },
+    variables: { username: userData?.username }
+  })
+
+  const operatorData = R.path(['operatorByUsername'], data)
 
   const elements = [
     {
@@ -106,7 +113,7 @@ const Accounting = () => {
       view: it => {
         return (
           <span className={classes.operation}>
-            {it.operation}
+            {it.description}
             {!!it.extraInfo && (
               <Tooltip width={175}>
                 <P>{it.extraInfo}</P>
@@ -122,18 +129,15 @@ const Accounting = () => {
       size: 'sm',
       textAlign: 'right',
       view: it =>
-        `${
-          it.direction === 'in'
-            ? formatCurrency(it.amount)
-            : formatCurrency(-it.amount)
-        } ${it.currency}`
+        `${formatCurrency(it.fiatAmount)} ${R.toUpper(it.fiatCurrency)}`
     },
     {
       header: 'Balance after operation',
       width: 250,
       size: 'sm',
       textAlign: 'right',
-      view: it => `${formatCurrency(it.balanceAfterTx)} ${it.currency}`
+      view: it =>
+        `${formatCurrency(it.fiatBalanceAfter)} ${R.toUpper(it.fiatCurrency)}`
     },
     {
       header: 'Date',
@@ -152,18 +156,26 @@ const Accounting = () => {
   ]
 
   return (
-    <>
-      <TitleSection title="Accounting" />
-      <Assets balance={10438} hedgingReserve={1486} currency={'USD'} />
-      <H4 className={classes.tableTitle}>Fiat balance history</H4>
-      <DataTable
-        loading={false}
-        emptyText="No transactions so far"
-        elements={elements}
-        data={mockData}
-        rowSize="sm"
-      />
-    </>
+    !loading && (
+      <>
+        <TitleSection title="Accounting" />
+        <Assets
+          balance={
+            operatorData.fiatBalances[operatorData.preferredFiatCurrency]
+          }
+          hedgingReserve={operatorData.hedgingReserve ?? 0}
+          currency={operatorData.preferredFiatCurrency}
+        />
+        <H4 className={classes.tableTitle}>Fiat balance history</H4>
+        <DataTable
+          loading={false}
+          emptyText="No transactions so far"
+          elements={elements}
+          data={operatorData.fundings ?? []}
+          rowSize="sm"
+        />
+      </>
+    )
   )
 }
 

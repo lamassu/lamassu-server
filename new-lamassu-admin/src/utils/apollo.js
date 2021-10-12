@@ -12,6 +12,9 @@ import AppContext from 'src/AppContext'
 const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
+const ALT_URI =
+  process.env.NODE_ENV === 'development' ? 'http://localhost:4001' : ''
+
 const getClient = (history, location, getUserData, setUserData, setRole) =>
   new ApolloClient({
     link: ApolloLink.from([
@@ -43,10 +46,17 @@ const getClient = (history, location, getUserData, setUserData, setRole) =>
           return response
         })
       }),
-      new HttpLink({
-        credentials: 'include',
-        uri: `${URI}/graphql`
-      })
+      ApolloLink.split(
+        operation => operation.getContext().clientName === 'pazuz',
+        new HttpLink({
+          credentials: 'include',
+          uri: `${ALT_URI}/graphql`
+        }),
+        new HttpLink({
+          credentials: 'include',
+          uri: `${URI}/graphql`
+        })
+      )
     ]),
     cache: new InMemoryCache(),
     defaultOptions: {

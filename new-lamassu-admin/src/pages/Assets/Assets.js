@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/react-hooks'
 import Grid from '@material-ui/core/Grid'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -6,78 +7,47 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useContext } from 'react'
 
+import AppContext from 'src/AppContext'
 import TitleSection from 'src/components/layout/TitleSection'
 import { H4, Label2, P, Info2 } from 'src/components/typography'
 
 import styles from './Assets.styles'
 const useStyles = makeStyles(styles)
 
-const mockData = [
-  {
-    id: 'fiatBalance',
-    display: 'Fiat balance',
-    amount: 10438,
-    currency: 'USD',
-    class: 'Available balance'
-  },
-  {
-    id: 'hedgingReserve',
-    display: 'Hedging reserve',
-    amount: -1486,
-    currency: 'USD',
-    class: 'Available balance',
-    direction: 'out'
-  },
-  {
-    id: 'hedgedWalletAssets',
-    display: 'Hedged wallet assets',
-    amount: 96446,
-    currency: 'USD',
-    class: 'Wallet assets',
-    direction: 'in'
-  },
-  {
-    id: 'unhedgedWalletAssets',
-    display: 'Unhedged wallet assets',
-    amount: 3978,
-    currency: 'USD',
-    class: 'Wallet assets',
-    direction: 'in'
+const GET_OPERATOR_BY_USERNAME = gql`
+  query operatorByUsername($username: String) {
+    operatorByUsername(username: $username) {
+      id
+      entityId
+      name
+      fiatBalances
+      cryptoBalances
+      machines
+      joined
+      assetValue
+      preferredFiatCurrency
+      contactInfo {
+        name
+        email
+      }
+      fundings {
+        id
+        origin
+        destination
+        fiatAmount
+        fiatBalanceAfter
+        fiatCurrency
+        created
+        status
+        description
+      }
+    }
   }
-]
-
-const mockDataTotal = [
-  {
-    id: 'fiatBalance',
-    display: 'Fiat balance',
-    amount: 10438,
-    currency: 'USD'
-  },
-  {
-    id: 'hedgingReserve',
-    display: 'Hedging reserve',
-    amount: -1486,
-    currency: 'USD',
-    direction: 'out'
-  },
-  {
-    id: 'hedgedWalletAssets',
-    display: 'Market value of hedged wallet assets',
-    amount: 94980,
-    currency: 'USD',
-    direction: 'in'
-  },
-  {
-    id: 'unhedgedWalletAssets',
-    display: 'Unhedged wallet assets',
-    amount: 3978,
-    currency: 'USD',
-    direction: 'in'
-  }
-]
+`
 
 const cellStyling = {
   borderBottom: '4px solid white',
@@ -163,47 +133,126 @@ const formatCurrency = amount =>
 
 const Assets = () => {
   const classes = useStyles()
+  const { userData } = useContext(AppContext)
 
-  const filterByClass = x =>
-    R.filter(it => R.path(['class'])(it) === x)(mockData)
+  const { data, loading } = useQuery(GET_OPERATOR_BY_USERNAME, {
+    context: { clientName: 'pazuz' },
+    variables: { username: userData?.username }
+  })
+
+  const operatorData = R.path(['operatorByUsername'], data)
+
+  console.log('operatorData', operatorData)
+
+  const balanceData = [
+    {
+      id: 'fiatBalance',
+      display: 'Fiat balance',
+      amount:
+        operatorData?.fiatBalances[operatorData?.preferredFiatCurrency] ?? 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      class: 'Available balance'
+    },
+    {
+      id: 'hedgingReserve',
+      display: 'Hedging reserve',
+      amount:
+        operatorData?.fiatBalances[operatorData?.preferredFiatCurrency] ?? 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      class: 'Available balance',
+      direction: 'out'
+    }
+  ]
+
+  const walletData = [
+    {
+      id: 'hedgedWalletAssets',
+      display: 'Hedged wallet assets',
+      amount: 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      class: 'Wallet assets',
+      direction: 'in'
+    },
+    {
+      id: 'unhedgedWalletAssets',
+      display: 'Unhedged wallet assets',
+      amount: 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      class: 'Wallet assets',
+      direction: 'in'
+    }
+  ]
+
+  const totalData = [
+    {
+      id: 'fiatBalance',
+      display: 'Fiat balance',
+      amount:
+        operatorData?.fiatBalances[operatorData?.preferredFiatCurrency] ?? 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? '')
+    },
+    {
+      id: 'hedgingReserve',
+      display: 'Hedging reserve',
+      amount: 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      direction: 'out'
+    },
+    {
+      id: 'hedgedWalletAssets',
+      display: 'Market value of hedged wallet assets',
+      amount: 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      direction: 'in'
+    },
+    {
+      id: 'unhedgedWalletAssets',
+      display: 'Unhedged wallet assets',
+      amount: 0,
+      currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
+      direction: 'in'
+    }
+  ]
 
   return (
-    <>
-      <TitleSection title="Balance sheet" />
-      <div className={classes.root}>
-        <Grid container>
-          <Grid container direction="column" item xs={5}>
-            <Grid item xs={12}>
-              <div className={classes.leftSide}>
-                <AssetsAmountTable
-                  title="Available balance"
-                  data={filterByClass('Available balance')}
-                  numToRender={mockData.length}
-                />
-              </div>
-              <div className={classes.leftSide}>
-                <AssetsAmountTable
-                  title="Wallet assets"
-                  data={filterByClass('Wallet assets')}
-                  numToRender={mockData.length}
-                />
-              </div>
+    !loading && (
+      <>
+        <TitleSection title="Balance sheet" />
+        <div className={classes.root}>
+          <Grid container>
+            <Grid container direction="column" item xs={5}>
+              <Grid item xs={12}>
+                <div className={classes.leftSide}>
+                  <AssetsAmountTable
+                    title="Available balance"
+                    data={balanceData}
+                    numToRender={balanceData.length}
+                  />
+                </div>
+                <div className={classes.leftSide}>
+                  <AssetsAmountTable
+                    title="Wallet assets"
+                    data={walletData}
+                    numToRender={walletData.length}
+                  />
+                </div>
+              </Grid>
+            </Grid>
+            <Grid container direction="column" item xs={7}>
+              <Grid item xs={12}>
+                <div className={classes.rightSide}>
+                  <AssetsAmountTable
+                    title="Total assets"
+                    data={totalData}
+                    numToRender={totalData.length}
+                  />
+                </div>
+              </Grid>
             </Grid>
           </Grid>
-          <Grid container direction="column" item xs={7}>
-            <Grid item xs={12}>
-              <div className={classes.rightSide}>
-                <AssetsAmountTable
-                  title="Total assets"
-                  data={mockDataTotal}
-                  numToRender={mockDataTotal.length}
-                />
-              </div>
-            </Grid>
-          </Grid>
-        </Grid>
-      </div>
-    </>
+        </div>
+      </>
+    )
   )
 }
 

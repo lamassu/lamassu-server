@@ -97,8 +97,8 @@
     "storybook": "start-storybook -p 9009 -s public",
     "postinstall": "patch-package",
     "build-storybook": "build-storybook -s public",
-    "start-lamassu": "REACT_APP_BUILD_TARGET=LAMASSU react-scripts start",
-    "start-pazuz": "REACT_APP_BUILD_TARGET=PAZUZ react-scripts start"
+    "lamassu": "REACT_APP_BUILD_TARGET=LAMASSU react-scripts start",
+    "pazuz": "REACT_APP_BUILD_TARGET=PAZUZ react-scripts start"
   },
   "browserslist": {
     "production": [
