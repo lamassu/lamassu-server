@@ -18,8 +18,7 @@ import { DenominationsSchema, getElements } from './helper'
 const useStyles = makeStyles({
   fudgeFactor: {
     display: 'flex',
-    alignItems: 'center',
-    marginRight: 156
+    alignItems: 'center'
   },
   switchLabel: {
     margin: 6,

@@ -123,6 +123,9 @@ const CashCassettes = () => {
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines)
+  )
 
   const onSave = (
     ...[, { id, cashbox, cassette1, cassette2, cassette3, cassette4 }]
@@ -146,14 +149,14 @@ const CashCassettes = () => {
     {
       name: 'name',
       header: 'Machine',
-      width: 254,
+      width: 184,
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
     },
     {
       name: 'cashbox',
-      header: 'Cashbox',
-      width: 240,
+      header: 'Cash-in',
+      width: maxNumberOfCassettes > 2 ? 140 : 280,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
@@ -165,25 +168,29 @@ const CashCassettes = () => {
   ]
 
   R.until(
-    R.gt(R.__, Math.max(...R.map(it => it.numberOfCassettes, machines))),
+    R.gt(R.__, maxNumberOfCassettes),
     it => {
       elements.push({
         name: `cassette${it}`,
         header: `Cassette ${it}`,
-        width: 265,
+        width: (maxNumberOfCassettes > 2 ? 700 : 560) / maxNumberOfCassettes,
         stripe: true,
+        doubleHeader: 'Cash-out',
         view: (value, { id }) => (
           <CashOut
             className={classes.cashbox}
             denomination={getCashoutSettings(id)?.[`cassette${it}`]}
             currency={{ code: fiatCurrency }}
             notes={value}
+            width={50}
           />
         ),
         isHidden: ({ numberOfCassettes }) => it > numberOfCassettes,
         input: CashCassetteInput,
         inputProps: {
-          decimalPlaces: 0
+          decimalPlaces: 0,
+          width: 50,
+          inputClassName: classes.cashbox
         }
       })
       return R.add(1, it)
@@ -199,6 +206,7 @@ const CashCassettes = () => {
           error={error?.message}
           name="cashboxes"
           enableEdit
+          enableEditText="Update"
           stripeWhen={isCashOutDisabled}
           elements={elements}
           data={machines}

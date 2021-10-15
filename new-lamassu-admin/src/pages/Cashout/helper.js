@@ -2,6 +2,7 @@ import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import { NumberInput } from 'src/components/inputs/formik'
+import { transformNumber } from 'src/utils/number'
 
 const currencyMax = 999999999
 const DenominationsSchema = Yup.object().shape({
@@ -18,11 +19,15 @@ const DenominationsSchema = Yup.object().shape({
   cassette3: Yup.number()
     .label('Cassette 3')
     .min(1)
-    .max(currencyMax),
+    .max(currencyMax)
+    .nullable()
+    .transform(transformNumber),
   cassette4: Yup.number()
     .label('Cassette 4')
     .min(1)
-    .max(currencyMax),
+    .max(currencyMax)
+    .nullable()
+    .transform(transformNumber),
   zeroConfLimit: Yup.number()
     .label('0-conf Limit')
     .required()
@@ -31,6 +36,10 @@ const DenominationsSchema = Yup.object().shape({
 })
 
 const getElements = (machines, { fiatCurrency } = {}) => {
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines)
+  )
+
   const elements = [
     {
       name: 'id',
@@ -43,7 +52,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
   ]
 
   R.until(
-    R.gt(R.__, Math.max(...R.map(it => it.numberOfCassettes, machines))),
+    R.gt(R.__, maxNumberOfCassettes),
     it => {
       elements.push({
         name: `cassette${it}`,
@@ -51,12 +60,13 @@ const getElements = (machines, { fiatCurrency } = {}) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: 200,
+        width: (maxNumberOfCassettes > 2 ? 600 : 460) / maxNumberOfCassettes,
         input: NumberInput,
         inputProps: {
           decimalPlaces: 0
         },
         suffix: fiatCurrency,
+        doubleHeader: 'Denominations',
         isHidden: machine =>
           it >
           machines.find(({ deviceId }) => deviceId === machine.id)
@@ -73,7 +83,7 @@ const getElements = (machines, { fiatCurrency } = {}) => {
     size: 'sm',
     stripe: true,
     textAlign: 'right',
-    width: 200,
+    width: maxNumberOfCassettes > 2 ? 150 : 290,
     input: NumberInput,
     inputProps: {
       decimalPlaces: 0
