@@ -7,9 +7,9 @@ const loadDummyTxData = () => {
   INSERT INTO customers
   VALUES ('99ac9999-9999-99e9-9999-9f99a9999999', null, null, null, null, null, null, 
   'load_test_customers', null, null, null, null, null, null, '2021-04-16 10:51:38',
-  'automatic', null, null, 'automatic', null, null, 'automatic', null, null, 'automatic',
-   null, null, 'automatic', null, null, 'automatic', null, null, null, null,
-   null, null, null, 'automatic', null, null, null)
+  'automatic', null, 'automatic', null, 'automatic', null, 'automatic', null, 'automatic',
+   null, 'automatic', null, null, null, null, null, null, 'automatic', null, null,
+   null, null, null, null, null, null, null, null, null, null)
   ON CONFLICT DO NOTHING;
 
   INSERT INTO cash_in_txs
@@ -17,7 +17,7 @@ const loadDummyTxData = () => {
    i::integer, 'EUR', null, null, null, null, now() - random() * INTERVAL '2 days', random() > 0.5,
    random() > 0.5, random() > 0.5, now() - random() * INTERVAL '2 days', null, random() > 0.5,
    random() > 0.5, i::integer, i::integer, 1, '99ac9999-9999-99e9-9999-9f99a9999999',
-   6, random() > 0.5, random() * (0.9-0.1) + 0.1::int, i::integer, random() > 0.5, null
+   6, random() > 0.5, random() * (0.9-0.1) + 0.1::int, i::integer, random() > 0.5, null, null
   FROM generate_series(1, 5000000) as t(i);
 
   INSERT INTO cash_out_txs
