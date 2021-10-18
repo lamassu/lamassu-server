@@ -123,7 +123,6 @@ const EditableCard = ({
     [classes.label1Rejected]: state === OVERRIDE_REJECTED,
     [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
   }
-
   const authorized =
     state === OVERRIDE_PENDING
       ? { label: 'Pending', type: 'neutral' }
