@@ -123,7 +123,12 @@ const EditableCard = ({
     [classes.label1Rejected]: state === OVERRIDE_REJECTED,
     [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
   }
+<<<<<<< HEAD
 
+=======
+  const isNotAuthorized =
+    state === OVERRIDE_REJECTED || state === OVERRIDE_PENDING
+>>>>>>> feat: add dynamic position to editable cards, reject/authorize buttons
   const authorized =
     state === OVERRIDE_PENDING
       ? { label: 'Pending', type: 'neutral' }
