@@ -14,7 +14,7 @@ import cashbox from 'src/styling/icons/cassettes/acceptor-left.svg'
 import cassetteOne from 'src/styling/icons/cassettes/dispenser-1.svg'
 import cassetteTwo from 'src/styling/icons/cassettes/dispenser-2.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { comet } from 'src/styling/variables'
+import { comet, errorColor } from 'src/styling/variables'
 
 const styles = {
   content: {
@@ -83,6 +83,9 @@ const styles = {
   },
   fiatTotal: {
     color: comet
+  },
+  errorMessage: {
+    color: errorColor
   }
 }
 
@@ -142,7 +145,7 @@ const WizardStep = ({
           initialValues={{ wasCashboxEmptied: '' }}
           enableReinitialize
           validationSchema={steps[step - 1].schema}>
-          {({ values }) => (
+          {({ values, errors }) => (
             <Form>
               <div
                 className={classnames(classes.horizontalAlign, classes.form)}>
@@ -163,6 +166,11 @@ const WizardStep = ({
                       options={stepOneRadioOptions}
                       className={classes.horizontalAlign}
                     />
+                    {errors.wasCashboxEmptied && (
+                      <div className={classes.errorMessage}>
+                        {errors.wasCashboxEmptied}
+                      </div>
+                    )}
                     <div
                       className={classnames(
                         classes.horizontalAlign,
@@ -205,7 +213,7 @@ const WizardStep = ({
           initialValues={{ cassette1Count: '', cassette2Count: '' }}
           enableReinitialize
           validationSchema={steps[step - 1].schema}>
-          {({ values }) => (
+          {({ values, errors }) => (
             <Form>
               <div
                 className={classnames(classes.horizontalAlign, classes.form)}>
@@ -268,6 +276,11 @@ const WizardStep = ({
                         : (values.cassette2Count ?? 0) *
                           cassetteInfo.denomination}{' '}
                       {fiatCurrency}
+                    </P>
+                    <P className={classes.errorMessage}>
+                      {step === 2
+                        ? errors.cassette1Count
+                        : errors.cassette2Count}
                     </P>
                   </div>
                 </div>
