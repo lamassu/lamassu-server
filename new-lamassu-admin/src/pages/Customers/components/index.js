@@ -1,4 +1,3 @@
-import ComplianceDetails from './ComplianceDetails'
 import CustomerDetails from './CustomerDetails'
 import CustomerSidebar from './CustomerSidebar'
 import EditableCard from './EditableCard'
@@ -10,7 +9,6 @@ export {
   CustomerDetails,
   IdDataCard,
   TransactionsList,
-  ComplianceDetails,
   CustomerSidebar,
   Field,
   EditableCard

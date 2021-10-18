@@ -25,7 +25,6 @@ import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
   TransactionsList,
-  ComplianceDetails,
   CustomerSidebar
 } from './components'
 import { getFormattedPhone, getName } from './helper'
@@ -260,22 +259,14 @@ const CustomerProfile = memo(() => {
                   setShowCompliance={() => setShowCompliance(!showCompliance)}
                 />
               </Box>
-              {!showCompliance && (
-                <div>
-                  <TransactionsList
-                    customer={customerData}
-                    data={sortedTransactions}
-                    locale={locale}
-                    loading={loading}
-                  />
-                </div>
-              )}
-              {showCompliance && (
-                <ComplianceDetails
+              <div>
+                <TransactionsList
                   customer={customerData}
-                  updateCustomer={updateCustomer}
+                  data={sortedTransactions}
+                  locale={locale}
+                  loading={loading}
                 />
-              )}
+              </div>
             </div>
           )}
           {isCustomerData && (

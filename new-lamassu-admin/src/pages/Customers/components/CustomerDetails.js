@@ -2,11 +2,8 @@ import { makeStyles, Box } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
-import { SubpageButton } from 'src/components/buttons'
 import { H2, Label1, P } from 'src/components/typography'
 import { ReactComponent as IdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
-import { ReactComponent as LawIconInverse } from 'src/styling/icons/circle buttons/law/white.svg'
-import { ReactComponent as LawIcon } from 'src/styling/icons/circle buttons/law/zodiac.svg'
 
 import mainStyles from '../CustomersList.styles'
 import { getFormattedPhone, getName } from '../helper'
@@ -70,13 +67,6 @@ const CustomerDetails = memo(
                     locale.country
                   )}
             </H2>
-            <SubpageButton
-              className={classes.subpageButton}
-              Icon={LawIcon}
-              InverseIcon={LawIconInverse}
-              toggle={setShowCompliance}>
-              Compliance details
-            </SubpageButton>
           </div>
           <Box display="flex" mt="auto">
             {elements.map(({ size, header }, idx) => (
