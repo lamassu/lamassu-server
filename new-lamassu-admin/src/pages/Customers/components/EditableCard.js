@@ -123,8 +123,7 @@ const EditableCard = ({
     [classes.label1Rejected]: state === OVERRIDE_REJECTED,
     [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
   }
-  const isNotAuthorized =
-    state === OVERRIDE_REJECTED || state === OVERRIDE_PENDING
+
   const authorized =
     state === OVERRIDE_PENDING
       ? { label: 'Pending', type: 'neutral' }
@@ -208,20 +207,28 @@ const EditableCard = ({
                         Cancel
                       </ActionButton>
                     </div>
-                    <ActionButton
-                      color="secondary"
-                      Icon={isNotAuthorized ? AuthorizeIcon : CancelIcon}
-                      InverseIcon={
-                        isNotAuthorized
-                          ? AuthorizeReversedIcon
-                          : CancelReversedIcon
-                      }
-                      type="submit"
-                      onClick={
-                        isNotAuthorized ? () => authorize() : () => reject()
-                      }>
-                      {isNotAuthorized ? 'Authorize' : 'Reject'}
-                    </ActionButton>
+                    {authorized.label !== 'Accepted' && (
+                      <div className={classes.button}>
+                        <ActionButton
+                          color="secondary"
+                          Icon={AuthorizeIcon}
+                          InverseIcon={AuthorizeReversedIcon}
+                          type="submit"
+                          onClick={() => authorize()}>
+                          {'Authorize'}
+                        </ActionButton>
+                      </div>
+                    )}
+                    {authorized.label !== 'Rejected' && (
+                      <ActionButton
+                        color="secondary"
+                        Icon={CancelIcon}
+                        InverseIcon={CancelReversedIcon}
+                        type="submit"
+                        onClick={() => reject()}>
+                        {'Reject'}
+                      </ActionButton>
+                    )}
                     {error && (
                       <ErrorMessage>Failed to save changes</ErrorMessage>
                     )}
