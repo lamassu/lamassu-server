@@ -2,7 +2,8 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  makeStyles
+  makeStyles,
+  InputLabel
 } from '@material-ui/core'
 import React, { memo, useState } from 'react'
 
@@ -101,9 +102,9 @@ export const ConfirmDialog = memo(
         )}
         <DialogContent className={classes.dialogContent}>
           {message && <P>{message}</P>}
+          <InputLabel htmlFor="confirm-input">{confirmationMessage}</InputLabel>
           <TextInput
             disabled={disabled}
-            label={confirmationMessage}
             name="confirm-input"
             autoFocus
             id="confirm-input"
