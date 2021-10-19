@@ -6,6 +6,7 @@ import EditableCard from './EditableCard'
 import Field from './Field'
 import IdDataCard from './IdDataCard'
 import TransactionsList from './TransactionsList'
+import Upload from './Upload'
 
 export {
   CustomerDetails,
@@ -14,5 +15,6 @@ export {
   CustomerSidebar,
   Field,
   EditableCard,
-  Wizard
+  Wizard,
+  Upload
 }

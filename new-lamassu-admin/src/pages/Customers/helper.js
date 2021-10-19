@@ -9,11 +9,9 @@ import { RadioGroup, TextInput } from 'src/components/inputs/formik'
 import { H4 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 
+import { Upload } from './components'
+
 const useStyles = makeStyles({
-  radioLabel: {
-    height: 40,
-    padding: [[0, 10]]
-  },
   radio: {
     padding: 4,
     margin: 4
@@ -26,54 +24,16 @@ const useStyles = makeStyles({
   },
   specialLabel: {
     height: 40,
+    padding: 0,
+    width: 250
+  },
+  label: {
+    height: 40,
     padding: 0
   },
   specialGrid: {
     display: 'grid',
     gridTemplateColumns: [[182, 162, 141]]
-  },
-  directionIcon: {
-    marginRight: 2
-  },
-  directionName: {
-    marginLeft: 6
-  },
-  thresholdWrapper: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  thresholdTitle: {
-    marginTop: 50
-  },
-  thresholdContentWrapper: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  thresholdField: {
-    marginRight: 6,
-    width: 75
-  },
-  description: {
-    marginTop: 7
-  },
-  space: {
-    marginLeft: 6,
-    marginRight: 6
-  },
-  lastSpace: {
-    marginLeft: 6
-  },
-  suspensionDays: {
-    width: 34
-  },
-  input: {
-    marginTop: -2
-  },
-  limitedInput: {
-    width: 50
-  },
-  daysInput: {
-    width: 60
   }
 })
 
@@ -180,7 +140,7 @@ const EntryType = () => {
             component={RadioGroup}
             name="dataType"
             options={dataOptions}
-            labelClassName={classes.specialLabel}
+            labelClassName={classes.label}
             radioClassName={classes.radio}
             className={classnames(classes.radioGroup, classes.specialGrid)}
           />
@@ -195,7 +155,7 @@ const EntryType = () => {
             component={RadioGroup}
             name="requirement"
             options={requirementOptions}
-            labelClassName={classes.specialLabel}
+            labelClassName={classes.label}
             radioClassName={classes.radio}
             className={classnames(classes.radioGroup, classes.specialGrid)}
           />
@@ -217,7 +177,7 @@ const CustomData = ({ selectedValues }) => {
       {customElements[dataTypeSelected].options.map(({ display, code }) => (
         <Field name={code} label={display} component={TextInput} width={390} />
       ))}
-      {upload && <H4 type="image">{'OI'}</H4>}
+      {upload && <Upload type="image"></Upload>}
     </>
   )
 }
