@@ -16,6 +16,8 @@ import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/butto
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
+import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
+import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
 import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
 import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
@@ -25,7 +27,8 @@ import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
   TransactionsList,
-  CustomerSidebar
+  CustomerSidebar,
+  Wizard
 } from './components'
 import { getFormattedPhone, getName } from './helper'
 
@@ -110,7 +113,10 @@ const SET_CUSTOMER = gql`
 
 const CustomerProfile = memo(() => {
   const history = useHistory()
+
   const [showCompliance, setShowCompliance] = useState(false)
+  const [wizard, setWizard] = useState(false)
+  const [error] = useState(null)
   const [clickedItem, setClickedItem] = useState('overview')
   const { id: customerId } = useParams()
 
@@ -184,6 +190,16 @@ const CustomerProfile = memo(() => {
                 />
               </div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
+              <div>
+                <ActionButton
+                  className={classes.customerManualDataEntry}
+                  color="primary"
+                  Icon={DataIcon}
+                  InverseIcon={DataReversedIcon}
+                  onClick={() => setWizard(true)}>
+                  {`Manual data entry`}
+                </ActionButton>
+              </div>
               <div>
                 <ActionButton
                   className={classes.customerDiscount}
@@ -301,6 +317,13 @@ const CustomerProfile = memo(() => {
             </div>
           )}
         </div>
+        {wizard && (
+          <Wizard
+            error={error?.message}
+            save={() => {}}
+            onClose={() => setWizard(null)}
+          />
+        )}
       </div>
     </>
   )

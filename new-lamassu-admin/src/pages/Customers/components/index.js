@@ -1,3 +1,5 @@
+import Wizard from '../Wizard'
+
 import CustomerDetails from './CustomerDetails'
 import CustomerSidebar from './CustomerSidebar'
 import EditableCard from './EditableCard'
@@ -11,5 +13,6 @@ export {
   TransactionsList,
   CustomerSidebar,
   Field,
-  EditableCard
+  EditableCard,
+  Wizard
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/button/data/zodiac</title>
+    <g id="icon/button/data/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Data-icon---small" transform="translate(1.500000, 0.500000)" stroke="#1B2559">
+            <path d="M10,2 L10,4.77777778 C10,6.00507722 7.76142375,7 5,7 C2.29272181,7 0.0854192765,5.97179097 0,4.77777778 L0.00256904537,2" id="oval-3"></path>
+            <path d="M10,5 L10,7.77777778 C10,9.00507722 7.76142375,10 5,10 C2.29272181,10 0.0854192765,8.97179097 0,7.77777778 L0.00256904537,5" id="oval-2"></path>
+            <ellipse id="oval-1" cx="5" cy="2" rx="5" ry="2"></ellipse>
+        </g>
+        <g id="Group-9" transform="translate(0.000000, 4.000000)">
+            <circle id="Oval" stroke="#1B2559" fill="#EBEFFF" cx="4" cy="4" r="3.5"></circle>
+            <polygon id="Path" fill="#1B2559" fill-rule="nonzero" points="4.33333333 3.66666667 6 3.66666667 6 4.33333333 4.33333333 4.33333333 4.33333333 6 3.66666667 6 3.66666667 4.33333333 2 4.33333333 2 3.66666667 3.66666667 3.66666667 3.66666667 2 4.33333333 2"></polygon>
+        </g>
+    </g>
+</svg>

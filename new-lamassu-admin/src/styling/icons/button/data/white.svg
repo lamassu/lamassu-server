@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/button/data/white</title>
+    <g id="icon/button/data/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Data-icon---small" transform="translate(0.500000, 0.500000)" stroke="#FFFFFF">
+            <path d="M11,2.44444444 L11,5.5 C11,6.85002939 8.53756612,7.94444444 5.5,7.94444444 C2.521994,7.94444444 0.0939612041,6.81341452 1.11160464e-12,5.5 L0.00282594991,2.44444444" id="oval-3"></path>
+            <path d="M11,5.5 L11,8.55555556 C11,9.90558494 8.53756612,11 5.5,11 C2.521994,11 0.0939612041,9.86897007 1.11160464e-12,8.55555556 L0.00282594991,5.5" id="oval-2"></path>
+            <ellipse id="oval-1" cx="5.5" cy="2.44444444" rx="5.5" ry="2.44444444"></ellipse>
+        </g>
+        <g id="Group-9" transform="translate(0.000000, 4.000000)">
+            <circle id="Oval" stroke="#FFFFFF" fill="#5F668A" cx="4" cy="4" r="3.5"></circle>
+            <polygon id="Path" fill="#FFFFFF" fill-rule="nonzero" points="4.33333333 3.66666667 6 3.66666667 6 4.33333333 4.33333333 4.33333333 4.33333333 6 3.66666667 6 3.66666667 4.33333333 2 4.33333333 2 3.66666667 3.66666667 3.66666667 3.66666667 2 4.33333333 2"></polygon>
+        </g>
+    </g>
+</svg>
