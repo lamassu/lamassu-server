@@ -30,7 +30,7 @@ function run (address) {
   Promise.all([fetchMnemonic(), searchForHdIndex(address)])
     .then(([mnemonic, hdIndex]) => {
       try {
-        const prefix = !_.isNil(hdIndex) ? defaultPrefixPath : paymentPrefixPath
+        const prefix = !_.isNil(hdIndex) ? paymentPrefixPath : defaultPrefixPath
         console.log(`Private key: `, defaultHdNode(mnemonic, prefix).deriveChild(hdIndex).getWallet().getPrivateKeyString())
         process.exit(0)
       } catch (err) {
