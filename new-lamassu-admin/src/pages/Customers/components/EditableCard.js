@@ -38,7 +38,7 @@ const fieldStyles = {
   },
   label: {
     color: comet,
-    margin: [[0, 3]]
+    margin: [[0, 0, 0, 0]]
   },
   notEditing: {
     display: 'flex',
@@ -58,8 +58,10 @@ const fieldStyles = {
     }
   },
   editing: {
-    '& > input': {
-      padding: 0
+    '& > div': {
+      '& > input': {
+        padding: 0
+      }
     }
   }
 }
@@ -88,9 +90,7 @@ const EditableField = ({ editing, field, size, ...props }) => {
           <FormikField
             className={classes.editing}
             id={field.name}
-            name={field.name}
             component={field.component}
-            placeholder={field.placeholder}
             value={field.value}
             type={field.type}
             width={size}

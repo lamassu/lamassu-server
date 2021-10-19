@@ -256,21 +256,25 @@ const CustomerData = ({ customer, updateCustomer }) => {
     }
   ]
 
-  const editableCard = ({
-    title,
-    authorize,
-    reject,
-    state,
-    titleIcon,
-    data,
-    save,
-    children,
-    validationSchema,
-    initialValues
-  }) => {
+  const editableCard = (
+    {
+      title,
+      authorize,
+      reject,
+      state,
+      titleIcon,
+      data,
+      save,
+      children,
+      validationSchema,
+      initialValues
+    },
+    idx
+  ) => {
     return (
       <EditableCard
         title={title}
+        key={idx}
         authorize={authorize}
         reject={reject}
         state={state}
@@ -308,12 +312,12 @@ const CustomerData = ({ customer, updateCustomer }) => {
           <Grid container>
             <Grid container direction="column" item xs={6}>
               {visibleCards.map((elem, idx) => {
-                return isEven(idx) ? editableCard(elem) : null
+                return isEven(idx) ? editableCard(elem, idx) : null
               })}
             </Grid>
             <Grid container direction="column" item xs={6}>
               {visibleCards.map((elem, idx) => {
-                return !isEven(idx) ? editableCard(elem) : null
+                return !isEven(idx) ? editableCard(elem, idx) : null
               })}
             </Grid>
           </Grid>

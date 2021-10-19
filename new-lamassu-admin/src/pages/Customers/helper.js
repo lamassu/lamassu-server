@@ -5,7 +5,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
-import { RadioGroup } from 'src/components/inputs/formik'
+import { RadioGroup, TextInput } from 'src/components/inputs/formik'
 import { H4 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 
@@ -122,16 +122,41 @@ const requirementOptions = [
   { display: 'US SSN', code: 'usSsn' }
 ]
 
+const customTextOptions = [
+  { display: 'Data entry title', code: 'title' },
+  { display: 'Data entry', code: 'data' }
+]
+
+const customUploadOptions = [{ display: 'Data entry title', code: 'title' }]
+
 const entryTypeSchema = Yup.object().shape({
-  entryType: Yup.object({
-    entryType: Yup.string().required()
+  entryType: Yup.string().required()
+})
+
+const customFileSchema = Yup.object().shape({
+  file: Yup.mixed().required()
+})
+
+const customImageSchema = Yup.object().shape({
+  image: Yup.mixed().required()
+})
+
+const customTextSchema = Yup.object().shape({
+  text: Yup.object({
+    title: Yup.string().required(),
+    data: Yup.string().required()
   }).required()
 })
 
 const EntryType = () => {
   const classes = useStyles()
   const { values } = useFormikContext()
-  const displayCustom = values.entryType === 'custom'
+
+  const CUSTOM = 'custom'
+  const REQUIREMENT = 'requirement'
+
+  const displayCustomOptions = values.entryType === CUSTOM
+  const displayRequirementOptions = values.entryType === REQUIREMENT
 
   return (
     <>
@@ -146,7 +171,7 @@ const EntryType = () => {
         radioClassName={classes.radio}
         className={classnames(classes.radioGroup, classes.specialGrid)}
       />
-      {displayCustom && (
+      {displayCustomOptions && (
         <div>
           <Box display="flex" alignItems="center">
             <H4>Type of data</H4>
@@ -161,7 +186,7 @@ const EntryType = () => {
           />
         </div>
       )}
-      {!displayCustom && (
+      {displayRequirementOptions && (
         <div>
           <Box display="flex" alignItems="center">
             <H4>Requirements</H4>
@@ -180,11 +205,55 @@ const EntryType = () => {
   )
 }
 
+const CustomData = ({ selectedValues }) => {
+  const dataTypeSelected = selectedValues?.dataType
+  const upload = dataTypeSelected === 'file' || dataTypeSelected === 'image'
+  console.log(dataTypeSelected, 'LAWDOIUHJAWIDUAW', selectedValues)
+  return (
+    <>
+      <Box display="flex" alignItems="center">
+        <H4>{`Custom ${dataTypeSelected} entry`}</H4>
+      </Box>
+      {customElements[dataTypeSelected].options.map(({ display, code }) => (
+        <Field name={code} label={display} component={TextInput} width={390} />
+      ))}
+      {upload && <H4 type="image">{'OI'}</H4>}
+    </>
+  )
+}
+
+const customElements = {
+  text: {
+    schema: customTextSchema,
+    options: customTextOptions,
+    Component: CustomData,
+    initialValues: { text: { title: '', data: '' } }
+  },
+  file: {
+    schema: customFileSchema,
+    options: customUploadOptions,
+    Component: CustomData,
+    initialValues: { file: { title: '', file: '' } }
+  },
+  image: {
+    schema: customImageSchema,
+    options: customUploadOptions,
+    Component: CustomData,
+    initialValues: { image: { title: '', image: '' } }
+  }
+}
+
 const entryType = {
   schema: entryTypeSchema,
   options: entryOptions,
   Component: EntryType,
-  initialValues: { entryType: { entryType: '' } }
+  initialValues: { entryType: '' }
 }
 
-export { getAuthorizedStatus, getFormattedPhone, getName, entryType }
+export {
+  getAuthorizedStatus,
+  getFormattedPhone,
+  getName,
+  entryType,
+  customElements
+}

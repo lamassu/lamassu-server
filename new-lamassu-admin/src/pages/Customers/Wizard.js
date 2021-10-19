@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
-import { Form, Formik } from 'formik'
+import { Form, Formik, useFormikContext } from 'formik'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
@@ -9,7 +9,7 @@ import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { comet } from 'src/styling/variables'
 
-import { entryType } from './helper'
+import { entryType, customElements } from './helper'
 
 const LAST_STEP = 2
 
@@ -46,26 +46,44 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const getStep = step => {
+const getStep = (step, selectedValues) => {
   switch (step) {
     case 1:
       return entryType
+    case 2:
+      return customElements[selectedValues?.dataType]
     default:
-      return entryType
+      return Fragment
   }
+}
+
+const GetValues = ({ setValues }) => {
+  const { values, touched, errors } = useFormikContext()
+  console.log(touched, errors, values)
+
+  useEffect(() => {
+    setValues && values && setValues(values)
+  }, [setValues, values])
+
+  return null
 }
 
 const Wizard = ({ onClose, save, error }) => {
   const classes = useStyles()
 
+  const [selectedValues, setSelectedValues] = useState(null)
+  const [liveValues, setLiveValues] = useState({})
+
   const [{ step, config }, setState] = useState({
     step: 1
   })
-
+  console.log(liveValues)
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step)
+  const stepOptions = getStep(step, selectedValues)
+
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
+    setSelectedValues(newConfig)
 
     if (isLastStep) {
       return save(newConfig)
@@ -98,11 +116,15 @@ const Wizard = ({ onClose, save, error }) => {
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
           <Form className={classes.form}>
-            <stepOptions.Component {...stepOptions.props} />
+            <GetValues setValues={setLiveValues} />
+            <stepOptions.Component
+              selectedValues={selectedValues}
+              {...stepOptions.props}
+            />
             <div className={classes.submit}>
               {error && <ErrorMessage>Failed to save</ErrorMessage>}
               <Button className={classes.button} type="submit">
-                {isLastStep ? 'Finish' : 'Next'}
+                {isLastStep ? 'Add Data' : 'Next'}
               </Button>
             </div>
           </Form>
