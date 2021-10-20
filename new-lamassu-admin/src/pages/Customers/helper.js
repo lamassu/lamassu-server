@@ -94,18 +94,18 @@ const entryTypeSchema = Yup.object().shape({
 })
 
 const customFileSchema = Yup.object().shape({
+  title: Yup.string().required(),
   file: Yup.mixed().required()
 })
 
 const customImageSchema = Yup.object().shape({
+  title: Yup.string().required(),
   image: Yup.mixed().required()
 })
 
 const customTextSchema = Yup.object().shape({
-  text: Yup.object({
-    title: Yup.string().required(),
-    data: Yup.string().required()
-  }).required()
+  title: Yup.string().required(),
+  data: Yup.string().required()
 })
 
 const EntryType = () => {
@@ -168,7 +168,6 @@ const EntryType = () => {
 const CustomData = ({ selectedValues }) => {
   const dataTypeSelected = selectedValues?.dataType
   const upload = dataTypeSelected === 'file' || dataTypeSelected === 'image'
-  console.log(dataTypeSelected, 'LAWDOIUHJAWIDUAW', selectedValues)
   return (
     <>
       <Box display="flex" alignItems="center">
@@ -177,7 +176,7 @@ const CustomData = ({ selectedValues }) => {
       {customElements[dataTypeSelected].options.map(({ display, code }) => (
         <Field name={code} label={display} component={TextInput} width={390} />
       ))}
-      {upload && <Upload type="image"></Upload>}
+      {upload && <Upload type={dataTypeSelected}></Upload>}
     </>
   )
 }
@@ -187,19 +186,19 @@ const customElements = {
     schema: customTextSchema,
     options: customTextOptions,
     Component: CustomData,
-    initialValues: { text: { title: '', data: '' } }
+    initialValues: { data: '', title: '' }
   },
   file: {
     schema: customFileSchema,
     options: customUploadOptions,
     Component: CustomData,
-    initialValues: { file: { title: '', file: '' } }
+    initialValues: { file: '', title: '' }
   },
   image: {
     schema: customImageSchema,
     options: customUploadOptions,
     Component: CustomData,
-    initialValues: { image: { title: '', image: '' } }
+    initialValues: { image: '', title: '' }
   }
 }
 

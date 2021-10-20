@@ -36,6 +36,7 @@
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.10.2",
     "react-material-ui-carousel": "^2.2.7",
+    "react-dropzone": "^11.4.2",
     "react-number-format": "^4.4.1",
     "react-otp-input": "^2.3.0",
     "react-router-dom": "5.1.2",

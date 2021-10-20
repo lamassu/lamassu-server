@@ -58,8 +58,7 @@ const getStep = (step, selectedValues) => {
 }
 
 const GetValues = ({ setValues }) => {
-  const { values, touched, errors } = useFormikContext()
-  console.log(touched, errors, values)
+  const { values } = useFormikContext()
 
   useEffect(() => {
     setValues && values && setValues(values)
@@ -77,9 +76,10 @@ const Wizard = ({ onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 1
   })
-  console.log(liveValues)
+
+  // TODO forms error handling
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step, selectedValues)
+  const stepOptions = getStep(step, selectedValues, liveValues)
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))

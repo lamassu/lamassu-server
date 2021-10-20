@@ -75,6 +75,8 @@ const CustomerData = ({ customer, updateCustomer }) => {
     ? 'Passed'
     : 'Failed'
 
+  const customEntries = [] // get customer custom entries
+
   const isEven = elem => elem % 2 === 0
 
   const getVisibleCards = _.filter(
@@ -321,6 +323,11 @@ const CustomerData = ({ customer, updateCustomer }) => {
               })}
             </Grid>
           </Grid>
+        )}
+        {customEntries && (
+          <div className={classes.wrapper}>
+            <div className={classes.separator}>{'Custom data entry'}</div>
+          </div>
         )}
       </div>
     </div>
