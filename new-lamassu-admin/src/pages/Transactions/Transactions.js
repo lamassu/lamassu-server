@@ -281,6 +281,8 @@ const Transactions = () => {
                 query={GET_TRANSACTIONS_CSV}
                 getLogs={logs => R.path(['transactionsCsv'])(logs)}
                 simplified
+                timezone={timezone}
+                args={{ timezone }}
               />
             </div>
           )}
