@@ -75,7 +75,7 @@ const CustomerData = ({ customer, updateCustomer }) => {
     ? 'Passed'
     : 'Failed'
 
-  const customEntries = [] // get customer custom entries
+  const customEntries = null // get customer custom entries
 
   const isEven = elem => elem % 2 === 0
 
