@@ -1,14 +1,12 @@
 import * as d3 from 'd3'
 import moment from 'moment'
-import * as R from 'ramda'
 import React, { useEffect, useRef, useCallback } from 'react'
 
 import { backgroundColor, java, neon } from 'src/styling/variables'
 
 const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
   const svgRef = useRef()
-  const cashIns = R.filter(R.propEq('txClass', 'cashIn'))(realData)
-  const cashOuts = R.filter(R.propEq('txClass', 'cashOut'))(realData)
+  const dstOffset = parseInt(timezone.split(':')[1])
   const drawGraph = useCallback(() => {
     const svg = d3.select(svgRef.current)
     const margin = { top: 25, right: 0, bottom: 25, left: 15 }
@@ -26,23 +24,28 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
       return maxY
     }
 
+    const timeFormat = v => {
+      switch (timeFrame) {
+        case 'Week':
+          return d3.timeFormat('%a %d')(v)
+        case 'Month':
+          return d3.timeFormat('%b %d')(v)
+        default:
+          return moment
+            .utc(v)
+            .add(dstOffset, 'minutes')
+            .format('HH:mm')
+      }
+    }
+
     // changes values of arguments in some d3 function calls to make the graph labels look good according to the selected time frame
     const findXAxisSettings = () => {
-      // case 'Day' or default
-      const res = {
-        nice: null,
-        ticks: 4,
-        subtractDays: 1,
-        timeFormat: '%H:%M',
-        timeRange: [50, 500]
-      }
       switch (timeFrame) {
         case 'Week':
           return {
             nice: 7,
             ticks: 7,
             subtractDays: 7,
-            timeFormat: '%a %d',
             timeRange: [50, 500]
           }
         case 'Month':
@@ -50,11 +53,15 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
             nice: 6,
             ticks: 6,
             subtractDays: 30,
-            timeFormat: '%b %d',
             timeRange: [50, 500]
           }
         default:
-          return res
+          return {
+            nice: null,
+            ticks: 4,
+            subtractDays: 1,
+            timeRange: [50, 500]
+          }
       }
     }
 
@@ -65,11 +72,10 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
     svg
       .append('rect')
       .attr('x', 0)
-      .attr('y', -margin.top)
-      .attr('width', width + margin.left + margin.right)
+      .attr('y', 0)
+      .attr('width', width)
       .attr('height', height + margin.top)
       .attr('fill', backgroundColor)
-      .attr('transform', `translate(${0},${margin.top})`)
 
     // declare g variable where more svg components will be attached
     const g = svg
@@ -92,14 +98,16 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
       .domain([
         moment()
           .add(-xAxisSettings.subtractDays, 'day')
-          .add(timezone.dstOffset, 'minutes')
           .valueOf(),
-        moment()
-          .add(timezone.dstOffset, 'minutes')
-          .valueOf()
+        moment().valueOf()
       ])
       .range(xAxisSettings.timeRange)
       .nice(xAxisSettings.nice)
+
+    const timeValue = s => {
+      const date = moment.utc(s)
+      return x(date.valueOf())
+    }
 
     // horizontal gridlines
     const makeYGridlines = () => {
@@ -127,7 +135,7 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
           .axisBottom(x)
           .ticks(xAxisSettings.ticks)
           .tickSize(0)
-          .tickFormat(d3.timeFormat(xAxisSettings.timeFormat))
+          .tickFormat(timeFormat)
       )
       .selectAll('text')
       .attr('dy', '1.5em')
@@ -144,7 +152,6 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
       )
       .selectAll('text')
       .attr('dy', '1.5em')
-    /* ******************** */
 
     // Y axis
     g.append('g')
@@ -163,41 +170,21 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
       .attr('dy', '-0.40em')
       .attr('dx', '3em')
 
-    /* APPEND DOTS */
-    svg
+    // Append dots
+    const dots = svg
       .append('g')
-      .selectAll('dot')
-      .data(cashIns)
-      .enter()
-      .append('circle')
-      .attr('cx', function(d) {
-        const date = new Date(d.created)
-        return x(date.setMinutes(date.getMinutes() + timezone.dstOffset))
-      })
-      .attr('cy', function(d) {
-        return y(d.fiat)
-      })
-      .attr('r', 4)
-      .attr('transform', 'translate(' + margin.left + ',' + 15 + ')')
-      .style('fill', java)
-    svg
-      .append('g')
-      .selectAll('dot')
-      .data(cashOuts)
-      .enter()
-      .append('circle')
-      .attr('cx', function(d) {
-        return x(new Date(d.created))
-      })
-      .attr('cy', function(d) {
-        return y(d.fiat)
-      })
-      .attr('r', 4)
-      .attr('transform', 'translate(' + margin.left + ',' + 15 + ')')
-      .style('fill', neon)
+      .attr('transform', `translate(${margin.left},${margin.top})`)
 
-    /* ************************** */
-  }, [cashIns, cashOuts, realData, timeFrame, timezone])
+    dots
+      .selectAll('circle')
+      .data(realData)
+      .enter()
+      .append('circle')
+      .attr('cx', d => timeValue(d.created))
+      .attr('cy', d => y(d.fiat))
+      .attr('r', 4)
+      .style('fill', d => (d.txClass === 'cashIn' ? java : neon))
+  }, [realData, timeFrame, timezone])
 
   useEffect(() => {
     // first we clear old chart DOM elements on component update
