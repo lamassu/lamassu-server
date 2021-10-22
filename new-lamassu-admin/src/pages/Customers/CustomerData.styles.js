@@ -24,7 +24,7 @@ export default {
   },
   separator: {
     display: 'flex',
-    flexBasis: '35%',
+    flexBasis: '100%',
     justifyContent: 'center',
     color: offColor,
     margin: [[8, 0, 8, 0]],
