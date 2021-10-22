@@ -19,7 +19,7 @@ const cashboxStyles = {
     borderColor: colorPicker,
     backgroundColor: colorPicker,
     height: 118,
-    width: 80,
+    width: ({ width }) => width ?? 80,
     border: '2px solid',
     textAlign: 'end',
     display: 'inline-block'
@@ -55,7 +55,7 @@ const gridStyles = {
     justifyContent: 'flex-start'
   },
   col2: {
-    marginLeft: 16
+    marginLeft: 14
   },
   noMarginText: {
     marginTop: 0,

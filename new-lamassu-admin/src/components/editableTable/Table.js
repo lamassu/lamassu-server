@@ -37,6 +37,7 @@ const ETable = ({
   validationSchema,
   enableCreate,
   enableEdit,
+  enableEditText,
   editWidth: outerEditWidth,
   enableDelete,
   deleteWidth = ACTION_COL_SIZE,
@@ -138,6 +139,7 @@ const ETable = ({
   const ctxValue = {
     elements,
     enableEdit,
+    enableEditText,
     onEdit,
     clearError: () => setError(null),
     error: error,

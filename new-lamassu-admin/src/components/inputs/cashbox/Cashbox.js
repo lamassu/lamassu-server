@@ -16,11 +16,12 @@ const gridClasses = makeStyles(gridStyles)
 const Cashbox = ({
   percent = 0,
   cashOut = false,
+  width,
   className,
   emptyPartClassName,
   labelClassName
 }) => {
-  const classes = cashboxClasses({ percent, cashOut })
+  const classes = cashboxClasses({ percent, cashOut, width })
   const threshold = 51
 
   return (
@@ -107,7 +108,8 @@ const CashOut = ({
   currency,
   notes,
   className,
-  editingMode = false
+  editingMode = false,
+  width
 }) => {
   const percent = (100 * notes) / capacity
   const classes = gridClasses()
@@ -115,7 +117,12 @@ const CashOut = ({
     <>
       <div className={classes.row}>
         <div className={classes.col}>
-          <Cashbox className={className} percent={percent} cashOut />
+          <Cashbox
+            className={className}
+            width={width}
+            percent={percent}
+            cashOut
+          />
         </div>
         {!editingMode && (
           <div className={classes.col2}>

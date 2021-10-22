@@ -184,6 +184,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
           {suffix}
         </SuffixComponent>
       )}
+      {isHidden(values) && <StripesSvg />}
     </Td>
   )
 }

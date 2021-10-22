@@ -34,6 +34,7 @@ const Header = () => {
   const {
     elements,
     enableEdit,
+    enableEditText,
     editWidth,
     enableDelete,
     deleteWidth,
@@ -72,7 +73,7 @@ const Header = () => {
       {innerElements.map(mapElement2)}
       {enableEdit && (
         <Td header width={editWidth} textAlign="center">
-          Edit
+          {enableEditText ?? `Edit`}
         </Td>
       )}
       {enableDelete && (
