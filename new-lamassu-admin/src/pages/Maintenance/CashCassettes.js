@@ -26,13 +26,25 @@ const ValidationSchema = Yup.object().shape({
     .min(0)
     .max(1000),
   cassette1: Yup.number()
-    .label('Cassette 1 (top)')
+    .label('Cassette 1')
     .required()
     .integer()
     .min(0)
     .max(500),
   cassette2: Yup.number()
-    .label('Cassette 2 (bottom)')
+    .label('Cassette 2')
+    .required()
+    .integer()
+    .min(0)
+    .max(500),
+  cassette3: Yup.number()
+    .label('Cassette 3')
+    .required()
+    .integer()
+    .min(0)
+    .max(500),
+  cassette4: Yup.number()
+    .label('Cassette 4')
     .required()
     .integer()
     .min(0)
@@ -47,6 +59,9 @@ const GET_MACHINES_AND_CONFIG = gql`
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
+      numberOfCassettes
     }
     config
   }
@@ -69,6 +84,8 @@ const SET_CASSETTE_BILLS = gql`
     $cashbox: Int!
     $cassette1: Int!
     $cassette2: Int!
+    $cassette3: Int!
+    $cassette4: Int!
   ) {
     machineAction(
       deviceId: $deviceId
@@ -76,11 +93,15 @@ const SET_CASSETTE_BILLS = gql`
       cashbox: $cashbox
       cassette1: $cassette1
       cassette2: $cassette2
+      cassette3: $cassette3
+      cassette4: $cassette4
     ) {
       deviceId
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
     }
   }
 `
@@ -103,14 +124,18 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
 
-  const onSave = (...[, { id, cashbox, cassette1, cassette2 }]) => {
+  const onSave = (
+    ...[, { id, cashbox, cassette1, cassette2, cassette3, cassette4 }]
+  ) => {
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: id,
         cashbox,
         cassette1,
-        cassette2
+        cassette2,
+        cassette3,
+        cassette4
       }
     })
   }
@@ -136,46 +161,35 @@ const CashCassettes = () => {
       inputProps: {
         decimalPlaces: 0
       }
-    },
-    {
-      name: 'cassette1',
-      header: 'Cassette 1 (Top)',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => (
-        <CashOut
-          className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.top}
-          currency={{ code: fiatCurrency }}
-          notes={value}
-        />
-      ),
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
-    },
-    {
-      name: 'cassette2',
-      header: 'Cassette 2 (Bottom)',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => {
-        return (
+    }
+  ]
+
+  R.until(
+    R.gt(R.__, Math.max(...R.map(it => it.numberOfCassettes, machines))),
+    it => {
+      elements.push({
+        name: `cassette${it}`,
+        header: `Cassette ${it}`,
+        width: 265,
+        stripe: true,
+        view: (value, { id }) => (
           <CashOut
             className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.bottom}
+            denomination={getCashoutSettings(id)?.[`cassette${it}`]}
             currency={{ code: fiatCurrency }}
             notes={value}
           />
-        )
-      },
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
-    }
-  ]
+        ),
+        isHidden: ({ numberOfCassettes }) => it > numberOfCassettes,
+        input: CashCassetteInput,
+        inputProps: {
+          decimalPlaces: 0
+        }
+      })
+      return R.add(1, it)
+    },
+    1
+  )
 
   return (
     <>

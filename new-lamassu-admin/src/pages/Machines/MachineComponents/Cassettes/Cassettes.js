@@ -40,6 +40,8 @@ const SET_CASSETTE_BILLS = gql`
     $cashbox: Int!
     $cassette1: Int!
     $cassette2: Int!
+    $cassette3: Int!
+    $cassette4: Int!
   ) {
     machineAction(
       deviceId: $deviceId
@@ -47,11 +49,15 @@ const SET_CASSETTE_BILLS = gql`
       cashbox: $cashbox
       cassette1: $cassette1
       cassette2: $cassette2
+      cassette3: $cassette3
+      cassette4: $cassette4
     ) {
       deviceId
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
     }
   }
 `
@@ -90,7 +96,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       view: (value, { deviceId }) => (
         <CashOut
           className={classes.cashbox}
-          denomination={getCashoutSettings(deviceId)?.top}
+          denomination={getCashoutSettings(deviceId)?.cassette1}
           currency={{ code: fiatCurrency }}
           notes={value}
         />
@@ -109,7 +115,47 @@ const CashCassettes = ({ machine, config, refetchData }) => {
         return (
           <CashOut
             className={classes.cashbox}
-            denomination={getCashoutSettings(deviceId)?.bottom}
+            denomination={getCashoutSettings(deviceId)?.cassette2}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        )
+      },
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
+    },
+    {
+      name: 'cassette3',
+      header: 'Cash-out 3',
+      width: 265,
+      stripe: true,
+      view: (value, { deviceId }) => {
+        return (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(deviceId)?.cassette2}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+          />
+        )
+      },
+      input: NumberInput,
+      inputProps: {
+        decimalPlaces: 0
+      }
+    },
+    {
+      name: 'cassette4',
+      header: 'Cash-out 4',
+      width: 265,
+      stripe: true,
+      view: (value, { deviceId }) => {
+        return (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(deviceId)?.cassette2}
             currency={{ code: fiatCurrency }}
             notes={value}
           />
@@ -126,14 +172,18 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     refetchQueries: () => refetchData()
   })
 
-  const onSave = (...[, { deviceId, cashbox, cassette1, cassette2 }]) => {
+  const onSave = (
+    ...[, { deviceId, cashbox, cassette1, cassette2, cassette3, cassette4 }]
+  ) => {
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: deviceId,
         cashbox,
         cassette1,
-        cassette2
+        cassette2,
+        cassette3,
+        cassette4
       }
     })
   }
