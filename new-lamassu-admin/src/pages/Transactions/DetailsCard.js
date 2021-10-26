@@ -329,7 +329,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
             }
           })
         }}
-        onDissmised={() => {
+        onDismissed={() => {
           setAction({ command: null })
           setErrorMessage(null)
         }}

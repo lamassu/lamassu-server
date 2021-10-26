@@ -63,7 +63,7 @@ export const ConfirmDialog = memo(
     message,
     confirmationMessage = `Write '${toBeConfirmed}' to confirm this action`,
     onConfirmed,
-    onDissmised,
+    onDismissed,
     initialValue = '',
     disabled = false,
     ...props
@@ -76,7 +76,7 @@ export const ConfirmDialog = memo(
     const innerOnClose = () => {
       setValue('')
       setError(false)
-      onDissmised()
+      onDismissed()
     }
 
     const isOnErrorState =
