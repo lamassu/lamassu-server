@@ -10,7 +10,6 @@ const useStyles = makeStyles({
     display: 'flex'
   },
   cashCassette: {
-    width: 80,
     height: 36,
     marginRight: 14
   }
