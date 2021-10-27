@@ -2,6 +2,7 @@ import { CardContent, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
+import * as R from 'ramda'
 import { useState, React } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
@@ -15,12 +16,16 @@ import {
   OVERRIDE_REJECTED,
   OVERRIDE_PENDING
 } from 'src/pages/Customers/components/propertyCard'
+import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
+import { ReactComponent as DeleteReversedIcon } from 'src/styling/icons/action/delete/white.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as EditReversedIcon } from 'src/styling/icons/action/edit/white.svg'
-import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
-import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
+import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/white.svg'
+import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/white.svg'
 import { ReactComponent as CancelReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
 import { ReactComponent as CancelIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
+import { ReactComponent as ReplaceReversedIcon } from 'src/styling/icons/button/replace/white.svg'
+import { ReactComponent as ReplaceIcon } from 'src/styling/icons/button/replace/zodiac.svg'
 import { ReactComponent as SaveReversedIcon } from 'src/styling/icons/circle buttons/save/white.svg'
 import { ReactComponent as SaveIcon } from 'src/styling/icons/circle buttons/save/zodiac.svg'
 import { comet } from 'src/styling/variables'
@@ -70,7 +75,7 @@ const fieldUseStyles = makeStyles(fieldStyles)
 
 const EditableField = ({ editing, field, size, ...props }) => {
   const classes = fieldUseStyles()
-
+  console.log('FIELDDDDDDDD', field)
   const classNames = {
     [classes.field]: true,
     [classes.notEditing]: !editing
@@ -90,8 +95,9 @@ const EditableField = ({ editing, field, size, ...props }) => {
           <FormikField
             className={classes.editing}
             id={field.name}
-            component={field.component}
+            name={field.name}
             value={field.value}
+            component={field.component}
             type={field.type}
             width={size}
             {...props}
@@ -103,19 +109,26 @@ const EditableField = ({ editing, field, size, ...props }) => {
 }
 
 const EditableCard = ({
-  data,
+  fields,
   save,
   authorize,
+  hasImage,
   reject,
   state,
   title,
   titleIcon,
-  children
+  children,
+  validationSchema,
+  initialValues,
+  deleteEditedData
 }) => {
   const classes = useStyles()
 
   const [editing, setEditing] = useState(false)
+  const [input, setInput] = useState(null)
   const [error, setError] = useState(null)
+
+  const triggerInput = () => input.click()
 
   const label1ClassNames = {
     [classes.label1]: true,
@@ -130,9 +143,7 @@ const EditableCard = ({
       ? { label: 'Rejected', type: 'error' }
       : { label: 'Accepted', type: 'success' }
 
-  const editableField = field => {
-    return <EditableField field={field} editing={editing} size={180} />
-  }
+  const reader = new FileReader()
 
   return (
     <div>
@@ -142,99 +153,172 @@ const EditableCard = ({
             {titleIcon}
             <H3 className={classes.cardTitle}>{title}</H3>
             <Tooltip width={304}></Tooltip>
-            <div className={classnames(label1ClassNames)}>
-              <MainStatus statuses={[authorized]} />
-            </div>
+            {state && (
+              <div className={classnames(label1ClassNames)}>
+                <MainStatus statuses={[authorized]} />
+              </div>
+            )}
           </div>
+          {children}
           <Formik
             validateOnBlur={false}
             validateOnChange={false}
             enableReinitialize
+            validationSchema={validationSchema}
+            initialValues={initialValues}
             onSubmit={values => save(values)}
             onReset={() => {
               setEditing(false)
               setError(false)
             }}>
-            <Form>
-              <PromptWhenDirty />
-              <div className={classes.row}>
-                <Grid container>
-                  <Grid container direction="column" item xs={6}>
-                    {data?.map((field, idx) => {
-                      return idx >= 0 && idx < 4 ? editableField(field) : null
-                    })}
+            {({ values, touched, errors, setFieldValue }) => (
+              <Form>
+                <PromptWhenDirty />
+                {console.log(values, touched, errors, 'FORMIK STATUS')}
+                <div className={classes.row}>
+                  <Grid container>
+                    <Grid container direction="column" item xs={6}>
+                      {!hasImage &&
+                        fields?.map((field, idx) => {
+                          return idx >= 0 && idx < 4 ? (
+                            <EditableField
+                              field={field}
+                              editing={editing}
+                              size={180}
+                            />
+                          ) : null
+                        })}
+                    </Grid>
+                    <Grid container direction="column" item xs={6}>
+                      {!hasImage &&
+                        fields?.map((field, idx) => {
+                          return idx >= 4 ? (
+                            <EditableField
+                              field={field}
+                              editing={editing}
+                              size={180}
+                            />
+                          ) : null
+                        })}
+                    </Grid>
                   </Grid>
-                  <Grid container direction="column" item xs={6}>
-                    {data?.map((field, idx) => {
-                      return idx >= 4 ? editableField(field) : null
-                    })}
-                  </Grid>
-                </Grid>
-              </div>
-              {children}
-              <div className={classes.edit}>
-                {!editing && (
-                  <div className={classes.editButton}>
-                    <ActionButton
-                      color="primary"
-                      Icon={EditIcon}
-                      InverseIcon={EditReversedIcon}
-                      onClick={() => setEditing(true)}>
-                      {`Edit`}
-                    </ActionButton>
-                  </div>
-                )}
-                {editing && (
-                  <div className={classes.editingButtons}>
-                    {data && (
-                      <div className={classes.button}>
+                </div>
+                <div className={classes.edit}>
+                  {!editing && (
+                    <div className={classes.editButton}>
+                      <div className={classes.deleteButton}>
                         <ActionButton
-                          color="secondary"
-                          Icon={SaveIcon}
-                          InverseIcon={SaveReversedIcon}
-                          type="submit">
-                          Save
+                          color="primary"
+                          type="button"
+                          Icon={DeleteIcon}
+                          InverseIcon={DeleteReversedIcon}
+                          onClick={() => deleteEditedData()}>
+                          {`Delete`}
                         </ActionButton>
                       </div>
-                    )}
-                    <div className={classes.button}>
+
                       <ActionButton
-                        color="secondary"
-                        Icon={CancelIcon}
-                        InverseIcon={CancelReversedIcon}
-                        type="reset">
-                        Cancel
+                        color="primary"
+                        Icon={EditIcon}
+                        InverseIcon={EditReversedIcon}
+                        onClick={() => setEditing(true)}>
+                        {`Edit`}
                       </ActionButton>
                     </div>
-                    {authorized.label !== 'Accepted' && (
-                      <div className={classes.button}>
-                        <ActionButton
-                          color="secondary"
-                          Icon={AuthorizeIcon}
-                          InverseIcon={AuthorizeReversedIcon}
-                          type="submit"
-                          onClick={() => authorize()}>
-                          {'Authorize'}
-                        </ActionButton>
+                  )}
+                  {editing && (
+                    <div className={classes.editingWrapper}>
+                      <div className={classes.replace}>
+                        {hasImage && (
+                          <ActionButton
+                            color="secondary"
+                            type="button"
+                            Icon={ReplaceIcon}
+                            InverseIcon={ReplaceReversedIcon}
+                            onClick={() => triggerInput()}>
+                            {
+                              <div>
+                                <input
+                                  type="file"
+                                  alt=""
+                                  className={classes.input}
+                                  ref={fileInput => setInput(fileInput)}
+                                  onChange={event => {
+                                    // need to store it locally if we want to display it even after saving to db
+
+                                    const file = R.head(event.target.files)
+
+                                    reader.onloadend = () => {
+                                      // use a regex to remove data url part
+                                      setFieldValue(
+                                        R.head(fields).name,
+                                        reader.result
+                                          .replace('data:', '')
+                                          .replace(/^.+,/, '')
+                                      )
+                                    }
+                                    reader.readAsDataURL(file)
+                                    event.target.value = null
+                                  }}
+                                />
+                                Replace
+                              </div>
+                            }
+                          </ActionButton>
+                        )}
                       </div>
-                    )}
-                    {authorized.label !== 'Rejected' && (
-                      <ActionButton
-                        color="secondary"
-                        Icon={CancelIcon}
-                        InverseIcon={CancelReversedIcon}
-                        type="submit"
-                        onClick={() => reject()}>
-                        {'Reject'}
-                      </ActionButton>
-                    )}
-                    {error && (
-                      <ErrorMessage>Failed to save changes</ErrorMessage>
-                    )}
-                  </div>
-                )}
-              </div>
-            </Form>
+                      <div className={classes.editingButtons}>
+                        {fields && (
+                          <div className={classes.button}>
+                            <ActionButton
+                              color="secondary"
+                              Icon={SaveIcon}
+                              InverseIcon={SaveReversedIcon}
+                              type="submit">
+                              Save
+                            </ActionButton>
+                          </div>
+                        )}
+                        <div className={classes.button}>
+                          <ActionButton
+                            color="secondary"
+                            Icon={CancelIcon}
+                            InverseIcon={CancelReversedIcon}
+                            type="reset">
+                            Cancel
+                          </ActionButton>
+                        </div>
+                        {authorized.label !== 'Accepted' && (
+                          <div className={classes.button}>
+                            <ActionButton
+                              color="spring"
+                              type="button"
+                              Icon={AuthorizeIcon}
+                              InverseIcon={AuthorizeIcon}
+                              onClick={() => authorize()}>
+                              Authorize
+                            </ActionButton>
+                          </div>
+                        )}
+                        {authorized.label !== 'Rejected' && (
+                          <ActionButton
+                            color="tomato"
+                            type="button"
+                            Icon={BlockIcon}
+                            InverseIcon={BlockIcon}
+                            onClick={() => reject()}>
+                            Reject
+                          </ActionButton>
+                        )}
+                        {error && (
+                          <ErrorMessage>Failed to save changes</ErrorMessage>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Form>
+            )}
           </Formik>
         </CardContent>
       </Card>

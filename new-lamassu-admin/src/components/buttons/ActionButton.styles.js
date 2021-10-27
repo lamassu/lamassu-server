@@ -5,7 +5,12 @@ import {
   subheaderColor,
   subheaderDarkColor,
   offColor,
-  offDarkColor
+  offDarkColor,
+  secondaryColor,
+  secondaryColorDark,
+  secondaryColorDarker,
+  errorColor,
+  errorColorDarker
 } from 'src/styling/variables'
 
 const { p } = typographyStyles
@@ -54,6 +59,42 @@ export default {
     color: white,
     '&:active': {
       color: fontColor,
+      '& $actionButtonIcon': {
+        display: 'flex'
+      },
+      '& $actionButtonIconActive': {
+        display: 'none'
+      }
+    },
+    '& $actionButtonIcon': {
+      display: 'none'
+    },
+    '& $actionButtonIconActive': {
+      display: 'flex'
+    }
+  },
+  spring: {
+    extend: colors(secondaryColor, secondaryColorDark, secondaryColorDarker),
+    color: white,
+    '&:active': {
+      '& $actionButtonIcon': {
+        display: 'flex'
+      },
+      '& $actionButtonIconActive': {
+        display: 'none'
+      }
+    },
+    '& $actionButtonIcon': {
+      display: 'none'
+    },
+    '& $actionButtonIconActive': {
+      display: 'flex'
+    }
+  },
+  tomato: {
+    extend: colors(errorColor, errorColorDarker, errorColor),
+    color: white,
+    '&:active': {
       '& $actionButtonIcon': {
         display: 'flex'
       },

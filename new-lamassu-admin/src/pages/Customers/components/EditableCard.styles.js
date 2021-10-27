@@ -20,6 +20,20 @@ export default {
     display: 'flex',
     justifyContent: 'right'
   },
+  deleteButton: {
+    marginRight: 8
+  },
+  editingWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  replace: {
+    marginTop: 30
+  },
+  input: {
+    display: 'none'
+  },
   button: {
     marginRight: 8
   },

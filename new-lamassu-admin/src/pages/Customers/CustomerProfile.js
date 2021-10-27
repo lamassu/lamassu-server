@@ -116,6 +116,29 @@ const SET_CUSTOMER = gql`
     }
   }
 `
+const EDIT_CUSTOMER = gql`
+  mutation editCustomer($customerId: ID!, $customerEdit: CustomerEdit) {
+    editCustomer(customerId: $customerId, customerEdit: $customerEdit) {
+      id
+      frontCamera
+      idCardData
+      idCardPhoto
+      usSsn
+    }
+  }
+`
+
+const DELETE_EDITED_CUSTOMER = gql`
+  mutation deleteEditedData($customerId: ID!, $customerEdit: CustomerEdit) {
+    deleteEditedData(customerId: $customerId, customerEdit: $customerEdit) {
+      id
+      frontCamera
+      idCardData
+      idCardPhoto
+      usSsn
+    }
+  }
+`
 
 const CustomerProfile = memo(() => {
   const history = useHistory()
@@ -133,6 +156,14 @@ const CustomerProfile = memo(() => {
     }
   )
 
+  const [editCustomerData] = useMutation(EDIT_CUSTOMER, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [deleteCustomerEditedData] = useMutation(DELETE_EDITED_CUSTOMER, {
+    onCompleted: () => getCustomer()
+  })
+
   const [setCustomer] = useMutation(SET_CUSTOMER, {
     onCompleted: () => getCustomer()
   })
@@ -142,6 +173,22 @@ const CustomerProfile = memo(() => {
       variables: {
         customerId,
         customerInput: it
+      }
+    })
+
+  const editCustomer = it =>
+    editCustomerData({
+      variables: {
+        customerId,
+        customerEdit: it
+      }
+    })
+
+  const deleteEditedData = it =>
+    deleteCustomerEditedData({
+      variables: {
+        customerId,
+        customerEdit: it
       }
     })
 
@@ -295,7 +342,9 @@ const CustomerProfile = memo(() => {
             <div>
               <CustomerData
                 customer={customerData}
-                updateCustomer={updateCustomer}></CustomerData>
+                updateCustomer={updateCustomer}
+                editCustomer={editCustomer}
+                deleteEditedData={deleteEditedData}></CustomerData>
             </div>
           )}
         </div>
