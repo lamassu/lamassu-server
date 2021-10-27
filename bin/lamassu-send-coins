@@ -10,7 +10,7 @@ const ticker = require('../lib/ticker')
 
 const [toAddress, cryptoValue, cryptoCode] = process.argv.slice(2)
 
-function computeCrypto (cryptoCode, value) {
+function computeCrypto(cryptoCode, value) {
   try {
     const cryptoRec = coinUtils.getCryptoCurrency(cryptoCode)
     const unitScale = cryptoRec.unitScale
@@ -80,7 +80,12 @@ settingsLoader.loadLatest()
                 console.log('Success.')
                 process.exit(0)
               })
-              .catch(console.log)
+              .catch(e => {
+                if (e.name === 'InsufficientFundsError')
+                  console.log(e.message)
+                else
+                  console.log(e)
+              })
           })
           .catch(console.log)
       })
