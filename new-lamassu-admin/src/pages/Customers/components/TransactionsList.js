@@ -114,7 +114,7 @@ const TransactionsList = ({ customer, data, loading }) => {
     {
       header: 'Time (h:m:s)',
       width: 134,
-      view: it => moment.utc(it.created).format('hh:mm:ss')
+      view: it => moment.utc(it.created).format('HH:mm:ss')
     }
   ]
 
