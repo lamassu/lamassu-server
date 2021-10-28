@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
