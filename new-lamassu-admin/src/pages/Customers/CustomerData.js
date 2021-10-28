@@ -31,23 +31,23 @@ import { getName } from './helper.js'
 
 const useStyles = makeStyles(styles)
 
-const imageWidth = 165
-const imageHeight = 45
-const popupImageWidth = 360
-const popupImageHeight = 240
+const IMAGE_WIDTH = 165
+const IMAGE_HEIGHT = 45
+const POPUP_IMAGE_WIDTH = 360
+const POPUP_IMAGE_HEIGHT = 240
 
 const Photo = ({ show, src }) => {
-  const classes = useStyles({ width: imageWidth })
+  const classes = useStyles({ width: IMAGE_WIDTH })
 
   return (
     <>
       {show ? (
         <ImagePopper
           src={src}
-          width={imageWidth}
-          height={imageHeight}
-          popupWidth={popupImageWidth}
-          popupHeight={popupImageHeight}
+          width={IMAGE_WIDTH}
+          height={IMAGE_HEIGHT}
+          popupWidth={POPUP_IMAGE_WIDTH}
+          popupHeight={POPUP_IMAGE_HEIGHT}
         />
       ) : (
         <div className={classes.photoWrapper}>

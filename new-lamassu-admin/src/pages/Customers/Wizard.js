@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
-import { Form, Formik, useFormikContext } from 'formik'
+import { Form, Formik } from 'formik'
 import * as R from 'ramda'
-import React, { useState, Fragment, useEffect } from 'react'
+import React, { useState, Fragment } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
@@ -57,29 +57,17 @@ const getStep = (step, selectedValues) => {
   }
 }
 
-const GetValues = ({ setValues }) => {
-  const { values } = useFormikContext()
-
-  useEffect(() => {
-    setValues && values && setValues(values)
-  }, [setValues, values])
-
-  return null
-}
-
 const Wizard = ({ onClose, save, error }) => {
   const classes = useStyles()
 
   const [selectedValues, setSelectedValues] = useState(null)
-  const [liveValues, setLiveValues] = useState({})
 
   const [{ step, config }, setState] = useState({
     step: 1
   })
 
-  // TODO forms error handling
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step, selectedValues, liveValues)
+  const stepOptions = getStep(step, selectedValues)
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
@@ -116,7 +104,6 @@ const Wizard = ({ onClose, save, error }) => {
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
           <Form className={classes.form}>
-            <GetValues setValues={setLiveValues} />
             <stepOptions.Component
               selectedValues={selectedValues}
               {...stepOptions.props}
