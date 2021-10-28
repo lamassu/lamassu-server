@@ -11,8 +11,8 @@ const colors = {
   }
 }
 
-const colorPicker = ({ percent, cashOut }) =>
-  colors[cashOut ? 'cashOut' : 'cashIn'][percent >= 50 ? 'full' : 'empty']
+const colorPicker = ({ cashOut, isLow }) =>
+  colors[cashOut ? 'cashOut' : 'cashIn'][isLow ? 'empty' : 'full']
 
 const cashboxStyles = {
   cashbox: {

@@ -122,6 +122,8 @@ const CashCassettes = () => {
   )
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
+  const fiatBalanceSettings =
+    data?.config && fromNamespace('notifications', data.config)
   const fiatCurrency = locale?.fiatCurrency
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines)
@@ -170,6 +172,7 @@ const CashCassettes = () => {
   R.until(
     R.gt(R.__, maxNumberOfCassettes),
     it => {
+      const threshold = fiatBalanceSettings[`fiatBalanceCassette${it}`]
       elements.push({
         name: `cassette${it}`,
         header: `Cassette ${it}`,
@@ -183,6 +186,7 @@ const CashCassettes = () => {
             currency={{ code: fiatCurrency }}
             notes={value}
             width={50}
+            threshold={threshold}
           />
         ),
         isHidden: ({ numberOfCassettes }) => it > numberOfCassettes,
@@ -190,7 +194,8 @@ const CashCassettes = () => {
         inputProps: {
           decimalPlaces: 0,
           width: 50,
-          inputClassName: classes.cashbox
+          inputClassName: classes.cashbox,
+          threshold: threshold
         }
       })
       return R.add(1, it)

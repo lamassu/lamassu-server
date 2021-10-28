@@ -19,20 +19,24 @@ const Cashbox = ({
   width,
   className,
   emptyPartClassName,
-  labelClassName
+  labelClassName,
+  isLow
 }) => {
-  const classes = cashboxClasses({ percent, cashOut, width })
-  const threshold = 51
+  // `isLow` is true/false according to the notification settings. `ltHalf`
+  // is only used to decide if the percentage text goes below or above the
+  // middle.
+  const classes = cashboxClasses({ percent, cashOut, width, isLow })
+  const ltHalf = percent <= 51
 
   return (
     <div className={classnames(className, classes.cashbox)}>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
-        {percent <= threshold && (
+        {ltHalf && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
       <div className={classes.fullPart}>
-        {percent > threshold && (
+        {!ltHalf && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
@@ -109,8 +113,10 @@ const CashOut = ({
   notes,
   className,
   editingMode = false,
-  width
+  width,
+  threshold
 }) => {
+  const isLow = notes < threshold
   const percent = (100 * notes) / capacity
   const classes = gridClasses()
   return (
@@ -122,6 +128,7 @@ const CashOut = ({
             width={width}
             percent={percent}
             cashOut
+            isLow={isLow}
           />
         </div>
         {!editingMode && (
