@@ -21,10 +21,11 @@ const Cashbox = ({
   labelClassName,
   applyColorVariant,
   applyFiatBalanceAlertsStyling,
-  omitInnerPercentage
+  omitInnerPercentage,
+  isLow
 }) => {
-  const classes = cashboxClasses({ percent, cashOut, applyColorVariant })
-  const threshold = 51
+  const classes = cashboxClasses({ percent, cashOut, applyColorVariant, isLow })
+  const ltHalf = percent <= 51
 
   const showCashBox = {
     [classes.fiatBalanceAlertCashbox]: applyFiatBalanceAlertsStyling,
@@ -34,12 +35,12 @@ const Cashbox = ({
   return (
     <div className={classnames(className, showCashBox)}>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
-        {!omitInnerPercentage && percent <= threshold && (
+        {!omitInnerPercentage && ltHalf && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
       <div className={classes.fullPart}>
-        {!omitInnerPercentage && percent > threshold && (
+        {!omitInnerPercentage && !ltHalf && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
@@ -115,15 +116,22 @@ const CashOut = ({
   currency,
   notes,
   className,
-  editingMode = false
+  editingMode = false,
+  threshold
 }) => {
   const percent = (100 * notes) / capacity
+  const isLow = percent < threshold
   const classes = gridClasses()
   return (
     <>
       <div className={classes.row}>
         <div className={classes.col}>
-          <Cashbox className={className} percent={percent} cashOut />
+          <Cashbox
+            className={className}
+            percent={percent}
+            cashOut
+            isLow={isLow}
+          />
         </div>
         {!editingMode && (
           <div className={classes.col2}>

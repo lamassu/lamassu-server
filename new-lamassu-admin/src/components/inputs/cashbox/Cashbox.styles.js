@@ -11,10 +11,9 @@ const colors = {
   }
 }
 
-const colorPicker = ({ percent, cashOut, applyColorVariant }) => {
-  if (applyColorVariant) return colors[cashOut ? 'cashOut' : 'cashIn'].full
+const colorPicker = ({ cashOut, applyColorVariant, isLow }) => {
   return colors[cashOut ? 'cashOut' : 'cashIn'][
-    percent >= 50 ? 'full' : 'empty'
+    applyColorVariant || !isLow ? 'full' : 'empty'
   ]
 }
 
