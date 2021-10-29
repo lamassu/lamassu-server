@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
@@ -123,13 +123,19 @@ const Transactions = () => {
     GET_TRANSACTION_FILTERS
   )
   const [variables, setVariables] = useState({ limit: NUM_LOG_RESULTS })
-  const { data: txData, loading: loadingTransactions, refetch } = useQuery(
-    GET_TRANSACTIONS,
-    {
-      variables,
-      pollInterval: 10000
-    }
-  )
+  const {
+    data: txData,
+    loading: loadingTransactions,
+    refetch,
+    startPolling,
+    stopPolling
+  } = useQuery(GET_TRANSACTIONS, { variables })
+
+  useEffect(() => {
+    startPolling(10000)
+    return stopPolling
+  })
+
   const txList = txData ? txData.transactions : []
 
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
