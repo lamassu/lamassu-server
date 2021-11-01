@@ -73,7 +73,7 @@ const fieldStyles = {
 
 const fieldUseStyles = makeStyles(fieldStyles)
 
-const EditableField = ({ editing, field, size, ...props }) => {
+const EditableField = ({ editing, field, value, size, ...props }) => {
   const classes = fieldUseStyles()
   console.log('FIELDDDDDDDD', field)
   const classNames = {
@@ -86,7 +86,7 @@ const EditableField = ({ editing, field, size, ...props }) => {
       {!editing && (
         <>
           <Label1 className={classes.label}>{field.label}</Label1>
-          <Info3>{field.value}</Info3>
+          <Info3>{value}</Info3>
         </>
       )}
       {editing && (
@@ -96,7 +96,6 @@ const EditableField = ({ editing, field, size, ...props }) => {
             className={classes.editing}
             id={field.name}
             name={field.name}
-            value={field.value}
             component={field.component}
             type={field.type}
             width={size}
@@ -143,8 +142,6 @@ const EditableCard = ({
       ? { label: 'Rejected', type: 'error' }
       : { label: 'Accepted', type: 'success' }
 
-  const reader = new FileReader()
-
   return (
     <div>
       <Card className={classes.card}>
@@ -166,7 +163,10 @@ const EditableCard = ({
             enableReinitialize
             validationSchema={validationSchema}
             initialValues={initialValues}
-            onSubmit={values => save(values)}
+            onSubmit={values => {
+              save(values)
+              setEditing(false)
+            }}
             onReset={() => {
               setEditing(false)
               setError(false)
@@ -183,6 +183,7 @@ const EditableCard = ({
                           return idx >= 0 && idx < 4 ? (
                             <EditableField
                               field={field}
+                              value={initialValues[field.name]}
                               editing={editing}
                               size={180}
                             />
@@ -195,6 +196,7 @@ const EditableCard = ({
                           return idx >= 4 ? (
                             <EditableField
                               field={field}
+                              value={initialValues[field.name]}
                               editing={editing}
                               size={180}
                             />
@@ -245,20 +247,9 @@ const EditableCard = ({
                                   ref={fileInput => setInput(fileInput)}
                                   onChange={event => {
                                     // need to store it locally if we want to display it even after saving to db
-
                                     const file = R.head(event.target.files)
-
-                                    reader.onloadend = () => {
-                                      // use a regex to remove data url part
-                                      setFieldValue(
-                                        R.head(fields).name,
-                                        reader.result
-                                          .replace('data:', '')
-                                          .replace(/^.+,/, '')
-                                      )
-                                    }
-                                    reader.readAsDataURL(file)
-                                    event.target.value = null
+                                    if (!file) return
+                                    setFieldValue(R.head(fields).name, file)
                                   }}
                                 />
                                 Replace

@@ -3,7 +3,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
 import { onError } from 'apollo-link-error'
-import { HttpLink } from 'apollo-link-http'
+import { createUploadLink } from 'apollo-upload-client'
 import React, { useContext } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -14,6 +14,16 @@ const URI =
 
 const ALT_URI =
   process.env.NODE_ENV === 'development' ? 'http://localhost:4001' : ''
+
+const uploadLink = createUploadLink({
+  credentials: 'include',
+  uri: `${URI}/graphql`
+})
+
+const uploadLinkALT = createUploadLink({
+  credentials: 'include',
+  uri: `${ALT_URI}/graphql`
+})
 
 const getClient = (history, location, getUserData, setUserData, setRole) =>
   new ApolloClient({
@@ -48,14 +58,8 @@ const getClient = (history, location, getUserData, setUserData, setRole) =>
       }),
       ApolloLink.split(
         operation => operation.getContext().clientName === 'pazuz',
-        new HttpLink({
-          credentials: 'include',
-          uri: `${ALT_URI}/graphql`
-        }),
-        new HttpLink({
-          credentials: 'include',
-          uri: `${URI}/graphql`
-        })
+        uploadLink,
+        uploadLinkALT
       )
     ]),
     cache: new InMemoryCache(),

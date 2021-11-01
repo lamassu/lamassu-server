@@ -117,57 +117,36 @@ const CustomerData = ({
     {
       name: 'name',
       label: 'Name',
-      value: `${getName(customer)}`,
       component: TextInput
     },
     {
       name: 'idNumber',
       label: 'ID number',
-      value: R.path(['documentNumber'])(idData) ?? '',
       component: TextInput
     },
     {
       name: 'birthDate',
       label: 'Birth Date',
-      value:
-        (rawDob &&
-          format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDob))) ??
-        '',
       component: TextInput
     },
     {
       name: 'age',
       label: 'Age',
-      value:
-        (rawDob &&
-          differenceInYears(
-            parse(new Date(), 'yyyyMMdd', rawDob),
-            new Date()
-          )) ??
-        '',
       component: TextInput
     },
     {
       name: 'gender',
       label: 'Gender',
-      value: R.path(['gender'])(idData) ?? '',
       component: TextInput
     },
     {
       name: 'state',
       label: country === 'Canada' ? 'Province' : 'State',
-      value: R.path(['state'])(idData) ?? '',
       component: TextInput
     },
     {
       name: 'expirationDate',
       label: 'Expiration Date',
-      value:
-        (rawExpirationDate &&
-          format('yyyy-MM-dd')(
-            parse(new Date(), 'yyyyMMdd', rawExpirationDate)
-          )) ??
-        '',
       component: TextInput
     }
   ]
@@ -176,7 +155,6 @@ const CustomerData = ({
     {
       name: 'usSsn',
       label: 'US SSN',
-      value: `${customer.usSsn ?? ''}`,
       component: TextInput,
       size: 190
     }
@@ -187,16 +165,17 @@ const CustomerData = ({
 
   const initialValues = {
     idScan: {
-      name: '',
-      idNumber: '',
-      birthDate: '',
-      age: '',
-      gender: '',
-      state: '',
-      expirationDate: ''
+      name: getName(customer) ?? '',
+      idNumber: R.path(['documentNumber'])(idData) ?? '',
+      birthDate: (rawDob && format('yyyy-MM-dd', rawDob)) ?? '',
+      age: (rawDob && differenceInYears(rawDob, new Date())) ?? '',
+      gender: R.path(['gender'])(idData) ?? '',
+      state: R.path(['state'])(idData) ?? '',
+      expirationDate:
+        (rawExpirationDate && format('yyyy-MM-dd', rawExpirationDate)) ?? ''
     },
     usSsn: {
-      usSsn: ''
+      usSsn: customer.usSsn ?? ''
     },
     frontCamera: {
       frontCamera: null
