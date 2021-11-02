@@ -80,15 +80,10 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       type: 'cassette 1',
       schema: Yup.object().shape({
         cassette1Count: Yup.number()
-          .required('Bill count is a required.')
-          .min(
-            0,
-            ({ min }) => `Bill count must be greater than or equal to ${min}.`
-          )
-          .max(
-            CASHBOX_DEFAULT_CAPACITY,
-            ({ max }) => `Bill count must be less than or equal to ${max}.`
-          )
+          .label('Bill count')
+          .required()
+          .min(0)
+          .max(CASHBOX_DEFAULT_CAPACITY)
       }),
       cashoutRequired: true
     },
@@ -96,15 +91,10 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       type: 'cassette 2',
       schema: Yup.object().shape({
         cassette2Count: Yup.number()
-          .required('Bill count is a required.')
-          .min(
-            0,
-            ({ min }) => `Bill count must be greater than or equal to ${min}.`
-          )
-          .max(
-            CASHBOX_DEFAULT_CAPACITY,
-            ({ max }) => `Bill count must be less than or equal to ${max}.`
-          )
+          .label('Bill count')
+          .required()
+          .min(0)
+          .max(CASHBOX_DEFAULT_CAPACITY)
       }),
       cashoutRequired: true
     }
