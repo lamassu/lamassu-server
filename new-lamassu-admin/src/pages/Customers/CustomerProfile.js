@@ -69,6 +69,7 @@ const GET_CUSTOMER = gql`
         cryptoAtoms
         cryptoCode
         created
+        machineName
         errorMessage: error
         error: errorCode
         txCustomerPhotoAt
