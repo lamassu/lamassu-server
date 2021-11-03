@@ -60,6 +60,7 @@ const Photo = ({ show, src }) => {
 const CustomerData = ({
   customer,
   updateCustomer,
+  replacePhoto,
   editCustomer,
   deleteEditedData
 }) => {
@@ -230,7 +231,11 @@ const CustomerData = ({
       authorize: () =>
         updateCustomer({ frontCameraOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ frontCameraOverride: OVERRIDE_REJECTED }),
-      save: values => editCustomer({ frontCamera: values.frontCamera }),
+      save: values =>
+        replacePhoto({
+          newPhoto: values.frontCamera,
+          photoType: 'frontCamera'
+        }),
       deleteEditedData: () => deleteEditedData({ frontCamera: null }),
       children: customer.frontCameraPath ? (
         <Photo
@@ -252,7 +257,11 @@ const CustomerData = ({
       authorize: () =>
         updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ idCardPhotoOverride: OVERRIDE_REJECTED }),
-      save: values => editCustomer({ idCardPhoto: values.idCardPhoto }),
+      save: values =>
+        replacePhoto({
+          newPhoto: values.idCardPhoto,
+          photoType: 'idCardPhoto'
+        }),
       deleteEditedData: () => deleteEditedData({ idCardPhoto: null }),
       children: customer.idCardPhotoPath ? (
         <Photo

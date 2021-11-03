@@ -120,10 +120,26 @@ const EDIT_CUSTOMER = gql`
   mutation editCustomer($customerId: ID!, $customerEdit: CustomerEdit) {
     editCustomer(customerId: $customerId, customerEdit: $customerEdit) {
       id
-      frontCamera
       idCardData
-      idCardPhoto
       usSsn
+    }
+  }
+`
+
+const REPLACE_CUSTOMER_PHOTO = gql`
+  mutation replacePhoto(
+    $customerId: ID!
+    $photoType: String
+    $newPhoto: Upload
+  ) {
+    replacePhoto(
+      customerId: $customerId
+      photoType: $photoType
+      newPhoto: $newPhoto
+    ) {
+      id
+      newPhoto
+      photoType
     }
   }
 `
@@ -156,6 +172,10 @@ const CustomerProfile = memo(() => {
     }
   )
 
+  const [replaceCustomerPhoto] = useMutation(REPLACE_CUSTOMER_PHOTO, {
+    onCompleted: () => getCustomer()
+  })
+
   const [editCustomerData] = useMutation(EDIT_CUSTOMER, {
     onCompleted: () => getCustomer()
   })
@@ -173,6 +193,15 @@ const CustomerProfile = memo(() => {
       variables: {
         customerId,
         customerInput: it
+      }
+    })
+
+  const replacePhoto = it =>
+    replaceCustomerPhoto({
+      variables: {
+        customerId,
+        newPhoto: it.newPhoto,
+        photoType: it.photoType
       }
     })
 
@@ -343,6 +372,7 @@ const CustomerProfile = memo(() => {
               <CustomerData
                 customer={customerData}
                 updateCustomer={updateCustomer}
+                replacePhoto={replacePhoto}
                 editCustomer={editCustomer}
                 deleteEditedData={deleteEditedData}></CustomerData>
             </div>

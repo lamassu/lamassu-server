@@ -243,6 +243,7 @@ const EditableCard = ({
                                 <input
                                   type="file"
                                   alt=""
+                                  accept="image/*"
                                   className={classes.input}
                                   ref={fileInput => setInput(fileInput)}
                                   onChange={event => {
