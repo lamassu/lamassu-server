@@ -63,11 +63,10 @@ const SET_CASSETTE_BILLS = gql`
 `
 
 const CashCassettes = ({ machine, config, refetchData }) => {
-  const data = { machine, config }
   const classes = useStyles()
 
-  const cashout = data?.config && fromNamespace('cashOut')(data.config)
-  const locale = data?.config && fromNamespace('locale')(data.config)
+  const cashout = config && fromNamespace('cashOut')(config)
+  const locale = config && fromNamespace('locale')(config)
   const fiatCurrency = locale?.fiatCurrency
 
   const getCashoutSettings = deviceId => fromNamespace(deviceId)(cashout)
