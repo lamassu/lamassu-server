@@ -61,6 +61,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
 
   const cashout = fromNamespace('cashOut')(config)
   const locale = fromNamespace('locale')(config)
+  const fillingPercentageSettings = fromNamespace('notifications', config)
   const fiatCurrency = locale?.fiatCurrency
 
   const getCashoutSettings = deviceId => fromNamespace(deviceId)(cashout)
@@ -92,6 +93,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
           denomination={getCashoutSettings(deviceId)?.top}
           currency={{ code: fiatCurrency }}
           notes={value}
+          threshold={fillingPercentageSettings.fillingPercentageCassette1}
         />
       ),
       input: NumberInput,
@@ -111,6 +113,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
             denomination={getCashoutSettings(deviceId)?.bottom}
             currency={{ code: fiatCurrency }}
             notes={value}
+            threshold={fillingPercentageSettings.fillingPercentageCassette2}
           />
         )
       },
