@@ -67,6 +67,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
 
   const cashout = config && fromNamespace('cashOut')(config)
   const locale = config && fromNamespace('locale')(config)
+  const fiatBalanceSettings = config && fromNamespace('notifications', config)
   const fiatCurrency = locale?.fiatCurrency
 
   const getCashoutSettings = deviceId => fromNamespace(deviceId)(cashout)
@@ -98,6 +99,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
           denomination={getCashoutSettings(deviceId)?.cassette1}
           currency={{ code: fiatCurrency }}
           notes={value}
+          threshold={fiatBalanceSettings.fiatBalanceCassette1}
         />
       ),
       input: NumberInput,
@@ -117,6 +119,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
             denomination={getCashoutSettings(deviceId)?.cassette2}
             currency={{ code: fiatCurrency }}
             notes={value}
+            threshold={fiatBalanceSettings.fiatBalanceCassette2}
           />
         )
       },
@@ -137,6 +140,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
             denomination={getCashoutSettings(deviceId)?.cassette2}
             currency={{ code: fiatCurrency }}
             notes={value}
+            threshold={fiatBalanceSettings.fiatBalanceCassette3}
           />
         )
       },
@@ -157,6 +161,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
             denomination={getCashoutSettings(deviceId)?.cassette2}
             currency={{ code: fiatCurrency }}
             notes={value}
+            threshold={fiatBalanceSettings.fiatBalanceCassette4}
           />
         )
       },
