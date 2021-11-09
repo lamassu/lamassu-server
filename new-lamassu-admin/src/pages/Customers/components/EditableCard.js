@@ -75,7 +75,6 @@ const fieldUseStyles = makeStyles(fieldStyles)
 
 const EditableField = ({ editing, field, value, size, ...props }) => {
   const classes = fieldUseStyles()
-  console.log('FIELDDDDDDDD', field)
   const classNames = {
     [classes.field]: true,
     [classes.notEditing]: !editing
@@ -174,7 +173,6 @@ const EditableCard = ({
             {({ values, touched, errors, setFieldValue }) => (
               <Form>
                 <PromptWhenDirty />
-                {console.log(values, touched, errors, 'FORMIK STATUS')}
                 <div className={classes.row}>
                   <Grid container>
                     <Grid container direction="column" item xs={6}>

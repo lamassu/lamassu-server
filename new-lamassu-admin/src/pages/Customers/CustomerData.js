@@ -85,13 +85,7 @@ const CustomerData = ({
 
   const isEven = elem => elem % 2 === 0
 
-  const getVisibleCards = _.filter(
-    elem =>
-      !_.isEmpty(elem.fields) ||
-      (!_.isNil(elem.children) && !_.isNil(elem.state))
-  )
-
-  const getAvailableFields = _.filter(({ value }) => value !== '')
+  const getVisibleCards = _.filter(elem => elem.isAvailable)
 
   const schemas = {
     idScan: Yup.object().shape({
@@ -188,7 +182,7 @@ const CustomerData = ({
 
   const cards = [
     {
-      fields: getAvailableFields(idScanElements),
+      fields: idScanElements,
       title: 'ID Scan',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
       state: R.path(['idCardDataOverride'])(customer),
@@ -198,21 +192,24 @@ const CustomerData = ({
       deleteEditedData: () => deleteEditedData({ idCardData: null }),
       save: values => editCustomer({ idCardData: values }),
       validationSchema: schemas.idScan,
-      initialValues: initialValues.idScan
+      initialValues: initialValues.idScan,
+      isAvailable: !_.isNil(idData)
     },
     {
       title: 'SMS Confirmation',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       authorize: () => {},
       reject: () => {},
-      save: () => {}
+      save: () => {},
+      isAvailable: false
     },
     {
       title: 'Name',
       titleIcon: <EditIcon className={classes.editIcon} />,
       authorize: () => {},
       reject: () => {},
-      save: () => {}
+      save: () => {},
+      isAvailable: false
     },
     {
       title: 'Sanctions check',
@@ -221,10 +218,11 @@ const CustomerData = ({
       authorize: () =>
         updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED }),
-      children: <Info3>{sanctionsDisplay}</Info3>
+      children: <Info3>{sanctionsDisplay}</Info3>,
+      isAvailable: !_.isNil(sanctions)
     },
     {
-      fields: getAvailableFields(frontCameraElements),
+      fields: frontCameraElements,
       title: 'Front facing camera',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['frontCameraOverride'])(customer),
@@ -247,10 +245,11 @@ const CustomerData = ({
       ) : null,
       hasImage: true,
       validationSchema: schemas.frontCamera,
-      initialValues: initialValues.frontCamera
+      initialValues: initialValues.frontCamera,
+      isAvailable: !_.isNil(customer.frontCameraPath)
     },
     {
-      fields: getAvailableFields(idCardPhotoElements),
+      fields: idCardPhotoElements,
       title: 'ID card image',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['idCardPhotoOverride'])(customer),
@@ -271,10 +270,11 @@ const CustomerData = ({
       ) : null,
       hasImage: true,
       validationSchema: schemas.idCardPhoto,
-      initialValues: initialValues.idCardPhoto
+      initialValues: initialValues.idCardPhoto,
+      isAvailable: !_.isNil(customer.idCardPhotoPath)
     },
     {
-      fields: getAvailableFields(usSsnElements),
+      fields: usSsnElements,
       title: 'US SSN',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['usSsnOverride'])(customer),
@@ -283,7 +283,8 @@ const CustomerData = ({
       save: values => editCustomer({ usSsn: values.usSsn }),
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
       validationSchema: schemas.usSsn,
-      initialValues: initialValues.usSsn
+      initialValues: initialValues.usSsn,
+      isAvailable: !_.isNil(customer.usSsn)
     }
   ]
 
