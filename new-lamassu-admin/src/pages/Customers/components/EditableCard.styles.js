@@ -29,13 +29,14 @@ export default {
     justifyContent: 'space-between'
   },
   replace: {
-    marginTop: 30
+    marginTop: 30,
+    marginRight: 5
   },
   input: {
     display: 'none'
   },
   button: {
-    marginRight: 8
+    marginRight: 5
   },
   editingButtons: {
     marginTop: 30,

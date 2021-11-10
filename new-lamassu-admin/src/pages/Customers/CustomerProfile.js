@@ -148,9 +148,9 @@ const DELETE_EDITED_CUSTOMER = gql`
   mutation deleteEditedData($customerId: ID!, $customerEdit: CustomerEdit) {
     deleteEditedData(customerId: $customerId, customerEdit: $customerEdit) {
       id
-      frontCamera
+      frontCameraPath
       idCardData
-      idCardPhoto
+      idCardPhotoPath
       usSsn
     }
   }
