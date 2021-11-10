@@ -1,7 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Grid } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
-// import base64 from 'base-64'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import * as R from 'ramda'

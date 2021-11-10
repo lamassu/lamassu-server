@@ -142,8 +142,6 @@ const Assets = () => {
 
   const operatorData = R.path(['operatorByUsername'], data)
 
-  console.log('operatorData', operatorData)
-
   const balanceData = [
     {
       id: 'fiatBalance',
