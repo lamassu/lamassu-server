@@ -162,6 +162,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
     },
     {
       name: 'zeroConfLimit',
+      header: '0-conf Limit',
       size: 'sm',
       stripe: true,
       view: (it, row) =>

@@ -46,6 +46,7 @@ const GET_INFO = gql`
     }
   }
 `
+const LOCALE = 'locale'
 
 const Wallet = ({ name: SCREEN_KEY }) => {
   const [editingSchema, setEditingSchema] = useState(null)
@@ -69,8 +70,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config, accounts } })
   }
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const fiatCurrency =
+    data?.config && fromNamespace(LOCALE)(data.config).fiatCurrency
 
+  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
@@ -135,6 +138,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
               save={save}
               error={error?.message}
               cryptoCurrencies={cryptoCurrencies}
+              fiatCurrency={fiatCurrency}
               userAccounts={data?.config?.accounts}
               accounts={accounts}
               accountsConfig={accountsConfig}

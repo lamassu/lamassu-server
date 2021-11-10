@@ -38,5 +38,15 @@ export default {
   },
   picker: {
     width: LABEL_WIDTH
+  },
+  horizontalAlign: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  centerAlignment: {
+    alignItems: 'center'
+  },
+  zeroConfLimit: {
+    margin: 10
   }
 }
