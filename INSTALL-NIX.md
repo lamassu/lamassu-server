@@ -38,7 +38,6 @@ bash tools/cert-gen.sh
 
 Notes: 
   - This will create a ``.lamassu`` directory in your home directory.
-  - The script uses the current openssl LTS version (1.0.2g) and will not work on v1.1.
   
 ## Set up database
 
@@ -48,33 +47,41 @@ Important: lamassu-migrate currently gripes about a QueryResultError. Ignore thi
 node bin/lamassu-migrate
 ```
 
-## Register admin user
-
-You'll use this generated URL in the brower in moment.
+## Run new-lamassu-admin
 
 ```
-node bin/lamassu-register admin
+cd new-lamassu-admin/
+npm install
+npm run start
 ```
 
 ## Run lamassu-admin-server
 
-In first terminal window:
+In a second terminal window:
 
 ```
 node bin/lamassu-admin-server --dev
 ```
 
+## Register admin user
+
+In a third terminal window:
+
+```
+node bin/lamassu-register admin@example.com superuser
+```
+
+You'll use this generated URL in the brower in a moment.
+
 ## Complete configuration
 
 Paste the URL from lamassu-register exactly as output, into a browser (chrome or firefox).
 
-**Important**: the host must be localhost. Tell your browser to trust the certificate even though it's not signed by a recognized CA.
+**Important**: the host must be localhost. Tell your browser to trust the certificate even though it's not signed by a recognized CA. If you get an "expired" error, try opening https://localhost:8070/graphql in another tab and trust the certificate.
 
 Go to all the required, unconfigured red fields and choose some values. Choose mock services whenever available.
 
 ## Run lamassu-server
-
-In second terminal window:
 
 ```
 node bin/lamassu-server --mockSms
