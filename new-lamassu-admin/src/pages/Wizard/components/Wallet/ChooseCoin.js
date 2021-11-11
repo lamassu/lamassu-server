@@ -38,7 +38,7 @@ const ChooseCoin = ({ addData }) => {
     if (!schema.isValidSync(it)) return setError(true)
 
     if (it.coin !== 'BTC') {
-      return addData({ coin: it.coin, zeroConf: 'all-zero-conf' })
+      return addData({ coin: it.coin, zeroConf: 'none', zeroConfLimit: 0 })
     }
 
     addData(it)
