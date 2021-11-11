@@ -38,12 +38,16 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const isLastStep = step === LAST_STEP
 
   const onContinue = it => {
-    const wasCashboxEmptied = it?.wasCashboxEmptied === 'YES'
-
-    const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
-
     const newConfig = R.merge(config, it)
+
     if (isLastStep) {
+      const wasCashboxEmptied = [
+        config?.wasCashboxEmptied,
+        it?.wasCashboxEmptied
+      ].includes('YES')
+
+      const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
+
       if (wasCashboxEmptied) {
         createBatch({
           variables: {
