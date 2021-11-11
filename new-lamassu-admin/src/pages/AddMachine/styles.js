@@ -5,7 +5,8 @@ import {
   primaryColor,
   mainWidth,
   spring2,
-  spring3
+  spring3,
+  errorColor
 } from 'src/styling/variables'
 
 const { tl2, p } = typographyStyles
@@ -122,6 +123,9 @@ const styles = {
     display: 'flex',
     flexDirection: 'col',
     alignItems: 'center'
+  },
+  errorMessage: {
+    color: errorColor
   }
 }
 

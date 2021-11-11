@@ -109,8 +109,13 @@ const initialValues = {
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
-    .required()
+    .required('Machine name is required.')
     .max(50)
+    .test(
+      'unique-name',
+      'Machine name is already in use.',
+      (value, context) => !context.options.context.machineNames.includes(value)
+    )
 })
 
 const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
@@ -125,6 +130,19 @@ const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
     onError: e => console.log(e)
   })
 
+  const { data } = useQuery(GET_MACHINES)
+  const machineNames = R.map(R.prop('name'), data?.machines || {})
+
+  const uniqueNameValidator = value => {
+    try {
+      validationSchema.validateSync(value, {
+        context: { machineNames: machineNames }
+      })
+    } catch (error) {
+      return error
+    }
+  }
+
   return (
     <>
       <Info2 className={classes.nameTitle}>
@@ -134,23 +152,26 @@ const MachineNameComponent = ({ nextStep, classes, setQrCode, setName }) => {
         validateOnBlur={false}
         validateOnChange={false}
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        validate={uniqueNameValidator}
         onSubmit={({ name }) => {
           setName(name)
           register({ variables: { name } })
         }}>
-        <Form className={classes.form}>
-          <div>
-            <FastField
-              name="name"
-              label="Enter machine name"
-              component={TextInput}
-            />
-          </div>
-          <div className={classes.button}>
-            <Button type="submit">Submit</Button>
-          </div>
-        </Form>
+        {({ errors }) => (
+          <Form className={classes.form}>
+            <div>
+              <FastField
+                name="name"
+                label="Enter machine name"
+                component={TextInput}
+              />
+            </div>
+            {errors && <P className={classes.errorMessage}>{errors.message}</P>}
+            <div className={classes.button}>
+              <Button type="submit">Submit</Button>
+            </div>
+          </Form>
+        )}
       </Formik>
     </>
   )
