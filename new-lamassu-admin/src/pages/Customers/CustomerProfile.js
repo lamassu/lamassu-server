@@ -35,6 +35,7 @@ const GET_CUSTOMER = gql`
       id
       authorizedOverride
       frontCameraPath
+      frontCameraAt
       frontCameraOverride
       phone
       isAnonymous
@@ -67,6 +68,8 @@ const GET_CUSTOMER = gql`
         created
         errorMessage: error
         error: errorCode
+        txCustomerPhotoAt
+        txCustomerPhotoPath
       }
     }
   }
@@ -168,6 +171,7 @@ const CustomerProfile = memo(() => {
           justifyContent="space-between">
           <CustomerDetails
             customer={customerData}
+            txData={sortedTransactions}
             locale={locale}
             setShowCompliance={() => setShowCompliance(!showCompliance)}
           />
