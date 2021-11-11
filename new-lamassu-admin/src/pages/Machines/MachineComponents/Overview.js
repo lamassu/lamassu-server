@@ -6,6 +6,7 @@ import React from 'react'
 import { Status } from 'src/components/Status'
 import MachineActions from 'src/components/machineActions/MachineActions'
 import { H3, Label3, P } from 'src/components/typography'
+import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard.js'
 
 import styles from '../Machines.styles'
 const useStyles = makeStyles(styles)
@@ -66,6 +67,16 @@ const Overview = ({ data, onActionSuccess }) => {
         <MachineActions
           machine={data}
           onActionSuccess={onActionSuccess}></MachineActions>
+      </div>
+      <div className={classes.row}>
+        <div className={classes.rowItem}>
+          <Label3 className={classes.label3}>Device ID</Label3>
+          <P>
+            <CopyToClipboard buttonClassname={classes.copyToClipboard}>
+              {data.deviceId}
+            </CopyToClipboard>
+          </P>
+        </div>
       </div>
     </>
   )
