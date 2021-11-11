@@ -104,8 +104,8 @@ const getTypeText = (config, currency, classes) => {
     case 'txVolume':
       return (
         <>
-          makes {orUnderline(config.threshold.threshold, classes)} {currency}{' '}
-          worth of transactions within{' '}
+          makes more than {orUnderline(config.threshold.threshold, classes)}{' '}
+          {currency} worth of transactions within{' '}
           {orUnderline(config.threshold.thresholdDays, classes)}{' '}
           {singularOrPlural(config.threshold.thresholdDays, 'day', 'days')}
         </>
@@ -113,7 +113,7 @@ const getTypeText = (config, currency, classes) => {
     case 'txVelocity':
       return (
         <>
-          makes {orUnderline(config.threshold.threshold, classes)}{' '}
+          makes more than {orUnderline(config.threshold.threshold, classes)}{' '}
           {singularOrPlural(
             config.threshold.threshold,
             'transaction',
