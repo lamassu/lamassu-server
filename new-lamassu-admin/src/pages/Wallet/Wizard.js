@@ -72,7 +72,6 @@ const Wizard = ({
       )
       const configToSave = {
         ...newConfig,
-        zeroConfLimit: 0,
         cryptoUnits: defaultCryptoUnit
       }
       return save(toNamespace(coin.code, configToSave), newAccounts)
@@ -95,7 +94,7 @@ const Wizard = ({
         return { type: 'exchange', ...exchanges }
       case 4:
         return {
-          type: 'confidenceChecking',
+          type: 'zeroConf',
           name: 'confidence checking',
           schema: Yup.object().shape({
             zeroConfLimit: Yup.number().required()

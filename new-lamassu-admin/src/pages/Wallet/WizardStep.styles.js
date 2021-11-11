@@ -1,4 +1,4 @@
-import { errorColor } from 'src/styling/variables'
+import { errorColor, fontSize1, fontPrimary } from 'src/styling/variables'
 
 const LABEL_WIDTH = 150
 
@@ -47,6 +47,14 @@ export default {
     alignItems: 'center'
   },
   zeroConfLimit: {
-    margin: 10
+    marginRight: 5,
+    '& > div': {
+      fontSize: fontSize1,
+      fontFamily: fontPrimary,
+      fontWeight: 300,
+      '& > input': {
+        padding: [[6, 0, 2]]
+      }
+    }
   }
 }
