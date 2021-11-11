@@ -51,6 +51,9 @@ const GET_OPERATOR_BY_USERNAME = gql`
   }
 `
 
+const formatCurrency = amount =>
+  amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
+
 const CHIPS_PER_ROW = 6
 
 const Assets = ({ balance, wallets, currency }) => {
@@ -66,7 +69,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Available balance</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {balance.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+            {formatCurrency(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -78,9 +81,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Total balance in wallets</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {walletFiatSum().toLocaleString('en-US', {
-              maximumFractionDigits: 2
-            })}
+            {formatCurrency(walletFiatSum())}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -92,7 +93,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Total assets</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {balance.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+            {formatCurrency(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
