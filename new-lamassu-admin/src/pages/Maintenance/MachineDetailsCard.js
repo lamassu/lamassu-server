@@ -1,6 +1,6 @@
 import { Grid /*, Divider */ } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-// import BigNumber from 'bignumber.js'
+import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React from 'react'
 
@@ -106,7 +106,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
               machine={machine}
               onActionSuccess={onActionSuccess}></MachineActions>
           </Item>
-          {/* <Item xs={2}>
+          <Item xs={2}>
             <Label>Network speed</Label>
             <span>
               {machine.downloadSpeed
@@ -132,7 +132,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess }) => {
                   '  %'
                 : 'unavailable'}
             </span>
-          </Item> */}
+          </Item>
         </Container>
       </Item>
     </Container>
