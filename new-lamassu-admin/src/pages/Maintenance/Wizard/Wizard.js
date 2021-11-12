@@ -76,7 +76,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     {
       type: 'cashbox',
       schema: Yup.object().shape({
-        wasCashboxEmptied: Yup.string().required()
+        wasCashboxEmptied: Yup.string().required('Select one option.')
       }),
       cashoutRequired: false
     },
@@ -84,6 +84,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       type: 'cassette 1',
       schema: Yup.object().shape({
         cassette1Count: Yup.number()
+          .label('Bill count')
           .required()
           .min(0)
           .max(CASHBOX_DEFAULT_CAPACITY)
@@ -94,6 +95,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       type: 'cassette 2',
       schema: Yup.object().shape({
         cassette2Count: Yup.number()
+          .label('Bill count')
           .required()
           .min(0)
           .max(CASHBOX_DEFAULT_CAPACITY)
