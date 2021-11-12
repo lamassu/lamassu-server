@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/search/dark02</title>
+    <g id="icon/search/dark02" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(1.000000, 1.000000)" stroke="#1B2559" stroke-width="2">
+            <path d="M14.2771714,7.35325714 C14.2771714,11.1778286 11.1768857,14.2781143 7.35231429,14.2781143 C3.5286,14.2781143 0.428314286,11.1778286 0.428314286,7.35325714 C0.428314286,3.52868571 3.5286,0.4284 7.35231429,0.4284 C11.1768857,0.4284 14.2771714,3.52868571 14.2771714,7.35325714 Z" id="Stroke-1"></path>
+            <line x1="12.3331714" y1="12.3342" x2="17.5360286" y2="17.5370571" id="Stroke-3" stroke-linecap="round"></line>
+        </g>
+    </g>
+</svg>
