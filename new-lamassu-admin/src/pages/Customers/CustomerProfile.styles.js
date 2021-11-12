@@ -15,14 +15,26 @@ export default {
   customerDetails: {
     marginBottom: 18
   },
-  customerActions: {
+  customerBlock: props => ({
     display: 'flex',
     flexDirection: 'row',
-    '& button': {
-      marginRight: 15
-    },
-    '& > :last-child': {
-      marginRight: 0
-    }
+    margin: [[0, 0, 4, 0]],
+    padding: [[0, props.blocked ? 35 : 48, 0]]
+  }),
+  customerDiscount: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [[8, 0, 4, 0]],
+    padding: [[0, 24, 0]]
+  },
+  panels: {
+    display: 'flex'
+  },
+  rightSidePanel: {
+    display: 'block',
+    width: 1100
+  },
+  leftSidePanel: {
+    width: 300
   }
 }

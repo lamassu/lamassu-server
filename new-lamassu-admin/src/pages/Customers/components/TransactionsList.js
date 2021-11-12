@@ -71,8 +71,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
 
   const tableElements = [
     {
-      header: 'Direction',
-      width: 207,
+      width: 75,
       view: it => (
         <>
           {it.txClass === 'cashOut' ? (
@@ -80,20 +79,19 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
           ) : (
             <TxInIcon className={classes.txClassIconLeft} />
           )}
-          {it.txClass === 'cashOut' ? 'Cash-out' : 'Cash-in'}
         </>
       )
     },
     {
       header: 'Transaction ID',
-      width: 414,
+      width: 175,
       view: it => (
         <CopyToClipboard className={classes.txId}>{it.id}</CopyToClipboard>
       )
     },
     {
       header: 'Cash',
-      width: 146,
+      width: 175,
       textAlign: 'right',
       view: it => (
         <>
@@ -104,7 +102,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     },
     {
       header: 'Crypto',
-      width: 142,
+      width: 175,
       textAlign: 'right',
       view: it => (
         <>
@@ -117,7 +115,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     },
     {
       header: 'Date',
-      width: 157,
+      width: 160,
       view: it => formatDate(it.created, timezone, 'YYYY-MM-D')
     },
     {
