@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
@@ -10,10 +10,13 @@ import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
+import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
+import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
+import CashboxHistory from './CashboxHistory'
 
 const useStyles = makeStyles(styles)
 
@@ -108,6 +111,7 @@ const SET_CASSETTE_BILLS = gql`
 
 const CashCassettes = () => {
   const classes = useStyles()
+  const [showHistory, setShowHistory] = useState(false)
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
 
@@ -200,23 +204,39 @@ const CashCassettes = () => {
 
   return (
     <>
-      <TitleSection title="Cash Cassettes" />
+      <TitleSection
+        title="Cash Cassettes"
+        button={{
+          text: 'Cashbox history',
+          icon: HistoryIcon,
+          inverseIcon: ReverseHistoryIcon,
+          toggle: setShowHistory
+        }}
+        iconClassName={classes.listViewButton}
+      />
       <div className={classes.tableContainer}>
-        <EditableTable
-          error={error?.message}
-          name="cashboxes"
-          enableEdit
-          enableEditText="Update"
-          stripeWhen={isCashOutDisabled}
-          elements={elements}
-          data={machines}
-          save={onSave}
-          validationSchema={ValidationSchema}
-          tbodyWrapperClass={classes.tBody}
-        />
+        {!showHistory && (
+          <>
+            <EditableTable
+              error={error?.message}
+              name="cashboxes"
+              enableEdit
+              enableEditText="Update"
+              stripeWhen={isCashOutDisabled}
+              elements={elements}
+              data={machines}
+              save={onSave}
+              validationSchema={ValidationSchema}
+              tbodyWrapperClass={classes.tBody}
+            />
 
-        {data && R.isEmpty(machines) && (
-          <EmptyTable message="No machines so far" />
+            {data && R.isEmpty(machines) && (
+              <EmptyTable message="No machines so far" />
+            )}
+          </>
+        )}
+        {showHistory && (
+          <CashboxHistory machines={machines} currency={fiatCurrency} />
         )}
       </div>
       <CashCassettesFooter
