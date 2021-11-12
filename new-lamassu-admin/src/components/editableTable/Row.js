@@ -132,7 +132,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     SuffixComponent = TL2,
     textStyle = it => {},
     isHidden = it => false,
-    view = it => it?.toString() ?? '—',
+    view = it => it?.toString(),
     inputProps = {}
   } = config
 

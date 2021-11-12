@@ -140,6 +140,7 @@ const FiatBalanceOverrides = ({ section }) => {
         inputProps: {
           decimalPlaces: 0
         },
+        view: it => it?.toString() ?? '—',
         isHidden: value =>
           it >
           machines.find(({ deviceId }) => deviceId === value.machine)
