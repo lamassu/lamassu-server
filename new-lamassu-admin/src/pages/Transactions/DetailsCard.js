@@ -350,7 +350,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
             }
           })
         }}
-        onDissmised={() => {
+        onDismissed={() => {
           setAction({ command: null })
           setErrorMessage(null)
         }}
@@ -362,5 +362,5 @@ const DetailsRow = ({ it: tx, timezone }) => {
 export default memo(
   DetailsRow,
   (prev, next) =>
-    prev.it.id === next.it.id && prev.it.hasError === next.it.hasError
+    prev.it.id === next.it.id && getStatus(prev.it) === getStatus(next.it)
 )

@@ -207,7 +207,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
             }
           })
         }}
-        onDissmised={() => {
+        onDismissed={() => {
           setAction({ command: null })
           setErrorMessage(null)
         }}
