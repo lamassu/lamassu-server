@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
+import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -53,7 +54,14 @@ const AllSet = ({ data: currentData, doContinue }) => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
   const save = () => {
-    const adjustedData = { zeroConfLimit: 0, ...currentData }
+    const defaultCryptoUnit = R.head(
+      R.keys(coinUtils.getCryptoCurrency(coin).units)
+    )
+    const adjustedData = {
+      zeroConfLimit: 0,
+      ...currentData,
+      cryptoUnits: defaultCryptoUnit
+    }
     if (!WalletSchema.isValidSync(adjustedData)) return setError(true)
 
     const withCoin = toNamespace(coin, R.omit('coin', adjustedData))

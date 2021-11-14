@@ -1,3 +1,4 @@
+import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -57,7 +58,14 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
       : accountsToSave
 
     if (isLastStep) {
-      const configToSave = { ...newConfig, zeroConfLimit: 0 }
+      const defaultCryptoUnit = R.head(
+        R.keys(coinUtils.getCryptoCurrency(coin.code).units)
+      )
+      const configToSave = {
+        ...newConfig,
+        zeroConfLimit: 0,
+        cryptoUnits: defaultCryptoUnit
+      }
       return save(toNamespace(coin.code, configToSave), newAccounts)
     }
 
