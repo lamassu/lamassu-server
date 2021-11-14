@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   }
 })
 
-const CashCassetteInput = memo(({ decimalPlaces, ...props }) => {
+const CashCassetteInput = memo(({ decimalPlaces, threshold, ...props }) => {
   const classes = useStyles()
   const { name, onChange, onBlur, value } = props.field
   const { touched, errors } = props.form
@@ -27,6 +27,7 @@ const CashCassetteInput = memo(({ decimalPlaces, ...props }) => {
         className={classes.cashCassette}
         notes={notes}
         editingMode={true}
+        threshold={threshold}
       />
       <NumberInput
         name={name}

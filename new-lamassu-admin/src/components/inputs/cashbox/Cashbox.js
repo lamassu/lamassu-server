@@ -3,10 +3,7 @@ import classnames from 'classnames'
 import React from 'react'
 
 import Chip from 'src/components/Chip'
-import { Link } from 'src/components/buttons'
 import { Info2, Label1, Label2 } from 'src/components/typography'
-
-import TextInputFormik from '../base/TextInput'
 
 import { cashboxStyles, gridStyles } from './Cashbox.styles'
 
@@ -21,10 +18,11 @@ const Cashbox = ({
   labelClassName,
   applyColorVariant,
   applyFiatBalanceAlertsStyling,
-  omitInnerPercentage
+  omitInnerPercentage,
+  isLow
 }) => {
-  const classes = cashboxClasses({ percent, cashOut, applyColorVariant })
-  const threshold = 51
+  const classes = cashboxClasses({ percent, cashOut, applyColorVariant, isLow })
+  const ltHalf = percent <= 51
 
   const showCashBox = {
     [classes.fiatBalanceAlertCashbox]: applyFiatBalanceAlertsStyling,
@@ -34,12 +32,12 @@ const Cashbox = ({
   return (
     <div className={classnames(className, showCashBox)}>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
-        {!omitInnerPercentage && percent <= threshold && (
+        {!omitInnerPercentage && ltHalf && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
       <div className={classes.fullPart}>
-        {!omitInnerPercentage && percent > threshold && (
+        {!omitInnerPercentage && !ltHalf && (
           <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
         )}
       </div>
@@ -71,59 +69,28 @@ const CashIn = ({ currency, notes, total }) => {
   )
 }
 
-const CashInFormik = ({
-  capacity = 1000,
-  onEmpty,
-  field: {
-    value: { notes, deviceId }
-  },
-  form: { setFieldValue }
-}) => {
-  const classes = gridClasses()
-
-  return (
-    <>
-      <div className={classes.row}>
-        <div>
-          <Cashbox percent={(100 * notes) / capacity} />
-        </div>
-        <div className={classes.col2}>
-          <div>
-            <Link
-              onClick={() => {
-                onEmpty({
-                  variables: {
-                    deviceId,
-                    action: 'emptyCashInBills'
-                  }
-                }).then(() => setFieldValue('cashin.notes', 0))
-              }}
-              className={classes.link}
-              color={'primary'}>
-              Empty
-            </Link>
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
 const CashOut = ({
   capacity = 500,
   denomination = 0,
   currency,
   notes,
   className,
-  editingMode = false
+  editingMode = false,
+  threshold
 }) => {
   const percent = (100 * notes) / capacity
+  const isLow = percent < threshold
   const classes = gridClasses()
   return (
     <>
       <div className={classes.row}>
         <div className={classes.col}>
-          <Cashbox className={className} percent={percent} cashOut />
+          <Cashbox
+            className={className}
+            percent={percent}
+            cashOut
+            isLow={isLow}
+          />
         </div>
         {!editingMode && (
           <div className={classes.col2}>
@@ -146,42 +113,4 @@ const CashOut = ({
   )
 }
 
-const CashOutFormik = ({ capacity = 500, ...props }) => {
-  const {
-    name,
-    onChange,
-    onBlur,
-    value: { notes }
-  } = props.field
-  const { touched, errors } = props.form
-
-  const error = !!(touched[name] && errors[name])
-
-  const percent = (100 * notes) / capacity
-  const classes = gridClasses()
-
-  return (
-    <>
-      <div className={classes.row}>
-        <div className={classes.col}>
-          <Cashbox percent={percent} cashOut />
-        </div>
-        <div className={(classes.col, classes.col2)}>
-          <div>
-            <TextInputFormik
-              fullWidth
-              name={name + '.notes'}
-              onChange={onChange}
-              onBlur={onBlur}
-              value={notes}
-              error={error}
-              {...props}
-            />
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
-export { Cashbox, CashIn, CashInFormik, CashOut, CashOutFormik }
+export { Cashbox, CashIn, CashOut }

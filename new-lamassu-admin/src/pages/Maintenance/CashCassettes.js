@@ -113,6 +113,7 @@ const CashCassettes = () => {
 
   const machines = R.path(['machines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
+  const fillingPercentageSettings = fromNamespace('notifications', config)
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
@@ -198,11 +199,13 @@ const CashCassettes = () => {
           denomination={getCashoutSettings(id)?.top}
           currency={{ code: fiatCurrency }}
           notes={value}
+          threshold={fillingPercentageSettings.fillingPercentageCassette1}
         />
       ),
       input: CashCassetteInput,
       inputProps: {
-        decimalPlaces: 0
+        decimalPlaces: 0,
+        threshold: fillingPercentageSettings.fillingPercentageCassette1
       }
     },
     {
@@ -217,12 +220,14 @@ const CashCassettes = () => {
             denomination={getCashoutSettings(id)?.bottom}
             currency={{ code: fiatCurrency }}
             notes={value}
+            threshold={fillingPercentageSettings.fillingPercentageCassette2}
           />
         )
       },
       input: CashCassetteInput,
       inputProps: {
-        decimalPlaces: 0
+        decimalPlaces: 0,
+        threshold: fillingPercentageSettings.fillingPercentageCassette2
       }
     },
     {
