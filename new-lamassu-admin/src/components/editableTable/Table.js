@@ -88,7 +88,6 @@ const ETable = ({
     }
 
     setAdding(false)
-    setEditingId(null)
     setEditing && setEditing(false)
     setSaving(false)
   }
