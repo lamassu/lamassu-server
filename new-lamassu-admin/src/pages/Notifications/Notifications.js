@@ -22,6 +22,7 @@ const GET_INFO = gql`
     machines {
       name
       deviceId
+      numberOfCassettes
     }
     cryptoCurrencies {
       code
@@ -52,7 +53,7 @@ const Notifications = ({
   const [error, setError] = useState(null)
   const [editingKey, setEditingKey] = useState(null)
 
-  const { data } = useQuery(GET_INFO)
+  const { data, loading } = useQuery(GET_INFO)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: ['getData'],
@@ -100,40 +101,42 @@ const Notifications = ({
   }
 
   return (
-    <NotificationsCtx.Provider value={contextValue}>
-      {displayTitle && <TitleSection title="Notifications" />}
-      {displaySetup && (
-        <Section title="Setup" error={error && !section}>
-          <Setup forceDisable={!!editingKey} wizard={wizard} />
-        </Section>
-      )}
-      {displayTransactionAlerts && (
-        <Section title="Transaction alerts" error={error && section === 'tx'}>
-          <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
-        </Section>
-      )}
-      {displayFiatAlerts && (
-        <Section
-          title="Fiat balance alerts"
-          error={error && section === 'fiat'}>
-          <FiatBalanceAlerts section="fiat" max={500} fieldWidth={50} />
-          {displayOverrides && <FiatBalanceOverrides section="fiat" />}
-        </Section>
-      )}
-      {displayCryptoAlerts && (
-        <Section
-          title="Crypto balance alerts"
-          error={error && section === 'crypto'}>
-          <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
-          {displayOverrides && (
-            <CryptoBalanceOverrides
-              section="crypto"
-              fieldWidth={FIELDS_WIDTH}
-            />
-          )}
-        </Section>
-      )}
-    </NotificationsCtx.Provider>
+    !loading && (
+      <NotificationsCtx.Provider value={contextValue}>
+        {displayTitle && <TitleSection title="Notifications" />}
+        {displaySetup && (
+          <Section title="Setup" error={error && !section}>
+            <Setup forceDisable={!!editingKey} wizard={wizard} />
+          </Section>
+        )}
+        {displayTransactionAlerts && (
+          <Section title="Transaction alerts" error={error && section === 'tx'}>
+            <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
+          </Section>
+        )}
+        {displayFiatAlerts && (
+          <Section
+            title="Fiat balance alerts"
+            error={error && section === 'fiat'}>
+            <FiatBalanceAlerts section="fiat" max={500} fieldWidth={50} />
+            {displayOverrides && <FiatBalanceOverrides section="fiat" />}
+          </Section>
+        )}
+        {displayCryptoAlerts && (
+          <Section
+            title="Crypto balance alerts"
+            error={error && section === 'crypto'}>
+            <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
+            {displayOverrides && (
+              <CryptoBalanceOverrides
+                section="crypto"
+                fieldWidth={FIELDS_WIDTH}
+              />
+            )}
+          </Section>
+        )}
+      </NotificationsCtx.Provider>
+    )
   )
 }
 
