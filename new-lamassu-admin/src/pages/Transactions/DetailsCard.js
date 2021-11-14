@@ -62,9 +62,17 @@ const TX_SUMMARY = gql`
   }
 `
 
-const CANCEL_TRANSACTION = gql`
+const CANCEL_CASH_OUT_TRANSACTION = gql`
   mutation cancelCashOutTransaction($id: ID!) {
     cancelCashOutTransaction(id: $id) {
+      id
+    }
+  }
+`
+
+const CANCEL_CASH_IN_TRANSACTION = gql`
+  mutation cancelCashInTransaction($id: ID!) {
+    cancelCashInTransaction(id: $id) {
       id
     }
   }
@@ -83,16 +91,22 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const [action, setAction] = useState({ command: null })
   const [errorMessage, setErrorMessage] = useState('')
 
+  const isCashIn = tx.txClass === 'cashIn'
+
   const zip = new JSZip()
 
   const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
     onCompleted: data => createCsv(data)
   })
 
-  const [cancelCashOutTransaction] = useMutation(CANCEL_TRANSACTION, {
-    onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
-    refetchQueries: () => ['transactions']
-  })
+  const [cancelTransaction] = useMutation(
+    isCashIn ? CANCEL_CASH_IN_TRANSACTION : CANCEL_CASH_OUT_TRANSACTION,
+    {
+      onError: ({ message }) =>
+        setErrorMessage(message ?? 'An error occurred.'),
+      refetchQueries: () => ['transactions']
+    }
+  )
 
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
@@ -142,6 +156,13 @@ const DetailsRow = ({ it: tx, timezone }) => {
     </>
   )
 
+  const getCancelMessage = () => {
+    const cashInMessage = `The user will not be able to redeem the inserted bills, even if they subsequently confirm the transaction. If they've already deposited bills, you'll need to reconcile this transaction with them manually.`
+    const cashOutMessage = `The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`
+
+    return isCashIn ? cashInMessage : cashOutMessage
+  }
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.row}>
@@ -149,9 +170,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
           <Label>Direction</Label>
           <div>
             <span className={classes.txIcon}>
-              {tx.txClass === 'cashOut' ? <TxOutIcon /> : <TxInIcon />}
+              {!isCashIn ? <TxOutIcon /> : <TxInIcon />}
             </span>
-            <span>{tx.txClass === 'cashOut' ? 'Cash-out' : 'Cash-in'}</span>
+            <span>{!isCashIn ? 'Cash-out' : 'Cash-in'}</span>
           </div>
         </div>
 
@@ -246,7 +267,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         <div>
           <Label>Fixed fee</Label>
           <div>
-            {tx.txClass === 'cashIn'
+            {isCashIn
               ? `${Number.parseFloat(tx.cashInFee)} ${tx.fiatCode}`
               : 'N/A'}
           </div>
@@ -285,7 +306,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
           ) : (
             errorElements
           )}
-          {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
+          {getStatus(tx) === 'Pending' && (
             <ActionButton
               color="primary"
               Icon={CancelIcon}
@@ -319,11 +340,11 @@ const DetailsRow = ({ it: tx, timezone }) => {
         title={`Cancel this transaction?`}
         errorMessage={errorMessage}
         toBeConfirmed={tx.machineName}
-        message={`The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`}
+        message={getCancelMessage()}
         onConfirmed={() => {
           setErrorMessage(null)
           setAction({ command: null })
-          cancelCashOutTransaction({
+          cancelTransaction({
             variables: {
               id: tx.id
             }
