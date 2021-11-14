@@ -1,6 +1,7 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 
+import Analytics from 'src/pages/Analytics/Analytics'
 import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
@@ -81,6 +82,13 @@ const getLamassuRoutes = () => [
         component: ServerLogs
       }
     ]
+  },
+  {
+    key: 'analytics',
+    label: 'Analytics',
+    route: '/analytics',
+    allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+    component: Analytics
   },
   {
     key: 'settings',

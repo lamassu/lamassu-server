@@ -75,11 +75,15 @@ const getTzLabels = timezones =>
   )
 
 const formatDate = (date, timezoneCode, format) => {
-  const dstOffset = timezoneCode.split(':')[1]
+  const dstOffset = timezoneCode?.split(':')[1] ?? 0
   return moment
     .utc(date)
     .utcOffset(parseInt(dstOffset))
     .format(format)
 }
 
-export { getTzLabels, formatDate }
+const formatDateNonUtc = (date, format) => {
+  return moment(date).format(format)
+}
+
+export { getTzLabels, formatDate, formatDateNonUtc }
