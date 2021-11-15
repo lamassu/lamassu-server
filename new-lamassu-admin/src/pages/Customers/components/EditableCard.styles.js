@@ -16,20 +16,26 @@ export default {
     color: spring4
   },
   editButton: {
-    marginTop: 30,
+    marginTop: 20,
     display: 'flex',
     justifyContent: 'right'
   },
   deleteButton: {
     marginRight: 8
   },
+  headerWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 40
+  },
   editingWrapper: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginTop: 20
   },
   replace: {
-    marginTop: 30,
     marginRight: 5
   },
   input: {
@@ -39,7 +45,6 @@ export default {
     marginRight: 5
   },
   editingButtons: {
-    marginTop: 30,
     display: 'flex',
     justifyContent: 'right'
   },

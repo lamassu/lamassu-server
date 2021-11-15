@@ -10,7 +10,7 @@ import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { MainStatus } from 'src/components/Status'
 import { Tooltip } from 'src/components/Tooltip'
 import { ActionButton } from 'src/components/buttons'
-import { Label1, Info3, H3 } from 'src/components/typography'
+import { Label1, P, H3 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
   OVERRIDE_REJECTED,
@@ -39,7 +39,8 @@ const fieldStyles = {
     position: 'relative',
     width: 280,
     height: 48,
-    padding: [[0, 4, 4, 0]]
+    padding: [[0, 4, 4, 0]],
+    marginTop: 2
   },
   label: {
     color: comet,
@@ -65,7 +66,8 @@ const fieldStyles = {
   editing: {
     '& > div': {
       '& > input': {
-        padding: 0
+        padding: 0,
+        fontSize: 14
       }
     }
   }
@@ -85,7 +87,7 @@ const EditableField = ({ editing, field, value, size, ...props }) => {
       {!editing && (
         <>
           <Label1 className={classes.label}>{field.label}</Label1>
-          <Info3>{value}</Info3>
+          <P>{value}</P>
         </>
       )}
       {editing && (
@@ -145,10 +147,12 @@ const EditableCard = ({
     <div>
       <Card className={classes.card}>
         <CardContent>
-          <div className={classes.cardHeader}>
-            {titleIcon}
-            <H3 className={classes.cardTitle}>{title}</H3>
-            <Tooltip width={304}></Tooltip>
+          <div className={classes.headerWrapper}>
+            <div className={classes.cardHeader}>
+              {titleIcon}
+              <H3 className={classes.cardTitle}>{title}</H3>
+              <Tooltip width={304}></Tooltip>
+            </div>
             {state && (
               <div className={classnames(label1ClassNames)}>
                 <MainStatus statuses={[authorized]} />
