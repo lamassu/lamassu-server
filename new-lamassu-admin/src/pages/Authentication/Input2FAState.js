@@ -2,7 +2,6 @@ import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import base64 from 'base-64'
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -66,11 +65,7 @@ const Input2FAState = ({ state, dispatch }) => {
             }
           }
         }
-        return getUserData(
-          process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-            ? R.omit(['context'], options)
-            : options
-        )
+        return getUserData(options)
       }
       return setInvalidToken(true)
     }
@@ -106,11 +101,7 @@ const Input2FAState = ({ state, dispatch }) => {
       }
     }
 
-    input2FA(
-      process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-        ? R.omit(['context'], options)
-        : options
-    )
+    input2FA(options)
   }
 
   const getErrorMsg = () => {

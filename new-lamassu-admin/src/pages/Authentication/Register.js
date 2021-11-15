@@ -4,7 +4,6 @@ import Paper from '@material-ui/core/Paper'
 // import base64 from 'base-64'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 import React, { useReducer } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
@@ -126,9 +125,7 @@ const Register = () => {
 
   const { error: queryError, loading } = useQuery(
     VALIDATE_REGISTER_LINK,
-    process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-      ? R.omit(['context'], queryOptions)
-      : queryOptions
+    queryOptions
   )
 
   const [register, { error: mutationError }] = useMutation(REGISTER, {

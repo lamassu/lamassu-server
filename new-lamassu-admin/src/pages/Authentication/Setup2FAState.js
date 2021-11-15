@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import base64 from 'base-64'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
-import * as R from 'ramda'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -96,12 +95,7 @@ const Setup2FAState = ({ state, dispatch }) => {
     }
   }
 
-  const { error: queryError } = useQuery(
-    GET_2FA_SECRET,
-    process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-      ? R.omit(['context'], queryOptions)
-      : queryOptions
-  )
+  const { error: queryError } = useQuery(GET_2FA_SECRET, queryOptions)
 
   const [getUserData] = useLazyQuery(GET_USER_DATA, {
     onCompleted: ({ userData }) => {
@@ -119,13 +113,7 @@ const Setup2FAState = ({ state, dispatch }) => {
           }
         }
       }
-      success
-        ? getUserData(
-            process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-              ? R.omit(['context'], options)
-              : options
-          )
-        : setInvalidToken(true)
+      success ? getUserData(options) : setInvalidToken(true)
     }
   })
 
@@ -190,11 +178,7 @@ const Setup2FAState = ({ state, dispatch }) => {
                 setInvalidToken(true)
                 return
               }
-              setup2FA(
-                process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-                  ? R.omit(['context'], mutationOptions)
-                  : mutationOptions
-              )
+              setup2FA(mutationOptions)
             }}
             buttonClassName={classes.loginButton}>
             Done
