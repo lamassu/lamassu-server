@@ -110,7 +110,7 @@
     "test": "mocha --recursive tests",
     "jtest": "jest --detectOpenHandles",
     "build-admin": "npm run build-admin:css && npm run build-admin:main && npm run build-admin:lamassu",
-    "server": "nodemon bin/lamassu-server --mockSms",
+    "server": "nodemon bin/lamassu-server --mockSms --mockScoring",
     "admin-server": "nodemon bin/lamassu-admin-server --dev",
     "graphql-server": "nodemon bin/new-graphql-dev-insecure",
     "watch": "concurrently \"npm:server\" \"npm:admin-server\" \"npm:graphql-server\"",
