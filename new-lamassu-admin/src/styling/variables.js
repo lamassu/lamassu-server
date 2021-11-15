@@ -26,6 +26,7 @@ const white = '#ffffff'
 // Error
 const tomato = '#ff584a'
 const tomato1 = '#E45043'
+const tomato2 = '#CE463A'
 const mistyRose = '#ffeceb'
 const pumpkin = '#ff7311'
 const linen = '#fbf3ec'
@@ -48,7 +49,8 @@ const offColor = comet
 const offDarkColor = comet2
 const placeholderColor = comet
 const errorColor = tomato
-const errorColorDarker = tomato1
+const errorColorDark = tomato1
+const errorColorDarker = tomato2
 const offErrorColor = mistyRose
 const inputBorderColor = primaryColor
 
@@ -151,6 +153,7 @@ export {
   linkSecondaryColor,
   errorColor,
   errorColorDarker,
+  errorColorDark,
   offErrorColor,
   inputBorderColor,
   // font sizes
