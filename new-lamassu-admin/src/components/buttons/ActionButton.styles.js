@@ -10,6 +10,7 @@ import {
   secondaryColorDark,
   secondaryColorDarker,
   errorColor,
+  errorColorDark,
   errorColorDarker
 } from 'src/styling/variables'
 
@@ -74,7 +75,7 @@ export default {
     }
   },
   spring: {
-    extend: colors(secondaryColor, secondaryColorDark, secondaryColorDarker),
+    extend: colors(secondaryColorDark, secondaryColor, secondaryColorDarker),
     color: white,
     '&:active': {
       '& $actionButtonIcon': {
@@ -92,7 +93,7 @@ export default {
     }
   },
   tomato: {
-    extend: colors(errorColor, errorColorDarker, errorColor),
+    extend: colors(errorColorDark, errorColor, errorColorDarker),
     color: white,
     '&:active': {
       '& $actionButtonIcon': {
