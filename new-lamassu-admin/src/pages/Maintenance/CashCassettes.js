@@ -300,7 +300,6 @@ const CashCassettes = () => {
         {showHistory && (
           <CashboxHistory machines={machines} currency={fiatCurrency} />
         )}
-        {showHistory && <CashboxHistory machines={machines} />}
       </div>
       <CashCassettesFooter
         currencyCode={fiatCurrency}
