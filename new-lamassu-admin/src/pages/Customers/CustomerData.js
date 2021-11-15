@@ -26,7 +26,6 @@ import { URI } from 'src/utils/apollo'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
-import { getName } from './helper.js'
 
 const useStyles = makeStyles(styles)
 
@@ -69,7 +68,6 @@ const CustomerData = ({
 
   const idData = R.path(['idCardData'])(customer)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
-  const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
 
   const sanctions = R.path(['sanctions'])(customer)
@@ -89,44 +87,39 @@ const CustomerData = ({
 
   const schemas = {
     idScan: Yup.object().shape({
-      name: Yup.string(),
-      idNumber: Yup.string(),
-      birthDate: Yup.string(),
-      age: Yup.string(),
-      gender: Yup.string(),
-      state: Yup.string(),
-      expirationDate: Yup.string()
+      firstName: Yup.string().required(),
+      lastName: Yup.string().required(),
+      documentNumber: Yup.string().required(),
+      dateOfBirth: Yup.string().required(),
+      gender: Yup.string().required(),
+      country: Yup.string().required(),
+      expirationDate: Yup.string().required()
     }),
     usSsn: Yup.object().shape({
-      usSsn: Yup.string()
+      usSsn: Yup.string().required()
     }),
     idCardPhoto: Yup.object().shape({
-      idCardPhoto: Yup.mixed()
+      idCardPhoto: Yup.mixed().required()
     }),
     frontCamera: Yup.object().shape({
-      frontCamera: Yup.mixed()
+      frontCamera: Yup.mixed().required()
     })
   }
 
   const idScanElements = [
     {
-      name: 'name',
-      label: 'Name',
+      name: 'firstName',
+      label: 'First name',
       component: TextInput
     },
     {
-      name: 'idNumber',
+      name: 'documentNumber',
       label: 'ID number',
       component: TextInput
     },
     {
-      name: 'birthDate',
-      label: 'Birth Date',
-      component: TextInput
-    },
-    {
-      name: 'age',
-      label: 'Age',
+      name: 'dateOfBirth',
+      label: 'Birthdate',
       component: TextInput
     },
     {
@@ -135,13 +128,18 @@ const CustomerData = ({
       component: TextInput
     },
     {
-      name: 'state',
-      label: country === 'Canada' ? 'Province' : 'State',
+      name: 'lastName',
+      label: 'Last name',
       component: TextInput
     },
     {
       name: 'expirationDate',
       label: 'Expiration Date',
+      component: TextInput
+    },
+    {
+      name: 'country',
+      label: 'Country',
       component: TextInput
     }
   ]
@@ -160,12 +158,12 @@ const CustomerData = ({
 
   const initialValues = {
     idScan: {
-      name: getName(customer) ?? '',
-      idNumber: R.path(['documentNumber'])(idData) ?? '',
-      birthDate: (rawDob && format('yyyy-MM-dd', rawDob)) ?? '',
-      age: (rawDob && differenceInYears(rawDob, new Date())) ?? '',
+      firstName: R.path(['firstName'])(idData) ?? '',
+      lastName: R.path(['lastName'])(idData) ?? '',
+      documentNumber: R.path(['documentNumber'])(idData) ?? '',
+      dateOfBirth: (rawDob && format('yyyy-MM-dd', rawDob)) ?? '',
       gender: R.path(['gender'])(idData) ?? '',
-      state: R.path(['state'])(idData) ?? '',
+      country: R.path(['country'])(idData) ?? '',
       expirationDate:
         (rawExpirationDate && format('yyyy-MM-dd', rawExpirationDate)) ?? ''
     },
@@ -184,20 +182,20 @@ const CustomerData = ({
     {
       fields: idScanElements,
       title: 'ID Scan',
-      titleIcon: <PhoneIcon className={classes.cardIcon} />,
+      titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['idCardDataOverride'])(customer),
       authorize: () =>
         updateCustomer({ idCardDataOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ idCardDataOverride: OVERRIDE_REJECTED }),
       deleteEditedData: () => deleteEditedData({ idCardData: null }),
-      save: values => editCustomer({ idCardData: values }),
+      save: values => editCustomer({ idCardData: _.merge(idData, values) }),
       validationSchema: schemas.idScan,
       initialValues: initialValues.idScan,
       isAvailable: !_.isNil(idData)
     },
     {
       title: 'SMS Confirmation',
-      titleIcon: <CardIcon className={classes.cardIcon} />,
+      titleIcon: <PhoneIcon className={classes.cardIcon} />,
       authorize: () => {},
       reject: () => {},
       save: () => {},
