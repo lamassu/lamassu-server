@@ -76,6 +76,7 @@ const CreateUserModal = ({ state, dispatch }) => {
   const [createUser, { error }] = useMutation(CREATE_USER, {
     onCompleted: ({ createRegisterToken: token }) => {
       const queryParams =
+        // Pazuz-created register tokens add a field to identify the creator
         process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
           ? `t=${token.token}`
           : `t=${token.token}&id=${base64.encode(usernameField)}`
