@@ -1,6 +1,7 @@
 import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import schema from 'src/pages/Services/schemas'
@@ -9,7 +10,7 @@ import { toNamespace } from 'src/utils/config'
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 
-const LAST_STEP = 4
+const LAST_STEP = 5
 const MODAL_WIDTH = 554
 
 const contains = crypto => R.compose(R.contains(crypto), R.prop('cryptos'))
@@ -34,7 +35,15 @@ const getItems = (accountsConfig, accounts, type, crypto) => {
   return { filled, unfilled }
 }
 
-const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
+const Wizard = ({
+  coin,
+  onClose,
+  accountsConfig,
+  accounts,
+  fiatCurrency,
+  save,
+  error
+}) => {
   const [{ step, config, accountsToSave }, setState] = useState({
     step: 0,
     config: { active: true },
@@ -63,7 +72,6 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
       )
       const configToSave = {
         ...newConfig,
-        zeroConfLimit: 0,
         cryptoUnits: defaultCryptoUnit
       }
       return save(toNamespace(coin.code, configToSave), newAccounts)
@@ -85,7 +93,16 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
       case 3:
         return { type: 'exchange', ...exchanges }
       case 4:
-        return { type: 'zeroConf', name: 'zero conf', ...zeroConfs }
+        return {
+          type: 'zeroConf',
+          name: 'confidence checking',
+          schema: Yup.object().shape({
+            zeroConfLimit: Yup.number().required()
+          }),
+          ...zeroConfs
+        }
+      case 5:
+        return { type: 'zeroConfLimit', name: '0-conf limit', ...zeroConfs }
       default:
         return null
     }
@@ -107,6 +124,8 @@ const Wizard = ({ coin, onClose, accountsConfig, accounts, save, error }) => {
       {step !== 0 && (
         <WizardStep
           step={step}
+          coin={coin.display}
+          fiatCurrency={fiatCurrency}
           error={error}
           lastStep={isLastStep}
           {...getStepData()}

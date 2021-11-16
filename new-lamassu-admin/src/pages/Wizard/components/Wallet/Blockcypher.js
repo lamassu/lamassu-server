@@ -86,7 +86,7 @@ const Blockcypher = ({ addData }) => {
         {selected === 'disable' && (
           <Button
             size="lg"
-            onClick={() => addData({ zeroConf: 'all-zero-conf' })}
+            onClick={() => addData({ zeroConf: 'none', zeroConfLimit: 0 })}
             className={classes.button}>
             Continue
           </Button>
