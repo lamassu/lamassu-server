@@ -136,7 +136,7 @@ const Transactions = () => {
     return stopPolling
   })
 
-  const txList = txData ? txData.transactions : []
+  const txList = txData?.transactions ?? []
 
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
@@ -298,7 +298,7 @@ const Transactions = () => {
       </div>
       {filters.length > 0 && (
         <SearchFilter
-          entries={filteredTransactions.length}
+          entries={txList.length}
           filters={filters}
           onFilterDelete={onFilterDelete}
           setFilters={setFilters}
