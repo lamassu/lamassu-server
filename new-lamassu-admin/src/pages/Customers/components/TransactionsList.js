@@ -71,7 +71,13 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
 
   const tableElements = [
     {
-      width: 75,
+      header: 'Machine',
+      width: 160,
+      view: R.path(['machineName'])
+    },
+    {
+      header: 'Direction',
+      width: 125,
       view: it => (
         <>
           {it.txClass === 'cashOut' ? (
@@ -84,14 +90,14 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     },
     {
       header: 'Transaction ID',
-      width: 175,
+      width: 145,
       view: it => (
         <CopyToClipboard className={classes.txId}>{it.id}</CopyToClipboard>
       )
     },
     {
       header: 'Cash',
-      width: 175,
+      width: 155,
       textAlign: 'right',
       view: it => (
         <>
@@ -102,7 +108,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     },
     {
       header: 'Crypto',
-      width: 175,
+      width: 145,
       textAlign: 'right',
       view: it => (
         <>
@@ -115,12 +121,12 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     },
     {
       header: 'Date',
-      width: 160,
+      width: 100,
       view: it => formatDate(it.created, timezone, 'YYYY-MM-D')
     },
     {
       header: 'Time (h:m:s)',
-      width: 134,
+      width: 130,
       view: it => formatDate(it.created, timezone, 'HH:mm:ss')
     }
   ]
