@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="icon/button/replace/zodiac" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Group-3" transform="translate(0.500000, 0.500000)" stroke="#1B2559">
+            <g id="Group-2">
+                <path d="M3.27636475,10.2264084 C2.67216087,9.96069246 2.10487152,9.58126145 1.60869691,9.087544 C-0.521488181,6.9675304 -0.538316861,3.54693703 1.57123953,1.44692357 C1.86137314,1.15837428 2.17625375,0.909794042 2.50930653,0.701182852" id="Stroke-1"></path>
+                <polyline id="Stroke-3" points="3.0943493 1.69429658 3.08837783 0.545717786 1.99994228 3.80623901e-14"></polyline>
+            </g>
+            <g id="Group-2" transform="translate(8.999987, 5.500035) scale(-1, -1) translate(-8.999987, -5.500035) translate(6.999974, 0.000000)">
+                <path d="M3.27636475,10.2264084 C2.67216087,9.96069246 2.10487152,9.58126145 1.60869691,9.087544 C-0.521488181,6.9675304 -0.538316861,3.54693703 1.57123953,1.44692357 C1.86137314,1.15837428 2.17625375,0.909794042 2.50930653,0.701182852" id="Stroke-1"></path>
+                <polyline id="Stroke-3" points="3.0943493 1.69429658 3.08837783 0.545717786 1.99994228 3.80623901e-14"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

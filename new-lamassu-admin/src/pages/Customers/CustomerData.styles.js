@@ -1,3 +1,5 @@
+import { offColor } from 'src/styling/variables'
+
 export default {
   header: {
     display: 'flex',
@@ -16,5 +18,24 @@ export default {
   },
   viewIcons: {
     marginRight: 12
+  },
+  wrapper: {
+    display: 'flex'
+  },
+  separator: {
+    display: 'flex',
+    flexBasis: '100%',
+    justifyContent: 'center',
+    color: offColor,
+    margin: [[8, 0, 8, 0]],
+    '&::before, &::after': {
+      content: '',
+      flexGrow: 1,
+      background: offColor,
+      height: 1,
+      fontSize: 1,
+      lineHeight: 0,
+      margin: [[0, 8, 0, 8]]
+    }
   }
 }

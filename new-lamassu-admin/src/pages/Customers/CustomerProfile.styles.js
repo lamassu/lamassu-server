@@ -24,8 +24,14 @@ export default {
   customerDiscount: {
     display: 'flex',
     flexDirection: 'row',
+    margin: [[0, 0, 4, 0]],
+    padding: [[0, 23.5, 0]]
+  },
+  customerManualDataEntry: {
+    display: 'flex',
+    flexDirection: 'row',
     margin: [[8, 0, 4, 0]],
-    padding: [[0, 24, 0]]
+    padding: [[0, 40.5, 0]]
   },
   panels: {
     display: 'flex'

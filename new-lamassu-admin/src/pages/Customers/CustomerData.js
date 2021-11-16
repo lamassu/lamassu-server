@@ -31,23 +31,23 @@ import { getName } from './helper.js'
 
 const useStyles = makeStyles(styles)
 
-const imageWidth = 165
-const imageHeight = 45
-const popupImageWidth = 360
-const popupImageHeight = 240
+const IMAGE_WIDTH = 165
+const IMAGE_HEIGHT = 45
+const POPUP_IMAGE_WIDTH = 360
+const POPUP_IMAGE_HEIGHT = 240
 
 const Photo = ({ show, src }) => {
-  const classes = useStyles({ width: imageWidth })
+  const classes = useStyles({ width: IMAGE_WIDTH })
 
   return (
     <>
       {show ? (
         <ImagePopper
           src={src}
-          width={imageWidth}
-          height={imageHeight}
-          popupWidth={popupImageWidth}
-          popupHeight={popupImageHeight}
+          width={IMAGE_WIDTH}
+          height={IMAGE_HEIGHT}
+          popupWidth={POPUP_IMAGE_WIDTH}
+          popupHeight={POPUP_IMAGE_HEIGHT}
         />
       ) : (
         <div className={classes.photoWrapper}>
@@ -74,6 +74,8 @@ const CustomerData = ({ customer, updateCustomer }) => {
     : sanctions
     ? 'Passed'
     : 'Failed'
+
+  const customEntries = null // get customer custom entries
 
   const isEven = elem => elem % 2 === 0
 
@@ -256,21 +258,25 @@ const CustomerData = ({ customer, updateCustomer }) => {
     }
   ]
 
-  const editableCard = ({
-    title,
-    authorize,
-    reject,
-    state,
-    titleIcon,
-    data,
-    save,
-    children,
-    validationSchema,
-    initialValues
-  }) => {
+  const editableCard = (
+    {
+      title,
+      authorize,
+      reject,
+      state,
+      titleIcon,
+      data,
+      save,
+      children,
+      validationSchema,
+      initialValues
+    },
+    idx
+  ) => {
     return (
       <EditableCard
         title={title}
+        key={idx}
         authorize={authorize}
         reject={reject}
         state={state}
@@ -308,15 +314,20 @@ const CustomerData = ({ customer, updateCustomer }) => {
           <Grid container>
             <Grid container direction="column" item xs={6}>
               {visibleCards.map((elem, idx) => {
-                return isEven(idx) ? editableCard(elem) : null
+                return isEven(idx) ? editableCard(elem, idx) : null
               })}
             </Grid>
             <Grid container direction="column" item xs={6}>
               {visibleCards.map((elem, idx) => {
-                return !isEven(idx) ? editableCard(elem) : null
+                return !isEven(idx) ? editableCard(elem, idx) : null
               })}
             </Grid>
           </Grid>
+        )}
+        {customEntries && (
+          <div className={classes.wrapper}>
+            <div className={classes.separator}>{'Custom data entry'}</div>
+          </div>
         )}
       </div>
     </div>
