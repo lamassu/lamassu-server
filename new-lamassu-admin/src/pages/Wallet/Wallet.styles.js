@@ -12,5 +12,8 @@ export default {
   },
   selection: {
     marginRight: 12
+  },
+  table: {
+    width: 1000
   }
 }
