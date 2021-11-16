@@ -285,30 +285,6 @@ const CustomerProfile = memo(() => {
               </div>
             </div>
           )}
-        </div>
-        <div className={classes.rightSidePanel}>
-          {isOverview && (
-            <div>
-              <Box
-                className={classes.customerDetails}
-                display="flex"
-                justifyContent="space-between">
-                <CustomerDetails
-                  customer={customerData}
-                  locale={locale}
-                  setShowCompliance={() => setShowCompliance(!showCompliance)}
-                />
-              </Box>
-              <div>
-                <TransactionsList
-                  customer={customerData}
-                  data={sortedTransactions}
-                  locale={locale}
-                  loading={loading}
-                />
-              </div>
-            </div>
-          )}
           {isCustomerData && (
             <div>
               <CustomerData
