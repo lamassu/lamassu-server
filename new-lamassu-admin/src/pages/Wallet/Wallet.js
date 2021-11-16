@@ -137,32 +137,32 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <TitleSection
-        title="Wallet Settings"
-        button={{
-          text: 'Advanced settings',
-          icon: SettingsIcon,
-          inverseIcon: ReverseSettingsIcon,
-          toggle: setAdvancedSettings
-        }}
-      />
+      <div className={classes.header}>
+        <TitleSection
+          title="Wallet Settings"
+          button={{
+            text: 'Advanced settings',
+            icon: SettingsIcon,
+            inverseIcon: ReverseSettingsIcon,
+            toggle: setAdvancedSettings
+          }}
+        />
+        <Box alignItems="center" justifyContent="end">
+          <Label1 className={classes.feeDiscountLabel}>Fee discount</Label1>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="end"
+            mr="-4px">
+            <P className={classes.selection}>{selectedDiscount}</P>
+            <IconButton onClick={() => setEditingFeeDiscount(true)}>
+              <EditIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      </div>
       {!advancedSettings && (
         <>
-          <Box alignItems="center" justifyContent="end">
-            <Label1 className={classes.cashboxReset}>Fee discount</Label1>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="end"
-              mr="-4px">
-              <P className={classes.selection}>{selectedDiscount}</P>
-              <IconButton
-                onClick={() => setEditingFeeDiscount(true)}
-                className={classes.button}>
-                <EditIcon />
-              </IconButton>
-            </Box>
-          </Box>
           <EditableTable
             name="test"
             namespaces={R.map(R.path(['code']))(cryptoCurrencies)}
@@ -213,7 +213,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           width={478}
           handleClose={() => setEditingFeeDiscount(null)}
           open={true}>
-          <P className={classes.descriptions}>
+          <P>
             Set a priority level for your outgoing BTC transactions, selecting a
             percentage off of the fee estimate your wallet uses.
           </P>
@@ -222,9 +222,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
             value={selectedDiscount}
             options={radioButtonOptions}
             onChange={handleRadioButtons}
-            className={classes.radioButtons}
           />
-          <DialogActions className={classes.actions}>
+          <DialogActions>
             <Button
               onClick={() =>
                 saveFeeDiscount({ BTC_feeMultiplier: selectedDiscount })
