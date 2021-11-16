@@ -110,15 +110,11 @@ const CashboxHistory = ({ machines, currency }) => {
   }
 
   const save = row => {
-    const _performedBy = R.prop(
-      'performedBy',
-      R.find(f => f.id === row.id, fields)
-    )
-
-    const performedBy = _performedBy === '' ? null : _performedBy
+    const field = R.find(f => f.id === row.id, fields)
+    const performedBy = field.performedBy === '' ? null : field.performedBy
 
     schema
-      .isValid(performedBy)
+      .isValid(field)
       .then(() => {
         setError(false)
         editBatch({
@@ -132,6 +128,8 @@ const CashboxHistory = ({ machines, currency }) => {
   const close = id => {
     setFields(R.filter(f => f.id !== id, fields))
   }
+
+  const notEditing = id => !R.any(R.propEq('id', id), fields)
 
   const elements = [
     {
@@ -197,7 +195,7 @@ const CashboxHistory = ({ machines, currency }) => {
       width: 180,
       textAlign: 'left',
       view: it => {
-        if (!R.any(R.propEq('id', it.id), fields))
+        if (notEditing(it.id))
           return R.isNil(it.performedBy) ? 'Unknown entity' : it.performedBy
         return (
           <TextInput
@@ -226,7 +224,7 @@ const CashboxHistory = ({ machines, currency }) => {
       width: 150,
       textAlign: 'right',
       view: it => {
-        if (!R.any(R.propEq('id', it.id), fields))
+        if (notEditing(it.id))
           return (
             <IconButton
               onClick={() => {
