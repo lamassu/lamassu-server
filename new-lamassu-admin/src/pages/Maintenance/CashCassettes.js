@@ -5,11 +5,13 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import { IconButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace } from 'src/utils/config'
@@ -17,6 +19,7 @@ import { fromNamespace } from 'src/utils/config'
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
 import CashboxHistory from './CashboxHistory'
+import Wizard from './Wizard/Wizard'
 
 const useStyles = makeStyles(styles)
 
@@ -122,6 +125,8 @@ const CashCassettes = () => {
   const [showHistory, setShowHistory] = useState(false)
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
+  const [wizard, setWizard] = useState(false)
+  const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
@@ -145,9 +150,7 @@ const CashCassettes = () => {
     machines
   )
 
-  const onSave = (
-    ...[, { id, cashbox, cassette1, cassette2, cassette3, cassette4 }]
-  ) => {
+  const onSave = (id, cashbox, cassette1, cassette2, cassette3, cassette4) => {
     const oldCashboxCount = cashboxCounts[id]
     if (cashbox < oldCashboxCount) {
       createBatch({
@@ -226,6 +229,23 @@ const CashCassettes = () => {
     1
   )
 
+  elements.push({
+    name: 'edit',
+    header: 'Edit',
+    width: 87,
+    view: (value, { id }) => {
+      return (
+        <IconButton
+          onClick={() => {
+            setMachineId(id)
+            setWizard(true)
+          }}>
+          <EditIcon />
+        </IconButton>
+      )
+    }
+  })
+
   return (
     <>
       <TitleSection
@@ -244,12 +264,9 @@ const CashCassettes = () => {
             <EditableTable
               error={error?.message}
               name="cashboxes"
-              enableEdit
-              enableEditText="Update"
               stripeWhen={isCashOutDisabled}
               elements={elements}
               data={machines}
-              save={onSave}
               validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />
@@ -270,6 +287,18 @@ const CashCassettes = () => {
         bills={bills}
         deviceIds={deviceIds}
       />
+      {wizard && (
+        <Wizard
+          machine={R.find(R.propEq('id', machineId), machines)}
+          cashoutSettings={getCashoutSettings(machineId)}
+          onClose={() => {
+            setWizard(false)
+          }}
+          error={error?.message}
+          save={onSave}
+          locale={locale}
+        />
+      )}
     </>
   )
 }
