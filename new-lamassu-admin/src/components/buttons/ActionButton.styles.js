@@ -1,11 +1,11 @@
 import typographyStyles from 'src/components/typography/styles'
 import {
   white,
-  fontColor,
   subheaderColor,
   subheaderDarkColor,
   offColor,
   offDarkColor,
+  offDarkerColor,
   secondaryColor,
   secondaryColorDark,
   secondaryColorDarker,
@@ -56,10 +56,9 @@ export default {
     }
   },
   secondary: {
-    extend: colors(offColor, offDarkColor, white),
+    extend: colors(offColor, offDarkColor, offDarkerColor),
     color: white,
     '&:active': {
-      color: fontColor,
       '& $actionButtonIcon': {
         display: 'flex'
       },

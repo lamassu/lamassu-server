@@ -7,6 +7,7 @@ const spring = '#48f694'
 // Secondary
 const comet = '#5f668a'
 const comet2 = '#72799d'
+const comet3 = '#525772'
 const spring2 = '#44e188'
 const spring3 = '#ecfbef'
 const spring4 = '#3fd07e'
@@ -47,6 +48,7 @@ const disabledColor2 = concrete
 const fontColor = primaryColor
 const offColor = comet
 const offDarkColor = comet2
+const offDarkerColor = comet3
 const placeholderColor = comet
 const errorColor = tomato
 const errorColorDark = tomato1
@@ -146,6 +148,7 @@ export {
   placeholderColor,
   offColor,
   offDarkColor,
+  offDarkerColor,
   fontColor,
   disabledColor,
   disabledColor2,
