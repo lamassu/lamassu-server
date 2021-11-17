@@ -65,9 +65,8 @@ const useStyles = makeStyles(styles)
 
 const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
-  const [editing, setEditing] = useState(false)
   const [error, setError] = useState(false)
-  const [fields, setFields] = useState({})
+  const [fields, setFields] = useState([])
 
   const { data, loading } = useQuery(GET_BATCHES)
 
@@ -111,22 +110,26 @@ const CashboxHistory = ({ machines, currency }) => {
   }
 
   const save = row => {
+    const field = R.find(f => f.id === row.id, fields)
+    const performedBy = field.performedBy === '' ? null : field.performedBy
+
     schema
-      .isValid(fields)
+      .isValid(field)
       .then(() => {
         setError(false)
         editBatch({
-          variables: { id: row.id, performedBy: fields?.performedBy }
+          variables: { id: row.id, performedBy: performedBy }
         })
       })
       .catch(setError(true))
-    return close()
+    return close(row.id)
   }
 
-  const close = () => {
-    setFields({})
-    return setEditing(false)
+  const close = id => {
+    setFields(R.filter(f => f.id !== id, fields))
   }
+
+  const notEditing = id => !R.any(R.propEq('id', id), fields)
 
   const elements = [
     {
@@ -192,16 +195,25 @@ const CashboxHistory = ({ machines, currency }) => {
       width: 180,
       textAlign: 'left',
       view: it => {
-        if (!editing)
+        if (notEditing(it.id))
           return R.isNil(it.performedBy) ? 'Unknown entity' : it.performedBy
         return (
           <TextInput
             onChange={e =>
-              setFields({ ...fields, performedBy: e.target.value })
+              setFields(
+                R.map(
+                  f =>
+                    f.id === it.id ? { ...f, performedBy: e.target.value } : f,
+                  fields
+                )
+              )
             }
             error={error}
             width={190 * 0.85}
-            value={fields.performedBy ?? ''}
+            value={R.prop(
+              'performedBy',
+              R.find(f => f.id === it.id, fields)
+            )}
           />
         )
       }
@@ -212,12 +224,14 @@ const CashboxHistory = ({ machines, currency }) => {
       width: 150,
       textAlign: 'right',
       view: it => {
-        if (!editing)
+        if (notEditing(it.id))
           return (
             <IconButton
               onClick={() => {
-                setFields({})
-                setEditing(true)
+                setFields([
+                  ...fields,
+                  { id: it.id, performedBy: it.performedBy }
+                ])
               }}>
               <EditIcon />
             </IconButton>
@@ -227,7 +241,7 @@ const CashboxHistory = ({ machines, currency }) => {
             <Link type="submit" color="primary" onClick={() => save(it)}>
               Save
             </Link>
-            <Link color="secondary" onClick={close}>
+            <Link color="secondary" onClick={() => close(it.id)}>
               Cancel
             </Link>
           </div>
