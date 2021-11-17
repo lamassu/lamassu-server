@@ -127,6 +127,7 @@ const ETable = ({
     ((enableToggle && toggleWidth) ?? 0)
 
   const width = getWidth(elements) + actionColSize
+
   const classes = useStyles({ width })
 
   const showButtonOnEmpty = !data.length && enableCreate && !adding

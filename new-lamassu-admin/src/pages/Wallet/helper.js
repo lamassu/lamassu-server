@@ -95,7 +95,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
     {
       name: 'id',
       header: 'Cryptocurrency',
-      width: 180 - widthAdjust,
+      width: 150 - widthAdjust,
       view: viewCryptoCurrency,
       size: 'sm',
       editable: false
@@ -105,7 +105,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('ticker'),
-      width: 190 - widthAdjust,
+      width: 175 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('ticker'),
@@ -119,7 +119,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('wallet'),
-      width: 190 - widthAdjust,
+      width: 175 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('wallet'),
@@ -134,7 +134,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       size: 'sm',
       stripe: true,
       view: getDisplayName('exchange'),
-      width: 190 - widthAdjust,
+      width: 175 - widthAdjust,
       input: Autocomplete,
       inputProps: {
         options: getOptions('exchange'),
@@ -151,7 +151,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       stripe: true,
       view: getDisplayName('zeroConf'),
       input: Autocomplete,
-      width: 220 - widthAdjust,
+      width: 210 - widthAdjust,
       inputProps: {
         options: getOptions('zeroConf'),
         valueProp: 'code',
@@ -168,7 +168,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       view: (it, row) =>
         row.id === 'ETH' ? <span style={classes.editDisabled}>{it}</span> : it,
       input: NumberInput,
-      width: 190 - widthAdjust,
+      width: 145 - widthAdjust,
       inputProps: {
         decimalPlaces: 0
       },
