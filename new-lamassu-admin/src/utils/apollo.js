@@ -12,7 +12,10 @@ import AppContext from 'src/AppContext'
 const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
-const getClient = (history, location, setUserData, setRole) =>
+const ALT_URI =
+  process.env.NODE_ENV === 'development' ? 'http://localhost:4001' : ''
+
+const getClient = (history, location, getUserData, setUserData, setRole) =>
   new ApolloClient({
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
@@ -36,17 +39,24 @@ const getClient = (history, location, setUserData, setRole) =>
           } = context
 
           if (headers) {
-            const role = headers.get('role')
+            const role = headers.get('lamassu_role')
             setRole(role)
           }
 
           return response
         })
       }),
-      new HttpLink({
-        credentials: 'include',
-        uri: `${URI}/graphql`
-      })
+      ApolloLink.split(
+        operation => operation.getContext().clientName === 'pazuz',
+        new HttpLink({
+          credentials: 'include',
+          uri: `${ALT_URI}/graphql`
+        }),
+        new HttpLink({
+          credentials: 'include',
+          uri: `${URI}/graphql`
+        })
+      )
     ]),
     cache: new InMemoryCache(),
     defaultOptions: {
@@ -67,8 +77,14 @@ const getClient = (history, location, setUserData, setRole) =>
 const Provider = ({ children }) => {
   const history = useHistory()
   const location = useLocation()
-  const { setUserData, setRole } = useContext(AppContext)
-  const client = getClient(history, location, setUserData, setRole)
+  const { userData, setUserData, setRole } = useContext(AppContext)
+  const client = getClient(
+    history,
+    location,
+    () => userData,
+    setUserData,
+    setRole
+  )
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>
 }

@@ -91,10 +91,16 @@ const Register = () => {
   const classes = useStyles()
   const history = useHistory()
   const token = QueryParams().get('t')
+  const identifier = QueryParams().get('id') ?? null
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const { error: queryError, loading } = useQuery(VALIDATE_REGISTER_LINK, {
+  const queryOptions = {
+    context: {
+      headers: {
+        'Pazuz-Operator-Identifier': identifier
+      }
+    },
     variables: { token: token },
     onCompleted: ({ validateRegisterLink: info }) => {
       if (!info) {
@@ -114,7 +120,12 @@ const Register = () => {
       dispatch({
         type: 'failure'
       })
-  })
+  }
+
+  const { error: queryError, loading } = useQuery(
+    VALIDATE_REGISTER_LINK,
+    queryOptions
+  )
 
   const [register, { error: mutationError }] = useMutation(REGISTER, {
     onCompleted: ({ register: success }) => {

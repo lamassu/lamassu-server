@@ -1,5 +1,6 @@
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import gql from 'graphql-tag'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -56,7 +57,17 @@ const Input2FAState = ({ state, dispatch }) => {
 
   const [input2FA, { error: mutationError }] = useMutation(INPUT_2FA, {
     onCompleted: ({ input2FA: success }) => {
-      success ? getUserData() : setInvalidToken(true)
+      if (success) {
+        const options = {
+          context: {
+            headers: {
+              'Pazuz-Operator-Identifier': base64.encode(state.clientField)
+            }
+          }
+        }
+        return getUserData(options)
+      }
+      return setInvalidToken(true)
     }
   })
 
@@ -76,14 +87,21 @@ const Input2FAState = ({ state, dispatch }) => {
       return
     }
 
-    input2FA({
+    const options = {
       variables: {
         username: state.clientField,
         password: state.passwordField,
         code: state.twoFAField,
         rememberMe: state.rememberMeField
+      },
+      context: {
+        headers: {
+          'Pazuz-Operator-Identifier': base64.encode(state.clientField)
+        }
       }
-    })
+    }
+
+    input2FA(options)
   }
 
   const getErrorMsg = () => {

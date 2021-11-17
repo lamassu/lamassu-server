@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import React from 'react'
@@ -49,12 +50,18 @@ const LoginState = ({ state, dispatch }) => {
   const [login, { error: mutationError }] = useMutation(LOGIN)
 
   const submitLogin = async (username, password, rememberMe) => {
-    const { data: loginResponse } = await login({
+    const options = {
       variables: {
         username,
         password
+      },
+      context: {
+        headers: {
+          'Pazuz-Operator-Identifier': base64.encode(username)
+        }
       }
-    })
+    }
+    const { data: loginResponse } = await login(options)
 
     if (!loginResponse.login) return
 

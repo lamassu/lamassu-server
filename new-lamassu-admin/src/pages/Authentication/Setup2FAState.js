@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import base64 from 'base-64'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import React, { useContext, useState } from 'react'
@@ -67,13 +68,34 @@ const Setup2FAState = ({ state, dispatch }) => {
     setInvalidToken(false)
   }
 
-  const { error: queryError } = useQuery(GET_2FA_SECRET, {
+  const queryOptions = {
     variables: { username: state.clientField, password: state.passwordField },
+    context: {
+      headers: {
+        'Pazuz-Operator-Identifier': base64.encode(state.clientField)
+      }
+    },
     onCompleted: ({ get2FASecret }) => {
       setSecret(get2FASecret.secret)
       setOtpauth(get2FASecret.otpauth)
     }
-  })
+  }
+
+  const mutationOptions = {
+    variables: {
+      username: state.clientField,
+      password: state.passwordField,
+      rememberMe: state.rememberMeField,
+      codeConfirmation: twoFAConfirmation
+    },
+    context: {
+      headers: {
+        'Pazuz-Operator-Identifier': base64.encode(state.clientField)
+      }
+    }
+  }
+
+  const { error: queryError } = useQuery(GET_2FA_SECRET, queryOptions)
 
   const [getUserData] = useLazyQuery(GET_USER_DATA, {
     onCompleted: ({ userData }) => {
@@ -84,7 +106,14 @@ const Setup2FAState = ({ state, dispatch }) => {
 
   const [setup2FA, { error: mutationError }] = useMutation(SETUP_2FA, {
     onCompleted: ({ setup2FA: success }) => {
-      success ? getUserData() : setInvalidToken(true)
+      const options = {
+        context: {
+          headers: {
+            'Pazuz-Operator-Identifier': base64.encode(state.clientField)
+          }
+        }
+      }
+      success ? getUserData(options) : setInvalidToken(true)
     }
   })
 
@@ -149,14 +178,7 @@ const Setup2FAState = ({ state, dispatch }) => {
                 setInvalidToken(true)
                 return
               }
-              setup2FA({
-                variables: {
-                  username: state.clientField,
-                  password: state.passwordField,
-                  rememberMe: state.rememberMeField,
-                  codeConfirmation: twoFAConfirmation
-                }
-              })
+              setup2FA(mutationOptions)
             }}
             buttonClassName={classes.loginButton}>
             Done
