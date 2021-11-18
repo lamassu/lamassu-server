@@ -8,7 +8,7 @@ We do not generally accept outside pull requests for new features. Please consul
 
 ## Installation
 
-See [INSTALL.md](INSTALL.md), or [INSTALL-NIX.md](INSTALL.md) for nix environment. 
+See [INSTALL.md](INSTALL.md), or [INSTALL-NIX.md](INSTALL-NIX.md) for nix environment. 
 
 ## Installation on remote server (only for production)
 See [lamassu-remote-install/README.md](lamassu-remote-install/README.md).
