@@ -152,6 +152,7 @@ const Transactions = () => {
   }
 
   const getCustomerDisplayName = tx => {
+    if (tx.isAnonymous) return 'Anonymous'
     if (tx.customerName) return tx.customerName
     if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
     return tx.customerPhone
