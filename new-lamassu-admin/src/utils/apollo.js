@@ -58,8 +58,8 @@ const getClient = (history, location, getUserData, setUserData, setRole) =>
       }),
       ApolloLink.split(
         operation => operation.getContext().clientName === 'pazuz',
-        uploadLink,
-        uploadLinkALT
+        uploadLinkALT,
+        uploadLink
       )
     ]),
     cache: new InMemoryCache(),
