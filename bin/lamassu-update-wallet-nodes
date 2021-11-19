@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+const _ = require('lodash/fp')
+const common = require('../lib/blockchain/common')
+const { utils: coinUtils } = require('lamassu-coins')
+
+const cryptos = coinUtils.cryptoCurrencies()
+
+const PLUGINS = {
+  BTC: require('../lib/blockchain/bitcoin.js'),
+  LTC: require('../lib/blockchain/litecoin.js'),
+  ETH: require('../lib/blockchain/ethereum.js'),
+  DASH: require('../lib/blockchain/dash.js'),
+  ZEC: require('../lib/blockchain/zcash.js'),
+  BCH: require('../lib/blockchain/bitcoincash.js')
+}
+
+function plugin (crypto) {
+  const plugin = PLUGINS[crypto.cryptoCode]
+  if (!plugin) throw new Error(`No such plugin: ${crypto.cryptoCode}`)
+  return plugin
+}
+
+function run () {
+  _.forEach((crypto) => {
+    if (!_.includes(crypto.cryptoCode, _.keys(PLUGINS))) return
+
+    const cryptoPlugin = plugin(crypto)
+    const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`).trim()
+
+    if (status === 'RUNNING') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), true)
+    if (status === 'STOPPED') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), false)
+  }, cryptos)
+}
+
+run()
