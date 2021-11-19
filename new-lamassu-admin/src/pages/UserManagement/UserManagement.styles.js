@@ -50,13 +50,11 @@ const styles = {
   chip: {
     backgroundColor: subheaderColor,
     fontFamily: fontPrimary,
-    marginLeft: 15,
-    marginTop: -5
+    marginLeft: 10
   },
   actionChip: {
     backgroundColor: subheaderColor,
-    marginRight: 15,
-    marginTop: -5
+    marginRight: 15
   },
   info: {
     fontFamily: fontSecondary,
@@ -105,6 +103,21 @@ const styles = {
     height: '100%',
     overflow: 'hidden',
     position: 'relative'
+  },
+  loginWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  username: {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    width: '100%'
+  },
+  roleSwitch: {
+    marginLeft: 15
   }
 }
 
