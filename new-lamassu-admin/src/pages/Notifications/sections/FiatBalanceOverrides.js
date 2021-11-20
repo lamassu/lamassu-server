@@ -11,8 +11,17 @@ import NotificationsCtx from '../NotificationsContext'
 
 const CASSETTE_1_KEY = 'fiatBalanceCassette1'
 const CASSETTE_2_KEY = 'fiatBalanceCassette2'
+const CASSETTE_3_KEY = 'fiatBalanceCassette3'
+const CASSETTE_4_KEY = 'fiatBalanceCassette4'
 const MACHINE_KEY = 'machine'
 const NAME = 'fiatBalanceOverrides'
+
+const CASSETTE_LIST = [
+  CASSETTE_1_KEY,
+  CASSETTE_2_KEY,
+  CASSETTE_3_KEY,
+  CASSETTE_4_KEY
+]
 
 const FiatBalanceOverrides = ({ section }) => {
   const {
@@ -41,42 +50,62 @@ const FiatBalanceOverrides = ({ section }) => {
   const initialValues = {
     [MACHINE_KEY]: null,
     [CASSETTE_1_KEY]: '',
-    [CASSETTE_2_KEY]: ''
+    [CASSETTE_2_KEY]: '',
+    [CASSETTE_3_KEY]: '',
+    [CASSETTE_4_KEY]: ''
   }
+
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines)
+  )
 
   const notesMin = 0
   const notesMax = 9999999
-  const validationSchema = Yup.object().shape(
-    {
+  const validationSchema = Yup.object()
+    .shape({
       [MACHINE_KEY]: Yup.string()
         .label('Machine')
         .nullable()
         .required(),
       [CASSETTE_1_KEY]: Yup.number()
-        .label('Cassette 1 (top)')
-        .when(CASSETTE_2_KEY, {
-          is: CASSETTE_2_KEY => !CASSETTE_2_KEY,
-          then: Yup.number().required()
-        })
+        .label('Cassette 1')
         .transform(transformNumber)
         .integer()
         .min(notesMin)
         .max(notesMax)
         .nullable(),
       [CASSETTE_2_KEY]: Yup.number()
-        .label('Cassette 2 (bottom)')
-        .when(CASSETTE_1_KEY, {
-          is: CASSETTE_1_KEY => !CASSETTE_1_KEY,
-          then: Yup.number().required()
-        })
+        .label('Cassette 2')
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(notesMax)
+        .nullable(),
+      [CASSETTE_3_KEY]: Yup.number()
+        .label('Cassette 3')
+        .transform(transformNumber)
+        .integer()
+        .min(notesMin)
+        .max(notesMax)
+        .nullable(),
+      [CASSETTE_4_KEY]: Yup.number()
+        .label('Cassette 4')
         .transform(transformNumber)
         .integer()
         .min(notesMin)
         .max(notesMax)
         .nullable()
-    },
-    [CASSETTE_1_KEY, CASSETTE_2_KEY]
-  )
+    })
+    .test((values, context) => {
+      const picked = R.pick(CASSETTE_LIST, values)
+
+      if (CASSETTE_LIST.some(it => !R.isNil(picked[it]))) return
+
+      return context.createError({
+        path: CASSETTE_1_KEY,
+        message: 'At least one of the cassettes must have a value'
+      })
+    })
 
   const viewMachine = it =>
     R.compose(R.path(['name']), R.find(R.propEq('deviceId', it)))(machines)
@@ -93,34 +122,34 @@ const FiatBalanceOverrides = ({ section }) => {
         valueProp: 'deviceId',
         labelProp: 'name'
       }
-    },
-    {
-      name: CASSETTE_1_KEY,
-      display: 'Cash-out 1',
-      width: 155,
-      textAlign: 'right',
-      doubleHeader: 'Cash-out (Cassette Empty)',
-      bold: true,
-      input: NumberInput,
-      suffix: 'notes',
-      inputProps: {
-        decimalPlaces: 0
-      }
-    },
-    {
-      name: CASSETTE_2_KEY,
-      display: 'Cash-out 2',
-      width: 155,
-      textAlign: 'right',
-      doubleHeader: 'Cash-out (Cassette Empty)',
-      bold: true,
-      input: NumberInput,
-      suffix: 'notes',
-      inputProps: {
-        decimalPlaces: 0
-      }
     }
   ]
+
+  R.until(
+    R.gt(R.__, maxNumberOfCassettes),
+    it => {
+      elements.push({
+        name: `fiatBalanceCassette${it}`,
+        display: `Cash-out ${it}`,
+        width: 155,
+        textAlign: 'right',
+        doubleHeader: 'Cash-out (Cassette Empty)',
+        bold: true,
+        input: NumberInput,
+        suffix: 'notes',
+        inputProps: {
+          decimalPlaces: 0
+        },
+        view: it => it?.toString() ?? '—',
+        isHidden: value =>
+          it >
+          machines.find(({ deviceId }) => deviceId === value.machine)
+            ?.numberOfCassettes
+      })
+      return R.add(1, it)
+    },
+    1
+  )
 
   return (
     <EditableTable

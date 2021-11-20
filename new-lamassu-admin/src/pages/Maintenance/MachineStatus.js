@@ -33,6 +33,9 @@ const GET_MACHINES = gql`
         label
         type
       }
+      downloadSpeed
+      responseTime
+      packetLoss
     }
   }
 `

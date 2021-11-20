@@ -15,7 +15,7 @@ export default {
     paddingRight: 39
   },
   withSuffix: ({ textAlign }) => {
-    const justifyContent = textAlign === 'right' ? 'end' : textAlign
+    const justifyContent = textAlign === 'right' ? 'flex-end' : textAlign
     return {
       display: 'flex',
       alignItems: 'baseline',

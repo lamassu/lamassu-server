@@ -131,6 +131,7 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     suffix,
     SuffixComponent = TL2,
     textStyle = it => {},
+    isHidden = it => false,
     view = it => it?.toString(),
     inputProps = {}
   } = config
@@ -165,22 +166,25 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
       size={size}
       bold={bold}
       textAlign={textAlign}>
-      {isEditing && isField && (
+      {isEditing && isField && !isHidden(values) && (
         <Field name={name} component={input} {...innerProps} />
       )}
-      {isEditing && !isField && <config.input name={name} />}
-      {!isEditing && values && (
+      {isEditing && !isField && !isHidden(values) && (
+        <config.input name={name} />
+      )}
+      {!isEditing && values && !isHidden(values) && (
         <div style={textStyle(values, isEditing)}>
           {view(values[name], values)}
         </div>
       )}
-      {suffix && (
+      {suffix && !isHidden(values) && (
         <SuffixComponent
           className={classes.suffix}
           style={isEditing ? {} : textStyle(values, isEditing)}>
           {suffix}
         </SuffixComponent>
       )}
+      {isHidden(values) && <StripesSvg />}
     </Td>
   )
 }

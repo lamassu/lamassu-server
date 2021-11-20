@@ -24,8 +24,18 @@ const useStyles = makeStyles(mainStyles)
 const NUM_LOG_RESULTS = 1000
 
 const GET_TRANSACTIONS_CSV = gql`
-  query transactions($limit: Int, $from: Date, $until: Date) {
-    transactionsCsv(limit: $limit, from: $from, until: $until)
+  query transactions(
+    $simplified: Boolean
+    $limit: Int
+    $from: Date
+    $until: Date
+  ) {
+    transactionsCsv(
+      simplified: $simplified
+      limit: $limit
+      from: $from
+      until: $until
+    )
   }
 `
 
@@ -169,6 +179,7 @@ const Transactions = () => {
                 name="transactions"
                 query={GET_TRANSACTIONS_CSV}
                 getLogs={logs => R.path(['transactionsCsv'])(logs)}
+                simplified
               />
             </div>
           )}

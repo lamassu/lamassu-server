@@ -9,10 +9,35 @@ import { NumberInput } from 'src/components/inputs/formik'
 import { Info2, H4, P, Info1, Label1 } from 'src/components/typography'
 import cassetteOne from 'src/styling/icons/cassettes/cashout-cassette-1.svg'
 import cassetteTwo from 'src/styling/icons/cassettes/cashout-cassette-2.svg'
+import tejo3CassetteOne from 'src/styling/icons/cassettes/tejo/3-cassettes/3-cassettes-open-1-left.svg'
+import tejo3CassetteTwo from 'src/styling/icons/cassettes/tejo/3-cassettes/3-cassettes-open-2-left.svg'
+import tejo3CassetteThree from 'src/styling/icons/cassettes/tejo/3-cassettes/3-cassettes-open-3-left.svg'
+import tejo4CassetteOne from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-1-left.svg'
+import tejo4CassetteTwo from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-2-left.svg'
+import tejo4CassetteThree from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-3-left.svg'
+import tejo4CassetteFour from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-4-left.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
 import styles from './WizardStep.styles'
 const useStyles = makeStyles(styles)
+
+const getCassetesArtworks = () => ({
+  2: {
+    1: cassetteOne,
+    2: cassetteTwo
+  },
+  3: {
+    1: tejo3CassetteOne,
+    2: tejo3CassetteTwo,
+    3: tejo3CassetteThree
+  },
+  4: {
+    1: tejo4CassetteOne,
+    2: tejo4CassetteTwo,
+    3: tejo4CassetteThree,
+    4: tejo4CassetteFour
+  }
+})
 
 const WizardStep = ({
   name,
@@ -23,30 +48,31 @@ const WizardStep = ({
   onContinue,
   steps,
   fiatCurrency,
-  options
+  options,
+  numberOfCassettes
 }) => {
   const classes = useStyles()
 
   const label = lastStep ? 'Finish' : 'Next'
 
-  const cassetesArtworks = {
-    1: cassetteOne,
-    2: cassetteTwo
-  }
-
   return (
-    <div className={classes.content}>
+    <>
       <div className={classes.titleDiv}>
         <Info2 className={classes.title}>{name}</Info2>
-        <Stepper steps={4} currentStep={step} />
+        <Stepper steps={steps.length + 1} currentStep={step} />
       </div>
 
-      {step <= 2 && (
+      {step <= numberOfCassettes && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
           onSubmit={onContinue}
-          initialValues={{ top: '', bottom: '' }}
+          initialValues={{
+            cassette1: '',
+            cassette2: '',
+            cassette3: '',
+            cassette4: ''
+          }}
           enableReinitialize
           validationSchema={schema}>
           <Form>
@@ -84,8 +110,8 @@ const WizardStep = ({
                 className={classes.stepImage}
                 alt="cassette"
                 width="148"
-                height="196"
-                src={cassetesArtworks[step]}></img>
+                height="205"
+                src={getCassetesArtworks()[numberOfCassettes][step]}></img>
             </div>
 
             <Button className={classes.submit} type="submit">
@@ -95,7 +121,7 @@ const WizardStep = ({
         </Formik>
       )}
 
-      {step === 3 && (
+      {step === numberOfCassettes + 1 && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
@@ -162,7 +188,7 @@ const WizardStep = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
