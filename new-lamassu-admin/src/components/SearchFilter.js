@@ -14,7 +14,12 @@ import { chipStyles, styles } from './SearchFilter.styles'
 const useChipStyles = makeStyles(chipStyles)
 const useStyles = makeStyles(styles)
 
-const SearchFilter = ({ filters, onFilterDelete, setFilters, entries }) => {
+const SearchFilter = ({
+  filters,
+  onFilterDelete,
+  deleteAllFilters,
+  entries
+}) => {
   const chipClasses = useChipStyles()
   const classes = useStyles()
 
@@ -43,7 +48,7 @@ const SearchFilter = ({ filters, onFilterDelete, setFilters, entries }) => {
             Icon={ReverseFilterIcon}
             InverseIcon={FilterIcon}
             className={classes.deleteButton}
-            onClick={() => setFilters([])}>
+            onClick={deleteAllFilters}>
             Delete filters
           </ActionButton>
         </div>

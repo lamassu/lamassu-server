@@ -114,6 +114,14 @@ const GET_TRANSACTIONS = gql`
   }
 `
 
+const getFiltersObj = filters =>
+  R.compose(
+    R.mergeAll,
+    R.map(f => ({
+      [f.type]: f.value
+    }))
+  )(filters)
+
 const Transactions = () => {
   const classes = useStyles()
   const history = useHistory()
@@ -227,12 +235,7 @@ const Transactions = () => {
   ]
 
   const onFilterChange = filters => {
-    const filtersObject = R.compose(
-      R.mergeAll,
-      R.map(f => ({
-        [f.type]: f.value
-      }))
-    )(filters)
+    const filtersObject = getFiltersObj(filters)
 
     setFilters(filters)
 
@@ -250,10 +253,46 @@ const Transactions = () => {
     refetch && refetch()
   }
 
-  const onFilterDelete = filter =>
-    setFilters(
-      R.filter(f => !R.whereEq(R.pick(['type', 'value'], f), filter))(filters)
-    )
+  const onFilterDelete = filter => {
+    const newFilters = R.filter(
+      f => !R.whereEq(R.pick(['type', 'value'], f), filter)
+    )(filters)
+
+    setFilters(newFilters)
+
+    const filtersObject = getFiltersObj(newFilters)
+
+    setVariables({
+      limit: NUM_LOG_RESULTS,
+      txClass: filtersObject.type,
+      machineName: filtersObject.machine,
+      customerName: filtersObject.customer,
+      fiatCode: filtersObject.fiat,
+      cryptoCode: filtersObject.crypto,
+      toAddress: filtersObject.address,
+      status: filtersObject.status
+    })
+
+    refetch && refetch()
+  }
+
+  const deleteAllFilters = () => {
+    setFilters([])
+    const filtersObject = getFiltersObj([])
+
+    setVariables({
+      limit: NUM_LOG_RESULTS,
+      txClass: filtersObject.type,
+      machineName: filtersObject.machine,
+      customerName: filtersObject.customer,
+      fiatCode: filtersObject.fiat,
+      cryptoCode: filtersObject.crypto,
+      toAddress: filtersObject.address,
+      status: filtersObject.status
+    })
+
+    refetch && refetch()
+  }
 
   const filterOptions = R.path(['transactionFilters'])(filtersResponse)
 
@@ -301,7 +340,7 @@ const Transactions = () => {
           entries={txList.length}
           filters={filters}
           onFilterDelete={onFilterDelete}
-          setFilters={setFilters}
+          deleteAllFilters={deleteAllFilters}
         />
       )}
       <DataTable
