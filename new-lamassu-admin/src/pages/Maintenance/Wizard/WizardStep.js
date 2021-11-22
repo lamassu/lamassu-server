@@ -128,7 +128,7 @@ const WizardStep = ({
   const originalCassetteCount = machine?.[cassetteField]
   const cassetteDenomination = cashoutSettings?.[cassetteField]
 
-  const cassetteCount = values => values[`${step - 1}`] || originalCassetteCount
+  const cassetteCount = values => values[cassetteField] || originalCassetteCount
   const cassetteTotal = values => cassetteCount(values) * cassetteDenomination
   const getPercentage = R.pipe(
     cassetteCount,
@@ -150,7 +150,7 @@ const WizardStep = ({
           onSubmit={onContinue}
           initialValues={{ wasCashboxEmptied: '' }}
           enableReinitialize
-          validationSchema={steps[step - 1].schema}>
+          validationSchema={steps[0].schema}>
           {({ values }) => (
             <Form>
               <div
@@ -211,7 +211,12 @@ const WizardStep = ({
           validateOnBlur={false}
           validateOnChange={false}
           onSubmit={onContinue}
-          initialValues={{ 1: '', 2: '', 3: '', 4: '' }}
+          initialValues={{
+            cassette1: '',
+            cassette2: '',
+            cassette3: '',
+            cassette4: ''
+          }}
           enableReinitialize
           validationSchema={steps[step - 1].schema}>
           {({ values }) => (
@@ -262,7 +267,7 @@ const WizardStep = ({
                         decimalPlaces={0}
                         width={50}
                         placeholder={originalCassetteCount.toString()}
-                        name={step - 1}
+                        name={cassetteField}
                         className={classes.cashboxBills}
                       />
                       <P>

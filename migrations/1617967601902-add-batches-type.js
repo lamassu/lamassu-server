@@ -7,7 +7,11 @@ exports.up = function (next) {
       'cash-out-1-refill',
       'cash-out-1-empty',
       'cash-out-2-refill',
-      'cash-out-2-empty'
+      'cash-out-2-empty',
+      'cash-out-3-refill',
+      'cash-out-3-empty',
+      'cash-out-4-refill',
+      'cash-out-4-empty'
     )`,
     `ALTER TABLE cashbox_batches ADD COLUMN operation_type cashbox_batch_type NOT NULL`,
     `ALTER TABLE cashbox_batches ADD COLUMN bill_count_override SMALLINT`,

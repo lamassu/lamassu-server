@@ -17,11 +17,10 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     config: { active: true }
   })
 
-  const numberOfCassettes = machine.numberOfCassettes
-  const numberOfCassetteSteps = R.isEmpty(cashoutSettings)
+  const numberOfCassettes = R.isEmpty(cashoutSettings)
     ? 0
-    : numberOfCassettes
-  const LAST_STEP = numberOfCassetteSteps + 1
+    : machine.numberOfCassettes
+  const LAST_STEP = numberOfCassettes + 1
 
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
@@ -29,16 +28,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const onContinue = it => {
     const cashbox = config?.wasCashboxEmptied === 'YES' ? 0 : machine?.cashbox
 
-    console.log('Wizard.js:Wizard:it', it)
     if (isLastStep) {
-      save(
-        machine.id,
-        parseInt(cashbox),
-        parseInt(it[1] ?? 0),
-        parseInt(it[2] ?? 0),
-        parseInt(it[3] ?? 0),
-        parseInt(it[4] ?? 0)
-      )
+      const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
+      save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
       return onClose()
     }
 
@@ -50,11 +42,14 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   }
 
   const makeCassetteSteps = R.pipe(
+    R.add(1),
     R.range(1),
     R.map(i => ({
       type: `cassette ${i}`,
       schema: Yup.object().shape({
-        [i]: Yup.number()
+        [`cassette${i}`]: Yup.number()
+          .positive()
+          .integer()
           .required()
           .min(0)
           .max(CASHBOX_DEFAULT_CAPACITY)
@@ -69,7 +64,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         wasCashboxEmptied: Yup.string().required()
       })
     },
-    makeCassetteSteps(numberOfCassetteSteps + 1)
+    makeCassetteSteps(numberOfCassettes)
   )
 
   return (
