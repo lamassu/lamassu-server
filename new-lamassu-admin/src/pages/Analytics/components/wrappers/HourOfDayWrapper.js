@@ -1,5 +1,6 @@
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { getTimezoneOffset } from 'date-fns-tz'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -47,7 +48,7 @@ const HourOfDayBarGraphHeader = ({
     cashOut: <div className={classes.cashOutIcon}></div>
   }
 
-  const offset = parseInt(timezone.split(':')[1]) * MINUTE
+  const offset = getTimezoneOffset(timezone)
 
   const txsPerWeekday = R.reduce(
     (acc, value) => {

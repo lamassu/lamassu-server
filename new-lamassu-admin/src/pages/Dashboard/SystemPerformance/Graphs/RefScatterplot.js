@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import { getTimezoneOffset } from 'date-fns-tz'
 import moment from 'moment'
 import React, { useEffect, useRef, useCallback } from 'react'
 
@@ -11,7 +12,7 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
     const margin = { top: 25, right: 0, bottom: 25, left: 15 }
     const width = 555 - margin.left - margin.right
     const height = 150 - margin.top - margin.bottom
-    const dstOffset = parseInt(timezone.split(':')[1])
+    const offset = getTimezoneOffset(timezone)
     // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
     // (this is because the Y axis looks best with multiples of 100)
     const findMaxY = () => {
@@ -32,7 +33,7 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
         default:
           return moment
             .utc(v)
-            .add(dstOffset, 'minutes')
+            .add(offset, 'minutes')
             .format('HH:mm')
       }
     }

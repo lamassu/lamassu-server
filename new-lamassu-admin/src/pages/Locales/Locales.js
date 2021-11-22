@@ -158,6 +158,8 @@ const Locales = ({ name: SCREEN_KEY }) => {
     setValue(curr)
   }
 
+  console.log('config', config)
+
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
 
@@ -187,7 +189,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={handleSave}
           validationSchema={LocaleSchema}
           data={R.of(locale)}
-          elements={mainFields(data, onChangeCoin)}
+          elements={mainFields(data, onChangeCoin, R.of(locale))}
           setEditing={onEditingDefault}
           forceDisable={isEditingOverrides}
         />

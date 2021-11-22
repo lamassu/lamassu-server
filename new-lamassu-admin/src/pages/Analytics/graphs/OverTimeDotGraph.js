@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
+import { getTimezoneOffset } from 'date-fns-tz'
 import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
@@ -40,7 +41,7 @@ const Graph = ({
     []
   )
 
-  const offset = parseInt(timezone.split(':')[1]) * MINUTE
+  const offset = getTimezoneOffset(timezone)
   const NOW = Date.now() + offset
 
   const periodDomains = {

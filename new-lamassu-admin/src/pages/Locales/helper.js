@@ -1,18 +1,19 @@
 import * as ct from 'countries-and-timezones'
+// import { useFormikContext } from 'formik'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-import { getTzLabels } from 'src/utils/timezones'
+// import { getTzLabels } from 'src/utils/timezones'
 
-const getFields = (getData, names, onChange, auxElements = []) => {
+const getFields = (getData, names, onChange, auxElements = [], locale) => {
   return R.filter(
     it => R.includes(it.name, names),
-    allFields(getData, onChange, auxElements)
+    allFields(getData, onChange, auxElements, locale)
   )
 }
 
-const allFields = (getData, onChange, auxElements = []) => {
+const allFields = (getData, onChange, auxElements = [], locale) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -33,14 +34,19 @@ const allFields = (getData, onChange, auxElements = []) => {
   const suggestionFilter = it =>
     R.differenceWith((x, y) => x.deviceId === y, it, overridenMachines)
 
+  const localeData = (locale && locale[0]) || {}
+
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
   const cryptoData = getData(['cryptoCurrencies'])
-  const timezonesData = R.values(ct.getAllTimezones())
 
-  const tzLabels = getTzLabels(timezonesData)
+  const countryTimezones = ct.getTimezonesForCountry(localeData?.country) ?? []
+  const timezonesData =
+    R.values(
+      countryTimezones.map(it => ({ label: it.name, code: it.name })) ?? []
+    ) ?? []
 
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
@@ -117,10 +123,10 @@ const allFields = (getData, onChange, auxElements = []) => {
       name: 'timezone',
       width: 320,
       size: 'sm',
-      view: getView(tzLabels, 'label'),
+      view: getView(timezonesData, 'label'),
       input: Autocomplete,
       inputProps: {
-        options: tzLabels,
+        options: timezonesData,
         valueProp: 'code',
         labelProp: 'label'
       }
@@ -128,13 +134,15 @@ const allFields = (getData, onChange, auxElements = []) => {
   ]
 }
 
-const mainFields = (auxData, configureCoin) => {
+const mainFields = (auxData, configureCoin, locale) => {
   const getData = R.path(R.__, auxData)
 
   return getFields(
     getData,
     ['country', 'fiatCurrency', 'languages', 'cryptoCurrencies', 'timezone'],
-    configureCoin
+    configureCoin,
+    undefined,
+    locale
   )
 }
 
