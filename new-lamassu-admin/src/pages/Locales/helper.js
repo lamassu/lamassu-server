@@ -1,19 +1,17 @@
-import * as ct from 'countries-and-timezones'
-// import { useFormikContext } from 'formik'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-// import { getTzLabels } from 'src/utils/timezones'
+import timezoneList from 'src/utils/timezone-list'
 
-const getFields = (getData, names, onChange, auxElements = [], locale) => {
+const getFields = (getData, names, onChange, auxElements = []) => {
   return R.filter(
     it => R.includes(it.name, names),
-    allFields(getData, onChange, auxElements, locale)
+    allFields(getData, onChange, auxElements)
   )
 }
 
-const allFields = (getData, onChange, auxElements = [], locale) => {
+const allFields = (getData, onChange, auxElements = []) => {
   const getView = (data, code, compare) => it => {
     if (!data) return ''
 
@@ -34,19 +32,12 @@ const allFields = (getData, onChange, auxElements = [], locale) => {
   const suggestionFilter = it =>
     R.differenceWith((x, y) => x.deviceId === y, it, overridenMachines)
 
-  const localeData = (locale && locale[0]) || {}
-
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
   const cryptoData = getData(['cryptoCurrencies'])
-
-  const countryTimezones = ct.getTimezonesForCountry(localeData?.country) ?? []
-  const timezonesData =
-    R.values(
-      countryTimezones.map(it => ({ label: it.name, code: it.name })) ?? []
-    ) ?? []
+  const timezonesData = timezoneList
 
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
@@ -134,15 +125,14 @@ const allFields = (getData, onChange, auxElements = [], locale) => {
   ]
 }
 
-const mainFields = (auxData, configureCoin, locale) => {
+const mainFields = (auxData, configureCoin) => {
   const getData = R.path(R.__, auxData)
 
   return getFields(
     getData,
     ['country', 'fiatCurrency', 'languages', 'cryptoCurrencies', 'timezone'],
     configureCoin,
-    undefined,
-    locale
+    undefined
   )
 }
 
