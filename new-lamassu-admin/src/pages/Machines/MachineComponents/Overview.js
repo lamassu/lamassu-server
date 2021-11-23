@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
-import { differenceInSeconds } from 'date-fns'
+import { differenceInSeconds } from 'date-fns/fp'
 import React from 'react'
 
 import { Status } from 'src/components/Status'
@@ -13,7 +13,7 @@ const useStyles = makeStyles(styles)
 
 const makeLastPing = lastPing => {
   if (!lastPing) return null
-  const secondsAgo = differenceInSeconds(new Date(), lastPing)
+  const secondsAgo = differenceInSeconds(lastPing, new Date())
   if (secondsAgo < 60) {
     return `${secondsAgo} ${secondsAgo === 1 ? 'second' : 'seconds'} ago`
   }

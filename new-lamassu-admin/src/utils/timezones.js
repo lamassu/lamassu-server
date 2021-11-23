@@ -1,32 +1,25 @@
-import { format } from 'date-fns'
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz'
-// import * as R from 'ramda'
-
-// const buildLabel = tz => {
-//   return `(UTC${tz.utcOffsetStr}) ${R.map(it => it.city, tz.cities).join(', ')}`
-// }
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz/fp'
+import { format } from 'date-fns/fp'
 
 const toUtc = date => {
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  return zonedTimeToUtc(date, browserTimezone)
+  return zonedTimeToUtc(browserTimezone, date)
 }
 
 const toTimezone = (date, timezone) => {
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  return utcToZonedTime(zonedTimeToUtc(date, browserTimezone), timezone)
+  return utcToZonedTime(timezone, zonedTimeToUtc(browserTimezone, date))
 }
 
 const formatDate = (date, timezone, pattern) => {
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const newDate = utcToZonedTime(
-    zonedTimeToUtc(date, browserTimezone),
-    timezone
+    timezone,
+    zonedTimeToUtc(browserTimezone, date)
   )
-  return format(newDate, pattern)
+  return format(pattern, newDate)
 }
 
-const formatDateNonUtc = (date, pattern) => {
-  return format(date, pattern)
-}
+const formatDateNonUtc = (date, pattern) => format(pattern, date)
 
 export { toUtc, toTimezone, formatDate, formatDateNonUtc }

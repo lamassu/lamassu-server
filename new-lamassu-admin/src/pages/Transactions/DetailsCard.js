@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
-import { add, differenceInYears, format, sub } from 'date-fns'
+import { add, differenceInYears, format, sub } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
@@ -120,17 +120,17 @@ const DetailsRow = ({ it: tx, timezone }) => {
     name: `${onlyFirstToUpper(
       tx.customerIdCardData.firstName
     )} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
-    age: differenceInYears(new Date(), tx.customerIdCardData.dateOfBirth),
+    age: differenceInYears(tx.customerIdCardData.dateOfBirth, new Date()),
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
     idCardExpirationDate: format(
-      tx.customerIdCardData.expirationDate,
-      'DD-MM-YYYY'
+      'dd-MM-yyyy',
+      tx.customerIdCardData.expirationDate
     )
   }
 
-  const from = sub(tx.created, { minutes: MINUTES_OFFSET })
-  const until = add(tx.created, { minutes: MINUTES_OFFSET })
+  const from = sub({ minutes: MINUTES_OFFSET }, tx.created)
+  const until = add({ minutes: MINUTES_OFFSET }, tx.created)
 
   const downloadRawLogs = ({ id: txId, deviceId, txClass }, timezone) => {
     fetchSummary({

@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles'
-import { format } from 'date-fns'
+import { format } from 'date-fns/fp'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -44,7 +44,7 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
       header: 'Last active',
       width: 137,
       view: it =>
-        (it.lastActive && format(new Date(it.lastActive), 'yyyy-MM-d')) ?? ''
+        (it.lastActive && format('yyyy-MM-d', new Date(it.lastActive))) ?? ''
     },
     {
       header: 'Last transaction',

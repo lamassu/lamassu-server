@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { add } from 'date-fns'
+import { add } from 'date-fns/fp'
 import React, { useEffect, useRef, useCallback } from 'react'
 
 import { backgroundColor, java, neon } from 'src/styling/variables'
@@ -92,7 +92,7 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
     const x = d3
       .scaleTime()
       .domain([
-        add(new Date(), { days: -xAxisSettings.subtractDays }).valueOf(),
+        add({ days: -xAxisSettings.subtractDays }, new Date()).valueOf(),
         new Date().valueOf()
       ])
       .range(xAxisSettings.timeRange)

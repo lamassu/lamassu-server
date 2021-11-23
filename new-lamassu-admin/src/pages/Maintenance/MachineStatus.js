@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistance } from 'date-fns'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
@@ -91,7 +91,9 @@ const MachineStatus = () => {
       textAlign: 'left',
       view: m =>
         m.lastPing
-          ? formatDistanceToNow(new Date(m.lastPing), { addSuffix: true })
+          ? formatDistance(new Date(m.lastPing), new Date(), {
+              addSuffix: true
+            })
           : 'unknown'
     },
     {

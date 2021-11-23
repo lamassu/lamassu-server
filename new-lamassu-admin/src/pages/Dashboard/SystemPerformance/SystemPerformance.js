@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { isAfter, sub } from 'date-fns'
+import { isAfter, sub } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -30,7 +30,7 @@ const mapToFee = R.map(R.prop('cashInFee'))
 
 const getDateSecondsAgo = (seconds = 0, startDate = null) => {
   const date = startDate ? new Date(startDate) : new Date()
-  return sub(date, { seconds: seconds })
+  return sub({ seconds: seconds }, date)
 }
 
 const ranges = {
@@ -84,14 +84,14 @@ const SystemPerformance = () => {
     if (!getLastTimePeriod) {
       return (
         t.error === null &&
-        isAfter(toTimezone(t.created, timezone), ranges[selectedRange].right) &&
-        isAfter(new Date(), toTimezone(t.created, timezone))
+        isAfter(ranges[selectedRange].right, toTimezone(t.created, timezone)) &&
+        isAfter(toTimezone(t.created, timezone), new Date())
       )
     }
     return (
       t.error === null &&
-      isAfter(toTimezone(t.created, timezone), ranges[selectedRange].left) &&
-      isAfter(ranges[selectedRange].right, toTimezone(t.created, timezone))
+      isAfter(ranges[selectedRange].left, toTimezone(t.created, timezone)) &&
+      isAfter(toTimezone(t.created, timezone), ranges[selectedRange].right)
     )
   }
 

@@ -5,7 +5,7 @@ import {
   differenceInMonths,
   isSameMonth,
   set
-} from 'date-fns'
+} from 'date-fns/fp'
 import React, { useState, useEffect } from 'react'
 
 import Calendar from './Calendar'
@@ -31,12 +31,12 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
 
   const handleSelect = (day, minDate, maxDate) => {
     if (
-      (maxDate && differenceInDays(day, maxDate) > 0) ||
-      (minDate && differenceInDays(minDate, day) > 0)
+      (maxDate && differenceInDays(maxDate, day) > 0) ||
+      (minDate && differenceInDays(day, minDate) > 0)
     )
       return
 
-    if (from && !to && differenceInDays(from, day) > 0) {
+    if (from && !to && differenceInDays(day, from) > 0) {
       setTo(from)
       setFrom(day)
       return
@@ -45,10 +45,10 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
     if (
       from &&
       !to &&
-      (isSameMonth(day, from) || differenceInMonths(day, from) > 0)
+      (isSameMonth(from, day) || differenceInMonths(from, day) > 0)
     ) {
       setTo(
-        set(day, { hours: 23, minutes: 59, seconds: 59, milliseconds: 999 })
+        set({ hours: 23, minutes: 59, seconds: 59, milliseconds: 999 }, day)
       )
       return
     }

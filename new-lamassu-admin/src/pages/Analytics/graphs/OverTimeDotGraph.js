@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
-import { add, format, startOfWeek, startOfYear } from 'date-fns'
 import { getTimezoneOffset } from 'date-fns-tz'
+import { add, format, startOfWeek, startOfYear } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -88,11 +88,11 @@ const Graph = ({
     const previousDateMonth = previousDate.getUTCMonth()
 
     const daysOfWeek = Array.from(Array(7)).map((_, i) =>
-      format(add(startOfWeek(new Date()), { days: i }), 'EEE')
+      format('EEE', add({ days: i }, startOfWeek(new Date())))
     )
 
     const months = Array.from(Array(12)).map((_, i) =>
-      format(add(startOfYear(new Date()), { months: i }), 'LLL')
+      format('LLL', add({ months: i }, startOfYear(new Date())))
     )
 
     return {

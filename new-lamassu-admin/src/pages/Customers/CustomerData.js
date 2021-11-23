@@ -1,6 +1,6 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
-import { differenceInYears, format } from 'date-fns'
+import { differenceInYears, format } from 'date-fns/fp'
 import _ from 'lodash/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
@@ -65,7 +65,6 @@ const CustomerData = ({ customer, updateCustomer }) => {
   const rawExpirationDate = R.path(['expirationDate'])(idData)
   const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
-  console.log(rawDob)
 
   const sanctions = R.path(['sanctions'])(customer)
   const sanctionsAt = R.path(['sanctionsAt'])(customer)
@@ -116,13 +115,13 @@ const CustomerData = ({ customer, updateCustomer }) => {
     {
       name: 'birthDate',
       label: 'Birth Date',
-      value: (rawDob && format(rawDob, 'yyyy-MM-dd')) ?? '',
+      value: (rawDob && format('yyyy-MM-dd', rawDob)) ?? '',
       component: TextInput
     },
     {
       name: 'age',
       label: 'Age',
-      value: (rawDob && differenceInYears(new Date(), rawDob)) ?? '',
+      value: (rawDob && differenceInYears(rawDob, new Date())) ?? '',
       component: TextInput
     },
     {
@@ -141,7 +140,7 @@ const CustomerData = ({ customer, updateCustomer }) => {
       name: 'expirationDate',
       label: 'Expiration Date',
       value:
-        (rawExpirationDate && format(rawExpirationDate, 'yyyy-MM-dd')) ?? '',
+        (rawExpirationDate && format('yyyy-MM-dd', rawExpirationDate)) ?? '',
       component: TextInput
     }
   ]

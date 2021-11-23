@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
-import { format, isSameDay } from 'date-fns'
+import { format, isSameDay } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import * as R from 'ramda'
 import React, { useState, useCallback } from 'react'
@@ -65,13 +65,13 @@ const DateContainer = ({ date, children, ...props }) => {
       {date && (
         <>
           <div className={classes.container}>
-            <div className={classes.bigNumber}>{format(date, 'd')}</div>
+            <div className={classes.bigNumber}>{format('d', date)}</div>
             <div className={classes.monthWeekDayContainer}>
               <span className={classes.monthYear}>{`${format(
-                date,
-                'MMM'
-              )} ${format(date, 'yyyy')}`}</span>
-              <span className={classes.weekDay}>{format(date, 'EEEE')}</span>
+                'MMM',
+                date
+              )} ${format('yyyy', date)}`}</span>
+              <span className={classes.weekDay}>{format('EEEE', date)}</span>
             </div>
           </div>
         </>
@@ -188,7 +188,7 @@ const LogsDownloaderPopover = ({
 
     if (!range || !range.from) return
     if (range.from && !range.until) range.until = new Date()
-    if (isSameDay(range.from, range.until)) range.until = new Date()
+    if (isSameDay(range.until, range.from)) range.until = new Date()
 
     if (selectedRadio === RANGE) {
       fetchLogs({

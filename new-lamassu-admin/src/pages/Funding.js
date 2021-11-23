@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { format } from 'date-fns'
+import { format } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import { utils as coinUtils } from 'lamassu-coins'
 import QRCode from 'qrcode.react'
@@ -275,8 +275,8 @@ const Funding = () => {
                     <Td width={sizes.big}>
                       {it.fiatValue} {selected.fiatCode}
                     </Td>
-                    <Td width={sizes.date}>{format(it.date, 'YYYY-MM-DD')}</Td>
-                    <Td width={sizes.time}>{format(it.date, 'hh:mm:ss')}</Td>
+                    <Td width={sizes.date}>{format('yyyy-MM-dd', it.date)}</Td>
+                    <Td width={sizes.time}>{format('hh:mm:ss', it.date)}</Td>
                     <Td width={sizes.big}>add</Td>
                   </Tr>
                 ))}

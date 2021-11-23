@@ -1,5 +1,5 @@
 import { Box } from '@material-ui/core'
-import { differenceInYears, format } from 'date-fns'
+import { differenceInYears, format } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
@@ -34,14 +34,14 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
     },
     {
       header: 'Birth Date',
-      display: ifNotNull(rawDob, format(rawDob, 'YYYY-MM-DD')),
+      display: ifNotNull(rawDob, format('YYYY-MM-DD', rawDob)),
       size: 110
     },
     {
       header: 'Age',
       display: ifNotNull(
         rawDob,
-        differenceInYears(toUtc(new Date()), toUtc(rawDob))
+        differenceInYears(toUtc(rawDob), toUtc(new Date()))
       ),
       size: 50
     },
@@ -59,7 +59,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
       header: 'Expiration Date',
       display: ifNotNull(
         rawExpirationDate,
-        format(rawExpirationDate, 'YYYY-MM-DD')
+        format('YYYY-MM-DD', rawExpirationDate)
       )
     }
   ]

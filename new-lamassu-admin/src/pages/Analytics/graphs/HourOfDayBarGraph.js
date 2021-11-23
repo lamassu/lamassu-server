@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
-import { add, startOfDay } from 'date-fns'
 import { getTimezoneOffset } from 'date-fns-tz'
+import { add, startOfDay } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -100,7 +100,7 @@ const Graph = ({
     .scaleUtc()
     .domain([
       toUtc(startOfDay(new Date())),
-      toUtc(add(startOfDay(new Date()), { days: 1 }))
+      toUtc(add({ days: 1 }, startOfDay(new Date())))
     ])
     .rangeRound([GRAPH_MARGIN.left, GRAPH_WIDTH - GRAPH_MARGIN.right])
 
