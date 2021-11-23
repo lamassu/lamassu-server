@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="icon/button/upload-file/zodiac-resized" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Add-File-Icon" transform="translate(0.000000, 0.500000)">
+            <g id="file-icon" transform="translate(5.934783, 0.000000)" stroke="#1B2559">
+                <g id="lines" transform="translate(3.130435, 7.826087)" stroke-linecap="round">
+                    <line x1="0" y1="7.04347826" x2="7.82608696" y2="7.04347826" id="line-3"></line>
+                    <line x1="0" y1="3.91304348" x2="7.82608696" y2="3.91304348" id="line-2"></line>
+                    <line x1="0" y1="0.782608696" x2="5.47826087" y2="0.782608696" id="line-1"></line>
+                </g>
+                <polygon id="paper" stroke-linecap="round" stroke-linejoin="round" points="13.5652174 18.6521739 0 18.6521739 -1.18243096e-12 0 8.47826087 2.91569667e-12 13.5652174 5.08695652"></polygon>
+                <polygon id="fold" stroke-linejoin="round" points="8.47826087 0 8.47826087 5.08695652 13.5652174 5.08695652"></polygon>
+            </g>
+            <g id="plus-sign" transform="translate(0.000000, 5.934783)">
+                <circle id="Oval" stroke="#1B2559" fill="#EBEFFF" cx="6.7826087" cy="6.7826087" r="6.2826087"></circle>
+                <polygon id="Path" fill="#1B2559" fill-rule="nonzero" points="7.34782609 6.2173913 10.173913 6.2173913 10.173913 7.34782609 7.34782609 7.34782609 7.34782609 10.173913 6.2173913 10.173913 6.2173913 7.34782609 3.39130435 7.34782609 3.39130435 6.2173913 6.2173913 6.2173913 6.2173913 3.39130435 7.34782609 3.39130435"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
