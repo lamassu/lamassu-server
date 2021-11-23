@@ -1,15 +1,17 @@
-# Preliminaries for Ubuntu 16.04
+# Install
+
+## Preliminaries for Ubuntu 16.04
 
 Installation for other distros may be slightly different. This assumes NodeJS 8.3 or higher and npm 5.6 are already installed. All of this is done in the lamassu-server directory.
 
-## Packages
+### Packages
 
 ```
 sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib postgresql-server-dev-9.5 libpq-dev git
 ```
 
-## Set up PostgreSQL
+### Set up PostgreSQL
 
 ```
 sudo -u postgres createdb lamassu
@@ -23,24 +25,24 @@ In ``psql``, run the following and set password to ``postgres123``:
 ctrl-d
 ```
 
-# Preliminaries for MacOS
+## Preliminaries for MacOS
 
-## Postgres
+### Postgres
 
 Use Postgres.app: https://postgresapp.com/
 
 **psql** is automatically installed. You won't need to set up users.
 
-## NodeJS
+### NodeJS
 
 ```
 curl -L https://git.io/n-install | bash -s -- -y lts
 . ~/.bash_profile
 ```
 
-# Installation
+## Installation
 
-## Install node modules
+### Install node modules
 
 Make sure you're running NodeJS 8.3 or higher. Ignore any warnings.
 
@@ -48,7 +50,7 @@ Make sure you're running NodeJS 8.3 or higher. Ignore any warnings.
 npm install
 ```
 
-## Generate certificates
+### Generate certificates
 
 ```
 bash tools/cert-gen.sh
@@ -57,7 +59,7 @@ bash tools/cert-gen.sh
 Notes: 
   - This will create a ``.lamassu`` directory in your home directory.
   
-## Set up database
+### Set up database
 
 Important: lamassu-migrate currently gripes about a QueryResultError. Ignore this, it works anyway.
 
@@ -65,7 +67,7 @@ Important: lamassu-migrate currently gripes about a QueryResultError. Ignore thi
 node bin/lamassu-migrate
 ```
 
-## Run new-lamassu-admin
+### Run new-lamassu-admin
 
 ```
 cd new-lamassu-admin/
@@ -73,7 +75,7 @@ npm install
 npm run start
 ```
 
-## Run lamassu-admin-server
+### Run lamassu-admin-server
 
 In a second terminal window:
 
@@ -81,7 +83,7 @@ In a second terminal window:
 node bin/lamassu-admin-server --dev
 ```
 
-## Register admin user
+### Register admin user
 
 In a third terminal window:
 
@@ -91,7 +93,7 @@ node bin/lamassu-register admin@example.com superuser
 
 You'll use this generated URL in the brower in a moment.
 
-## Complete configuration
+### Complete configuration
 
 Paste the URL from lamassu-register exactly as output, into a browser (chrome or firefox).
 
@@ -99,14 +101,36 @@ Paste the URL from lamassu-register exactly as output, into a browser (chrome or
 
 Go to all the required, unconfigured red fields and choose some values. Choose mock services whenever available.
 
-## Run lamassu-server
+### Run lamassu-server
 
 ```
-node bin/lamassu-server --mockSms
+node bin/lamassu-server --mockSms --mockScoring
 ```
 
-## Add a lamassu-machine
+### Add a lamassu-machine
 
 Click on ``+ Add Machine`` in the sidebar. Type in a name for your machine and click **Pair**. Open up development tools to show the JavaScript console and copy the totem. You will use this to run lamassu-machine. This pairing totem expires after an hour.
 
-Now continue with lamassu-machine instructions from the ``INSTALL.md`` file in lamassu-machine.
+Now continue with lamassu-machine instructions from the ``INSTALL.md`` file in [lamassu-machine repository](https://github.com/lamassu/lamassu-machine).
+
+
+## Subsequent runs
+
+To start the Lamassu server run:
+
+```
+node bin/lamassu-server --mockSms --mockScoring
+```
+
+To start the Lamassu Admin run:
+
+```
+node bin/lamassu-admin-server --dev
+```
+
+and
+
+```
+cd new-lamassu-admin/
+npm run start
+```
