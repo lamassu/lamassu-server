@@ -54,7 +54,6 @@
     "mem": "^1.1.0",
     "migrate": "^1.6.2",
     "minimist": "^1.2.0",
-    "moment": "^2.17.0",
     "morgan": "^1.8.2",
     "nan": "^2.14.0",
     "nano-markdown": "^1.2.0",

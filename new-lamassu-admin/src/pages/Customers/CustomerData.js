@@ -1,7 +1,7 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
+import { differenceInYears, format } from 'date-fns'
 import _ from 'lodash/fp'
-import moment from 'moment'
 import * as R from 'ramda'
 import { useState, React } from 'react'
 import * as Yup from 'yup'
@@ -23,7 +23,6 @@ import { ReactComponent as CustomerListViewIcon } from 'src/styling/icons/circle
 import { ReactComponent as OverviewReversedIcon } from 'src/styling/icons/circle buttons/overview/white.svg'
 import { ReactComponent as OverviewIcon } from 'src/styling/icons/circle buttons/overview/zodiac.svg'
 import { URI } from 'src/utils/apollo'
-import { ifNotNull } from 'src/utils/nullCheck'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
@@ -66,6 +65,7 @@ const CustomerData = ({ customer, updateCustomer }) => {
   const rawExpirationDate = R.path(['expirationDate'])(idData)
   const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
+  console.log(rawDob)
 
   const sanctions = R.path(['sanctions'])(customer)
   const sanctionsAt = R.path(['sanctionsAt'])(customer)
@@ -116,16 +116,13 @@ const CustomerData = ({ customer, updateCustomer }) => {
     {
       name: 'birthDate',
       label: 'Birth Date',
-      value: ifNotNull(rawDob, moment.utc(rawDob).format('YYYY-MM-DD')),
+      value: (rawDob && format(rawDob, 'yyyy-MM-dd')) ?? '',
       component: TextInput
     },
     {
       name: 'age',
       label: 'Age',
-      value: ifNotNull(
-        rawDob,
-        moment.utc().diff(moment.utc(rawDob).format('YYYY-MM-DD'), 'years')
-      ),
+      value: (rawDob && differenceInYears(new Date(), rawDob)) ?? '',
       component: TextInput
     },
     {
@@ -143,10 +140,8 @@ const CustomerData = ({ customer, updateCustomer }) => {
     {
       name: 'expirationDate',
       label: 'Expiration Date',
-      value: ifNotNull(
-        rawExpirationDate,
-        moment.utc(rawExpirationDate).format('YYYY-MM-DD')
-      ),
+      value:
+        (rawExpirationDate && format(rawExpirationDate, 'yyyy-MM-dd')) ?? '',
       component: TextInput
     }
   ]

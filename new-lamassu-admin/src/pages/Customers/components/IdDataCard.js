@@ -1,5 +1,5 @@
 import { Box } from '@material-ui/core'
-import moment from 'moment'
+import { differenceInYears, format } from 'date-fns'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
@@ -9,6 +9,7 @@ import {
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
 import { ifNotNull } from 'src/utils/nullCheck'
+import { toUtc } from 'src/utils/timezones'
 
 import { getName } from '../helper'
 
@@ -33,14 +34,14 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
     },
     {
       header: 'Birth Date',
-      display: ifNotNull(rawDob, moment.utc(rawDob).format('YYYY-MM-DD')),
+      display: ifNotNull(rawDob, format(rawDob, 'YYYY-MM-DD')),
       size: 110
     },
     {
       header: 'Age',
       display: ifNotNull(
         rawDob,
-        moment.utc().diff(moment.utc(rawDob).format('YYYY-MM-DD'), 'years')
+        differenceInYears(toUtc(new Date()), toUtc(rawDob))
       ),
       size: 50
     },
@@ -58,7 +59,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
       header: 'Expiration Date',
       display: ifNotNull(
         rawExpirationDate,
-        moment.utc(rawExpirationDate).format('YYYY-MM-DD')
+        format(rawExpirationDate, 'YYYY-MM-DD')
       )
     }
   ]

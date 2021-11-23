@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
+import { add, startOfDay } from 'date-fns'
 import { getTimezoneOffset } from 'date-fns-tz'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -14,6 +14,7 @@ import {
   subheaderColor
 } from 'src/styling/variables'
 import { MINUTE } from 'src/utils/time'
+import { toUtc } from 'src/utils/timezones'
 
 const Graph = ({
   data,
@@ -98,13 +99,8 @@ const Graph = ({
   const x = d3
     .scaleUtc()
     .domain([
-      moment()
-        .startOf('day')
-        .utc(),
-      moment()
-        .startOf('day')
-        .add(1, 'day')
-        .utc()
+      toUtc(startOfDay(new Date())),
+      toUtc(add(startOfDay(new Date()), { days: 1 }))
     ])
     .rangeRound([GRAPH_MARGIN.left, GRAPH_WIDTH - GRAPH_MARGIN.right])
 

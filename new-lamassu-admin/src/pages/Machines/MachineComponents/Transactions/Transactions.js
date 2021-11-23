@@ -1,9 +1,8 @@
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import { utils as coinUtils } from 'lamassu-coins'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
 
@@ -12,6 +11,7 @@ import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
 import { getStatus } from 'src/pages/Transactions/helper'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { formatDate } from 'src/utils/timezones'
 
 import DataTable from './DataTable'
 const useStyles = makeStyles(mainStyles)
@@ -57,13 +57,19 @@ const GET_TRANSACTIONS = gql`
   }
 `
 
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
+
 const Transactions = ({ id }) => {
   const classes = useStyles()
 
   const [extraHeight, setExtraHeight] = useState(0)
   const [clickedId, setClickedId] = useState('')
 
-  const [getTx, { data: txResponse, loading }] = useLazyQuery(
+  const [getTx, { data: txResponse, loading: txLoading }] = useLazyQuery(
     GET_TRANSACTIONS,
     {
       variables: {
@@ -72,6 +78,11 @@ const Transactions = ({ id }) => {
       }
     }
   )
+
+  const { data: configData, loading: configLoading } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configData)
+
+  const loading = txLoading && configLoading
 
   if (!loading && txResponse) {
     txResponse.transactions = txResponse.transactions.splice(0, 5)
@@ -135,7 +146,7 @@ const Transactions = ({ id }) => {
     },
     {
       header: 'Date (UTC)',
-      view: it => moment.utc(it.created).format('YYYY-MM-DD'),
+      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd'),
       textAlign: 'left',
       size: 'sm',
       width: 140
