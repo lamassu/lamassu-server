@@ -2,18 +2,24 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import { IconButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
+import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './CashCassettes.styles.js'
 import CashCassettesFooter from './CashCassettesFooter'
+import CashboxHistory from './CashboxHistory'
+import Wizard from './Wizard/Wizard'
 
 const useStyles = makeStyles(styles)
 
@@ -106,16 +112,28 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
+const CREATE_BATCH = gql`
+  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
+    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
+      id
+    }
+  }
+`
+
 const CashCassettes = () => {
   const classes = useStyles()
+  const [showHistory, setShowHistory] = useState(false)
 
   const { data } = useQuery(GET_MACHINES_AND_CONFIG)
+  const [wizard, setWizard] = useState(false)
+  const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
+  const [createBatch] = useMutation(CREATE_BATCH)
   const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
     R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
@@ -126,10 +144,23 @@ const CashCassettes = () => {
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines)
   )
+  const cashboxCounts = R.reduce(
+    (ret, m) => R.assoc(m.id, m.cashbox, ret),
+    {},
+    machines
+  )
 
-  const onSave = (
-    ...[, { id, cashbox, cassette1, cassette2, cassette3, cassette4 }]
-  ) => {
+  const onSave = (id, cashbox, cassette1, cassette2, cassette3, cassette4) => {
+    const oldCashboxCount = cashboxCounts[id]
+    if (cashbox < oldCashboxCount) {
+      createBatch({
+        variables: {
+          deviceId: id,
+          cashboxCount: oldCashboxCount
+        }
+      })
+    }
+
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
@@ -198,25 +229,55 @@ const CashCassettes = () => {
     1
   )
 
+  elements.push({
+    name: 'edit',
+    header: 'Edit',
+    width: 87,
+    view: (value, { id }) => {
+      return (
+        <IconButton
+          onClick={() => {
+            setMachineId(id)
+            setWizard(true)
+          }}>
+          <EditIcon />
+        </IconButton>
+      )
+    }
+  })
+
   return (
     <>
-      <TitleSection title="Cash Cassettes" />
+      <TitleSection
+        title="Cash Cassettes"
+        button={{
+          text: 'Cashbox history',
+          icon: HistoryIcon,
+          inverseIcon: ReverseHistoryIcon,
+          toggle: setShowHistory
+        }}
+        iconClassName={classes.listViewButton}
+      />
       <div className={classes.tableContainer}>
-        <EditableTable
-          error={error?.message}
-          name="cashboxes"
-          enableEdit
-          enableEditText="Update"
-          stripeWhen={isCashOutDisabled}
-          elements={elements}
-          data={machines}
-          save={onSave}
-          validationSchema={ValidationSchema}
-          tbodyWrapperClass={classes.tBody}
-        />
+        {!showHistory && (
+          <>
+            <EditableTable
+              error={error?.message}
+              name="cashboxes"
+              stripeWhen={isCashOutDisabled}
+              elements={elements}
+              data={machines}
+              validationSchema={ValidationSchema}
+              tbodyWrapperClass={classes.tBody}
+            />
 
-        {data && R.isEmpty(machines) && (
-          <EmptyTable message="No machines so far" />
+            {data && R.isEmpty(machines) && (
+              <EmptyTable message="No machines so far" />
+            )}
+          </>
+        )}
+        {showHistory && (
+          <CashboxHistory machines={machines} currency={fiatCurrency} />
         )}
       </div>
       <CashCassettesFooter
@@ -226,6 +287,18 @@ const CashCassettes = () => {
         bills={bills}
         deviceIds={deviceIds}
       />
+      {wizard && (
+        <Wizard
+          machine={R.find(R.propEq('id', machineId), machines)}
+          cashoutSettings={getCashoutSettings(machineId)}
+          onClose={() => {
+            setWizard(false)
+          }}
+          error={error?.message}
+          save={onSave}
+          locale={locale}
+        />
+      )}
     </>
   )
 }
