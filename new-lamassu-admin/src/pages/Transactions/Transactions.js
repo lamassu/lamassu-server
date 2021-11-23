@@ -115,12 +115,7 @@ const GET_TRANSACTIONS = gql`
 `
 
 const getFiltersObj = filters =>
-  R.compose(
-    R.mergeAll,
-    R.map(f => ({
-      [f.type]: f.value
-    }))
-  )(filters)
+  R.reduce((s, f) => ({ ...s, [f.type]: f.value }), {}, filters)
 
 const Transactions = () => {
   const classes = useStyles()
