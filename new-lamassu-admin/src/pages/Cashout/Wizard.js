@@ -7,16 +7,17 @@ import { Autocomplete } from 'src/components/inputs/formik'
 import denominations from 'src/utils/bill-denominations'
 import { getBillOptions } from 'src/utils/bill-options'
 import { toNamespace } from 'src/utils/config'
+import { transformNumber } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 import { DenominationsSchema } from './helper'
 
-const LAST_STEP = 3
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
 const Wizard = ({ machine, locale, onClose, save, error }) => {
+  const LAST_STEP = machine.numberOfCassettes + 2
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
@@ -30,7 +31,10 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
   const onContinue = async it => {
     if (isLastStep) {
       return save(
-        toNamespace(machine.deviceId, DenominationsSchema.cast(config))
+        toNamespace(
+          machine.deviceId,
+          DenominationsSchema.cast(config, { assert: false })
+        )
       )
     }
 
@@ -42,33 +46,55 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     })
   }
 
-  const steps = [
-    {
-      type: 'top',
-      display: 'Cassette 1 (Top)',
-      component: Autocomplete,
-      inputProps: {
-        options: R.map(it => ({ code: it, display: it }))(options),
-        labelProp: 'display',
-        valueProp: 'code'
-      }
+  const steps = []
+
+  R.until(
+    R.gt(R.__, machine.numberOfCassettes),
+    it => {
+      steps.push({
+        type: `cassette${it}`,
+        display: `Cassette ${it}`,
+        component: Autocomplete,
+        inputProps: {
+          options: R.map(it => ({ code: it, display: it }))(options),
+          labelProp: 'display',
+          valueProp: 'code'
+        }
+      })
+      return R.add(1, it)
     },
-    {
-      type: 'bottom',
-      display: 'Cassette 2',
-      component: Autocomplete,
-      inputProps: {
-        options: R.map(it => ({ code: it, display: it }))(options),
-        labelProp: 'display',
-        valueProp: 'code'
-      }
-    }
-  ]
+    1
+  )
+
+  steps.push({
+    type: 'zeroConfLimit',
+    display: '0-conf Limit',
+    schema: Yup.object().shape({
+      zeroConfLimit: Yup.number().required()
+    })
+  })
 
   const schema = () =>
     Yup.object().shape({
-      top: Yup.number().required(),
-      bottom: step >= 2 ? Yup.number().required() : Yup.number()
+      cassette1: Yup.number().required(),
+      cassette2:
+        machine.numberOfCassettes > 1 && step >= 2
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      cassette3:
+        machine.numberOfCassettes > 2 && step >= 3
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      cassette4:
+        machine.numberOfCassettes > 3 && step >= 4
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable()
     })
 
   return (
@@ -85,6 +111,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
         <WizardStep
           step={step}
           name={machine.name}
+          numberOfCassettes={machine.numberOfCassettes}
           error={error}
           lastStep={isLastStep}
           steps={steps}

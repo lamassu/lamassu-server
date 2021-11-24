@@ -6,6 +6,7 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -60,6 +61,10 @@ const MachinesTable = ({ machines, numToRender }) => {
     })
   }
 
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines)
+  )
+
   return (
     <TableContainer className={classes.table}>
       <Table>
@@ -80,18 +85,17 @@ const MachinesTable = ({ machines, numToRender }) => {
                   <TxInIcon />
                 </div>
               </HeaderCell> */}
-            <HeaderCell>
-              <div className={classes.header}>
-                <TxOutIcon />
-                <Label2 className={classes.label}> 1</Label2>
-              </div>
-            </HeaderCell>
-            <HeaderCell>
-              <div className={classes.header}>
-                <TxOutIcon />
-                <Label2 className={classes.label}> 2</Label2>
-              </div>
-            </HeaderCell>
+            {R.map(
+              it => (
+                <HeaderCell>
+                  <div className={classes.header}>
+                    <TxOutIcon />
+                    <Label2 className={classes.label}> {it + 1}</Label2>
+                  </div>
+                </HeaderCell>
+              ),
+              R.times(R.identity, maxNumberOfCassettes)
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -120,12 +124,19 @@ const MachinesTable = ({ machines, numToRender }) => {
                   {/*                     <StyledCell align="left">
                       {makePercentageText(machine.cashbox)}
                     </StyledCell> */}
-                  <StyledCell align="left">
-                    {makePercentageText(machine.cassette1)}
-                  </StyledCell>
-                  <StyledCell align="left">
-                    {makePercentageText(machine.cassette2)}
-                  </StyledCell>
+                  {R.map(
+                    it =>
+                      machine.numberOfCassettes > it ? (
+                        <StyledCell align="left">
+                          {makePercentageText(machine[`cassette${it + 1}`])}
+                        </StyledCell>
+                      ) : (
+                        <StyledCell align="left">
+                          <TL2>{`— %`}</TL2>
+                        </StyledCell>
+                      ),
+                    R.times(R.identity, maxNumberOfCassettes)
+                  )}
                 </TableRow>
               )
             }

@@ -7,6 +7,8 @@ exports.up = function (next) {
     .then(({ config }) => {
       const fiatBalance1 = config.notifications_fiatBalanceCassette1
       const fiatBalance2 = config.notifications_fiatBalanceCassette2
+      const fiatBalance3 = config.notifications_fiatBalanceCassette3
+      const fiatBalance4 = config.notifications_fiatBalanceCassette4
       const overrides = config.notifications_fiatBalanceOverrides
       const newConfig = {}
       if (fiatBalance1) {
@@ -17,6 +19,14 @@ exports.up = function (next) {
         newConfig.notifications_fillingPercentageCassette2 = (100 * (fiatBalance2 / cassetteMaxCapacity)).toFixed(0)
         newConfig.notifications_fiatBalanceCassette2 = null
       }
+      if (fiatBalance3) {
+        newConfig.notifications_fillingPercentageCassette3 = (100 * (fiatBalance3 / cassetteMaxCapacity)).toFixed(0)
+        newConfig.notifications_fiatBalanceCassette3 = null
+      }
+      if (fiatBalance4) {
+        newConfig.notifications_fillingPercentageCassette4 = (100 * (fiatBalance4 / cassetteMaxCapacity)).toFixed(0)
+        newConfig.notifications_fiatBalanceCassette4 = null
+      }
 
       if (overrides) {
         newConfig.notifications_fiatBalanceOverrides = _.map(override => {
@@ -26,6 +36,12 @@ exports.up = function (next) {
           }
           if (override.fiatBalanceCassette2) {
             newOverride.fillingPercentageCassette2 = (100 * (override.fiatBalanceCassette2 / cassetteMaxCapacity)).toFixed(0)
+          }
+          if (override.fiatBalanceCassette3) {
+            newOverride.fillingPercentageCassette3 = (100 * (override.fiatBalanceCassette3 / cassetteMaxCapacity)).toFixed(0)
+          }
+          if (override.fiatBalanceCassette4) {
+            newOverride.fillingPercentageCassette4 = (100 * (override.fiatBalanceCassette4 / cassetteMaxCapacity)).toFixed(0)
           }
           newOverride.machine = override.machine
           newOverride.id = override.id

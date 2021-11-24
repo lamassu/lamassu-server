@@ -22,6 +22,7 @@ const GET_INFO = gql`
     machines {
       name
       deviceId
+      numberOfCassettes
     }
     cryptoCurrencies {
       code

@@ -32,7 +32,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const isCashOutDisabled =
     R.isEmpty(cashoutSettings) || !cashoutSettings?.active
 
-  const LAST_STEP = isCashOutDisabled ? 1 : 3
+  const numberOfCassettes = isCashOutDisabled ? 0 : machine.numberOfCassettes
+
+  const LAST_STEP = numberOfCassettes + 1
 
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
@@ -57,12 +59,8 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         })
       }
 
-      save(
-        machine.id,
-        parseInt(cashbox),
-        parseInt(it.cassette1Count ?? 0),
-        parseInt(it.cassette2Count ?? 0)
-      )
+      const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
+      save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
       return onClose()
     }
 
@@ -72,7 +70,24 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     })
   }
 
-  const steps = [
+  const makeCassetteSteps = R.pipe(
+    R.add(1),
+    R.range(1),
+    R.map(i => ({
+      type: `cassette ${i}`,
+      schema: Yup.object().shape({
+        [`cassette${i}`]: Yup.number()
+          .label('Bill count')
+          .positive()
+          .integer()
+          .required()
+          .min(0)
+          .max(CASHBOX_DEFAULT_CAPACITY)
+      })
+    }))
+  )
+
+  const steps = R.prepend(
     {
       type: 'cashbox',
       schema: Yup.object().shape({
@@ -80,33 +95,8 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       }),
       cashoutRequired: false
     },
-    {
-      type: 'cassette 1',
-      schema: Yup.object().shape({
-        cassette1Count: Yup.number()
-          .label('Bill count')
-          .required()
-          .min(0)
-          .max(CASHBOX_DEFAULT_CAPACITY)
-      }),
-      cashoutRequired: true
-    },
-    {
-      type: 'cassette 2',
-      schema: Yup.object().shape({
-        cassette2Count: Yup.number()
-          .label('Bill count')
-          .required()
-          .min(0)
-          .max(CASHBOX_DEFAULT_CAPACITY)
-      }),
-      cashoutRequired: true
-    }
-  ]
-
-  const filteredSteps = R.filter(it => {
-    return !it.cashoutRequired || (!isCashOutDisabled && it.cashoutRequired)
-  }, steps)
+    makeCassetteSteps(numberOfCassettes)
+  )
 
   return (
     <Modal
@@ -127,7 +117,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           cassetteCapacity={CASHBOX_DEFAULT_CAPACITY}
           error={error}
           lastStep={isLastStep}
-          steps={filteredSteps}
+          steps={steps}
           fiatCurrency={locale.fiatCurrency}
           onContinue={onContinue}
         />

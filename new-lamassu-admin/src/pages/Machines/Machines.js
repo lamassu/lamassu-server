@@ -32,6 +32,9 @@ const GET_INFO = gql`
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
+      numberOfCassettes
       statuses {
         label
         type
@@ -83,15 +86,6 @@ const Machines = () => {
             </Breadcrumbs>
             <Overview data={machine} onActionSuccess={refetch} />
           </div>
-        </Grid>
-        <Grid item xs={12}>
-          {/* on hold for now <Sidebar
-            isSelected={R.equals(selectedMachine)}
-            selectItem={setSelectedMachine}
-            data={machines}
-            getText={R.prop('name')}
-            getKey={R.prop('deviceId')}
-          /> */}
         </Grid>
       </Grid>
       <Grid item xs={9}>

@@ -76,38 +76,34 @@ const CashboxHistory = ({ machines, currency }) => {
 
   const batches = R.path(['cashboxBatches'])(data)
 
-  const getOperationRender = {
-    'cash-in-empty': (
-      <>
-        <TxInIcon />
-        <span className={classes.operationType}>Cash-in emptied</span>
-      </>
-    ),
-    'cash-out-1-refill': (
-      <>
-        <TxOutIcon />
-        <span className={classes.operationType}>Cash-out 1 refill</span>
-      </>
-    ),
-    'cash-out-1-empty': (
-      <>
-        <TxOutIcon />
-        <span className={classes.operationType}>Cash-out 1 emptied</span>
-      </>
-    ),
-    'cash-out-2-refill': (
-      <>
-        <TxOutIcon />
-        <span className={classes.operationType}>Cash-out 2 refill</span>
-      </>
-    ),
-    'cash-out-2-empty': (
-      <>
-        <TxOutIcon />
-        <span className={classes.operationType}>Cash-out 2 emptied</span>
-      </>
-    )
-  }
+  const getOperationRender = R.reduce(
+    (ret, i) =>
+      R.pipe(
+        R.assoc(
+          `cash-out-${i}-refill`,
+          <>
+            <TxOutIcon />
+            <span className={classes.operationType}>Cash-out {i} refill</span>
+          </>
+        ),
+        R.assoc(
+          `cash-out-${i}-empty`,
+          <>
+            <TxOutIcon />
+            <span className={classes.operationType}>Cash-out {i} emptied</span>
+          </>
+        )
+      )(ret),
+    {
+      'cash-in-empty': (
+        <>
+          <TxInIcon />
+          <span className={classes.operationType}>Cash-in emptied</span>
+        </>
+      )
+    },
+    R.range(1, 5)
+  )
 
   const save = row => {
     const field = R.find(f => f.id === row.id, fields)

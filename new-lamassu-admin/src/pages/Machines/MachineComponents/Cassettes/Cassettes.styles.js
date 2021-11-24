@@ -1,6 +1,5 @@
 const styles = {
   cashbox: {
-    width: 80,
     height: 36
   }
 }
