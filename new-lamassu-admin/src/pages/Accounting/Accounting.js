@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 
@@ -10,6 +9,7 @@ import { Tooltip } from 'src/components/Tooltip'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { H4, Info2, P } from 'src/components/typography'
+import { formatDate } from 'src/utils/timezones'
 
 import styles from './Accounting.styles'
 
@@ -46,6 +46,12 @@ const GET_OPERATOR_BY_USERNAME = gql`
         description
       }
     }
+  }
+`
+
+const GET_DATA = gql`
+  query getData {
+    config
   }
 `
 
@@ -97,12 +103,20 @@ const Accounting = () => {
   const classes = useStyles()
   const { userData } = useContext(AppContext)
 
-  const { data, loading } = useQuery(GET_OPERATOR_BY_USERNAME, {
-    context: { clientName: 'pazuz' },
-    variables: { username: userData?.username }
-  })
+  const { data: opData, loading: operatorLoading } = useQuery(
+    GET_OPERATOR_BY_USERNAME,
+    {
+      context: { clientName: 'pazuz' },
+      variables: { username: userData?.username }
+    }
+  )
 
-  const operatorData = R.path(['operatorByUsername'], data)
+  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+
+  const loading = operatorLoading && configLoading
+
+  const operatorData = R.path(['operatorByUsername'], opData)
 
   const elements = [
     {
@@ -144,14 +158,14 @@ const Accounting = () => {
       width: 150,
       size: 'sm',
       textAlign: 'right',
-      view: it => moment.utc(it.created).format('YYYY-MM-DD')
+      view: it => formatDate(it.created, timezone, 'YYYY-MM-DD')
     },
     {
       header: 'Time',
       width: 150,
       size: 'sm',
       textAlign: 'right',
-      view: it => moment.utc(it.created).format('HH:mm:ss')
+      view: it => formatDate(it.created, timezone, 'YYYY-MM-DD')
     }
   ]
 

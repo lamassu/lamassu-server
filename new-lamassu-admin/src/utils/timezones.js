@@ -1,89 +1,25 @@
-import moment from 'moment'
-import * as R from 'ramda'
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz/fp'
+import { format } from 'date-fns/fp'
 
-const getPossibleUTCDSTPairs = timezones =>
-  R.map(
-    it => ({
-      utcOffset: it.utcOffset,
-      dstOffset: it.dstOffset,
-      utcOffsetStr: it.utcOffsetStr,
-      dstOffsetStr: it.dstOffsetStr
-    }),
-    R.uniqBy(
-      it => [it.utcOffset, it.dstOffset, it.utcOffsetStr, it.dstOffsetStr],
-      timezones
-    )
-  )
-
-const getFormattedTimezones = timezones =>
-  R.sort(
-    R.ascend(R.prop('utcOffset')),
-    R.map(
-      it => ({
-        utcOffset: it.utcOffset,
-        dstOffset: it.dstOffset,
-        utcOffsetStr: it.utcOffsetStr,
-        dstOffsetStr: it.dstOffsetStr,
-        cities: R.map(
-          ite => {
-            const regionCityPair = R.split('/', ite.name)
-            return {
-              region: regionCityPair[0],
-              city: R.replace(/_/g, ' ', regionCityPair[1]),
-              country: ite.country
-            }
-          },
-          R.filter(
-            itx =>
-              R.eqProps('utcOffset', it, itx) &&
-              R.eqProps('dstOffset', it, itx) &&
-              !R.isNil(itx.country) &&
-              !R.includes('Etc', itx.name) &&
-              R.includes('/', itx.name),
-            timezones
-          )
-        )
-      }),
-      getPossibleUTCDSTPairs(timezones)
-    )
-  )
-
-const getFinalTimezones = timezones => {
-  const formattedTimezones = getFormattedTimezones(timezones)
-  const nonEmptyTimezones = R.filter(
-    it => !R.isEmpty(it.cities),
-    formattedTimezones
-  )
-  const nonDuplicateCities = R.map(
-    it => ({
-      ...it,
-      cities: R.uniqBy(R.prop('country'), R.uniqBy(R.prop('city'), it.cities))
-    }),
-    nonEmptyTimezones
-  )
-  return nonDuplicateCities
+const toUtc = date => {
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  return zonedTimeToUtc(browserTimezone, date)
 }
 
-const buildLabel = tz => {
-  return `(UTC${tz.utcOffsetStr}) ${R.map(it => it.city, tz.cities).join(', ')}`
+const toTimezone = (date, timezone) => {
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  return utcToZonedTime(timezone, zonedTimeToUtc(browserTimezone, date))
 }
 
-const getTzLabels = timezones =>
-  R.map(
-    it => ({ label: buildLabel(it), code: `${it.utcOffset}:${it.dstOffset}` }),
-    getFinalTimezones(timezones)
+const formatDate = (date, timezone, pattern) => {
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const newDate = utcToZonedTime(
+    timezone,
+    zonedTimeToUtc(browserTimezone, date)
   )
-
-const formatDate = (date, timezoneCode, format) => {
-  const dstOffset = timezoneCode?.split(':')[1] ?? 0
-  return moment
-    .utc(date)
-    .utcOffset(parseInt(dstOffset))
-    .format(format)
+  return format(pattern, newDate)
 }
 
-const formatDateNonUtc = (date, format) => {
-  return moment(date).format(format)
-}
+const formatDateNonUtc = (date, pattern) => format(pattern, date)
 
-export { getTzLabels, formatDate, formatDateNonUtc }
+export { toUtc, toTimezone, formatDate, formatDateNonUtc }

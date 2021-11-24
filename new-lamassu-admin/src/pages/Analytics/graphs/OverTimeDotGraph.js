@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
-import moment from 'moment'
+import { getTimezoneOffset } from 'date-fns-tz'
+import { add, format, startOfWeek, startOfYear } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -40,7 +41,7 @@ const Graph = ({
     []
   )
 
-  const offset = parseInt(timezone.split(':')[1]) * MINUTE
+  const offset = getTimezoneOffset(timezone)
   const NOW = Date.now() + offset
 
   const periodDomains = {
@@ -86,8 +87,13 @@ const Graph = ({
     const previousDateWeekday = previousDate.getUTCDay()
     const previousDateMonth = previousDate.getUTCMonth()
 
-    const daysOfWeek = moment.weekdaysShort()
-    const months = moment.monthsShort()
+    const daysOfWeek = Array.from(Array(7)).map((_, i) =>
+      format('EEE', add({ days: i }, startOfWeek(new Date())))
+    )
+
+    const months = Array.from(Array(12)).map((_, i) =>
+      format('LLL', add({ months: i }, startOfYear(new Date())))
+    )
 
     return {
       previous:

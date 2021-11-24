@@ -1,9 +1,8 @@
-import * as ct from 'countries-and-timezones'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-import { getTzLabels } from 'src/utils/timezones'
+import timezoneList from 'src/utils/timezone-list'
 
 const getFields = (getData, names, onChange, auxElements = []) => {
   return R.filter(
@@ -38,9 +37,7 @@ const allFields = (getData, onChange, auxElements = []) => {
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
   const cryptoData = getData(['cryptoCurrencies'])
-  const timezonesData = R.values(ct.getAllTimezones())
-
-  const tzLabels = getTzLabels(timezonesData)
+  const timezonesData = timezoneList
 
   const findSuggestion = it => {
     const machine = R.find(R.propEq('deviceId', it.machine))(machineData)
@@ -117,10 +114,10 @@ const allFields = (getData, onChange, auxElements = []) => {
       name: 'timezone',
       width: 320,
       size: 'sm',
-      view: getView(tzLabels, 'label'),
+      view: getView(timezonesData, 'label'),
       input: Autocomplete,
       inputProps: {
-        options: tzLabels,
+        options: timezonesData,
         valueProp: 'code',
         labelProp: 'label'
       }
@@ -134,7 +131,8 @@ const mainFields = (auxData, configureCoin) => {
   return getFields(
     getData,
     ['country', 'fiatCurrency', 'languages', 'cryptoCurrencies', 'timezone'],
-    configureCoin
+    configureCoin,
+    undefined
   )
 }
 

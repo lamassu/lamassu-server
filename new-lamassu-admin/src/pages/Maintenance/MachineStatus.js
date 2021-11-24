@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
+import { formatDistance } from 'date-fns'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -89,7 +89,12 @@ const MachineStatus = () => {
       width: 200,
       size: 'sm',
       textAlign: 'left',
-      view: m => (m.lastPing ? moment(m.lastPing).fromNow() : 'unknown')
+      view: m =>
+        m.lastPing
+          ? formatDistance(new Date(m.lastPing), new Date(), {
+              addSuffix: true
+            })
+          : 'unknown'
     },
     {
       header: 'Software Version',

@@ -1,5 +1,18 @@
 import { makeStyles } from '@material-ui/core/styles'
-import moment from 'moment'
+import {
+  add,
+  differenceInMonths,
+  format,
+  getDay,
+  getDaysInMonth,
+  isAfter,
+  isSameDay,
+  isSameMonth,
+  lastDayOfMonth,
+  startOfMonth,
+  startOfWeek,
+  sub
+} from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -72,49 +85,36 @@ const styles = {
 const useStyles = makeStyles(styles)
 
 const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
-  const [currentDisplayedMonth, setCurrentDisplayedMonth] = useState(moment())
+  const [currentDisplayedMonth, setCurrentDisplayedMonth] = useState(new Date())
 
   const classes = useStyles()
 
-  const weekdays = moment.weekdaysMin().map(day => day.slice(0, 1))
-  const monthLength = month =>
-    Number.parseInt(
-      moment(month)
-        .endOf('month')
-        .format('D')
-    )
+  const weekdays = Array.from(Array(7)).map((_, i) =>
+    format('EEEEE', add({ days: i }, startOfWeek(new Date())))
+  )
+
+  const monthLength = month => getDaysInMonth(month)
 
   const monthdays = month => {
-    const lastMonth = moment(month).subtract(1, 'month')
-    const lastMonthRange = R.range(
-      0,
-      moment(month)
-        .startOf('month')
-        .weekday()
-    ).reverse()
+    const lastMonth = sub({ months: 1 }, month)
+    const lastMonthRange = R.range(0, getDay(startOfMonth(month))).reverse()
     const lastMonthDays = R.map(i =>
-      moment(lastMonth)
-        .endOf('month')
-        .subtract(i, 'days')
+      sub({ days: i }, lastDayOfMonth(lastMonth))
     )(lastMonthRange)
 
     const thisMonthRange = R.range(0, monthLength(month))
-    const thisMonthDays = R.map(i =>
-      moment(month)
-        .startOf('month')
-        .add(i, 'days')
-    )(thisMonthRange)
+    const thisMonthDays = R.map(i => add({ days: i }, startOfMonth(month)))(
+      thisMonthRange
+    )
 
-    const nextMonth = moment(month).add(1, 'month')
+    const nextMonth = add({ months: 1 }, month)
     const nextMonthRange = R.range(
       0,
       42 - lastMonthDays.length - thisMonthDays.length
     )
-    const nextMonthDays = R.map(i =>
-      moment(nextMonth)
-        .startOf('month')
-        .add(i, 'days')
-    )(nextMonthRange)
+    const nextMonthDays = R.map(i => add({ days: i }, startOfMonth(nextMonth)))(
+      nextMonthRange
+    )
 
     return R.concat(R.concat(lastMonthDays, thisMonthDays), nextMonthDays)
   }
@@ -122,22 +122,24 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
   const getRow = (month, row) => monthdays(month).slice(row * 7 - 7, row * 7)
 
   const handleNavPrev = currentMonth => {
-    const prevMonth = moment(currentMonth).subtract(1, 'month')
+    const prevMonth = sub({ months: 1 }, currentMonth)
     if (!minDate) setCurrentDisplayedMonth(prevMonth)
     else {
       setCurrentDisplayedMonth(
-        prevMonth.isSameOrAfter(minDate, 'month')
+        isSameMonth(minDate, prevMonth) ||
+          differenceInMonths(minDate, prevMonth) > 0
           ? prevMonth
           : currentDisplayedMonth
       )
     }
   }
   const handleNavNext = currentMonth => {
-    const nextMonth = moment(currentMonth).add(1, 'month')
+    const nextMonth = add({ months: 1 }, currentMonth)
     if (!maxDate) setCurrentDisplayedMonth(nextMonth)
     else {
       setCurrentDisplayedMonth(
-        nextMonth.isSameOrBefore(maxDate, 'month')
+        isSameMonth(maxDate, nextMonth) ||
+          differenceInMonths(nextMonth, maxDate) > 0
           ? nextMonth
           : currentDisplayedMonth
       )
@@ -153,9 +155,10 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
           <Arrow />
         </button>
         <span>
-          {`${currentDisplayedMonth.format(
-            'MMMM'
-          )} ${currentDisplayedMonth.format('YYYY')}`}
+          {`${format('MMMM', currentDisplayedMonth)} ${format(
+            'yyyy',
+            currentDisplayedMonth
+          )}`}
         </span>
         <button
           className={classes.button}
@@ -180,13 +183,15 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
                   onClick={() => handleSelect(day, minDate, maxDate)}>
                   <Tile
                     isDisabled={
-                      (maxDate && day.isAfter(maxDate, 'day')) ||
-                      (minDate && day.isBefore(minDate, 'day'))
+                      (maxDate && isAfter(maxDate, day)) ||
+                      (minDate && isAfter(day, minDate))
                     }
-                    isLowerBound={day.isSame(props.from, 'day')}
-                    isUpperBound={day.isSame(props.to, 'day')}
-                    isBetween={day.isBetween(props.from, props.to, 'day', [])}>
-                    {day.format('D')}
+                    isLowerBound={isSameDay(props.from, day)}
+                    isUpperBound={isSameDay(props.to, day)}
+                    isBetween={
+                      isAfter(props.from, day) && isAfter(day, props.to)
+                    }>
+                    {format('d', day)}
                   </Tile>
                 </td>
               ))}

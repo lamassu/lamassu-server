@@ -1,11 +1,11 @@
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
+import { add, differenceInYears, format, sub } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
 import { utils as coinUtils } from 'lamassu-coins'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 
@@ -120,20 +120,17 @@ const DetailsRow = ({ it: tx, timezone }) => {
     name: `${onlyFirstToUpper(
       tx.customerIdCardData.firstName
     )} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
-    age: moment().diff(moment(tx.customerIdCardData.dateOfBirth), 'years'),
+    age: differenceInYears(tx.customerIdCardData.dateOfBirth, new Date()),
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
-    idCardExpirationDate: moment(tx.customerIdCardData.expirationDate).format(
-      'DD-MM-YYYY'
+    idCardExpirationDate: format(
+      'dd-MM-yyyy',
+      tx.customerIdCardData.expirationDate
     )
   }
 
-  const from = moment(tx.created)
-    .subtract(MINUTES_OFFSET, 'm')
-    .format()
-  const until = moment(tx.created)
-    .add(MINUTES_OFFSET, 'm')
-    .format()
+  const from = sub({ minutes: MINUTES_OFFSET }, tx.created)
+  const until = add({ minutes: MINUTES_OFFSET }, tx.created)
 
   const downloadRawLogs = ({ id: txId, deviceId, txClass }, timezone) => {
     fetchSummary({

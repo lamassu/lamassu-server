@@ -1,6 +1,7 @@
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import moment from 'moment'
+import { getTimezoneOffset } from 'date-fns-tz'
+import { format, add, startOfWeek } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -24,7 +25,9 @@ const dayOptions = R.map(
     code: R.toLower(it),
     display: it
   }),
-  moment.weekdays()
+  Array.from(Array(7)).map((_, i) =>
+    format('EEEE', add({ days: i }, startOfWeek(new Date())))
+  )
 )
 
 const HourOfDayBarGraphHeader = ({
@@ -47,16 +50,14 @@ const HourOfDayBarGraphHeader = ({
     cashOut: <div className={classes.cashOutIcon}></div>
   }
 
-  const offset = parseInt(timezone.split(':')[1]) * MINUTE
+  const offset = getTimezoneOffset(timezone)
 
   const txsPerWeekday = R.reduce(
     (acc, value) => {
       const created = new Date(value.created)
-      // console.log('before', R.clone(created))
       created.setTime(
         created.getTime() + created.getTimezoneOffset() * MINUTE + offset
       )
-      // console.log('after', R.clone(created))
       switch (created.getDay()) {
         case 0:
           acc.sunday.push(value)

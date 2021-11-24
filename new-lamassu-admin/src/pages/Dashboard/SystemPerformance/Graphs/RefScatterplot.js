@@ -1,8 +1,9 @@
 import * as d3 from 'd3'
-import moment from 'moment'
+import { add } from 'date-fns/fp'
 import React, { useEffect, useRef, useCallback } from 'react'
 
 import { backgroundColor, java, neon } from 'src/styling/variables'
+import { formatDate, toUtc } from 'src/utils/timezones'
 
 const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
   const svgRef = useRef()
@@ -11,7 +12,6 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
     const margin = { top: 25, right: 0, bottom: 25, left: 15 }
     const width = 555 - margin.left - margin.right
     const height = 150 - margin.top - margin.bottom
-    const dstOffset = parseInt(timezone.split(':')[1])
     // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
     // (this is because the Y axis looks best with multiples of 100)
     const findMaxY = () => {
@@ -30,10 +30,7 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
         case 'Month':
           return d3.timeFormat('%b %d')(v)
         default:
-          return moment
-            .utc(v)
-            .add(dstOffset, 'minutes')
-            .format('HH:mm')
+          return formatDate(v, timezone, 'HH:mm')
       }
     }
 
@@ -95,16 +92,14 @@ const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
     const x = d3
       .scaleTime()
       .domain([
-        moment()
-          .add(-xAxisSettings.subtractDays, 'day')
-          .valueOf(),
-        moment().valueOf()
+        add({ days: -xAxisSettings.subtractDays }, new Date()).valueOf(),
+        new Date().valueOf()
       ])
       .range(xAxisSettings.timeRange)
       .nice(xAxisSettings.nice)
 
     const timeValue = s => {
-      const date = moment.utc(s)
+      const date = toUtc(s)
       return x(date.valueOf())
     }
 

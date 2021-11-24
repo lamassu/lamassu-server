@@ -197,7 +197,7 @@ const Logs = () => {
                           formatDate(
                             log.timestamp,
                             timezone,
-                            'YYYY-MM-DD HH:mm'
+                            'yyyy-MM-dd HH:mm'
                           )}
                       </TableCell>
                       <TableCell>{log.logLevel}</TableCell>

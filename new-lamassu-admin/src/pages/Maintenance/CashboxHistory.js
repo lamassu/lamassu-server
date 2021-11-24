@@ -1,7 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
@@ -13,6 +12,7 @@ import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { formatDate } from 'src/utils/timezones'
 
 const GET_BATCHES = gql`
   query cashboxBatches {
@@ -38,6 +38,12 @@ const EDIT_BATCH = gql`
     editBatch(id: $id, performedBy: $performedBy) {
       id
     }
+  }
+`
+
+const GET_DATA = gql`
+  query getData {
+    config
   }
 `
 
@@ -68,13 +74,18 @@ const CashboxHistory = ({ machines, currency }) => {
   const [error, setError] = useState(false)
   const [fields, setFields] = useState([])
 
-  const { data, loading } = useQuery(GET_BATCHES)
+  const { data: batchesData, loading: batchesLoading } = useQuery(GET_BATCHES)
 
   const [editBatch] = useMutation(EDIT_BATCH, {
     refetchQueries: () => ['cashboxBatches']
   })
 
-  const batches = R.path(['cashboxBatches'])(data)
+  const { data: configData, loading: configLoading } = useQuery(GET_DATA)
+  const timezone = R.path(['config', 'locale_timezone'], configData)
+
+  const loading = batchesLoading && configLoading
+
+  const batches = R.path(['cashboxBatches'])(batchesData)
 
   const getOperationRender = R.reduce(
     (ret, i) =>
@@ -176,14 +187,14 @@ const CashboxHistory = ({ machines, currency }) => {
       header: 'Date',
       width: 135,
       textAlign: 'right',
-      view: it => moment.utc(it.created).format('YYYY-MM-DD')
+      view: it => formatDate(it.created, timezone, 'YYYY-MM-DD')
     },
     {
       name: 'time',
       header: 'Time (h:m)',
       width: 125,
       textAlign: 'right',
-      view: it => moment.utc(it.created).format('HH:mm')
+      view: it => formatDate(it.created, timezone, 'HH:mm')
     },
     {
       name: 'performedBy',

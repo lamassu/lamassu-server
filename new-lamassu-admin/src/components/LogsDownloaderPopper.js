@@ -1,8 +1,8 @@
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
+import { format, isSameDay } from 'date-fns/fp'
 import FileSaver from 'file-saver'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState, useCallback } from 'react'
 
@@ -65,12 +65,13 @@ const DateContainer = ({ date, children, ...props }) => {
       {date && (
         <>
           <div className={classes.container}>
-            <div className={classes.bigNumber}>{date.format('D')}</div>
+            <div className={classes.bigNumber}>{format('d', date)}</div>
             <div className={classes.monthWeekDayContainer}>
-              <span className={classes.monthYear}>{`${date.format(
-                'MMM'
-              )} ${date.format('YYYY')}`}</span>
-              <span className={classes.weekDay}>{date.format('dddd')}</span>
+              <span className={classes.monthYear}>{`${format(
+                'MMM',
+                date
+              )} ${format('yyyy', date)}`}</span>
+              <span className={classes.weekDay}>{format('EEEE', date)}</span>
             </div>
           </div>
         </>
@@ -186,8 +187,8 @@ const LogsDownloaderPopover = ({
     }
 
     if (!range || !range.from) return
-    if (range.from && !range.until) range.until = moment()
-    if (moment(range.from).isSame(range.until, 'day')) range.until = moment()
+    if (range.from && !range.until) range.until = new Date()
+    if (isSameDay(range.until, range.from)) range.until = new Date()
 
     if (selectedRadio === RANGE) {
       fetchLogs({
@@ -203,7 +204,7 @@ const LogsDownloaderPopover = ({
 
   const createLogsFile = (logs, range) => {
     const formatDateFile = date => {
-      return formatDate(date, timezone, 'YYYY-MM-DD_HH-mm')
+      return formatDate(date, timezone, 'yyyy-MM-dd_HH-mm')
     }
 
     const blob = new window.Blob([logs], {
@@ -277,7 +278,7 @@ const LogsDownloaderPopover = ({
                   )}
                 </div>
                 <DateRangePicker
-                  maxDate={moment()}
+                  maxDate={new Date()}
                   onRangeChange={handleRangeChange}
                 />
               </div>

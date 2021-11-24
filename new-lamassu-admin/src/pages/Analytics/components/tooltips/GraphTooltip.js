@@ -31,12 +31,12 @@ const GraphTooltip = ({
         formatDate(
           dateInterval[1],
           null,
-          period.code === 'day' ? 'MMM D, HH:mm' : 'MMM D'
+          period.code === 'day' ? 'MMM d, HH:mm' : 'MMM d'
         ),
         formatDate(
           dateInterval[0],
           null,
-          period.code === 'day' ? 'HH:mm' : 'MMM D'
+          period.code === 'day' ? 'HH:mm' : 'MMM d'
         )
       ]
     : [

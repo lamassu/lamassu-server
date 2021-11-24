@@ -3,8 +3,8 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
+import { isAfter, sub } from 'date-fns/fp'
 import gql from 'graphql-tag'
-import moment from 'moment'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -13,6 +13,7 @@ import { ReactComponent as PercentDownIcon } from 'src/styling/icons/dashboard/d
 import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboard/equal.svg'
 import { ReactComponent as PercentUpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { fromNamespace } from 'src/utils/config'
+import { toTimezone } from 'src/utils/timezones'
 
 import PercentageChart from './Graphs/PercentageChart'
 import LineChart from './Graphs/RefLineChart'
@@ -28,22 +29,22 @@ const useStyles = makeStyles(styles)
 const mapToFee = R.map(R.prop('cashInFee'))
 
 const getDateSecondsAgo = (seconds = 0, startDate = null) => {
-  const date = startDate ? moment(startDate) : moment()
-  return date.subtract(seconds, 'second')
+  const date = startDate ? new Date(startDate) : new Date()
+  return sub({ seconds: seconds }, date)
 }
 
 const ranges = {
   Day: {
-    left: getDateSecondsAgo(2 * 24 * 3600, moment()),
-    right: getDateSecondsAgo(24 * 3600, moment())
+    left: getDateSecondsAgo(2 * 24 * 3600, new Date()),
+    right: getDateSecondsAgo(24 * 3600, new Date())
   },
   Week: {
-    left: getDateSecondsAgo(14 * 24 * 3600, moment()),
-    right: getDateSecondsAgo(7 * 24 * 3600, moment())
+    left: getDateSecondsAgo(14 * 24 * 3600, new Date()),
+    right: getDateSecondsAgo(7 * 24 * 3600, new Date())
   },
   Month: {
-    left: getDateSecondsAgo(60 * 24 * 3600, moment()),
-    right: getDateSecondsAgo(30 * 24 * 3600, moment())
+    left: getDateSecondsAgo(60 * 24 * 3600, new Date()),
+    right: getDateSecondsAgo(30 * 24 * 3600, new Date())
   }
 }
 
@@ -83,18 +84,14 @@ const SystemPerformance = () => {
     if (!getLastTimePeriod) {
       return (
         t.error === null &&
-        moment
-          .utc(t.created)
-          .utcOffset(timezone)
-          .isBetween(ranges[selectedRange].right, moment())
+        isAfter(ranges[selectedRange].right, toTimezone(t.created, timezone)) &&
+        isAfter(toTimezone(t.created, timezone), new Date())
       )
     }
     return (
       t.error === null &&
-      moment
-        .utc(t.created)
-        .utcOffset(timezone)
-        .isBetween(ranges[selectedRange].left, ranges[selectedRange].right)
+      isAfter(ranges[selectedRange].left, toTimezone(t.created, timezone)) &&
+      isAfter(toTimezone(t.created, timezone), ranges[selectedRange].right)
     )
   }
 

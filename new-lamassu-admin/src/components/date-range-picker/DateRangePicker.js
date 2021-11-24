@@ -1,6 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
-import moment from 'moment'
+import {
+  differenceInDays,
+  differenceInMonths,
+  isSameMonth,
+  set
+} from 'date-fns/fp'
 import React, { useState, useEffect } from 'react'
 
 import Calendar from './Calendar'
@@ -26,19 +31,25 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
 
   const handleSelect = (day, minDate, maxDate) => {
     if (
-      (maxDate && day.isAfter(maxDate, 'day')) ||
-      (minDate && day.isBefore(minDate, 'day'))
+      (maxDate && differenceInDays(maxDate, day) > 0) ||
+      (minDate && differenceInDays(day, minDate) > 0)
     )
       return
 
-    if (from && !to && day.isBefore(from, 'day')) {
+    if (from && !to && differenceInDays(day, from) > 0) {
       setTo(from)
       setFrom(day)
       return
     }
 
-    if (from && !to && day.isSameOrAfter(from, 'day')) {
-      setTo(moment(day.toDate().setHours(23, 59, 59, 999)))
+    if (
+      from &&
+      !to &&
+      (isSameMonth(from, day) || differenceInMonths(from, day) > 0)
+    ) {
+      setTo(
+        set({ hours: 23, minutes: 59, seconds: 59, milliseconds: 999 }, day)
+      )
       return
     }
 

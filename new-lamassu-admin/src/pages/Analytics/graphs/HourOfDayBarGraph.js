@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
-import moment from 'moment'
+import { getTimezoneOffset } from 'date-fns-tz'
+import { add, startOfDay } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -13,6 +14,7 @@ import {
   subheaderColor
 } from 'src/styling/variables'
 import { MINUTE } from 'src/utils/time'
+import { toUtc } from 'src/utils/timezones'
 
 const Graph = ({
   data,
@@ -38,7 +40,7 @@ const Graph = ({
     []
   )
 
-  const offset = parseInt(timezone.split(':')[1]) * MINUTE
+  const offset = getTimezoneOffset(timezone)
 
   const getTickIntervals = (domain, interval) => {
     const ticks = []
@@ -97,13 +99,8 @@ const Graph = ({
   const x = d3
     .scaleUtc()
     .domain([
-      moment()
-        .startOf('day')
-        .utc(),
-      moment()
-        .startOf('day')
-        .add(1, 'day')
-        .utc()
+      toUtc(startOfDay(new Date())),
+      toUtc(add({ days: 1 }, startOfDay(new Date())))
     ])
     .rangeRound([GRAPH_MARGIN.left, GRAPH_WIDTH - GRAPH_MARGIN.right])
 
