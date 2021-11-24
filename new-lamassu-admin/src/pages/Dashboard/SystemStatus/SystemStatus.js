@@ -27,6 +27,9 @@ const GET_DATA = gql`
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
+      numberOfCassettes
       statuses {
         label
         type

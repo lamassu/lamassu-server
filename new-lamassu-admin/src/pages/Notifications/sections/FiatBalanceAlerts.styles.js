@@ -7,14 +7,11 @@ export default {
   form: {
     marginBottom: 36
   },
-  first: {
-    width: 236
-  },
   title: {
     marginTop: 0
   },
   row: {
-    width: 183,
+    width: 236,
     display: 'grid',
     gridTemplateColumns: 'repeat(2,1fr)',
     gridTemplateRows: '1fr',

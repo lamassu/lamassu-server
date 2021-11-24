@@ -306,7 +306,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
           ) : (
             errorElements
           )}
-          {getStatus(tx) === 'Pending' && (
+          {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
             <ActionButton
               color="primary"
               Icon={CancelIcon}
@@ -362,5 +362,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
 export default memo(
   DetailsRow,
   (prev, next) =>
-    prev.it.id === next.it.id && getStatus(prev.it) === getStatus(next.it)
+    prev.it.id === next.it.id &&
+    prev.it.hasError === next.it.hasError &&
+    getStatus(prev.it) === getStatus(next.it)
 )

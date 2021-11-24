@@ -6,21 +6,44 @@ import { bold } from 'src/styling/helpers'
 import denominations from 'src/utils/bill-denominations'
 import { getBillOptions } from 'src/utils/bill-options'
 import { CURRENCY_MAX } from 'src/utils/constants'
+import { transformNumber } from 'src/utils/number'
 
 const DenominationsSchema = Yup.object().shape({
-  top: Yup.number()
-    .label('Cassette 1 (Top)')
+  cassette1: Yup.number()
+    .label('Cassette 1')
     .required()
     .min(1)
     .max(CURRENCY_MAX),
-  bottom: Yup.number()
-    .label('Cassette 2 (Bottom)')
+  cassette2: Yup.number()
+    .label('Cassette 2')
     .required()
     .min(1)
+    .max(CURRENCY_MAX),
+  cassette3: Yup.number()
+    .label('Cassette 3')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  cassette4: Yup.number()
+    .label('Cassette 4')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  zeroConfLimit: Yup.number()
+    .label('0-conf Limit')
+    .required()
+    .min(0)
     .max(CURRENCY_MAX)
 })
 
 const getElements = (machines, locale = {}, classes) => {
+  const fiatCurrency = R.prop('fiatCurrency')(locale)
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines)
+  )
+
   const options = getBillOptions(locale, denominations)
   const cassetteProps =
     options?.length > 0
@@ -32,7 +55,7 @@ const getElements = (machines, locale = {}, classes) => {
         }
       : { decimalPlaces: 0 }
 
-  return [
+  const elements = [
     {
       name: 'id',
       header: 'Machine',
@@ -40,32 +63,50 @@ const getElements = (machines, locale = {}, classes) => {
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
-    },
-    {
-      name: 'top',
-      header: 'Cassette 1 (Top)',
-      stripe: true,
-      width: 250,
-      textAlign: 'right',
-      view: it => it,
-      input: options?.length > 0 ? Autocomplete : NumberInput,
-      inputProps: cassetteProps,
-      suffix: R.prop('fiatCurrency')(locale),
-      bold: bold
-    },
-    {
-      name: 'bottom',
-      header: 'Cassette 2 (Bottom)',
-      stripe: true,
-      textAlign: 'right',
-      width: 250,
-      view: it => it,
-      input: options?.length > 0 ? Autocomplete : NumberInput,
-      inputProps: cassetteProps,
-      suffix: R.prop('fiatCurrency')(locale),
-      bold: bold
     }
   ]
+
+  R.until(
+    R.gt(R.__, maxNumberOfCassettes),
+    it => {
+      elements.push({
+        name: `cassette${it}`,
+        header: `Cassette ${it}`,
+        size: 'sm',
+        stripe: true,
+        textAlign: 'right',
+        width: (maxNumberOfCassettes > 2 ? 600 : 460) / maxNumberOfCassettes,
+        suffix: fiatCurrency,
+        bold: bold,
+        view: it => it,
+        input: options?.length > 0 ? Autocomplete : NumberInput,
+        inputProps: cassetteProps,
+        doubleHeader: 'Denominations',
+        isHidden: machine =>
+          it >
+          machines.find(({ deviceId }) => deviceId === machine.id)
+            .numberOfCassettes
+      })
+      return R.add(1, it)
+    },
+    1
+  )
+
+  elements.push({
+    name: 'zeroConfLimit',
+    header: '0-conf Limit',
+    size: 'sm',
+    stripe: true,
+    textAlign: 'right',
+    width: maxNumberOfCassettes > 2 ? 150 : 290,
+    input: NumberInput,
+    inputProps: {
+      decimalPlaces: 0
+    },
+    suffix: fiatCurrency
+  })
+
+  return elements
 }
 
 export { DenominationsSchema, getElements }

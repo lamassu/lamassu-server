@@ -37,18 +37,38 @@ const ValidationSchema = Yup.object().shape({
     .min(0)
     .max(1000),
   cassette1: Yup.number()
-    .label('Cassette 1 (top)')
+    .label('Cassette 1')
     .required()
     .integer()
     .min(0)
     .max(500),
   cassette2: Yup.number()
-    .label('Cassette 2 (bottom)')
+    .label('Cassette 2')
+    .required()
+    .integer()
+    .min(0)
+    .max(500),
+  cassette3: Yup.number()
+    .label('Cassette 3')
+    .required()
+    .integer()
+    .min(0)
+    .max(500),
+  cassette4: Yup.number()
+    .label('Cassette 4')
     .required()
     .integer()
     .min(0)
     .max(500)
 })
+
+const CREATE_BATCH = gql`
+  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
+    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
+      id
+    }
+  }
+`
 
 const GET_MACHINES_AND_CONFIG = gql`
   query getData {
@@ -58,6 +78,9 @@ const GET_MACHINES_AND_CONFIG = gql`
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
+      numberOfCassettes
     }
     config
   }
@@ -85,6 +108,8 @@ const SET_CASSETTE_BILLS = gql`
     $cashbox: Int!
     $cassette1: Int!
     $cassette2: Int!
+    $cassette3: Int!
+    $cassette4: Int!
   ) {
     machineAction(
       deviceId: $deviceId
@@ -92,11 +117,15 @@ const SET_CASSETTE_BILLS = gql`
       cashbox: $cashbox
       cassette1: $cassette1
       cassette2: $cassette2
+      cassette3: $cassette3
+      cassette4: $cassette4
     ) {
       deviceId
       cashbox
       cassette1
       cassette2
+      cassette3
+      cassette4
     }
   }
 `
@@ -117,6 +146,7 @@ const CashCassettes = () => {
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
+  const [createBatch] = useMutation(CREATE_BATCH)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setEditingSchema(false),
     refetchQueries: () => ['getData']
@@ -129,6 +159,37 @@ const CashCassettes = () => {
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines)
+  )
+  const cashboxCounts = R.reduce(
+    (ret, m) => R.assoc(m.id, m.cashbox, ret),
+    {},
+    machines
+  )
+
+  const onSave = (id, cashbox, cassette1, cassette2, cassette3, cassette4) => {
+    const oldCashboxCount = cashboxCounts[id]
+    if (cashbox < oldCashboxCount) {
+      createBatch({
+        variables: {
+          deviceId: id,
+          cashboxCount: oldCashboxCount
+        }
+      })
+    }
+    return setCassetteBills({
+      variables: {
+        action: 'setCassetteBills',
+        deviceId: id,
+        cashbox,
+        cassette1,
+        cassette2,
+        cassette3,
+        cassette4
+      }
+    })
+  }
 
   const cashboxReset =
     data?.config && fromNamespace('cashIn')(data.config).cashboxReset
@@ -144,17 +205,7 @@ const CashCassettes = () => {
       setEditingSchema(false)
     }
   }
-  const onSave = (id, cashbox, cassette1, cassette2) => {
-    return setCassetteBills({
-      variables: {
-        action: 'setCassetteBills',
-        deviceId: id,
-        cashbox,
-        cassette1,
-        cassette2
-      }
-    })
-  }
+
   const getCashoutSettings = id => fromNamespace(id)(cashout)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
@@ -172,14 +223,14 @@ const CashCassettes = () => {
     {
       name: 'name',
       header: 'Machine',
-      width: 254,
+      width: 184,
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
     },
     {
       name: 'cashbox',
-      header: 'Cashbox',
-      width: 240,
+      header: 'Cash-in',
+      width: maxNumberOfCassettes > 2 ? 140 : 280,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
       ),
@@ -187,67 +238,59 @@ const CashCassettes = () => {
       inputProps: {
         decimalPlaces: 0
       }
-    },
-    {
-      name: 'cassette1',
-      header: 'Cassette 1 (Top)',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => (
-        <CashOut
-          className={classes.cashbox}
-          denomination={getCashoutSettings(id)?.top}
-          currency={{ code: fiatCurrency }}
-          notes={value}
-          threshold={fillingPercentageSettings.fillingPercentageCassette1}
-        />
-      ),
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0,
-        threshold: fillingPercentageSettings.fillingPercentageCassette1
-      }
-    },
-    {
-      name: 'cassette2',
-      header: 'Cassette 2 (Bottom)',
-      width: 265,
-      stripe: true,
-      view: (value, { id }) => {
-        return (
-          <CashOut
-            className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.bottom}
-            currency={{ code: fiatCurrency }}
-            notes={value}
-            threshold={fillingPercentageSettings.fillingPercentageCassette2}
-          />
-        )
-      },
-      input: CashCassetteInput,
-      inputProps: {
-        decimalPlaces: 0,
-        threshold: fillingPercentageSettings.fillingPercentageCassette2
-      }
-    },
-    {
-      name: 'edit',
-      header: 'Edit',
-      width: 175,
-      textAlign: 'center',
-      view: (value, { id }) => {
-        return (
-          <IconButton
-            onClick={() => {
-              setMachineId(id)
-              setWizard(true)
-            }}>
-            <EditIcon />
-          </IconButton>
-        )
-      }
     }
   ]
+
+  R.until(
+    R.gt(R.__, maxNumberOfCassettes),
+    it => {
+      elements.push({
+        name: `cassette${it}`,
+        header: `Cassette ${it}`,
+        width: (maxNumberOfCassettes > 2 ? 700 : 560) / maxNumberOfCassettes,
+        stripe: true,
+        doubleHeader: 'Cash-out',
+        view: (value, { id }) => (
+          <CashOut
+            className={classes.cashbox}
+            denomination={getCashoutSettings(id)?.[`cassette${it}`]}
+            currency={{ code: fiatCurrency }}
+            notes={value}
+            width={50}
+            threshold={
+              fillingPercentageSettings[`fillingPercentageCassette${it}`]
+            }
+          />
+        ),
+        isHidden: ({ numberOfCassettes }) => it > numberOfCassettes,
+        input: CashCassetteInput,
+        inputProps: {
+          decimalPlaces: 0,
+          width: 50,
+          inputClassName: classes.cashbox
+        }
+      })
+      return R.add(1, it)
+    },
+    1
+  )
+
+  elements.push({
+    name: 'edit',
+    header: 'Edit',
+    width: 87,
+    view: (value, { id }) => {
+      return (
+        <IconButton
+          onClick={() => {
+            setMachineId(id)
+            setWizard(true)
+          }}>
+          <EditIcon />
+        </IconButton>
+      )
+    }
+  })
 
   return (
     <>
@@ -292,7 +335,6 @@ const CashCassettes = () => {
               stripeWhen={isCashOutDisabled}
               elements={elements}
               data={machines}
-              save={onSave}
               validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />

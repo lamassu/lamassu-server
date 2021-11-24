@@ -13,6 +13,13 @@ import { Info2, H4, P, Info1 } from 'src/components/typography'
 import cashbox from 'src/styling/icons/cassettes/acceptor-left.svg'
 import cassetteOne from 'src/styling/icons/cassettes/dispenser-1.svg'
 import cassetteTwo from 'src/styling/icons/cassettes/dispenser-2.svg'
+import tejo3CassetteOne from 'src/styling/icons/cassettes/tejo/3-cassettes/3-cassettes-open-1-left.svg'
+import tejo3CassetteTwo from 'src/styling/icons/cassettes/tejo/3-cassettes/3-cassettes-open-2-left.svg'
+import tejo3CassetteThree from 'src/styling/icons/cassettes/tejo/3-cassettes/3-cassettes-open-3-left.svg'
+import tejo4CassetteOne from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-1-left.svg'
+import tejo4CassetteTwo from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-2-left.svg'
+import tejo4CassetteThree from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-3-left.svg'
+import tejo4CassetteFour from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-4-left.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { comet, errorColor } from 'src/styling/variables'
 
@@ -91,6 +98,13 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
+const cassetesArtworks = (numberOfCassettes, step) =>
+  [
+    [cassetteOne, cassetteTwo],
+    [tejo3CassetteOne, tejo3CassetteTwo, tejo3CassetteThree],
+    [tejo4CassetteOne, tejo4CassetteTwo, tejo4CassetteThree, tejo4CassetteFour]
+  ][numberOfCassettes - 2][step - 2]
+
 const WizardStep = ({
   step,
   name,
@@ -107,28 +121,23 @@ const WizardStep = ({
 
   const label = lastStep ? 'Finish' : 'Confirm'
 
-  const cassetesArtworks = {
-    1: cashbox,
-    2: cassetteOne,
-    3: cassetteTwo
-  }
-
   const stepOneRadioOptions = [
     { display: 'Yes', code: 'YES' },
     { display: 'No', code: 'NO' }
   ]
 
-  const cassetteInfo = {
-    amount: step === 2 ? machine?.cassette1 : machine?.cassette2,
-    denomination: step === 2 ? cashoutSettings.top : cashoutSettings.bottom
-  }
+  const cassetteField = `cassette${step - 1}`
+  const numberOfCassettes = machine.numberOfCassettes
+  const originalCassetteCount = machine?.[cassetteField]
+  const cassetteDenomination = cashoutSettings?.[cassetteField]
 
-  const getPercentage = values => {
-    const cassetteCount =
-      step === 2 ? values.cassette1Count : values.cassette2Count
-    const value = cassetteCount ?? cassetteInfo.amount
-    return R.clamp(0, 100, 100 * (value / cassetteCapacity))
-  }
+  const cassetteCount = values => values[cassetteField] || originalCassetteCount
+  const cassetteTotal = values => cassetteCount(values) * cassetteDenomination
+  const getPercentage = R.pipe(
+    cassetteCount,
+    count => 100 * (count / cassetteCapacity),
+    R.clamp(0, 100)
+  )
 
   return (
     <div className={classes.content}>
@@ -144,7 +153,7 @@ const WizardStep = ({
           onSubmit={onContinue}
           initialValues={{ wasCashboxEmptied: '' }}
           enableReinitialize
-          validationSchema={steps[step - 1].schema}>
+          validationSchema={steps[0].schema}>
           {({ values, errors }) => (
             <Form>
               <div
@@ -152,7 +161,7 @@ const WizardStep = ({
                 <img
                   className={classes.stepImage}
                   alt="cassette"
-                  src={cassetesArtworks[step]}></img>
+                  src={cashbox}></img>
                 <div className={classes.formWrapper}>
                   <div
                     className={classnames(
@@ -205,12 +214,17 @@ const WizardStep = ({
         </Formik>
       )}
 
-      {(step === 2 || step === 3) && (
+      {step > 1 && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
           onSubmit={onContinue}
-          initialValues={{ cassette1Count: '', cassette2Count: '' }}
+          initialValues={{
+            cassette1: '',
+            cassette2: '',
+            cassette3: '',
+            cassette4: ''
+          }}
           enableReinitialize
           validationSchema={steps[step - 1].schema}>
           {({ values, errors }) => (
@@ -220,7 +234,7 @@ const WizardStep = ({
                 <img
                   className={classes.stepImage}
                   alt="cassette"
-                  src={cassetesArtworks[step]}></img>
+                  src={cassetesArtworks(numberOfCassettes, step)}></img>
                 <div className={classes.formWrapper}>
                   <div
                     className={classnames(
@@ -260,27 +274,16 @@ const WizardStep = ({
                         component={NumberInput}
                         decimalPlaces={0}
                         width={50}
-                        placeholder={cassetteInfo.amount.toString()}
-                        name={`cassette${step - 1}Count`}
+                        placeholder={originalCassetteCount.toString()}
+                        name={cassetteField}
                         className={classes.cashboxBills}
                       />
                       <P>
-                        {cassetteInfo.denomination} {fiatCurrency} bills loaded
+                        {cassetteDenomination} {fiatCurrency} bills loaded
                       </P>
                     </div>
                     <P noMargin className={classes.fiatTotal}>
-                      ={' '}
-                      {step === 2
-                        ? (values.cassette1Count ?? 0) *
-                          cassetteInfo.denomination
-                        : (values.cassette2Count ?? 0) *
-                          cassetteInfo.denomination}{' '}
-                      {fiatCurrency}
-                    </P>
-                    <P className={classes.errorMessage}>
-                      {step === 2
-                        ? errors.cassette1Count
-                        : errors.cassette2Count}
+                      = {cassetteTotal(values)} {fiatCurrency}
                     </P>
                   </div>
                 </div>

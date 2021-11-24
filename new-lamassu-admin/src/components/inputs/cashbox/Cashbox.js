@@ -13,6 +13,7 @@ const gridClasses = makeStyles(gridStyles)
 const Cashbox = ({
   percent = 0,
   cashOut = false,
+  width,
   className,
   emptyPartClassName,
   labelClassName,
@@ -21,7 +22,13 @@ const Cashbox = ({
   omitInnerPercentage,
   isLow
 }) => {
-  const classes = cashboxClasses({ percent, cashOut, applyColorVariant, isLow })
+  const classes = cashboxClasses({
+    percent,
+    cashOut,
+    width,
+    applyColorVariant,
+    isLow
+  })
   const ltHalf = percent <= 51
 
   const showCashBox = {
@@ -76,7 +83,8 @@ const CashOut = ({
   notes,
   className,
   editingMode = false,
-  threshold
+  threshold,
+  width
 }) => {
   const percent = (100 * notes) / capacity
   const isLow = percent < threshold
@@ -90,6 +98,7 @@ const CashOut = ({
             percent={percent}
             cashOut
             isLow={isLow}
+            width={width}
           />
         </div>
         {!editingMode && (

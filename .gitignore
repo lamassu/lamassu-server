@@ -40,3 +40,4 @@ terraform.*
 .terraform
 
 db.json
+.env
