@@ -196,7 +196,9 @@ const InputFIDOState = ({ state, strategy }) => {
       )}
       {strategy === 'FIDO2FA' && (
         <>
-          <H2 className={classes.info}>Insert your Yubikey and touch it</H2>
+          <H2 className={classes.info}>
+            Insert your hardware key and follow the instructions
+          </H2>
           <Button
             type="button"
             form="fido-form"

@@ -14,7 +14,6 @@ import { Checkbox, SecretInput, TextInput } from 'src/components/inputs/formik'
 import { Label3, P } from 'src/components/typography'
 
 import styles from './shared.styles'
-import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
 
@@ -92,10 +91,8 @@ const LoginState = ({ state, dispatch, strategy }) => {
 
     if (!loginResponse.login) return
 
-    const stateVar = STATES[loginResponse.login]
-
     return dispatch({
-      type: stateVar,
+      type: loginResponse.login,
       payload: {
         clientField: username,
         passwordField: password,
@@ -222,7 +219,7 @@ const LoginState = ({ state, dispatch, strategy }) => {
                 }}
                 buttonClassName={classes.loginButton}
                 className={classes.fidoLoginButtonWrapper}>
-                I have a YubiKey
+                I have a hardware key
               </Button>
             )}
             <Button
