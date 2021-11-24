@@ -40,6 +40,9 @@ const styles = {
   twofaFooter: {
     marginTop: '6vh'
   },
+  fidoLoginButtonWrapper: {
+    marginBottom: 12
+  },
   loginButton: {
     display: 'block',
     width: '100%'

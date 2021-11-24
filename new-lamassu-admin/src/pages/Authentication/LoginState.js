@@ -1,23 +1,47 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { startAssertion } from '@simplewebauthn/browser'
 import base64 from 'base-64'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
-import React from 'react'
+import React, { useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 
+import AppContext from 'src/AppContext'
 import { Button } from 'src/components/buttons'
 import { Checkbox, SecretInput, TextInput } from 'src/components/inputs/formik'
 import { Label3, P } from 'src/components/typography'
 
 import styles from './shared.styles'
-import { STATES } from './states'
 
 const useStyles = makeStyles(styles)
 
 const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password)
+  }
+`
+
+const GENERATE_ASSERTION = gql`
+  query generateAssertionOptions {
+    generateAssertionOptions
+  }
+`
+
+const VALIDATE_ASSERTION = gql`
+  mutation validateAssertion($assertionResponse: JSONObject!) {
+    validateAssertion(assertionResponse: $assertionResponse)
+  }
+`
+
+const GET_USER_DATA = gql`
+  {
+    userData {
+      id
+      username
+      role
+    }
   }
 `
 
@@ -44,10 +68,12 @@ const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
   return null
 }
 
-const LoginState = ({ state, dispatch }) => {
+const LoginState = ({ state, dispatch, strategy }) => {
   const classes = useStyles()
+  const history = useHistory()
+  const { setUserData } = useContext(AppContext)
 
-  const [login, { error: mutationError }] = useMutation(LOGIN)
+  const [login, { error: loginMutationError }] = useMutation(LOGIN)
 
   const submitLogin = async (username, password, rememberMe) => {
     const options = {
@@ -65,11 +91,8 @@ const LoginState = ({ state, dispatch }) => {
 
     if (!loginResponse.login) return
 
-    const stateVar =
-      loginResponse.login === 'INPUT2FA' ? STATES.INPUT_2FA : STATES.SETUP_2FA
-
     return dispatch({
-      type: stateVar,
+      type: loginResponse.login,
       payload: {
         clientField: username,
         passwordField: password,
@@ -77,6 +100,42 @@ const LoginState = ({ state, dispatch }) => {
       }
     })
   }
+
+  const [validateAssertion, { error: FIDOMutationError }] = useMutation(
+    VALIDATE_ASSERTION,
+    {
+      onCompleted: ({ validateAssertion: success }) => success && getUserData()
+    }
+  )
+
+  const [assertionOptions, { error: assertionQueryError }] = useLazyQuery(
+    GENERATE_ASSERTION,
+    {
+      onCompleted: ({ generateAssertionOptions: options }) => {
+        startAssertion(options)
+          .then(res => {
+            validateAssertion({
+              variables: {
+                assertionResponse: res
+              }
+            })
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      }
+    }
+  )
+
+  const [getUserData, { error: userDataQueryError }] = useLazyQuery(
+    GET_USER_DATA,
+    {
+      onCompleted: ({ userData }) => {
+        setUserData(userData)
+        history.push('/')
+      }
+    }
+  )
 
   return (
     <Formik
@@ -95,7 +154,14 @@ const LoginState = ({ state, dispatch }) => {
             fullWidth
             autoFocus
             className={classes.input}
-            error={getErrorMsg(errors, touched, mutationError)}
+            error={getErrorMsg(
+              errors,
+              touched,
+              loginMutationError ||
+                FIDOMutationError ||
+                assertionQueryError ||
+                userDataQueryError
+            )}
           />
           <Field
             name="password"
@@ -103,7 +169,14 @@ const LoginState = ({ state, dispatch }) => {
             component={SecretInput}
             label="Password"
             fullWidth
-            error={getErrorMsg(errors, touched, mutationError)}
+            error={getErrorMsg(
+              errors,
+              touched,
+              loginMutationError ||
+                FIDOMutationError ||
+                assertionQueryError ||
+                userDataQueryError
+            )}
           />
           <div className={classes.rememberMeWrapper}>
             <Field
@@ -114,10 +187,40 @@ const LoginState = ({ state, dispatch }) => {
             <Label3>Keep me logged in</Label3>
           </div>
           <div className={classes.footer}>
-            {getErrorMsg(errors, touched, mutationError) && (
+            {getErrorMsg(
+              errors,
+              touched,
+              loginMutationError ||
+                FIDOMutationError ||
+                assertionQueryError ||
+                userDataQueryError
+            ) && (
               <P className={classes.errorMessage}>
-                {getErrorMsg(errors, touched, mutationError)}
+                {getErrorMsg(
+                  errors,
+                  touched,
+                  loginMutationError ||
+                    FIDOMutationError ||
+                    assertionQueryError ||
+                    userDataQueryError
+                )}
               </P>
+            )}
+            {strategy !== 'FIDO2FA' && (
+              <Button
+                type="button"
+                onClick={() => {
+                  return strategy === 'FIDOUsernameless'
+                    ? assertionOptions()
+                    : dispatch({
+                        type: 'FIDO',
+                        payload: {}
+                      })
+                }}
+                buttonClassName={classes.loginButton}
+                className={classes.fidoLoginButtonWrapper}>
+                I have a hardware key
+              </Button>
             )}
             <Button
               type="submit"
