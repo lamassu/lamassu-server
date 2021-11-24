@@ -53,6 +53,11 @@ const reducer = (_, action) => {
   }
 }
 
+const roleMapper = {
+  user: 'Regular',
+  superuser: 'Superuser'
+}
+
 const Users = () => {
   const classes = useStyles()
   const { userData } = useContext(AppContext)
@@ -65,62 +70,43 @@ const Users = () => {
   const elements = [
     {
       header: 'Login',
-      width: 257,
+      width: 307,
       textAlign: 'left',
       size: 'sm',
       view: u => {
         if (userData.id === u.id)
           return (
-            <>
-              {u.username}
+            <div className={classes.loginWrapper}>
+              <span className={classes.username}>{u.username}</span>
               <Chip size="small" label="You" className={classes.chip} />
-            </>
+            </div>
           )
-        return u.username
+        return <span className={classes.username}>{u.username}</span>
       }
     },
     {
       header: 'Role',
-      width: 105,
-      textAlign: 'center',
-      size: 'sm',
-      view: u => {
-        switch (u.role) {
-          case 'user':
-            return 'Regular'
-          case 'superuser':
-            return 'Superuser'
-          default:
-            return u.role
-        }
-      }
-    },
-    {
-      header: '',
-      width: 80,
-      textAlign: 'center',
+      width: 160,
+      textAlign: 'left',
       size: 'sm',
       view: u => (
-        <Switch
-          disabled={userData.id === u.id}
-          checked={u.role === 'superuser'}
-          onClick={() => {
-            setUserInfo(u)
-            dispatch({
-              type: 'open',
-              payload: 'showRoleModal'
-            })
-          }}
-          value={u.role === 'superuser'}
-        />
+        <div className={classes.loginWrapper}>
+          <span>{roleMapper[u.role]}</span>
+          <Switch
+            className={classes.roleSwitch}
+            disabled={userData.id === u.id}
+            checked={u.role === 'superuser'}
+            onClick={() => {
+              setUserInfo(u)
+              dispatch({
+                type: 'open',
+                payload: 'showRoleModal'
+              })
+            }}
+            value={u.role === 'superuser'}
+          />
+        </div>
       )
-    },
-    {
-      header: '',
-      width: 25,
-      textAlign: 'center',
-      size: 'sm',
-      view: u => {}
     },
     {
       header: 'Actions',
