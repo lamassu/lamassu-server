@@ -64,6 +64,11 @@ const GET_CUSTOMER = gql`
       lastTxClass
       daysSuspended
       isSuspended
+      customFields {
+        id
+        label
+        value
+      }
       transactions {
         txClass
         id
