@@ -62,7 +62,8 @@ const MachinesTable = ({ machines, numToRender }) => {
   }
 
   const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines)
+    ...R.map(it => it.numberOfCassettes, machines),
+    0
   )
 
   return (
