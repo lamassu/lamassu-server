@@ -47,11 +47,9 @@ exports.up = function (next) {
         `INSERT INTO operator_ids (operator_id, service) VALUES ('${operatorId}','authentication')`
       ]
       db.multi(sql.concat(sql2), next)
-        .then(() => next())
     })
     .catch(e => {
-      db.multi(sql, next)
-        .then(() => next())
+      db.multi(sql, next(e))
     })
 }
 
