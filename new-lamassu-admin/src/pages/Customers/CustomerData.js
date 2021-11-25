@@ -31,7 +31,7 @@ import { getName } from './helper.js'
 const useStyles = makeStyles(styles)
 
 const IMAGE_WIDTH = 165
-const IMAGE_HEIGHT = 45
+const IMAGE_HEIGHT = 32
 const POPUP_IMAGE_WIDTH = 360
 const POPUP_IMAGE_HEIGHT = 240
 

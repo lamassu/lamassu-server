@@ -324,6 +324,7 @@ const CustomerProfile = memo(() => {
                 </ActionButton>
                 <ActionButton
                   color="primary"
+                  className={classes.retrieveInformation}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
