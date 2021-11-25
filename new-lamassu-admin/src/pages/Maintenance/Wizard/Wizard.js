@@ -26,9 +26,14 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const isLastStep = step === LAST_STEP
 
   const onContinue = it => {
-    const cashbox = config?.wasCashboxEmptied === 'YES' ? 0 : machine?.cashbox
-
     if (isLastStep) {
+      const wasCashboxEmptied = [
+        config?.wasCashboxEmptied,
+        it?.wasCashboxEmptied
+      ].includes('YES')
+
+      const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
+
       const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
       save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
       return onClose()
