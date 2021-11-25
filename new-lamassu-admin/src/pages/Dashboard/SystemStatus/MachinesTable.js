@@ -40,7 +40,7 @@ const HeaderCell = withStyles({
   }
 })(TableCell)
 
-const MachinesTable = ({ machines, numToRender }) => {
+const MachinesTable = ({ machines = [], numToRender }) => {
   const classes = useStyles()
   const history = useHistory()
   const getPercent = (notes, capacity = 500) => {
