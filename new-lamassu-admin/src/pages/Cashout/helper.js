@@ -41,7 +41,8 @@ const DenominationsSchema = Yup.object().shape({
 const getElements = (machines, locale = {}, classes) => {
   const fiatCurrency = R.prop('fiatCurrency')(locale)
   const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines)
+    ...R.map(it => it.numberOfCassettes, machines),
+    0
   )
 
   const options = getBillOptions(locale, denominations)

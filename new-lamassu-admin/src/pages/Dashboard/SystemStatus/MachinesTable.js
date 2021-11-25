@@ -40,7 +40,7 @@ const HeaderCell = withStyles({
   }
 })(TableCell)
 
-const MachinesTable = ({ machines, numToRender }) => {
+const MachinesTable = ({ machines = [], numToRender }) => {
   const classes = useStyles()
   const history = useHistory()
   const getPercent = (notes, capacity = 500) => {
@@ -61,9 +61,10 @@ const MachinesTable = ({ machines, numToRender }) => {
     })
   }
 
-  const maxNumberOfCassettes = R.isEmpty(machines)
-    ? 0
-    : Math.max(...R.map(it => it.numberOfCassettes, machines))
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines),
+    0
+  )
 
   return (
     <TableContainer className={classes.table}>

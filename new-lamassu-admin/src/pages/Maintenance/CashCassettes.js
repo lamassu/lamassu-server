@@ -160,7 +160,8 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
   const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines)
+    ...R.map(it => it.numberOfCassettes, machines),
+    0
   )
   const cashboxCounts = R.reduce(
     (ret, m) => R.assoc(m.id, m.cashbox, ret),
