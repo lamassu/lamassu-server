@@ -61,9 +61,9 @@ const MachinesTable = ({ machines, numToRender }) => {
     })
   }
 
-  const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines)
-  )
+  const maxNumberOfCassettes = R.isEmpty(machines)
+    ? 0
+    : Math.max(...R.map(it => it.numberOfCassettes, machines))
 
   return (
     <TableContainer className={classes.table}>
