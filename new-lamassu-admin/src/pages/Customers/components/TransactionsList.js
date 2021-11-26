@@ -51,7 +51,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
       value:
         !R.isNil(timezone) &&
         ((customer.lastActive &&
-          formatDate(customer.lastActive, timezone, 'yyyy-MM-d')) ??
+          formatDate(customer.lastActive, timezone, 'yyyy-MM-dd')) ??
           '')
     },
     {
@@ -121,7 +121,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     {
       header: 'Date',
       width: 100,
-      view: it => formatDate(it.created, timezone, 'yyyy-MM-d')
+      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd')
     },
     {
       header: 'Time (h:m:s)',

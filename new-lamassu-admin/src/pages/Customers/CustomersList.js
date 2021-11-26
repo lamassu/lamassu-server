@@ -44,7 +44,7 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
       header: 'Last active',
       width: 137,
       view: it =>
-        (it.lastActive && format('yyyy-MM-d', new Date(it.lastActive))) ?? ''
+        (it.lastActive && format('yyyy-MM-dd', new Date(it.lastActive))) ?? ''
     },
     {
       header: 'Last transaction',
