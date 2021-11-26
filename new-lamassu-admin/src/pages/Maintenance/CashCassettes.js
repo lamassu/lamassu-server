@@ -166,10 +166,10 @@ const CashCassettes = () => {
         action: 'setCassetteBills',
         deviceId: id,
         cashbox,
-        cassette1: cassette1 ?? 0,
-        cassette2: cassette2 ?? 0,
-        cassette3: cassette3 ?? 0,
-        cassette4: cassette4 ?? 0
+        cassette1,
+        cassette2,
+        cassette3,
+        cassette4
       }
     })
   }
