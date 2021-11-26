@@ -142,7 +142,7 @@ const Logs = () => {
                   <TableRow key={idx} size="sm">
                     <TableCell>
                       {timezone &&
-                        formatDate(log.timestamp, timezone, 'YYYY-MM-DD HH:mm')}
+                        formatDate(log.timestamp, timezone, 'yyyy-MM-dd HH:mm')}
                     </TableCell>
                     <TableCell>{log.logLevel}</TableCell>
                     <TableCell>{log.message}</TableCell>

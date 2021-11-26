@@ -187,7 +187,7 @@ const CashboxHistory = ({ machines, currency }) => {
       header: 'Date',
       width: 135,
       textAlign: 'right',
-      view: it => formatDate(it.created, timezone, 'YYYY-MM-DD')
+      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd')
     },
     {
       name: 'time',

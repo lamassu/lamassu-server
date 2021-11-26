@@ -50,10 +50,9 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
       size: 142,
       value:
         !R.isNil(timezone) &&
-        ifNotNull(
-          customer.lastActive,
-          formatDate(customer.lastActive, timezone, 'yyyy-MM-d')
-        )
+        ((customer.lastActive &&
+          formatDate(customer.lastActive, timezone, 'yyyy-MM-d')) ??
+          '')
     },
     {
       header: 'Last transaction',
