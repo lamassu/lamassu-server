@@ -6,7 +6,6 @@
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
-    "@simplewebauthn/browser": "^3.0.0",
     "@simplewebauthn/server": "^3.0.0",
     "apollo-server-express": "2.25.1",
     "argon2": "0.28.2",
