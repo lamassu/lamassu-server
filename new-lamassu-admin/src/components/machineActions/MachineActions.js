@@ -70,6 +70,7 @@ const Label = ({ children }) => {
 
 const MachineActions = memo(({ machine, onActionSuccess }) => {
   const [action, setAction] = useState({ command: null })
+  const [preflightOptions, setPreflightOptions] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useStyles()
 
@@ -82,17 +83,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
 
   const [fetchMachineEvents, { loading: loadingEvents }] = useLazyQuery(
     MACHINE,
-    {
-      variables: {
-        deviceId: machine.deviceId
-      },
-      onCompleted: machineEventsLazy => {
-        const message = !isStaticState(getState(machineEventsLazy))
-          ? warningMessage
-          : null
-        setAction(action => ({ ...action, message }))
-      }
-    }
+    preflightOptions
   )
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
@@ -108,6 +99,19 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
 
   const confirmDialogOpen = Boolean(action.command)
   const disabled = !!(action?.command === 'restartServices' && loadingEvents)
+
+  const machineStatusPreflight = actionToDo => {
+    setPreflightOptions({
+      variables: { deviceId: machine.deviceId },
+      onCompleted: machineEventsLazy => {
+        const message = !isStaticState(getState(machineEventsLazy))
+          ? warningMessage
+          : null
+        setAction({ ...actionToDo, message })
+      }
+    })
+    fetchMachineEvents()
+  }
 
   return (
     <div>
@@ -179,8 +183,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
           InverseIcon={RebootReversedIcon}
           disabled={loading}
           onClick={() => {
-            fetchMachineEvents()
-            setAction({
+            machineStatusPreflight({
               command: 'restartServices',
               display: 'Restart services for'
             })
