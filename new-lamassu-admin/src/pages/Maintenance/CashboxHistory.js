@@ -163,7 +163,7 @@ const CashboxHistory = ({ machines, currency }) => {
     {
       name: 'total',
       header: 'Total',
-      width: 100,
+      width: 180,
       textAlign: 'right',
       view: it => (
         <span>
@@ -217,7 +217,7 @@ const CashboxHistory = ({ machines, currency }) => {
     {
       name: '',
       header: 'Edit',
-      width: 150,
+      width: 80,
       textAlign: 'right',
       view: it => {
         if (notEditing(it.id))

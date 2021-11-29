@@ -30,7 +30,14 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
 
     if (isLastStep) {
       const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
-      save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
+      save(
+        machine.id,
+        cashbox,
+        cassette1 ?? 0,
+        cassette2 ?? 0,
+        cassette3 ?? 0,
+        cassette4 ?? 0
+      )
       return onClose()
     }
 

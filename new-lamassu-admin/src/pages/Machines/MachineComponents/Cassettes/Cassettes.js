@@ -2,12 +2,15 @@ import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import { IconButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
+import Wizard from 'src/pages/Maintenance/Wizard/Wizard'
+import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace } from 'src/utils/config'
 
 import styles from './Cassettes.styles'
@@ -79,9 +82,19 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
+const CREATE_BATCH = gql`
+  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
+    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
+      id
+    }
+  }
+`
+
 const CashCassettes = ({ machine, config, refetchData }) => {
   const data = { machine, config }
   const classes = useStyles()
+
+  const [wizard, setWizard] = useState(false)
 
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
@@ -143,17 +156,43 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     1
   )
 
+  elements.push({
+    name: 'edit',
+    header: 'Edit',
+    width: 87,
+    view: () => {
+      return (
+        <IconButton
+          onClick={() => {
+            setWizard(true)
+          }}>
+          <EditIcon />
+        </IconButton>
+      )
+    }
+  })
+
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => refetchData()
   })
 
-  const onSave = (
-    ...[, { deviceId, cashbox, cassette1, cassette2, cassette3, cassette4 }]
-  ) => {
+  const [createBatch] = useMutation(CREATE_BATCH)
+
+  const onSave = (_, cashbox, cassette1, cassette2, cassette3, cassette4) => {
+    const oldCashboxCount = machine.cashbox
+    if (cashbox < oldCashboxCount) {
+      createBatch({
+        variables: {
+          deviceId: machine.deviceId,
+          cashboxCount: oldCashboxCount
+        }
+      })
+    }
+
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
-        deviceId: deviceId,
+        deviceId: machine.deviceId,
         cashbox,
         cassette1,
         cassette2,
@@ -164,18 +203,31 @@ const CashCassettes = ({ machine, config, refetchData }) => {
   }
 
   return machine.name ? (
-    <EditableTable
-      error={error?.message}
-      enableEdit
-      editWidth={widthsByNumberOfCassettes[numberOfCassettes].editWidth}
-      stripeWhen={isCashOutDisabled}
-      disableRowEdit={isCashOutDisabled}
-      name="cashboxes"
-      elements={elements}
-      data={[machine]}
-      save={onSave}
-      validationSchema={ValidationSchema}
-    />
+    <>
+      <EditableTable
+        error={error?.message}
+        editWidth={widthsByNumberOfCassettes[numberOfCassettes].editWidth}
+        stripeWhen={isCashOutDisabled}
+        disableRowEdit={isCashOutDisabled}
+        name="cashboxes"
+        elements={elements}
+        data={[machine]}
+        save={onSave}
+        validationSchema={ValidationSchema}
+      />
+      {wizard && (
+        <Wizard
+          machine={machine}
+          cashoutSettings={getCashoutSettings(machine.deviceId)}
+          onClose={() => {
+            setWizard(false)
+          }}
+          error={error?.message}
+          save={onSave}
+          locale={locale}
+        />
+      )}
+    </>
   ) : null
 }
 
