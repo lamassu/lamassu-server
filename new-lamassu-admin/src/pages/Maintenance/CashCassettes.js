@@ -179,6 +179,7 @@ const CashCassettes = () => {
         }
       })
     }
+
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
