@@ -62,14 +62,6 @@ const ValidationSchema = Yup.object().shape({
     .max(500)
 })
 
-const CREATE_BATCH = gql`
-  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
-    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
-      id
-    }
-  }
-`
-
 const GET_MACHINES_AND_CONFIG = gql`
   query getData {
     machines {
@@ -146,7 +138,6 @@ const CashCassettes = () => {
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
-  const [createBatch] = useMutation(CREATE_BATCH)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setEditingSchema(false),
     refetchQueries: () => ['getData']
@@ -163,32 +154,17 @@ const CashCassettes = () => {
     ...R.map(it => it.numberOfCassettes, machines),
     0
   )
-  const cashboxCounts = R.reduce(
-    (ret, m) => R.assoc(m.id, m.cashbox, ret),
-    {},
-    machines
-  )
 
-  const onSave = (id, cashbox, cassette1, cassette2, cassette3, cassette4) => {
-    const oldCashboxCount = cashboxCounts[id]
-    if (cashbox < oldCashboxCount) {
-      createBatch({
-        variables: {
-          deviceId: id,
-          cashboxCount: oldCashboxCount
-        }
-      })
-    }
+  const getCashoutSettings = id => fromNamespace(id)(cashout)
+  const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
+  const onSave = (id, cashbox, cassettes) => {
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: id,
         cashbox,
-        cassette1,
-        cassette2,
-        cassette3,
-        cassette4
+        ...cassettes
       }
     })
   }
@@ -207,9 +183,6 @@ const CashCassettes = () => {
       setEditingSchema(false)
     }
   }
-
-  const getCashoutSettings = id => fromNamespace(id)(cashout)
-  const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const radioButtonOptions = [
     { display: 'Automatic', code: AUTOMATIC },
@@ -299,7 +272,7 @@ const CashCassettes = () => {
       <TitleSection
         title="Cash Cassettes"
         button={{
-          text: 'Cashbox history',
+          text: 'Cashbox history a',
           icon: HistoryIcon,
           inverseIcon: ReverseHistoryIcon,
           toggle: setShowHistory

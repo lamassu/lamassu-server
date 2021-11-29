@@ -54,7 +54,7 @@ const getMachineID = path => path.slice(path.lastIndexOf('/') + 1)
 
 const Machines = () => {
   const location = useLocation()
-  const { data, refetch } = useQuery(GET_INFO, {
+  const { data, loading, refetch } = useQuery(GET_INFO, {
     variables: {
       deviceId: getMachineID(location.pathname)
     }
@@ -70,50 +70,52 @@ const Machines = () => {
   const machineID = R.path(['deviceId'])(machine) ?? null
 
   return (
-    <Grid container className={classes.grid}>
-      <Grid item xs={3}>
-        <Grid item xs={12}>
-          <div className={classes.breadcrumbsContainer}>
-            <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
-              <Link to="/dashboard" className={classes.breadcrumbLink}>
-                <Label3 noMargin className={classes.subtitle}>
-                  Dashboard
-                </Label3>
-              </Link>
-              <TL2 noMargin className={classes.subtitle}>
-                {machineName}
-              </TL2>
-            </Breadcrumbs>
-            <Overview data={machine} onActionSuccess={refetch} />
+    !loading && (
+      <Grid container className={classes.grid}>
+        <Grid item xs={3}>
+          <Grid item xs={12}>
+            <div className={classes.breadcrumbsContainer}>
+              <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Link to="/dashboard" className={classes.breadcrumbLink}>
+                  <Label3 noMargin className={classes.subtitle}>
+                    Dashboard
+                  </Label3>
+                </Link>
+                <TL2 noMargin className={classes.subtitle}>
+                  {machineName}
+                </TL2>
+              </Breadcrumbs>
+              <Overview data={machine} onActionSuccess={refetch} />
+            </div>
+          </Grid>
+        </Grid>
+        <Grid item xs={9}>
+          <div className={classes.content}>
+            <div
+              className={classnames(classes.detailItem, classes.detailsMargin)}>
+              <TL1 className={classes.subtitle}>{'Details'}</TL1>
+              <Details data={machine} timezone={timezone} />
+            </div>
+            <div className={classes.detailItem}>
+              <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
+              <Cassettes
+                refetchData={refetch}
+                machine={machine}
+                config={config ?? false}
+              />
+            </div>
+            <div className={classes.transactionsItem}>
+              <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
+              <Transactions id={machineID} />
+            </div>
+            <div className={classes.detailItem}>
+              <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
+              <Commissions name={'commissions'} id={machineID} />
+            </div>
           </div>
         </Grid>
       </Grid>
-      <Grid item xs={9}>
-        <div className={classes.content}>
-          <div
-            className={classnames(classes.detailItem, classes.detailsMargin)}>
-            <TL1 className={classes.subtitle}>{'Details'}</TL1>
-            <Details data={machine} timezone={timezone} />
-          </div>
-          <div className={classes.detailItem}>
-            <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
-            <Cassettes
-              refetchData={refetch}
-              machine={machine}
-              config={config ?? false}
-            />
-          </div>
-          <div className={classes.transactionsItem}>
-            <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
-            <Transactions id={machineID} />
-          </div>
-          <div className={classes.detailItem}>
-            <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
-            <Commissions name={'commissions'} id={machineID} />
-          </div>
-        </div>
-      </Grid>
-    </Grid>
+    )
   )
 }
 
