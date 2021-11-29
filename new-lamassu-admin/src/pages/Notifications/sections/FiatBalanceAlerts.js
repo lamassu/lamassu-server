@@ -32,13 +32,14 @@ const FiatBalance = ({
     setEditing,
     data,
     save,
-    machines
+    machines = []
   } = useContext(NotificationsCtx)
   const classes = useStyles()
 
-  const maxNumberOfCassettes =
-    Math.max(...R.map(it => it.numberOfCassettes, machines)) ??
+  const maxNumberOfCassettes = Math.max(
+    ...R.map(it => it.numberOfCassettes, machines),
     DEFAULT_NUMBER_OF_CASSETTES
+  )
 
   const editing = isEditing(NAME)
 
