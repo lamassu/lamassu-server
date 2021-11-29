@@ -99,7 +99,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess, timezone }) => {
             <Label>Paired at</Label>
             <span>
               {timezone &&
-                formatDate(machine.pairedAt, timezone, 'YYYY-MM-DD HH:mm:ss')}
+                formatDate(machine.pairedAt, timezone, 'yyyy-MM-dd HH:mm:ss')}
             </span>
           </Item>
           <Item xs={6}>

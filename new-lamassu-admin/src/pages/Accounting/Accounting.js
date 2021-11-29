@@ -158,14 +158,14 @@ const Accounting = () => {
       width: 150,
       size: 'sm',
       textAlign: 'right',
-      view: it => formatDate(it.created, timezone, 'YYYY-MM-DD')
+      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd')
     },
     {
       header: 'Time',
       width: 150,
       size: 'sm',
       textAlign: 'right',
-      view: it => formatDate(it.created, timezone, 'YYYY-MM-DD')
+      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd')
     }
   ]
 
