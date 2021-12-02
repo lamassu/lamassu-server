@@ -134,6 +134,9 @@ const styles = {
   labelMargin: {
     marginBottom: 20,
     marginRight: 32
+  },
+  emptyTransactions: {
+    paddingTop: 40
   }
 }
 

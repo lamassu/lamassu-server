@@ -1,5 +1,12 @@
 import typographyStyles from 'src/components/typography/styles'
-import { spacer, white, primaryColor } from 'src/styling/variables'
+import {
+  spacer,
+  white,
+  primaryColor,
+  zircon,
+  zircon2,
+  offDarkColor
+} from 'src/styling/variables'
 const { label1 } = typographyStyles
 
 const styles = {
@@ -22,6 +29,11 @@ const styles = {
     flexGrow: 1,
     display: 'flex',
     marginBottom: 120
+  },
+  emptyMachinesRoot: {
+    height: 300,
+    backgroundColor: zircon,
+    border: `solid 2px ${zircon2}`
   },
   card: {
     wordWrap: 'break-word',
@@ -75,6 +87,25 @@ const styles = {
   displayFlex: {
     display: 'flex',
     flexDirection: 'column'
+  },
+  inline: {
+    display: 'inline'
+  },
+  emptyMachinesContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '& > :first-child': {
+      marginTop: 0
+    },
+    '& > *': {
+      marginTop: 25
+    }
+  },
+  offColor: {
+    color: offDarkColor
   }
 }
 
