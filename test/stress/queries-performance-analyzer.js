@@ -30,6 +30,7 @@ function filterTransaction () {
         ) f`
   return db.any(sql)
 }
+
 function filterCustomer () {
   const sql = `EXPLAIN ANALYZE
           SELECT DISTINCT * FROM (
@@ -42,6 +43,7 @@ function filterCustomer () {
         ) f`
   return db.any(sql)
 }
+
 function getCustomerById (id) {
   const passableErrorCodes = _.map(Pgp.as.text, TX_PASSTHROUGH_ERROR_CODES).join(',')
 
