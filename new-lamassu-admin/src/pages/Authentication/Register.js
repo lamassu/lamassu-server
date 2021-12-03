@@ -42,18 +42,17 @@ const REGISTER = gql`
   }
 `
 
-const validationSchema = Yup.object().shape({
+const validationSchema = Yup.object({
   password: Yup.string()
     .required('A password is required')
     .test(
       'len',
-      'Your password must contain more than 8 characters',
+      'Your password must contain at least 8 characters',
       val => val.length >= 8
     ),
-  confirmPassword: Yup.string().oneOf(
-    [Yup.ref('password'), null],
-    'Passwords must match'
-  )
+  confirmPassword: Yup.string()
+    .required('Please confirm the password')
+    .oneOf([Yup.ref('password')], 'Passwords must match')
 })
 
 const initialValues = {
