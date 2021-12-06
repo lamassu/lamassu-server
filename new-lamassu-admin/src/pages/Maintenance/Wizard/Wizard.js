@@ -1,5 +1,3 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
@@ -13,21 +11,11 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
 
-const CREATE_BATCH = gql`
-  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
-    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
-      id
-    }
-  }
-`
-
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
   })
-
-  const [createBatch] = useMutation(CREATE_BATCH)
 
   const isCashOutDisabled =
     R.isEmpty(cashoutSettings) || !cashoutSettings?.active
@@ -49,15 +37,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       ].includes('YES')
 
       const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
-
-      if (wasCashboxEmptied) {
-        createBatch({
-          variables: {
-            deviceId: machine.id,
-            cashboxCount: machine.cashbox
-          }
-        })
-      }
 
       const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
       save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
