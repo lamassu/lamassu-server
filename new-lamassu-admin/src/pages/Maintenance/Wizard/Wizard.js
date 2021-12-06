@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
+import { defaultToZero } from 'src/utils/number.js'
 
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
@@ -34,15 +35,11 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
 
       const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
 
-      const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
-      save(
-        machine.id,
-        cashbox,
-        cassette1 ?? 0,
-        cassette2 ?? 0,
-        cassette3 ?? 0,
-        cassette4 ?? 0
+      const { cassette1, cassette2, cassette3, cassette4 } = R.map(
+        defaultToZero,
+        it
       )
+      save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
       return onClose()
     }
 
