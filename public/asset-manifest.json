@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/static/js/main.b19e2bb6.chunk.js",
-    "main.js.map": "/static/js/main.b19e2bb6.chunk.js.map",
+    "main.js": "/static/js/main.e0666ffd.chunk.js",
+    "main.js.map": "/static/js/main.e0666ffd.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.5b925903.js",
     "runtime-main.js.map": "/static/js/runtime-main.5b925903.js.map",
-    "static/js/2.67862a9d.chunk.js": "/static/js/2.67862a9d.chunk.js",
-    "static/js/2.67862a9d.chunk.js.map": "/static/js/2.67862a9d.chunk.js.map",
+    "static/js/2.8c47ab1b.chunk.js": "/static/js/2.8c47ab1b.chunk.js",
+    "static/js/2.8c47ab1b.chunk.js.map": "/static/js/2.8c47ab1b.chunk.js.map",
     "index.html": "/index.html",
-    "static/js/2.67862a9d.chunk.js.LICENSE.txt": "/static/js/2.67862a9d.chunk.js.LICENSE.txt",
+    "static/js/2.8c47ab1b.chunk.js.LICENSE.txt": "/static/js/2.8c47ab1b.chunk.js.LICENSE.txt",
     "static/media/3-cassettes-open-1-left.d6d9aa73.svg": "/static/media/3-cassettes-open-1-left.d6d9aa73.svg",
     "static/media/3-cassettes-open-2-left.a9ee8d4c.svg": "/static/media/3-cassettes-open-2-left.a9ee8d4c.svg",
     "static/media/3-cassettes-open-3-left.08fed660.svg": "/static/media/3-cassettes-open-3-left.08fed660.svg",
@@ -132,7 +132,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.5b925903.js",
-    "static/js/2.67862a9d.chunk.js",
-    "static/js/main.b19e2bb6.chunk.js"
+    "static/js/2.8c47ab1b.chunk.js",
+    "static/js/main.e0666ffd.chunk.js"
   ]
 }
