@@ -42,13 +42,13 @@ const REGISTER = gql`
   }
 `
 
+const PASSWORD_MIN_LENGTH = 8
 const validationSchema = Yup.object({
   password: Yup.string()
     .required('A password is required')
-    .test(
-      'len',
-      'Your password must contain at least 8 characters',
-      val => val.length >= 8
+    .min(
+      PASSWORD_MIN_LENGTH,
+      `Your password must contain at least ${PASSWORD_MIN_LENGTH} characters`
     ),
   confirmPassword: Yup.string()
     .required('Please confirm the password')
