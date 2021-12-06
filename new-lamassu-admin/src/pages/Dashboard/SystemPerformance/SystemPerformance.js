@@ -8,6 +8,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import { EmptyTable } from 'src/components/table'
 import { Label1, Label2 } from 'src/components/typography/index'
 import { ReactComponent as PercentDownIcon } from 'src/styling/icons/dashboard/down.svg'
 import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboard/equal.svg'
@@ -171,8 +172,17 @@ const SystemPerformance = () => {
 
   return (
     <>
-      <Nav handleSetRange={setSelectedRange} />
-      {!loading && (
+      <Nav
+        showPicker={!loading && !R.isEmpty(data.transactions)}
+        handleSetRange={setSelectedRange}
+      />
+      {!loading && R.isEmpty(data.transactions) && (
+        <EmptyTable
+          className={classes.emptyTransactions}
+          message="No transactions so far"
+        />
+      )}
+      {!loading && !R.isEmpty(data.transactions) && (
         <>
           <Grid container spacing={2}>
             <Grid item xs={3}>

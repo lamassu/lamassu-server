@@ -10,7 +10,7 @@ import styles from './SystemPerformance.styles'
 const useStyles = makeStyles(styles)
 const ranges = ['Month', 'Week', 'Day']
 
-const Nav = ({ handleSetRange }) => {
+const Nav = ({ handleSetRange, showPicker }) => {
   const classes = useStyles()
   const [clickedItem, setClickedItem] = useState('Day')
 
@@ -25,22 +25,24 @@ const Nav = ({ handleSetRange }) => {
       <div className={classes.titleAndButtonsContainer}>
         <H4 className={classes.h4}>{'System performance'}</H4>
       </div>
-      <div className={classes.navContainer}>
-        {ranges.map((it, idx) => {
-          return (
-            <div
-              key={idx}
-              onClick={e => handleClick(e.target.innerText)}
-              className={
-                isSelected(it)
-                  ? classnames(classes.newHighlightedLabel, classes.navButton)
-                  : classnames(classes.label, classes.navButton)
-              }>
-              {it}
-            </div>
-          )
-        })}
-      </div>
+      {showPicker && (
+        <div className={classes.navContainer}>
+          {ranges.map((it, idx) => {
+            return (
+              <div
+                key={idx}
+                onClick={e => handleClick(e.target.innerText)}
+                className={
+                  isSelected(it)
+                    ? classnames(classes.newHighlightedLabel, classes.navButton)
+                    : classnames(classes.label, classes.navButton)
+                }>
+                {it}
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
