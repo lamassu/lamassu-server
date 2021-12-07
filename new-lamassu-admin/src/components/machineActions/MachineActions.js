@@ -93,7 +93,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
     },
     onCompleted: () => {
       onActionSuccess && onActionSuccess()
-      setAction({ command: null })
+      setAction({ display: action.display, command: null })
     }
   })
 
