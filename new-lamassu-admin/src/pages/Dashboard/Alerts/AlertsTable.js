@@ -31,6 +31,15 @@ const AlertsTable = ({ numToRender, alerts, machines }) => {
   const history = useHistory()
   const classes = useStyles()
   const alertsToRender = R.slice(0, numToRender, alerts)
+
+  const alertMessage = alert => {
+    const deviceId = alert.detail.deviceId
+    if (!deviceId) return `${alert.message}`
+
+    const deviceName = R.defaultTo('Unpaired device', machines[deviceId])
+    return `${alert.message} - ${deviceName}`
+  }
+
   return (
     <List dense className={classes.table}>
       {alertsToRender.map((alert, idx) => {
@@ -39,8 +48,7 @@ const AlertsTable = ({ numToRender, alerts, machines }) => {
             {icons[alert.type] || (
               <Wrench style={{ height: 23, width: 23, marginRight: 8 }} />
             )}
-            <P className={classes.listItemText}>{`${alert.message}${alert.detail
-              .deviceId && ' - ' + machines[alert.detail.deviceId]}`}</P>
+            <P className={classes.listItemText}>{alertMessage(alert)}</P>
             <LinkIcon
               className={classes.linkIcon}
               onClick={() => history.push(links[alert.type] || '/dashboard')}
