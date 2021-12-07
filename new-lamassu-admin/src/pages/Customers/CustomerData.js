@@ -31,7 +31,7 @@ import { getName } from './helper.js'
 const useStyles = makeStyles(styles)
 
 const IMAGE_WIDTH = 165
-const IMAGE_HEIGHT = 45
+const IMAGE_HEIGHT = 32
 const POPUP_IMAGE_WIDTH = 360
 const POPUP_IMAGE_HEIGHT = 240
 
@@ -57,7 +57,12 @@ const Photo = ({ show, src }) => {
   )
 }
 
-const CustomerData = ({ customer, updateCustomer }) => {
+const CustomerData = ({
+  customer,
+  updateCustomer,
+  editCustomer,
+  deleteEditedData
+}) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
 
@@ -75,11 +80,14 @@ const CustomerData = ({ customer, updateCustomer }) => {
     : 'Failed'
 
   const customEntries = null // get customer custom entries
+  const customRequirements = null // get customer custom requirements
 
   const isEven = elem => elem % 2 === 0
 
   const getVisibleCards = _.filter(
-    elem => !_.isEmpty(elem.data) || !_.isNil(elem.children)
+    elem =>
+      !_.isEmpty(elem.fields) ||
+      (!_.isNil(elem.children) && !_.isNil(elem.state))
   )
 
   const getAvailableFields = _.filter(({ value }) => value !== '')
@@ -96,6 +104,12 @@ const CustomerData = ({ customer, updateCustomer }) => {
     }),
     usSsn: Yup.object().shape({
       usSsn: Yup.string()
+    }),
+    idCardPhoto: Yup.object().shape({
+      idCardPhoto: Yup.mixed()
+    }),
+    frontCamera: Yup.object().shape({
+      frontCamera: Yup.mixed()
     })
   }
 
@@ -103,96 +117,98 @@ const CustomerData = ({ customer, updateCustomer }) => {
     {
       name: 'name',
       label: 'Name',
-      value: `${getName(customer)}`,
       component: TextInput
     },
     {
       name: 'idNumber',
       label: 'ID number',
-      value: R.path(['documentNumber'])(idData) ?? '',
       component: TextInput
     },
     {
       name: 'birthDate',
       label: 'Birth Date',
-      value:
-        (rawDob &&
-          format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDob))) ??
-        '',
       component: TextInput
     },
     {
       name: 'age',
       label: 'Age',
-      value:
-        (rawDob &&
-          differenceInYears(
-            parse(new Date(), 'yyyyMMdd', rawDob),
-            new Date()
-          )) ??
-        '',
       component: TextInput
     },
     {
       name: 'gender',
       label: 'Gender',
-      value: R.path(['gender'])(idData) ?? '',
       component: TextInput
     },
     {
       name: 'state',
       label: country === 'Canada' ? 'Province' : 'State',
-      value: R.path(['state'])(idData) ?? '',
       component: TextInput
     },
     {
       name: 'expirationDate',
       label: 'Expiration Date',
-      value:
-        (rawExpirationDate &&
-          format('yyyy-MM-dd')(
-            parse(new Date(), 'yyyyMMdd', rawExpirationDate)
-          )) ??
-        '',
       component: TextInput
     }
   ]
 
   const usSsnElements = [
     {
-      name: 'us ssn',
+      name: 'usSsn',
       label: 'US SSN',
-      value: `${customer.usSsn ?? ''}`,
       component: TextInput,
       size: 190
     }
   ]
 
+  const idCardPhotoElements = [{ name: 'idCardPhoto' }]
+  const frontCameraElements = [{ name: 'frontCamera' }]
+
   const initialValues = {
     idScan: {
-      name: '',
-      idNumber: '',
-      birthDate: '',
-      age: '',
-      gender: '',
-      state: '',
-      expirationDate: ''
+      name: getName(customer) ?? '',
+      idNumber: R.path(['documentNumber'])(idData) ?? '',
+      birthDate:
+        (rawDob &&
+          format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDob))) ??
+        '',
+      age:
+        (rawDob &&
+          differenceInYears(
+            parse(new Date(), 'yyyyMMdd', rawDob),
+            new Date()
+          )) ??
+        '',
+      gender: R.path(['gender'])(idData) ?? '',
+      state: R.path(['state'])(idData) ?? '',
+      expirationDate:
+        (rawExpirationDate &&
+          format('yyyy-MM-dd')(
+            parse(new Date(), 'yyyyMMdd', rawExpirationDate)
+          )) ??
+        ''
     },
     usSsn: {
-      usSsn: ''
+      usSsn: customer.usSsn ?? ''
+    },
+    frontCamera: {
+      frontCamera: null
+    },
+    idCardPhoto: {
+      idCardPhoto: null
     }
   }
 
   const cards = [
     {
-      data: getAvailableFields(idScanElements),
+      fields: getAvailableFields(idScanElements),
       title: 'ID Scan',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
       state: R.path(['idCardDataOverride'])(customer),
       authorize: () =>
         updateCustomer({ idCardDataOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ idCardDataOverride: OVERRIDE_REJECTED }),
-      save: values => console.log(values),
+      deleteEditedData: () => deleteEditedData({ idCardData: null }),
+      save: values => editCustomer({ idCardData: values }),
       validationSchema: schemas.idScan,
       initialValues: initialValues.idScan
     },
@@ -217,17 +233,18 @@ const CustomerData = ({ customer, updateCustomer }) => {
       authorize: () =>
         updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED }),
-      save: () => {},
       children: <Info3>{sanctionsDisplay}</Info3>
     },
     {
+      fields: getAvailableFields(frontCameraElements),
       title: 'Front facing camera',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['frontCameraOverride'])(customer),
       authorize: () =>
         updateCustomer({ frontCameraOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ frontCameraOverride: OVERRIDE_REJECTED }),
-      save: () => {},
+      save: values => editCustomer({ frontCamera: values.frontCamera }),
+      deleteEditedData: () => deleteEditedData({ frontCamera: null }),
       children: customer.frontCameraPath ? (
         <Photo
           show={customer.frontCameraPath}
@@ -235,31 +252,40 @@ const CustomerData = ({ customer, updateCustomer }) => {
             customer
           )}`}
         />
-      ) : null
+      ) : null,
+      hasImage: true,
+      validationSchema: schemas.frontCamera,
+      initialValues: initialValues.frontCamera
     },
     {
+      fields: getAvailableFields(idCardPhotoElements),
       title: 'ID card image',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['idCardPhotoOverride'])(customer),
       authorize: () =>
         updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ idCardPhotoOverride: OVERRIDE_REJECTED }),
-      save: () => {},
+      save: values => editCustomer({ idCardPhoto: values.idCardPhoto }),
+      deleteEditedData: () => deleteEditedData({ idCardPhoto: null }),
       children: customer.idCardPhotoPath ? (
         <Photo
           show={customer.idCardPhotoPath}
           src={`${URI}/id-card-photo/${R.path(['idCardPhotoPath'])(customer)}`}
         />
-      ) : null
+      ) : null,
+      hasImage: true,
+      validationSchema: schemas.idCardPhoto,
+      initialValues: initialValues.idCardPhoto
     },
     {
-      data: getAvailableFields(usSsnElements),
+      fields: getAvailableFields(usSsnElements),
       title: 'US SSN',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['usSsnOverride'])(customer),
       authorize: () => updateCustomer({ usSsnOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ usSsnOverride: OVERRIDE_REJECTED }),
-      save: () => {},
+      save: values => editCustomer({ usSsn: values.usSsn }),
+      deleteEditedData: () => deleteEditedData({ usSsn: null }),
       validationSchema: schemas.usSsn,
       initialValues: initialValues.usSsn
     }
@@ -272,11 +298,13 @@ const CustomerData = ({ customer, updateCustomer }) => {
       reject,
       state,
       titleIcon,
-      data,
+      fields,
       save,
+      deleteEditedData,
       children,
       validationSchema,
-      initialValues
+      initialValues,
+      hasImage
     },
     idx
   ) => {
@@ -288,11 +316,13 @@ const CustomerData = ({ customer, updateCustomer }) => {
         reject={reject}
         state={state}
         titleIcon={titleIcon}
-        data={data}
+        hasImage={hasImage}
+        fields={fields}
         children={children}
         validationSchema={validationSchema}
         initialValues={initialValues}
-        save={save}></EditableCard>
+        save={save}
+        deleteEditedData={deleteEditedData}></EditableCard>
     )
   }
 
@@ -317,7 +347,7 @@ const CustomerData = ({ customer, updateCustomer }) => {
           onClick={() => setListView(true)}></FeatureButton>
       </div>
       <div>
-        {!listView && (
+        {!listView && customer && (
           <Grid container>
             <Grid container direction="column" item xs={6}>
               {visibleCards.map((elem, idx) => {
@@ -333,7 +363,12 @@ const CustomerData = ({ customer, updateCustomer }) => {
         )}
         {customEntries && (
           <div className={classes.wrapper}>
-            <div className={classes.separator}>{'Custom data entry'}</div>
+            <span className={classes.separator}>Custom data entry</span>
+          </div>
+        )}
+        {customRequirements && (
+          <div className={classes.wrapper}>
+            <span className={classes.separator}>Custom requirements</span>
           </div>
         )}
       </div>

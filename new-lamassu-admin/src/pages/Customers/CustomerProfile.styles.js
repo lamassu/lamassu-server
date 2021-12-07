@@ -33,6 +33,12 @@ export default {
     margin: [[8, 0, 4, 0]],
     padding: [[0, 40.5, 0]]
   },
+  retrieveInformation: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [[0, 0, 4, 0]],
+    padding: [[0, 32.5, 0]]
+  },
   panels: {
     display: 'flex'
   },

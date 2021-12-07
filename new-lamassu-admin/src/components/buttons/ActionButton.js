@@ -12,7 +12,9 @@ const ActionButton = memo(
     const classNames = {
       [classes.actionButton]: true,
       [classes.primary]: color === 'primary',
-      [classes.secondary]: color === 'secondary'
+      [classes.secondary]: color === 'secondary',
+      [classes.spring]: color === 'spring',
+      [classes.tomato]: color === 'tomato'
     }
 
     return (

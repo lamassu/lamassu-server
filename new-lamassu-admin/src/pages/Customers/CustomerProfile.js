@@ -116,6 +116,45 @@ const SET_CUSTOMER = gql`
     }
   }
 `
+const EDIT_CUSTOMER = gql`
+  mutation editCustomer($customerId: ID!, $customerEdit: CustomerEdit) {
+    editCustomer(customerId: $customerId, customerEdit: $customerEdit) {
+      id
+      idCardData
+      usSsn
+    }
+  }
+`
+
+const REPLACE_CUSTOMER_PHOTO = gql`
+  mutation replacePhoto(
+    $customerId: ID!
+    $photoType: String
+    $newPhoto: Upload
+  ) {
+    replacePhoto(
+      customerId: $customerId
+      photoType: $photoType
+      newPhoto: $newPhoto
+    ) {
+      id
+      newPhoto
+      photoType
+    }
+  }
+`
+
+const DELETE_EDITED_CUSTOMER = gql`
+  mutation deleteEditedData($customerId: ID!, $customerEdit: CustomerEdit) {
+    deleteEditedData(customerId: $customerId, customerEdit: $customerEdit) {
+      id
+      frontCameraPath
+      idCardData
+      idCardPhotoPath
+      usSsn
+    }
+  }
+`
 
 const CustomerProfile = memo(() => {
   const history = useHistory()
@@ -133,6 +172,18 @@ const CustomerProfile = memo(() => {
     }
   )
 
+  const [replaceCustomerPhoto] = useMutation(REPLACE_CUSTOMER_PHOTO, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [editCustomerData] = useMutation(EDIT_CUSTOMER, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [deleteCustomerEditedData] = useMutation(DELETE_EDITED_CUSTOMER, {
+    onCompleted: () => getCustomer()
+  })
+
   const [setCustomer] = useMutation(SET_CUSTOMER, {
     onCompleted: () => getCustomer()
   })
@@ -142,6 +193,31 @@ const CustomerProfile = memo(() => {
       variables: {
         customerId,
         customerInput: it
+      }
+    })
+
+  const replacePhoto = it =>
+    replaceCustomerPhoto({
+      variables: {
+        customerId,
+        newPhoto: it.newPhoto,
+        photoType: it.photoType
+      }
+    })
+
+  const editCustomer = it =>
+    editCustomerData({
+      variables: {
+        customerId,
+        customerEdit: it
+      }
+    })
+
+  const deleteEditedData = it =>
+    deleteCustomerEditedData({
+      variables: {
+        customerId,
+        customerEdit: it
       }
     })
 
@@ -248,6 +324,7 @@ const CustomerProfile = memo(() => {
                 </ActionButton>
                 <ActionButton
                   color="primary"
+                  className={classes.retrieveInformation}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
@@ -295,7 +372,10 @@ const CustomerProfile = memo(() => {
             <div>
               <CustomerData
                 customer={customerData}
-                updateCustomer={updateCustomer}></CustomerData>
+                updateCustomer={updateCustomer}
+                replacePhoto={replacePhoto}
+                editCustomer={editCustomer}
+                deleteEditedData={deleteEditedData}></CustomerData>
             </div>
           )}
         </div>

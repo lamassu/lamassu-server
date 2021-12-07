@@ -20,22 +20,30 @@ export default {
     marginRight: 12
   },
   wrapper: {
-    display: 'flex'
+    display: 'block',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap'
   },
   separator: {
-    display: 'flex',
-    flexBasis: '100%',
-    justifyContent: 'center',
     color: offColor,
-    margin: [[8, 0, 8, 0]],
-    '&::before, &::after': {
-      content: '',
-      flexGrow: 1,
+    margin: [[8, 0, 8, 150]],
+    position: 'relative',
+    display: 'inline-block',
+    '&:before, &:after': {
+      content: '""',
+      position: 'absolute',
       background: offColor,
-      height: 1,
-      fontSize: 1,
-      lineHeight: 0,
-      margin: [[0, 8, 0, 8]]
+      top: '50%',
+      width: 1000,
+      height: 1
+    },
+    '&:before': {
+      right: '100%',
+      marginRight: 15
+    },
+    '&:after': {
+      left: '100%',
+      marginLeft: 15
     }
   }
 }

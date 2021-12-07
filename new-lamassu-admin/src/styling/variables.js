@@ -7,6 +7,7 @@ const spring = '#48f694'
 // Secondary
 const comet = '#5f668a'
 const comet2 = '#72799d'
+const comet3 = '#525772'
 const spring2 = '#44e188'
 const spring3 = '#ecfbef'
 const spring4 = '#3fd07e'
@@ -25,6 +26,8 @@ const white = '#ffffff'
 
 // Error
 const tomato = '#ff584a'
+const tomato1 = '#E45043'
+const tomato2 = '#CE463A'
 const mistyRose = '#ffeceb'
 const pumpkin = '#ff7311'
 const linen = '#fbf3ec'
@@ -45,8 +48,11 @@ const disabledColor2 = concrete
 const fontColor = primaryColor
 const offColor = comet
 const offDarkColor = comet2
+const offDarkerColor = comet3
 const placeholderColor = comet
 const errorColor = tomato
+const errorColorDark = tomato1
+const errorColorDarker = tomato2
 const offErrorColor = mistyRose
 const inputBorderColor = primaryColor
 
@@ -142,12 +148,15 @@ export {
   placeholderColor,
   offColor,
   offDarkColor,
+  offDarkerColor,
   fontColor,
   disabledColor,
   disabledColor2,
   linkPrimaryColor,
   linkSecondaryColor,
   errorColor,
+  errorColorDarker,
+  errorColorDark,
   offErrorColor,
   inputBorderColor,
   // font sizes

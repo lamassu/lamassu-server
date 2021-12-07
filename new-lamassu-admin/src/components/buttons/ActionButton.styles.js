@@ -1,11 +1,17 @@
 import typographyStyles from 'src/components/typography/styles'
 import {
   white,
-  fontColor,
   subheaderColor,
   subheaderDarkColor,
   offColor,
-  offDarkColor
+  offDarkColor,
+  offDarkerColor,
+  secondaryColor,
+  secondaryColorDark,
+  secondaryColorDarker,
+  errorColor,
+  errorColorDark,
+  errorColorDarker
 } from 'src/styling/variables'
 
 const { p } = typographyStyles
@@ -50,10 +56,45 @@ export default {
     }
   },
   secondary: {
-    extend: colors(offColor, offDarkColor, white),
+    extend: colors(offColor, offDarkColor, offDarkerColor),
     color: white,
     '&:active': {
-      color: fontColor,
+      '& $actionButtonIcon': {
+        display: 'flex'
+      },
+      '& $actionButtonIconActive': {
+        display: 'none'
+      }
+    },
+    '& $actionButtonIcon': {
+      display: 'none'
+    },
+    '& $actionButtonIconActive': {
+      display: 'flex'
+    }
+  },
+  spring: {
+    extend: colors(secondaryColorDark, secondaryColor, secondaryColorDarker),
+    color: white,
+    '&:active': {
+      '& $actionButtonIcon': {
+        display: 'flex'
+      },
+      '& $actionButtonIconActive': {
+        display: 'none'
+      }
+    },
+    '& $actionButtonIcon': {
+      display: 'none'
+    },
+    '& $actionButtonIconActive': {
+      display: 'flex'
+    }
+  },
+  tomato: {
+    extend: colors(errorColorDark, errorColor, errorColorDarker),
+    color: white,
+    '&:active': {
       '& $actionButtonIcon': {
         display: 'flex'
       },
