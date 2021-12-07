@@ -151,7 +151,10 @@ const CashCassettes = () => {
     machines
   )
 
-  const onSave = (id, cashbox, cassette1, cassette2, cassette3, cassette4) => {
+  const getCashoutSettings = id => fromNamespace(id)(cashout)
+  const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
+
+  const onSave = (id, cashbox, cassettes) => {
     const oldCashboxCount = cashboxCounts[id]
     if (cashbox < oldCashboxCount) {
       createBatch({
@@ -167,15 +170,10 @@ const CashCassettes = () => {
         action: 'setCassetteBills',
         deviceId: id,
         cashbox,
-        cassette1,
-        cassette2,
-        cassette3,
-        cassette4
+        ...cassettes
       }
     })
   }
-  const getCashoutSettings = id => fromNamespace(id)(cashout)
-  const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const elements = [
     {
