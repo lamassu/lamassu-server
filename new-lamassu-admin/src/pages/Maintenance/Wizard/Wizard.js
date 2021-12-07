@@ -12,6 +12,8 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
 
+const CASSETTE_FIELDS = ['cassette1', 'cassette2', 'cassette3', 'cassette4']
+
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
@@ -26,6 +28,17 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
 
+  const buildCassetteObj = cassetteInput => {
+    return R.reduce(
+      (acc, value) => {
+        acc[value] = defaultToZero(cassetteInput[value])
+        return acc
+      },
+      {},
+      CASSETTE_FIELDS
+    )
+  }
+
   const onContinue = it => {
     if (isLastStep) {
       const wasCashboxEmptied = [
@@ -34,12 +47,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       ].includes('YES')
 
       const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
+      const cassettes = buildCassetteObj(it)
 
-      const { cassette1, cassette2, cassette3, cassette4 } = R.map(
-        defaultToZero,
-        it
-      )
-      save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
+      save(machine.id, cashbox, cassettes)
       return onClose()
     }
 
@@ -65,6 +75,18 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       })
     }))
   )
+
+  const makeInitialValues = () =>
+    !R.isEmpty(cashoutSettings)
+      ? R.reduce(
+          (acc, value) => {
+            acc[`cassette${value}`] = ''
+            return acc
+          },
+          {},
+          R.range(1, numberOfCassettes + 1)
+        )
+      : {}
 
   const steps = R.prepend(
     {
@@ -98,6 +120,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           steps={steps}
           fiatCurrency={locale.fiatCurrency}
           onContinue={onContinue}
+          initialValues={makeInitialValues()}
         />
       )}
     </Modal>
