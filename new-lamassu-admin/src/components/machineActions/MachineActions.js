@@ -97,7 +97,6 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
     }
   })
 
-  const confirmDialogOpen = Boolean(action.command)
   const disabled = !!(action?.command === 'restartServices' && loadingEvents)
 
   const machineStatusPreflight = actionToDo => {
@@ -193,8 +192,8 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       </div>
       <ConfirmDialog
         disabled={disabled}
-        open={confirmDialogOpen}
-        title={`${action?.display} this machine?`}
+        open={action.command}
+        title={`${action.display} this machine?`}
         errorMessage={errorMessage}
         toBeConfirmed={machine.name}
         message={action?.message}
@@ -211,7 +210,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
           })
         }}
         onDismissed={() => {
-          setAction({ command: null })
+          setAction({ display: action.display, command: null })
           setErrorMessage(null)
         }}
       />
