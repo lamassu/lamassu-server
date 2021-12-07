@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, withStyles } from '@material-ui/core'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -6,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import classnames from 'classnames'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
@@ -15,11 +17,18 @@ import { Label2, TL2 } from 'src/components/typography'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { ReactComponent as MachineLinkIcon } from 'src/styling/icons/month arrows/right.svg'
+import { fromNamespace } from 'src/utils/config'
 
 import styles from './MachinesTable.styles'
 
 // percentage threshold where below this number the text in the cash cassettes percentage turns red
 const PERCENTAGE_THRESHOLD = 20
+
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
 
 const useStyles = makeStyles(styles)
 
@@ -43,16 +52,28 @@ const HeaderCell = withStyles({
 const MachinesTable = ({ machines = [], numToRender }) => {
   const classes = useStyles()
   const history = useHistory()
+
+  const { data } = useQuery(GET_CONFIG)
+  const fillingPercentageSettings = fromNamespace(
+    'notifications',
+    R.path(['config'], data) ?? {}
+  )
+
   const getPercent = (notes, capacity = 500) => {
     return Math.round((notes / capacity) * 100)
   }
 
-  const makePercentageText = (notes, capacity = 500) => {
+  const makePercentageText = (cassetteIdx, notes, capacity = 500) => {
     const percent = getPercent(notes, capacity)
-    if (percent < PERCENTAGE_THRESHOLD) {
-      return <TL2 className={classes.error}>{`${percent}%`}</TL2>
-    }
-    return <TL2>{`${percent}%`}</TL2>
+    const percentageThreshold = R.pipe(
+      R.path([`fillingPercentageCassette${cassetteIdx}`]),
+      R.defaultTo(PERCENTAGE_THRESHOLD)
+    )(fillingPercentageSettings)
+    return percent < percentageThreshold ? (
+      <TL2 className={classes.error}>{`${percent}%`}</TL2>
+    ) : (
+      <TL2>{`${percent}%`}</TL2>
+    )
   }
 
   const redirect = ({ name, deviceId }) => {
@@ -122,21 +143,18 @@ const MachinesTable = ({ machines = [], numToRender }) => {
                   <StyledCell>
                     <Status status={machine.statuses[0]} />
                   </StyledCell>
-                  {/*                     <StyledCell align="left">
-                      {makePercentageText(machine.cashbox)}
-                    </StyledCell> */}
                   {R.map(
                     it =>
-                      machine.numberOfCassettes > it ? (
+                      machine.numberOfCassettes >= it ? (
                         <StyledCell align="left">
-                          {makePercentageText(machine[`cassette${it + 1}`])}
+                          {makePercentageText(it, machine[`cassette${it}`])}
                         </StyledCell>
                       ) : (
                         <StyledCell align="left">
                           <TL2>{`— %`}</TL2>
                         </StyledCell>
                       ),
-                    R.times(R.identity, maxNumberOfCassettes)
+                    R.range(1, maxNumberOfCassettes + 1)
                   )}
                 </TableRow>
               )
