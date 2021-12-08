@@ -1,6 +1,6 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
-import { differenceInYears, parse, format } from 'date-fns/fp'
+import { parse, format, isValid } from 'date-fns/fp'
 import _ from 'lodash/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
@@ -26,7 +26,6 @@ import { URI } from 'src/utils/apollo'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
-import { getName } from './helper.js'
 
 const useStyles = makeStyles(styles)
 
@@ -60,6 +59,7 @@ const Photo = ({ show, src }) => {
 const CustomerData = ({
   customer,
   updateCustomer,
+  replacePhoto,
   editCustomer,
   deleteEditedData
 }) => {
@@ -68,7 +68,6 @@ const CustomerData = ({
 
   const idData = R.path(['idCardData'])(customer)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
-  const country = R.path(['country'])(idData)
   const rawDob = R.path(['dateOfBirth'])(idData)
 
   const sanctions = R.path(['sanctions'])(customer)
@@ -84,54 +83,51 @@ const CustomerData = ({
 
   const isEven = elem => elem % 2 === 0
 
-  const getVisibleCards = _.filter(
-    elem =>
-      !_.isEmpty(elem.fields) ||
-      (!_.isNil(elem.children) && !_.isNil(elem.state))
-  )
-
-  const getAvailableFields = _.filter(({ value }) => value !== '')
+  const getVisibleCards = _.filter(elem => elem.isAvailable)
 
   const schemas = {
     idScan: Yup.object().shape({
-      name: Yup.string(),
-      idNumber: Yup.string(),
-      birthDate: Yup.string(),
-      age: Yup.string(),
-      gender: Yup.string(),
-      state: Yup.string(),
+      firstName: Yup.string().required(),
+      lastName: Yup.string().required(),
+      documentNumber: Yup.string().required(),
+      dateOfBirth: Yup.string()
+        .test({
+          test: val => isValid(parse(new Date(), 'yyyy-MM-dd', val))
+        })
+        .required(),
+      gender: Yup.string().required(),
+      country: Yup.string().required(),
       expirationDate: Yup.string()
+        .test({
+          test: val => isValid(parse(new Date(), 'yyyy-MM-dd', val))
+        })
+        .required()
     }),
     usSsn: Yup.object().shape({
-      usSsn: Yup.string()
+      usSsn: Yup.string().required()
     }),
     idCardPhoto: Yup.object().shape({
-      idCardPhoto: Yup.mixed()
+      idCardPhoto: Yup.mixed().required()
     }),
     frontCamera: Yup.object().shape({
-      frontCamera: Yup.mixed()
+      frontCamera: Yup.mixed().required()
     })
   }
 
   const idScanElements = [
     {
-      name: 'name',
-      label: 'Name',
+      name: 'firstName',
+      label: 'First name',
       component: TextInput
     },
     {
-      name: 'idNumber',
+      name: 'documentNumber',
       label: 'ID number',
       component: TextInput
     },
     {
-      name: 'birthDate',
-      label: 'Birth Date',
-      component: TextInput
-    },
-    {
-      name: 'age',
-      label: 'Age',
+      name: 'dateOfBirth',
+      label: 'Birthdate',
       component: TextInput
     },
     {
@@ -140,13 +136,18 @@ const CustomerData = ({
       component: TextInput
     },
     {
-      name: 'state',
-      label: country === 'Canada' ? 'Province' : 'State',
+      name: 'lastName',
+      label: 'Last name',
       component: TextInput
     },
     {
       name: 'expirationDate',
       label: 'Expiration Date',
+      component: TextInput
+    },
+    {
+      name: 'country',
+      label: 'Country',
       component: TextInput
     }
   ]
@@ -165,21 +166,15 @@ const CustomerData = ({
 
   const initialValues = {
     idScan: {
-      name: getName(customer) ?? '',
-      idNumber: R.path(['documentNumber'])(idData) ?? '',
-      birthDate:
+      firstName: R.path(['firstName'])(idData) ?? '',
+      lastName: R.path(['lastName'])(idData) ?? '',
+      documentNumber: R.path(['documentNumber'])(idData) ?? '',
+      dateOfBirth:
         (rawDob &&
           format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDob))) ??
         '',
-      age:
-        (rawDob &&
-          differenceInYears(
-            parse(new Date(), 'yyyyMMdd', rawDob),
-            new Date()
-          )) ??
-        '',
       gender: R.path(['gender'])(idData) ?? '',
-      state: R.path(['state'])(idData) ?? '',
+      country: R.path(['country'])(idData) ?? '',
       expirationDate:
         (rawExpirationDate &&
           format('yyyy-MM-dd')(
@@ -198,33 +193,49 @@ const CustomerData = ({
     }
   }
 
+  const formatDates = values => {
+    _.map(
+      elem =>
+        (values[elem] = format('yyyyMMdd')(
+          parse(new Date(), 'yyyy-MM-dd', values[elem])
+        ))
+    )(['dateOfBirth', 'expirationDate'])
+    return values
+  }
+
   const cards = [
     {
-      fields: getAvailableFields(idScanElements),
+      fields: idScanElements,
       title: 'ID Scan',
-      titleIcon: <PhoneIcon className={classes.cardIcon} />,
+      titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['idCardDataOverride'])(customer),
       authorize: () =>
         updateCustomer({ idCardDataOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ idCardDataOverride: OVERRIDE_REJECTED }),
       deleteEditedData: () => deleteEditedData({ idCardData: null }),
-      save: values => editCustomer({ idCardData: values }),
+      save: values =>
+        editCustomer({
+          idCardData: _.merge(idData, formatDates(values))
+        }),
       validationSchema: schemas.idScan,
-      initialValues: initialValues.idScan
+      initialValues: initialValues.idScan,
+      isAvailable: !_.isNil(idData)
     },
     {
       title: 'SMS Confirmation',
-      titleIcon: <CardIcon className={classes.cardIcon} />,
+      titleIcon: <PhoneIcon className={classes.cardIcon} />,
       authorize: () => {},
       reject: () => {},
-      save: () => {}
+      save: () => {},
+      isAvailable: false
     },
     {
       title: 'Name',
       titleIcon: <EditIcon className={classes.editIcon} />,
       authorize: () => {},
       reject: () => {},
-      save: () => {}
+      save: () => {},
+      isAvailable: false
     },
     {
       title: 'Sanctions check',
@@ -233,17 +244,22 @@ const CustomerData = ({
       authorize: () =>
         updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED }),
-      children: <Info3>{sanctionsDisplay}</Info3>
+      children: <Info3>{sanctionsDisplay}</Info3>,
+      isAvailable: !_.isNil(sanctions)
     },
     {
-      fields: getAvailableFields(frontCameraElements),
+      fields: frontCameraElements,
       title: 'Front facing camera',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['frontCameraOverride'])(customer),
       authorize: () =>
         updateCustomer({ frontCameraOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ frontCameraOverride: OVERRIDE_REJECTED }),
-      save: values => editCustomer({ frontCamera: values.frontCamera }),
+      save: values =>
+        replacePhoto({
+          newPhoto: values.frontCamera,
+          photoType: 'frontCamera'
+        }),
       deleteEditedData: () => deleteEditedData({ frontCamera: null }),
       children: customer.frontCameraPath ? (
         <Photo
@@ -255,17 +271,22 @@ const CustomerData = ({
       ) : null,
       hasImage: true,
       validationSchema: schemas.frontCamera,
-      initialValues: initialValues.frontCamera
+      initialValues: initialValues.frontCamera,
+      isAvailable: !_.isNil(customer.frontCameraPath)
     },
     {
-      fields: getAvailableFields(idCardPhotoElements),
+      fields: idCardPhotoElements,
       title: 'ID card image',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['idCardPhotoOverride'])(customer),
       authorize: () =>
         updateCustomer({ idCardPhotoOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ idCardPhotoOverride: OVERRIDE_REJECTED }),
-      save: values => editCustomer({ idCardPhoto: values.idCardPhoto }),
+      save: values =>
+        replacePhoto({
+          newPhoto: values.idCardPhoto,
+          photoType: 'idCardPhoto'
+        }),
       deleteEditedData: () => deleteEditedData({ idCardPhoto: null }),
       children: customer.idCardPhotoPath ? (
         <Photo
@@ -275,10 +296,11 @@ const CustomerData = ({
       ) : null,
       hasImage: true,
       validationSchema: schemas.idCardPhoto,
-      initialValues: initialValues.idCardPhoto
+      initialValues: initialValues.idCardPhoto,
+      isAvailable: !_.isNil(customer.idCardPhotoPath)
     },
     {
-      fields: getAvailableFields(usSsnElements),
+      fields: usSsnElements,
       title: 'US SSN',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['usSsnOverride'])(customer),
@@ -287,7 +309,8 @@ const CustomerData = ({
       save: values => editCustomer({ usSsn: values.usSsn }),
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
       validationSchema: schemas.usSsn,
-      initialValues: initialValues.usSsn
+      initialValues: initialValues.usSsn,
+      isAvailable: !_.isNil(customer.usSsn)
     }
   ]
 
