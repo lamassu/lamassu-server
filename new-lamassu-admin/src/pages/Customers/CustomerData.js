@@ -62,7 +62,8 @@ const CustomerData = ({
   updateCustomer,
   editCustomer,
   deleteEditedData,
-  updateCustomRequest
+  updateCustomRequest,
+  authorizeCustomRequest
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
@@ -85,7 +86,7 @@ const CustomerData = ({
   )
 
   const customEntries = null // get customer custom entries
-  const customRequirements = null // get customer custom requirements
+  const customRequirements = [] // get customer custom requirements
   const customInfoRequests = sortByName(
     R.path(['customInfoRequests'])(customer) ?? []
   )
@@ -300,17 +301,20 @@ const CustomerData = ({
   ]
 
   R.forEach(it => {
-    cards.push({
-      data: [
+    console.log('it', it)
+    customRequirements.push({
+      fields: [
         {
-          value: it.customerData.data,
+          name: it.customInfoRequest.id,
+          label: it.customInfoRequest.customRequest.name,
+          value: it.customerData.data ?? '',
           component: TextInput
         }
       ],
       title: it.customInfoRequest.customRequest.name,
       titleIcon: <CardIcon className={classes.cardIcon} />,
       authorize: () =>
-        updateCustomRequest({
+        authorizeCustomRequest({
           variables: {
             customerId: it.customerId,
             infoRequestId: it.customInfoRequest.id,
@@ -318,14 +322,31 @@ const CustomerData = ({
           }
         }),
       reject: () =>
-        updateCustomRequest({
+        authorizeCustomRequest({
           variables: {
             customerId: it.customerId,
             infoRequestId: it.customInfoRequest.id,
             isAuthorized: false
           }
         }),
-      save: () => {}
+      save: values => {
+        updateCustomRequest({
+          variables: {
+            customerId: it.customerId,
+            infoRequestId: it.customInfoRequest.id,
+            data: {
+              info_request_id: it.customInfoRequest.id,
+              data: values[it.customInfoRequest.id]
+            }
+          }
+        })
+      },
+      validationSchema: Yup.object().shape({
+        [it.customInfoRequest.id]: Yup.string()
+      }),
+      initialValues: {
+        [it.customInfoRequest.id]: it.customerData.data ?? ''
+      }
     })
   }, customInfoRequests)
 
@@ -407,6 +428,18 @@ const CustomerData = ({
         {customRequirements && (
           <div className={classes.wrapper}>
             <span className={classes.separator}>Custom requirements</span>
+            <Grid container>
+              <Grid container direction="column" item xs={6}>
+                {customRequirements.map((elem, idx) => {
+                  return isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+              <Grid container direction="column" item xs={6}>
+                {customRequirements.map((elem, idx) => {
+                  return !isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+            </Grid>
           </div>
         )}
       </div>

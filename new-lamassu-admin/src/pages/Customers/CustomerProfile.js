@@ -180,6 +180,20 @@ const SET_AUTHORIZED_REQUEST = gql`
   }
 `
 
+const SET_CUSTOMER_CUSTOM_INFO_REQUEST = gql`
+  mutation setCustomerCustomInfoRequest(
+    $customerId: ID!
+    $infoRequestId: ID!
+    $data: JSON!
+  ) {
+    setCustomerCustomInfoRequest(
+      customerId: $customerId
+      infoRequestId: $infoRequestId
+      data: $data
+    )
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -211,9 +225,17 @@ const CustomerProfile = memo(() => {
   const [setCustomer] = useMutation(SET_CUSTOMER, {
     onCompleted: () => getCustomer()
   })
-  const [updateCustomRequest] = useMutation(SET_AUTHORIZED_REQUEST, {
+
+  const [authorizeCustomRequest] = useMutation(SET_AUTHORIZED_REQUEST, {
     onCompleted: () => getCustomer()
   })
+
+  const [setCustomerCustomInfoRequest] = useMutation(
+    SET_CUSTOMER_CUSTOM_INFO_REQUEST,
+    {
+      onCompleted: () => getCustomer()
+    }
+  )
 
   const updateCustomer = it =>
     setCustomer({
@@ -403,7 +425,8 @@ const CustomerProfile = memo(() => {
                 replacePhoto={replacePhoto}
                 editCustomer={editCustomer}
                 deleteEditedData={deleteEditedData}
-                updateCustomRequest={updateCustomRequest}></CustomerData>
+                updateCustomRequest={setCustomerCustomInfoRequest}
+                authorizeCustomRequest={authorizeCustomRequest}></CustomerData>
             </div>
           )}
         </div>
