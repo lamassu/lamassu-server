@@ -61,7 +61,9 @@ const CustomerData = ({
   customer,
   updateCustomer,
   editCustomer,
-  deleteEditedData
+  deleteEditedData,
+  updateCustomRequest,
+  authorizeCustomRequest
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
@@ -79,8 +81,15 @@ const CustomerData = ({
     ? 'Passed'
     : 'Failed'
 
+  const sortByName = R.sortBy(
+    R.compose(R.toLower, R.path(['customInfoRequest', 'customRequest', 'name']))
+  )
+
   const customEntries = null // get customer custom entries
-  const customRequirements = null // get customer custom requirements
+  const customRequirements = [] // get customer custom requirements
+  const customInfoRequests = sortByName(
+    R.path(['customInfoRequests'])(customer) ?? []
+  )
 
   const isEven = elem => elem % 2 === 0
 
@@ -291,6 +300,57 @@ const CustomerData = ({
     }
   ]
 
+  R.forEach(it => {
+    console.log('it', it)
+    customRequirements.push({
+      fields: [
+        {
+          name: it.customInfoRequest.id,
+          label: it.customInfoRequest.customRequest.name,
+          value: it.customerData.data ?? '',
+          component: TextInput
+        }
+      ],
+      title: it.customInfoRequest.customRequest.name,
+      titleIcon: <CardIcon className={classes.cardIcon} />,
+      authorize: () =>
+        authorizeCustomRequest({
+          variables: {
+            customerId: it.customerId,
+            infoRequestId: it.customInfoRequest.id,
+            isAuthorized: true
+          }
+        }),
+      reject: () =>
+        authorizeCustomRequest({
+          variables: {
+            customerId: it.customerId,
+            infoRequestId: it.customInfoRequest.id,
+            isAuthorized: false
+          }
+        }),
+      save: values => {
+        updateCustomRequest({
+          variables: {
+            customerId: it.customerId,
+            infoRequestId: it.customInfoRequest.id,
+            data: {
+              info_request_id: it.customInfoRequest.id,
+              data: values[it.customInfoRequest.id]
+            }
+          }
+        })
+      },
+      deleteEditedData: () => {},
+      validationSchema: Yup.object().shape({
+        [it.customInfoRequest.id]: Yup.string()
+      }),
+      initialValues: {
+        [it.customInfoRequest.id]: it.customerData.data ?? ''
+      }
+    })
+  }, customInfoRequests)
+
   const editableCard = (
     {
       title,
@@ -369,6 +429,18 @@ const CustomerData = ({
         {customRequirements && (
           <div className={classes.wrapper}>
             <span className={classes.separator}>Custom requirements</span>
+            <Grid container>
+              <Grid container direction="column" item xs={6}>
+                {customRequirements.map((elem, idx) => {
+                  return isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+              <Grid container direction="column" item xs={6}>
+                {customRequirements.map((elem, idx) => {
+                  return !isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+            </Grid>
           </div>
         )}
       </div>

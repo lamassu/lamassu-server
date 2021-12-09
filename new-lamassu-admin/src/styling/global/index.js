@@ -23,6 +23,10 @@ export default {
       // for when notification center is open
       overflow: 'hidden'
     },
+    '.root-blur': {
+      filter: 'blur(1px)',
+      pointerEvents: 'none'
+    },
     html: {
       height: fill
     },

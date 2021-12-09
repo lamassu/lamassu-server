@@ -83,6 +83,16 @@ const GET_CUSTOMER = gql`
         txCustomerPhotoAt
         txCustomerPhotoPath
       }
+      customInfoRequests {
+        customerId
+        approved
+        customerData
+        customInfoRequest {
+          id
+          enabled
+          customRequest
+        }
+      }
     }
   }
 `
@@ -156,6 +166,34 @@ const DELETE_EDITED_CUSTOMER = gql`
   }
 `
 
+const SET_AUTHORIZED_REQUEST = gql`
+  mutation setAuthorizedCustomRequest(
+    $customerId: ID!
+    $infoRequestId: ID!
+    $isAuthorized: Boolean!
+  ) {
+    setAuthorizedCustomRequest(
+      customerId: $customerId
+      infoRequestId: $infoRequestId
+      isAuthorized: $isAuthorized
+    )
+  }
+`
+
+const SET_CUSTOMER_CUSTOM_INFO_REQUEST = gql`
+  mutation setCustomerCustomInfoRequest(
+    $customerId: ID!
+    $infoRequestId: ID!
+    $data: JSON!
+  ) {
+    setCustomerCustomInfoRequest(
+      customerId: $customerId
+      infoRequestId: $infoRequestId
+      data: $data
+    )
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -187,6 +225,17 @@ const CustomerProfile = memo(() => {
   const [setCustomer] = useMutation(SET_CUSTOMER, {
     onCompleted: () => getCustomer()
   })
+
+  const [authorizeCustomRequest] = useMutation(SET_AUTHORIZED_REQUEST, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [setCustomerCustomInfoRequest] = useMutation(
+    SET_CUSTOMER_CUSTOM_INFO_REQUEST,
+    {
+      onCompleted: () => getCustomer()
+    }
+  )
 
   const updateCustomer = it =>
     setCustomer({
@@ -375,7 +424,9 @@ const CustomerProfile = memo(() => {
                 updateCustomer={updateCustomer}
                 replacePhoto={replacePhoto}
                 editCustomer={editCustomer}
-                deleteEditedData={deleteEditedData}></CustomerData>
+                deleteEditedData={deleteEditedData}
+                updateCustomRequest={setCustomerCustomInfoRequest}
+                authorizeCustomRequest={authorizeCustomRequest}></CustomerData>
             </div>
           )}
         </div>

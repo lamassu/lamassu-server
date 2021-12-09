@@ -1,25 +1,26 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
+import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-import { v4 } from 'uuid'
 
 import { Tooltip } from 'src/components/Tooltip'
-import { Link, Button } from 'src/components/buttons'
-import { Table as EditableTable } from 'src/components/editableTable'
+import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
-import { P, Label2, H2 } from 'src/components/typography'
+import { P, Label2 } from 'src/components/typography'
+import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circle buttons/filter/white.svg'
+import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
-import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
+import { fromNamespace, toNamespace } from 'src/utils/config'
 
+import CustomInfoRequests from './CustomInfoRequests'
+import TriggerView from './TriggerView'
 import styles from './Triggers.styles'
-import Wizard from './Wizard'
 import AdvancedTriggers from './components/AdvancedTriggers'
-import { Schema, getElements, sortBy, fromServer, toServer } from './helper'
-
+import { fromServer } from './helper'
 const useStyles = makeStyles(styles)
 
 const SAVE_CONFIG = gql`
@@ -28,24 +29,40 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const GET_INFO = gql`
+const GET_CONFIG = gql`
   query getData {
     config
   }
 `
 
+const GET_CUSTOM_REQUESTS = gql`
+  query customInfoRequests {
+    customInfoRequests {
+      id
+      customRequest
+      enabled
+    }
+  }
+`
+
 const Triggers = () => {
   const classes = useStyles()
-  const [wizard, setWizard] = useState(false)
-  const [advancedSettings, setAdvancedSettings] = useState(false)
+  const [wizardType, setWizard] = useState(false)
+  const { data, loading } = useQuery(GET_CONFIG)
+  const { data: customInfoReqData } = useQuery(GET_CUSTOM_REQUESTS)
+  const [error, setError] = useState(null)
+  const [subMenu, setSubMenu] = useState(false)
 
-  const { data, loading } = useQuery(GET_INFO)
+  const customInfoRequests =
+    R.path(['customInfoRequests'])(customInfoReqData) ?? []
+  const enabledCustomInfoRequests = R.filter(R.propEq('enabled', true))(
+    customInfoRequests
+  )
+
   const triggers = fromServer(data?.config?.triggers ?? [])
-
   const complianceConfig =
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
-  const [error, setError] = useState(null)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
@@ -53,41 +70,56 @@ const Triggers = () => {
     onError: error => setError(error)
   })
 
-  const add = rawConfig => {
-    const toSave = R.concat([{ id: v4(), direction: 'both', ...rawConfig }])(
-      triggers
-    )
-    return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
-  }
-
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
     return saveConfig({ variables: { config } })
   }
 
-  const save = config => {
-    setError(null)
-    return saveConfig({
-      variables: { config: { triggers: toServer(config.triggers) } }
-    })
+  const titleSectionWidth = {
+    [classes.tableWidth]: !subMenu === 'customInfoRequests'
   }
 
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
-  )
+  const setBlur = shouldBlur => {
+    return shouldBlur
+      ? document.querySelector('#root').classList.add('root-blur')
+      : document.querySelector('#root').classList.remove('root-blur')
+  }
+
+  const toggleWizard = wizardName => forceDisable => {
+    if (wizardType === wizardName || forceDisable) {
+      setBlur(false)
+      return setWizard(null)
+    }
+    setBlur(true)
+    return setWizard(wizardName)
+  }
 
   return (
     <>
       <TitleSection
         title="Compliance Triggers"
-        button={{
-          text: 'Advanced settings',
-          icon: SettingsIcon,
-          inverseIcon: ReverseSettingsIcon,
-          toggle: setAdvancedSettings
-        }}
-        className={classes.tableWidth}>
-        {!advancedSettings && (
+        buttons={[
+          {
+            text: 'Advanced settings',
+            icon: SettingsIcon,
+            inverseIcon: ReverseSettingsIcon,
+            forceDisable: !(subMenu === 'advancedSettings'),
+            toggle: show => {
+              setSubMenu(show ? 'advancedSettings' : false)
+            }
+          },
+          {
+            text: 'Custom info requests',
+            icon: CustomInfoIcon,
+            inverseIcon: ReverseCustomInfoIcon,
+            forceDisable: !(subMenu === 'customInfoRequests'),
+            toggle: show => {
+              setSubMenu(show ? 'customInfoRequests' : false)
+            }
+          }
+        ]}
+        className={classnames(titleSectionWidth)}>
+        {!subMenu && (
           <Box display="flex" alignItems="center">
             <Box
               display="flex"
@@ -115,55 +147,41 @@ const Triggers = () => {
             </Box>
           </Box>
         )}
-      </TitleSection>
-      {!advancedSettings && (
-        <>
-          <Box
-            marginBottom={2}
-            className={classes.tableWidth}
-            display="flex"
-            justifyContent="flex-end">
-            {!loading && !R.isEmpty(triggers) && (
-              <Link color="primary" onClick={() => setWizard(true)}>
-                + Add new trigger
+        {subMenu === 'customInfoRequests' &&
+          !R.isEmpty(enabledCustomInfoRequests) && (
+            <Box display="flex" justifyContent="flex-end">
+              <Link
+                color="primary"
+                onClick={() => toggleWizard('newCustomRequest')()}>
+                + Add new custom info request
               </Link>
-            )}
-          </Box>
-          <EditableTable
-            data={triggers}
-            name="triggers"
-            enableEdit
-            sortBy={sortBy}
-            groupBy="triggerType"
-            enableDelete
-            error={error?.message}
-            save={save}
-            validationSchema={Schema}
-            elements={getElements(currency, classes)}
-          />
-          {wizard && (
-            <Wizard
-              currency={currency}
-              error={error?.message}
-              save={add}
-              onClose={() => setWizard(null)}
-            />
-          )}
-          {!loading && R.isEmpty(triggers) && (
-            <Box
-              display="flex"
-              alignItems="center"
-              flexDirection="column"
-              mt={15}>
-              <H2>
-                It seems there are no active compliance triggers on your network
-              </H2>
-              <Button onClick={() => setWizard(true)}>Add first trigger</Button>
             </Box>
           )}
-        </>
+        {!loading && !subMenu && !R.isEmpty(triggers) && (
+          <Box display="flex" justifyContent="flex-end">
+            <Link color="primary" onClick={() => toggleWizard('newTrigger')()}>
+              + Add new trigger
+            </Link>
+          </Box>
+        )}
+      </TitleSection>
+      {!loading && subMenu === 'customInfoRequests' && (
+        <CustomInfoRequests
+          data={enabledCustomInfoRequests}
+          showWizard={wizardType === 'newCustomRequest'}
+          toggleWizard={toggleWizard('newCustomRequest')}
+        />
       )}
-      {advancedSettings && (
+      {!loading && !subMenu && (
+        <TriggerView
+          triggers={triggers}
+          showWizard={wizardType === 'newTrigger'}
+          config={data?.config ?? {}}
+          toggleWizard={toggleWizard('newTrigger')}
+          customInfoRequests={customInfoRequests}
+        />
+      )}
+      {!loading && subMenu === 'advancedSettings' && (
         <AdvancedTriggers
           error={error}
           save={saveConfig}
