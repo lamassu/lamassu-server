@@ -341,6 +341,7 @@ const CustomerData = ({
           }
         })
       },
+      deleteEditedData: () => {},
       validationSchema: Yup.object().shape({
         [it.customInfoRequest.id]: Yup.string()
       }),
