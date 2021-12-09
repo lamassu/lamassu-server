@@ -4,6 +4,8 @@ import React from 'react'
 
 import { ReactComponent as CustomerDataReversedIcon } from 'src/styling/icons/customer-nav/data/comet.svg'
 import { ReactComponent as CustomerDataIcon } from 'src/styling/icons/customer-nav/data/white.svg'
+import { ReactComponent as NoteReversedIcon } from 'src/styling/icons/customer-nav/note/comet.svg'
+import { ReactComponent as NoteIcon } from 'src/styling/icons/customer-nav/note/white.svg'
 import { ReactComponent as OverviewReversedIcon } from 'src/styling/icons/customer-nav/overview/comet.svg'
 import { ReactComponent as OverviewIcon } from 'src/styling/icons/customer-nav/overview/white.svg'
 
@@ -25,6 +27,12 @@ const CustomerSidebar = ({ isSelected, onClick }) => {
       display: 'Customer Data',
       Icon: CustomerDataIcon,
       InverseIcon: CustomerDataReversedIcon
+    },
+    {
+      code: 'notes',
+      display: 'Notes',
+      Icon: NoteIcon,
+      InverseIcon: NoteReversedIcon
     }
   ]
 

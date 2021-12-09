@@ -23,6 +23,7 @@ import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zo
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
+import CustomerNotes from './CustomerNotes'
 import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
@@ -69,7 +70,14 @@ const GET_CUSTOMER = gql`
         label
         value
       }
-      notes
+      notes {
+        id
+        customerId
+        title
+        content
+        created
+        lastEditedAt
+      }
       transactions {
         txClass
         id
@@ -195,6 +203,38 @@ const SET_CUSTOMER_CUSTOM_INFO_REQUEST = gql`
   }
 `
 
+const CREATE_NOTE = gql`
+  mutation createCustomerNote(
+    $customerId: ID!
+    $title: String!
+    $content: String!
+  ) {
+    createCustomerNote(
+      customerId: $customerId
+      title: $title
+      content: $content
+    )
+  }
+`
+
+const DELETE_NOTE = gql`
+  mutation deleteCustomerNote($noteId: ID!) {
+    deleteCustomerNote(noteId: $noteId)
+  }
+`
+
+const EDIT_NOTE = gql`
+  mutation editCustomerNote($noteId: ID!, $newContent: String!) {
+    editCustomerNote(noteId: $noteId, newContent: $newContent)
+  }
+`
+
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -204,12 +244,15 @@ const CustomerProfile = memo(() => {
   const [clickedItem, setClickedItem] = useState('overview')
   const { id: customerId } = useParams()
 
-  const { data: customerResponse, refetch: getCustomer, loading } = useQuery(
-    GET_CUSTOMER,
-    {
-      variables: { customerId }
-    }
-  )
+  const {
+    data: customerResponse,
+    refetch: getCustomer,
+    loading: customerLoading
+  } = useQuery(GET_CUSTOMER, {
+    variables: { customerId }
+  })
+
+  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
 
   const [replaceCustomerPhoto] = useMutation(REPLACE_CUSTOMER_PHOTO, {
     onCompleted: () => getCustomer()
@@ -237,6 +280,18 @@ const CustomerProfile = memo(() => {
       onCompleted: () => getCustomer()
     }
   )
+
+  const [createNote] = useMutation(CREATE_NOTE, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [deleteNote] = useMutation(DELETE_NOTE, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [editNote] = useMutation(EDIT_NOTE, {
+    onCompleted: () => getCustomer()
+  })
 
   const updateCustomer = it =>
     setCustomer({
@@ -271,6 +326,30 @@ const CustomerProfile = memo(() => {
       }
     })
 
+  const createCustomerNote = it =>
+    createNote({
+      variables: {
+        customerId,
+        title: it.title,
+        content: it.content
+      }
+    })
+
+  const deleteCustomerNote = it =>
+    deleteNote({
+      variables: {
+        noteId: it.noteId
+      }
+    })
+
+  const editCustomerNote = it =>
+    editNote({
+      variables: {
+        noteId: it.noteId,
+        newContent: it.newContent
+      }
+    })
+
   const onClickSidebarItem = code => setClickedItem(code)
 
   const configData = R.path(['config'])(customerResponse) ?? []
@@ -287,6 +366,11 @@ const CustomerProfile = memo(() => {
   const isSuspended = customerData.isSuspended
   const isCustomerData = clickedItem === 'customerData'
   const isOverview = clickedItem === 'overview'
+  const isNotes = clickedItem === 'notes'
+
+  const loading = customerLoading && configLoading
+
+  const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const classes = useStyles({ blocked })
 
@@ -428,6 +512,16 @@ const CustomerProfile = memo(() => {
                 deleteEditedData={deleteEditedData}
                 updateCustomRequest={setCustomerCustomInfoRequest}
                 authorizeCustomRequest={authorizeCustomRequest}></CustomerData>
+            </div>
+          )}
+          {isNotes && (
+            <div>
+              <CustomerNotes
+                customer={customerData}
+                createNote={createCustomerNote}
+                deleteNote={deleteCustomerNote}
+                editNote={editCustomerNote}
+                timezone={timezone}></CustomerNotes>
             </div>
           )}
         </div>
