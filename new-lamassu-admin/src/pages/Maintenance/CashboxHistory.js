@@ -72,7 +72,7 @@ const useStyles = makeStyles(styles)
 const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
   const [error, setError] = useState(false)
-  const [fields, setFields] = useState([])
+  const [field, setField] = useState(null)
 
   const { data: batchesData, loading: batchesLoading } = useQuery(GET_BATCHES)
 
@@ -117,7 +117,6 @@ const CashboxHistory = ({ machines, currency }) => {
   )
 
   const save = row => {
-    const field = R.find(f => f.id === row.id, fields)
     const performedBy = field.performedBy === '' ? null : field.performedBy
 
     schema
@@ -133,10 +132,10 @@ const CashboxHistory = ({ machines, currency }) => {
   }
 
   const close = id => {
-    setFields(R.filter(f => f.id !== id, fields))
+    setField(null)
   }
 
-  const notEditing = id => !R.any(R.propEq('id', id), fields)
+  const notEditing = id => field?.id !== id
 
   const elements = [
     {
@@ -206,21 +205,10 @@ const CashboxHistory = ({ machines, currency }) => {
           return R.isNil(it.performedBy) ? 'Unknown entity' : it.performedBy
         return (
           <TextInput
-            onChange={e =>
-              setFields(
-                R.map(
-                  f =>
-                    f.id === it.id ? { ...f, performedBy: e.target.value } : f,
-                  fields
-                )
-              )
-            }
+            onChange={e => setField({ ...field, performedBy: e.target.value })}
             error={error}
             width={190 * 0.85}
-            value={R.prop(
-              'performedBy',
-              R.find(f => f.id === it.id, fields)
-            )}
+            value={field?.performedBy}
           />
         )
       }
@@ -235,10 +223,7 @@ const CashboxHistory = ({ machines, currency }) => {
           return (
             <IconButton
               onClick={() => {
-                setFields([
-                  ...fields,
-                  { id: it.id, performedBy: it.performedBy }
-                ])
+                setField({ id: it.id, performedBy: it.performedBy })
               }}>
               <EditIcon />
             </IconButton>
