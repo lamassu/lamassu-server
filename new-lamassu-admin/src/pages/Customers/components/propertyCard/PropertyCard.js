@@ -10,6 +10,8 @@ import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/butto
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as RejectReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
 import { ReactComponent as RejectIcon } from 'src/styling/icons/button/cancel/zodiac.svg'
+import { ReactComponent as EditReversedIcon } from 'src/styling/icons/button/edit/white.svg'
+import { ReactComponent as EditIcon } from 'src/styling/icons/button/edit/zodiac.svg'
 
 import { propertyCardStyles } from './PropertyCard.styles'
 
@@ -20,7 +22,19 @@ const OVERRIDE_AUTHORIZED = 'verified'
 const OVERRIDE_REJECTED = 'blocked'
 
 const PropertyCard = memo(
-  ({ className, title, state, authorize, reject, children }) => {
+  ({
+    className,
+    contentClassName,
+    title,
+    state,
+    authorize,
+    reject,
+    edit,
+    confirm,
+    isEditing,
+    formName,
+    children
+  }) => {
     const classes = useStyles()
 
     const label1ClassNames = {
@@ -52,6 +66,29 @@ const PropertyCard = memo(
       </ActionButton>
     )
 
+    const EditButton = () => (
+      <ActionButton
+        className={classes.cardActionButton}
+        color="secondary"
+        Icon={EditIcon}
+        InverseIcon={EditReversedIcon}
+        onClick={() => edit()}>
+        Edit
+      </ActionButton>
+    )
+
+    const ConfirmButton = () => (
+      <ActionButton
+        className={classes.cardActionButton}
+        type="submit"
+        form={formName}
+        color="secondary"
+        Icon={AuthorizeIcon}
+        InverseIcon={AuthorizeReversedIcon}>
+        Confirm
+      </ActionButton>
+    )
+
     const authorized =
       state === OVERRIDE_PENDING
         ? { label: 'Pending', type: 'neutral' }
@@ -64,14 +101,22 @@ const PropertyCard = memo(
         className={classnames(classes.propertyCard, className)}
         elevation={0}>
         <H3 className={classes.propertyCardTopRow}>{title}</H3>
-        <div className={classes.propertyCardBottomRow}>
-          <div className={classnames(label1ClassNames)}>
-            <MainStatus statuses={[authorized]} />
-          </div>
+        <div
+          className={classnames(
+            classes.propertyCardBottomRow,
+            contentClassName
+          )}>
+          {state && (
+            <div className={classnames(label1ClassNames)}>
+              <MainStatus statuses={[authorized]} />
+            </div>
+          )}
           {children}
           <div className={classes.buttonsWrapper}>
             {authorize && state !== OVERRIDE_AUTHORIZED && AuthorizeButton()}
             {reject && state !== OVERRIDE_REJECTED && RejectButton()}
+            {edit && !isEditing && EditButton()}
+            {confirm && isEditing && ConfirmButton()}
           </div>
         </div>
       </Paper>
