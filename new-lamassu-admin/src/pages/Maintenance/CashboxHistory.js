@@ -10,6 +10,7 @@ import { Link, IconButton } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs'
 import { NumberInput } from 'src/components/inputs/formik'
 import DataTable from 'src/components/tables/DataTable'
+import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -67,6 +68,7 @@ const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
   const [error, setError] = useState(false)
   const [field, setField] = useState(null)
+  const [editing, setEditing] = useState(false)
 
   const { data, loading } = useQuery(GET_BATCHES)
 
@@ -117,10 +119,11 @@ const CashboxHistory = ({ machines, currency }) => {
         })
       })
       .catch(setError(true))
-    return close(row.id)
+    return close()
   }
 
-  const close = id => {
+  const close = () => {
+    setEditing(false)
     setField(null)
   }
 
@@ -211,10 +214,12 @@ const CashboxHistory = ({ machines, currency }) => {
         if (notEditing(it.id))
           return (
             <IconButton
+              disabled={editing}
               onClick={() => {
                 setField({ id: it.id, performedBy: it.performedBy })
+                setEditing(true)
               }}>
-              <EditIcon />
+              {editing ? <EditIconDisabled /> : <EditIcon />}
             </IconButton>
           )
         return (
@@ -222,7 +227,7 @@ const CashboxHistory = ({ machines, currency }) => {
             <Link type="submit" color="primary" onClick={() => save(it)}>
               Save
             </Link>
-            <Link color="secondary" onClick={() => close(it.id)}>
+            <Link color="secondary" onClick={close}>
               Cancel
             </Link>
           </div>
