@@ -426,7 +426,7 @@ const CustomerData = ({
             <span className={classes.separator}>Custom data entry</span>
           </div>
         )}
-        {customRequirements && (
+        {!R.isEmpty(customRequirements) && (
           <div className={classes.wrapper}>
             <span className={classes.separator}>Custom requirements</span>
             <Grid container>

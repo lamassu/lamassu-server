@@ -8,7 +8,7 @@ exports.up = function (next) {
       created TIMESTAMPTZ NOT NULL DEFAULT now(),
       last_edited_at TIMESTAMPTZ,
       last_edited_by UUID REFERENCES users(id),
-      title TEXT NOT NULL DEFAULT ''
+      title TEXT NOT NULL DEFAULT '',
       content TEXT NOT NULL DEFAULT ''
     )`
   ]
