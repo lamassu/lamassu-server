@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
+import { MAX_NUMBER_OF_CASSETTES } from 'src/utils/constants'
 import { defaultToZero } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
@@ -11,9 +12,6 @@ import WizardStep from './WizardStep'
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
-
-// Maximum number of cassettes, to create the necessary fields for the back-end
-const MAX_NUMBER_OF_CASSETTES = 4
 
 const CASSETTE_FIELDS = R.map(
   it => `cassette${it}`,
@@ -68,8 +66,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       config: newConfig
     })
   }
-
-  console.log('AAA', CASSETTE_FIELDS)
 
   const makeCassetteSteps = R.pipe(
     R.add(1),

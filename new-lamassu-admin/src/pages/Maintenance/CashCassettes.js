@@ -272,7 +272,7 @@ const CashCassettes = () => {
       <TitleSection
         title="Cash Cassettes"
         button={{
-          text: 'Cashbox history a',
+          text: 'Cashbox history',
           icon: HistoryIcon,
           inverseIcon: ReverseHistoryIcon,
           toggle: setShowHistory
