@@ -82,14 +82,6 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
-const CREATE_BATCH = gql`
-  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
-    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
-      id
-    }
-  }
-`
-
 const CashCassettes = ({ machine, config, refetchData }) => {
   const data = { machine, config }
   const classes = useStyles()
@@ -176,31 +168,15 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     refetchQueries: () => refetchData()
   })
 
-  const [createBatch] = useMutation(CREATE_BATCH)
-
-  const onSave = (_, cashbox, cassette1, cassette2, cassette3, cassette4) => {
-    const oldCashboxCount = machine.cashbox
-    if (cashbox < oldCashboxCount) {
-      createBatch({
-        variables: {
-          deviceId: machine.deviceId,
-          cashboxCount: oldCashboxCount
-        }
-      })
-    }
-
-    return setCassetteBills({
+  const onSave = (_, cashbox, cassettes) =>
+    setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: machine.deviceId,
         cashbox,
-        cassette1,
-        cassette2,
-        cassette3,
-        cassette4
+        ...cassettes
       }
     })
-  }
 
   return machine.name ? (
     <>

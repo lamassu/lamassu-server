@@ -112,14 +112,6 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
-const CREATE_BATCH = gql`
-  mutation createBatch($deviceId: ID, $cashboxCount: Int) {
-    createBatch(deviceId: $deviceId, cashboxCount: $cashboxCount) {
-      id
-    }
-  }
-`
-
 const CashCassettes = () => {
   const classes = useStyles()
   const [showHistory, setShowHistory] = useState(false)
@@ -133,7 +125,6 @@ const CashCassettes = () => {
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
-  const [createBatch] = useMutation(CREATE_BATCH)
   const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
     R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
@@ -145,26 +136,11 @@ const CashCassettes = () => {
     ...R.map(it => it.numberOfCassettes, machines),
     0
   )
-  const cashboxCounts = R.reduce(
-    (ret, m) => R.assoc(m.id, m.cashbox, ret),
-    {},
-    machines
-  )
 
   const getCashoutSettings = id => fromNamespace(id)(cashout)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const onSave = (id, cashbox, cassettes) => {
-    const oldCashboxCount = cashboxCounts[id]
-    if (cashbox < oldCashboxCount) {
-      createBatch({
-        variables: {
-          deviceId: id,
-          cashboxCount: oldCashboxCount
-        }
-      })
-    }
-
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',

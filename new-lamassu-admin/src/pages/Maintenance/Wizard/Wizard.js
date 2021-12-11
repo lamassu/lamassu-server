@@ -12,7 +12,13 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
 
-const CASSETTE_FIELDS = ['cassette1', 'cassette2', 'cassette3', 'cassette4']
+// Maximum number of cassettes, to create the necessary fields for the back-end
+const MAX_NUMBER_OF_CASSETTES = 4
+
+const CASSETTE_FIELDS = R.map(
+  it => `cassette${it}`,
+  R.range(1, MAX_NUMBER_OF_CASSETTES + 1)
+)
 
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
