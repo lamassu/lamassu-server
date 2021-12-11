@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
+import { MAX_NUMBER_OF_CASSETTES } from 'src/utils/constants'
+import { defaultToZero } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
@@ -10,6 +12,11 @@ import WizardStep from './WizardStep'
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 const CASHBOX_DEFAULT_CAPACITY = 500
+
+const CASSETTE_FIELDS = R.map(
+  it => `cassette${it}`,
+  R.range(1, MAX_NUMBER_OF_CASSETTES + 1)
+)
 
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
@@ -27,6 +34,17 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
 
+  const buildCassetteObj = cassetteInput => {
+    return R.reduce(
+      (acc, value) => {
+        acc[value] = defaultToZero(cassetteInput[value])
+        return acc
+      },
+      {},
+      CASSETTE_FIELDS
+    )
+  }
+
   const onContinue = it => {
     const newConfig = R.merge(config, it)
 
@@ -37,9 +55,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       ].includes('YES')
 
       const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
+      const cassettes = buildCassetteObj(it)
 
-      const { cassette1, cassette2, cassette3, cassette4 } = R.map(parseInt, it)
-      save(machine.id, cashbox, cassette1, cassette2, cassette3, cassette4)
+      save(machine.id, cashbox, cassettes)
       return onClose()
     }
 
@@ -65,6 +83,18 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       })
     }))
   )
+
+  const makeInitialValues = () =>
+    !R.isEmpty(cashoutSettings)
+      ? R.reduce(
+          (acc, value) => {
+            acc[`cassette${value}`] = ''
+            return acc
+          },
+          {},
+          R.range(1, numberOfCassettes + 1)
+        )
+      : {}
 
   const steps = R.prepend(
     {
@@ -99,6 +129,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           steps={steps}
           fiatCurrency={locale.fiatCurrency}
           onContinue={onContinue}
+          initialValues={makeInitialValues()}
         />
       )}
     </Modal>
