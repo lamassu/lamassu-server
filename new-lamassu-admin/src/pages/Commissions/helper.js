@@ -147,7 +147,6 @@ const getOverridesFields = (getData, currency, auxElements) => {
       name: 'minimumTx',
       display: 'Minimun Tx',
       width: 169,
-      size: 'lg',
       doubleHeader: 'Cash-in only',
       textAlign: 'center',
       editingAlign: 'right',
