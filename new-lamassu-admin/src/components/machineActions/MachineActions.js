@@ -93,7 +93,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
     },
     onCompleted: () => {
       onActionSuccess && onActionSuccess()
-      setAction({ command: null })
+      setAction({ display: action.display, command: null })
     }
   })
 
@@ -194,7 +194,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       <ConfirmDialog
         disabled={disabled}
         open={confirmDialogOpen}
-        title={`${action?.display} this machine?`}
+        title={`${action.display} this machine?`}
         errorMessage={errorMessage}
         toBeConfirmed={machine.name}
         message={action?.message}
@@ -211,7 +211,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
           })
         }}
         onDismissed={() => {
-          setAction({ command: null })
+          setAction({ display: action.display, command: null })
           setErrorMessage(null)
         }}
       />
