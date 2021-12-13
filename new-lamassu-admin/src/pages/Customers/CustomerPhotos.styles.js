@@ -17,7 +17,9 @@ const styles = {
     objectFit: 'cover',
     objectPosition: 'center',
     width: 224,
-    height: 200
+    height: 200,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4
   },
   photoCardChip: {
     margin: [[0, 16, 0, 0]]
