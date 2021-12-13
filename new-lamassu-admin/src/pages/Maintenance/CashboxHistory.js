@@ -257,7 +257,7 @@ const CashboxHistory = ({ machines, currency }) => {
       name="cashboxHistory"
       elements={elements}
       data={batches}
-      emptyText="No cashbox batches so far"
+      emptyText="No cash box batches so far"
     />
   )
 }
