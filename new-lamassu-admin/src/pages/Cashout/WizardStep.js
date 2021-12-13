@@ -162,14 +162,14 @@ const WizardStep = ({
 
       {lastStep && (
         <div className={classes.disclaimer}>
-          <Info2 className={classes.title}>Cash-out Bill Count</Info2>
+          <Info2 className={classes.title}>Cash Cassette Bill Count</Info2>
           <P>
             <WarningIcon className={classes.disclaimerIcon} />
             When enabling cash-out, your bill count will be automatically set to
             zero. Make sure you physically put cash inside the cash cassettes to
             allow the machine to dispense it to your users. If you already did,
-            make sure you set the correct cash-out bill count for this machine
-            on your Cash Cassettes tab under Maintenance.
+            make sure you set the correct cash cassette bill count for this
+            machine on your Cash Boxes & Cassettes tab under Maintenance.
           </P>
 
           <Info2 className={classes.title}>Default Commissions</Info2>

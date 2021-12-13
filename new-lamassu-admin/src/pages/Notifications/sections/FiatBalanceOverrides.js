@@ -131,10 +131,10 @@ const FiatBalanceOverrides = ({ section }) => {
     it => {
       elements.push({
         name: `fiatBalanceCassette${it}`,
-        display: `Cash-out ${it}`,
+        display: `Cash cassette ${it}`,
         width: 155,
         textAlign: 'right',
-        doubleHeader: 'Cash-out (Cassette Empty)',
+        doubleHeader: 'Cash Cassette Empty',
         bold: true,
         input: NumberInput,
         suffix: 'notes',

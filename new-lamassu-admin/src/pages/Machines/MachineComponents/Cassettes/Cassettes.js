@@ -26,7 +26,7 @@ const widthsByNumberOfCassettes = {
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
   cashbox: Yup.number()
-    .label('Cashbox')
+    .label('Cash box')
     .required()
     .integer()
     .min(0)
@@ -100,7 +100,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
   const elements = [
     {
       name: 'cashbox',
-      header: 'Cashbox',
+      header: 'Cash box',
       width: widthsByNumberOfCassettes[numberOfCassettes].cashbox,
       stripe: false,
       view: value => (
@@ -118,7 +118,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     it => {
       elements.push({
         name: `cassette${it}`,
-        header: `Cash-out ${it}`,
+        header: `Cash cassette ${it}`,
         width: widthsByNumberOfCassettes[numberOfCassettes].cassette,
         stripe: true,
         doubleHeader: 'Cash-out',
