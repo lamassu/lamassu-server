@@ -9,6 +9,7 @@ import { Link, IconButton } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs'
 import { NumberInput } from 'src/components/inputs/formik'
 import DataTable from 'src/components/tables/DataTable'
+import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -72,7 +73,8 @@ const useStyles = makeStyles(styles)
 const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
   const [error, setError] = useState(false)
-  const [fields, setFields] = useState([])
+  const [field, setField] = useState(null)
+  const [editing, setEditing] = useState(false)
 
   const { data: batchesData, loading: batchesLoading } = useQuery(GET_BATCHES)
 
@@ -117,7 +119,6 @@ const CashboxHistory = ({ machines, currency }) => {
   )
 
   const save = row => {
-    const field = R.find(f => f.id === row.id, fields)
     const performedBy = field.performedBy === '' ? null : field.performedBy
 
     schema
@@ -129,14 +130,15 @@ const CashboxHistory = ({ machines, currency }) => {
         })
       })
       .catch(setError(true))
-    return close(row.id)
+    return close()
   }
 
-  const close = id => {
-    setFields(R.filter(f => f.id !== id, fields))
+  const close = () => {
+    setEditing(false)
+    setField(null)
   }
 
-  const notEditing = id => !R.any(R.propEq('id', id), fields)
+  const notEditing = id => field?.id !== id
 
   const elements = [
     {
@@ -206,21 +208,10 @@ const CashboxHistory = ({ machines, currency }) => {
           return R.isNil(it.performedBy) ? 'Unknown entity' : it.performedBy
         return (
           <TextInput
-            onChange={e =>
-              setFields(
-                R.map(
-                  f =>
-                    f.id === it.id ? { ...f, performedBy: e.target.value } : f,
-                  fields
-                )
-              )
-            }
+            onChange={e => setField({ ...field, performedBy: e.target.value })}
             error={error}
             width={190 * 0.85}
-            value={R.prop(
-              'performedBy',
-              R.find(f => f.id === it.id, fields)
-            )}
+            value={field?.performedBy}
           />
         )
       }
@@ -234,13 +225,12 @@ const CashboxHistory = ({ machines, currency }) => {
         if (notEditing(it.id))
           return (
             <IconButton
+              disabled={editing}
               onClick={() => {
-                setFields([
-                  ...fields,
-                  { id: it.id, performedBy: it.performedBy }
-                ])
+                setField({ id: it.id, performedBy: it.performedBy })
+                setEditing(true)
               }}>
-              <EditIcon />
+              {editing ? <EditIconDisabled /> : <EditIcon />}
             </IconButton>
           )
         return (
@@ -248,7 +238,7 @@ const CashboxHistory = ({ machines, currency }) => {
             <Link type="submit" color="primary" onClick={() => save(it)}>
               Save
             </Link>
-            <Link color="secondary" onClick={() => close(it.id)}>
+            <Link color="secondary" onClick={close}>
               Cancel
             </Link>
           </div>
