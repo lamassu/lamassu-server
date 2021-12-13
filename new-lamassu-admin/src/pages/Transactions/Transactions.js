@@ -15,6 +15,8 @@ import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { ReactComponent as CustomerLinkIcon } from 'src/styling/icons/month arrows/right.svg'
+import { ReactComponent as CustomerLinkWhiteIcon } from 'src/styling/icons/month arrows/right_white.svg'
+import { errorColor } from 'src/styling/variables'
 import { formatDate } from 'src/utils/timezones'
 
 import DetailsRow from './DetailsCard'
@@ -124,13 +126,13 @@ const Transactions = () => {
   const history = useHistory()
 
   const [filters, setFilters] = useState([])
-  const { data: filtersResponse, loading: loadingFilters } = useQuery(
+  const { data: filtersResponse, loading: filtersLoading } = useQuery(
     GET_TRANSACTION_FILTERS
   )
   const [variables, setVariables] = useState({ limit: NUM_LOG_RESULTS })
   const {
     data: txData,
-    loading: loadingTransactions,
+    loading: transactionsLoading,
     refetch,
     startPolling,
     stopPolling
@@ -185,7 +187,11 @@ const Transactions = () => {
           <div className={classes.overflowTd}>{getCustomerDisplayName(it)}</div>
           {!it.isAnonymous && (
             <div onClick={() => redirect(it.customerId)}>
-              <CustomerLinkIcon className={classes.customerLinkIcon} />
+              {it.hasError ? (
+                <CustomerLinkWhiteIcon className={classes.customerLinkIcon} />
+              ) : (
+                <CustomerLinkIcon className={classes.customerLinkIcon} />
+              )}
             </div>
           )}
         </div>
@@ -294,6 +300,14 @@ const Transactions = () => {
 
   const filterOptions = R.path(['transactionFilters'])(filtersResponse)
 
+  const loading = transactionsLoading || filtersLoading || configLoading
+
+  const errorLabel = (
+    <svg width={12} height={12}>
+      <rect width={12} height={12} rx={3} fill={errorColor} />
+    </svg>
+  )
+
   return (
     <>
       <div className={classes.titleWrapper}>
@@ -301,7 +315,7 @@ const Transactions = () => {
           <Title>Transactions</Title>
           <div className={classes.buttonsWrapper}>
             <SearchBox
-              loading={loadingFilters}
+              loading={filtersLoading}
               filters={filters}
               options={filterOptions}
               inputPlaceholder={'Search Transactions'}
@@ -331,6 +345,10 @@ const Transactions = () => {
             <TxOutIcon />
             <span>Cash-out</span>
           </div>
+          <div>
+            {errorLabel}
+            <span>Transaction error</span>
+          </div>
         </div>
       </div>
       {filters.length > 0 && (
@@ -342,7 +360,7 @@ const Transactions = () => {
         />
       )}
       <DataTable
-        loading={loadingTransactions && configLoading}
+        loading={loading}
         emptyText="No transactions so far"
         elements={elements}
         data={txList}
