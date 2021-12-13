@@ -129,7 +129,7 @@ export default {
   confirmationCode: {
     extend: base,
     fontSize: codeInputFontSize,
-    fontFamily: fontPrimary,
+    fontFamily: fontSecondary,
     fontWeight: 900
   },
   inline: {
