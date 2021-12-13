@@ -82,7 +82,7 @@ const Transactions = ({ id }) => {
   const { data: configData, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configData)
 
-  const loading = txLoading && configLoading
+  const loading = txLoading || configLoading
 
   if (!loading && txResponse) {
     txResponse.transactions = txResponse.transactions.splice(0, 5)

@@ -64,7 +64,9 @@ const IndividualDiscounts = () => {
   const [showModal, setShowModal] = useState(false)
   const toggleModal = () => setShowModal(!showModal)
 
-  const { data: discountResponse, loading } = useQuery(GET_INDIVIDUAL_DISCOUNTS)
+  const { data: discountResponse, loading: discountLoading } = useQuery(
+    GET_INDIVIDUAL_DISCOUNTS
+  )
   const { data: customerData, loading: customerLoading } = useQuery(
     GET_CUSTOMERS
   )
@@ -160,11 +162,11 @@ const IndividualDiscounts = () => {
     }
   ]
 
-  const isLoading = loading || customerLoading
+  const loading = discountLoading || customerLoading
 
   return (
     <>
-      {!isLoading && !R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
         <Box
           marginBottom={4}
           marginTop={-7}
@@ -176,7 +178,7 @@ const IndividualDiscounts = () => {
           </Link>
         </Box>
       )}
-      {!isLoading && !R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
         <>
           <DataTable
             elements={elements}
@@ -196,7 +198,7 @@ const IndividualDiscounts = () => {
           />
         </>
       )}
-      {!isLoading && R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && R.isEmpty(discountResponse.individualDiscounts) && (
         <Box display="flex" alignItems="left" flexDirection="column">
           <Label3>
             It seems there are no active individual customer discounts on your
