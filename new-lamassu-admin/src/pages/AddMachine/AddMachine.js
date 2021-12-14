@@ -14,6 +14,7 @@ import { Button } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
 import Sidebar from 'src/components/layout/Sidebar'
 import { Info2, P } from 'src/components/typography'
+import { ReactComponent as CameraIcon } from 'src/styling/icons/ID/photo/zodiac.svg'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as CompleteStageIconSpring } from 'src/styling/icons/stage/spring/complete.svg'
 import { ReactComponent as CompleteStageIconZodiac } from 'src/styling/icons/stage/zodiac/complete.svg'
@@ -70,8 +71,18 @@ const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
         Scan QR code with your new cryptomat
       </Info2>
       <div className={classes.qrCodeWrapper}>
-        <div>
-          <QRCode size={240} fgColor={primaryColor} value={qrCode} />
+        <div className={classes.qrCodeImageWrapper}>
+          <QRCode
+            size={280}
+            fgColor={primaryColor}
+            includeMargin
+            value={qrCode}
+            className={classes.qrCodeBorder}
+          />
+          <div className={classes.qrCodeScanMessage}>
+            <CameraIcon />
+            <P noMargin>Snap a picture and scan</P>
+          </div>
         </div>
         <div className={classes.qrTextWrapper}>
           <div className={classes.qrTextInfoWrapper}>
