@@ -31,7 +31,7 @@ const useStyles = makeStyles(styles)
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   cashbox: Yup.number()
-    .label('Cashbox')
+    .label('Cash box')
     .required()
     .integer()
     .min(0)
@@ -204,7 +204,7 @@ const CashCassettes = () => {
     },
     {
       name: 'cashbox',
-      header: 'Cash-in',
+      header: 'Cash box',
       width: maxNumberOfCassettes > 2 ? 140 : 280,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
@@ -270,9 +270,9 @@ const CashCassettes = () => {
   return (
     <>
       <TitleSection
-        title="Cash Cassettes"
+        title="Cash Boxes & Cassettes"
         button={{
-          text: 'Cashbox history',
+          text: 'Cash box history',
           icon: HistoryIcon,
           inverseIcon: ReverseHistoryIcon,
           toggle: setShowHistory
