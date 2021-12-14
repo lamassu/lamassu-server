@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Grid } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
+import { Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import React, { useReducer, useState } from 'react'
@@ -101,6 +102,20 @@ const Reset2FA = () => {
     return null
   }
 
+  const handleSubmit = () => {
+    if (twoFAConfirmation.length !== 6) {
+      setInvalidToken(true)
+      return
+    }
+    reset2FA({
+      variables: {
+        token: token,
+        userID: state.userID,
+        code: twoFAConfirmation
+      }
+    })
+  }
+
   return (
     <Grid
       container
@@ -152,33 +167,30 @@ const Reset2FA = () => {
                     </ActionButton>
                   </div>
                   <div className={classes.confirm2FAInput}>
-                    <CodeInput
-                      name="2fa"
-                      value={twoFAConfirmation}
-                      onChange={handle2FAChange}
-                      numInputs={6}
-                      error={invalidToken}
-                      shouldAutoFocus
-                    />
+                    {/* TODO: refactor the 2FA CodeInput to properly use Formik */}
+                    <Formik onSubmit={() => {}} initialValues={{}}>
+                      <Form>
+                        <CodeInput
+                          name="2fa"
+                          value={twoFAConfirmation}
+                          onChange={handle2FAChange}
+                          numInputs={6}
+                          error={invalidToken}
+                          shouldAutoFocus
+                        />
+                        <button
+                          onClick={handleSubmit}
+                          className={classes.enterButton}
+                        />
+                      </Form>
+                    </Formik>
                   </div>
                   <div className={classes.twofaFooter}>
                     {getErrorMsg() && (
                       <P className={classes.errorMessage}>{getErrorMsg()}</P>
                     )}
                     <Button
-                      onClick={() => {
-                        if (twoFAConfirmation.length !== 6) {
-                          setInvalidToken(true)
-                          return
-                        }
-                        reset2FA({
-                          variables: {
-                            token: token,
-                            userID: state.userID,
-                            code: twoFAConfirmation
-                          }
-                        })
-                      }}
+                      onClick={handleSubmit}
                       buttonClassName={classes.loginButton}>
                       Done
                     </Button>

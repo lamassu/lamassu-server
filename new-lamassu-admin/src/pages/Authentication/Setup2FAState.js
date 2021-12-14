@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import base64 from 'base-64'
+import { Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import React, { useContext, useState } from 'react'
@@ -125,6 +126,14 @@ const Setup2FAState = ({ state, dispatch }) => {
     return null
   }
 
+  const handleSubmit = () => {
+    if (twoFAConfirmation.length !== 6) {
+      setInvalidToken(true)
+      return
+    }
+    setup2FA(mutationOptions)
+  }
+
   return (
     secret &&
     otpauth && (
@@ -159,28 +168,26 @@ const Setup2FAState = ({ state, dispatch }) => {
           </ActionButton>
         </div>
         <div className={classes.confirm2FAInput}>
-          <CodeInput
-            name="2fa"
-            value={twoFAConfirmation}
-            onChange={handle2FAChange}
-            numInputs={6}
-            error={invalidToken}
-            shouldAutoFocus
-          />
+          {/* TODO: refactor the 2FA CodeInput to properly use Formik */}
+          <Formik onSubmit={() => {}} initialValues={{}}>
+            <Form>
+              <CodeInput
+                name="2fa"
+                value={twoFAConfirmation}
+                onChange={handle2FAChange}
+                numInputs={6}
+                error={invalidToken}
+                shouldAutoFocus
+              />
+              <button onClick={handleSubmit} className={classes.enterButton} />
+            </Form>
+          </Formik>
         </div>
         <div className={classes.twofaFooter}>
           {getErrorMsg() && (
             <P className={classes.errorMessage}>{getErrorMsg()}</P>
           )}
-          <Button
-            onClick={() => {
-              if (twoFAConfirmation.length !== 6) {
-                setInvalidToken(true)
-                return
-              }
-              setup2FA(mutationOptions)
-            }}
-            buttonClassName={classes.loginButton}>
+          <Button onClick={handleSubmit} buttonClassName={classes.loginButton}>
             Done
           </Button>
         </div>
