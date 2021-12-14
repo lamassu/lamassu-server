@@ -167,19 +167,17 @@ const IndividualDiscounts = () => {
   return (
     <>
       {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
-        <Box
-          marginBottom={4}
-          marginTop={-7}
-          className={classes.tableWidth}
-          display="flex"
-          justifyContent="flex-end">
-          <Link color="primary" onClick={toggleModal}>
-            Add new code
-          </Link>
-        </Box>
-      )}
-      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
         <>
+          <Box
+            marginBottom={4}
+            marginTop={-7}
+            className={classes.tableWidth}
+            display="flex"
+            justifyContent="flex-end">
+            <Link color="primary" onClick={toggleModal}>
+              Add new code
+            </Link>
+          </Box>
           <DataTable
             elements={elements}
             data={R.path(['individualDiscounts'])(discountResponse)}
