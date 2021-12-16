@@ -61,8 +61,10 @@ const Services = () => {
 
   const updateSettings = element => {
     const settings = element.settings
-    const wallet = R.lensPath(['config', 'wallets_BTC_wallet'])
-    const isEnabled = R.equals(R.view(wallet, data), settings.requirement)
+    const field = R.lensPath(['config', settings.field])
+    const isEnabled = R.isNil(settings.requirement)
+      ? true
+      : R.equals(R.view(field, data), settings.requirement)
     settings.enabled = isEnabled
     return element
   }
