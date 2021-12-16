@@ -6,7 +6,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 
 import { TL1, TL2, Label3 } from 'src/components/typography'
@@ -67,12 +67,16 @@ const MachineRoute = () => {
 
   const id = getMachineID(location.pathname)
 
-  const { loading } = useQuery(GET_MACHINES, {
+  const [loading, setLoading] = useState(true)
+
+  useQuery(GET_MACHINES, {
     onCompleted: data => {
       const machines = data.machines
       const machineFound = machines.map(m => m.deviceId).includes(id)
 
       if (!machineFound) return history.push('/maintenance/machine-status')
+
+      setLoading(false)
     }
   })
 
