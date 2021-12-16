@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="icon/customer-nav/note/comet" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M18,1 C18.2761424,1 18.5261424,1.11192881 18.7071068,1.29289322 C18.8880712,1.47385763 19,1.72385763 19,2 L19,2 L19,18 C19,18.2761424 18.8880712,18.5261424 18.7071068,18.7071068 C18.5261424,18.8880712 18.2761424,19 18,19 L18,19 L2,19 C1.72385763,19 1.47385763,18.8880712 1.29289322,18.7071068 C1.11192881,18.5261424 1,18.2761424 1,18 L1,18 L1,2 C1,1.72385763 1.11192881,1.47385763 1.29289322,1.29289322 C1.47385763,1.11192881 1.72385763,1 2,1 L2,1 Z" id="Rectangle" stroke="#5F668A" stroke-width="2"></path>
+        <line x1="5" y1="5" x2="15" y2="5" id="Line-4" stroke="#5F668A" stroke-width="2" stroke-linecap="round"></line>
+        <line x1="5" y1="13" x2="10" y2="13" id="Line-4-Copy" stroke="#5F668A" stroke-width="2" stroke-linecap="round"></line>
+        <line x1="5" y1="9" x2="15" y2="9" id="Line-4" stroke="#5F668A" stroke-width="2" stroke-linecap="round"></line>
+    </g>
+</svg>

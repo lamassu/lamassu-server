@@ -18,27 +18,10 @@ module.exports.up = function (next) {
   }
 
   loadLatest(OLD_SETTINGS_LOADER_SCHEMA_VERSION)
-    .then(async settings => {
-      if (_.isEmpty(settings.config)) {
-        return {
-          settings,
-          machines: []
-        }
-      }
-      return {
-        settings,
-        machines: await machineLoader.getMachineNames(settings.config)
-      }
-    })
-    .then(({ settings, machines }) => {
-      if (_.isEmpty(settings.config)) {
-        return next()
-      }
-      const sql = machines
-        ? machines.map(m => `update devices set name = '${m.name}' where device_id = '${m.deviceId}'`)
-        : []
-      return db.multi(sql, () => migrateConfig(settings))
-    })
+    .then(settings => _.isEmpty(settings.config)
+        ? next()
+        : migrateConfig(settings)
+    )
     .catch(err => {
       if (err.message === 'lamassu-server is not configured') {
         return next()

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/customer-nav/photos/comet</title>
+    <g id="icon/customer-nav/photos/comet" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" stroke="#5F668A" stroke-width="2" x="1" y="1" width="18" height="18" rx="1"></rect>
+        <circle id="Oval" stroke="#5F668A" stroke-width="2" cx="15" cy="5" r="1"></circle>
+        <polyline id="Path" stroke="#5F668A" stroke-width="2" stroke-linejoin="round" points="1 19 7 13 13 19"></polyline>
+        <path d="M13.3333333,14 L18,19 L13.3333333,19 L11,16.5 L13.3333333,14 Z" id="Combined-Shape" stroke="#5F668A" stroke-width="2" stroke-linejoin="round"></path>
+    </g>
+</svg>
