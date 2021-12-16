@@ -1,7 +1,4 @@
-import typographyStyles from 'src/components/typography/styles'
-import { zircon, backgroundColor, offColor } from 'src/styling/variables'
-
-const { p } = typographyStyles
+import { zircon, backgroundColor } from 'src/styling/variables'
 
 export default {
   photo: {
@@ -41,43 +38,5 @@ export default {
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex'
-  },
-  label: {
-    color: offColor,
-    margin: [[0, 0, 6, 0]]
-  },
-  firstRow: {
-    padding: [[8]],
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  secondRow: {
-    extend: p,
-    display: 'flex',
-    padding: [[8]],
-    '& > div': {
-      display: 'flex',
-      flexDirection: 'column',
-      '& > div': {
-        width: 144,
-        height: 37,
-        marginBottom: 15,
-        marginRight: 55
-      }
-    }
-  },
-  imgWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    display: 'flex',
-    width: 550,
-    height: 550
-  },
-  imgInner: {
-    objectFit: 'cover',
-    objectPosition: 'center',
-    width: 550,
-    height: 550,
-    marginBottom: 40
   }
 }

@@ -24,6 +24,7 @@ import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
 import CustomerNotes from './CustomerNotes'
+import CustomerPhotos from './CustomerPhotos'
 import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
@@ -31,7 +32,7 @@ import {
   CustomerSidebar,
   Wizard
 } from './components'
-import { getFormattedPhone, getName } from './helper'
+import { getFormattedPhone, getName, formatPhotosData } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -367,6 +368,18 @@ const CustomerProfile = memo(() => {
   const isCustomerData = clickedItem === 'customerData'
   const isOverview = clickedItem === 'overview'
   const isNotes = clickedItem === 'notes'
+  const isPhotos = clickedItem === 'photos'
+
+  const frontCameraData = R.pick(['frontCameraPath', 'frontCameraAt'])(
+    customerData
+  )
+  const txPhotosData =
+    sortedTransactions &&
+    R.map(R.pick(['id', 'txCustomerPhotoPath', 'txCustomerPhotoAt']))(
+      sortedTransactions
+    )
+
+  const photosData = formatPhotosData(R.append(frontCameraData, txPhotosData))
 
   const loading = customerLoading && configLoading
 
@@ -488,6 +501,7 @@ const CustomerProfile = memo(() => {
                 justifyContent="space-between">
                 <CustomerDetails
                   customer={customerData}
+                  photosData={photosData}
                   locale={locale}
                   setShowCompliance={() => setShowCompliance(!showCompliance)}
                 />
@@ -522,6 +536,11 @@ const CustomerProfile = memo(() => {
                 deleteNote={deleteCustomerNote}
                 editNote={editCustomerNote}
                 timezone={timezone}></CustomerNotes>
+            </div>
+          )}
+          {isPhotos && (
+            <div>
+              <CustomerPhotos photosData={photosData} />
             </div>
           )}
         </div>
