@@ -79,6 +79,7 @@ const Tr = ({
   onClick,
   error,
   errorMessage,
+  shouldShowError,
   children,
   className,
   size,
@@ -99,7 +100,9 @@ const Tr = ({
       <Card className={classnames(classNames, className)} onClick={onClick}>
         <CardContent classes={cardClasses}>
           <div className={classes.mainContent}>{children}</div>
-          {error && <div className={classes.errorContent}>{errorMessage}</div>}
+          {error && shouldShowError && (
+            <div className={classes.errorContent}>{errorMessage}</div>
+          )}
         </CardContent>
       </Card>
     </>

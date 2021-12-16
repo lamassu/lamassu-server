@@ -80,8 +80,11 @@ const mainStyles = {
       display: 'flex',
       alignItems: 'center'
     },
+    '& > div': {
+      marginLeft: 24
+    },
     '& > div:first-child': {
-      marginRight: 24
+      marginLeft: 0
     },
     '& span': {
       extend: label1,
