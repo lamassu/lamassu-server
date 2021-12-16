@@ -14,7 +14,7 @@
     "apollo-link": "^1.2.14",
     "apollo-link-error": "^1.1.13",
     "apollo-link-http": "^1.5.17",
-    "apollo-upload-client": "^16.0.0",
+    "apollo-upload-client": "^13.0.0",
     "axios": "0.21.1",
     "base-64": "^1.0.0",
     "bignumber.js": "9.0.0",
