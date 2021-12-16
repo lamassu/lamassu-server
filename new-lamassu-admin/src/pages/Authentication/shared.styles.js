@@ -100,6 +100,9 @@ const styles = {
   },
   error: {
     color: errorColor
+  },
+  enterButton: {
+    display: 'none'
   }
 }
 

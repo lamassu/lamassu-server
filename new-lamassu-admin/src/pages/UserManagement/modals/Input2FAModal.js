@@ -1,5 +1,6 @@
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
@@ -48,6 +49,14 @@ const Input2FAModal = ({ showModal, handleClose, setConfirmation }) => {
     return null
   }
 
+  const handleSubmit = () => {
+    if (twoFACode.length !== 6) {
+      setInvalidCode(true)
+      return
+    }
+    confirm2FA({ variables: { code: twoFACode } })
+  }
+
   return (
     showModal && (
       <Modal
@@ -61,28 +70,26 @@ const Input2FAModal = ({ showModal, handleClose, setConfirmation }) => {
           To make changes on this user, please confirm this action by entering
           your two-factor authentication code below.
         </P>
-        <CodeInput
-          name="2fa"
-          value={twoFACode}
-          onChange={handleCodeChange}
-          numInputs={6}
-          error={invalidCode}
-          containerStyle={classes.codeContainer}
-          shouldAutoFocus
-        />
+        {/* TODO: refactor the 2FA CodeInput to properly use Formik */}
+        <Formik onSubmit={() => {}} initialValues={{}}>
+          <Form>
+            <CodeInput
+              name="2fa"
+              value={twoFACode}
+              onChange={handleCodeChange}
+              numInputs={6}
+              error={invalidCode}
+              containerStyle={classes.codeContainer}
+              shouldAutoFocus
+            />
+            <button onClick={handleSubmit} className={classes.enterButton} />
+          </Form>
+        </Formik>
         {getErrorMsg() && (
           <P className={classes.errorMessage}>{getErrorMsg()}</P>
         )}
         <div className={classes.footer}>
-          <Button
-            className={classes.submit}
-            onClick={() => {
-              if (twoFACode.length !== 6) {
-                setInvalidCode(true)
-                return
-              }
-              confirm2FA({ variables: { code: twoFACode } })
-            }}>
+          <Button className={classes.submit} onClick={handleSubmit}>
             Confirm
           </Button>
         </div>
