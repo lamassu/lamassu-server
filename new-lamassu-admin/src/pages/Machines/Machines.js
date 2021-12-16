@@ -7,7 +7,7 @@ import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 
 import { TL1, TL2, Label3 } from 'src/components/typography'
 
@@ -50,13 +50,43 @@ const GET_INFO = gql`
   }
 `
 
+const GET_MACHINES = gql`
+  {
+    machines {
+      name
+      deviceId
+    }
+  }
+`
+
 const getMachineID = path => path.slice(path.lastIndexOf('/') + 1)
 
-const Machines = () => {
+const MachineRoute = () => {
   const location = useLocation()
+  const history = useHistory()
+
+  const id = getMachineID(location.pathname)
+
+  const { loading } = useQuery(GET_MACHINES, {
+    onCompleted: data => {
+      const machines = data.machines
+      const machineFound = machines.map(m => m.deviceId).includes(id)
+
+      if (!machineFound) return history.push('/maintenance/machine-status')
+    }
+  })
+
+  const reload = () => {
+    return history.push(location.pathname)
+  }
+
+  return !loading && <Machines id={id} reload={reload}></Machines>
+}
+
+const Machines = ({ id, reload }) => {
   const { data, loading, refetch } = useQuery(GET_INFO, {
     variables: {
-      deviceId: getMachineID(location.pathname)
+      deviceId: id
     }
   })
   const classes = useStyles()
@@ -85,7 +115,7 @@ const Machines = () => {
                   {machineName}
                 </TL2>
               </Breadcrumbs>
-              <Overview data={machine} onActionSuccess={refetch} />
+              <Overview data={machine} onActionSuccess={reload} />
             </div>
           </Grid>
         </Grid>
@@ -119,4 +149,4 @@ const Machines = () => {
   )
 }
 
-export default Machines
+export default MachineRoute

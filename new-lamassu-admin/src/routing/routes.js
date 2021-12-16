@@ -17,7 +17,7 @@ import Register from 'src/pages/Authentication/Register'
 import Reset2FA from 'src/pages/Authentication/Reset2FA'
 import ResetPassword from 'src/pages/Authentication/ResetPassword'
 import Dashboard from 'src/pages/Dashboard'
-import Machines from 'src/pages/Machines'
+import MachineRoute from 'src/pages/Machines'
 import Wizard from 'src/pages/Wizard'
 
 import PrivateRoute from './PrivateRoute'
@@ -140,7 +140,7 @@ const Routes = () => {
           }
         />
       </PrivateRoute>
-      <PrivateRoute path="/machines" component={Machines} />
+      <PrivateRoute path="/machines" component={MachineRoute} />
       <PrivateRoute path="/wizard" component={Wizard} />
       <PublicRoute path="/register" component={Register} />
       {/* <PublicRoute path="/configmigration" component={ConfigMigration} /> */}
