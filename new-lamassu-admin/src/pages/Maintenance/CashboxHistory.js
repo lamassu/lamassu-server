@@ -1,16 +1,16 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
-import * as Yup from 'yup'
+import React from 'react'
+// import * as Yup from 'yup'
 
-import { Link, IconButton } from 'src/components/buttons'
-import { TextInput } from 'src/components/inputs'
+// import { Link, IconButton } from 'src/components/buttons'
+// import { TextInput } from 'src/components/inputs'
 import { NumberInput } from 'src/components/inputs/formik'
 import DataTable from 'src/components/tables/DataTable'
-import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+// import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
+// import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { formatDate } from 'src/utils/timezones'
@@ -34,13 +34,13 @@ const GET_BATCHES = gql`
   }
 `
 
-const EDIT_BATCH = gql`
+/* const EDIT_BATCH = gql`
   mutation editBatch($id: ID, $performedBy: String) {
     editBatch(id: $id, performedBy: $performedBy) {
       id
     }
   }
-`
+` */
 
 const GET_DATA = gql`
   query getData {
@@ -64,23 +64,24 @@ const styles = {
   }
 }
 
-const schema = Yup.object().shape({
+/* const schema = Yup.object().shape({
   performedBy: Yup.string().nullable()
-})
+}) */
 
 const useStyles = makeStyles(styles)
 
 const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
-  const [error, setError] = useState(false)
+
+  /* const [error, setError] = useState(false)
   const [field, setField] = useState(null)
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(false) */
 
   const { data: batchesData, loading: batchesLoading } = useQuery(GET_BATCHES)
 
-  const [editBatch] = useMutation(EDIT_BATCH, {
+  /* const [editBatch] = useMutation(EDIT_BATCH, {
     refetchQueries: () => ['cashboxBatches']
-  })
+  }) */
 
   const { data: configData, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configData)
@@ -118,7 +119,7 @@ const CashboxHistory = ({ machines, currency }) => {
     R.range(1, 5)
   )
 
-  const save = row => {
+  /* const save = row => {
     const performedBy = field.performedBy === '' ? null : field.performedBy
 
     schema
@@ -138,7 +139,7 @@ const CashboxHistory = ({ machines, currency }) => {
     setField(null)
   }
 
-  const notEditing = id => field?.id !== id
+  const notEditing = id => field?.id !== id */
 
   const elements = [
     {
@@ -197,8 +198,8 @@ const CashboxHistory = ({ machines, currency }) => {
       width: 125,
       textAlign: 'right',
       view: it => formatDate(it.created, timezone, 'HH:mm')
-    },
-    {
+    }
+    /* {
       name: 'performedBy',
       header: 'Performed by',
       width: 180,
@@ -244,7 +245,7 @@ const CashboxHistory = ({ machines, currency }) => {
           </div>
         )
       }
-    }
+    } */
   ]
 
   return (
