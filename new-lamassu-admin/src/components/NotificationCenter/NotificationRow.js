@@ -7,7 +7,6 @@ import React from 'react'
 import { Label1, Label2, TL2 } from 'src/components/typography'
 import { ReactComponent as Wrench } from 'src/styling/icons/action/wrench/zodiac.svg'
 import { ReactComponent as Transaction } from 'src/styling/icons/arrow/transaction.svg'
-import { ReactComponent as StripesSvg } from 'src/styling/icons/stripes.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/tomato.svg'
 
 import styles from './NotificationCenter.styles'
@@ -72,7 +71,6 @@ const NotificationRow = ({
           className={classnames(iconClass)}
         />
       </div>
-      {!valid && <StripesSvg className={classes.stripes} />}
     </div>
   )
 }
