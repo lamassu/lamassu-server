@@ -153,7 +153,6 @@ const NotificationCenter = ({
           {!loading && buildNotifications()}
         </div>
       </div>
-      <div className={classes.background} />
     </>
   )
 }

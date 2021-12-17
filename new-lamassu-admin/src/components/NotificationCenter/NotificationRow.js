@@ -1,4 +1,3 @@
-import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import prettyMs from 'pretty-ms'
@@ -54,36 +53,27 @@ const NotificationRow = ({
     [classes.unreadIcon]: !read
   }
   return (
-    <Grid
-      container
+    <div
       className={classnames(
         classes.notificationRow,
         !read && valid ? classes.unread : ''
       )}>
-      <Grid item xs={2} className={classes.notificationRowIcon}>
-        {icon}
-      </Grid>
-      <Grid item container xs={7} direction="row">
-        <Grid item xs={12}>
-          <Label2 className={classes.notificationTitle}>
-            {notificationTitle}
-          </Label2>
-        </Grid>
-        <Grid item xs={12}>
-          <TL2 className={classes.notificationBody}>{message}</TL2>
-        </Grid>
-        <Grid item xs={12}>
-          <Label1 className={classes.notificationSubtitle}>{age}</Label1>
-        </Grid>
-      </Grid>
-      <Grid item xs={3} style={{ zIndex: 1 }}>
+      <div className={classes.notificationRowIcon}>{icon}</div>
+      <div className={classes.notificationContent}>
+        <Label2 className={classes.notificationTitle}>
+          {notificationTitle}
+        </Label2>
+        <TL2 className={classes.notificationBody}>{message}</TL2>
+        <Label1 className={classes.notificationSubtitle}>{age}</Label1>
+      </div>
+      <div className={classes.readIconWrapper}>
         <div
           onClick={() => toggleClear(id)}
           className={classnames(iconClass)}
         />
-      </Grid>
+      </div>
       {!valid && <StripesSvg className={classes.stripes} />}
-    </Grid>
+    </div>
   )
 }
 
