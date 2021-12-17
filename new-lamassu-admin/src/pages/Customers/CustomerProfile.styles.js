@@ -15,29 +15,16 @@ export default {
   customerDetails: {
     marginBottom: 18
   },
-  customerBlock: props => ({
+  actionButton: {
+    margin: [[0, 0, 4, 0]],
     display: 'flex',
     flexDirection: 'row',
-    margin: [[0, 0, 4, 0]],
-    padding: [[0, props.blocked ? 35 : 48, 0]]
-  }),
-  customerDiscount: {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: [[0, 0, 4, 0]],
-    padding: [[0, 23.5, 0]]
+    justifyContent: 'center'
   },
-  customerManualDataEntry: {
+  actionBar: {
     display: 'flex',
-    flexDirection: 'row',
-    margin: [[8, 0, 4, 0]],
-    padding: [[0, 40.5, 0]]
-  },
-  retrieveInformation: {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: [[0, 0, 4, 0]],
-    padding: [[0, 32.5, 0]]
+    flexDirection: 'column',
+    width: 219
   },
   panels: {
     display: 'flex'
