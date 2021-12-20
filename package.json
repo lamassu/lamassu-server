@@ -107,7 +107,8 @@
     "lamassu-coinatmradar": "./bin/lamassu-coinatmradar",
     "lamassu-users": "./bin/lamassu-users",
     "lamassu-blacklist": "./bin/lamassu-blacklist",
-    "lamassu-revoke": "./bin/lamassu-revoke"
+    "lamassu-revoke": "./bin/lamassu-revoke",
+    "lamassu-update-cassettes": "./bin/lamassu-update-cassettes"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
