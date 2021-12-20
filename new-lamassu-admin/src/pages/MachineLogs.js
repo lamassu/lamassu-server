@@ -81,16 +81,21 @@ const Logs = () => {
 
   const deviceId = selected?.deviceId
 
-  const { data: machineResponse } = useQuery(GET_MACHINES)
+  const { data: machineResponse, loading: machinesLoading } = useQuery(
+    GET_MACHINES
+  )
 
-  const { data: configResponse } = useQuery(GET_DATA)
+  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const { data: logsResponse, loading } = useQuery(GET_MACHINE_LOGS, {
-    variables: { deviceId, limit: NUM_LOG_RESULTS },
-    skip: !selected,
-    onCompleted: () => setSaveMessage('')
-  })
+  const { data: logsResponse, loading: logsLoading } = useQuery(
+    GET_MACHINE_LOGS,
+    {
+      variables: { deviceId, limit: NUM_LOG_RESULTS },
+      skip: !selected,
+      onCompleted: () => setSaveMessage('')
+    }
+  )
 
   if (machineResponse?.machines?.length && !selected) {
     setSelected(machineResponse?.machines[0])
@@ -99,6 +104,8 @@ const Logs = () => {
   const isSelected = it => {
     return R.path(['deviceId'])(selected) === it.deviceId
   }
+
+  const loading = machinesLoading || configLoading || logsLoading
 
   return (
     <>

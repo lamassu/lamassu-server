@@ -54,7 +54,11 @@ const MachineStatus = () => {
   const history = useHistory()
   const { state } = useLocation()
   const addedMachineId = state?.id
-  const { data: machinesResponse, refetch, loading } = useQuery(GET_MACHINES)
+  const {
+    data: machinesResponse,
+    refetch,
+    loading: machinesLoading
+  } = useQuery(GET_MACHINES)
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
@@ -114,6 +118,8 @@ const MachineStatus = () => {
     <MachineDetailsRow it={it} onActionSuccess={refetch} timezone={timezone} />
   )
 
+  const loading = machinesLoading || configLoading
+
   return (
     <>
       <div className={classes.titleWrapper}>
@@ -132,7 +138,7 @@ const MachineStatus = () => {
         </div>
       </div>
       <DataTable
-        loading={loading && configLoading}
+        loading={loading}
         elements={elements}
         data={machines}
         Details={InnerMachineDetailsRow}

@@ -85,7 +85,7 @@ const CashboxHistory = ({ machines, currency }) => {
   const { data: configData, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configData)
 
-  const loading = batchesLoading && configLoading
+  const loading = batchesLoading || configLoading
 
   const batches = R.path(['cashboxBatches'])(batchesData)
 
@@ -248,16 +248,13 @@ const CashboxHistory = ({ machines, currency }) => {
   ]
 
   return (
-    <>
-      {!loading && (
-        <DataTable
-          name="cashboxHistory"
-          elements={elements}
-          data={batches}
-          emptyText="No cashbox batches so far"
-        />
-      )}
-    </>
+    <DataTable
+      loading={loading}
+      name="cashboxHistory"
+      elements={elements}
+      data={batches}
+      emptyText="No cashbox batches so far"
+    />
   )
 }
 

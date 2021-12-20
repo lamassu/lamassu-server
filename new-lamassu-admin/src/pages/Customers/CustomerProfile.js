@@ -381,7 +381,7 @@ const CustomerProfile = memo(() => {
 
   const photosData = formatPhotosData(R.append(frontCameraData, txPhotosData))
 
-  const loading = customerLoading && configLoading
+  const loading = customerLoading || configLoading
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
