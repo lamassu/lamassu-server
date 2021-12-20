@@ -46,6 +46,12 @@ const GET_INFO = gql`
         note
       }
     }
+    looseBillsByMachine(deviceId: $deviceId) {
+      id
+      fiat
+      deviceId
+      created
+    }
     config
   }
 `
@@ -59,12 +65,14 @@ const Machines = () => {
       deviceId: getMachineID(location.pathname)
     }
   })
+
   const classes = useStyles()
 
   const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
 
   const machine = R.path(['machine'])(data) ?? {}
   const config = R.path(['config'])(data) ?? {}
+  const bills = R.path(['looseBillsByMachine'])(data) ?? []
 
   const machineName = R.path(['name'])(machine) ?? null
   const machineID = R.path(['deviceId'])(machine) ?? null
@@ -102,6 +110,7 @@ const Machines = () => {
                 refetchData={refetch}
                 machine={machine}
                 config={config ?? false}
+                bills={bills}
               />
             </div>
             <div className={classes.transactionsItem}>

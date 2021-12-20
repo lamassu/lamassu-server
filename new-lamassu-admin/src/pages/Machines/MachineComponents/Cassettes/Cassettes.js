@@ -82,7 +82,7 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
-const CashCassettes = ({ machine, config, refetchData }) => {
+const CashCassettes = ({ machine, config, refetchData, bills }) => {
   const classes = useStyles()
 
   const [wizard, setWizard] = useState(false)
@@ -105,7 +105,11 @@ const CashCassettes = ({ machine, config, refetchData }) => {
       width: widthsByNumberOfCassettes[numberOfCassettes].cashbox,
       stripe: false,
       view: value => (
-        <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
+        <CashIn
+          currency={{ code: fiatCurrency }}
+          notes={value}
+          total={R.sum(R.map(it => it.fiat)(bills))}
+        />
       ),
       input: NumberInput,
       inputProps: {

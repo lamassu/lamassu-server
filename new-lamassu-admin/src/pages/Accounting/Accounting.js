@@ -9,12 +9,10 @@ import { Tooltip } from 'src/components/Tooltip'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { H4, Info2, P } from 'src/components/typography'
+import { numberToFiatAmount } from 'src/utils/number'
 import { formatDate } from 'src/utils/timezones'
 
 import styles from './Accounting.styles'
-
-const formatCurrency = amount =>
-  amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
 const useStyles = makeStyles(styles)
 
@@ -64,7 +62,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
         <P className={classes.fieldHeader}>Pazuz fiat balance</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {formatCurrency(balance)}
+            {numberToFiatAmount(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -76,7 +74,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
         <P className={classes.fieldHeader}>Hedging reserve</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {formatCurrency(hedgingReserve)}
+            {numberToFiatAmount(hedgingReserve)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -88,7 +86,7 @@ const Assets = ({ balance, hedgingReserve, currency }) => {
         <P className={classes.fieldHeader}>Available balance</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {formatCurrency(balance - hedgingReserve)}
+            {numberToFiatAmount(balance - hedgingReserve)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -143,7 +141,7 @@ const Accounting = () => {
       size: 'sm',
       textAlign: 'right',
       view: it =>
-        `${formatCurrency(it.fiatAmount)} ${R.toUpper(it.fiatCurrency)}`
+        `${numberToFiatAmount(it.fiatAmount)} ${R.toUpper(it.fiatCurrency)}`
     },
     {
       header: 'Balance after operation',
@@ -151,7 +149,9 @@ const Accounting = () => {
       size: 'sm',
       textAlign: 'right',
       view: it =>
-        `${formatCurrency(it.fiatBalanceAfter)} ${R.toUpper(it.fiatCurrency)}`
+        `${numberToFiatAmount(it.fiatBalanceAfter)} ${R.toUpper(
+          it.fiatCurrency
+        )}`
     },
     {
       header: 'Date',
