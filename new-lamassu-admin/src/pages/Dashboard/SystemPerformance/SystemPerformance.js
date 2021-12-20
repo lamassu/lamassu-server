@@ -9,10 +9,11 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { EmptyTable } from 'src/components/table'
-import { Label1, Label2 } from 'src/components/typography/index'
+import { Label1, Label2, P } from 'src/components/typography/index'
 import { ReactComponent as PercentDownIcon } from 'src/styling/icons/dashboard/down.svg'
 import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboard/equal.svg'
 import { ReactComponent as PercentUpIcon } from 'src/styling/icons/dashboard/up.svg'
+import { java, neon } from 'src/styling/variables'
 import { fromNamespace } from 'src/utils/config'
 import { toTimezone } from 'src/utils/timezones'
 
@@ -199,9 +200,27 @@ const SystemPerformance = () => {
             </Grid>
             {/* todo new customers */}
           </Grid>
-          <Grid container className={classes.gridContainer}>
+          <Grid container className={classes.txGraphContainer}>
             <Grid item xs={12}>
-              <Label2>Transactions</Label2>
+              <div className={classes.graphHeader}>
+                <Label2 noMargin>Transactions</Label2>
+                <div className={classes.labelWrapper}>
+                  <P noMargin>{timezone} timezone</P>
+                  <span className={classes.verticalLine} />
+                  <div>
+                    <svg width={8} height={8}>
+                      <rect width={8} height={8} rx={4} fill={java} />
+                    </svg>
+                    <Label1 noMargin>In</Label1>
+                  </div>
+                  <div>
+                    <svg width={8} height={8}>
+                      <rect width={8} height={8} rx={4} fill={neon} />
+                    </svg>
+                    <Label1 noMargin>Out</Label1>
+                  </div>
+                </div>
+              </div>
               <Scatterplot
                 timeFrame={selectedRange}
                 data={transactionsToShow}
@@ -209,9 +228,9 @@ const SystemPerformance = () => {
               />
             </Grid>
           </Grid>
-          <Grid container className={classes.gridContainer}>
+          <Grid container className={classes.commissionGraphContainer}>
             <Grid item xs={8}>
-              <Label2 className={classes.labelMargin}>
+              <Label2 noMargin className={classes.commissionProfitTitle}>
                 Profit from commissions
               </Label2>
               <div className={classes.profitContainer}>
@@ -233,23 +252,22 @@ const SystemPerformance = () => {
               />
             </Grid>
             <Grid item xs={4}>
-              <Grid container>
-                <Grid item>
-                  <Label2 className={classes.labelMargin}>Direction</Label2>
-                </Grid>
-                <Grid
-                  item
-                  className={classnames(
-                    classes.directionLabelContainer,
-                    classes.dirLabContMargin
-                  )}>
-                  <div className={classes.outSquare} />
-                  <Label1 className={classes.directionLabel}>Out</Label1>
-                </Grid>
-                <Grid item className={classes.directionLabelContainer}>
-                  <div className={classes.inSquare} />
-                  <Label1 className={classes.directionLabel}>In</Label1>
-                </Grid>
+              <Grid container className={classes.graphHeader}>
+                <Label2 noMargin>Direction</Label2>
+                <div className={classes.labelWrapper}>
+                  <div>
+                    <svg width={8} height={8}>
+                      <rect width={8} height={8} rx={2} fill={java} />
+                    </svg>
+                    <Label1 noMargin>In</Label1>
+                  </div>
+                  <div>
+                    <svg width={8} height={8}>
+                      <rect width={8} height={8} rx={2} fill={neon} />
+                    </svg>
+                    <Label1 noMargin>Out</Label1>
+                  </div>
+                </div>
               </Grid>
               <Grid item xs>
                 <PercentageChart

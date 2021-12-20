@@ -45,7 +45,7 @@ const RefLineChart = ({
     const svg = d3.select(svgRef.current)
     const margin = { top: 0, right: 0, bottom: 0, left: 0 }
     const width = 336 - margin.left - margin.right
-    const height = 128 - margin.top - margin.bottom
+    const height = 140 - margin.top - margin.bottom
 
     const massageData = () => {
       // if we're viewing transactions for the past day, then we group by hour. If not, we group by day
@@ -148,7 +148,7 @@ const RefLineChart = ({
     const y = d3
       .scaleLinear()
       // 30 is a margin so that the labels and the percentage change label can fit and not overlay the line path
-      .range([height, 30])
+      .range([height, 40])
       .domain([0, yDomain[1]])
     const x = d3
       .scaleTime()
