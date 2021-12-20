@@ -385,7 +385,7 @@ const CustomerProfile = memo(() => {
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const classes = useStyles({ blocked })
+  const classes = useStyles()
 
   return (
     <>
@@ -419,29 +419,26 @@ const CustomerProfile = memo(() => {
                 />
               </div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
-              <div>
+              <div className={classes.actionBar}>
                 <ActionButton
-                  className={classes.customerManualDataEntry}
+                  className={classes.actionButton}
                   color="primary"
                   Icon={DataIcon}
                   InverseIcon={DataReversedIcon}
                   onClick={() => setWizard(true)}>
                   {`Manual data entry`}
                 </ActionButton>
-              </div>
-              <div>
                 <ActionButton
-                  className={classes.customerDiscount}
+                  className={classes.actionButton}
                   color="primary"
                   Icon={Discount}
                   InverseIcon={DiscountReversedIcon}
                   onClick={() => {}}>
                   {`Add individual discount`}
                 </ActionButton>
-              </div>
-              <div>
                 {isSuspended && (
                   <ActionButton
+                    className={classes.actionButton}
                     color="primary"
                     Icon={AuthorizeIcon}
                     InverseIcon={AuthorizeReversedIcon}
@@ -455,7 +452,7 @@ const CustomerProfile = memo(() => {
                 )}
                 <ActionButton
                   color="primary"
-                  className={classes.customerBlock}
+                  className={classes.actionButton}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
@@ -471,7 +468,7 @@ const CustomerProfile = memo(() => {
                 </ActionButton>
                 <ActionButton
                   color="primary"
-                  className={classes.retrieveInformation}
+                  className={classes.actionButton}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
