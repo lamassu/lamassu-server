@@ -15,6 +15,7 @@ import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboar
 import { ReactComponent as PercentUpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { java, neon } from 'src/styling/variables'
 import { fromNamespace } from 'src/utils/config'
+import { timezones } from 'src/utils/timezone-list'
 import { toTimezone } from 'src/utils/timezones'
 
 import PercentageChart from './Graphs/PercentageChart'
@@ -205,7 +206,10 @@ const SystemPerformance = () => {
               <div className={classes.graphHeader}>
                 <Label2 noMargin>Transactions</Label2>
                 <div className={classes.labelWrapper}>
-                  <P noMargin>{timezone} timezone</P>
+                  <P noMargin>
+                    {timezones[timezone].short ?? timezones[timezone].long}{' '}
+                    timezone
+                  </P>
                   <span className={classes.verticalLine} />
                   <div>
                     <svg width={8} height={8}>
