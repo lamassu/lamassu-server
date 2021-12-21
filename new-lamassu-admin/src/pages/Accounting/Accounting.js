@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React, { useContext } from 'react'
 
 import AppContext from 'src/AppContext'
-import { Tooltip } from 'src/components/Tooltip'
+import { HoverableTooltip } from 'src/components/Tooltip'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { H4, Info2, P } from 'src/components/typography'
@@ -127,9 +127,9 @@ const Accounting = () => {
           <span className={classes.operation}>
             {it.description}
             {!!it.extraInfo && (
-              <Tooltip width={175}>
+              <HoverableTooltip width={175}>
                 <P>{it.extraInfo}</P>
-              </Tooltip>
+              </HoverableTooltip>
             )}
           </span>
         )

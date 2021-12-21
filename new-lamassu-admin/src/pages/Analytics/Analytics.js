@@ -284,6 +284,7 @@ const Analytics = () => {
               items={REPRESENTING_OPTIONS}
               default={REPRESENTING_OPTIONS[0]}
               selectedItem={representing}
+              defaultAsFilter
             />
             <Select
               label="Time period"
@@ -291,6 +292,7 @@ const Analytics = () => {
               items={PERIOD_OPTIONS}
               default={PERIOD_OPTIONS[0]}
               selectedItem={period}
+              defaultAsFilter
             />
           </div>
           <div className={classes.overview}>

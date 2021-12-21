@@ -7,7 +7,7 @@ import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { Tooltip } from 'src/components/Tooltip'
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import Sidebar from 'src/components/layout/Sidebar'
@@ -186,13 +186,13 @@ const Blacklist = () => {
                 value={rejectAddressReuse}
               />
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
-              <Tooltip width={304}>
+              <HoverableTooltip width={304}>
                 <P>
                   The "Reject reused addresses" option means that all addresses
                   that are used once will be automatically rejected if there's
                   an attempt to use them again on a new transaction.
                 </P>
-              </Tooltip>
+              </HoverableTooltip>
             </Box>
           </Box>
           <BlacklistTable

@@ -40,6 +40,7 @@ const Header = () => {
     deleteWidth,
     enableToggle,
     toggleWidth,
+    orderedBy,
     DEFAULT_COL_SIZE
   } = useContext(TableCtx)
 
@@ -62,7 +63,8 @@ const Header = () => {
     idx
   ) => (
     <Td header key={idx} width={width} textAlign={textAlign}>
-      {header || startCase(name)}
+      {header || startCase(name)}{' '}
+      {!R.isNil(orderedBy) && R.equals(name, orderedBy.code) && '-'}
     </Td>
   )
 

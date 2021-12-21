@@ -27,16 +27,17 @@ const Sidebar = ({
       {loading && <P>Loading...</P>}
       {!loading &&
         data?.map((it, idx) => (
-          <div
-            key={idx}
-            className={classnames({
-              [classes.activeLink]: isSelected(it),
-              [classes.customRenderActiveLink]: itemRender && isSelected(it),
-              [classes.customRenderLink]: itemRender,
-              [classes.link]: true
-            })}
-            onClick={() => onClick(it)}>
-            {itemRender ? itemRender(it, isSelected(it)) : displayName(it)}
+          <div className={classes.linkWrapper} onClick={() => onClick(it)}>
+            <div
+              key={idx}
+              className={classnames({
+                [classes.activeLink]: isSelected(it),
+                [classes.customRenderActiveLink]: itemRender && isSelected(it),
+                [classes.customRenderLink]: itemRender,
+                [classes.link]: true
+              })}>
+              {itemRender ? itemRender(it, isSelected(it)) : displayName(it)}
+            </div>
           </div>
         ))}
       {!loading && children}

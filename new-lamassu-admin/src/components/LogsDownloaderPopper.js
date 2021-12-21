@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
-import { format, isSameDay } from 'date-fns/fp'
+import { format } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import * as R from 'ramda'
 import React, { useState, useCallback } from 'react'
@@ -188,7 +188,6 @@ const LogsDownloaderPopover = ({
 
     if (!range || !range.from) return
     if (range.from && !range.until) range.until = new Date()
-    if (isSameDay(range.until, range.from)) range.until = new Date()
 
     if (selectedRadio === RANGE) {
       fetchLogs({
