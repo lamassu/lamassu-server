@@ -61,7 +61,7 @@ const getDefaultSettings = () => {
   return [
     {
       name: 'expirationTime',
-      header: 'Expiration Time',
+      header: 'Expiration time',
       width: 196,
       size: 'sm',
       editable: false
@@ -101,7 +101,7 @@ const getOverrides = () => {
     },
     {
       name: 'expirationTime',
-      header: 'Expiration Time',
+      header: 'Expiration time',
       width: 196,
       size: 'sm',
       editable: false

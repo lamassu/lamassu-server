@@ -5,6 +5,7 @@ import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Link } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
@@ -32,7 +33,10 @@ const BlackListModal = ({
     LTC: 'LPKvbjwV1Kaksktzkr7TMK3FQtQEEe6Wqa',
     DASH: 'XqQ7gU8eM76rEfey726cJpT2RGKyJyBrcn',
     ZEC: 't1KGyyv24eL354C9gjveBGEe8Xz9UoPKvHR',
-    BCH: 'qrd6za97wm03lfyg82w0c9vqgc727rhemg5yd9k3dm'
+    BCH: 'qrd6za97wm03lfyg82w0c9vqgc727rhemg5yd9k3dm',
+    USDT: '0x5754284f345afc66a98fbb0a0afe71e0f007b949',
+    XMR:
+      '888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H'
   }
 
   return (
@@ -53,9 +57,8 @@ const BlackListModal = ({
             .trim()
             .required('An address is required')
         })}
-        onSubmit={({ address }, { resetForm }) => {
+        onSubmit={({ address }) => {
           handleAddToBlacklist(address.trim())
-          resetForm()
         }}>
         <Form id="address-form">
           <H3 className={classes.modalTitle}>
@@ -63,7 +66,6 @@ const BlackListModal = ({
               ? `Blacklist ${R.toLower(selectedCoin.display)} address`
               : ''}
           </H3>
-          <span className={classes.error}>{errorMsg}</span>
           <Field
             name="address"
             fullWidth
@@ -72,6 +74,9 @@ const BlackListModal = ({
             placeholder={`ex: ${placeholderAddress[selectedCoin.code]}`}
             component={TextInput}
           />
+          {!R.isNil(errorMsg) && (
+            <ErrorMessage className={classes.error}>{errorMsg}</ErrorMessage>
+          )}
         </Form>
       </Formik>
       <div className={classes.footer}>
