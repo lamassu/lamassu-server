@@ -10,8 +10,11 @@ import { ActionButton, Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
+import { ReactComponent as WhiteKeyIcon } from 'src/styling/icons/button/key/white.svg'
 import { ReactComponent as KeyIcon } from 'src/styling/icons/button/key/zodiac.svg'
+import { ReactComponent as WhiteLockIcon } from 'src/styling/icons/button/lock/white.svg'
 import { ReactComponent as LockIcon } from 'src/styling/icons/button/lock/zodiac.svg'
+import { ReactComponent as WhiteUserRoleIcon } from 'src/styling/icons/button/user-role/white.svg'
 import { ReactComponent as UserRoleIcon } from 'src/styling/icons/button/user-role/zodiac.svg'
 
 import styles from './UserManagement.styles'
@@ -159,6 +162,7 @@ const Users = () => {
           <div className={classes.actionButtonWrapper}>
             <ActionButton
               Icon={KeyIcon}
+              InverseIcon={WhiteKeyIcon}
               color="primary"
               onClick={() => {
                 setUserInfo(u)
@@ -171,6 +175,7 @@ const Users = () => {
             </ActionButton>
             <ActionButton
               Icon={LockIcon}
+              InverseIcon={WhiteLockIcon}
               color="primary"
               onClick={() => {
                 setUserInfo(u)
@@ -183,6 +188,7 @@ const Users = () => {
             </ActionButton>
             <ActionButton
               Icon={UserRoleIcon}
+              InverseIcon={WhiteUserRoleIcon}
               color="primary"
               onClick={() => {
                 setUserInfo(u)
