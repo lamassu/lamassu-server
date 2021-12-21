@@ -115,7 +115,8 @@ const WizardStep = ({
   lastStep,
   steps,
   fiatCurrency,
-  onContinue
+  onContinue,
+  initialValues
 }) => {
   const classes = useStyles()
 
@@ -219,12 +220,7 @@ const WizardStep = ({
           validateOnBlur={false}
           validateOnChange={false}
           onSubmit={onContinue}
-          initialValues={{
-            cassette1: '',
-            cassette2: '',
-            cassette3: '',
-            cassette4: ''
-          }}
+          initialValues={initialValues}
           enableReinitialize
           validationSchema={steps[step - 1].schema}>
           {({ values, errors }) => (
