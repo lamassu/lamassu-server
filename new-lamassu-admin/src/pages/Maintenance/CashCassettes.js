@@ -276,8 +276,8 @@ const CashCassettes = () => {
         iconClassName={classes.listViewButton}
         className={classes.tableWidth}>
         {!showHistory && (
-          <Box alignItems="center" justifyContent="end">
-            <Label1 className={classes.cashboxReset}>Cash box reset</Label1>
+          <Box alignItems="center" justifyContent="flex-end">
+            <Label1 className={classes.cashboxReset}>Cash box resets</Label1>
             <Box
               display="flex"
               alignItems="center"
@@ -340,13 +340,13 @@ const CashCassettes = () => {
       )}
       {editingSchema && (
         <Modal
-          title={'Cash box reset'}
+          title={'Cash box resets'}
           width={478}
           handleClose={() => setEditingSchema(null)}
           open={true}>
           <P className={classes.descriptions}>
-            Specify if you want your cash-in counts to be reset automatically or
-            manually.
+            We can automatically assume you emptied a bill validator's cash box
+            when the machine detects that it has been removed.
           </P>
           <RadioGroup
             name="set-automatic-reset"
@@ -356,8 +356,8 @@ const CashCassettes = () => {
             className={classes.radioButtons}
           />
           <P className={classes.descriptions}>
-            Choose this option if you want your cash-in cash box count to be
-            reset automatically when it is physically removed from the machine.
+            Assume the cash box is emptied whenever it's removed, creating a new
+            batch on the history screen and setting its current balance to zero.
           </P>
           <RadioGroup
             name="set-manual-reset"
@@ -367,9 +367,9 @@ const CashCassettes = () => {
             className={classes.radioButtons}
           />
           <P className={classes.descriptions}>
-            Choose this option if you want to edit your cash-in counts manually
-            on Lamassu Admin, after you physically remove the bills from the
-            cash box.
+            Cash boxes won't be assumed emptied when removed, nor their counts
+            modified. Instead, to update the count and create a new batch,
+            you'll click the 'Edit' button on this panel.
           </P>
           <DialogActions className={classes.actions}>
             <Button onClick={() => saveCashboxOption(selectedRadio)}>
