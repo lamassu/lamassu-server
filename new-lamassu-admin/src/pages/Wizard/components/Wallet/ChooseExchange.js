@@ -38,7 +38,8 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it => !R.isNil(it) && !R.contains(it)(['mock-exchange'])
+const isConfigurable = it =>
+  !R.isNil(it) && !R.contains(it)(['mock-exchange', 'no-exchange'])
 
 const ChooseExchange = ({ data: currentData, addData }) => {
   const classes = useStyles()

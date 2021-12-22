@@ -48,7 +48,7 @@ const SessionManagement = () => {
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const loading = sessionsLoading && configLoading
+  const loading = sessionsLoading || configLoading
 
   const elements = [
     {
@@ -107,15 +107,14 @@ const SessionManagement = () => {
   ]
 
   return (
-    !loading && (
-      <>
-        <TitleSection title="Session Management" />
-        <DataTable
-          elements={elements}
-          data={R.path(['sessions'])(tknResponse)}
-        />
-      </>
-    )
+    <>
+      <TitleSection title="Session Management" />
+      <DataTable
+        loading={loading}
+        elements={elements}
+        data={R.path(['sessions'])(tknResponse)}
+      />
+    </>
   )
 }
 

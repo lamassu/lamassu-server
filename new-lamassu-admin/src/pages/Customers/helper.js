@@ -209,10 +209,41 @@ const entryType = {
   initialValues: { entryType: '' }
 }
 
+const mapKeys = pair => {
+  const [key, value] = pair
+  if (key === 'txCustomerPhotoPath' || key === 'frontCameraPath') {
+    return ['path', value]
+  }
+  if (key === 'txCustomerPhotoAt' || key === 'frontCameraAt') {
+    return ['date', value]
+  }
+  return pair
+}
+
+const addPhotoDir = R.map(it => {
+  const hasFrontCameraData = R.has('id')(it)
+  return hasFrontCameraData
+    ? { ...it, photoDir: 'operator-data/customersphotos' }
+    : { ...it, photoDir: 'front-camera-photo' }
+})
+
+const standardizeKeys = R.map(R.compose(R.fromPairs, R.map(mapKeys), R.toPairs))
+
+const filterByPhotoAvailable = R.filter(
+  tx => !R.isNil(tx.date) && !R.isNil(tx.path)
+)
+
+const formatPhotosData = R.compose(
+  filterByPhotoAvailable,
+  addPhotoDir,
+  standardizeKeys
+)
+
 export {
   getAuthorizedStatus,
   getFormattedPhone,
   getName,
   entryType,
-  customElements
+  customElements,
+  formatPhotosData
 }

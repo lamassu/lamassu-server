@@ -1,6 +1,7 @@
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import base64 from 'base-64'
+import { Form, Formik } from 'formik'
 import gql from 'graphql-tag'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -120,14 +121,20 @@ const Input2FAState = ({ state, dispatch }) => {
       <TL1 className={classes.info}>
         Enter your two-factor authentication code
       </TL1>
-      <CodeInput
-        name="2fa"
-        value={state.twoFAField}
-        onChange={handle2FAChange}
-        numInputs={6}
-        error={invalidToken}
-        shouldAutoFocus
-      />
+      {/* TODO: refactor the 2FA CodeInput to properly use Formik */}
+      <Formik onSubmit={() => {}} initialValues={{}}>
+        <Form>
+          <CodeInput
+            name="2fa"
+            value={state.twoFAField}
+            onChange={handle2FAChange}
+            numInputs={6}
+            error={invalidToken}
+            shouldAutoFocus
+          />
+          <button onClick={handleSubmit} className={classes.enterButton} />
+        </Form>
+      </Formik>
       <div className={classes.twofaFooter}>
         {errorMessage && <P className={classes.errorMessage}>{errorMessage}</P>}
         <Button onClick={handleSubmit} buttonClassName={classes.loginButton}>

@@ -28,6 +28,7 @@ const useStyles = makeStyles(styles)
 
 const Row = ({
   id,
+  index,
   elements,
   data,
   width,
@@ -48,9 +49,11 @@ const Row = ({
     [classes.row]: true,
     [classes.expanded]: expanded
   }
+
   return (
     <div className={classes.rowWrapper}>
-      <div className={classnames({ [classes.before]: expanded && id !== 0 })}>
+      <div
+        className={classnames({ [classes.before]: expanded && index !== 0 })}>
         <Tr
           size={size}
           className={classnames(trClasses)}
@@ -58,8 +61,9 @@ const Row = ({
             expandable && expandRow(id, data)
             onClick && onClick(data)
           }}
-          error={data.error}
-          errorMessage={data.errorMessage}>
+          error={data.error || data.hasError}
+          shouldShowError={false}
+          errorMessage={data.errorMessage || data.hasError}>
           {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
             <Td key={idx} {...props}>
               {view(data)}
@@ -142,6 +146,7 @@ const DataTable = ({
               width={width}
               size={rowSize}
               id={data[index].id ? data[index].id : index}
+              index={index}
               expWidth={expWidth}
               elements={elements}
               data={data[index]}

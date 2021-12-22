@@ -70,12 +70,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
 
   const tableElements = [
     {
-      header: 'Machine',
-      width: 160,
-      view: R.path(['machineName'])
-    },
-    {
-      width: 125,
+      width: 40,
       view: it => (
         <>
           {it.txClass === 'cashOut' ? (
@@ -85,6 +80,11 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
           )}
         </>
       )
+    },
+    {
+      header: 'Machine',
+      width: 160,
+      view: R.path(['machineName'])
     },
     {
       header: 'Transaction ID',

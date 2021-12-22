@@ -24,6 +24,7 @@ import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
 import CustomerNotes from './CustomerNotes'
+import CustomerPhotos from './CustomerPhotos'
 import styles from './CustomerProfile.styles'
 import {
   CustomerDetails,
@@ -31,7 +32,7 @@ import {
   CustomerSidebar,
   Wizard
 } from './components'
-import { getFormattedPhone, getName } from './helper'
+import { getFormattedPhone, getName, formatPhotosData } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -367,12 +368,24 @@ const CustomerProfile = memo(() => {
   const isCustomerData = clickedItem === 'customerData'
   const isOverview = clickedItem === 'overview'
   const isNotes = clickedItem === 'notes'
+  const isPhotos = clickedItem === 'photos'
 
-  const loading = customerLoading && configLoading
+  const frontCameraData = R.pick(['frontCameraPath', 'frontCameraAt'])(
+    customerData
+  )
+  const txPhotosData =
+    sortedTransactions &&
+    R.map(R.pick(['id', 'txCustomerPhotoPath', 'txCustomerPhotoAt']))(
+      sortedTransactions
+    )
+
+  const photosData = formatPhotosData(R.append(frontCameraData, txPhotosData))
+
+  const loading = customerLoading || configLoading
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const classes = useStyles({ blocked })
+  const classes = useStyles()
 
   return (
     <>
@@ -406,29 +419,26 @@ const CustomerProfile = memo(() => {
                 />
               </div>
               <Label1 className={classes.actionLabel}>Actions</Label1>
-              <div>
+              <div className={classes.actionBar}>
                 <ActionButton
-                  className={classes.customerManualDataEntry}
+                  className={classes.actionButton}
                   color="primary"
                   Icon={DataIcon}
                   InverseIcon={DataReversedIcon}
                   onClick={() => setWizard(true)}>
                   {`Manual data entry`}
                 </ActionButton>
-              </div>
-              <div>
                 <ActionButton
-                  className={classes.customerDiscount}
+                  className={classes.actionButton}
                   color="primary"
                   Icon={Discount}
                   InverseIcon={DiscountReversedIcon}
                   onClick={() => {}}>
                   {`Add individual discount`}
                 </ActionButton>
-              </div>
-              <div>
                 {isSuspended && (
                   <ActionButton
+                    className={classes.actionButton}
                     color="primary"
                     Icon={AuthorizeIcon}
                     InverseIcon={AuthorizeReversedIcon}
@@ -442,7 +452,7 @@ const CustomerProfile = memo(() => {
                 )}
                 <ActionButton
                   color="primary"
-                  className={classes.customerBlock}
+                  className={classes.actionButton}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
@@ -458,7 +468,7 @@ const CustomerProfile = memo(() => {
                 </ActionButton>
                 <ActionButton
                   color="primary"
-                  className={classes.retrieveInformation}
+                  className={classes.actionButton}
                   Icon={blocked ? AuthorizeIcon : BlockIcon}
                   InverseIcon={
                     blocked ? AuthorizeReversedIcon : BlockReversedIcon
@@ -488,6 +498,7 @@ const CustomerProfile = memo(() => {
                 justifyContent="space-between">
                 <CustomerDetails
                   customer={customerData}
+                  photosData={photosData}
                   locale={locale}
                   setShowCompliance={() => setShowCompliance(!showCompliance)}
                 />
@@ -522,6 +533,11 @@ const CustomerProfile = memo(() => {
                 deleteNote={deleteCustomerNote}
                 editNote={editCustomerNote}
                 timezone={timezone}></CustomerNotes>
+            </div>
+          )}
+          {isPhotos && (
+            <div>
+              <CustomerPhotos photosData={photosData} />
             </div>
           )}
         </div>

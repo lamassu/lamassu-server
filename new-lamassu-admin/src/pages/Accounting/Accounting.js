@@ -114,7 +114,7 @@ const Accounting = () => {
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const loading = operatorLoading && configLoading
+  const loading = operatorLoading || configLoading
 
   const operatorData = R.path(['operatorByUsername'], opData)
 
@@ -170,26 +170,22 @@ const Accounting = () => {
   ]
 
   return (
-    !loading && (
-      <>
-        <TitleSection title="Accounting" />
-        <Assets
-          balance={
-            operatorData.fiatBalances[operatorData.preferredFiatCurrency]
-          }
-          hedgingReserve={operatorData.hedgingReserve ?? 0}
-          currency={operatorData.preferredFiatCurrency}
-        />
-        <H4 className={classes.tableTitle}>Fiat balance history</H4>
-        <DataTable
-          loading={false}
-          emptyText="No transactions so far"
-          elements={elements}
-          data={operatorData.fundings ?? []}
-          rowSize="sm"
-        />
-      </>
-    )
+    <>
+      <TitleSection title="Accounting" />
+      <Assets
+        balance={operatorData.fiatBalances[operatorData.preferredFiatCurrency]}
+        hedgingReserve={operatorData.hedgingReserve ?? 0}
+        currency={operatorData.preferredFiatCurrency}
+      />
+      <H4 className={classes.tableTitle}>Fiat balance history</H4>
+      <DataTable
+        loading={loading}
+        emptyText="No transactions so far"
+        elements={elements}
+        data={operatorData.fundings ?? []}
+        rowSize="sm"
+      />
+    </>
   )
 }
 
