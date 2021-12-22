@@ -477,21 +477,43 @@ const requirementSchema = Yup.object()
         otherwise: Yup.number()
           .nullable()
           .transform(() => null)
+      }),
+      customInfoRequestId: Yup.string().when('requirement', {
+        is: value => value === 'custom',
+        then: Yup.string(),
+        otherwise: Yup.string()
+          .nullable()
+          .transform(() => '')
       })
     }).required()
   })
   .test(({ requirement }, context) => {
-    const requirementValidator = requirement =>
-      requirement.requirement === 'suspend'
-        ? requirement.suspensionDays > 0
-        : true
+    const requirementValidator = (requirement, type) => {
+      switch (type) {
+        case 'suspend':
+          return requirement.requirement === type
+            ? requirement.suspensionDays > 0
+            : true
+        case 'custom':
+          return requirement.requirement === type
+            ? !R.isNil(requirement.customInfoRequestId)
+            : true
+        default:
+          return true
+      }
+    }
 
-    if (requirement && requirementValidator(requirement)) return
+    if (requirement && !requirementValidator(requirement, 'suspend'))
+      return context.createError({
+        path: 'requirement',
+        message: 'Suspension days must be greater than 0'
+      })
 
-    return context.createError({
-      path: 'requirement',
-      message: 'Suspension days must be greater than 0'
-    })
+    if (requirement && !requirementValidator(requirement, 'custom'))
+      return context.createError({
+        path: 'requirement',
+        message: 'You must select an item'
+      })
   })
 
 const requirementOptions = [
@@ -505,6 +527,18 @@ const requirementOptions = [
   { display: 'Suspend', code: 'suspend' },
   { display: 'Block', code: 'block' }
 ]
+
+const hasRequirementError = (errors, touched, values) =>
+  !!errors.requirement &&
+  !!touched.requirement?.suspensionDays &&
+  (!values.requirement?.suspensionDays ||
+    values.requirement?.suspensionDays < 0)
+
+const hasCustomRequirementError = (errors, touched, values) =>
+  !!errors.requirement &&
+  !!touched.requirement?.customInfoRequestId &&
+  (!values.requirement?.customInfoRequestId ||
+    !R.isNil(values.requirement?.customInfoRequestId))
 
 const Requirement = ({ customInfoRequests }) => {
   const classes = useStyles()
@@ -524,12 +558,6 @@ const Requirement = ({ customInfoRequests }) => {
       display: it.customRequest.name
     }))
 
-  const hasRequirementError =
-    !!errors.requirement &&
-    !!touched.requirement?.suspensionDays &&
-    (!values.requirement?.suspensionDays ||
-      values.requirement?.suspensionDays < 0)
-
   const enableCustomRequirement = customInfoRequests?.length > 0
   const customInfoOption = {
     display: 'Custom information requirement',
@@ -540,7 +568,9 @@ const Requirement = ({ customInfoRequests }) => {
     : [...requirementOptions, { ...customInfoOption, disabled: true }]
   const titleClass = {
     [classes.error]:
-      (!!errors.requirement && !isSuspend) || (isSuspend && hasRequirementError)
+      (!!errors.requirement && !isSuspend && !isCustom) ||
+      (isSuspend && hasRequirementError(errors, touched, values)) ||
+      (isCustom && hasCustomRequirementError(errors, touched, values))
   }
 
   return (
@@ -569,7 +599,7 @@ const Requirement = ({ customInfoRequests }) => {
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
-          error={hasRequirementError}
+          error={hasRequirementError(errors, touched, values)}
         />
       )}
       {isCustom && (
@@ -592,6 +622,8 @@ const requirements = customInfoRequests => ({
   options: requirementOptions,
   Component: Requirement,
   props: { customInfoRequests },
+  hasRequirementError: hasRequirementError,
+  hasCustomRequirementError: hasCustomRequirementError,
   initialValues: {
     requirement: {
       requirement: '',
