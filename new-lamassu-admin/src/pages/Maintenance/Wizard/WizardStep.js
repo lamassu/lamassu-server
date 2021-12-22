@@ -139,6 +139,11 @@ const WizardStep = ({
     R.clamp(0, 100)
   )
 
+  const textInput = React.useRef(null)
+  React.useEffect(() => {
+    textInput.current?.children[0].children[0]?.focus()
+  }, [step])
+
   return (
     <div className={classes.content}>
       <div className={classes.titleDiv}>
@@ -277,7 +282,7 @@ const WizardStep = ({
                         placeholder={originalCassetteCount.toString()}
                         name={cassetteField}
                         className={classes.cashboxBills}
-                        autoFocus
+                        innerRef={textInput}
                       />
                       <P>
                         {cassetteDenomination} {fiatCurrency} bills loaded
