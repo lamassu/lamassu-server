@@ -169,7 +169,7 @@ const WizardStep = ({
                       classes.verticalAlign,
                       classes.fullWidth
                     )}>
-                    <H4 noMargin>Did you empty the cash-in box?</H4>
+                    <H4 noMargin>Did you empty the cash box?</H4>
                     <Field
                       component={RadioGroup}
                       name="wasCashboxEmptied"
@@ -189,8 +189,8 @@ const WizardStep = ({
                       <P>Since previous update</P>
                       <Tooltip width={215}>
                         <P>
-                          Number of bills inside the cashbox, since the last
-                          cashbox changes.
+                          Number of bills inside the cash box, since the last
+                          cash box changes.
                         </P>
                       </Tooltip>
                     </div>
@@ -251,7 +251,7 @@ const WizardStep = ({
                         <H4
                           className={classes.cassetteFormTitleContent}
                           noMargin>
-                          Cash-out {step - 1} (dispenser)
+                          Cash cassette {step - 1} (dispenser)
                         </H4>
                       </div>
                       <Cashbox

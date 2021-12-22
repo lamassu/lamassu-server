@@ -94,25 +94,29 @@ const CashboxHistory = ({ machines, currency }) => {
     (ret, i) =>
       R.pipe(
         R.assoc(
-          `cash-out-${i}-refill`,
+          `cash-cassette-${i}-refill`,
           <>
             <TxOutIcon />
-            <span className={classes.operationType}>Cash-out {i} refill</span>
+            <span className={classes.operationType}>
+              Cash cassette {i} refill
+            </span>
           </>
         ),
         R.assoc(
-          `cash-out-${i}-empty`,
+          `cash-cassette-${i}-empty`,
           <>
             <TxOutIcon />
-            <span className={classes.operationType}>Cash-out {i} emptied</span>
+            <span className={classes.operationType}>
+              Cash cassette {i} emptied
+            </span>
           </>
         )
       )(ret),
     {
-      'cash-in-empty': (
+      'cash-box-empty': (
         <>
           <TxInIcon />
-          <span className={classes.operationType}>Cash-in emptied</span>
+          <span className={classes.operationType}>Cash box emptied</span>
         </>
       )
     },

@@ -31,7 +31,7 @@ const useStyles = makeStyles(styles)
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   cashbox: Yup.number()
-    .label('Cashbox')
+    .label('Cash box')
     .required()
     .integer()
     .min(0)
@@ -204,7 +204,7 @@ const CashCassettes = () => {
     },
     {
       name: 'cashbox',
-      header: 'Cash-in',
+      header: 'Cash box',
       width: maxNumberOfCassettes > 2 ? 140 : 280,
       view: value => (
         <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
@@ -270,9 +270,9 @@ const CashCassettes = () => {
   return (
     <>
       <TitleSection
-        title="Cash Cassettes"
+        title="Cash Boxes & Cassettes"
         button={{
-          text: 'Cashbox history',
+          text: 'Cash box history',
           icon: HistoryIcon,
           inverseIcon: ReverseHistoryIcon,
           toggle: setShowHistory
@@ -281,7 +281,7 @@ const CashCassettes = () => {
         className={classes.tableWidth}>
         {!showHistory && (
           <Box alignItems="center" justifyContent="flex-end">
-            <Label1 className={classes.cashboxReset}>Cashbox reset</Label1>
+            <Label1 className={classes.cashboxReset}>Cash box resets</Label1>
             <Box
               display="flex"
               alignItems="center"
@@ -344,13 +344,13 @@ const CashCassettes = () => {
       )}
       {editingSchema && (
         <Modal
-          title={'Cashbox reset'}
+          title={'Cash box resets'}
           width={478}
           handleClose={() => setEditingSchema(null)}
           open={true}>
           <P className={classes.descriptions}>
-            Specify if you want your cash-in counts to be reset automatically or
-            manually.
+            We can automatically assume you emptied a bill validator's cash box
+            when the machine detects that it has been removed.
           </P>
           <RadioGroup
             name="set-automatic-reset"
@@ -360,8 +360,8 @@ const CashCassettes = () => {
             className={classes.radioButtons}
           />
           <P className={classes.descriptions}>
-            Choose this option if you want your cash-in cashbox count to be
-            reset automatically when it is physically removed from the machine.
+            Assume the cash box is emptied whenever it's removed, creating a new
+            batch on the history screen and setting its current balance to zero.
           </P>
           <RadioGroup
             name="set-manual-reset"
@@ -371,9 +371,9 @@ const CashCassettes = () => {
             className={classes.radioButtons}
           />
           <P className={classes.descriptions}>
-            Choose this option if you want to edit your cash-in counts manually
-            on Lamassu Admin, after you physically remove the bills from the
-            cashbox.
+            Cash boxes won't be assumed emptied when removed, nor their counts
+            modified. Instead, to update the count and create a new batch,
+            you'll click the 'Edit' button on this panel.
           </P>
           <DialogActions className={classes.actions}>
             <Button onClick={() => saveCashboxOption(selectedRadio)}>
