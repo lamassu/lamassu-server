@@ -29,7 +29,8 @@ import { EditableCard } from './components'
 import {
   customerDataElements,
   customerDataSchemas,
-  formatDates
+  formatDates,
+  getFormattedPhone
 } from './helper.js'
 
 const useStyles = makeStyles(styles)
@@ -62,6 +63,7 @@ const Photo = ({ show, src }) => {
 }
 
 const CustomerData = ({
+  locale,
   customer,
   updateCustomer,
   replacePhoto,
@@ -96,6 +98,9 @@ const CustomerData = ({
     R.path(['customInfoRequests'])(customer) ?? []
   )
 
+  const phone = R.path(['phone'])(customer)
+  const smsData = R.path(['subscriberInfo'])(customer)
+
   const isEven = elem => elem % 2 === 0
 
   const getVisibleCards = _.filter(elem => elem.isAvailable)
@@ -126,6 +131,9 @@ const CustomerData = ({
     },
     idCardPhoto: {
       idCardPhoto: null
+    },
+    smsData: {
+      phoneNumber: getFormattedPhone(phone, locale.country)
     }
   }
 
@@ -148,12 +156,16 @@ const CustomerData = ({
       isAvailable: !_.isNil(idData)
     },
     {
-      title: 'SMS Confirmation',
+      fields: customerDataElements.smsData,
+      title: 'SMS data',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
       authorize: () => {},
       reject: () => {},
       save: () => {},
-      isAvailable: false
+      validationSchema: customerDataSchemas.smsData,
+      initialValues: initialValues.smsData,
+      isAvailable: !_.isNil(phone),
+      isDeletable: !_.isNil(smsData) || !_.isEmpty(smsData.result)
     },
     {
       title: 'Name',

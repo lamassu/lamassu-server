@@ -117,7 +117,8 @@ const EditableCard = ({
   children,
   validationSchema,
   initialValues,
-  deleteEditedData
+  deleteEditedData,
+  isDeletable
 }) => {
   const classes = useStyles()
 

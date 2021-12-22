@@ -397,7 +397,12 @@ const customerDataElements = {
     }
   ],
   idCardPhoto: [{ name: 'idCardPhoto' }],
-  frontCamera: [{ name: 'frontCamera' }]
+  frontCamera: [{ name: 'frontCamera' }],
+  smsData: {
+    name: 'phoneNumber',
+    label: 'Phone number',
+    component: TextInput
+  }
 }
 
 const customerDataSchemas = {
@@ -426,6 +431,9 @@ const customerDataSchemas = {
   }),
   frontCamera: Yup.object().shape({
     frontCamera: Yup.mixed().required()
+  }),
+  smsData: Yup.object().shape({
+    phoneNumber: Yup.mixed().required()
   })
 }
 

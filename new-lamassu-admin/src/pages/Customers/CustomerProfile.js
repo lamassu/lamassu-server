@@ -69,6 +69,7 @@ const GET_CUSTOMER = gql`
       daysSuspended
       isSuspended
       isTestCustomer
+      subscriberInfo
       customFields {
         id
         label
@@ -628,6 +629,7 @@ const CustomerProfile = memo(() => {
           {isCustomerData && (
             <div>
               <CustomerData
+                locale={locale}
                 customer={customerData}
                 updateCustomer={updateCustomer}
                 replacePhoto={replacePhoto}
