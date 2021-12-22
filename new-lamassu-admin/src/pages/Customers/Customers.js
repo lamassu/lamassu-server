@@ -51,6 +51,9 @@ const GET_CUSTOMERS = gql`
 
 const useBaseStyles = makeStyles(baseStyles)
 
+const getFiltersObj = filters =>
+  R.reduce((s, f) => ({ ...s, [f.type]: f.value }), {}, filters)
+
 const Customers = () => {
   const baseStyles = useBaseStyles()
   const history = useHistory()
@@ -82,12 +85,7 @@ const Customers = () => {
   )
 
   const onFilterChange = filters => {
-    const filtersObject = R.compose(
-      R.mergeAll,
-      R.map(f => ({
-        [f.type]: f.value
-      }))
-    )(filters)
+    const filtersObject = getFiltersObj(filters)
 
     setFilters(filters)
 
@@ -101,10 +99,38 @@ const Customers = () => {
     refetch && refetch()
   }
 
-  const onFilterDelete = filter =>
-    setFilters(
-      R.filter(f => !R.whereEq(R.pick(['type', 'value'], f), filter))(filters)
-    )
+  const onFilterDelete = filter => {
+    const newFilters = R.filter(
+      f => !R.whereEq(R.pick(['type', 'value'], f), filter)
+    )(filters)
+
+    setFilters(newFilters)
+
+    const filtersObject = getFiltersObj(newFilters)
+
+    setVariables({
+      phone: filtersObject.phone,
+      name: filtersObject.name,
+      address: filtersObject.address,
+      id: filtersObject.id
+    })
+
+    refetch && refetch()
+  }
+
+  const deleteAllFilters = () => {
+    setFilters([])
+    const filtersObject = getFiltersObj([])
+
+    setVariables({
+      phone: filtersObject.phone,
+      name: filtersObject.name,
+      address: filtersObject.address,
+      id: filtersObject.id
+    })
+
+    refetch && refetch()
+  }
 
   const filterOptions = R.path(['customerFilters'])(filtersResponse)
 
@@ -131,9 +157,10 @@ const Customers = () => {
       />
       {filters.length > 0 && (
         <SearchFilter
+          entries={customersData.length}
           filters={filters}
           onFilterDelete={onFilterDelete}
-          setFilters={setFilters}
+          deleteAllFilters={deleteAllFilters}
         />
       )}
       <CustomersList
