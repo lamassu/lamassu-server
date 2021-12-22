@@ -62,6 +62,11 @@ const Graph = ({ data, timeFrame, timezone }) => {
     []
   )
 
+  const filterDay = useMemo(
+    x => (timeFrame === 'day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
+    [timeFrame]
+  )
+
   const getPastAndCurrentDayLabels = useCallback(d => {
     const currentDate = new Date(d)
     const currentDateDay = currentDate.getUTCDate()
@@ -213,12 +218,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
           g
             .append('g')
             .selectAll('line')
-            .data(
-              buildTicks(x.domain()).filter(x => {
-                if (timeFrame === 'day') return x.getUTCHours() === 0
-                return x.getUTCDate() === 1
-              })
-            )
+            .data(buildTicks(x.domain()).filter(filterDay))
             .join('line')
             .attr('class', 'dateSeparator')
             .attr('x1', d => 0.5 + x(d))
@@ -237,10 +237,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
 
           if (!separator) return
 
-          const breakpoint = buildTicks(x.domain()).filter(x => {
-            if (timeFrame === 'day') return x.getUTCHours() === 0
-            return x.getUTCDate() === 1
-          })
+          const breakpoint = buildTicks(x.domain()).filter(filterDay)
 
           const labels = getPastAndCurrentDayLabels(breakpoint)
 
@@ -261,10 +258,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
 
           if (!separator) return
 
-          const breakpoint = buildTicks(x.domain()).filter(x => {
-            if (timeFrame === 'day') return x.getUTCHours() === 0
-            return x.getUTCDate() === 1
-          })
+          const breakpoint = buildTicks(x.domain()).filter(filterDay)
 
           const labels = getPastAndCurrentDayLabels(breakpoint)
 
@@ -277,7 +271,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
             .text(labels.current)
         })
     },
-    [GRAPH_MARGIN, buildTicks, getPastAndCurrentDayLabels, x, y, timeFrame]
+    [GRAPH_MARGIN, buildTicks, getPastAndCurrentDayLabels, x, y, filterDay]
   )
 
   const formatTicksText = useCallback(
