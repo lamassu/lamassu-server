@@ -101,7 +101,7 @@ const Machines = () => {
               <Details data={machine} />
             </div>
             <div className={classes.detailItem}>
-              <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
+              <TL1 className={classes.subtitle}>{'Cash box & cassettes'}</TL1>
               <Cassettes
                 refetchData={refetch}
                 machine={machine}
