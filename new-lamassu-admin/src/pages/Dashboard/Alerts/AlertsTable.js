@@ -7,8 +7,8 @@ import { useHistory } from 'react-router-dom'
 
 import { P } from 'src/components/typography/index'
 import { ReactComponent as Wrench } from 'src/styling/icons/action/wrench/zodiac.svg'
-import { ReactComponent as LinkIcon } from 'src/styling/icons/button/link/zodiac.svg'
 import { ReactComponent as CashBoxEmpty } from 'src/styling/icons/cassettes/cashbox-empty.svg'
+import { ReactComponent as AlertLinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/tomato.svg'
 
 import styles from './Alerts.styles'
@@ -49,7 +49,7 @@ const AlertsTable = ({ numToRender, alerts, machines }) => {
               <Wrench style={{ height: 23, width: 23, marginRight: 8 }} />
             )}
             <P className={classes.listItemText}>{alertMessage(alert)}</P>
-            <LinkIcon
+            <AlertLinkIcon
               className={classes.linkIcon}
               onClick={() => history.push(links[alert.type] || '/dashboard')}
             />
