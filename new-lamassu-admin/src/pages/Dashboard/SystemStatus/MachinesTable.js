@@ -107,17 +107,17 @@ const MachinesTable = ({ machines = [], numToRender }) => {
                   onClick={() => redirect(machine)}
                   className={classnames(classes.row)}
                   key={machine.deviceId + idx}>
-                  <StyledCell
-                    align="left"
-                    className={classes.machineNameWrapper}>
-                    <TL2>{machine.name}</TL2>
-                    <MachineLinkIcon
-                      className={classnames(
-                        classes.machineRedirectIcon,
-                        classes.clickableRow
-                      )}
-                      onClick={() => redirect(machine)}
-                    />
+                  <StyledCell align="left">
+                    <div className={classes.machineNameWrapper}>
+                      <TL2>{machine.name}</TL2>
+                      <MachineLinkIcon
+                        className={classnames(
+                          classes.machineRedirectIcon,
+                          classes.clickableRow
+                        )}
+                        onClick={() => redirect(machine)}
+                      />
+                    </div>
                   </StyledCell>
                   <StyledCell>
                     <Status status={machine.statuses[0]} />
