@@ -212,7 +212,9 @@ const Funding = () => {
               <div className={classes.addressWrapper}>
                 <div className={classes.mono}>
                   <strong>
-                    <CopyToClipboard buttonClassname={classes.copyToClipboard}>
+                    <CopyToClipboard
+                      buttonClassname={classes.copyToClipboard}
+                      key={selected.cryptoCode}>
                       {formatAddress(
                         selected.cryptoCode,
                         selected.fundingAddress

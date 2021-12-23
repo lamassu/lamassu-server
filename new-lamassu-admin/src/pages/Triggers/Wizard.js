@@ -183,10 +183,10 @@ const InfoPanel = ({ step, config = {}, liveValues = {}, currency }) => {
   return (
     <>
       <H5 className={classes.infoTitle}>Trigger overview so far</H5>
-      <Info3 noMargin className={classes.infoText}>
+      <Info3 noMargin>
         {oldText}
         {step !== 1 && ', '}
-        {newText}
+        <span className={classes.infoCurrentText}>{newText}</span>
         {!isLastStep && '...'}
       </Info3>
     </>
