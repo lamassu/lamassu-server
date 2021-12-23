@@ -1,3 +1,5 @@
+import { makeStyles } from '@material-ui/core'
+import classnames from 'classnames'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 
@@ -10,6 +12,14 @@ import {
 import { startCase } from 'src/utils/string'
 
 import TableCtx from './Context'
+
+const styles = {
+  orderedBySpan: {
+    whiteSpace: 'nowrap'
+  }
+}
+
+const useStyles = makeStyles(styles)
 
 const groupSecondHeader = elements => {
   const [toSHeader, noSHeader] = R.partition(R.has('doubleHeader'))(elements)
@@ -31,6 +41,7 @@ const groupSecondHeader = elements => {
 }
 
 const Header = () => {
+  const classes = useStyles()
   const {
     elements,
     enableEdit,
@@ -61,12 +72,41 @@ const Header = () => {
   const mapElement = (
     { name, width = DEFAULT_COL_SIZE, header, textAlign },
     idx
-  ) => (
-    <Td header key={idx} width={width} textAlign={textAlign}>
-      {header || startCase(name)}{' '}
-      {!R.isNil(orderedBy) && R.equals(name, orderedBy.code) && '-'}
-    </Td>
-  )
+  ) => {
+    const orderClasses = classnames({
+      [classes.orderedBySpan]:
+        R.isNil(header) && !R.isNil(orderedBy) && R.equals(name, orderedBy.code)
+    })
+
+    const attachOrderedByToComplexHeader = header => {
+      const cloneHeader = R.clone(header)
+      const children = R.path(['props', 'children'], cloneHeader)
+      const spanChild = R.find(it => R.equals(it.type, 'span'), children)
+
+      if (!R.isNil(orderedBy) && R.equals(name, orderedBy.code)) {
+        try {
+          spanChild.props.children = R.append(' -', spanChild.props.children)
+          return cloneHeader
+        } catch (e) {
+          return header
+        }
+      }
+      return header
+    }
+
+    return (
+      <Td header key={idx} width={width} textAlign={textAlign}>
+        {!R.isNil(header) ? (
+          <>{attachOrderedByToComplexHeader(header) ?? header}</>
+        ) : (
+          <span className={orderClasses}>
+            {startCase(name)}{' '}
+            {!R.isNil(orderedBy) && R.equals(name, orderedBy.code) && '-'}
+          </span>
+        )}
+      </Td>
+    )
+  }
 
   const [innerElements, HeaderElement] = groupSecondHeader(elements)
 
