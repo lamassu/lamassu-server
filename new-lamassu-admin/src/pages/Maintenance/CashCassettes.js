@@ -63,7 +63,7 @@ const ValidationSchema = Yup.object().shape({
 })
 
 const GET_MACHINES_AND_CONFIG = gql`
-  query getData {
+  query getData($billFilters: JSONObject) {
     machines {
       name
       id: deviceId
@@ -75,7 +75,7 @@ const GET_MACHINES_AND_CONFIG = gql`
       numberOfCassettes
     }
     config
-    looseBills {
+    bills(filters: $billFilters) {
       id
       fiat
       created
@@ -125,7 +125,13 @@ const CashCassettes = () => {
   const [editingSchema, setEditingSchema] = useState(null)
   const [selectedRadio, setSelectedRadio] = useState(null)
 
-  const { data, loading: dataLoading } = useQuery(GET_MACHINES_AND_CONFIG)
+  const { data, loading: dataLoading } = useQuery(GET_MACHINES_AND_CONFIG, {
+    variables: {
+      billFilters: {
+        batch: 'none'
+      }
+    }
+  })
   const [wizard, setWizard] = useState(false)
   const [machineId, setMachineId] = useState('')
 
@@ -140,11 +146,9 @@ const CashCassettes = () => {
     refetchQueries: () => ['getData']
   })
 
-  const bills = R.groupBy(bill => bill.deviceId)(
-    R.path(['looseBills'])(data) ?? []
-  )
+  const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
-    R.map(R.prop('deviceId'))(R.path(['looseBills'])(data) ?? [])
+    R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
   )
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
@@ -209,7 +213,7 @@ const CashCassettes = () => {
         <CashIn
           currency={{ code: fiatCurrency }}
           notes={value}
-          total={R.sum(R.map(it => it.fiat, bills[id]))}
+          total={R.sum(R.map(it => it.fiat, bills[id] ?? []))}
         />
       ),
       input: NumberInput,
@@ -331,7 +335,7 @@ const CashCassettes = () => {
           currencyCode={fiatCurrency}
           machines={machines}
           config={config}
-          bills={bills}
+          bills={R.path(['bills'])(data)}
           deviceIds={deviceIds}
         />
         {wizard && (

@@ -20,7 +20,7 @@ import styles from './Machines.styles'
 const useStyles = makeStyles(styles)
 
 const GET_INFO = gql`
-  query getMachine($deviceId: ID!) {
+  query getMachine($deviceId: ID!, $billFilters: JSONObject) {
     machine(deviceId: $deviceId) {
       name
       deviceId
@@ -46,7 +46,7 @@ const GET_INFO = gql`
         note
       }
     }
-    looseBillsByMachine(deviceId: $deviceId) {
+    bills(filters: $billFilters) {
       id
       fiat
       deviceId
@@ -62,7 +62,11 @@ const Machines = () => {
   const location = useLocation()
   const { data, loading, refetch } = useQuery(GET_INFO, {
     variables: {
-      deviceId: getMachineID(location.pathname)
+      deviceId: getMachineID(location.pathname),
+      billFilters: {
+        deviceId: getMachineID(location.pathname),
+        batch: 'none'
+      }
     }
   })
 
@@ -72,7 +76,7 @@ const Machines = () => {
 
   const machine = R.path(['machine'])(data) ?? {}
   const config = R.path(['config'])(data) ?? {}
-  const bills = R.path(['looseBillsByMachine'])(data) ?? []
+  const bills = R.path(['bills'])(data) ?? []
 
   const machineName = R.path(['name'])(machine) ?? null
   const machineID = R.path(['deviceId'])(machine) ?? null
