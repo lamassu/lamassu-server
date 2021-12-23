@@ -8,11 +8,10 @@ import { java, neon, white } from 'src/styling/variables'
 const styles = {
   wrapper: {
     display: 'flex',
-    height: 130,
-    marginTop: -8
+    height: 142
   },
   percentageBox: {
-    height: 130,
+    height: 142,
     borderRadius: 4,
     display: 'flex',
     alignItems: 'center',
@@ -33,11 +32,11 @@ const styles = {
     borderRadius: 2
   },
   inWidth: {
-    width: value => `${value}%`
+    width: value => `${value}%`,
+    marginRight: value => (value === 100 ? 0 : 4)
   },
   outWidth: {
-    width: value => `${100 - value}%`,
-    marginRight: 4
+    width: value => `${100 - value}%`
   }
 }
 
@@ -62,18 +61,18 @@ const PercentageChart = ({ cashIn, cashOut }) => {
       <div
         className={classnames(
           percentageClasses,
-          classes.outColor,
-          classes.outWidth
-        )}>
-        {buildPercentageView(100 - value, 'cashOut')}
-      </div>
-      <div
-        className={classnames(
-          percentageClasses,
           classes.inColor,
           classes.inWidth
         )}>
         {buildPercentageView(value, 'cashIn')}
+      </div>
+      <div
+        className={classnames(
+          percentageClasses,
+          classes.outColor,
+          classes.outWidth
+        )}>
+        {buildPercentageView(100 - value, 'cashOut')}
       </div>
     </div>
   )

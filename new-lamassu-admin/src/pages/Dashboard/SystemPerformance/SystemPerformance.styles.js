@@ -1,5 +1,6 @@
 import {
   offColor,
+  offDarkColor,
   spacer,
   primaryColor,
   fontSize3,
@@ -7,8 +8,6 @@ import {
   fontColor,
   spring4,
   tomato,
-  java,
-  neon,
   comet
 } from 'src/styling/variables'
 
@@ -67,12 +66,6 @@ const styles = {
   navContainer: {
     display: 'flex'
   },
-  profitLabel: {
-    fontSize: fontSize3,
-    fontFamily: fontSecondary,
-    fontWeight: 700,
-    color: fontColor
-  },
   percentUp: {
     fontSize: fontSize3,
     fontFamily: fontSecondary,
@@ -96,34 +89,14 @@ const styles = {
   profitContainer: {
     display: 'flex',
     justifyContent: 'space-between',
-    margin: '0 26px -30px 16px',
+    margin: '23px 26px -30px 16px',
     position: 'relative'
   },
-  gridContainer: {
-    marginTop: 30,
-    height: 225
-  },
-  inSquare: {
-    width: 8,
-    height: 8,
-    borderRadius: 2,
-    marginTop: 18,
-    marginRight: 4,
-    backgroundColor: java
-  },
-  outSquare: {
-    width: 8,
-    height: 8,
-    borderRadius: 2,
-    marginTop: 18,
-    marginRight: 4,
-    backgroundColor: neon
-  },
-  directionLabelContainer: {
-    display: 'flex'
-  },
-  dirLabContMargin: {
-    marginRight: 20
+  profitLabel: {
+    fontSize: fontSize3,
+    fontFamily: fontSecondary,
+    fontWeight: 700,
+    color: fontColor
   },
   directionIcon: {
     width: 16,
@@ -131,12 +104,50 @@ const styles = {
     marginBottom: -2,
     marginRight: 4
   },
-  labelMargin: {
-    marginBottom: 20,
-    marginRight: 32
-  },
   emptyTransactions: {
     paddingTop: 40
+  },
+  commissionProfitTitle: {
+    marginBottom: 16
+  },
+  graphHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16
+  },
+  labelWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    '& > div': {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: 15,
+      '&:first-child': {
+        marginLeft: 0
+      },
+      '& > p': {
+        marginLeft: 8
+      }
+    }
+  },
+  txGraphContainer: {
+    height: 300,
+    marginTop: 30
+  },
+  commissionsGraphContainer: {
+    height: 250,
+    marginTop: 30
+  },
+  verticalLine: {
+    height: 15,
+    width: 1,
+    backgroundColor: offDarkColor,
+    marginLeft: 31,
+    marginRight: 16
   }
 }
 

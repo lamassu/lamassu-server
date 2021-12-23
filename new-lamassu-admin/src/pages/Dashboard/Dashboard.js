@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
-import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -13,6 +12,7 @@ import { H1, Info2, TL2, Label1 } from 'src/components/typography'
 import AddMachine from 'src/pages/AddMachine'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { errorColor } from 'src/styling/variables'
 
 import styles from './Dashboard.styles'
 import Footer from './Footer'
@@ -46,20 +46,20 @@ const Dashboard = () => {
       <>
         <TitleSection title="Dashboard">
           <div className={classes.headerLabels}>
-            <>
-              <div
-                className={classnames(
-                  classes.headerLabelContainer,
-                  classes.headerLabelContainerMargin
-                )}>
-                <TxOutIcon />
-                <span className={classes.headerLabelSpan}>Cash-out</span>
-              </div>
-              <div className={classes.headerLabelContainer}>
-                <TxInIcon />
-                <span className={classes.headerLabelSpan}>Cash-in</span>
-              </div>
-            </>
+            <div>
+              <TxInIcon />
+              <span>Cash-in</span>
+            </div>
+            <div>
+              <TxOutIcon />
+              <span>Cash-out</span>
+            </div>
+            <div>
+              <svg width={12} height={12}>
+                <rect width={12} height={12} rx={3} fill={errorColor} />
+              </svg>
+              <span>Action Required</span>
+            </div>
           </div>
         </TitleSection>
         <div className={classes.root}>

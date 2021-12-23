@@ -1,197 +1,357 @@
+import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
-import { add } from 'date-fns/fp'
-import React, { useEffect, useRef, useCallback } from 'react'
+import { getTimezoneOffset } from 'date-fns-tz'
+import { add, format, startOfWeek, startOfYear } from 'date-fns/fp'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
-import { backgroundColor, java, neon } from 'src/styling/variables'
-import { formatDate, toUtc } from 'src/utils/timezones'
+import {
+  java,
+  neon,
+  subheaderDarkColor,
+  offColor,
+  fontSecondary,
+  backgroundColor
+} from 'src/styling/variables'
+import { MINUTE, DAY, WEEK, MONTH } from 'src/utils/time'
 
-const RefScatterplot = ({ data: realData, timeFrame, timezone }) => {
-  const svgRef = useRef()
-  const drawGraph = useCallback(() => {
-    const svg = d3.select(svgRef.current)
-    const margin = { top: 25, right: 0, bottom: 25, left: 15 }
-    const width = 555 - margin.left - margin.right
-    const height = 150 - margin.top - margin.bottom
-    // finds maximum value for the Y axis. Minimum value is 100. If value is multiple of 1000, add 100
-    // (this is because the Y axis looks best with multiples of 100)
-    const findMaxY = () => {
-      if (realData.length === 0) return 100
-      const maxvalueTx =
-        100 * Math.ceil(d3.max(realData, t => parseFloat(t.fiat)) / 100)
-      const maxY = Math.max(100, maxvalueTx)
-      if (maxY % 1000 === 0) return maxY + 100
-      return maxY
-    }
+const Graph = ({ data, timeFrame, timezone }) => {
+  const ref = useRef(null)
 
-    const timeFormat = v => {
-      switch (timeFrame) {
-        case 'Week':
-          return d3.timeFormat('%a %d')(v)
-        case 'Month':
-          return d3.timeFormat('%b %d')(v)
-        default:
-          return formatDate(v, timezone, 'HH:mm')
+  const GRAPH_HEIGHT = 250
+  const GRAPH_WIDTH = 555
+  const GRAPH_MARGIN = useMemo(
+    () => ({
+      top: 20,
+      right: 0.5,
+      bottom: 27,
+      left: 43.5
+    }),
+    []
+  )
+
+  const offset = getTimezoneOffset(timezone)
+  const NOW = Date.now() + offset
+
+  const periodDomains = {
+    Day: [NOW - DAY, NOW],
+    Week: [NOW - WEEK, NOW],
+    Month: [NOW - MONTH, NOW]
+  }
+
+  const dataPoints = useMemo(
+    () => ({
+      Day: {
+        freq: 24,
+        step: 60 * 60 * 1000,
+        tick: d3.utcHour.every(4),
+        labelFormat: '%H:%M'
+      },
+      Week: {
+        freq: 7,
+        step: 24 * 60 * 60 * 1000,
+        tick: d3.utcDay.every(1),
+        labelFormat: '%a %d'
+      },
+      Month: {
+        freq: 30,
+        step: 24 * 60 * 60 * 1000,
+        tick: d3.utcDay.every(2),
+        labelFormat: '%d'
       }
-    }
+    }),
+    []
+  )
 
-    // changes values of arguments in some d3 function calls to make the graph labels look good according to the selected time frame
-    const findXAxisSettings = () => {
-      switch (timeFrame) {
-        case 'Week':
-          return {
-            nice: 7,
-            ticks: 7,
-            subtractDays: 7,
-            timeRange: [50, 500]
-          }
-        case 'Month':
-          return {
-            nice: 6,
-            ticks: 6,
-            subtractDays: 30,
-            timeRange: [50, 500]
-          }
-        default:
-          return {
-            nice: null,
-            ticks: 4,
-            subtractDays: 1,
-            timeRange: [50, 500]
-          }
+  const filterDay = useMemo(
+    x => (timeFrame === 'day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
+    [timeFrame]
+  )
+
+  const getPastAndCurrentDayLabels = useCallback(d => {
+    const currentDate = new Date(d)
+    const currentDateDay = currentDate.getUTCDate()
+    const currentDateWeekday = currentDate.getUTCDay()
+    const currentDateMonth = currentDate.getUTCMonth()
+
+    const previousDate = new Date(currentDate.getTime())
+    previousDate.setUTCDate(currentDateDay - 1)
+
+    const previousDateDay = previousDate.getUTCDate()
+    const previousDateWeekday = previousDate.getUTCDay()
+    const previousDateMonth = previousDate.getUTCMonth()
+
+    const daysOfWeek = Array.from(Array(7)).map((_, i) =>
+      format('EEE', add({ days: i }, startOfWeek(new Date())))
+    )
+
+    const months = Array.from(Array(12)).map((_, i) =>
+      format('LLL', add({ months: i }, startOfYear(new Date())))
+    )
+
+    return {
+      previous:
+        currentDateMonth !== previousDateMonth
+          ? months[previousDateMonth]
+          : `${daysOfWeek[previousDateWeekday]} ${previousDateDay}`,
+      current:
+        currentDateMonth !== previousDateMonth
+          ? months[currentDateMonth]
+          : `${daysOfWeek[currentDateWeekday]} ${currentDateDay}`
+    }
+  }, [])
+
+  const buildTicks = useCallback(
+    domain => {
+      const points = []
+
+      const roundDate = d => {
+        const step = dataPoints[timeFrame].step
+        return new Date(Math.ceil(d.valueOf() / step) * step)
       }
-    }
 
-    // sets width of the graph
-    svg.attr('width', width)
+      for (let i = 0; i <= dataPoints[timeFrame].freq; i++) {
+        const stepDate = new Date(NOW - i * dataPoints[timeFrame].step)
+        if (roundDate(stepDate) > domain[1]) continue
+        if (stepDate < domain[0]) continue
+        points.push(roundDate(stepDate))
+      }
 
-    // background color for the graph
-    svg
-      .append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', width)
-      .attr('height', height + margin.top)
-      .attr('fill', backgroundColor)
+      return points
+    },
+    [NOW, dataPoints, timeFrame]
+  )
 
-    // declare g variable where more svg components will be attached
-    const g = svg
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`)
+  const x = d3
+    .scaleUtc()
+    .domain(periodDomains[timeFrame])
+    .range([GRAPH_MARGIN.left, GRAPH_WIDTH - GRAPH_MARGIN.right])
 
-    // y axis range: round up to 100 highest data value, if rounds up to 1000, add 100.
-    // this keeps the vertical axis nice looking
-    const maxY = findMaxY()
-    const xAxisSettings = findXAxisSettings()
+  const y = d3
+    .scaleLinear()
+    .domain([
+      0,
+      (d3.max(data, d => new BigNumber(d.fiat).toNumber()) ?? 1000) * 1.05
+    ])
+    .nice()
+    .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
 
-    // y and x scales
-    const y = d3
-      .scaleLinear()
-      .range([height, 0])
-      .domain([0, maxY])
-      .nice(3)
-    const x = d3
-      .scaleTime()
-      .domain([
-        add({ days: -xAxisSettings.subtractDays }, new Date()).valueOf(),
-        new Date().valueOf()
-      ])
-      .range(xAxisSettings.timeRange)
-      .nice(xAxisSettings.nice)
+  const buildBackground = useCallback(
+    g => {
+      g.append('rect')
+        .attr('x', 0)
+        .attr('y', GRAPH_MARGIN.top)
+        .attr('width', GRAPH_WIDTH)
+        .attr('height', GRAPH_HEIGHT - GRAPH_MARGIN.top - GRAPH_MARGIN.bottom)
+        .attr('fill', backgroundColor)
+    },
+    [GRAPH_MARGIN]
+  )
 
-    const timeValue = s => {
-      const date = toUtc(s)
-      return x(date.valueOf())
-    }
+  const buildXAxis = useCallback(
+    g =>
+      g
+        .attr(
+          'transform',
+          `translate(0, ${GRAPH_HEIGHT - GRAPH_MARGIN.bottom})`
+        )
+        .call(
+          d3
+            .axisBottom(x)
+            .ticks(dataPoints[timeFrame].tick)
+            .tickFormat(d => {
+              return d3.timeFormat(dataPoints[timeFrame].labelFormat)(
+                d.getTime() + d.getTimezoneOffset() * MINUTE
+              )
+            })
+        )
+        .call(g => g.select('.domain').remove()),
+    [GRAPH_MARGIN, dataPoints, timeFrame, x]
+  )
 
-    // horizontal gridlines
-    const makeYGridlines = () => {
-      return d3.axisLeft(y).ticks(4)
-    }
-    g.append('g')
-      .style('color', '#eef1ff')
-      .call(
-        makeYGridlines()
-          .tickSize(-width)
-          .tickFormat('')
-      )
-      .call(g => g.select('.domain').remove())
+  const buildYAxis = useCallback(
+    g =>
+      g
+        .attr('transform', `translate(${GRAPH_MARGIN.left}, 0)`)
+        .call(d3.axisLeft(y).ticks(5))
+        .call(g => g.select('.domain').remove())
+        .selectAll('text')
+        .attr('dy', '-0.25rem'),
+    [GRAPH_MARGIN, y]
+  )
 
-    /* X AXIS */
-    // this one is for the labels at the bottom
-    g.append('g')
-      .attr('transform', 'translate(0,' + height + ')')
-      .style('font-size', '13px')
-      .style('color', '#5f668a')
-      .style('font-family', 'MuseoSans')
-      .style('margin-top', '11px')
-      .call(
-        d3
-          .axisBottom(x)
-          .ticks(xAxisSettings.ticks)
-          .tickSize(0)
-          .tickFormat(timeFormat)
-      )
-      .selectAll('text')
-      .attr('dy', '1.5em')
-    // this is for the x axis line. It is the same color as the horizontal grid lines
-    g.append('g')
-      .attr('transform', 'translate(0,' + height + ')')
-      .style('color', '#eef1ff')
-      .call(
-        d3
-          .axisBottom(x)
-          .ticks(6)
-          .tickSize(0)
-          .tickFormat('')
-      )
-      .selectAll('text')
-      .attr('dy', '1.5em')
+  const buildGrid = useCallback(
+    g => {
+      g.attr('stroke', subheaderDarkColor)
+        .attr('fill', subheaderDarkColor)
+        // Vertical lines
+        .call(g =>
+          g
+            .append('g')
+            .selectAll('line')
+            .data(buildTicks(x.domain()))
+            .join('line')
+            .attr('x1', d => 0.5 + x(d))
+            .attr('x2', d => 0.5 + x(d))
+            .attr('y1', GRAPH_MARGIN.top)
+            .attr('y2', GRAPH_HEIGHT - GRAPH_MARGIN.bottom)
+            .attr('stroke-width', 1)
+        )
+        // Horizontal lines
+        .call(g =>
+          g
+            .append('g')
+            .selectAll('line')
+            .data(
+              d3
+                .axisLeft(y)
+                .scale()
+                .ticks(5)
+            )
+            .join('line')
+            .attr('y1', d => 0.5 + y(d))
+            .attr('y2', d => 0.5 + y(d))
+            .attr('x1', GRAPH_MARGIN.left)
+            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
+        )
+        // Thick vertical lines
+        .call(g =>
+          g
+            .append('g')
+            .selectAll('line')
+            .data(buildTicks(x.domain()).filter(filterDay))
+            .join('line')
+            .attr('class', 'dateSeparator')
+            .attr('x1', d => 0.5 + x(d))
+            .attr('x2', d => 0.5 + x(d))
+            .attr('y1', GRAPH_MARGIN.top - 10)
+            .attr('y2', GRAPH_HEIGHT - GRAPH_MARGIN.bottom)
+            .attr('stroke-width', 2)
+            .join('text')
+        )
+        // Left side breakpoint label
+        .call(g => {
+          const separator = d3
+            ?.select('.dateSeparator')
+            ?.node()
+            ?.getBBox()
 
-    // Y axis
-    g.append('g')
-      .style('font-size', '13px')
-      .style('color', '#5f668a')
-      .style('font-family', 'MuseoSans')
-      .style('margin-top', '11px')
-      .call(
-        d3
-          .axisLeft(y)
-          .ticks(4)
-          .tickSize(0)
-      )
-      .call(g => g.select('.domain').remove())
-      .selectAll('text')
-      .attr('dy', '-0.40em')
-      .attr('dx', '3em')
+          if (!separator) return
 
-    // Append dots
-    const dots = svg
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`)
+          const breakpoint = buildTicks(x.domain()).filter(filterDay)
 
-    dots
-      .selectAll('circle')
-      .data(realData)
-      .enter()
-      .append('circle')
-      .attr('cx', d => timeValue(d.created))
-      .attr('cy', d => y(d.fiat))
-      .attr('r', 4)
-      .style('fill', d => (d.txClass === 'cashIn' ? java : neon))
-  }, [realData, timeFrame, timezone])
+          const labels = getPastAndCurrentDayLabels(breakpoint)
+
+          return g
+            .append('text')
+            .attr('x', separator.x - 7)
+            .attr('y', separator.y)
+            .attr('text-anchor', 'end')
+            .attr('dy', '.25em')
+            .text(labels.previous)
+        })
+        // Right side breakpoint label
+        .call(g => {
+          const separator = d3
+            ?.select('.dateSeparator')
+            ?.node()
+            ?.getBBox()
+
+          if (!separator) return
+
+          const breakpoint = buildTicks(x.domain()).filter(filterDay)
+
+          const labels = getPastAndCurrentDayLabels(breakpoint)
+
+          return g
+            .append('text')
+            .attr('x', separator.x + 7)
+            .attr('y', separator.y)
+            .attr('text-anchor', 'start')
+            .attr('dy', '.25em')
+            .text(labels.current)
+        })
+    },
+    [GRAPH_MARGIN, buildTicks, getPastAndCurrentDayLabels, x, y, filterDay]
+  )
+
+  const formatTicksText = useCallback(
+    () =>
+      d3
+        .selectAll('.tick text')
+        .style('stroke', offColor)
+        .style('fill', offColor)
+        .style('stroke-width', 0)
+        .style('font-family', fontSecondary),
+    []
+  )
+
+  const formatText = useCallback(
+    () =>
+      d3
+        .selectAll('text')
+        .style('stroke', offColor)
+        .style('fill', offColor)
+        .style('stroke-width', 0)
+        .style('font-family', fontSecondary),
+    []
+  )
+
+  const formatTicks = useCallback(() => {
+    d3.selectAll('.tick line')
+      .style('stroke', 'transparent')
+      .style('fill', 'transparent')
+  }, [])
+
+  const drawData = useCallback(
+    g => {
+      g.selectAll('circle')
+        .data(data)
+        .join('circle')
+        .attr('cx', d => {
+          const created = new Date(d.created)
+          return x(created.setTime(created.getTime() + offset))
+        })
+        .attr('cy', d => y(new BigNumber(d.fiat).toNumber()))
+        .attr('fill', d => (d.txClass === 'cashIn' ? java : neon))
+        .attr('r', 3.5)
+    },
+    [data, offset, x, y]
+  )
+
+  const drawChart = useCallback(() => {
+    const svg = d3
+      .select(ref.current)
+      .attr('viewBox', [0, 0, GRAPH_WIDTH, GRAPH_HEIGHT])
+
+    svg.append('g').call(buildBackground)
+    svg.append('g').call(buildGrid)
+    svg.append('g').call(buildXAxis)
+    svg.append('g').call(buildYAxis)
+    svg.append('g').call(formatTicksText)
+    svg.append('g').call(formatText)
+    svg.append('g').call(formatTicks)
+    svg.append('g').call(drawData)
+
+    return svg.node()
+  }, [
+    buildBackground,
+    buildGrid,
+    buildXAxis,
+    buildYAxis,
+    drawData,
+    formatText,
+    formatTicks,
+    formatTicksText
+  ])
 
   useEffect(() => {
-    // first we clear old chart DOM elements on component update
-    d3.select(svgRef.current)
+    d3.select(ref.current)
       .selectAll('*')
       .remove()
-    drawGraph()
-  }, [drawGraph])
+    drawChart()
+  }, [drawChart])
 
-  return (
-    <>
-      <svg ref={svgRef} />
-    </>
-  )
+  return <svg ref={ref} />
 }
-export default RefScatterplot
+
+export default Graph

@@ -17,52 +17,34 @@ const styles = {
   txOutMargin: {
     marginLeft: spacer * 3
   },
-  footer: ({ expanded, bigFooter }) => ({
-    height:
-      expanded && bigFooter
-        ? spacer * 12 * 3 + spacer * 3
-        : expanded
-        ? spacer * 12 * 2 + spacer * 2
-        : spacer * 12,
+  tickerLabel: {
+    color: offColor,
+    marginTop: -5
+  },
+  footer1: {
     left: 0,
     bottom: 0,
     position: 'fixed',
     width: '100vw',
     backgroundColor: white,
     textAlign: 'left',
-    boxShadow: '0px -1px 10px 0px rgba(50, 50, 50, 0.1)'
-  }),
-  tickerLabel: {
-    color: offColor,
-    marginTop: -5
-  },
-  content: {
-    width: 1200,
-    backgroundColor: white,
     zIndex: 1,
-    position: 'fixed',
-    bottom: -spacer,
-    transform: 'translateY(-100%)'
+    boxShadow: '0px -1px 10px 0px rgba(50, 50, 50, 0.1)',
+    minHeight: spacer * 12,
+    transition: 'min-height 0.5s ease-out',
+    '&:hover': {
+      transition: 'min-height 0.5s ease-in',
+      minHeight: 200
+    }
   },
-  footerContainer: ({ expanded, bigFooter }) => ({
-    marginLeft: spacer * 5,
-    height: 100,
-    marginTop: expanded && bigFooter ? -300 : expanded ? -200 : -100,
-    overflow: !expanded && 'hidden'
-  }),
-  mouseWatcher: ({ expanded, bigFooter }) => ({
-    position: 'fixed',
-    bottom: 0,
-    left: 0,
-    width: '100vw',
-    height:
-      expanded && bigFooter
-        ? spacer * 12 * 3 + spacer * 3
-        : expanded
-        ? spacer * 12 * 2 + spacer * 2
-        : spacer * 12,
-    zIndex: 2
-  })
+  content1: {
+    width: 1200,
+    maxHeight: 100,
+    backgroundColor: white,
+    zIndex: 2,
+    bottom: -spacer,
+    margin: '0 auto'
+  }
 }
 
 export default styles

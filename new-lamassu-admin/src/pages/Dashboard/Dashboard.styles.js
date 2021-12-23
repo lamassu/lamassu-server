@@ -12,18 +12,26 @@ const { label1 } = typographyStyles
 const styles = {
   headerLabels: {
     display: 'flex',
-    flexDirection: 'row'
-  },
-  headerLabelContainerMargin: {
-    marginRight: 24
-  },
-  headerLabelContainer: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  headerLabelSpan: {
-    extend: label1,
-    marginLeft: 6
+    flexDirection: 'row',
+    '& > div:first-child': {
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 0
+    },
+    '& > div': {
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 25
+    },
+    '& > div:last-child': {
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 64
+    },
+    '& > div > span': {
+      extend: label1,
+      marginLeft: 7
+    }
   },
   root: {
     flexGrow: 1,
