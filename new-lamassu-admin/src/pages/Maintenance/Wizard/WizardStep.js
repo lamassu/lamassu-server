@@ -22,6 +22,7 @@ import tejo4CassetteThree from 'src/styling/icons/cassettes/tejo/4-cassettes/4-c
 import tejo4CassetteFour from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-4-left.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { comet, errorColor } from 'src/styling/variables'
+import { numberToFiatAmount } from 'src/utils/number'
 
 const styles = {
   content: {
@@ -279,7 +280,8 @@ const WizardStep = ({
                       </P>
                     </div>
                     <P noMargin className={classes.fiatTotal}>
-                      = {cassetteTotal(values)} {fiatCurrency}
+                      = {numberToFiatAmount(cassetteTotal(values))}{' '}
+                      {fiatCurrency}
                     </P>
                   </div>
                 </div>

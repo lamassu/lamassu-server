@@ -14,8 +14,10 @@ import React, { useContext } from 'react'
 import AppContext from 'src/AppContext'
 import TitleSection from 'src/components/layout/TitleSection'
 import { H4, Label2, P, Info2 } from 'src/components/typography'
+import { numberToFiatAmount } from 'src/utils/number'
 
 import styles from './Assets.styles'
+
 const useStyles = makeStyles(styles)
 
 const GET_OPERATOR_BY_USERNAME = gql`
@@ -105,7 +107,7 @@ const AssetsAmountTable = ({ title, data = [], numToRender }) => {
                     </Cell>
                     <Cell align="right">
                       <P>{`${selectAmountPrefix(asset)}
-                         ${formatCurrency(Math.abs(asset.amount))} ${
+                         ${numberToFiatAmount(Math.abs(asset.amount))} ${
                         asset.currency
                       }`}</P>
                     </Cell>
@@ -117,7 +119,9 @@ const AssetsAmountTable = ({ title, data = [], numToRender }) => {
                   <Info2>{`Total ${R.toLower(title)}`}</Info2>
                 </Cell>
                 <Cell align="right">
-                  <Info2>{`${formatCurrency(totalAmount)} ${currency}`}</Info2>
+                  <Info2>{`${numberToFiatAmount(
+                    totalAmount
+                  )} ${currency}`}</Info2>
                 </Cell>
               </TableRow>
             </TableBody>
@@ -127,9 +131,6 @@ const AssetsAmountTable = ({ title, data = [], numToRender }) => {
     </>
   )
 }
-
-const formatCurrency = amount =>
-  amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
 const Assets = () => {
   const classes = useStyles()

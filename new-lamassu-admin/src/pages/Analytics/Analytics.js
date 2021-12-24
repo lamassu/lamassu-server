@@ -13,6 +13,7 @@ import { ReactComponent as DownIcon } from 'src/styling/icons/dashboard/down.svg
 import { ReactComponent as EqualIcon } from 'src/styling/icons/dashboard/equal.svg'
 import { ReactComponent as UpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { fromNamespace } from 'src/utils/config'
+import { numberToFiatAmount } from 'src/utils/number'
 import { DAY, WEEK, MONTH } from 'src/utils/time'
 
 import styles from './Analytics.styles'
@@ -97,9 +98,7 @@ const OverviewEntry = ({ label, value, oldValue, currency }) => {
     <div className={classes.overviewEntry}>
       <P noMargin>{label}</P>
       <Info2 noMargin className={classes.overviewFieldWrapper}>
-        <span>
-          {value.toLocaleString('en-US', { maximumFractionDigits: 2 })}
-        </span>
+        <span>{numberToFiatAmount(value)}</span>
         {!!currency && ` ${currency}`}
       </Info2>
       <span className={classes.overviewGrowth}>
@@ -107,7 +106,7 @@ const OverviewEntry = ({ label, value, oldValue, currency }) => {
         {R.lt(growthRate, 0) && <DownIcon height={10} />}
         {R.equals(growthRate, 0) && <EqualIcon height={10} />}
         <P noMargin className={classnames(growthClasses)}>
-          {growthRate.toLocaleString('en-US', { maximumFractionDigits: 2 })}%
+          {numberToFiatAmount(growthRate)}%
         </P>
       </span>
     </div>

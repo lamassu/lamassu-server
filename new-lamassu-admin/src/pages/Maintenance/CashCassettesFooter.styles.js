@@ -24,9 +24,7 @@ export default {
     boxShadow: [[0, -1, 10, 0, 'rgba(50, 50, 50, 0.1)']]
   },
   flex: {
-    display: 'flex',
-    // temp marginLeft until cashIn square is enabled
-    marginLeft: -640
+    display: 'flex'
   },
   icon: {
     alignSelf: 'center',
