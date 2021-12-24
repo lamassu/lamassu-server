@@ -20,7 +20,7 @@ import styles from './Machines.styles'
 const useStyles = makeStyles(styles)
 
 const GET_INFO = gql`
-  query getMachine($deviceId: ID!) {
+  query getMachine($deviceId: ID!, $billFilters: JSONObject) {
     machine(deviceId: $deviceId) {
       name
       deviceId
@@ -46,6 +46,12 @@ const GET_INFO = gql`
         note
       }
     }
+    bills(filters: $billFilters) {
+      id
+      fiat
+      deviceId
+      created
+    }
     config
   }
 `
@@ -69,6 +75,10 @@ const MachineRoute = () => {
     },
     variables: {
       deviceId: id
+    },
+    billFilters: {
+      deviceId: id,
+      batch: 'none'
     }
   })
 
@@ -83,7 +93,7 @@ const MachineRoute = () => {
   )
 }
 
-const Machines = ({ data, refetch, reload }) => {
+const Machines = ({ data, refetch, reload, bills }) => {
   const classes = useStyles()
 
   const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
@@ -121,11 +131,12 @@ const Machines = ({ data, refetch, reload }) => {
             <Details data={machine} timezone={timezone} />
           </div>
           <div className={classes.detailItem}>
-            <TL1 className={classes.subtitle}>{'Cash cassettes'}</TL1>
+            <TL1 className={classes.subtitle}>{'Cash box & cassettes'}</TL1>
             <Cassettes
               refetchData={refetch}
               machine={machine}
               config={config ?? false}
+              bills={bills}
             />
           </div>
           <div className={classes.transactionsItem}>
