@@ -103,7 +103,7 @@ const Header = memo(({ tree, user }) => {
 
   const handleClick = event => {
     const coords = notifCenterButtonRef.current.getBoundingClientRect()
-    setNotifButtonCoords({ x: coords.x, y: coords.y })
+    setNotifButtonCoords({ x: coords.x, y: coords.y + 5 })
 
     setAnchorEl(anchorEl ? null : event.currentTarget)
     document.querySelector('#root').classList.add('root-notifcenter-open')
@@ -132,7 +132,7 @@ const Header = memo(({ tree, user }) => {
                 return (
                   <NavLink
                     key={idx}
-                    to={it.route || it.children[0].route}
+                    to={!R.isNil(it.children) ? it.children[0].route : it.route}
                     isActive={match => {
                       if (!match) return false
                       setActive(it)
@@ -173,10 +173,16 @@ const Header = memo(({ tree, user }) => {
                   anchorEl={anchorEl}
                   className={classes.popper}
                   disablePortal={false}
+                  placement="bottom-end"
                   modifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '100vw'
+                    },
                     preventOverflow: {
                       enabled: true,
-                      boundariesElement: 'viewport'
+                      boundariesElement: 'viewport',
+                      padding: 0
                     }
                   }}>
                   <NotificationCenter

@@ -8,21 +8,15 @@ import {
 } from 'src/styling/variables'
 
 const styles = {
-  background: {
-    position: 'absolute',
-    width: '100vw',
-    height: '100vh',
-    left: 0,
-    top: 0,
-    zIndex: -1,
+  container: {
+    '@media only screen and (max-width: 1920px)': {
+      width: '30vw'
+    },
+    width: '40vw',
+    height: '110vh',
+    right: 0,
     backgroundColor: white,
     boxShadow: '0 0 14px 0 rgba(0, 0, 0, 0.24)'
-  },
-  container: {
-    left: -200,
-    top: -42,
-    backgroundColor: white,
-    height: '110vh'
   },
   header: {
     display: 'flex',
@@ -39,7 +33,7 @@ const styles = {
   },
   notificationIcon: ({ buttonCoords, xOffset }) => ({
     position: 'absolute',
-    top: buttonCoords ? buttonCoords.y - 1 : 0,
+    top: buttonCoords ? buttonCoords.y : 0,
     left: buttonCoords ? buttonCoords.x - xOffset : 0,
     cursor: 'pointer',
     background: 'transparent',
@@ -54,21 +48,33 @@ const styles = {
     backgroundColor: zircon
   },
   notificationsList: {
-    width: 440,
     height: '90vh',
     maxHeight: '100vh',
     marginTop: spacer * 3,
     marginLeft: 0,
-    marginRight: -50,
     overflowY: 'auto',
     overflowX: 'hidden',
     backgroundColor: white,
     zIndex: 10
   },
   notificationRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     position: 'relative',
     marginBottom: spacer / 2,
-    paddingTop: spacer * 1.5
+    paddingTop: spacer * 1.5,
+    '& > *': {
+      marginRight: 10
+    },
+    '& > *:last-child': {
+      marginRight: 0
+    }
+  },
+  notificationContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
   },
   unread: {
     backgroundColor: spring3
@@ -78,6 +84,9 @@ const styles = {
     '& > *': {
       marginLeft: spacer * 3
     }
+  },
+  readIconWrapper: {
+    flexGrow: 1
   },
   unreadIcon: {
     marginLeft: spacer,

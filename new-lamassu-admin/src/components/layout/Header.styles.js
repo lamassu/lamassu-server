@@ -171,7 +171,7 @@ const styles = {
   hasUnread: {
     position: 'absolute',
     top: 4,
-    left: 182,
+    left: 186,
     width: '9px',
     height: '9px',
     backgroundColor: secondaryColor,
