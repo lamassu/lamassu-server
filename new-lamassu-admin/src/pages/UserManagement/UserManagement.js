@@ -6,10 +6,16 @@ import * as R from 'ramda'
 import React, { useReducer, useState, useContext } from 'react'
 
 import AppContext from 'src/AppContext'
-import { Link } from 'src/components/buttons'
+import { ActionButton, Link } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
+import { ReactComponent as WhiteKeyIcon } from 'src/styling/icons/button/key/white.svg'
+import { ReactComponent as KeyIcon } from 'src/styling/icons/button/key/zodiac.svg'
+import { ReactComponent as WhiteLockIcon } from 'src/styling/icons/button/lock/white.svg'
+import { ReactComponent as LockIcon } from 'src/styling/icons/button/lock/zodiac.svg'
+import { ReactComponent as WhiteUserRoleIcon } from 'src/styling/icons/button/user-role/white.svg'
+import { ReactComponent as UserRoleIcon } from 'src/styling/icons/button/user-role/zodiac.svg'
 
 import styles from './UserManagement.styles'
 import ChangeRoleModal from './modals/ChangeRoleModal'
@@ -153,35 +159,37 @@ const Users = () => {
       size: 'sm',
       view: u => {
         return (
-          <>
-            <Chip
-              size="small"
-              label="Reset password"
-              className={classes.actionChip}
+          <div className={classes.actionButtonWrapper}>
+            <ActionButton
+              Icon={KeyIcon}
+              InverseIcon={WhiteKeyIcon}
+              color="primary"
               onClick={() => {
                 setUserInfo(u)
                 dispatch({
                   type: 'open',
                   payload: 'showResetPasswordModal'
                 })
-              }}
-            />
-            <Chip
-              size="small"
-              label="Reset 2FA"
-              className={classes.actionChip}
+              }}>
+              Reset password
+            </ActionButton>
+            <ActionButton
+              Icon={LockIcon}
+              InverseIcon={WhiteLockIcon}
+              color="primary"
               onClick={() => {
                 setUserInfo(u)
                 dispatch({
                   type: 'open',
                   payload: 'showReset2FAModal'
                 })
-              }}
-            />
-            <Chip
-              size="small"
-              label="Add FIDO"
-              className={classes.actionChip}
+              }}>
+              Reset 2FA
+            </ActionButton>
+            <ActionButton
+              Icon={UserRoleIcon}
+              InverseIcon={WhiteUserRoleIcon}
+              color="primary"
               onClick={() => {
                 setUserInfo(u)
                 generateAttestationOptions({
@@ -189,9 +197,10 @@ const Users = () => {
                     userID: u.id
                   }
                 })
-              }}
-            />
-          </>
+              }}>
+              Add FIDO
+            </ActionButton>
+          </div>
         )
       }
     },
