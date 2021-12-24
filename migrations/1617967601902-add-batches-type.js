@@ -3,15 +3,15 @@ var db = require('./db')
 exports.up = function (next) {
   var sqls = [
     `CREATE TYPE cashbox_batch_type AS ENUM(
-      'cash-in-empty',
-      'cash-out-1-refill',
-      'cash-out-1-empty',
-      'cash-out-2-refill',
-      'cash-out-2-empty',
-      'cash-out-3-refill',
-      'cash-out-3-empty',
-      'cash-out-4-refill',
-      'cash-out-4-empty'
+      'cash-box-empty',
+      'cash-cassette-1-refill',
+      'cash-cassette-1-empty',
+      'cash-cassette-2-refill',
+      'cash-cassette-2-empty',
+      'cash-cassette-3-refill',
+      'cash-cassette-3-empty',
+      'cash-cassette-4-refill',
+      'cash-cassette-4-empty'
     )`,
     `ALTER TABLE cashbox_batches ADD COLUMN operation_type cashbox_batch_type NOT NULL`,
     `ALTER TABLE cashbox_batches ADD COLUMN bill_count_override SMALLINT`,

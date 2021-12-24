@@ -67,7 +67,7 @@ const tree = [
     children: [
       {
         key: 'cash_cassettes',
-        label: 'Cash Cassettes',
+        label: 'Cash Boxes & Cassettes',
         route: '/maintenance/cash-cassettes',
         component: CashCassettes
       },

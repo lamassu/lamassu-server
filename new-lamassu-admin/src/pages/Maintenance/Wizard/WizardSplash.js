@@ -67,7 +67,7 @@ const WizardSplash = ({ name, onContinue }) => {
       <div className={classes.warningInfo}>
         <WarningIcon className={classes.warningIcon} />
         <P noMargin className={classes.warningText}>
-          For cash-out cassettes, please make sure you've removed the remaining
+          For cash cassettes, please make sure you've removed the remaining
           bills before adding the new ones.
         </P>
       </div>

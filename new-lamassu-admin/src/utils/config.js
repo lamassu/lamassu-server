@@ -1,6 +1,7 @@
 import * as R from 'ramda'
 
 const namespaces = {
+  CASH_IN: 'cashIn',
   CASH_OUT: 'cashOut',
   WALLETS: 'wallets',
   OPERATOR_INFO: 'operatorInfo',

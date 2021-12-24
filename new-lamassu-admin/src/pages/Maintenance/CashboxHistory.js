@@ -1,17 +1,17 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import moment from 'moment'
 import * as R from 'ramda'
-import React, { useState } from 'react'
-import * as Yup from 'yup'
+import React from 'react'
+// import * as Yup from 'yup'
 
-import { Link, IconButton } from 'src/components/buttons'
-import { TextInput } from 'src/components/inputs'
+// import { Link, IconButton } from 'src/components/buttons'
+// import { TextInput } from 'src/components/inputs'
 import { NumberInput } from 'src/components/inputs/formik'
 import DataTable from 'src/components/tables/DataTable'
-import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+// import { ReactComponent as EditIconDisabled } from 'src/styling/icons/action/edit/disabled.svg'
+// import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
@@ -34,13 +34,13 @@ const GET_BATCHES = gql`
   }
 `
 
-const EDIT_BATCH = gql`
+/* const EDIT_BATCH = gql`
   mutation editBatch($id: ID, $performedBy: String) {
     editBatch(id: $id, performedBy: $performedBy) {
       id
     }
   }
-`
+` */
 
 const styles = {
   operationType: {
@@ -58,23 +58,24 @@ const styles = {
   }
 }
 
-const schema = Yup.object().shape({
+/* const schema = Yup.object().shape({
   performedBy: Yup.string().nullable()
-})
+}) */
 
 const useStyles = makeStyles(styles)
 
 const CashboxHistory = ({ machines, currency }) => {
   const classes = useStyles()
-  const [error, setError] = useState(false)
+
+  /* const [error, setError] = useState(false)
   const [field, setField] = useState(null)
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(false) */
 
   const { data, loading } = useQuery(GET_BATCHES)
 
-  const [editBatch] = useMutation(EDIT_BATCH, {
+  /* const [editBatch] = useMutation(EDIT_BATCH, {
     refetchQueries: () => ['cashboxBatches']
-  })
+  }) */
 
   const batches = R.path(['cashboxBatches'])(data)
 
@@ -82,32 +83,36 @@ const CashboxHistory = ({ machines, currency }) => {
     (ret, i) =>
       R.pipe(
         R.assoc(
-          `cash-out-${i}-refill`,
+          `cash-cassette-${i}-refill`,
           <>
             <TxOutIcon />
-            <span className={classes.operationType}>Cash-out {i} refill</span>
+            <span className={classes.operationType}>
+              Cash cassette {i} refill
+            </span>
           </>
         ),
         R.assoc(
-          `cash-out-${i}-empty`,
+          `cash-cassette-${i}-empty`,
           <>
             <TxOutIcon />
-            <span className={classes.operationType}>Cash-out {i} emptied</span>
+            <span className={classes.operationType}>
+              Cash cassette {i} emptied
+            </span>
           </>
         )
       )(ret),
     {
-      'cash-in-empty': (
+      'cash-box-empty': (
         <>
           <TxInIcon />
-          <span className={classes.operationType}>Cash-in emptied</span>
+          <span className={classes.operationType}>Cash box emptied</span>
         </>
       )
     },
     R.range(1, 5)
   )
 
-  const save = row => {
+  /* const save = row => {
     const performedBy = field.performedBy === '' ? null : field.performedBy
 
     schema
@@ -127,7 +132,7 @@ const CashboxHistory = ({ machines, currency }) => {
     setField(null)
   }
 
-  const notEditing = id => field?.id !== id
+  const notEditing = id => field?.id !== id */
 
   const elements = [
     {
@@ -186,8 +191,8 @@ const CashboxHistory = ({ machines, currency }) => {
       width: 125,
       textAlign: 'right',
       view: it => moment.utc(it.created).format('HH:mm')
-    },
-    {
+    }
+    /* {
       name: 'performedBy',
       header: 'Performed by',
       width: 180,
@@ -233,7 +238,7 @@ const CashboxHistory = ({ machines, currency }) => {
           </div>
         )
       }
-    }
+    } */
   ]
 
   return (
@@ -243,7 +248,7 @@ const CashboxHistory = ({ machines, currency }) => {
           name="cashboxHistory"
           elements={elements}
           data={batches}
-          emptyText="No cashbox batches so far"
+          emptyText="No cash box batches so far"
         />
       )}
     </>
