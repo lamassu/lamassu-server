@@ -56,15 +56,6 @@ const GET_INFO = gql`
   }
 `
 
-const GET_MACHINES = gql`
-  {
-    machines {
-      name
-      deviceId
-    }
-  }
-`
-
 const getMachineID = path => path.slice(path.lastIndexOf('/') + 1)
 
 const MachineRoute = () => {
