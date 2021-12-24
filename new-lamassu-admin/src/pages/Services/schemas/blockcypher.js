@@ -27,7 +27,7 @@ export default {
       settings: {
         enabled: true,
         disabledMessage: 'RBF verification not available',
-        label: 'Enable RBF verification',
+        label: 'Lower the confidence of RBF transactions',
         requirement: 'bitcoind'
       },
       face: true

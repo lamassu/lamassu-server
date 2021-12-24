@@ -6,15 +6,13 @@ import React, { memo } from 'react'
 import { Info2, Label3, P } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { numberToFiatAmount } from 'src/utils/number'
 import { singularOrPlural } from 'src/utils/string'
 import { formatDate, formatDateNonUtc } from 'src/utils/timezones'
 
 import styles from './GraphTooltip.styles'
 
 const useStyles = makeStyles(styles)
-
-const formatCurrency = amount =>
-  amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
 const GraphTooltip = ({
   coords,
@@ -67,7 +65,7 @@ const GraphTooltip = ({
         {singularOrPlural(R.length(data), 'transaction', 'transactions')}
       </P>
       <P noMargin className={classes.dotOtTransactionVolume}>
-        {formatCurrency(transactions.volume)} {currency} in volume
+        {numberToFiatAmount(transactions.volume)} {currency} in volume
       </P>
       <div className={classes.dotOtTransactionClasses}>
         <Label3 noMargin>

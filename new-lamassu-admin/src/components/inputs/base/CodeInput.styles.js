@@ -9,10 +9,12 @@ const styles = {
     borderRadius: '4px'
   },
   focus: {
-    color: primaryColor,
     border: '2px solid',
     borderColor: primaryColor,
-    borderRadius: '4px'
+    borderRadius: '4px',
+    '&:focus': {
+      outline: 'none'
+    }
   },
   error: {
     borderColor: errorColor

@@ -47,7 +47,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
 
   const onContinue = it => {
     const newConfig = R.merge(config, it)
-
     if (isLastStep) {
       const wasCashboxEmptied = [
         config?.wasCashboxEmptied,

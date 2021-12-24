@@ -1,4 +1,4 @@
-import { spacer, white, errorColor } from 'src/styling/variables'
+import { spacer, white } from 'src/styling/variables'
 const styles = {
   grid: {
     flex: 1,
@@ -32,7 +32,7 @@ const styles = {
     marginLeft: 8
   },
   error: {
-    color: errorColor
+    marginTop: 20
   }
 }
 

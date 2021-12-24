@@ -93,13 +93,14 @@ const MachineRoute = () => {
   )
 }
 
-const Machines = ({ data, refetch, reload, bills }) => {
+const Machines = ({ data, refetch, reload }) => {
   const classes = useStyles()
 
   const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
 
   const machine = R.path(['machine'])(data) ?? {}
   const config = R.path(['config'])(data) ?? {}
+  const bills = R.path(['bills'])(data) ?? []
 
   const machineName = R.path(['name'])(machine) ?? null
   const machineID = R.path(['deviceId'])(machine) ?? null

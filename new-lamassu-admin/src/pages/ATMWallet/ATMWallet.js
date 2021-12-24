@@ -15,6 +15,7 @@ import { ReactComponent as DashLogo } from 'src/styling/logos/icon-dash-colour.s
 import { ReactComponent as EthereumLogo } from 'src/styling/logos/icon-ethereum-colour.svg'
 import { ReactComponent as LitecoinLogo } from 'src/styling/logos/icon-litecoin-colour.svg'
 import { ReactComponent as ZCashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
+import { numberToFiatAmount } from 'src/utils/number'
 
 import styles from './ATMWallet.styles'
 
@@ -51,9 +52,6 @@ const GET_OPERATOR_BY_USERNAME = gql`
   }
 `
 
-const formatCurrency = amount =>
-  amount.toLocaleString('en-US', { maximumFractionDigits: 2 })
-
 const CHIPS_PER_ROW = 6
 
 const Assets = ({ balance, wallets, currency }) => {
@@ -69,7 +67,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Available balance</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {formatCurrency(balance)}
+            {numberToFiatAmount(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -81,7 +79,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Total balance in wallets</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {formatCurrency(walletFiatSum())}
+            {numberToFiatAmount(walletFiatSum())}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -93,7 +91,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Total assets</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {formatCurrency(balance)}
+            {numberToFiatAmount(balance)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -144,17 +142,11 @@ const WalletInfoChip = ({ wallet, currency }) => {
         <div className={classes.walletValueWrapper}>
           <Label2 className={classes.fieldHeader}>{wallet.name} value</Label2>
           <Label2 className={classes.walletValue}>
-            {wallet.amount.toFixed(1).toLocaleString('en-US', {
-              maximumFractionDigits: 2
-            })}{' '}
-            {wallet.cryptoCode}
+            {numberToFiatAmount(wallet.amount.toFixed(1))} {wallet.cryptoCode}
           </Label2>
           <Label2 className={classes.fieldHeader}>Hedged value</Label2>
           <Label2 className={classes.walletValue}>
-            {wallet.fiatValue.toLocaleString('en-US', {
-              maximumFractionDigits: 2
-            })}{' '}
-            {currency}
+            {numberToFiatAmount(wallet.fiatValue)} {currency}
           </Label2>
         </div>
       </Paper>

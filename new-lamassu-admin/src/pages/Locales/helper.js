@@ -2,7 +2,7 @@ import * as R from 'ramda'
 import * as Yup from 'yup'
 
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
-import timezoneList from 'src/utils/timezone-list'
+import { labels as timezoneList } from 'src/utils/timezone-list'
 
 const getFields = (getData, names, onChange, auxElements = []) => {
   return R.filter(

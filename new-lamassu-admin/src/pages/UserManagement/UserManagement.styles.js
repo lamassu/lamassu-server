@@ -52,10 +52,6 @@ const styles = {
     fontFamily: fontPrimary,
     marginLeft: 10
   },
-  actionChip: {
-    backgroundColor: subheaderColor,
-    marginRight: 15
-  },
   info: {
     fontFamily: fontSecondary,
     textAlign: 'justify'
@@ -118,6 +114,10 @@ const styles = {
   },
   roleSwitch: {
     marginLeft: 15
+  },
+  actionButtonWrapper: {
+    display: 'flex',
+    gap: 12
   }
 }
 

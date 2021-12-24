@@ -98,13 +98,13 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data, loading } = useQuery(GET_SERVER_DATA, {
+  const { data, loading: dataLoading } = useQuery(GET_SERVER_DATA, {
     onCompleted: () => setSaveMessage(''),
     variables: {
       limit: NUM_LOG_RESULTS
     }
   })
-  const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const defaultLogLevels = [
@@ -131,6 +131,8 @@ const Logs = () => {
 
     setLogLevel(logLevel)
   }
+
+  const loading = dataLoading || configLoading
 
   return (
     <>
@@ -206,8 +208,8 @@ const Logs = () => {
                   ))}
             </TableBody>
           </Table>
-          {loading && configLoading && <H4>{'Loading...'}</H4>}
-          {!loading && !configLoading && !data?.serverLogs?.length && (
+          {loading && <H4>{'Loading...'}</H4>}
+          {!loading && !data?.serverLogs?.length && (
             <H4>{'No activity so far'}</H4>
           )}
         </div>

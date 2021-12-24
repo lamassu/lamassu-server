@@ -7,4 +7,7 @@ const transformNumber = value => (isValidNumber(value) ? value : null)
 const defaultToZero = value =>
   isValidNumber(parseInt(value)) ? parseInt(value) : 0
 
-export { defaultToZero, transformNumber }
+const numberToFiatAmount = value =>
+  value.toLocaleString('en-US', { maximumFractionDigits: 2 })
+
+export { defaultToZero, transformNumber, numberToFiatAmount }

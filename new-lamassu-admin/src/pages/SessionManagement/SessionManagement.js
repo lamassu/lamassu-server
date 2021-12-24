@@ -48,7 +48,7 @@ const SessionManagement = () => {
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const loading = sessionsLoading && configLoading
+  const loading = sessionsLoading || configLoading
 
   const elements = [
     {
@@ -61,7 +61,7 @@ const SessionManagement = () => {
     {
       header: 'Last known use',
       width: 305,
-      textAlign: 'center',
+      textAlign: 'left',
       size: 'sm',
       view: s => {
         if (R.isNil(s.sess.ua)) return 'No Record'
@@ -72,7 +72,7 @@ const SessionManagement = () => {
     {
       header: 'Last known location',
       width: 250,
-      textAlign: 'center',
+      textAlign: 'left',
       size: 'sm',
       view: s => {
         return isLocalhost(s.sess.ipAddress) ? 'This device' : s.sess.ipAddress
@@ -107,15 +107,14 @@ const SessionManagement = () => {
   ]
 
   return (
-    !loading && (
-      <>
-        <TitleSection title="Session Management" />
-        <DataTable
-          elements={elements}
-          data={R.path(['sessions'])(tknResponse)}
-        />
-      </>
-    )
+    <>
+      <TitleSection title="Session Management" />
+      <DataTable
+        loading={loading}
+        elements={elements}
+        data={R.path(['sessions'])(tknResponse)}
+      />
+    </>
   )
 }
 

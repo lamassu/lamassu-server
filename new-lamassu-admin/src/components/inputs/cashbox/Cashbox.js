@@ -4,6 +4,7 @@ import React from 'react'
 
 import Chip from 'src/components/Chip'
 import { Info2, Label1, Label2 } from 'src/components/typography'
+import { numberToFiatAmount } from 'src/utils/number'
 
 import { cashboxStyles, gridStyles } from './Cashbox.styles'
 
@@ -64,11 +65,9 @@ const CashIn = ({ currency, notes, total }) => {
             <Info2 className={classes.noMarginText}>{notes} notes</Info2>
           </div>
           <div className={classes.innerRow}>
-            {/* Feature on hold until this can be calculated
             <Label1 className={classes.noMarginText}>
               {total} {currency.code}
             </Label1>
-            */}
           </div>
         </div>
       </div>
@@ -112,7 +111,7 @@ const CashOut = ({
             </div>
             <div className={classes.innerRow}>
               <Label1 className={classes.noMarginText}>
-                {notes * denomination} {currency.code}
+                {numberToFiatAmount(notes * denomination)} {currency.code}
               </Label1>
             </div>
           </div>

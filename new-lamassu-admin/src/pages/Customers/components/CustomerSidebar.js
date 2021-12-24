@@ -8,6 +8,8 @@ import { ReactComponent as NoteReversedIcon } from 'src/styling/icons/customer-n
 import { ReactComponent as NoteIcon } from 'src/styling/icons/customer-nav/note/white.svg'
 import { ReactComponent as OverviewReversedIcon } from 'src/styling/icons/customer-nav/overview/comet.svg'
 import { ReactComponent as OverviewIcon } from 'src/styling/icons/customer-nav/overview/white.svg'
+import { ReactComponent as PhotosReversedIcon } from 'src/styling/icons/customer-nav/photos/comet.svg'
+import { ReactComponent as Photos } from 'src/styling/icons/customer-nav/photos/white.svg'
 
 import styles from './CustomerSidebar.styles.js'
 
@@ -33,6 +35,12 @@ const CustomerSidebar = ({ isSelected, onClick }) => {
       display: 'Notes',
       Icon: NoteIcon,
       InverseIcon: NoteReversedIcon
+    },
+    {
+      code: 'photos',
+      display: 'Photos & files',
+      Icon: Photos,
+      InverseIcon: PhotosReversedIcon
     }
   ]
 

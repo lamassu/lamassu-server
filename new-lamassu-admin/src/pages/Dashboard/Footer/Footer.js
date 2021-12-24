@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
@@ -27,19 +28,15 @@ const GET_DATA = gql`
     }
   }
 `
+
 BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_UP })
 
 const useStyles = makeStyles(styles)
 const Footer = () => {
   const { data } = useQuery(GET_DATA)
-  const [expanded, setExpanded] = useState(false)
-  const [delayedExpand, setDelayedExpand] = useState(null)
 
   const withCommissions = R.path(['cryptoRates', 'withCommissions'])(data) ?? {}
-  const classes = useStyles({
-    bigFooter: R.keys(withCommissions).length > 8,
-    expanded
-  })
+  const classes = useStyles()
   const config = R.path(['config'])(data) ?? {}
   const canExpand = R.keys(withCommissions).length > 4
 
@@ -99,31 +96,16 @@ const Footer = () => {
     )
   }
 
-  const handleMouseEnter = () => {
-    setDelayedExpand(setTimeout(() => canExpand && setExpanded(true), 300))
-  }
-
-  const handleMouseLeave = () => {
-    clearTimeout(delayedExpand)
-    setExpanded(false)
-  }
-
   return (
-    <>
-      <div
-        className={classes.mouseWatcher}
-        onMouseLeave={handleMouseLeave}
-        onMouseEnter={handleMouseEnter}
-      />
-      <div className={classes.content}>
-        <Grid container spacing={1}>
-          <Grid container className={classes.footerContainer}>
+    <div className={classes.footer1}>
+      <div className={classes.content1}>
+        <Grid container>
+          <Grid container className={classes.footerContainer1}>
             {R.keys(withCommissions).map(key => renderFooterItem(key))}
           </Grid>
         </Grid>
       </div>
-      <div className={classes.footer} />
-    </>
+    </div>
   )
 }
 

@@ -8,7 +8,6 @@ import { DeleteDialog } from 'src/components/DeleteDialog'
 import { Link, Button, IconButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { Label3, TL1 } from 'src/components/typography'
-import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
 import { ReactComponent as PhoneIdIcon } from 'src/styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 
@@ -49,7 +48,6 @@ const GET_CUSTOMERS = gql`
       id
       phone
       idCardData
-      phone
     }
   }
 `
@@ -64,7 +62,9 @@ const IndividualDiscounts = () => {
   const [showModal, setShowModal] = useState(false)
   const toggleModal = () => setShowModal(!showModal)
 
-  const { data: discountResponse, loading } = useQuery(GET_INDIVIDUAL_DISCOUNTS)
+  const { data: discountResponse, loading: discountLoading } = useQuery(
+    GET_INDIVIDUAL_DISCOUNTS
+  )
   const { data: customerData, loading: customerLoading } = useQuery(
     GET_CUSTOMERS
   )
@@ -102,12 +102,6 @@ const IndividualDiscounts = () => {
           <div className={classes.identification}>
             <PhoneIdIcon />
             <span>{customer.phone}</span>
-            {customer?.idCardData?.documentNumber && (
-              <>
-                <CardIdIcon />
-                <span>{customer?.idCardData?.documentNumber}</span>
-              </>
-            )}
           </div>
         )
       }
@@ -160,24 +154,22 @@ const IndividualDiscounts = () => {
     }
   ]
 
-  const isLoading = loading || customerLoading
+  const loading = discountLoading || customerLoading
 
   return (
     <>
-      {!isLoading && !R.isEmpty(discountResponse.individualDiscounts) && (
-        <Box
-          marginBottom={4}
-          marginTop={-7}
-          className={classes.tableWidth}
-          display="flex"
-          justifyContent="flex-end">
-          <Link color="primary" onClick={toggleModal}>
-            Add new code
-          </Link>
-        </Box>
-      )}
-      {!isLoading && !R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
         <>
+          <Box
+            marginBottom={4}
+            marginTop={-7}
+            className={classes.tableWidth}
+            display="flex"
+            justifyContent="flex-end">
+            <Link color="primary" onClick={toggleModal}>
+              Add new code
+            </Link>
+          </Box>
           <DataTable
             elements={elements}
             data={R.path(['individualDiscounts'])(discountResponse)}
@@ -196,7 +188,7 @@ const IndividualDiscounts = () => {
           />
         </>
       )}
-      {!isLoading && R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && R.isEmpty(discountResponse.individualDiscounts) && (
         <Box display="flex" alignItems="left" flexDirection="column">
           <Label3>
             It seems there are no active individual customer discounts on your

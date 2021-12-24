@@ -22,6 +22,7 @@ import tejo4CassetteThree from 'src/styling/icons/cassettes/tejo/4-cassettes/4-c
 import tejo4CassetteFour from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-4-left.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { comet, errorColor } from 'src/styling/variables'
+import { numberToFiatAmount } from 'src/utils/number'
 
 const styles = {
   content: {
@@ -115,7 +116,8 @@ const WizardStep = ({
   lastStep,
   steps,
   fiatCurrency,
-  onContinue
+  onContinue,
+  initialValues
 }) => {
   const classes = useStyles()
 
@@ -168,7 +170,7 @@ const WizardStep = ({
                       classes.verticalAlign,
                       classes.fullWidth
                     )}>
-                    <H4 noMargin>Did you empty the cash-in box?</H4>
+                    <H4 noMargin>Did you empty the cash box?</H4>
                     <Field
                       component={RadioGroup}
                       name="wasCashboxEmptied"
@@ -188,8 +190,8 @@ const WizardStep = ({
                       <P>Since previous update</P>
                       <Tooltip width={215}>
                         <P>
-                          Number of bills inside the cashbox, since the last
-                          cashbox changes.
+                          Number of bills inside the cash box, since the last
+                          cash box changes.
                         </P>
                       </Tooltip>
                     </div>
@@ -219,12 +221,7 @@ const WizardStep = ({
           validateOnBlur={false}
           validateOnChange={false}
           onSubmit={onContinue}
-          initialValues={{
-            cassette1: '',
-            cassette2: '',
-            cassette3: '',
-            cassette4: ''
-          }}
+          initialValues={initialValues}
           enableReinitialize
           validationSchema={steps[step - 1].schema}>
           {({ values, errors }) => (
@@ -255,7 +252,7 @@ const WizardStep = ({
                         <H4
                           className={classes.cassetteFormTitleContent}
                           noMargin>
-                          Cash-out {step - 1} (dispenser)
+                          Cash cassette {step - 1} (dispenser)
                         </H4>
                       </div>
                       <Cashbox
@@ -283,7 +280,8 @@ const WizardStep = ({
                       </P>
                     </div>
                     <P noMargin className={classes.fiatTotal}>
-                      = {cassetteTotal(values)} {fiatCurrency}
+                      = {numberToFiatAmount(cassetteTotal(values))}{' '}
+                      {fiatCurrency}
                     </P>
                   </div>
                 </div>

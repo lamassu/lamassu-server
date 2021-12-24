@@ -26,7 +26,7 @@ const widthsByNumberOfCassettes = {
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
   cashbox: Yup.number()
-    .label('Cashbox')
+    .label('Cash box')
     .required()
     .integer()
     .min(0)
@@ -82,7 +82,7 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
-const CashCassettes = ({ machine, config, refetchData }) => {
+const CashCassettes = ({ machine, config, refetchData, bills }) => {
   const classes = useStyles()
 
   const [wizard, setWizard] = useState(false)
@@ -101,11 +101,15 @@ const CashCassettes = ({ machine, config, refetchData }) => {
   const elements = [
     {
       name: 'cashbox',
-      header: 'Cashbox',
+      header: 'Cash box',
       width: widthsByNumberOfCassettes[numberOfCassettes].cashbox,
       stripe: false,
       view: value => (
-        <CashIn currency={{ code: fiatCurrency }} notes={value} total={0} />
+        <CashIn
+          currency={{ code: fiatCurrency }}
+          notes={value}
+          total={R.sum(R.map(it => it.fiat)(bills))}
+        />
       ),
       input: NumberInput,
       inputProps: {
@@ -119,7 +123,7 @@ const CashCassettes = ({ machine, config, refetchData }) => {
     it => {
       elements.push({
         name: `cassette${it}`,
-        header: `Cash-out ${it}`,
+        header: `Cash cassette ${it}`,
         width: widthsByNumberOfCassettes[numberOfCassettes].cassette,
         stripe: true,
         doubleHeader: 'Cash-out',

@@ -126,6 +126,23 @@ const styles = {
   },
   errorMessage: {
     color: errorColor
+  },
+  qrCodeImageWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    border: `5px solid ${primaryColor}`,
+    padding: 5,
+    borderRadius: 15
+  },
+  qrCodeScanMessage: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: [[0, 0, 20, 20]],
+    '& > p': {
+      marginLeft: 10
+    }
   }
 }
 
