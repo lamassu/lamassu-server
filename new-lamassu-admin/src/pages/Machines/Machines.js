@@ -6,8 +6,8 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 
 import { TL1, TL2, Label3 } from 'src/components/typography'
 
@@ -49,13 +49,38 @@ const GET_INFO = gql`
 
 const getMachineID = path => path.slice(path.lastIndexOf('/') + 1)
 
-const Machines = () => {
+const MachineRoute = () => {
   const location = useLocation()
-  const { data, loading, refetch } = useQuery(GET_INFO, {
+  const history = useHistory()
+
+  const id = getMachineID(location.pathname)
+
+  const [loading, setLoading] = useState(true)
+
+  const { data, refetch } = useQuery(GET_INFO, {
+    onCompleted: data => {
+      if (data.machine === null) return history.push('/dashboard')
+
+      setLoading(false)
+    },
     variables: {
-      deviceId: getMachineID(location.pathname)
+      deviceId: id
     }
   })
+
+  const reload = () => {
+    setLoading(true)
+    return history.push(location.pathname)
+  }
+
+  return (
+    !loading && (
+      <Machines data={data} refetch={refetch} reload={reload}></Machines>
+    )
+  )
+}
+
+const Machines = ({ data, refetch, reload }) => {
   const classes = useStyles()
 
   const machine = R.path(['machine'])(data) ?? {}
@@ -65,62 +90,60 @@ const Machines = () => {
   const machineID = R.path(['deviceId'])(machine) ?? null
 
   return (
-    !loading && (
-      <Grid container className={classes.grid}>
-        <Grid item xs={3}>
-          <Grid item xs={12}>
-            <div className={classes.breadcrumbsContainer}>
-              <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
-                <Link to="/dashboard" className={classes.breadcrumbLink}>
-                  <Label3 noMargin className={classes.subtitle}>
-                    Dashboard
-                  </Label3>
-                </Link>
-                <TL2 noMargin className={classes.subtitle}>
-                  {machineName}
-                </TL2>
-              </Breadcrumbs>
-              <Overview data={machine} onActionSuccess={refetch} />
-            </div>
-          </Grid>
-          <Grid item xs={12}>
-            {/* on hold for now <Sidebar
+    <Grid container className={classes.grid}>
+      <Grid item xs={3}>
+        <Grid item xs={12}>
+          <div className={classes.breadcrumbsContainer}>
+            <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+              <Link to="/dashboard" className={classes.breadcrumbLink}>
+                <Label3 noMargin className={classes.subtitle}>
+                  Dashboard
+                </Label3>
+              </Link>
+              <TL2 noMargin className={classes.subtitle}>
+                {machineName}
+              </TL2>
+            </Breadcrumbs>
+            <Overview data={machine} onActionSuccess={reload} />
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          {/* on hold for now <Sidebar
             isSelected={R.equals(selectedMachine)}
             selectItem={setSelectedMachine}
             data={machines}
             getText={R.prop('name')}
             getKey={R.prop('deviceId')}
           /> */}
-          </Grid>
-        </Grid>
-        <Grid item xs={9}>
-          <div className={classes.content}>
-            <div
-              className={classnames(classes.detailItem, classes.detailsMargin)}>
-              <TL1 className={classes.subtitle}>{'Details'}</TL1>
-              <Details data={machine} />
-            </div>
-            <div className={classes.detailItem}>
-              <TL1 className={classes.subtitle}>{'Cash box & cassettes'}</TL1>
-              <Cassettes
-                refetchData={refetch}
-                machine={machine}
-                config={config ?? false}
-              />
-            </div>
-            <div className={classes.transactionsItem}>
-              <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
-              <Transactions id={machineID} />
-            </div>
-            <div className={classes.detailItem}>
-              <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
-              <Commissions name={'commissions'} id={machineID} />
-            </div>
-          </div>
         </Grid>
       </Grid>
-    )
+      <Grid item xs={9}>
+        <div className={classes.content}>
+          <div
+            className={classnames(classes.detailItem, classes.detailsMargin)}>
+            <TL1 className={classes.subtitle}>{'Details'}</TL1>
+            <Details data={machine} />
+          </div>
+          <div className={classes.detailItem}>
+            <TL1 className={classes.subtitle}>{'Cash box & cassettes'}</TL1>
+            <Cassettes
+              refetchData={refetch}
+              machine={machine}
+              config={config ?? false}
+            />
+          </div>
+          <div className={classes.transactionsItem}>
+            <TL1 className={classes.subtitle}>{'Latest transactions'}</TL1>
+            <Transactions id={machineID} />
+          </div>
+          <div className={classes.detailItem}>
+            <TL1 className={classes.subtitle}>{'Commissions'}</TL1>
+            <Commissions name={'commissions'} id={machineID} />
+          </div>
+        </div>
+      </Grid>
+    </Grid>
   )
 }
 
-export default Machines
+export default MachineRoute
