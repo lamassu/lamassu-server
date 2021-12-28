@@ -132,7 +132,7 @@ const getPazuzRoutes = () => [
       },
       {
         key: 'services',
-        label: '3rd party services',
+        label: '3rd Party Services',
         route: '/settings/3rd-party-services',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: Services
