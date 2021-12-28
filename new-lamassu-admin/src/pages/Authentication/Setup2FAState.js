@@ -140,14 +140,13 @@ const Setup2FAState = ({ state, dispatch }) => {
       <>
         <div className={classes.infoWrapper}>
           <Label3 className={classes.info2}>
-            We detected that this account does not have its two-factor
-            authentication enabled. In order to protect the resources in the
-            system, a two-factor authentication is enforced.
+            This account does not yet have two-factor authentication enabled. To
+            secure the admin, two-factor authentication is required.
           </Label3>
           <Label3 className={classes.info2}>
-            To finish this process, please scan the following QR code or insert
-            the secret further below on an authentication app of your choice,
-            such as Google Authenticator or Authy.
+            To complete the registration process, scan the following QR code or
+            insert the secret below on a 2FA app, such as Google Authenticator
+            or AndOTP.
           </Label3>
         </div>
         <div className={classes.qrCodeWrapper}>
