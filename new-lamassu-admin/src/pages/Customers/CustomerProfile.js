@@ -439,6 +439,16 @@ const CustomerProfile = memo(() => {
       }
     })
 
+  const retrieveAditionalData = () =>
+    setCustomer({
+      variables: {
+        customerId,
+        customerInput: {
+          subscriberInfo: true
+        }
+      }
+    })
+
   const onClickSidebarItem = code => setClickedItem(code)
 
   const configData = R.path(['config'])(customerResponse) ?? []
@@ -559,25 +569,6 @@ const CustomerProfile = memo(() => {
                     }>
                     {`${blocked ? 'Authorize' : 'Block'} customer`}
                   </ActionButton>
-                  <ActionButton
-                    color="primary"
-                    className={classes.actionButton}
-                    Icon={blocked ? AuthorizeIcon : BlockIcon}
-                    InverseIcon={
-                      blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                    }
-                    onClick={() =>
-                      setCustomer({
-                        variables: {
-                          customerId,
-                          customerInput: {
-                            subscriberInfo: true
-                          }
-                        }
-                      })
-                    }>
-                    {`Retrieve information`}
-                  </ActionButton>
                 </div>
               </div>
               <div>
@@ -598,6 +589,22 @@ const CustomerProfile = memo(() => {
                     {`Test user`}
                   </div>
                 </div>
+                <ActionButton
+                  color="primary"
+                  className={classes.actionButton}
+                  Icon={blocked ? AuthorizeIcon : BlockIcon}
+                  InverseIcon={
+                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                  }
+                  onClick={() =>
+                    updateCustomer({
+                      authorizedOverride: blocked
+                        ? OVERRIDE_AUTHORIZED
+                        : OVERRIDE_REJECTED
+                    })
+                  }>
+                  {`${blocked ? 'Authorize' : 'Block'} customer`}
+                </ActionButton>
               </div>
             </>
           )}
@@ -637,7 +644,8 @@ const CustomerProfile = memo(() => {
                 deleteEditedData={deleteEditedData}
                 updateCustomRequest={setCustomerCustomInfoRequest}
                 authorizeCustomRequest={authorizeCustomRequest}
-                updateCustomEntry={updateCustomEntry}></CustomerData>
+                updateCustomEntry={updateCustomEntry}
+                retrieveAditionalData={retrieveAditionalData}></CustomerData>
             </div>
           )}
           {isNotes && (

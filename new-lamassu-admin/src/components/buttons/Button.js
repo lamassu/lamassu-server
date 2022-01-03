@@ -7,8 +7,15 @@ import styles from './Button.styles'
 const useStyles = makeStyles(styles)
 
 const ActionButton = memo(
-  ({ size = 'lg', children, className, buttonClassName, ...props }) => {
-    const classes = useStyles({ size })
+  ({
+    size = 'lg',
+    children,
+    className,
+    buttonClassName,
+    backgroundColor,
+    ...props
+  }) => {
+    const classes = useStyles({ size, backgroundColor })
     return (
       <div className={classnames(className, classes.wrapper)}>
         <button

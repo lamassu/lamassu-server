@@ -5,6 +5,9 @@ import {
   secondaryColor,
   secondaryColorDark,
   secondaryColorDarker,
+  offColor,
+  offDarkColor,
+  offDarkerColor,
   spacer
 } from 'src/styling/variables'
 
@@ -28,11 +31,11 @@ export default {
     const shadowSize = height / 12
     return { height: height + shadowSize / 2 }
   },
-  button: ({ size }) => {
+  button: ({ size, backgroundColor }) => {
     const height = pickSize(size)
     const shadowSize = size === 'xl' ? 3 : height / 12
     const padding = size === 'xl' ? 20 : height / 2
-
+    const isGrey = backgroundColor === 'grey'
     return {
       extend: size === 'xl' ? h1 : h3,
       border: 'none',
@@ -40,7 +43,7 @@ export default {
       cursor: 'pointer',
       fontWeight: 900,
       outline: 0,
-      backgroundColor: secondaryColor,
+      backgroundColor: isGrey ? offDarkColor : secondaryColor,
       '&:disabled': {
         backgroundColor: disabledColor,
         boxShadow: 'none',
@@ -56,15 +59,19 @@ export default {
       height,
       padding: `0 ${padding}px`,
       borderRadius: height / 4,
-      boxShadow: `0 ${shadowSize}px ${secondaryColorDark}`,
+      boxShadow: `0 ${shadowSize}px ${isGrey ? offColor : secondaryColorDark}`,
       '&:hover': {
-        backgroundColor: secondaryColorDark,
-        boxShadow: `0 ${shadowSize}px ${secondaryColorDarker}`
+        backgroundColor: isGrey ? offColor : secondaryColorDark,
+        boxShadow: `0 ${shadowSize}px ${
+          isGrey ? offDarkerColor : secondaryColorDarker
+        }`
       },
       '&:active': {
         marginTop: shadowSize / 2,
-        backgroundColor: secondaryColorDark,
-        boxShadow: `0 ${shadowSize / 2}px ${secondaryColorDarker}`
+        backgroundColor: isGrey ? offDarkColor : secondaryColorDark,
+        boxShadow: `0 ${shadowSize / 2}px ${
+          isGrey ? offDarkerColor : secondaryColorDarker
+        }`
       }
     }
   }

@@ -23,6 +23,8 @@ import { ReactComponent as EditReversedIcon } from 'src/styling/icons/action/edi
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/white.svg'
 import { ReactComponent as CancelReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
+import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
+import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
 import { ReactComponent as ReplaceReversedIcon } from 'src/styling/icons/button/replace/white.svg'
 import { ReactComponent as SaveReversedIcon } from 'src/styling/icons/circle buttons/save/white.svg'
 import { comet } from 'src/styling/variables'
@@ -118,7 +120,8 @@ const EditableCard = ({
   validationSchema,
   initialValues,
   deleteEditedData,
-  isDeletable
+  retrieveAdditionalData,
+  hasAdditionalData = true
 }) => {
   const classes = useStyles()
 
@@ -211,19 +214,28 @@ const EditableCard = ({
                 <div className={classes.edit}>
                   {!editing && (
                     <div className={classes.editButton}>
-                      {// TODO: Remove false condition for next release
-                      false && (
-                        <div className={classes.deleteButton}>
+                      <div className={classes.deleteButton}>
+                        {false && (
                           <ActionButton
                             color="primary"
                             type="button"
                             Icon={DeleteIcon}
                             InverseIcon={DeleteReversedIcon}
                             onClick={() => deleteEditedData()}>
-                            {`Delete`}
+                            Delete
                           </ActionButton>
-                        </div>
-                      )}
+                        )}
+                        {!hasAdditionalData && (
+                          <ActionButton
+                            color="primary"
+                            type="button"
+                            Icon={DataIcon}
+                            InverseIcon={DataReversedIcon}
+                            onClick={() => retrieveAdditionalData()}>
+                            Retrieve API data
+                          </ActionButton>
+                        )}
+                      </div>
                       <ActionButton
                         color="primary"
                         Icon={EditIcon}

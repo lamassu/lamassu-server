@@ -432,9 +432,11 @@ const customerDataSchemas = {
   frontCamera: Yup.object().shape({
     frontCamera: Yup.mixed().required()
   }),
-  smsData: Yup.object().shape({
-    phoneNumber: Yup.mixed().required()
-  })
+  smsData: Yup.object()
+    .shape({
+      phoneNumber: Yup.mixed().required()
+    })
+    .required()
 }
 
 const requirementElements = {
