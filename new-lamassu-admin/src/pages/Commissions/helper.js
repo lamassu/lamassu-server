@@ -487,7 +487,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'cryptoCurrencies',
-      display: 'Crypto Currencydasdsa',
+      display: 'Crypto Currency',
       width: 255,
       view: R.prop(0),
       size: 'sm',
