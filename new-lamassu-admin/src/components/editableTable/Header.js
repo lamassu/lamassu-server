@@ -79,12 +79,11 @@ const Header = () => {
     })
 
     const attachOrderedByToComplexHeader = header => {
-      const cloneHeader = R.clone(header)
-      const children = R.path(['props', 'children'], cloneHeader)
-      const spanChild = R.find(it => R.equals(it.type, 'span'), children)
-
       if (!R.isNil(orderedBy) && R.equals(name, orderedBy.code)) {
         try {
+          const cloneHeader = R.clone(header)
+          const children = R.path(['props', 'children'], cloneHeader)
+          const spanChild = R.find(it => R.equals(it.type, 'span'), children)
           spanChild.props.children = R.append(' -', spanChild.props.children)
           return cloneHeader
         } catch (e) {
