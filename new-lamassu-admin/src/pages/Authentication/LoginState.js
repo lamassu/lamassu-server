@@ -46,23 +46,24 @@ const GET_USER_DATA = gql`
 `
 
 const validationSchema = Yup.object().shape({
-  client: Yup.string()
-    .required('Client field is required!')
-    .email('Username field should be in an email format!'),
+  email: Yup.string()
+    .label('Email')
+    .required()
+    .email(),
   password: Yup.string().required('Password field is required'),
   rememberMe: Yup.boolean()
 })
 
 const initialValues = {
-  client: '',
+  email: '',
   password: '',
   rememberMe: false
 }
 
 const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
   if (!formikErrors || !formikTouched) return null
-  if (mutationError) return 'Invalid login/password combination'
-  if (formikErrors.client && formikTouched.client) return formikErrors.client
+  if (mutationError) return 'Invalid email/password combination'
+  if (formikErrors.email && formikTouched.email) return formikErrors.email
   if (formikErrors.password && formikTouched.password)
     return formikErrors.password
   return null
@@ -142,13 +143,13 @@ const LoginState = ({ state, dispatch, strategy }) => {
       validationSchema={validationSchema}
       initialValues={initialValues}
       onSubmit={values =>
-        submitLogin(values.client, values.password, values.rememberMe)
+        submitLogin(values.email, values.password, values.rememberMe)
       }>
       {({ errors, touched }) => (
         <Form id="login-form">
           <Field
-            name="client"
-            label="Client"
+            name="email"
+            label="Email"
             size="lg"
             component={TextInput}
             fullWidth

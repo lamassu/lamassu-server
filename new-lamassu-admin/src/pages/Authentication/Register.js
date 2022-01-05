@@ -210,6 +210,10 @@ const Register = () => {
               {!loading && state.result === 'failure' && (
                 <>
                   <Label3>Link has expired</Label3>
+                  <Label3>
+                    To obtain a new link, run the command{' '}
+                    <strong>lamassu-register</strong> in your server’s terminal.
+                  </Label3>
                 </>
               )}
             </div>
