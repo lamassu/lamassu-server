@@ -42,8 +42,8 @@ const TIME_OPTIONS = {
 }
 
 const GET_TRANSACTIONS = gql`
-  query transactions($limit: Int, $from: Date, $until: Date) {
-    transactions(limit: $limit, from: $from, until: $until) {
+  query transactions($excludeTestingCustomers: Boolean) {
+    transactions(excludeTestingCustomers: $excludeTestingCustomers) {
       id
       txClass
       txHash
@@ -116,7 +116,9 @@ const OverviewEntry = ({ label, value, oldValue, currency }) => {
 const Analytics = () => {
   const classes = useStyles()
 
-  const { data: txResponse, loading: txLoading } = useQuery(GET_TRANSACTIONS)
+  const { data: txResponse, loading: txLoading } = useQuery(GET_TRANSACTIONS, {
+    variables: { excludeTestingCustomers: true }
+  })
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
 
   const [representing, setRepresenting] = useState(REPRESENTING_OPTIONS[0])
