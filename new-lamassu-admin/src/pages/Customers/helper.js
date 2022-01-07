@@ -434,7 +434,7 @@ const customerDataSchemas = {
   }),
   smsData: Yup.object()
     .shape({
-      phoneNumber: Yup.mixed().required()
+      phoneNumber: Yup.string().required()
     })
     .required()
 }
