@@ -76,7 +76,7 @@ const CustomerData = ({
   updateCustomRequest,
   authorizeCustomRequest,
   updateCustomEntry,
-  retrieveAditionalData
+  retrieveAdditionalData
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
@@ -178,11 +178,11 @@ const CustomerData = ({
           }
         })
       },
-      retrieveAditionalData: () => setRetrieve(true),
       validationSchema: customerDataSchemas.smsData,
+      retrieveAdditionalData: () => setRetrieve(true),
       initialValues: initialValues.smsData,
       isAvailable: !_.isNil(phone),
-      hasAditionalData: !_.isNil(smsData) && !_.isEmpty(smsData)
+      hasAdditionalData: !_.isNil(smsData) && !_.isEmpty(smsData)
     },
     {
       title: 'Name',
@@ -350,7 +350,7 @@ const CustomerData = ({
 
   R.forEach(it => {
     initialValues.smsData[it] = smsData[it]
-    smsDataElements.push({
+    customerDataElements.smsData.push({
       name: it,
       label: onlyFirstToUpper(it),
       component: TextInput
@@ -360,7 +360,7 @@ const CustomerData = ({
         [it]: Yup.string()
       })
       .required()
-      .concat(schemas.smsData)
+      .concat(customerDataSchemas.smsData)
   }, R.keys(smsData) ?? [])
 
   const editableCard = (
@@ -373,12 +373,12 @@ const CustomerData = ({
       fields,
       save,
       deleteEditedData,
-      retrieveAditionalData,
+      retrieveAdditionalData,
       children,
       validationSchema,
       initialValues,
       hasImage,
-      hasAditionalData
+      hasAdditionalData
     },
     idx
   ) => {
@@ -391,14 +391,14 @@ const CustomerData = ({
         state={state}
         titleIcon={titleIcon}
         hasImage={hasImage}
-        hasAditionalData={hasAditionalData}
+        hasAdditionalData={hasAdditionalData}
         fields={fields}
         children={children}
         validationSchema={validationSchema}
         initialValues={initialValues}
         save={save}
         deleteEditedData={deleteEditedData}
-        retrieveAditionalData={retrieveAditionalData}></EditableCard>
+        retrieveAdditionalData={retrieveAdditionalData}></EditableCard>
     )
   }
 
@@ -479,7 +479,7 @@ const CustomerData = ({
       </div>
       <RetrieveDataDialog
         setRetrieve={setRetrieve}
-        retrieveAditionalData={retrieveAditionalData}
+        retrieveAdditionalData={retrieveAdditionalData}
         open={retrieve}></RetrieveDataDialog>
     </div>
   )
@@ -487,7 +487,7 @@ const CustomerData = ({
 
 const RetrieveDataDialog = ({
   setRetrieve,
-  retrieveAditionalData,
+  retrieveAdditionalData,
   open,
   props
 }) => {
@@ -530,7 +530,7 @@ const RetrieveDataDialog = ({
         </Button>
         <Button
           onClick={() => {
-            retrieveAditionalData()
+            retrieveAdditionalData()
             setRetrieve(false)
           }}>
           Confirm

@@ -441,7 +441,7 @@ const CustomerProfile = memo(() => {
       }
     })
 
-  const retrieveAditionalData = () =>
+  const retrieveAdditionalData = () =>
     setCustomer({
       variables: {
         customerId,
@@ -647,7 +647,7 @@ const CustomerProfile = memo(() => {
                 updateCustomRequest={setCustomerCustomInfoRequest}
                 authorizeCustomRequest={authorizeCustomRequest}
                 updateCustomEntry={updateCustomEntry}
-                retrieveAditionalData={retrieveAditionalData}></CustomerData>
+                retrieveAdditionalData={retrieveAdditionalData}></CustomerData>
             </div>
           )}
           {isNotes && (
