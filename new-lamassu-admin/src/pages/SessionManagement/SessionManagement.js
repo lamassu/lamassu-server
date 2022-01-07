@@ -79,7 +79,7 @@ const SessionManagement = () => {
       }
     },
     {
-      header: 'Expiration date (UTC)',
+      header: 'Expiration date',
       width: 290,
       textAlign: 'right',
       size: 'sm',
