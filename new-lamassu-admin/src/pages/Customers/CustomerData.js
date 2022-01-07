@@ -2,6 +2,7 @@ import { DialogActions, DialogContent, Dialog } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { parse, format } from 'date-fns/fp'
+import { parsePhoneNumber } from 'libphonenumber-js'
 import _ from 'lodash/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
@@ -25,6 +26,7 @@ import { ReactComponent as CustomerListViewIcon } from 'src/styling/icons/circle
 import { ReactComponent as OverviewReversedIcon } from 'src/styling/icons/circle buttons/overview/white.svg'
 import { ReactComponent as OverviewIcon } from 'src/styling/icons/circle buttons/overview/zodiac.svg'
 import { URI } from 'src/utils/apollo'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
@@ -103,7 +105,7 @@ const CustomerData = ({
   )
 
   const phone = R.path(['phone'])(customer)
-  const smsData = R.path(['subscriberInfo'])(customer)
+  const smsData = R.path(['subscriberInfo', 'result'])(customer)
 
   const isEven = elem => elem % 2 === 0
 
@@ -163,14 +165,24 @@ const CustomerData = ({
       fields: customerDataElements.smsData,
       title: 'SMS data',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
-      authorize: () => {},
-      reject: () => {},
-      save: () => {},
+      state: R.path(['subscriberInfoOverride'])(customer),
+      authorize: () =>
+        updateCustomer({ subscriberInfoOverride: OVERRIDE_AUTHORIZED }),
+      reject: () =>
+        updateCustomer({ subscriberInfoOverride: OVERRIDE_REJECTED }),
+      save: values => {
+        editCustomer({
+          phone: parsePhoneNumber(values.phoneNumber).number,
+          subscriberInfo: {
+            result: _.merge(smsData, R.omit(['phoneNumber'])(values))
+          }
+        })
+      },
       retrieveAditionalData: () => setRetrieve(true),
       validationSchema: customerDataSchemas.smsData,
       initialValues: initialValues.smsData,
       isAvailable: !_.isNil(phone),
-      hasAditionalData: !_.isNil(smsData) && !_.isEmpty(smsData.result)
+      hasAditionalData: !_.isNil(smsData) && !_.isEmpty(smsData)
     },
     {
       title: 'Name',
@@ -335,6 +347,21 @@ const CustomerData = ({
       }
     })
   }, R.path(['customFields'])(customer) ?? [])
+
+  R.forEach(it => {
+    initialValues.smsData[it] = smsData[it]
+    smsDataElements.push({
+      name: it,
+      label: onlyFirstToUpper(it),
+      component: TextInput
+    })
+    Yup.object()
+      .shape({
+        [it]: Yup.string()
+      })
+      .required()
+      .concat(schemas.smsData)
+  }, R.keys(smsData) ?? [])
 
   const editableCard = (
     {
