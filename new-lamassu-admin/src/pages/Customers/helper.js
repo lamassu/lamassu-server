@@ -401,7 +401,8 @@ const customerDataElements = {
   smsData: {
     name: 'phoneNumber',
     label: 'Phone number',
-    component: TextInput
+    component: TextInput,
+    disabled: true
   }
 }
 

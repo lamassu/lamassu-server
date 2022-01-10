@@ -190,6 +190,7 @@ const EditableCard = ({
                             <EditableField
                               field={field}
                               value={initialValues[field.name]}
+                              disabled={field.disabled ?? false}
                               editing={editing}
                               size={180}
                             />
@@ -203,6 +204,7 @@ const EditableCard = ({
                             <EditableField
                               field={field}
                               value={initialValues[field.name]}
+                              disabled={field.disabled ?? false}
                               editing={editing}
                               size={180}
                             />
