@@ -353,7 +353,8 @@ const CustomerData = ({
     customerDataElements.smsData.push({
       name: it,
       label: onlyFirstToUpper(it),
-      component: TextInput
+      component: TextInput,
+      editable: true
     })
     Yup.object()
       .shape({

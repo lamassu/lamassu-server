@@ -3,7 +3,7 @@ var db = require('./db')
 exports.up = function (next) {
   var sql = [
     `ALTER TABLE customers 
-     ADD COLUMN subscriber_info_override VERIFICATION_TYPE,
+     ADD COLUMN subscriber_info_override VERIFICATION_TYPE NOT NULL DEFAULT 'automatic',
      ADD COLUMN subscriber_info_override_by UUID,
      ADD COLUMN subscriber_info_override_at TIMESTAMPTZ
     `,

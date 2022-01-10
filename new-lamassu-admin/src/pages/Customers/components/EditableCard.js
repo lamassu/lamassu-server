@@ -69,6 +69,13 @@ const fieldStyles = {
         fontSize: 14
       }
     }
+  },
+  readOnlyLabel: {
+    color: comet,
+    margin: [[3, 0, 3, 0]]
+  },
+  readOnlyValue: {
+    margin: 0
   }
 }
 
@@ -104,6 +111,23 @@ const EditableField = ({ editing, field, value, size, ...props }) => {
         </>
       )}
     </div>
+  )
+}
+
+const ReadOnlyField = ({ field, value, ...props }) => {
+  const classes = fieldUseStyles()
+  const classNames = {
+    [classes.field]: true,
+    [classes.notEditing]: true
+  }
+
+  return (
+    <>
+      <div className={classnames(classNames)}>
+        <Label1 className={classes.readOnlyLabel}>{field.label}</Label1>
+        <P className={classes.readOnlyValue}>{value}</P>
+      </div>
+    </>
   )
 }
 
@@ -178,7 +202,7 @@ const EditableCard = ({
               setEditing(false)
               setError(false)
             }}>
-            {({ values, touched, errors, setFieldValue }) => (
+            {({ setFieldValue }) => (
               <Form>
                 <PromptWhenDirty />
                 <div className={classes.row}>
@@ -187,13 +211,19 @@ const EditableCard = ({
                       {!hasImage &&
                         fields?.map((field, idx) => {
                           return idx >= 0 && idx < 4 ? (
-                            <EditableField
-                              field={field}
-                              value={initialValues[field.name]}
-                              disabled={field.disabled ?? false}
-                              editing={editing}
-                              size={180}
-                            />
+                            !field.editable ? (
+                              <ReadOnlyField
+                                field={field}
+                                value={initialValues[field.name]}
+                              />
+                            ) : (
+                              <EditableField
+                                field={field}
+                                value={initialValues[field.name]}
+                                editing={editing}
+                                size={180}
+                              />
+                            )
                           ) : null
                         })}
                     </Grid>
@@ -201,13 +231,19 @@ const EditableCard = ({
                       {!hasImage &&
                         fields?.map((field, idx) => {
                           return idx >= 4 ? (
-                            <EditableField
-                              field={field}
-                              value={initialValues[field.name]}
-                              disabled={field.disabled ?? false}
-                              editing={editing}
-                              size={180}
-                            />
+                            !field.editable ? (
+                              <ReadOnlyField
+                                field={field}
+                                value={initialValues[field.name]}
+                              />
+                            ) : (
+                              <EditableField
+                                field={field}
+                                value={initialValues[field.name]}
+                                editing={editing}
+                                size={180}
+                              />
+                            )
                           ) : null
                         })}
                     </Grid>
