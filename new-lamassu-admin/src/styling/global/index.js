@@ -28,7 +28,10 @@ export default {
       pointerEvents: 'none'
     },
     html: {
-      height: fill
+      height: fill,
+      '@media screen and (max-height: 900px)': {
+        scrollbarGutter: 'stable'
+      }
     },
     body: {
       width: mainWidth,
