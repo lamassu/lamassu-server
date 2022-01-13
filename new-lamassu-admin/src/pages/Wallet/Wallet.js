@@ -140,12 +140,14 @@ const Wallet = ({ name: SCREEN_KEY }) => {
       <div className={classes.header}>
         <TitleSection
           title="Wallet Settings"
-          button={{
-            text: 'Advanced settings',
-            icon: SettingsIcon,
-            inverseIcon: ReverseSettingsIcon,
-            toggle: setAdvancedSettings
-          }}
+          buttons={[
+            {
+              text: 'Advanced settings',
+              icon: SettingsIcon,
+              inverseIcon: ReverseSettingsIcon,
+              toggle: setAdvancedSettings
+            }
+          ]}
         />
         <Box alignItems="center" justifyContent="end">
           <Label1 className={classes.feeDiscountLabel}>Fee discount</Label1>

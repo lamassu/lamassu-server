@@ -279,12 +279,14 @@ const CashCassettes = () => {
       <>
         <TitleSection
           title="Cash Boxes & Cassettes"
-          button={{
-            text: 'Cash box history',
-            icon: HistoryIcon,
-            inverseIcon: ReverseHistoryIcon,
-            toggle: setShowHistory
-          }}
+          buttons={[
+            {
+              text: 'Cash box history',
+              icon: HistoryIcon,
+              inverseIcon: ReverseHistoryIcon,
+              toggle: setShowHistory
+            }
+          ]}
           iconClassName={classes.listViewButton}
           className={classes.tableWidth}>
           {!showHistory && (
