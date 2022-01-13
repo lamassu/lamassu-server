@@ -3,7 +3,6 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { parse, format } from 'date-fns/fp'
 import { parsePhoneNumber } from 'libphonenumber-js'
-import _ from 'lodash/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
 import * as Yup from 'yup'
@@ -109,7 +108,7 @@ const CustomerData = ({
 
   const isEven = elem => elem % 2 === 0
 
-  const getVisibleCards = _.filter(elem => elem.isAvailable)
+  const getVisibleCards = R.filter(elem => elem.isAvailable)
 
   const initialValues = {
     idCardData: {
@@ -155,11 +154,11 @@ const CustomerData = ({
       deleteEditedData: () => deleteEditedData({ idCardData: null }),
       save: values =>
         editCustomer({
-          idCardData: _.merge(idData, formatDates(values))
+          idCardData: R.merge(idData, formatDates(values))
         }),
       validationSchema: customerDataSchemas.idCardData,
       initialValues: initialValues.idCardData,
-      isAvailable: !_.isNil(idData)
+      isAvailable: !R.isNil(idData)
     },
     {
       fields: customerDataElements.smsData,
@@ -174,15 +173,15 @@ const CustomerData = ({
         editCustomer({
           phone: parsePhoneNumber(values.phoneNumber).number,
           subscriberInfo: {
-            result: _.merge(smsData, R.omit(['phoneNumber'])(values))
+            result: R.merge(smsData, R.omit(['phoneNumber'])(values))
           }
         })
       },
       validationSchema: customerDataSchemas.smsData,
       retrieveAdditionalData: () => setRetrieve(true),
       initialValues: initialValues.smsData,
-      isAvailable: !_.isNil(phone),
-      hasAdditionalData: !_.isNil(smsData) && !_.isEmpty(smsData)
+      isAvailable: !R.isNil(phone),
+      hasAdditionalData: !R.isNil(smsData) && !R.isEmpty(smsData)
     },
     {
       title: 'Name',
@@ -200,7 +199,7 @@ const CustomerData = ({
         updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED }),
       children: <Info3>{sanctionsDisplay}</Info3>,
-      isAvailable: !_.isNil(sanctions)
+      isAvailable: !R.isNil(sanctions)
     },
     {
       fields: customerDataElements.frontCamera,
@@ -227,7 +226,7 @@ const CustomerData = ({
       hasImage: true,
       validationSchema: customerDataSchemas.frontCamera,
       initialValues: initialValues.frontCamera,
-      isAvailable: !_.isNil(customer.frontCameraPath)
+      isAvailable: !R.isNil(customer.frontCameraPath)
     },
     {
       fields: customerDataElements.idCardPhoto,
@@ -252,7 +251,7 @@ const CustomerData = ({
       hasImage: true,
       validationSchema: customerDataSchemas.idCardPhoto,
       initialValues: initialValues.idCardPhoto,
-      isAvailable: !_.isNil(customer.idCardPhotoPath)
+      isAvailable: !R.isNil(customer.idCardPhotoPath)
     },
     {
       fields: customerDataElements.usSsn,
@@ -265,7 +264,7 @@ const CustomerData = ({
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
       validationSchema: customerDataSchemas.usSsn,
       initialValues: initialValues.usSsn,
-      isAvailable: !_.isNil(customer.usSsn)
+      isAvailable: !R.isNil(customer.usSsn)
     }
   ]
 
@@ -356,7 +355,7 @@ const CustomerData = ({
       component: TextInput,
       editable: true
     })
-    Yup.object()
+    customerDataSchemas.smsData = Yup.object()
       .shape({
         [it]: Yup.string()
       })
@@ -443,7 +442,7 @@ const CustomerData = ({
             </Grid>
           </Grid>
         )}
-        {!_.isEmpty(customFields) && (
+        {!R.isEmpty(customFields) && (
           <div className={classes.wrapper}>
             <span className={classes.separator}>Custom data entry</span>
             <Grid container>

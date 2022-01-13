@@ -279,7 +279,7 @@ const EditableCard = ({
                         Icon={EditIcon}
                         InverseIcon={EditReversedIcon}
                         onClick={() => setEditing(true)}>
-                        {`Edit`}
+                        Edit
                       </ActionButton>
                     </div>
                   )}
