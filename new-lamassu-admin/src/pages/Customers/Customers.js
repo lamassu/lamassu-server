@@ -80,9 +80,9 @@ const Customers = () => {
 
   const configData = R.path(['config'])(customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
-  const customersData = R.sortWith([R.descend(R.prop('lastActive'))])(
-    filteredCustomers ?? []
-  )
+  const customersData = R.sortWith([
+    R.descend(it => new Date(R.prop('lastActive', it) ?? '0'))
+  ])(filteredCustomers ?? [])
 
   const onFilterChange = filters => {
     const filtersObject = getFiltersObj(filters)
