@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core'
-import { Form, Formik } from 'formik'
+import { Form, Formik, Field } from 'formik'
 import * as R from 'ramda'
 import React, { useState, Fragment } from 'react'
 
@@ -7,6 +7,7 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
+import { Dropdown } from 'src/components/inputs/formik'
 import { comet } from 'src/styling/variables'
 
 import { entryType, customElements } from './helper'
@@ -41,6 +42,10 @@ const styles = {
     margin: [[0, 4, 0, 2]],
     borderBottom: `1px solid ${comet}`,
     display: 'inline-block'
+  },
+  dropdownField: {
+    marginTop: 16,
+    minWidth: 155
   }
 }
 
@@ -57,7 +62,14 @@ const getStep = (step, selectedValues) => {
   }
 }
 
-const Wizard = ({ onClose, save, error }) => {
+const Wizard = ({
+  onClose,
+  save,
+  error,
+  customRequirementOptions,
+  addCustomerData,
+  addPhoto
+}) => {
   const classes = useStyles()
 
   const [selectedValues, setSelectedValues] = useState(null)
@@ -66,6 +78,7 @@ const Wizard = ({ onClose, save, error }) => {
     step: 1
   })
 
+  const isCustom = values => values?.requirement === 'custom'
   const isLastStep = step === LAST_STEP
   const stepOptions = getStep(step, selectedValues)
 
@@ -103,18 +116,34 @@ const Wizard = ({ onClose, save, error }) => {
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          <Form className={classes.form}>
-            <stepOptions.Component
-              selectedValues={selectedValues}
-              {...stepOptions.props}
-            />
-            <div className={classes.submit}>
-              {error && <ErrorMessage>Failed to save</ErrorMessage>}
-              <Button className={classes.button} type="submit">
-                {isLastStep ? 'Add Data' : 'Next'}
-              </Button>
-            </div>
-          </Form>
+          {({ values }) => (
+            <Form className={classes.form}>
+              <stepOptions.Component
+                selectedValues={selectedValues}
+                hasCustomRequirementOptions={
+                  !R.isEmpty(customRequirementOptions)
+                }
+                {...stepOptions.props}
+              />
+              {isCustom(values) && (
+                <div>
+                  <Field
+                    className={classes.dropdownField}
+                    component={Dropdown}
+                    label="Available requests"
+                    name="requirement.customInfoRequestId"
+                    options={customRequirementOptions}
+                  />
+                </div>
+              )}
+              <div className={classes.submit}>
+                {error && <ErrorMessage>Failed to save</ErrorMessage>}
+                <Button className={classes.button} type="submit">
+                  {isLastStep ? 'Add Data' : 'Next'}
+                </Button>
+              </div>
+            </Form>
+          )}
         </Formik>
       </Modal>
     </>

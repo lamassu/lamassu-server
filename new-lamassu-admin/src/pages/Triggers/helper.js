@@ -554,7 +554,7 @@ const Requirement = () => {
   }
   const options = enableCustomRequirement
     ? [...requirementOptions, customInfoOption]
-    : [...requirementOptions, { ...customInfoOption, disabled: true }]
+    : [...requirementOptions]
   const titleClass = {
     [classes.error]:
       (!!errors.requirement && !isSuspend) || (isSuspend && hasRequirementError)

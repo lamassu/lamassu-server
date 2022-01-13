@@ -236,6 +236,21 @@ const GET_DATA = gql`
   }
 `
 
+const SET_CUSTOM_ENTRY = gql`
+  mutation addCustomField($customerId: ID!, $label: String!, $value: String!) {
+    addCustomField(customerId: $customerId, label: $label, value: $value)
+  }
+`
+
+const GET_ACTIVE_CUSTOM_REQUESTS = gql`
+  query customInfoRequests($onlyEnabled: Boolean) {
+    customInfoRequests(onlyEnabled: $onlyEnabled) {
+      id
+      customRequest
+    }
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -254,6 +269,16 @@ const CustomerProfile = memo(() => {
   })
 
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+
+  const { data: activeCustomRequests } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
+    variables: {
+      onlyEnabled: true
+    }
+  })
+
+  const [setCustomEntry] = useMutation(SET_CUSTOM_ENTRY, {
+    onCompleted: () => getCustomer()
+  })
 
   const [replaceCustomerPhoto] = useMutation(REPLACE_CUSTOMER_PHOTO, {
     onCompleted: () => getCustomer()
@@ -293,6 +318,17 @@ const CustomerProfile = memo(() => {
   const [editNote] = useMutation(EDIT_NOTE, {
     onCompleted: () => getCustomer()
   })
+
+  const saveCustomEntry = it => {
+    setCustomEntry({
+      variables: {
+        customerId,
+        label: it.title,
+        value: it.data
+      }
+    })
+    setWizard(null)
+  }
 
   const updateCustomer = it =>
     setCustomer({
@@ -384,6 +420,12 @@ const CustomerProfile = memo(() => {
   const loading = customerLoading || configLoading
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
+
+  const customRequirementOptions =
+    activeCustomRequests?.customInfoRequests?.map(it => ({
+      value: it.id,
+      display: it.customRequest.name
+    })) ?? []
 
   const classes = useStyles()
 
@@ -544,8 +586,11 @@ const CustomerProfile = memo(() => {
         {wizard && (
           <Wizard
             error={error?.message}
-            save={() => {}}
+            save={saveCustomEntry}
+            addPhoto={replacePhoto}
+            addCustomerData={editCustomer}
             onClose={() => setWizard(null)}
+            customRequirementOptions={customRequirementOptions}
           />
         )}
       </div>

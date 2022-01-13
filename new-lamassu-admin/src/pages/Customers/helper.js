@@ -1,5 +1,6 @@
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
+import { parse, isValid } from 'date-fns/fp'
 import { Field, useFormikContext } from 'formik'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
@@ -63,23 +64,25 @@ const getName = it => {
   ) ?? ''}`.trim()
 }
 
+// Manual Entry Wizard
+
 const entryOptions = [
   { display: 'Custom entry', code: 'custom' },
   { display: 'Populate existing requirement', code: 'requirement' }
 ]
 
 const dataOptions = [
-  { display: 'Text', code: 'text' },
-  { display: 'File', code: 'file' },
-  { display: 'Image', code: 'image' }
+  { display: 'Text', code: 'text' }
+  // TODO: Requires backend modifications to support File and Image
+  // { display: 'File', code: 'file' },
+  // { display: 'Image', code: 'image' }
 ]
 
 const requirementOptions = [
-  { display: 'Birthdate', code: 'birthdate' },
   { display: 'ID card image', code: 'idCardPhoto' },
   { display: 'ID data', code: 'idCardData' },
-  { display: 'Customer camera', code: 'facephoto' },
-  { display: 'US SSN', code: 'usSsn' }
+  { display: 'US SSN', code: 'usSsn' },
+  { display: 'Customer camera', code: 'facephoto' }
 ]
 
 const customTextOptions = [
@@ -108,7 +111,7 @@ const customTextSchema = Yup.object().shape({
   data: Yup.string().required()
 })
 
-const EntryType = () => {
+const EntryType = ({ hasCustomRequirementOptions }) => {
   const classes = useStyles()
   const { values } = useFormikContext()
 
@@ -154,7 +157,17 @@ const EntryType = () => {
           <Field
             component={RadioGroup}
             name="requirement"
-            options={requirementOptions}
+            options={
+              hasCustomRequirementOptions
+                ? [
+                    {
+                      display: 'Custom information requirement',
+                      code: 'custom'
+                    },
+                    ...requirementOptions
+                  ]
+                : requirementOptions
+            }
             labelClassName={classes.label}
             radioClassName={classes.radio}
             className={classnames(classes.radioGroup, classes.specialGrid)}
@@ -209,6 +222,87 @@ const entryType = {
   initialValues: { entryType: '' }
 }
 
+// Customer data
+
+const customerDataElements = {
+  idScanElements: [
+    {
+      name: 'firstName',
+      label: 'First name',
+      component: TextInput
+    },
+    {
+      name: 'documentNumber',
+      label: 'ID number',
+      component: TextInput
+    },
+    {
+      name: 'dateOfBirth',
+      label: 'Birthdate',
+      component: TextInput
+    },
+    {
+      name: 'gender',
+      label: 'Gender',
+      component: TextInput
+    },
+    {
+      name: 'lastName',
+      label: 'Last name',
+      component: TextInput
+    },
+    {
+      name: 'expirationDate',
+      label: 'Expiration Date',
+      component: TextInput
+    },
+    {
+      name: 'country',
+      label: 'Country',
+      component: TextInput
+    }
+  ],
+  usSsnElements: [
+    {
+      name: 'usSsn',
+      label: 'US SSN',
+      component: TextInput,
+      size: 190
+    }
+  ],
+  idCardPhotoElements: [{ name: 'idCardPhoto' }],
+  frontCameraElements: [{ name: 'frontCamera' }]
+}
+
+const customerDataschemas = {
+  idScan: Yup.object().shape({
+    firstName: Yup.string().required(),
+    lastName: Yup.string().required(),
+    documentNumber: Yup.string().required(),
+    dateOfBirth: Yup.string()
+      .test({
+        test: val => isValid(parse(new Date(), 'yyyy-MM-dd', val))
+      })
+      .required(),
+    gender: Yup.string().required(),
+    country: Yup.string().required(),
+    expirationDate: Yup.string()
+      .test({
+        test: val => isValid(parse(new Date(), 'yyyy-MM-dd', val))
+      })
+      .required()
+  }),
+  usSsn: Yup.object().shape({
+    usSsn: Yup.string().required()
+  }),
+  idCardPhoto: Yup.object().shape({
+    idCardPhoto: Yup.mixed().required()
+  }),
+  frontCamera: Yup.object().shape({
+    frontCamera: Yup.mixed().required()
+  })
+}
+
 const mapKeys = pair => {
   const [key, value] = pair
   if (key === 'txCustomerPhotoPath' || key === 'frontCameraPath') {
@@ -245,5 +339,7 @@ export {
   getName,
   entryType,
   customElements,
-  formatPhotosData
+  formatPhotosData,
+  customerDataElements,
+  customerDataschemas
 }

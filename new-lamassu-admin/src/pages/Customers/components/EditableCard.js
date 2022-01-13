@@ -150,7 +150,7 @@ const EditableCard = ({
               <H3 className={classes.cardTitle}>{title}</H3>
               <Tooltip width={304}></Tooltip>
             </div>
-            {state && (
+            {state && authorize && (
               <div className={classnames(label1ClassNames)}>
                 <MainStatus statuses={[authorized]} />
               </div>
@@ -279,7 +279,7 @@ const EditableCard = ({
                             Cancel
                           </ActionButton>
                         </div>
-                        {authorized.label !== 'Accepted' && (
+                        {authorize && authorized.label !== 'Accepted' && (
                           <div className={classes.button}>
                             <ActionButton
                               color="spring"
@@ -291,7 +291,7 @@ const EditableCard = ({
                             </ActionButton>
                           </div>
                         )}
-                        {authorized.label !== 'Rejected' && (
+                        {authorize && authorized.label !== 'Rejected' && (
                           <ActionButton
                             color="tomato"
                             type="button"

@@ -1,6 +1,6 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
-import { parse, format, isValid } from 'date-fns/fp'
+import { parse, format } from 'date-fns/fp'
 import _ from 'lodash/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
@@ -26,6 +26,7 @@ import { URI } from 'src/utils/apollo'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
+import { customerDataElements, customerDataschemas } from './helper.js'
 
 const useStyles = makeStyles(styles)
 
@@ -84,8 +85,8 @@ const CustomerData = ({
     R.compose(R.toLower, R.path(['customInfoRequest', 'customRequest', 'name']))
   )
 
-  const customEntries = null // get customer custom entries
-  const customRequirements = [] // get customer custom requirements
+  const customFields = []
+  const customRequirements = []
   const customInfoRequests = sortByName(
     R.path(['customInfoRequests'])(customer) ?? []
   )
@@ -93,85 +94,6 @@ const CustomerData = ({
   const isEven = elem => elem % 2 === 0
 
   const getVisibleCards = _.filter(elem => elem.isAvailable)
-
-  const schemas = {
-    idScan: Yup.object().shape({
-      firstName: Yup.string().required(),
-      lastName: Yup.string().required(),
-      documentNumber: Yup.string().required(),
-      dateOfBirth: Yup.string()
-        .test({
-          test: val => isValid(parse(new Date(), 'yyyy-MM-dd', val))
-        })
-        .required(),
-      gender: Yup.string().required(),
-      country: Yup.string().required(),
-      expirationDate: Yup.string()
-        .test({
-          test: val => isValid(parse(new Date(), 'yyyy-MM-dd', val))
-        })
-        .required()
-    }),
-    usSsn: Yup.object().shape({
-      usSsn: Yup.string().required()
-    }),
-    idCardPhoto: Yup.object().shape({
-      idCardPhoto: Yup.mixed().required()
-    }),
-    frontCamera: Yup.object().shape({
-      frontCamera: Yup.mixed().required()
-    })
-  }
-
-  const idScanElements = [
-    {
-      name: 'firstName',
-      label: 'First name',
-      component: TextInput
-    },
-    {
-      name: 'documentNumber',
-      label: 'ID number',
-      component: TextInput
-    },
-    {
-      name: 'dateOfBirth',
-      label: 'Birthdate',
-      component: TextInput
-    },
-    {
-      name: 'gender',
-      label: 'Gender',
-      component: TextInput
-    },
-    {
-      name: 'lastName',
-      label: 'Last name',
-      component: TextInput
-    },
-    {
-      name: 'expirationDate',
-      label: 'Expiration Date',
-      component: TextInput
-    },
-    {
-      name: 'country',
-      label: 'Country',
-      component: TextInput
-    }
-  ]
-
-  const usSsnElements = [
-    {
-      name: 'usSsn',
-      label: 'US SSN',
-      component: TextInput,
-      size: 190
-    }
-  ]
-
-  const idCardPhotoElements = [{ name: 'idCardPhoto' }]
-  const frontCameraElements = [{ name: 'frontCamera' }]
 
   const initialValues = {
     idScan: {
@@ -214,7 +136,7 @@ const CustomerData = ({
 
   const cards = [
     {
-      fields: idScanElements,
+      fields: customerDataElements.idScanElements,
       title: 'ID Scan',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['idCardDataOverride'])(customer),
@@ -226,7 +148,7 @@ const CustomerData = ({
         editCustomer({
           idCardData: _.merge(idData, formatDates(values))
         }),
-      validationSchema: schemas.idScan,
+      validationSchema: customerDataschemas.idScan,
       initialValues: initialValues.idScan,
       isAvailable: !_.isNil(idData)
     },
@@ -257,7 +179,7 @@ const CustomerData = ({
       isAvailable: !_.isNil(sanctions)
     },
     {
-      fields: frontCameraElements,
+      fields: customerDataElements.frontCameraElements,
       title: 'Front facing camera',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['frontCameraOverride'])(customer),
@@ -279,12 +201,12 @@ const CustomerData = ({
         />
       ) : null,
       hasImage: true,
-      validationSchema: schemas.frontCamera,
+      validationSchema: customerDataschemas.frontCamera,
       initialValues: initialValues.frontCamera,
       isAvailable: !_.isNil(customer.frontCameraPath)
     },
     {
-      fields: idCardPhotoElements,
+      fields: customerDataElements.idCardPhotoElements,
       title: 'ID card image',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['idCardPhotoOverride'])(customer),
@@ -304,12 +226,12 @@ const CustomerData = ({
         />
       ) : null,
       hasImage: true,
-      validationSchema: schemas.idCardPhoto,
+      validationSchema: customerDataschemas.idCardPhoto,
       initialValues: initialValues.idCardPhoto,
       isAvailable: !_.isNil(customer.idCardPhotoPath)
     },
     {
-      fields: usSsnElements,
+      fields: customerDataElements.usSsnElements,
       title: 'US SSN',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['usSsnOverride'])(customer),
@@ -317,7 +239,7 @@ const CustomerData = ({
       reject: () => updateCustomer({ usSsnOverride: OVERRIDE_REJECTED }),
       save: values => editCustomer({ usSsn: values.usSsn }),
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
-      validationSchema: schemas.usSsn,
+      validationSchema: customerDataschemas.usSsn,
       initialValues: initialValues.usSsn,
       isAvailable: !_.isNil(customer.usSsn)
     }
@@ -373,6 +295,29 @@ const CustomerData = ({
       }
     })
   }, customInfoRequests)
+
+  R.forEach(it => {
+    customFields.push({
+      fields: [
+        {
+          name: it.label,
+          label: it.label,
+          value: it.value ?? '',
+          component: TextInput
+        }
+      ],
+      title: it.label,
+      titleIcon: <EditIcon className={classes.editIcon} />,
+      save: () => {},
+      deleteEditedData: () => {},
+      validationSchema: Yup.object().shape({
+        [it.label]: Yup.string()
+      }),
+      initialValues: {
+        [it.label]: it.value ?? ''
+      }
+    })
+  }, R.path(['customFields'])(customer) ?? [])
 
   const editableCard = (
     {
@@ -444,9 +389,21 @@ const CustomerData = ({
             </Grid>
           </Grid>
         )}
-        {customEntries && (
+        {!_.isEmpty(customFields) && (
           <div className={classes.wrapper}>
             <span className={classes.separator}>Custom data entry</span>
+            <Grid container>
+              <Grid container direction="column" item xs={6}>
+                {customFields.map((elem, idx) => {
+                  return isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+              <Grid container direction="column" item xs={6}>
+                {customFields.map((elem, idx) => {
+                  return !isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+            </Grid>
           </div>
         )}
         {!R.isEmpty(customRequirements) && (
