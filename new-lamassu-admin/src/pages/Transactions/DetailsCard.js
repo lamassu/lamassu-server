@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
-import { add, differenceInYears, format, sub } from 'date-fns/fp'
+import { add, differenceInYears, format, sub, parse } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
@@ -123,9 +123,8 @@ const DetailsRow = ({ it: tx, timezone }) => {
     age: differenceInYears(tx.customerIdCardData.dateOfBirth, new Date()),
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
-    idCardExpirationDate: format(
-      'dd-MM-yyyy',
-      tx.customerIdCardData.expirationDate
+    idCardExpirationDate: format('yyyy-MM-dd')(
+      parse(new Date(), 'yyyyMMdd', tx.customerIdCardData.expirationDate)
     )
   }
 
