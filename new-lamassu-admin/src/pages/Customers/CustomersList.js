@@ -19,36 +19,36 @@ const CustomersList = ({ data, locale, onClick, loading }) => {
   const elements = [
     {
       header: 'Phone',
-      width: 175,
+      width: 199,
       view: it => getFormattedPhone(it.phone, locale.country)
     },
     {
       header: 'Name',
-      width: 247,
+      width: 241,
       view: getName
     },
     {
       header: 'Total TXs',
-      width: 130,
+      width: 126,
       textAlign: 'right',
       view: it => `${Number.parseInt(it.totalTxs)}`
     },
     {
       header: 'Total spent',
-      width: 155,
+      width: 152,
       textAlign: 'right',
       view: it =>
         `${Number.parseFloat(it.totalSpent)} ${it.lastTxFiatCode ?? ''}`
     },
     {
       header: 'Last active',
-      width: 137,
+      width: 133,
       view: it =>
         (it.lastActive && format('yyyy-MM-dd', new Date(it.lastActive))) ?? ''
     },
     {
       header: 'Last transaction',
-      width: 165,
+      width: 161,
       textAlign: 'right',
       view: it => {
         const hasLastTx = !R.isNil(it.lastTxFiatCode)
