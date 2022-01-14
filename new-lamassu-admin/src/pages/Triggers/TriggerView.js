@@ -75,10 +75,7 @@ const TriggerView = ({
           error={error?.message}
           save={add}
           onClose={toggleWizard}
-          customInfoRequests={R.filter(
-            it => it.enabled === true,
-            customInfoRequests
-          )}
+          customInfoRequests={customInfoRequests}
         />
       )}
       {R.isEmpty(triggers) && (

@@ -48,8 +48,10 @@ const GET_CUSTOM_REQUESTS = gql`
 const Triggers = () => {
   const classes = useStyles()
   const [wizardType, setWizard] = useState(false)
-  const { data, loading } = useQuery(GET_CONFIG)
-  const { data: customInfoReqData } = useQuery(GET_CUSTOM_REQUESTS)
+  const { data, loading: configLoading } = useQuery(GET_CONFIG)
+  const { data: customInfoReqData, loading: customInfoLoading } = useQuery(
+    GET_CUSTOM_REQUESTS
+  )
   const [error, setError] = useState(null)
   const [subMenu, setSubMenu] = useState(false)
 
@@ -93,6 +95,8 @@ const Triggers = () => {
     setBlur(true)
     return setWizard(wizardName)
   }
+
+  const loading = configLoading || customInfoLoading
 
   return (
     <>
@@ -178,7 +182,7 @@ const Triggers = () => {
           showWizard={wizardType === 'newTrigger'}
           config={data?.config ?? {}}
           toggleWizard={toggleWizard('newTrigger')}
-          customInfoRequests={customInfoRequests}
+          customInfoRequests={enabledCustomInfoRequests}
         />
       )}
       {!loading && subMenu === 'advancedSettings' && (
