@@ -225,14 +225,14 @@ const CashCassettes = () => {
     {
       name: 'name',
       header: 'Machine',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.machine,
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
     },
     {
       name: 'cashbox',
       header: 'Cash box',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes].cashbox,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cashbox,
       view: (value, { id }) => (
         <CashIn
           currency={{ code: fiatCurrency }}
@@ -253,7 +253,7 @@ const CashCassettes = () => {
       elements.push({
         name: `cassette${it}`,
         header: `Cassette ${it}`,
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
         stripe: true,
         doubleHeader: 'Cash-out',
         view: (value, { id }) => (
@@ -263,7 +263,7 @@ const CashCassettes = () => {
             currency={{ code: fiatCurrency }}
             notes={value}
             width={
-              widthsByNumberOfCassettes[maxNumberOfCassettes].cassetteGraph
+              widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph
             }
             threshold={
               fillingPercentageSettings[`fillingPercentageCassette${it}`]
@@ -274,7 +274,7 @@ const CashCassettes = () => {
         input: CashCassetteInput,
         inputProps: {
           decimalPlaces: 0,
-          width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassetteGraph,
+          width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph,
           inputClassName: classes.cashbox
         }
       })
@@ -286,7 +286,7 @@ const CashCassettes = () => {
   elements.push({
     name: 'edit',
     header: 'Edit',
-    width: widthsByNumberOfCassettes[maxNumberOfCassettes].editWidth,
+    width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.editWidth,
     textAlign: 'center',
     view: (value, { id }) => {
       return (
