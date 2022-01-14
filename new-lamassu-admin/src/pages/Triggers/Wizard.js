@@ -48,14 +48,14 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const getStep = (step, currency) => {
+const getStep = (step, currency, customInfoRequests) => {
   switch (step) {
     // case 1:
     //   return txDirection
     case 1:
       return type(currency)
     case 2:
-      return requirements
+      return requirements(customInfoRequests)
     default:
       return Fragment
   }
@@ -202,7 +202,7 @@ const GetValues = ({ setValues }) => {
   return null
 }
 
-const Wizard = ({ onClose, save, error, currency }) => {
+const Wizard = ({ onClose, save, error, currency, customInfoRequests }) => {
   const classes = useStyles()
 
   const [liveValues, setLiveValues] = useState({})
@@ -211,7 +211,7 @@ const Wizard = ({ onClose, save, error, currency }) => {
   })
 
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step, currency)
+  const stepOptions = getStep(step, currency, customInfoRequests)
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
