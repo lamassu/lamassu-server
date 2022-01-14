@@ -43,6 +43,16 @@ const GET_CUSTOMERS = gql`
       lastTxFiatCode
       lastTxClass
       authorizedOverride
+      frontCameraPath
+      frontCameraOverride
+      idCardPhotoPath
+      idCardPhotoOverride
+      idCardData
+      idCardDataOverride
+      usSsn
+      usSsnOverride
+      sanctions
+      sanctionsOverride
       daysSuspended
       isSuspended
     }
@@ -80,6 +90,7 @@ const Customers = () => {
 
   const configData = R.path(['config'])(customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
+  const triggers = configData && fromNamespace(namespaces.TRIGGERS, configData)
   const customersData = R.sortWith([
     R.descend(it => new Date(R.prop('lastActive', it) ?? '0'))
   ])(filteredCustomers ?? [])
@@ -168,6 +179,7 @@ const Customers = () => {
         locale={locale}
         onClick={handleCustomerClicked}
         loading={customerLoading}
+        triggers={triggers}
       />
     </>
   )
