@@ -8,6 +8,7 @@ import * as Yup from 'yup'
 import { RadioGroup, TextInput } from 'src/components/inputs/formik'
 import { H4 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
+import { MANUAL } from 'src/utils/constants'
 
 import { Upload } from './components'
 
@@ -39,14 +40,47 @@ const useStyles = makeStyles({
 
 const CUSTOMER_BLOCKED = 'blocked'
 
-const getAuthorizedStatus = it =>
-  it.authorizedOverride === CUSTOMER_BLOCKED
-    ? { label: 'Blocked', type: 'error' }
-    : it.isSuspended
-    ? it.daysSuspended > 0
+const getAuthorizedStatus = (it, triggers) => {
+  const fields = [
+    'frontCameraPath',
+    'idCardData',
+    'idCardPhotoPath',
+    'usSsn',
+    'sanctions'
+  ]
+
+  const isManualField = fieldName => {
+    const manualOverrides = R.filter(
+      ite => R.equals(R.toLower(ite.automation), MANUAL),
+      triggers?.overrides ?? []
+    )
+
+    return (
+      !!R.find(ite => R.equals(ite.requirement, fieldName), manualOverrides) ||
+      R.equals(triggers.automation, MANUAL)
+    )
+  }
+
+  const pendingFieldStatus = R.map(
+    ite =>
+      !R.isNil(it[`${ite}`])
+        ? isManualField(ite)
+          ? R.equals(it[`${ite}Override`], 'automatic')
+          : false
+        : false,
+    fields
+  )
+
+  if (it.authorizedOverride === CUSTOMER_BLOCKED)
+    return { label: 'Blocked', type: 'error' }
+  if (it.isSuspended)
+    return it.daysSuspended > 0
       ? { label: `${it.daysSuspended} day suspension`, type: 'warning' }
       : { label: `< 1 day suspension`, type: 'warning' }
-    : { label: 'Authorized', type: 'success' }
+  if (R.any(ite => ite === true, pendingFieldStatus))
+    return { label: 'Pending', type: 'warning' }
+  return { label: 'Authorized', type: 'success' }
+}
 
 const getFormattedPhone = (phone, country) => {
   const phoneNumber =
