@@ -91,7 +91,12 @@ const Customers = () => {
 
   const [createNewCustomer] = useMutation(CREATE_CUSTOMER, {
     onCompleted: () => setShowCreationModal(false),
-    refetchQueries: () => ['configAndCustomers']
+    refetchQueries: () => [
+      {
+        query: GET_CUSTOMERS,
+        variables
+      }
+    ]
   })
 
   const configData = R.path(['config'])(customersResponse) ?? []
