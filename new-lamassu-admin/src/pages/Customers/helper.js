@@ -42,6 +42,11 @@ const useStyles = makeStyles({
   },
   picker: {
     width: 150
+  },
+  field: {
+    '& > *:last-child': {
+      marginBottom: 24
+    }
   }
 })
 
@@ -183,9 +188,11 @@ const EntryType = ({ customInfoRequirementOptions }) => {
             component={RadioGroup}
             name="requirement"
             options={
-              !R.isEmpty(customInfoRequirementOptions)
-                ? updateRequirementOptions(requirementOptions)
-                : requirementOptions
+              requirementOptions
+              // TODO: Enable once custom info requirement manual entry is finished
+              // !R.isEmpty(customInfoRequirementOptions)
+              //   ? updateRequirementOptions(requirementOptions)
+              //   : requirementOptions
             }
             labelClassName={classes.label}
             radioClassName={classes.radio}
@@ -248,11 +255,18 @@ const ManualDataEntry = ({ selectedValues, customInfoRequirementOptions }) => {
           }}
         />
       )}
-      {!upload &&
-        !isCustomInfoRequirement &&
-        elements.options.map(({ label, name }) => (
-          <Field name={name} label={label} component={TextInput} width={390} />
-        ))}
+      <div className={classes.field}>
+        {!upload &&
+          !isCustomInfoRequirement &&
+          elements.options.map(({ label, name }) => (
+            <Field
+              name={name}
+              label={label}
+              component={TextInput}
+              width={390}
+            />
+          ))}
+      </div>
       {upload && (
         <Upload
           type={

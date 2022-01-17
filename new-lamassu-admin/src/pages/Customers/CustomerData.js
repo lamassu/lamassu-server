@@ -360,19 +360,24 @@ const CustomerData = ({
     <div>
       <div className={classes.header}>
         <H3 className={classes.title}>{'Customer data'}</H3>
-        <FeatureButton
-          active={!listView}
-          className={classes.viewIcons}
-          Icon={OverviewIcon}
-          InverseIcon={OverviewReversedIcon}
-          onClick={() => setListView(false)}
-        />
-        <FeatureButton
-          active={listView}
-          className={classes.viewIcons}
-          Icon={CustomerListViewIcon}
-          InverseIcon={CustomerListViewReversedIcon}
-          onClick={() => setListView(true)}></FeatureButton>
+        {// TODO: Remove false condition for next release
+        false && (
+          <>
+            <FeatureButton
+              active={!listView}
+              className={classes.viewIcons}
+              Icon={OverviewIcon}
+              InverseIcon={OverviewReversedIcon}
+              onClick={() => setListView(false)}
+            />
+            <FeatureButton
+              active={listView}
+              className={classes.viewIcons}
+              Icon={CustomerListViewIcon}
+              InverseIcon={CustomerListViewReversedIcon}
+              onClick={() => setListView(true)}></FeatureButton>
+          </>
+        )}
       </div>
       <div>
         {!listView && customer && (

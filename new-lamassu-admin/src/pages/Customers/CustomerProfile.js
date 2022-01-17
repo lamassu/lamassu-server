@@ -18,8 +18,8 @@ import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/bl
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
 import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
-import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
-import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
+// import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
+// import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
@@ -494,14 +494,17 @@ const CustomerProfile = memo(() => {
                   onClick={() => setWizard(true)}>
                   {`Manual data entry`}
                 </ActionButton>
-                <ActionButton
+                {
+                  // TODO: Enable for next release
+                  /* <ActionButton
                   className={classes.actionButton}
                   color="primary"
                   Icon={Discount}
                   InverseIcon={DiscountReversedIcon}
                   onClick={() => {}}>
                   {`Add individual discount`}
-                </ActionButton>
+                </ActionButton> */
+                }
                 {isSuspended && (
                   <ActionButton
                     className={classes.actionButton}
