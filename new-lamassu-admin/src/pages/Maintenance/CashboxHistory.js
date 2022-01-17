@@ -28,7 +28,6 @@ const GET_BATCHES = gql`
         fiat
         deviceId
         created
-        cashbox
       }
     }
   }
