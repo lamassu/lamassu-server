@@ -232,12 +232,12 @@ const Wizard = ({ onClose, save, error, currency, customInfoRequests }) => {
     const isSuspend = values?.requirement?.requirement === 'suspend'
     const isCustom = values?.requirement?.requirement === 'custom'
 
-    const hasRequirementError = requirements.hasRequirementError(
+    const hasRequirementError = requirements().hasRequirementError(
       errors,
       touched,
       values
     )
-    const hasCustomRequirementError = requirements.hasCustomRequirementError(
+    const hasCustomRequirementError = requirements().hasCustomRequirementError(
       errors,
       touched,
       values
