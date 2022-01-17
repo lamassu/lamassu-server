@@ -26,7 +26,11 @@ import { URI } from 'src/utils/apollo'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
-import { customerDataElements, customerDataschemas } from './helper.js'
+import {
+  customerDataElements,
+  customerDataSchemas,
+  formatDates
+} from './helper.js'
 
 const useStyles = makeStyles(styles)
 
@@ -64,7 +68,8 @@ const CustomerData = ({
   editCustomer,
   deleteEditedData,
   updateCustomRequest,
-  authorizeCustomRequest
+  authorizeCustomRequest,
+  updateCustomEntry
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
@@ -96,7 +101,7 @@ const CustomerData = ({
   const getVisibleCards = _.filter(elem => elem.isAvailable)
 
   const initialValues = {
-    idScan: {
+    idCardData: {
       firstName: R.path(['firstName'])(idData) ?? '',
       lastName: R.path(['lastName'])(idData) ?? '',
       documentNumber: R.path(['documentNumber'])(idData) ?? '',
@@ -124,19 +129,9 @@ const CustomerData = ({
     }
   }
 
-  const formatDates = values => {
-    _.map(
-      elem =>
-        (values[elem] = format('yyyyMMdd')(
-          parse(new Date(), 'yyyy-MM-dd', values[elem])
-        ))
-    )(['dateOfBirth', 'expirationDate'])
-    return values
-  }
-
   const cards = [
     {
-      fields: customerDataElements.idScanElements,
+      fields: customerDataElements.idCardData,
       title: 'ID Scan',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['idCardDataOverride'])(customer),
@@ -148,8 +143,8 @@ const CustomerData = ({
         editCustomer({
           idCardData: _.merge(idData, formatDates(values))
         }),
-      validationSchema: customerDataschemas.idScan,
-      initialValues: initialValues.idScan,
+      validationSchema: customerDataSchemas.idCardData,
+      initialValues: initialValues.idCardData,
       isAvailable: !_.isNil(idData)
     },
     {
@@ -179,7 +174,7 @@ const CustomerData = ({
       isAvailable: !_.isNil(sanctions)
     },
     {
-      fields: customerDataElements.frontCameraElements,
+      fields: customerDataElements.frontCamera,
       title: 'Front facing camera',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['frontCameraOverride'])(customer),
@@ -201,12 +196,12 @@ const CustomerData = ({
         />
       ) : null,
       hasImage: true,
-      validationSchema: customerDataschemas.frontCamera,
+      validationSchema: customerDataSchemas.frontCamera,
       initialValues: initialValues.frontCamera,
       isAvailable: !_.isNil(customer.frontCameraPath)
     },
     {
-      fields: customerDataElements.idCardPhotoElements,
+      fields: customerDataElements.idCardPhoto,
       title: 'ID card image',
       titleIcon: <EditIcon className={classes.editIcon} />,
       state: R.path(['idCardPhotoOverride'])(customer),
@@ -226,20 +221,20 @@ const CustomerData = ({
         />
       ) : null,
       hasImage: true,
-      validationSchema: customerDataschemas.idCardPhoto,
+      validationSchema: customerDataSchemas.idCardPhoto,
       initialValues: initialValues.idCardPhoto,
       isAvailable: !_.isNil(customer.idCardPhotoPath)
     },
     {
-      fields: customerDataElements.usSsnElements,
+      fields: customerDataElements.usSsn,
       title: 'US SSN',
       titleIcon: <CardIcon className={classes.cardIcon} />,
       state: R.path(['usSsnOverride'])(customer),
       authorize: () => updateCustomer({ usSsnOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ usSsnOverride: OVERRIDE_REJECTED }),
-      save: values => editCustomer({ usSsn: values.usSsn }),
+      save: values => editCustomer(values),
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
-      validationSchema: customerDataschemas.usSsn,
+      validationSchema: customerDataSchemas.usSsn,
       initialValues: initialValues.usSsn,
       isAvailable: !_.isNil(customer.usSsn)
     }
@@ -308,7 +303,12 @@ const CustomerData = ({
       ],
       title: it.label,
       titleIcon: <EditIcon className={classes.editIcon} />,
-      save: () => {},
+      save: values => {
+        updateCustomEntry({
+          fieldId: it.id,
+          value: values[it.label]
+        })
+      },
       deleteEditedData: () => {},
       validationSchema: Yup.object().shape({
         [it.label]: Yup.string()

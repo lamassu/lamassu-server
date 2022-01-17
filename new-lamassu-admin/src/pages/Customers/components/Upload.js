@@ -12,7 +12,6 @@ import { offColor, subheaderColor } from 'src/styling/variables'
 const useStyles = makeStyles({
   box: {
     boxSizing: 'border-box',
-    marginTop: 40,
     width: 450,
     height: 120,
     borderStyle: 'dashed',
@@ -32,6 +31,7 @@ const useStyles = makeStyles({
     display: 'flex'
   },
   board: {
+    marginTop: 40,
     width: 450,
     height: 120
   },
@@ -48,12 +48,15 @@ const Upload = ({ type }) => {
   const { setFieldValue } = useFormikContext()
 
   const IMAGE = 'image'
-  const isImage = type === IMAGE
+  const ID_CARD_PHOTO = 'idCardPhoto'
+  const FRONT_CAMERA = 'frontCamera'
+
+  const isImage =
+    type === IMAGE || type === FRONT_CAMERA || type === ID_CARD_PHOTO
 
   const onDrop = useCallback(
     acceptedData => {
-      // TODO: attach the uploaded data to the form as well
-      setFieldValue(type, R.head(acceptedData).name)
+      setFieldValue(type, R.head(acceptedData))
 
       setData({
         preview: isImage
@@ -84,12 +87,12 @@ const Upload = ({ type }) => {
             </div>
           </div>
         )}
-        {!R.isEmpty(data) && type === IMAGE && (
+        {!R.isEmpty(data) && isImage && (
           <div key={data.name}>
             <img src={data.preview} className={classes.box} alt=""></img>
           </div>
         )}
-        {!R.isEmpty(data) && type !== IMAGE && (
+        {!R.isEmpty(data) && !isImage && (
           <div className={classes.box}>
             <H3 className={classes.uploadContent}>{data.preview}</H3>
           </div>

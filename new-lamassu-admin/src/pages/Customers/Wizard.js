@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core'
-import { Form, Formik, Field } from 'formik'
+import { Form, Formik } from 'formik'
 import * as R from 'ramda'
 import React, { useState, Fragment } from 'react'
 
@@ -7,10 +7,16 @@ import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
-import { Dropdown } from 'src/components/inputs/formik'
 import { comet } from 'src/styling/variables'
 
-import { entryType, customElements } from './helper'
+import {
+  entryType,
+  customElements,
+  requirementElements,
+  formatDates,
+  REQUIREMENT,
+  ID_CARD_DATA
+} from './helper'
 
 const LAST_STEP = 2
 
@@ -52,11 +58,17 @@ const styles = {
 const useStyles = makeStyles(styles)
 
 const getStep = (step, selectedValues) => {
+  const elements =
+    selectedValues?.entryType === REQUIREMENT &&
+    !R.isNil(selectedValues?.requirement)
+      ? requirementElements[selectedValues?.requirement]
+      : customElements[selectedValues?.dataType]
+
   switch (step) {
     case 1:
       return entryType
     case 2:
-      return customElements[selectedValues?.dataType]
+      return elements
     default:
       return Fragment
   }
@@ -66,7 +78,7 @@ const Wizard = ({
   onClose,
   save,
   error,
-  customRequirementOptions,
+  customInfoRequirementOptions,
   addCustomerData,
   addPhoto
 }) => {
@@ -78,7 +90,10 @@ const Wizard = ({
     step: 1
   })
 
-  const isCustom = values => values?.requirement === 'custom'
+  const isIdCardData = values => values?.requirement === ID_CARD_DATA
+  const formatCustomerData = (it, newConfig) =>
+    isIdCardData(newConfig) ? { [newConfig.requirement]: formatDates(it) } : it
+
   const isLastStep = step === LAST_STEP
   const stepOptions = getStep(step, selectedValues)
 
@@ -87,7 +102,23 @@ const Wizard = ({
     setSelectedValues(newConfig)
 
     if (isLastStep) {
-      return save(newConfig)
+      switch (stepOptions.saveType) {
+        case 'customerData':
+          return addCustomerData(formatCustomerData(it, newConfig))
+        case 'customerDataUpload':
+          return addPhoto({
+            newPhoto: R.head(R.values(it)),
+            photoType: R.head(R.keys(it))
+          })
+        case 'customEntry':
+          return save(newConfig)
+        case 'customInfoRequirement':
+          return
+        // case 'customerEntryUpload':
+        //   break
+        default:
+          break
+      }
     }
 
     setState({
@@ -120,22 +151,9 @@ const Wizard = ({
             <Form className={classes.form}>
               <stepOptions.Component
                 selectedValues={selectedValues}
-                hasCustomRequirementOptions={
-                  !R.isEmpty(customRequirementOptions)
-                }
+                customInfoRequirementOptions={customInfoRequirementOptions}
                 {...stepOptions.props}
               />
-              {isCustom(values) && (
-                <div>
-                  <Field
-                    className={classes.dropdownField}
-                    component={Dropdown}
-                    label="Available requests"
-                    name="requirement.customInfoRequestId"
-                    options={customRequirementOptions}
-                  />
-                </div>
-              )}
               <div className={classes.submit}>
                 {error && <ErrorMessage>Failed to save</ErrorMessage>}
                 <Button className={classes.button} type="submit">

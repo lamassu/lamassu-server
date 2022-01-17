@@ -242,6 +242,12 @@ const SET_CUSTOM_ENTRY = gql`
   }
 `
 
+const EDIT_CUSTOM_ENTRY = gql`
+  mutation saveCustomField($customerId: ID!, $fieldId: ID!, $value: String!) {
+    saveCustomField(customerId: $customerId, fieldId: $fieldId, value: $value)
+  }
+`
+
 const GET_ACTIVE_CUSTOM_REQUESTS = gql`
   query customInfoRequests($onlyEnabled: Boolean) {
     customInfoRequests(onlyEnabled: $onlyEnabled) {
@@ -277,6 +283,10 @@ const CustomerProfile = memo(() => {
   })
 
   const [setCustomEntry] = useMutation(SET_CUSTOM_ENTRY, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [editCustomEntry] = useMutation(EDIT_CUSTOM_ENTRY, {
     onCompleted: () => getCustomer()
   })
 
@@ -330,6 +340,16 @@ const CustomerProfile = memo(() => {
     setWizard(null)
   }
 
+  const updateCustomEntry = it => {
+    editCustomEntry({
+      variables: {
+        customerId,
+        fieldId: it.fieldId,
+        value: it.value
+      }
+    })
+  }
+
   const updateCustomer = it =>
     setCustomer({
       variables: {
@@ -338,7 +358,7 @@ const CustomerProfile = memo(() => {
       }
     })
 
-  const replacePhoto = it =>
+  const replacePhoto = it => {
     replaceCustomerPhoto({
       variables: {
         customerId,
@@ -346,14 +366,18 @@ const CustomerProfile = memo(() => {
         photoType: it.photoType
       }
     })
+    setWizard(null)
+  }
 
-  const editCustomer = it =>
+  const editCustomer = it => {
     editCustomerData({
       variables: {
         customerId,
         customerEdit: it
       }
     })
+    setWizard(null)
+  }
 
   const deleteEditedData = it =>
     deleteCustomerEditedData({
@@ -421,7 +445,7 @@ const CustomerProfile = memo(() => {
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const customRequirementOptions =
+  const customInfoRequirementOptions =
     activeCustomRequests?.customInfoRequests?.map(it => ({
       value: it.id,
       display: it.customRequest.name
@@ -564,7 +588,8 @@ const CustomerProfile = memo(() => {
                 editCustomer={editCustomer}
                 deleteEditedData={deleteEditedData}
                 updateCustomRequest={setCustomerCustomInfoRequest}
-                authorizeCustomRequest={authorizeCustomRequest}></CustomerData>
+                authorizeCustomRequest={authorizeCustomRequest}
+                updateCustomEntry={updateCustomEntry}></CustomerData>
             </div>
           )}
           {isNotes && (
@@ -590,7 +615,7 @@ const CustomerProfile = memo(() => {
             addPhoto={replacePhoto}
             addCustomerData={editCustomer}
             onClose={() => setWizard(null)}
-            customRequirementOptions={customRequirementOptions}
+            customInfoRequirementOptions={customInfoRequirementOptions}
           />
         )}
       </div>
