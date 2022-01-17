@@ -64,6 +64,9 @@ const styles = {
     position: 'relative',
     marginBottom: spacer / 2,
     paddingTop: spacer * 1.5,
+    '& > *:first-child': {
+      marginRight: 24
+    },
     '& > *': {
       marginRight: 10
     },
@@ -74,7 +77,8 @@ const styles = {
   notificationContent: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: 300
   },
   unread: {
     backgroundColor: spring3
@@ -89,8 +93,7 @@ const styles = {
     flexGrow: 1
   },
   unreadIcon: {
-    marginLeft: spacer,
-    marginTop: 5,
+    marginTop: 2,
     width: '12px',
     height: '12px',
     backgroundColor: secondaryColor,
