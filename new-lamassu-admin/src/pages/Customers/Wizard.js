@@ -147,21 +147,19 @@ const Wizard = ({
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          {({ values }) => (
-            <Form className={classes.form}>
-              <stepOptions.Component
-                selectedValues={selectedValues}
-                customInfoRequirementOptions={customInfoRequirementOptions}
-                {...stepOptions.props}
-              />
-              <div className={classes.submit}>
-                {error && <ErrorMessage>Failed to save</ErrorMessage>}
-                <Button className={classes.button} type="submit">
-                  {isLastStep ? 'Add Data' : 'Next'}
-                </Button>
-              </div>
-            </Form>
-          )}
+          <Form className={classes.form}>
+            <stepOptions.Component
+              selectedValues={selectedValues}
+              customInfoRequirementOptions={customInfoRequirementOptions}
+              {...stepOptions.props}
+            />
+            <div className={classes.submit}>
+              {error && <ErrorMessage>Failed to save</ErrorMessage>}
+              <Button className={classes.button} type="submit">
+                {isLastStep ? 'Add Data' : 'Next'}
+              </Button>
+            </div>
+          </Form>
         </Formik>
       </Modal>
     </>
