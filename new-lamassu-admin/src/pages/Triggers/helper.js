@@ -1,8 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
@@ -508,16 +506,7 @@ const requirementOptions = [
   { display: 'Block', code: 'block' }
 ]
 
-const GET_ACTIVE_CUSTOM_REQUESTS = gql`
-  query customInfoRequests($onlyEnabled: Boolean) {
-    customInfoRequests(onlyEnabled: $onlyEnabled) {
-      id
-      customRequest
-    }
-  }
-`
-
-const Requirement = () => {
+const Requirement = ({ customInfoRequests }) => {
   const classes = useStyles()
   const {
     touched,
@@ -526,11 +515,6 @@ const Requirement = () => {
     handleChange,
     setTouched
   } = useFormikContext()
-  const { data } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
-    variables: {
-      onlyEnabled: true
-    }
-  })
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
   const isCustom = values?.requirement?.requirement === 'custom'
@@ -546,8 +530,7 @@ const Requirement = () => {
     (!values.requirement?.suspensionDays ||
       values.requirement?.suspensionDays < 0)
 
-  const customInfoRequests = R.path(['customInfoRequests'])(data) ?? []
-  const enableCustomRequirement = customInfoRequests.length > 0
+  const enableCustomRequirement = customInfoRequests?.length > 0
   const customInfoOption = {
     display: 'Custom information requirement',
     code: 'custom'
@@ -604,10 +587,11 @@ const Requirement = () => {
   )
 }
 
-const requirements = {
+const requirements = customInfoRequests => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
+  props: { customInfoRequests },
   initialValues: {
     requirement: {
       requirement: '',
@@ -615,7 +599,7 @@ const requirements = {
       customInfoRequestId: ''
     }
   }
-}
+})
 
 const getView = (data, code, compare) => it => {
   if (!data) return ''

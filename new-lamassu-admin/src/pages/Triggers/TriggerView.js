@@ -75,6 +75,7 @@ const TriggerView = ({
           error={error?.message}
           save={add}
           onClose={toggleWizard}
+          customInfoRequests={customInfoRequests}
         />
       )}
       {R.isEmpty(triggers) && (
