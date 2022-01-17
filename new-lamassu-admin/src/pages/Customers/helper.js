@@ -250,9 +250,7 @@ const ManualDataEntry = ({ selectedValues, customInfoRequirementOptions }) => {
           getOptionSelected={R.eqProps('code')}
           labelProp={'display'}
           options={customInfoRequirementOptions}
-          onChange={(evt, it) => {
-            // dispatch({ type: 'form', form: it })
-          }}
+          onChange={(evt, it) => {}}
         />
       )}
       <div className={classes.field}>

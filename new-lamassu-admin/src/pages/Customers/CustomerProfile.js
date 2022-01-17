@@ -18,6 +18,7 @@ import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/bl
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
 import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
+// TODO: Enable for next release
 // import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
 // import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
