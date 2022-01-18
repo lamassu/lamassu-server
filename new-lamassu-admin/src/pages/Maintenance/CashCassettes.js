@@ -338,28 +338,26 @@ const CashCassettes = () => {
             </Box>
           )}
         </TitleSection>
-        <div className={classes.tableContainer}>
-          {!showHistory && (
-            <>
-              <EditableTable
-                error={error?.message}
-                name="cashboxes"
-                stripeWhen={isCashOutDisabled}
-                elements={elements}
-                data={machines}
-                validationSchema={ValidationSchema}
-                tbodyWrapperClass={classes.tBody}
-              />
+        {!showHistory && (
+          <>
+            <EditableTable
+              error={error?.message}
+              name="cashboxes"
+              stripeWhen={isCashOutDisabled}
+              elements={elements}
+              data={machines}
+              validationSchema={ValidationSchema}
+              tbodyWrapperClass={classes.tBody}
+            />
 
-              {data && R.isEmpty(machines) && (
-                <EmptyTable message="No machines so far" />
-              )}
-            </>
-          )}
-          {showHistory && (
-            <CashboxHistory machines={machines} currency={fiatCurrency} />
-          )}
-        </div>
+            {data && R.isEmpty(machines) && (
+              <EmptyTable message="No machines so far" />
+            )}
+          </>
+        )}
+        {showHistory && (
+          <CashboxHistory machines={machines} currency={fiatCurrency} />
+        )}
         <CashCassettesFooter
           currencyCode={fiatCurrency}
           machines={machines}
