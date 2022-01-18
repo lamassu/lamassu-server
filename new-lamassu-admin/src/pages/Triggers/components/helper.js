@@ -4,18 +4,29 @@ import * as Yup from 'yup'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
 import { getView } from 'src/pages/Triggers/helper'
 
-const advancedRequirementOptions = [
-  { display: 'Sanctions', code: 'sanctions' },
-  { display: 'ID card image', code: 'idCardPhoto' },
-  { display: 'ID data', code: 'idCardData' },
-  { display: 'Customer camera', code: 'facephoto' },
-  { display: 'US SSN', code: 'usSsn' }
-]
+const buildAdvancedRequirementOptions = customInfoRequests => {
+  const base = [
+    { display: 'Sanctions', code: 'sanctions' },
+    { display: 'ID card image', code: 'idCardPhoto' },
+    { display: 'ID data', code: 'idCardData' },
+    { display: 'Customer camera', code: 'facephoto' },
+    { display: 'US SSN', code: 'usSsn' }
+  ]
 
-const displayRequirement = code => {
+  const custom = R.map(it => ({
+    display: it.customRequest.name,
+    code: it.id
+  }))(customInfoRequests)
+
+  return R.concat(base, custom)
+}
+
+const displayRequirement = (code, customInfoRequests) => {
   return R.prop(
     'display',
-    R.find(R.propEq('code', code))(advancedRequirementOptions)
+    R.find(R.propEq('code', code))(
+      buildAdvancedRequirementOptions(customInfoRequests)
+    )
   )
 }
 
@@ -29,7 +40,7 @@ const defaultSchema = Yup.object().shape({
     .required()
 })
 
-const getOverridesSchema = values => {
+const getOverridesSchema = (values, customInfoRequests) => {
   return Yup.object().shape({
     id: Yup.string()
       .label('Requirement')
@@ -40,7 +51,8 @@ const getOverridesSchema = values => {
           if (R.find(R.propEq('requirement', requirement))(values)) {
             return this.createError({
               message: `Requirement ${displayRequirement(
-                requirement
+                requirement,
+                customInfoRequests
               )} already overriden`
             })
           }
@@ -84,17 +96,20 @@ const getDefaultSettings = () => {
   ]
 }
 
-const getOverrides = () => {
+const getOverrides = customInfoRequests => {
   return [
     {
       name: 'requirement',
       header: 'Requirement',
       width: 196,
       size: 'sm',
-      view: getView(advancedRequirementOptions, 'display'),
+      view: getView(
+        buildAdvancedRequirementOptions(customInfoRequests),
+        'display'
+      ),
       input: Autocomplete,
       inputProps: {
-        options: advancedRequirementOptions,
+        options: buildAdvancedRequirementOptions(customInfoRequests),
         labelProp: 'display',
         valueProp: 'code'
       }

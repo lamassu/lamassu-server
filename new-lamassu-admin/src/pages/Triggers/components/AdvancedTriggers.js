@@ -28,13 +28,34 @@ const GET_INFO = gql`
   }
 `
 
+const GET_CUSTOM_REQUESTS = gql`
+  query customInfoRequests {
+    customInfoRequests {
+      id
+      customRequest
+      enabled
+    }
+  }
+`
+
 const AdvancedTriggersSettings = memo(() => {
   const SCREEN_KEY = namespaces.TRIGGERS
   const [error, setError] = useState(null)
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
 
-  const { data } = useQuery(GET_INFO)
+  const { data, loading: configLoading } = useQuery(GET_INFO)
+  const { data: customInfoReqData, loading: customInfoLoading } = useQuery(
+    GET_CUSTOM_REQUESTS
+  )
+
+  const customInfoRequests =
+    R.path(['customInfoRequests'])(customInfoReqData) ?? []
+  const enabledCustomInfoRequests = R.filter(R.propEq('enabled', true))(
+    customInfoRequests
+  )
+
+  const loading = configLoading || customInfoLoading
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     refetchQueries: () => ['getData'],
@@ -67,42 +88,47 @@ const AdvancedTriggersSettings = memo(() => {
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
 
   return (
-    <>
-      <Section>
-        <EditableTable
-          title="Default requirement settings"
-          error={error?.message}
-          titleLg
-          name="triggersConfig"
-          enableEdit
-          initialValues={requirementsDefaults}
-          save={saveDefaults}
-          validationSchema={defaultSchema}
-          data={R.of(requirementsDefaults)}
-          elements={getDefaultSettings()}
-          setEditing={onEditingDefault}
-          forceDisable={isEditingOverrides}
-        />
-      </Section>
-      <Section>
-        <EditableTable
-          error={error?.message}
-          title="Overrides"
-          titleLg
-          name="overrides"
-          enableDelete
-          enableEdit
-          enableCreate
-          initialValues={overridesDefaults}
-          save={saveOverrides}
-          validationSchema={getOverridesSchema(requirementsOverrides)}
-          data={requirementsOverrides}
-          elements={getOverrides()}
-          setEditing={onEditingOverrides}
-          forceDisable={isEditingDefault}
-        />
-      </Section>
-    </>
+    !loading && (
+      <>
+        <Section>
+          <EditableTable
+            title="Default requirement settings"
+            error={error?.message}
+            titleLg
+            name="triggersConfig"
+            enableEdit
+            initialValues={requirementsDefaults}
+            save={saveDefaults}
+            validationSchema={defaultSchema}
+            data={R.of(requirementsDefaults)}
+            elements={getDefaultSettings()}
+            setEditing={onEditingDefault}
+            forceDisable={isEditingOverrides}
+          />
+        </Section>
+        <Section>
+          <EditableTable
+            error={error?.message}
+            title="Overrides"
+            titleLg
+            name="overrides"
+            enableDelete
+            enableEdit
+            enableCreate
+            initialValues={overridesDefaults}
+            save={saveOverrides}
+            validationSchema={getOverridesSchema(
+              requirementsOverrides,
+              enabledCustomInfoRequests
+            )}
+            data={requirementsOverrides}
+            elements={getOverrides(enabledCustomInfoRequests)}
+            setEditing={onEditingOverrides}
+            forceDisable={isEditingDefault}
+          />
+        </Section>
+      </>
+    )
   )
 })
 

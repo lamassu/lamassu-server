@@ -95,7 +95,9 @@ const GET_CUSTOMER = gql`
       }
       customInfoRequests {
         customerId
-        approved
+        override
+        overrideBy
+        overrideAt
         customerData
         customInfoRequest {
           id
@@ -180,12 +182,12 @@ const SET_AUTHORIZED_REQUEST = gql`
   mutation setAuthorizedCustomRequest(
     $customerId: ID!
     $infoRequestId: ID!
-    $isAuthorized: Boolean!
+    $override: String!
   ) {
     setAuthorizedCustomRequest(
       customerId: $customerId
       infoRequestId: $infoRequestId
-      isAuthorized: $isAuthorized
+      override: $override
     )
   }
 `
