@@ -230,12 +230,18 @@ const Wizard = ({ onClose, save, error, currency, customInfoRequests }) => {
     const triggerType = values?.triggerType
     const containsType = R.contains(triggerType)
     const isSuspend = values?.requirement?.requirement === 'suspend'
+    const isCustom = values?.requirement?.requirement === 'custom'
 
-    const hasRequirementError =
-      !!errors.requirement &&
-      !!touched.requirement?.suspensionDays &&
-      (!values.requirement?.suspensionDays ||
-        values.requirement?.suspensionDays < 0)
+    const hasRequirementError = requirements().hasRequirementError(
+      errors,
+      touched,
+      values
+    )
+    const hasCustomRequirementError = requirements().hasCustomRequirementError(
+      errors,
+      touched,
+      values
+    )
 
     const hasAmountError =
       !!errors.threshold &&
@@ -258,7 +264,11 @@ const Wizard = ({ onClose, save, error, currency, customInfoRequests }) => {
     )
       return errors.threshold
 
-    if (isSuspend && hasRequirementError) return errors.requirement
+    if (
+      (isSuspend && hasRequirementError) ||
+      (isCustom && hasCustomRequirementError)
+    )
+      return errors.requirement
   }
 
   return (
