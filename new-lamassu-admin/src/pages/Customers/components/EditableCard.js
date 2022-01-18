@@ -150,7 +150,7 @@ const EditableCard = ({
               <H3 className={classes.cardTitle}>{title}</H3>
               <Tooltip width={304}></Tooltip>
             </div>
-            {state && (
+            {state && authorize && (
               <div className={classnames(label1ClassNames)}>
                 <MainStatus statuses={[authorized]} />
               </div>
@@ -207,17 +207,19 @@ const EditableCard = ({
                 <div className={classes.edit}>
                   {!editing && (
                     <div className={classes.editButton}>
-                      <div className={classes.deleteButton}>
-                        <ActionButton
-                          color="primary"
-                          type="button"
-                          Icon={DeleteIcon}
-                          InverseIcon={DeleteReversedIcon}
-                          onClick={() => deleteEditedData()}>
-                          {`Delete`}
-                        </ActionButton>
-                      </div>
-
+                      {// TODO: Remove false condition for next release
+                      false && (
+                        <div className={classes.deleteButton}>
+                          <ActionButton
+                            color="primary"
+                            type="button"
+                            Icon={DeleteIcon}
+                            InverseIcon={DeleteReversedIcon}
+                            onClick={() => deleteEditedData()}>
+                            {`Delete`}
+                          </ActionButton>
+                        </div>
+                      )}
                       <ActionButton
                         color="primary"
                         Icon={EditIcon}
@@ -279,7 +281,7 @@ const EditableCard = ({
                             Cancel
                           </ActionButton>
                         </div>
-                        {authorized.label !== 'Accepted' && (
+                        {authorize && authorized.label !== 'Accepted' && (
                           <div className={classes.button}>
                             <ActionButton
                               color="spring"
@@ -291,7 +293,7 @@ const EditableCard = ({
                             </ActionButton>
                           </div>
                         )}
-                        {authorized.label !== 'Rejected' && (
+                        {authorize && authorized.label !== 'Rejected' && (
                           <ActionButton
                             color="tomato"
                             type="button"

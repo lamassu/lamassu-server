@@ -38,6 +38,12 @@ export const Carousel = memo(({ photosData, slidePhoto }) => {
             opacity: 1
           }
         }}
+        // navButtonsWrapperProps={{
+        //   style: {
+        //     background: 'linear-gradient(to right, black 10%, transparent 80%)',
+        //     opacity: '0.4'
+        //   }
+        // }}
         autoPlay={false}
         indicators={false}
         navButtonsAlwaysVisible={true}

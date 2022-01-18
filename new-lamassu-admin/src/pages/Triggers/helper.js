@@ -565,7 +565,7 @@ const Requirement = ({ customInfoRequests }) => {
   }
   const options = enableCustomRequirement
     ? [...requirementOptions, customInfoOption]
-    : [...requirementOptions, { ...customInfoOption, disabled: true }]
+    : [...requirementOptions]
   const titleClass = {
     [classes.error]:
       (!!errors.requirement && !isSuspend && !isCustom) ||

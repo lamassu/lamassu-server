@@ -18,8 +18,9 @@ import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/bl
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
 import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
-import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
-import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
+// TODO: Enable for next release
+// import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
+// import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
@@ -236,6 +237,27 @@ const GET_DATA = gql`
   }
 `
 
+const SET_CUSTOM_ENTRY = gql`
+  mutation addCustomField($customerId: ID!, $label: String!, $value: String!) {
+    addCustomField(customerId: $customerId, label: $label, value: $value)
+  }
+`
+
+const EDIT_CUSTOM_ENTRY = gql`
+  mutation saveCustomField($customerId: ID!, $fieldId: ID!, $value: String!) {
+    saveCustomField(customerId: $customerId, fieldId: $fieldId, value: $value)
+  }
+`
+
+const GET_ACTIVE_CUSTOM_REQUESTS = gql`
+  query customInfoRequests($onlyEnabled: Boolean) {
+    customInfoRequests(onlyEnabled: $onlyEnabled) {
+      id
+      customRequest
+    }
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -254,6 +276,20 @@ const CustomerProfile = memo(() => {
   })
 
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+
+  const { data: activeCustomRequests } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
+    variables: {
+      onlyEnabled: true
+    }
+  })
+
+  const [setCustomEntry] = useMutation(SET_CUSTOM_ENTRY, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [editCustomEntry] = useMutation(EDIT_CUSTOM_ENTRY, {
+    onCompleted: () => getCustomer()
+  })
 
   const [replaceCustomerPhoto] = useMutation(REPLACE_CUSTOMER_PHOTO, {
     onCompleted: () => getCustomer()
@@ -294,6 +330,27 @@ const CustomerProfile = memo(() => {
     onCompleted: () => getCustomer()
   })
 
+  const saveCustomEntry = it => {
+    setCustomEntry({
+      variables: {
+        customerId,
+        label: it.title,
+        value: it.data
+      }
+    })
+    setWizard(null)
+  }
+
+  const updateCustomEntry = it => {
+    editCustomEntry({
+      variables: {
+        customerId,
+        fieldId: it.fieldId,
+        value: it.value
+      }
+    })
+  }
+
   const updateCustomer = it =>
     setCustomer({
       variables: {
@@ -302,7 +359,7 @@ const CustomerProfile = memo(() => {
       }
     })
 
-  const replacePhoto = it =>
+  const replacePhoto = it => {
     replaceCustomerPhoto({
       variables: {
         customerId,
@@ -310,14 +367,18 @@ const CustomerProfile = memo(() => {
         photoType: it.photoType
       }
     })
+    setWizard(null)
+  }
 
-  const editCustomer = it =>
+  const editCustomer = it => {
     editCustomerData({
       variables: {
         customerId,
         customerEdit: it
       }
     })
+    setWizard(null)
+  }
 
   const deleteEditedData = it =>
     deleteCustomerEditedData({
@@ -385,6 +446,12 @@ const CustomerProfile = memo(() => {
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
+  const customInfoRequirementOptions =
+    activeCustomRequests?.customInfoRequests?.map(it => ({
+      value: it.id,
+      display: it.customRequest.name
+    })) ?? []
+
   const classes = useStyles()
 
   return (
@@ -428,14 +495,17 @@ const CustomerProfile = memo(() => {
                   onClick={() => setWizard(true)}>
                   {`Manual data entry`}
                 </ActionButton>
-                <ActionButton
+                {
+                  // TODO: Enable for next release
+                  /* <ActionButton
                   className={classes.actionButton}
                   color="primary"
                   Icon={Discount}
                   InverseIcon={DiscountReversedIcon}
                   onClick={() => {}}>
                   {`Add individual discount`}
-                </ActionButton>
+                </ActionButton> */
+                }
                 {isSuspended && (
                   <ActionButton
                     className={classes.actionButton}
@@ -522,7 +592,8 @@ const CustomerProfile = memo(() => {
                 editCustomer={editCustomer}
                 deleteEditedData={deleteEditedData}
                 updateCustomRequest={setCustomerCustomInfoRequest}
-                authorizeCustomRequest={authorizeCustomRequest}></CustomerData>
+                authorizeCustomRequest={authorizeCustomRequest}
+                updateCustomEntry={updateCustomEntry}></CustomerData>
             </div>
           )}
           {isNotes && (
@@ -544,8 +615,11 @@ const CustomerProfile = memo(() => {
         {wizard && (
           <Wizard
             error={error?.message}
-            save={() => {}}
+            save={saveCustomEntry}
+            addPhoto={replacePhoto}
+            addCustomerData={editCustomer}
             onClose={() => setWizard(null)}
+            customInfoRequirementOptions={customInfoRequirementOptions}
           />
         )}
       </div>

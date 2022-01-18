@@ -9,7 +9,14 @@ import Stepper from 'src/components/Stepper'
 import { Button } from 'src/components/buttons'
 import { comet } from 'src/styling/variables'
 
-import { entryType, customElements } from './helper'
+import {
+  entryType,
+  customElements,
+  requirementElements,
+  formatDates,
+  REQUIREMENT,
+  ID_CARD_DATA
+} from './helper'
 
 const LAST_STEP = 2
 
@@ -41,23 +48,40 @@ const styles = {
     margin: [[0, 4, 0, 2]],
     borderBottom: `1px solid ${comet}`,
     display: 'inline-block'
+  },
+  dropdownField: {
+    marginTop: 16,
+    minWidth: 155
   }
 }
 
 const useStyles = makeStyles(styles)
 
 const getStep = (step, selectedValues) => {
+  const elements =
+    selectedValues?.entryType === REQUIREMENT &&
+    !R.isNil(selectedValues?.requirement)
+      ? requirementElements[selectedValues?.requirement]
+      : customElements[selectedValues?.dataType]
+
   switch (step) {
     case 1:
       return entryType
     case 2:
-      return customElements[selectedValues?.dataType]
+      return elements
     default:
       return Fragment
   }
 }
 
-const Wizard = ({ onClose, save, error }) => {
+const Wizard = ({
+  onClose,
+  save,
+  error,
+  customInfoRequirementOptions,
+  addCustomerData,
+  addPhoto
+}) => {
   const classes = useStyles()
 
   const [selectedValues, setSelectedValues] = useState(null)
@@ -65,6 +89,10 @@ const Wizard = ({ onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 1
   })
+
+  const isIdCardData = values => values?.requirement === ID_CARD_DATA
+  const formatCustomerData = (it, newConfig) =>
+    isIdCardData(newConfig) ? { [newConfig.requirement]: formatDates(it) } : it
 
   const isLastStep = step === LAST_STEP
   const stepOptions = getStep(step, selectedValues)
@@ -74,7 +102,23 @@ const Wizard = ({ onClose, save, error }) => {
     setSelectedValues(newConfig)
 
     if (isLastStep) {
-      return save(newConfig)
+      switch (stepOptions.saveType) {
+        case 'customerData':
+          return addCustomerData(formatCustomerData(it, newConfig))
+        case 'customerDataUpload':
+          return addPhoto({
+            newPhoto: R.head(R.values(it)),
+            photoType: R.head(R.keys(it))
+          })
+        case 'customEntry':
+          return save(newConfig)
+        case 'customInfoRequirement':
+          return
+        // case 'customerEntryUpload':
+        //   break
+        default:
+          break
+      }
     }
 
     setState({
@@ -106,6 +150,7 @@ const Wizard = ({ onClose, save, error }) => {
           <Form className={classes.form}>
             <stepOptions.Component
               selectedValues={selectedValues}
+              customInfoRequirementOptions={customInfoRequirementOptions}
               {...stepOptions.props}
             />
             <div className={classes.submit}>
