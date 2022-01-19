@@ -40,6 +40,7 @@ const GET_TRANSACTIONS_CSV = gql`
     $from: Date
     $until: Date
     $timezone: String
+    $excludeTestingCustomers: Boolean
   ) {
     transactionsCsv(
       simplified: $simplified
@@ -47,6 +48,7 @@ const GET_TRANSACTIONS_CSV = gql`
       from: $from
       until: $until
       timezone: $timezone
+      excludeTestingCustomers: $excludeTestingCustomers
     )
   }
 `

@@ -181,7 +181,8 @@ const LogsDownloaderPopover = ({
       fetchLogs({
         variables: {
           ...args,
-          simplified: selectedAdvancedRadio === SIMPLIFIED
+          simplified: selectedAdvancedRadio === SIMPLIFIED,
+          excludeTestingCustomers: true
         }
       })
     }
@@ -196,7 +197,8 @@ const LogsDownloaderPopover = ({
           ...args,
           from: range.from,
           until: range.until,
-          simplified: selectedAdvancedRadio === SIMPLIFIED
+          simplified: selectedAdvancedRadio === SIMPLIFIED,
+          excludeTestingCustomers: true
         }
       })
     }

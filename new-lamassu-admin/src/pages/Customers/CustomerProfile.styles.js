@@ -1,4 +1,4 @@
-import { comet } from 'src/styling/variables'
+import { comet, subheaderColor } from 'src/styling/variables'
 
 export default {
   labelLink: {
@@ -34,6 +34,23 @@ export default {
     width: 1100
   },
   leftSidePanel: {
-    width: 300
+    width: 300,
+    '& > *': {
+      marginBottom: 25
+    },
+    '& > *:last-child': {
+      marginBottom: 0
+    },
+    '& > *:first-child': {
+      marginBottom: 50
+    }
+  },
+  userStatusAction: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: subheaderColor,
+    borderRadius: 8,
+    padding: [[0, 5]]
   }
 }

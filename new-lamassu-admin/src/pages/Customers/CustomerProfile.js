@@ -7,6 +7,7 @@ import React, { memo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { ActionButton } from 'src/components/buttons'
+import { Switch } from 'src/components/inputs'
 import { Label1, Label2 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
@@ -67,6 +68,7 @@ const GET_CUSTOMER = gql`
       lastTxClass
       daysSuspended
       isSuspended
+      isTestCustomer
       customFields {
         id
         label
@@ -231,6 +233,18 @@ const EDIT_NOTE = gql`
   }
 `
 
+const ENABLE_TEST_CUSTOMER = gql`
+  mutation enableTestCustomer($customerId: ID!) {
+    enableTestCustomer(customerId: $customerId)
+  }
+`
+
+const DISABLE_TEST_CUSTOMER = gql`
+  mutation disableTestCustomer($customerId: ID!) {
+    disableTestCustomer(customerId: $customerId)
+  }
+`
+
 const GET_DATA = gql`
   query getData {
     config
@@ -350,6 +364,16 @@ const CustomerProfile = memo(() => {
       }
     })
   }
+
+  const [enableTestCustomer] = useMutation(ENABLE_TEST_CUSTOMER, {
+    variables: { customerId },
+    onCompleted: () => getCustomer()
+  })
+
+  const [disableTestCustomer] = useMutation(DISABLE_TEST_CUSTOMER, {
+    variables: { customerId },
+    onCompleted: () => getCustomer()
+  })
 
   const updateCustomer = it =>
     setCustomer({
@@ -478,85 +502,101 @@ const CustomerProfile = memo(() => {
       <div className={classes.panels}>
         <div className={classes.leftSidePanel}>
           {!loading && !customerData.isAnonymous && (
-            <div>
+            <>
+              <CustomerSidebar
+                isSelected={code => code === clickedItem}
+                onClick={onClickSidebarItem}
+              />
               <div>
-                <CustomerSidebar
-                  isSelected={code => code === clickedItem}
-                  onClick={onClickSidebarItem}
-                />
-              </div>
-              <Label1 className={classes.actionLabel}>Actions</Label1>
-              <div className={classes.actionBar}>
-                <ActionButton
-                  className={classes.actionButton}
-                  color="primary"
-                  Icon={DataIcon}
-                  InverseIcon={DataReversedIcon}
-                  onClick={() => setWizard(true)}>
-                  {`Manual data entry`}
-                </ActionButton>
-                {
-                  // TODO: Enable for next release
-                  /* <ActionButton
-                  className={classes.actionButton}
-                  color="primary"
-                  Icon={Discount}
-                  InverseIcon={DiscountReversedIcon}
-                  onClick={() => {}}>
-                  {`Add individual discount`}
-                </ActionButton> */
-                }
-                {isSuspended && (
+                <Label1 className={classes.actionLabel}>Actions</Label1>
+                <div className={classes.actionBar}>
                   <ActionButton
                     className={classes.actionButton}
                     color="primary"
-                    Icon={AuthorizeIcon}
-                    InverseIcon={AuthorizeReversedIcon}
+                    Icon={DataIcon}
+                    InverseIcon={DataReversedIcon}
+                    onClick={() => setWizard(true)}>
+                    {`Manual data entry`}
+                  </ActionButton>
+                  {/* <ActionButton
+                    className={classes.actionButton}
+                    color="primary"
+                    Icon={Discount}
+                    InverseIcon={DiscountReversedIcon}
+                    onClick={() => {}}>
+                    {`Add individual discount`}
+                  </ActionButton> */}
+                  {isSuspended && (
+                    <ActionButton
+                      className={classes.actionButton}
+                      color="primary"
+                      Icon={AuthorizeIcon}
+                      InverseIcon={AuthorizeReversedIcon}
+                      onClick={() =>
+                        updateCustomer({
+                          suspendedUntil: null
+                        })
+                      }>
+                      {`Unsuspend customer`}
+                    </ActionButton>
+                  )}
+                  <ActionButton
+                    color="primary"
+                    className={classes.actionButton}
+                    Icon={blocked ? AuthorizeIcon : BlockIcon}
+                    InverseIcon={
+                      blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                    }
                     onClick={() =>
                       updateCustomer({
-                        suspendedUntil: null
+                        authorizedOverride: blocked
+                          ? OVERRIDE_AUTHORIZED
+                          : OVERRIDE_REJECTED
                       })
                     }>
-                    {`Unsuspend customer`}
+                    {`${blocked ? 'Authorize' : 'Block'} customer`}
                   </ActionButton>
-                )}
-                <ActionButton
-                  color="primary"
-                  className={classes.actionButton}
-                  Icon={blocked ? AuthorizeIcon : BlockIcon}
-                  InverseIcon={
-                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                  }
-                  onClick={() =>
-                    updateCustomer({
-                      authorizedOverride: blocked
-                        ? OVERRIDE_AUTHORIZED
-                        : OVERRIDE_REJECTED
-                    })
-                  }>
-                  {`${blocked ? 'Authorize' : 'Block'} customer`}
-                </ActionButton>
-                <ActionButton
-                  color="primary"
-                  className={classes.actionButton}
-                  Icon={blocked ? AuthorizeIcon : BlockIcon}
-                  InverseIcon={
-                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                  }
-                  onClick={() =>
-                    setCustomer({
-                      variables: {
-                        customerId,
-                        customerInput: {
-                          subscriberInfo: true
+                  <ActionButton
+                    color="primary"
+                    className={classes.actionButton}
+                    Icon={blocked ? AuthorizeIcon : BlockIcon}
+                    InverseIcon={
+                      blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                    }
+                    onClick={() =>
+                      setCustomer({
+                        variables: {
+                          customerId,
+                          customerInput: {
+                            subscriberInfo: true
+                          }
                         }
-                      }
-                    })
-                  }>
-                  {`Retrieve information`}
-                </ActionButton>
+                      })
+                    }>
+                    {`Retrieve information`}
+                  </ActionButton>
+                </div>
               </div>
-            </div>
+              <div>
+                <Label1 className={classes.actionLabel}>
+                  {`Special user status`}
+                </Label1>
+                <div className={classes.actionBar}>
+                  <div className={classes.userStatusAction}>
+                    <Switch
+                      checked={!!R.path(['isTestCustomer'])(customerData)}
+                      value={!!R.path(['isTestCustomer'])(customerData)}
+                      onChange={() =>
+                        R.path(['isTestCustomer'])(customerData)
+                          ? disableTestCustomer()
+                          : enableTestCustomer()
+                      }
+                    />
+                    {`Test user`}
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
         <div className={classes.rightSidePanel}>

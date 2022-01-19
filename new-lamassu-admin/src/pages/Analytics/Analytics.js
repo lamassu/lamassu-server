@@ -2,6 +2,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import { endOfToday } from 'date-fns'
+import { subDays } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -42,8 +44,16 @@ const TIME_OPTIONS = {
 }
 
 const GET_TRANSACTIONS = gql`
-  query transactions($limit: Int, $from: Date, $until: Date) {
-    transactions(limit: $limit, from: $from, until: $until) {
+  query transactions(
+    $from: Date
+    $until: Date
+    $excludeTestingCustomers: Boolean
+  ) {
+    transactions(
+      from: $from
+      until: $until
+      excludeTestingCustomers: $excludeTestingCustomers
+    ) {
       id
       txClass
       txHash
@@ -116,7 +126,13 @@ const OverviewEntry = ({ label, value, oldValue, currency }) => {
 const Analytics = () => {
   const classes = useStyles()
 
-  const { data: txResponse, loading: txLoading } = useQuery(GET_TRANSACTIONS)
+  const { data: txResponse, loading: txLoading } = useQuery(GET_TRANSACTIONS, {
+    variables: {
+      from: subDays(65, endOfToday()),
+      until: endOfToday(),
+      excludeTestingCustomers: true
+    }
+  })
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
 
   const [representing, setRepresenting] = useState(REPRESENTING_OPTIONS[0])
