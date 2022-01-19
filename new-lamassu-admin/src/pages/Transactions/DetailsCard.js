@@ -116,16 +116,27 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const exchangeRate = BigNumber(fiat / crypto).toFormat(2)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
 
+  const parseDateString = d => parse(new Date(), 'yyyyMMdd', d)
+
   const customer = tx.customerIdCardData && {
     name: `${onlyFirstToUpper(
       tx.customerIdCardData.firstName
     )} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
-    age: differenceInYears(tx.customerIdCardData.dateOfBirth, new Date()),
+    age:
+      (tx.customerIdCardData.dateOfBirth &&
+        differenceInYears(
+          parseDateString(tx.customerIdCardData.dateOfBirth),
+          new Date()
+        )) ??
+      '',
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
-    idCardExpirationDate: format('yyyy-MM-dd')(
-      parse(new Date(), 'yyyyMMdd', tx.customerIdCardData.expirationDate)
-    )
+    idCardExpirationDate:
+      (tx.customerIdCardData.expirationDate &&
+        format('yyyy-MM-dd')(
+          parseDateString(tx.customerIdCardData.expirationDate)
+        )) ??
+      ''
   }
 
   const from = sub({ minutes: MINUTES_OFFSET }, tx.created)
