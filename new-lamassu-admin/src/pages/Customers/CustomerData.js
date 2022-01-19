@@ -241,7 +241,6 @@ const CustomerData = ({
   ]
 
   R.forEach(it => {
-    console.log('it', it)
     customRequirements.push({
       fields: [
         {
@@ -253,12 +252,13 @@ const CustomerData = ({
       ],
       title: it.customInfoRequest.customRequest.name,
       titleIcon: <CardIcon className={classes.cardIcon} />,
+      state: R.path(['override'])(it),
       authorize: () =>
         authorizeCustomRequest({
           variables: {
             customerId: it.customerId,
             infoRequestId: it.customInfoRequest.id,
-            isAuthorized: true
+            override: OVERRIDE_AUTHORIZED
           }
         }),
       reject: () =>
@@ -266,7 +266,7 @@ const CustomerData = ({
           variables: {
             customerId: it.customerId,
             infoRequestId: it.customInfoRequest.id,
-            isAuthorized: false
+            override: OVERRIDE_REJECTED
           }
         }),
       save: values => {
