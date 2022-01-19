@@ -472,11 +472,7 @@ const CustomerProfile = memo(() => {
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
-  const customInfoRequirementOptions =
-    activeCustomRequests?.customInfoRequests?.map(it => ({
-      value: it.id,
-      display: it.customRequest.name
-    })) ?? []
+  const customInfoRequirements = activeCustomRequests?.customInfoRequests
 
   const classes = useStyles()
 
@@ -661,7 +657,7 @@ const CustomerProfile = memo(() => {
             addPhoto={replacePhoto}
             addCustomerData={editCustomer}
             onClose={() => setWizard(null)}
-            customInfoRequirementOptions={customInfoRequirementOptions}
+            customInfoRequirements={customInfoRequirements}
           />
         )}
       </div>
