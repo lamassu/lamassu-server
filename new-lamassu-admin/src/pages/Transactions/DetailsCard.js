@@ -116,7 +116,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const exchangeRate = BigNumber(fiat / crypto).toFormat(2)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
 
-  const parseDateString = d => parse(new Date(), 'yyyyMMdd', d)
+  const parseDateString = parse(new Date(), 'yyyyMMdd')
 
   const customer = tx.customerIdCardData && {
     name: `${onlyFirstToUpper(
