@@ -93,7 +93,7 @@ const CustomInfoRequests = ({
       setToBeEdited(null)
       toggleWizard()
     },
-    refetchQueries: () => ['customInfoRequests']
+    refetchQueries: () => ['getData', 'customInfoRequests']
   })
 
   const [removeEntry] = useMutation(REMOVE_ROW, {
@@ -105,7 +105,7 @@ const CustomInfoRequests = ({
       setDeleteDialog(false)
       setHasError(false)
     },
-    refetchQueries: () => ['customInfoRequests']
+    refetchQueries: () => ['getData', 'customInfoRequests']
   })
 
   const handleDelete = id => {
