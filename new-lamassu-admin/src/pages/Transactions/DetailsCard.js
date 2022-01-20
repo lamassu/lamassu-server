@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
-import { add, differenceInYears, format, sub } from 'date-fns/fp'
+import { add, differenceInYears, format, sub, parse } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
@@ -116,17 +116,27 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const exchangeRate = BigNumber(fiat / crypto).toFormat(2)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
 
+  const parseDateString = parse(new Date(), 'yyyyMMdd')
+
   const customer = tx.customerIdCardData && {
     name: `${onlyFirstToUpper(
       tx.customerIdCardData.firstName
     )} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
-    age: differenceInYears(tx.customerIdCardData.dateOfBirth, new Date()),
+    age:
+      (tx.customerIdCardData.dateOfBirth &&
+        differenceInYears(
+          parseDateString(tx.customerIdCardData.dateOfBirth),
+          new Date()
+        )) ??
+      '',
     country: tx.customerIdCardData.country,
     idCardNumber: tx.customerIdCardData.documentNumber,
-    idCardExpirationDate: format(
-      'dd-MM-yyyy',
-      tx.customerIdCardData.expirationDate
-    )
+    idCardExpirationDate:
+      (tx.customerIdCardData.expirationDate &&
+        format('yyyy-MM-dd')(
+          parseDateString(tx.customerIdCardData.expirationDate)
+        )) ??
+      ''
   }
 
   const from = sub({ minutes: MINUTES_OFFSET }, tx.created)

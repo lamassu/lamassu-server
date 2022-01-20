@@ -274,6 +274,7 @@ const WizardStep = ({
                         placeholder={originalCassetteCount.toString()}
                         name={cassetteField}
                         className={classes.cashboxBills}
+                        autoFocus
                       />
                       <P>
                         {cassetteDenomination} {fiatCurrency} bills loaded

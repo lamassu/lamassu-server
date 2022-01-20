@@ -28,6 +28,30 @@ import Wizard from './Wizard/Wizard'
 
 const useStyles = makeStyles(styles)
 
+const widthsByNumberOfCassettes = {
+  2: {
+    machine: 250,
+    cashbox: 260,
+    cassette: 300,
+    cassetteGraph: 80,
+    editWidth: 90
+  },
+  3: {
+    machine: 220,
+    cashbox: 215,
+    cassette: 225,
+    cassetteGraph: 60,
+    editWidth: 90
+  },
+  4: {
+    machine: 190,
+    cashbox: 180,
+    cassette: 185,
+    cassetteGraph: 50,
+    editWidth: 90
+  }
+}
+
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
   cashbox: Yup.number()
@@ -201,14 +225,14 @@ const CashCassettes = () => {
     {
       name: 'name',
       header: 'Machine',
-      width: 184,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.machine,
       view: name => <>{name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
     },
     {
       name: 'cashbox',
       header: 'Cash box',
-      width: maxNumberOfCassettes > 2 ? 140 : 280,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cashbox,
       view: (value, { id }) => (
         <CashIn
           currency={{ code: fiatCurrency }}
@@ -229,7 +253,7 @@ const CashCassettes = () => {
       elements.push({
         name: `cassette${it}`,
         header: `Cassette ${it}`,
-        width: (maxNumberOfCassettes > 2 ? 560 : 650) / maxNumberOfCassettes,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
         stripe: true,
         doubleHeader: 'Cash-out',
         view: (value, { id }) => (
@@ -238,7 +262,9 @@ const CashCassettes = () => {
             denomination={getCashoutSettings(id)?.[`cassette${it}`]}
             currency={{ code: fiatCurrency }}
             notes={value}
-            width={50}
+            width={
+              widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph
+            }
             threshold={
               fillingPercentageSettings[`fillingPercentageCassette${it}`]
             }
@@ -248,7 +274,7 @@ const CashCassettes = () => {
         input: CashCassetteInput,
         inputProps: {
           decimalPlaces: 0,
-          width: 50,
+          width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph,
           inputClassName: classes.cashbox
         }
       })
@@ -260,7 +286,8 @@ const CashCassettes = () => {
   elements.push({
     name: 'edit',
     header: 'Edit',
-    width: 87,
+    width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.editWidth,
+    textAlign: 'center',
     view: (value, { id }) => {
       return (
         <IconButton
@@ -279,12 +306,14 @@ const CashCassettes = () => {
       <>
         <TitleSection
           title="Cash Boxes & Cassettes"
-          button={{
-            text: 'Cash box history',
-            icon: HistoryIcon,
-            inverseIcon: ReverseHistoryIcon,
-            toggle: setShowHistory
-          }}
+          buttons={[
+            {
+              text: 'Cash box history',
+              icon: HistoryIcon,
+              inverseIcon: ReverseHistoryIcon,
+              toggle: setShowHistory
+            }
+          ]}
           iconClassName={classes.listViewButton}
           className={classes.tableWidth}>
           {!showHistory && (

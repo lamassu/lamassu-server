@@ -7,6 +7,7 @@ import React, { memo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { ActionButton } from 'src/components/buttons'
+import { Switch } from 'src/components/inputs'
 import { Label1, Label2 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
@@ -18,8 +19,9 @@ import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/bl
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/zodiac.svg'
 import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
 import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
-import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
-import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
+// TODO: Enable for next release
+// import { ReactComponent as DiscountReversedIcon } from 'src/styling/icons/button/discount/white.svg'
+// import { ReactComponent as Discount } from 'src/styling/icons/button/discount/zodiac.svg'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomerData from './CustomerData'
@@ -66,6 +68,7 @@ const GET_CUSTOMER = gql`
       lastTxClass
       daysSuspended
       isSuspended
+      isTestCustomer
       customFields {
         id
         label
@@ -95,7 +98,9 @@ const GET_CUSTOMER = gql`
       }
       customInfoRequests {
         customerId
-        approved
+        override
+        overrideBy
+        overrideAt
         customerData
         customInfoRequest {
           id
@@ -180,12 +185,12 @@ const SET_AUTHORIZED_REQUEST = gql`
   mutation setAuthorizedCustomRequest(
     $customerId: ID!
     $infoRequestId: ID!
-    $isAuthorized: Boolean!
+    $override: String!
   ) {
     setAuthorizedCustomRequest(
       customerId: $customerId
       infoRequestId: $infoRequestId
-      isAuthorized: $isAuthorized
+      override: $override
     )
   }
 `
@@ -230,9 +235,42 @@ const EDIT_NOTE = gql`
   }
 `
 
+const ENABLE_TEST_CUSTOMER = gql`
+  mutation enableTestCustomer($customerId: ID!) {
+    enableTestCustomer(customerId: $customerId)
+  }
+`
+
+const DISABLE_TEST_CUSTOMER = gql`
+  mutation disableTestCustomer($customerId: ID!) {
+    disableTestCustomer(customerId: $customerId)
+  }
+`
+
 const GET_DATA = gql`
   query getData {
     config
+  }
+`
+
+const SET_CUSTOM_ENTRY = gql`
+  mutation addCustomField($customerId: ID!, $label: String!, $value: String!) {
+    addCustomField(customerId: $customerId, label: $label, value: $value)
+  }
+`
+
+const EDIT_CUSTOM_ENTRY = gql`
+  mutation saveCustomField($customerId: ID!, $fieldId: ID!, $value: String!) {
+    saveCustomField(customerId: $customerId, fieldId: $fieldId, value: $value)
+  }
+`
+
+const GET_ACTIVE_CUSTOM_REQUESTS = gql`
+  query customInfoRequests($onlyEnabled: Boolean) {
+    customInfoRequests(onlyEnabled: $onlyEnabled) {
+      id
+      customRequest
+    }
   }
 `
 
@@ -254,6 +292,20 @@ const CustomerProfile = memo(() => {
   })
 
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+
+  const { data: activeCustomRequests } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
+    variables: {
+      onlyEnabled: true
+    }
+  })
+
+  const [setCustomEntry] = useMutation(SET_CUSTOM_ENTRY, {
+    onCompleted: () => getCustomer()
+  })
+
+  const [editCustomEntry] = useMutation(EDIT_CUSTOM_ENTRY, {
+    onCompleted: () => getCustomer()
+  })
 
   const [replaceCustomerPhoto] = useMutation(REPLACE_CUSTOMER_PHOTO, {
     onCompleted: () => getCustomer()
@@ -294,6 +346,37 @@ const CustomerProfile = memo(() => {
     onCompleted: () => getCustomer()
   })
 
+  const saveCustomEntry = it => {
+    setCustomEntry({
+      variables: {
+        customerId,
+        label: it.title,
+        value: it.data
+      }
+    })
+    setWizard(null)
+  }
+
+  const updateCustomEntry = it => {
+    editCustomEntry({
+      variables: {
+        customerId,
+        fieldId: it.fieldId,
+        value: it.value
+      }
+    })
+  }
+
+  const [enableTestCustomer] = useMutation(ENABLE_TEST_CUSTOMER, {
+    variables: { customerId },
+    onCompleted: () => getCustomer()
+  })
+
+  const [disableTestCustomer] = useMutation(DISABLE_TEST_CUSTOMER, {
+    variables: { customerId },
+    onCompleted: () => getCustomer()
+  })
+
   const updateCustomer = it =>
     setCustomer({
       variables: {
@@ -302,7 +385,7 @@ const CustomerProfile = memo(() => {
       }
     })
 
-  const replacePhoto = it =>
+  const replacePhoto = it => {
     replaceCustomerPhoto({
       variables: {
         customerId,
@@ -310,14 +393,18 @@ const CustomerProfile = memo(() => {
         photoType: it.photoType
       }
     })
+    setWizard(null)
+  }
 
-  const editCustomer = it =>
+  const editCustomer = it => {
     editCustomerData({
       variables: {
         customerId,
         customerEdit: it
       }
     })
+    setWizard(null)
+  }
 
   const deleteEditedData = it =>
     deleteCustomerEditedData({
@@ -385,6 +472,12 @@ const CustomerProfile = memo(() => {
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
+  const customInfoRequirementOptions =
+    activeCustomRequests?.customInfoRequests?.map(it => ({
+      value: it.id,
+      display: it.customRequest.name
+    })) ?? []
+
   const classes = useStyles()
 
   return (
@@ -411,82 +504,101 @@ const CustomerProfile = memo(() => {
       <div className={classes.panels}>
         <div className={classes.leftSidePanel}>
           {!loading && !customerData.isAnonymous && (
-            <div>
+            <>
+              <CustomerSidebar
+                isSelected={code => code === clickedItem}
+                onClick={onClickSidebarItem}
+              />
               <div>
-                <CustomerSidebar
-                  isSelected={code => code === clickedItem}
-                  onClick={onClickSidebarItem}
-                />
-              </div>
-              <Label1 className={classes.actionLabel}>Actions</Label1>
-              <div className={classes.actionBar}>
-                <ActionButton
-                  className={classes.actionButton}
-                  color="primary"
-                  Icon={DataIcon}
-                  InverseIcon={DataReversedIcon}
-                  onClick={() => setWizard(true)}>
-                  {`Manual data entry`}
-                </ActionButton>
-                <ActionButton
-                  className={classes.actionButton}
-                  color="primary"
-                  Icon={Discount}
-                  InverseIcon={DiscountReversedIcon}
-                  onClick={() => {}}>
-                  {`Add individual discount`}
-                </ActionButton>
-                {isSuspended && (
+                <Label1 className={classes.actionLabel}>Actions</Label1>
+                <div className={classes.actionBar}>
                   <ActionButton
                     className={classes.actionButton}
                     color="primary"
-                    Icon={AuthorizeIcon}
-                    InverseIcon={AuthorizeReversedIcon}
+                    Icon={DataIcon}
+                    InverseIcon={DataReversedIcon}
+                    onClick={() => setWizard(true)}>
+                    {`Manual data entry`}
+                  </ActionButton>
+                  {/* <ActionButton
+                    className={classes.actionButton}
+                    color="primary"
+                    Icon={Discount}
+                    InverseIcon={DiscountReversedIcon}
+                    onClick={() => {}}>
+                    {`Add individual discount`}
+                  </ActionButton> */}
+                  {isSuspended && (
+                    <ActionButton
+                      className={classes.actionButton}
+                      color="primary"
+                      Icon={AuthorizeIcon}
+                      InverseIcon={AuthorizeReversedIcon}
+                      onClick={() =>
+                        updateCustomer({
+                          suspendedUntil: null
+                        })
+                      }>
+                      {`Unsuspend customer`}
+                    </ActionButton>
+                  )}
+                  <ActionButton
+                    color="primary"
+                    className={classes.actionButton}
+                    Icon={blocked ? AuthorizeIcon : BlockIcon}
+                    InverseIcon={
+                      blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                    }
                     onClick={() =>
                       updateCustomer({
-                        suspendedUntil: null
+                        authorizedOverride: blocked
+                          ? OVERRIDE_AUTHORIZED
+                          : OVERRIDE_REJECTED
                       })
                     }>
-                    {`Unsuspend customer`}
+                    {`${blocked ? 'Authorize' : 'Block'} customer`}
                   </ActionButton>
-                )}
-                <ActionButton
-                  color="primary"
-                  className={classes.actionButton}
-                  Icon={blocked ? AuthorizeIcon : BlockIcon}
-                  InverseIcon={
-                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                  }
-                  onClick={() =>
-                    updateCustomer({
-                      authorizedOverride: blocked
-                        ? OVERRIDE_AUTHORIZED
-                        : OVERRIDE_REJECTED
-                    })
-                  }>
-                  {`${blocked ? 'Authorize' : 'Block'} customer`}
-                </ActionButton>
-                <ActionButton
-                  color="primary"
-                  className={classes.actionButton}
-                  Icon={blocked ? AuthorizeIcon : BlockIcon}
-                  InverseIcon={
-                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                  }
-                  onClick={() =>
-                    setCustomer({
-                      variables: {
-                        customerId,
-                        customerInput: {
-                          subscriberInfo: true
+                  <ActionButton
+                    color="primary"
+                    className={classes.actionButton}
+                    Icon={blocked ? AuthorizeIcon : BlockIcon}
+                    InverseIcon={
+                      blocked ? AuthorizeReversedIcon : BlockReversedIcon
+                    }
+                    onClick={() =>
+                      setCustomer({
+                        variables: {
+                          customerId,
+                          customerInput: {
+                            subscriberInfo: true
+                          }
                         }
-                      }
-                    })
-                  }>
-                  {`Retrieve information`}
-                </ActionButton>
+                      })
+                    }>
+                    {`Retrieve information`}
+                  </ActionButton>
+                </div>
               </div>
-            </div>
+              <div>
+                <Label1 className={classes.actionLabel}>
+                  {`Special user status`}
+                </Label1>
+                <div className={classes.actionBar}>
+                  <div className={classes.userStatusAction}>
+                    <Switch
+                      checked={!!R.path(['isTestCustomer'])(customerData)}
+                      value={!!R.path(['isTestCustomer'])(customerData)}
+                      onChange={() =>
+                        R.path(['isTestCustomer'])(customerData)
+                          ? disableTestCustomer()
+                          : enableTestCustomer()
+                      }
+                    />
+                    {`Test user`}
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
         <div className={classes.rightSidePanel}>
@@ -522,7 +634,8 @@ const CustomerProfile = memo(() => {
                 editCustomer={editCustomer}
                 deleteEditedData={deleteEditedData}
                 updateCustomRequest={setCustomerCustomInfoRequest}
-                authorizeCustomRequest={authorizeCustomRequest}></CustomerData>
+                authorizeCustomRequest={authorizeCustomRequest}
+                updateCustomEntry={updateCustomEntry}></CustomerData>
             </div>
           )}
           {isNotes && (
@@ -544,8 +657,11 @@ const CustomerProfile = memo(() => {
         {wizard && (
           <Wizard
             error={error?.message}
-            save={() => {}}
+            save={saveCustomEntry}
+            addPhoto={replacePhoto}
+            addCustomerData={editCustomer}
             onClose={() => setWizard(null)}
+            customInfoRequirementOptions={customInfoRequirementOptions}
           />
         )}
       </div>

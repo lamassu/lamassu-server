@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core/styles'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { Box, makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom'
 
 import SearchBox from 'src/components/SearchBox'
 import SearchFilter from 'src/components/SearchFilter'
+import { Link } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import baseStyles from 'src/pages/Logs.styles'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -14,6 +15,7 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomersList from './CustomersList'
+import CreateCustomerModal from './components/CreateCustomerModal'
 
 const GET_CUSTOMER_FILTERS = gql`
   query filters {
@@ -43,13 +45,34 @@ const GET_CUSTOMERS = gql`
       lastTxFiatCode
       lastTxClass
       authorizedOverride
+      frontCameraPath
+      frontCameraOverride
+      idCardPhotoPath
+      idCardPhotoOverride
+      idCardData
+      idCardDataOverride
+      usSsn
+      usSsnOverride
+      sanctions
+      sanctionsOverride
       daysSuspended
       isSuspended
     }
   }
 `
 
+const CREATE_CUSTOMER = gql`
+  mutation createCustomer($phoneNumber: String) {
+    createCustomer(phoneNumber: $phoneNumber) {
+      phone
+    }
+  }
+`
+
 const useBaseStyles = makeStyles(baseStyles)
+
+const getFiltersObj = filters =>
+  R.reduce((s, f) => ({ ...s, [f.type]: f.value }), {}, filters)
 
 const Customers = () => {
   const baseStyles = useBaseStyles()
@@ -61,6 +84,7 @@ const Customers = () => {
   const [filteredCustomers, setFilteredCustomers] = useState([])
   const [variables, setVariables] = useState({})
   const [filters, setFilters] = useState([])
+  const [showCreationModal, setShowCreationModal] = useState(false)
 
   const {
     data: customersResponse,
@@ -75,19 +99,25 @@ const Customers = () => {
     GET_CUSTOMER_FILTERS
   )
 
+  const [createNewCustomer] = useMutation(CREATE_CUSTOMER, {
+    onCompleted: () => setShowCreationModal(false),
+    refetchQueries: () => [
+      {
+        query: GET_CUSTOMERS,
+        variables
+      }
+    ]
+  })
+
   const configData = R.path(['config'])(customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
-  const customersData = R.sortWith([R.descend(R.prop('lastActive'))])(
-    filteredCustomers ?? []
-  )
+  const triggers = configData && fromNamespace(namespaces.TRIGGERS, configData)
+  const customersData = R.sortWith([
+    R.descend(it => new Date(R.prop('lastActive', it) ?? '0'))
+  ])(filteredCustomers ?? [])
 
   const onFilterChange = filters => {
-    const filtersObject = R.compose(
-      R.mergeAll,
-      R.map(f => ({
-        [f.type]: f.value
-      }))
-    )(filters)
+    const filtersObject = getFiltersObj(filters)
 
     setFilters(filters)
 
@@ -101,10 +131,38 @@ const Customers = () => {
     refetch && refetch()
   }
 
-  const onFilterDelete = filter =>
-    setFilters(
-      R.filter(f => !R.whereEq(R.pick(['type', 'value'], f), filter))(filters)
-    )
+  const onFilterDelete = filter => {
+    const newFilters = R.filter(
+      f => !R.whereEq(R.pick(['type', 'value'], f), filter)
+    )(filters)
+
+    setFilters(newFilters)
+
+    const filtersObject = getFiltersObj(newFilters)
+
+    setVariables({
+      phone: filtersObject.phone,
+      name: filtersObject.name,
+      address: filtersObject.address,
+      id: filtersObject.id
+    })
+
+    refetch && refetch()
+  }
+
+  const deleteAllFilters = () => {
+    setFilters([])
+    const filtersObject = getFiltersObj([])
+
+    setVariables({
+      phone: filtersObject.phone,
+      name: filtersObject.name,
+      address: filtersObject.address,
+      id: filtersObject.id
+    })
+
+    refetch && refetch()
+  }
 
   const filterOptions = R.path(['customerFilters'])(filtersResponse)
 
@@ -113,7 +171,7 @@ const Customers = () => {
       <TitleSection
         title="Customers"
         appendix={
-          <div>
+          <div className={baseStyles.buttonsWrapper}>
             <SearchBox
               loading={loadingFilters}
               filters={filters}
@@ -123,7 +181,13 @@ const Customers = () => {
             />
           </div>
         }
-        appendixClassName={baseStyles.buttonsWrapper}
+        appendixRight={
+          <Box display="flex">
+            <Link color="primary" onClick={() => setShowCreationModal(true)}>
+              Add new user
+            </Link>
+          </Box>
+        }
         labels={[
           { label: 'Cash-in', icon: <TxInIcon /> },
           { label: 'Cash-out', icon: <TxOutIcon /> }
@@ -131,9 +195,10 @@ const Customers = () => {
       />
       {filters.length > 0 && (
         <SearchFilter
+          entries={customersData.length}
           filters={filters}
           onFilterDelete={onFilterDelete}
-          setFilters={setFilters}
+          deleteAllFilters={deleteAllFilters}
         />
       )}
       <CustomersList
@@ -141,6 +206,13 @@ const Customers = () => {
         locale={locale}
         onClick={handleCustomerClicked}
         loading={customerLoading}
+        triggers={triggers}
+      />
+      <CreateCustomerModal
+        showModal={showCreationModal}
+        handleClose={() => setShowCreationModal(false)}
+        locale={locale}
+        onSubmit={createNewCustomer}
       />
     </>
   )

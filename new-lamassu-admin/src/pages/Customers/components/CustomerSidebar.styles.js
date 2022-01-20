@@ -11,8 +11,7 @@ export default {
     backgroundColor: sidebarColor,
     width: 219,
     flexDirection: 'column',
-    borderRadius: 5,
-    marginBottom: 50
+    borderRadius: 5
   },
   link: {
     alignItems: 'center',

@@ -1,8 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import { Field, useFormikContext } from 'formik'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 import * as Yup from 'yup'
@@ -479,21 +477,43 @@ const requirementSchema = Yup.object()
         otherwise: Yup.number()
           .nullable()
           .transform(() => null)
+      }),
+      customInfoRequestId: Yup.string().when('requirement', {
+        is: value => value === 'custom',
+        then: Yup.string(),
+        otherwise: Yup.string()
+          .nullable()
+          .transform(() => '')
       })
     }).required()
   })
   .test(({ requirement }, context) => {
-    const requirementValidator = requirement =>
-      requirement.requirement === 'suspend'
-        ? requirement.suspensionDays > 0
-        : true
+    const requirementValidator = (requirement, type) => {
+      switch (type) {
+        case 'suspend':
+          return requirement.requirement === type
+            ? requirement.suspensionDays > 0
+            : true
+        case 'custom':
+          return requirement.requirement === type
+            ? !R.isNil(requirement.customInfoRequestId)
+            : true
+        default:
+          return true
+      }
+    }
 
-    if (requirement && requirementValidator(requirement)) return
+    if (requirement && !requirementValidator(requirement, 'suspend'))
+      return context.createError({
+        path: 'requirement',
+        message: 'Suspension days must be greater than 0'
+      })
 
-    return context.createError({
-      path: 'requirement',
-      message: 'Suspension days must be greater than 0'
-    })
+    if (requirement && !requirementValidator(requirement, 'custom'))
+      return context.createError({
+        path: 'requirement',
+        message: 'You must select an item'
+      })
   })
 
 const requirementOptions = [
@@ -508,16 +528,19 @@ const requirementOptions = [
   { display: 'Block', code: 'block' }
 ]
 
-const GET_ACTIVE_CUSTOM_REQUESTS = gql`
-  query customInfoRequests($onlyEnabled: Boolean) {
-    customInfoRequests(onlyEnabled: $onlyEnabled) {
-      id
-      customRequest
-    }
-  }
-`
+const hasRequirementError = (errors, touched, values) =>
+  !!errors.requirement &&
+  !!touched.requirement?.suspensionDays &&
+  (!values.requirement?.suspensionDays ||
+    values.requirement?.suspensionDays < 0)
 
-const Requirement = () => {
+const hasCustomRequirementError = (errors, touched, values) =>
+  !!errors.requirement &&
+  !!touched.requirement?.customInfoRequestId &&
+  (!values.requirement?.customInfoRequestId ||
+    !R.isNil(values.requirement?.customInfoRequestId))
+
+const Requirement = ({ customInfoRequests }) => {
   const classes = useStyles()
   const {
     touched,
@@ -526,11 +549,6 @@ const Requirement = () => {
     handleChange,
     setTouched
   } = useFormikContext()
-  const { data } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
-    variables: {
-      onlyEnabled: true
-    }
-  })
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
   const isCustom = values?.requirement?.requirement === 'custom'
@@ -540,24 +558,19 @@ const Requirement = () => {
       display: it.customRequest.name
     }))
 
-  const hasRequirementError =
-    !!errors.requirement &&
-    !!touched.requirement?.suspensionDays &&
-    (!values.requirement?.suspensionDays ||
-      values.requirement?.suspensionDays < 0)
-
-  const customInfoRequests = R.path(['customInfoRequests'])(data) ?? []
-  const enableCustomRequirement = customInfoRequests.length > 0
+  const enableCustomRequirement = customInfoRequests?.length > 0
   const customInfoOption = {
     display: 'Custom information requirement',
     code: 'custom'
   }
   const options = enableCustomRequirement
     ? [...requirementOptions, customInfoOption]
-    : [...requirementOptions, { ...customInfoOption, disabled: true }]
+    : [...requirementOptions]
   const titleClass = {
     [classes.error]:
-      (!!errors.requirement && !isSuspend) || (isSuspend && hasRequirementError)
+      (!!errors.requirement && !isSuspend && !isCustom) ||
+      (isSuspend && hasRequirementError(errors, touched, values)) ||
+      (isCustom && hasCustomRequirementError(errors, touched, values))
   }
 
   return (
@@ -586,7 +599,7 @@ const Requirement = () => {
           label="Days"
           size="lg"
           name="requirement.suspensionDays"
-          error={hasRequirementError}
+          error={hasRequirementError(errors, touched, values)}
         />
       )}
       {isCustom && (
@@ -604,10 +617,13 @@ const Requirement = () => {
   )
 }
 
-const requirements = {
+const requirements = customInfoRequests => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
+  props: { customInfoRequests },
+  hasRequirementError: hasRequirementError,
+  hasCustomRequirementError: hasCustomRequirementError,
   initialValues: {
     requirement: {
       requirement: '',
@@ -615,7 +631,7 @@ const requirements = {
       customInfoRequestId: ''
     }
   }
-}
+})
 
 const getView = (data, code, compare) => it => {
   if (!data) return ''

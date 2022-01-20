@@ -52,8 +52,8 @@ const ranges = {
 }
 
 const GET_DATA = gql`
-  query getData {
-    transactions {
+  query getData($excludeTestingCustomers: Boolean) {
+    transactions(excludeTestingCustomers: $excludeTestingCustomers) {
       fiatCode
       fiat
       cashInFee
@@ -78,7 +78,9 @@ const reducer = (acc, it) =>
 const SystemPerformance = () => {
   const classes = useStyles()
   const [selectedRange, setSelectedRange] = useState('Day')
-  const { data, loading } = useQuery(GET_DATA)
+  const { data, loading } = useQuery(GET_DATA, {
+    variables: { excludeTestingCustomers: true }
+  })
   const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
   const timezone = fromNamespace('locale')(data?.config).timezone
 

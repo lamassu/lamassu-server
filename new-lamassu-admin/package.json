@@ -26,6 +26,7 @@
     "downshift": "3.3.4",
     "file-saver": "2.0.2",
     "formik": "2.2.0",
+    "google-libphonenumber": "^3.2.22",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.3",
     "jss-plugin-extend": "^10.0.0",

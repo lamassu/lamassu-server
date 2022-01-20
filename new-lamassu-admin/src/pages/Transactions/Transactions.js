@@ -40,6 +40,7 @@ const GET_TRANSACTIONS_CSV = gql`
     $from: Date
     $until: Date
     $timezone: String
+    $excludeTestingCustomers: Boolean
   ) {
     transactionsCsv(
       simplified: $simplified
@@ -47,6 +48,7 @@ const GET_TRANSACTIONS_CSV = gql`
       from: $from
       until: $until
       timezone: $timezone
+      excludeTestingCustomers: $excludeTestingCustomers
     )
   }
 `
@@ -222,7 +224,7 @@ const Transactions = () => {
       width: 140
     },
     {
-      header: 'Date (UTC)',
+      header: 'Date',
       view: it =>
         timezone && formatDate(it.created, timezone, 'yyyy-MM-dd HH:mm:ss'),
       textAlign: 'right',

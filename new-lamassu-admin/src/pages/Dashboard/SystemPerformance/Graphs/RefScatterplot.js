@@ -62,7 +62,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
     []
   )
 
-  const filterDay = useMemo(
+  const filterDay = useCallback(
     x => (timeFrame === 'day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
     [timeFrame]
   )

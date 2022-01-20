@@ -132,7 +132,7 @@ const Header = memo(({ tree, user }) => {
                 return (
                   <NavLink
                     key={idx}
-                    to={!R.isNil(it.children) ? it.children[0].route : it.route}
+                    to={it.route || it.children[0].route}
                     isActive={match => {
                       if (!match) return false
                       setActive(it)

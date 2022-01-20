@@ -13,12 +13,27 @@ import styles from './NotificationCenter.styles'
 const useStyles = makeStyles(styles)
 
 const types = {
-  transaction: { display: 'Transactions', icon: <Transaction /> },
-  highValueTransaction: { display: 'Transactions', icon: <Transaction /> },
-  fiatBalance: { display: 'Maintenance', icon: <Wrench /> },
-  cryptoBalance: { display: 'Maintenance', icon: <Wrench /> },
-  compliance: { display: 'Compliance', icon: <WarningIcon /> },
-  error: { display: 'Error', icon: <WarningIcon /> }
+  transaction: {
+    display: 'Transactions',
+    icon: <Transaction height={16} width={16} />
+  },
+  highValueTransaction: {
+    display: 'Transactions',
+    icon: <Transaction height={16} width={16} />
+  },
+  fiatBalance: {
+    display: 'Maintenance',
+    icon: <Wrench height={16} width={16} />
+  },
+  cryptoBalance: {
+    display: 'Maintenance',
+    icon: <Wrench height={16} width={16} />
+  },
+  compliance: {
+    display: 'Compliance',
+    icon: <WarningIcon height={16} width={16} />
+  },
+  error: { display: 'Error', icon: <WarningIcon height={16} width={16} /> }
 }
 
 const NotificationRow = ({
@@ -35,7 +50,9 @@ const NotificationRow = ({
   const classes = useStyles()
 
   const typeDisplay = R.path([type, 'display'])(types) ?? null
-  const icon = R.path([type, 'icon'])(types) ?? <Wrench />
+  const icon = R.path([type, 'icon'])(types) ?? (
+    <Wrench height={16} width={16} />
+  )
   const age = prettyMs(new Date().getTime() - new Date(created).getTime(), {
     compact: true,
     verbose: true
@@ -57,7 +74,9 @@ const NotificationRow = ({
         classes.notificationRow,
         !read && valid ? classes.unread : ''
       )}>
-      <div className={classes.notificationRowIcon}>{icon}</div>
+      <div className={classes.notificationRowIcon}>
+        <div>{icon}</div>
+      </div>
       <div className={classes.notificationContent}>
         <Label2 className={classes.notificationTitle}>
           {notificationTitle}
