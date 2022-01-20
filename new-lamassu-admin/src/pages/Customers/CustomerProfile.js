@@ -70,7 +70,7 @@ const GET_CUSTOMER = gql`
       isSuspended
       isTestCustomer
       subscriberInfo
-      subscriberInfoOverride
+      phoneOverride
       customFields {
         id
         label
@@ -140,7 +140,7 @@ const SET_CUSTOMER = gql`
       lastTxFiatCode
       lastTxClass
       subscriberInfo
-      subscriberInfoOverride
+      phoneOverride
     }
   }
 `

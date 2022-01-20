@@ -164,11 +164,9 @@ const CustomerData = ({
       fields: customerDataElements.smsData,
       title: 'SMS data',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
-      state: R.path(['subscriberInfoOverride'])(customer),
-      authorize: () =>
-        updateCustomer({ subscriberInfoOverride: OVERRIDE_AUTHORIZED }),
-      reject: () =>
-        updateCustomer({ subscriberInfoOverride: OVERRIDE_REJECTED }),
+      state: R.path(['phoneOverride'])(customer),
+      authorize: () => updateCustomer({ phoneOverride: OVERRIDE_AUTHORIZED }),
+      reject: () => updateCustomer({ phoneOverride: OVERRIDE_REJECTED }),
       save: values => {
         editCustomer({
           phone: parsePhoneNumber(values.phoneNumber).number,
