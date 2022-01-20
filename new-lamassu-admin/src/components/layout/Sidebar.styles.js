@@ -30,7 +30,9 @@ export default {
       boxShadow: `-200px 0px 0px 0px ${sidebarColor}`
     }
   },
-
+  linkWrapper: {
+    cursor: 'pointer'
+  },
   link: {
     extend: p,
     position: 'relative',

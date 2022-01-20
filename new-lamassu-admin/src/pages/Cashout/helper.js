@@ -8,6 +8,12 @@ import { getBillOptions } from 'src/utils/bill-options'
 import { CURRENCY_MAX } from 'src/utils/constants'
 import { transformNumber } from 'src/utils/number'
 
+const widthsByNumberOfCassettes = {
+  2: { machine: 300, cassette: 225, zeroConf: 200 },
+  3: { machine: 210, cassette: 180, zeroConf: 200 },
+  4: { machine: 200, cassette: 150, zeroConf: 150 }
+}
+
 const DenominationsSchema = Yup.object().shape({
   cassette1: Yup.number()
     .label('Cassette 1')
@@ -60,7 +66,7 @@ const getElements = (machines, locale = {}, classes) => {
     {
       name: 'id',
       header: 'Machine',
-      width: 300,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -76,7 +82,7 @@ const getElements = (machines, locale = {}, classes) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: (maxNumberOfCassettes > 2 ? 600 : 460) / maxNumberOfCassettes,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
         suffix: fiatCurrency,
         bold: bold,
         view: it => it,
@@ -99,7 +105,7 @@ const getElements = (machines, locale = {}, classes) => {
     size: 'sm',
     stripe: true,
     textAlign: 'right',
-    width: maxNumberOfCassettes > 2 ? 150 : 290,
+    width: widthsByNumberOfCassettes[maxNumberOfCassettes].zeroConf,
     input: NumberInput,
     inputProps: {
       decimalPlaces: 0

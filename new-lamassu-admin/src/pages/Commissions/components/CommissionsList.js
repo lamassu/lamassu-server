@@ -160,6 +160,7 @@ const CommissionsList = memo(
             default={ORDER_OPTIONS[0]}
             items={ORDER_OPTIONS}
             selectedItem={orderProp}
+            defaultAsFilter
           />
         </div>
         <div className={classes.tableWrapper}>
@@ -172,6 +173,7 @@ const CommissionsList = memo(
             validationSchema={getListCommissionsSchema(localeConfig)}
             data={tableData}
             elements={commissionsList(data, currency)}
+            orderedBy={orderProp}
           />
         </div>
       </div>

@@ -56,7 +56,8 @@ const ETable = ({
   sortBy,
   createText = 'Add override',
   forceAdd = false,
-  tbodyWrapperClass
+  tbodyWrapperClass,
+  orderedBy = null
 }) => {
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
@@ -155,6 +156,7 @@ const ETable = ({
     actionColSize,
     stripeWhen,
     forceAdd,
+    orderedBy,
     DEFAULT_COL_SIZE
   }
 

@@ -16,7 +16,7 @@ import { startCase } from 'src/utils/string'
 
 import NotificationsCtx from '../NotificationsContext'
 
-const channelSize = 129
+const channelSize = 229
 const sizes = {
   balance: 152,
   transactions: 184,
@@ -26,7 +26,7 @@ const sizes = {
   active: 263
 }
 
-const Row = ({ namespace, forceDisable }) => {
+const Row = ({ namespace, forceDisable, shouldUpperCase }) => {
   const { data: rawData, save: rawSave } = useContext(NotificationsCtx)
 
   const save = R.compose(rawSave(null), toNamespace(namespace))
@@ -53,7 +53,9 @@ const Row = ({ namespace, forceDisable }) => {
 
   return (
     <Tr>
-      <Td width={channelSize}>{startCase(namespace)}</Td>
+      <Td width={channelSize}>
+        {shouldUpperCase ? R.toUpper(namespace) : startCase(namespace)}
+      </Td>
       <Cell name="balance" disabled={disabled} />
       <Cell name="transactions" disabled={disabled} />
       <Cell name="compliance" disabled={disabled} />
@@ -84,7 +86,7 @@ const Setup = ({ wizard, forceDisable }) => {
       </THead>
       <TBody>
         <Row namespace="email" forceDisable={forceDisable} />
-        <Row namespace="sms" forceDisable={forceDisable} />
+        <Row namespace="sms" shouldUpperCase forceDisable={forceDisable} />
         <Row namespace="notificationCenter" forceDisable={forceDisable} />
       </TBody>
     </Table>

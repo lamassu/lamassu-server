@@ -1,4 +1,5 @@
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
+import * as R from 'ramda'
 import React, { useState, memo } from 'react'
 
 import Popper from 'src/components/Popper'
@@ -8,9 +9,9 @@ const useStyles = makeStyles({
   transparentButton: {
     border: 'none',
     backgroundColor: 'transparent',
-    marginTop: 4,
     outline: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    marginTop: 4
   },
   popoverContent: ({ width }) => ({
     width,
@@ -69,11 +70,22 @@ const HoverableTooltip = memo(({ parentElements, children, width }) => {
 
   return (
     <div>
-      <div
-        onMouseEnter={handler.handleOpenHelpPopper}
-        onMouseLeave={handler.handleCloseHelpPopper}>
-        {parentElements}
-      </div>
+      {!R.isNil(parentElements) && (
+        <div
+          onMouseEnter={handler.handleOpenHelpPopper}
+          onMouseLeave={handler.handleCloseHelpPopper}>
+          {parentElements}
+        </div>
+      )}
+      {R.isNil(parentElements) && (
+        <button
+          type="button"
+          onMouseEnter={handler.handleOpenHelpPopper}
+          onMouseLeave={handler.handleCloseHelpPopper}
+          className={handler.classes.transparentButton}>
+          <HelpIcon />
+        </button>
+      )}
       <Popper
         open={handler.helpPopperOpen}
         anchorEl={handler.helpPopperAnchorEl}

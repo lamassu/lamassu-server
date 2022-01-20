@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React from 'react'
 
 import Stepper from 'src/components/Stepper'
-import { Tooltip } from 'src/components/Tooltip'
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
 import { Cashbox } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, RadioGroup } from 'src/components/inputs/formik'
@@ -188,12 +188,12 @@ const WizardStep = ({
                         classes.centerAlignment
                       )}>
                       <P>Since previous update</P>
-                      <Tooltip width={215}>
+                      <HoverableTooltip width={215}>
                         <P>
                           Number of bills inside the cash box, since the last
                           cash box changes.
                         </P>
-                      </Tooltip>
+                      </HoverableTooltip>
                     </div>
                     <div
                       className={classnames(

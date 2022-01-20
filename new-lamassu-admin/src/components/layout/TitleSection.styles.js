@@ -19,6 +19,7 @@ export default {
   },
   buttonText: {
     color: backgroundColor,
+    fontFamily: 'Mont',
     fontSize: 15
   },
   icon: {

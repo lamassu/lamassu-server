@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import React, { memo } from 'react'
 
-import { Tooltip } from 'src/components/Tooltip'
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
@@ -66,7 +66,7 @@ const CoinATMRadar = memo(({ wizard }) => {
       <div>
         <div className={classes.header}>
           <H4>Coin ATM Radar share settings</H4>
-          <Tooltip width={304}>
+          <HoverableTooltip width={304}>
             <P>
               For details on configuring this panel, please read the relevant
               knowledgebase article{' '}
@@ -78,7 +78,7 @@ const CoinATMRadar = memo(({ wizard }) => {
               </a>
               .
             </P>
-          </Tooltip>
+          </HoverableTooltip>
         </div>
         <Row
           title={'Share information?'}

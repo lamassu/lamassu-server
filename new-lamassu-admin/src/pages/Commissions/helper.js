@@ -23,7 +23,7 @@ const ALL_COINS = {
   code: 'ALL_COINS'
 }
 
-const cashInAndOutHeaderStyle = { marginLeft: 6 }
+const cashInAndOutHeaderStyle = { marginLeft: 6, whiteSpace: 'nowrap' }
 
 const cashInHeader = (
   <div>
@@ -488,7 +488,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     {
       name: 'cryptoCurrencies',
       display: 'Crypto Currency',
-      width: 265,
+      width: 255,
       view: R.prop(0),
       size: 'sm',
       editable: false
@@ -510,7 +510,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       header: cashOutHeader,
       name: 'cashOut',
       display: 'Cash-out',
-      width: 130,
+      width: 140,
       input: NumberInput,
       textAlign: 'right',
       greenText: true,

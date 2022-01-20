@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
+import { fromNamespace } from 'src/utils/config'
 import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
@@ -23,7 +24,13 @@ const CASSETTE_LIST = [
   CASSETTE_4_KEY
 ]
 
-const FiatBalanceOverrides = ({ section }) => {
+const widthsByNumberOfCassettes = {
+  2: { machine: 230, cassette: 250 },
+  3: { machine: 216, cassette: 270 },
+  4: { machine: 210, cassette: 204 }
+}
+
+const FiatBalanceOverrides = ({ config, section }) => {
   const {
     machines = [],
     data,
@@ -36,9 +43,13 @@ const FiatBalanceOverrides = ({ section }) => {
   const setupValues = data?.fiatBalanceOverrides ?? []
   const innerSetEditing = it => setEditing(NAME, it)
 
+  const cashoutConfig = it => fromNamespace(it)(config)
+
   const overridenMachines = R.map(override => override.machine, setupValues)
   const suggestionFilter = R.filter(
-    it => !R.contains(it.deviceId, overridenMachines)
+    it =>
+      !R.includes(it.deviceId, overridenMachines) &&
+      cashoutConfig(it.deviceId).active
   )
   const suggestions = suggestionFilter(machines)
 
@@ -114,7 +125,7 @@ const FiatBalanceOverrides = ({ section }) => {
   const elements = [
     {
       name: MACHINE_KEY,
-      width: 238,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
       size: 'sm',
       view: viewMachine,
       input: Autocomplete,
@@ -132,7 +143,7 @@ const FiatBalanceOverrides = ({ section }) => {
       elements.push({
         name: `fillingPercentageCassette${it}`,
         display: `Cash cassette ${it}`,
-        width: 155,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
         textAlign: 'right',
         doubleHeader: 'Cash Cassette Empty',
         bold: true,

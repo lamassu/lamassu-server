@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { useSelect } from 'downshift'
+import * as R from 'ramda'
 import React from 'react'
 
 import { ReactComponent as Arrowdown } from 'src/styling/icons/action/arrow/regular.svg'
@@ -29,7 +30,9 @@ function Select({ className, label, items, ...props }) {
 
   const selectClassNames = {
     [classes.select]: true,
-    [classes.selectFiltered]: selectedItem !== props.default,
+    [classes.selectFiltered]: props.defaultAsFilter
+      ? true
+      : !R.equals(selectedItem, props.default),
     [classes.open]: isOpen
   }
 
