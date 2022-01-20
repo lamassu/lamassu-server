@@ -186,6 +186,20 @@ const updateRequirementOptions = it => [
   ...it
 ]
 
+const getCustomInfoRequirementType = R.view(
+  R.lensPath(['customRequest', 'input', 'type'])
+)
+
+const buildCustomInfoRequirementElements = customInfoRequirements => {
+  R.forEach(it => {
+    switch (getCustomInfoRequirementType(it)) {
+      case 'numerical' || 'text':
+      default:
+        break
+    }
+  }, customInfoRequirements)
+}
+
 const EntryType = ({ customInfoRequirementOptions }) => {
   const classes = useStyles()
   const { values } = useFormikContext()
@@ -248,7 +262,7 @@ const ManualDataEntry = ({
   selectedValues,
   customInfoRequirementOptions,
   customInfoRequirements,
-  selectedCustomInfoRequirement
+  selectedCustomInfoRequirementLive
 }) => {
   const classes = useStyles()
 
@@ -282,14 +296,18 @@ const ManualDataEntry = ({
       requirementSelected === 'frontCamera'
     : dataTypeSelected === 'file' || dataTypeSelected === 'image'
 
-  const customInfoRequirementType = R.view(
-    R.lensPath([0, 'customRequest', 'input', 'type']),
-    R.filter(it => it.id === selectedCustomInfoRequirement)(
-      customInfoRequirements
+  const customInfoRequirementType = getCustomInfoRequirementType(
+    R.head(
+      R.filter(it => it.id === selectedCustomInfoRequirementLive)(
+        customInfoRequirements
+      )
     )
   )
 
-  console.log(customInfoRequirementType)
+  const customInfoRequirementElements = !R.isNil(customInfoRequirements)
+    ? buildCustomInfoRequirementElements(customInfoRequirements)
+    : []
+  console.log(customInfoRequirementElements, customInfoRequirements)
 
   return (
     <>
@@ -450,8 +468,6 @@ const customerDataSchemas = {
   })
 }
 
-const customInfoRequirementElements = {}
-
 const requirementElements = {
   idCardData: {
     schema: customerDataSchemas.idCardData,
@@ -491,7 +507,6 @@ const requirementElements = {
   },
   custom: {
     schema: customInfoRequirementSchema,
-    options: customInfoRequirementElements,
     Component: ManualDataEntry,
     initialValues: { customInfoRequirement: null },
     saveType: 'customInfoRequirement'

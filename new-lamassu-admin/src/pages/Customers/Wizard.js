@@ -155,7 +155,7 @@ const Wizard = ({
                 selectedValues={selectedValues}
                 customInfoRequirementOptions={customInfoRequirementOptions}
                 customInfoRequirements={customInfoRequirements}
-                selectedCustomInfoRequirement={
+                selectedCustomInfoRequirementLive={
                   values.customInfoRequirement ?? null
                 }
                 {...stepOptions.props}
