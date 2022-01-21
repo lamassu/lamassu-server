@@ -591,22 +591,6 @@ const CustomerProfile = memo(() => {
                     {`Test user`}
                   </div>
                 </div>
-                <ActionButton
-                  color="primary"
-                  className={classes.actionButton}
-                  Icon={blocked ? AuthorizeIcon : BlockIcon}
-                  InverseIcon={
-                    blocked ? AuthorizeReversedIcon : BlockReversedIcon
-                  }
-                  onClick={() =>
-                    updateCustomer({
-                      authorizedOverride: blocked
-                        ? OVERRIDE_AUTHORIZED
-                        : OVERRIDE_REJECTED
-                    })
-                  }>
-                  {`${blocked ? 'Authorize' : 'Block'} customer`}
-                </ActionButton>
               </div>
             </>
           )}

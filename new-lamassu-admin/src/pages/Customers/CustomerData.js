@@ -142,6 +142,23 @@ const CustomerData = ({
     }
   }
 
+  const smsDataElements = [
+    {
+      name: 'phoneNumber',
+      label: 'Phone number',
+      component: TextInput,
+      editable: false
+    }
+  ]
+
+  const smsDataSchema = {
+    smsData: Yup.object()
+      .shape({
+        phoneNumber: Yup.string().required()
+      })
+      .required()
+  }
+
   const cards = [
     {
       fields: customerDataElements.idCardData,
@@ -161,7 +178,7 @@ const CustomerData = ({
       isAvailable: !R.isNil(idData)
     },
     {
-      fields: customerDataElements.smsData,
+      fields: smsDataElements,
       title: 'SMS data',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
       state: R.path(['phoneOverride'])(customer),
@@ -175,7 +192,7 @@ const CustomerData = ({
           }
         })
       },
-      validationSchema: customerDataSchemas.smsData,
+      validationSchema: smsDataSchema.smsData,
       retrieveAdditionalData: () => setRetrieve(true),
       initialValues: initialValues.smsData,
       isAvailable: !R.isNil(phone),
@@ -347,18 +364,18 @@ const CustomerData = ({
 
   R.forEach(it => {
     initialValues.smsData[it] = smsData[it]
-    customerDataElements.smsData.push({
+    smsDataElements.push({
       name: it,
       label: onlyFirstToUpper(it),
       component: TextInput,
       editable: true
     })
-    customerDataSchemas.smsData = Yup.object()
+    smsDataSchema.smsData = Yup.object()
       .shape({
         [it]: Yup.string()
       })
       .required()
-      .concat(customerDataSchemas.smsData)
+      .concat(smsDataSchema.smsData)
   }, R.keys(smsData) ?? [])
 
   const editableCard = (

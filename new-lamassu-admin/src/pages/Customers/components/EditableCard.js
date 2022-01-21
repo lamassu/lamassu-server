@@ -274,13 +274,15 @@ const EditableCard = ({
                           </ActionButton>
                         )}
                       </div>
-                      <ActionButton
-                        color="primary"
-                        Icon={EditIcon}
-                        InverseIcon={EditReversedIcon}
-                        onClick={() => setEditing(true)}>
-                        Edit
-                      </ActionButton>
+                      {hasAdditionalData && (
+                        <ActionButton
+                          color="primary"
+                          Icon={EditIcon}
+                          InverseIcon={EditReversedIcon}
+                          onClick={() => setEditing(true)}>
+                          Edit
+                        </ActionButton>
+                      )}
                     </div>
                   )}
                   {editing && (
