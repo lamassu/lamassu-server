@@ -1,15 +1,15 @@
+import { DialogActions, DialogContent, Dialog } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { parse, format } from 'date-fns/fp'
-import _ from 'lodash/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
 import * as Yup from 'yup'
 
 import ImagePopper from 'src/components/ImagePopper'
-import { FeatureButton } from 'src/components/buttons'
+import { FeatureButton, Button, IconButton } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
-import { H3, Info3 } from 'src/components/typography'
+import { H3, Info3, H2 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
   OVERRIDE_REJECTED
@@ -17,19 +17,22 @@ import {
 import { ReactComponent as CardIcon } from 'src/styling/icons/ID/card/comet.svg'
 import { ReactComponent as PhoneIcon } from 'src/styling/icons/ID/phone/comet.svg'
 import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/comet.svg'
 import { ReactComponent as CustomerListViewReversedIcon } from 'src/styling/icons/circle buttons/customer-list-view/white.svg'
 import { ReactComponent as CustomerListViewIcon } from 'src/styling/icons/circle buttons/customer-list-view/zodiac.svg'
 import { ReactComponent as OverviewReversedIcon } from 'src/styling/icons/circle buttons/overview/white.svg'
 import { ReactComponent as OverviewIcon } from 'src/styling/icons/circle buttons/overview/zodiac.svg'
 import { URI } from 'src/utils/apollo'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './CustomerData.styles.js'
 import { EditableCard } from './components'
 import {
   customerDataElements,
   customerDataSchemas,
-  formatDates
+  formatDates,
+  getFormattedPhone
 } from './helper.js'
 
 const useStyles = makeStyles(styles)
@@ -62,6 +65,7 @@ const Photo = ({ show, src }) => {
 }
 
 const CustomerData = ({
+  locale,
   customer,
   updateCustomer,
   replacePhoto,
@@ -69,10 +73,12 @@ const CustomerData = ({
   deleteEditedData,
   updateCustomRequest,
   authorizeCustomRequest,
-  updateCustomEntry
+  updateCustomEntry,
+  retrieveAdditionalData
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
+  const [retrieve, setRetrieve] = useState(false)
 
   const idData = R.path(['idCardData'])(customer)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
@@ -96,9 +102,12 @@ const CustomerData = ({
     R.path(['customInfoRequests'])(customer) ?? []
   )
 
+  const phone = R.path(['phone'])(customer)
+  const smsData = R.path(['subscriberInfo', 'result'])(customer)
+
   const isEven = elem => elem % 2 === 0
 
-  const getVisibleCards = _.filter(elem => elem.isAvailable)
+  const getVisibleCards = R.filter(elem => elem.isAvailable)
 
   const initialValues = {
     idCardData: {
@@ -126,7 +135,32 @@ const CustomerData = ({
     },
     idCardPhoto: {
       idCardPhoto: null
+    },
+    smsData: {
+      phoneNumber: getFormattedPhone(phone, locale.country)
     }
+  }
+
+  const smsDataElements = [
+    {
+      name: 'phoneNumber',
+      label: 'Phone number',
+      component: TextInput,
+      editable: false
+    }
+  ]
+
+  const smsDataSchema = {
+    smsData: Yup.lazy(values => {
+      const additionalData = R.omit(['phoneNumber'])(values)
+      const fields = R.keys(additionalData)
+      if (R.length(fields) === 2) {
+        return Yup.object().shape({
+          [R.head(fields)]: Yup.string().required(),
+          [R.last(fields)]: Yup.string().required()
+        })
+      }
+    })
   }
 
   const cards = [
@@ -141,19 +175,31 @@ const CustomerData = ({
       deleteEditedData: () => deleteEditedData({ idCardData: null }),
       save: values =>
         editCustomer({
-          idCardData: _.merge(idData, formatDates(values))
+          idCardData: R.merge(idData, formatDates(values))
         }),
       validationSchema: customerDataSchemas.idCardData,
       initialValues: initialValues.idCardData,
-      isAvailable: !_.isNil(idData)
+      isAvailable: !R.isNil(idData)
     },
     {
-      title: 'SMS Confirmation',
+      fields: smsDataElements,
+      title: 'SMS data',
       titleIcon: <PhoneIcon className={classes.cardIcon} />,
-      authorize: () => {},
-      reject: () => {},
-      save: () => {},
-      isAvailable: false
+      state: R.path(['phoneOverride'])(customer),
+      authorize: () => updateCustomer({ phoneOverride: OVERRIDE_AUTHORIZED }),
+      reject: () => updateCustomer({ phoneOverride: OVERRIDE_REJECTED }),
+      save: values => {
+        editCustomer({
+          subscriberInfo: {
+            result: R.merge(smsData, R.omit(['phoneNumber'])(values))
+          }
+        })
+      },
+      validationSchema: smsDataSchema.smsData,
+      retrieveAdditionalData: () => setRetrieve(true),
+      initialValues: initialValues.smsData,
+      isAvailable: !R.isNil(phone),
+      hasAdditionalData: !R.isNil(smsData) && !R.isEmpty(smsData)
     },
     {
       title: 'Name',
@@ -171,7 +217,7 @@ const CustomerData = ({
         updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED }),
       children: <Info3>{sanctionsDisplay}</Info3>,
-      isAvailable: !_.isNil(sanctions)
+      isAvailable: !R.isNil(sanctions)
     },
     {
       fields: customerDataElements.frontCamera,
@@ -198,7 +244,7 @@ const CustomerData = ({
       hasImage: true,
       validationSchema: customerDataSchemas.frontCamera,
       initialValues: initialValues.frontCamera,
-      isAvailable: !_.isNil(customer.frontCameraPath)
+      isAvailable: !R.isNil(customer.frontCameraPath)
     },
     {
       fields: customerDataElements.idCardPhoto,
@@ -223,7 +269,7 @@ const CustomerData = ({
       hasImage: true,
       validationSchema: customerDataSchemas.idCardPhoto,
       initialValues: initialValues.idCardPhoto,
-      isAvailable: !_.isNil(customer.idCardPhotoPath)
+      isAvailable: !R.isNil(customer.idCardPhotoPath)
     },
     {
       fields: customerDataElements.usSsn,
@@ -236,7 +282,7 @@ const CustomerData = ({
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
       validationSchema: customerDataSchemas.usSsn,
       initialValues: initialValues.usSsn,
-      isAvailable: !_.isNil(customer.usSsn)
+      isAvailable: !R.isNil(customer.usSsn)
     }
   ]
 
@@ -319,6 +365,16 @@ const CustomerData = ({
     })
   }, R.path(['customFields'])(customer) ?? [])
 
+  R.forEach(it => {
+    initialValues.smsData[it] = smsData[it]
+    smsDataElements.push({
+      name: it,
+      label: onlyFirstToUpper(it),
+      component: TextInput,
+      editable: true
+    })
+  }, R.keys(smsData) ?? [])
+
   const editableCard = (
     {
       title,
@@ -329,10 +385,12 @@ const CustomerData = ({
       fields,
       save,
       deleteEditedData,
+      retrieveAdditionalData,
       children,
       validationSchema,
       initialValues,
-      hasImage
+      hasImage,
+      hasAdditionalData
     },
     idx
   ) => {
@@ -345,12 +403,14 @@ const CustomerData = ({
         state={state}
         titleIcon={titleIcon}
         hasImage={hasImage}
+        hasAdditionalData={hasAdditionalData}
         fields={fields}
         children={children}
         validationSchema={validationSchema}
         initialValues={initialValues}
         save={save}
-        deleteEditedData={deleteEditedData}></EditableCard>
+        deleteEditedData={deleteEditedData}
+        retrieveAdditionalData={retrieveAdditionalData}></EditableCard>
     )
   }
 
@@ -394,7 +454,7 @@ const CustomerData = ({
             </Grid>
           </Grid>
         )}
-        {!_.isEmpty(customFields) && (
+        {!R.isEmpty(customFields) && (
           <div className={classes.wrapper}>
             <span className={classes.separator}>Custom data entry</span>
             <Grid container>
@@ -429,7 +489,66 @@ const CustomerData = ({
           </div>
         )}
       </div>
+      <RetrieveDataDialog
+        setRetrieve={setRetrieve}
+        retrieveAdditionalData={retrieveAdditionalData}
+        open={retrieve}></RetrieveDataDialog>
     </div>
+  )
+}
+
+const RetrieveDataDialog = ({
+  setRetrieve,
+  retrieveAdditionalData,
+  open,
+  props
+}) => {
+  const classes = useStyles()
+
+  return (
+    <Dialog
+      open={open}
+      aria-labelledby="form-dialog-title"
+      PaperProps={{
+        style: {
+          borderRadius: 8,
+          minWidth: 656,
+          bottom: 125,
+          right: 7
+        }
+      }}
+      {...props}>
+      <div className={classes.closeButton}>
+        <IconButton
+          size={16}
+          aria-label="close"
+          onClick={() => setRetrieve(false)}>
+          <CloseIcon />
+        </IconButton>
+      </div>
+      <H2 className={classes.dialogTitle}>{'Retrieve API data from Twilio'}</H2>
+      <DialogContent className={classes.dialogContent}>
+        <Info3>{`With this action you'll be using Twilio's API to retrieve additional
+  data from this user. This includes name and address, if available.\n`}</Info3>
+        <Info3>{` There is a small cost from Twilio for each retrieval. Would you like
+  to proceed?`}</Info3>
+      </DialogContent>
+      <DialogActions className={classes.dialogActions}>
+        <Button
+          backgroundColor="grey"
+          className={classes.cancelButton}
+          onClick={() => setRetrieve(false)}>
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            retrieveAdditionalData()
+            setRetrieve(false)
+          }}>
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

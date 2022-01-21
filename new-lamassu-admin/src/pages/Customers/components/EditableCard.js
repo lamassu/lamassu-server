@@ -23,6 +23,8 @@ import { ReactComponent as EditReversedIcon } from 'src/styling/icons/action/edi
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as BlockIcon } from 'src/styling/icons/button/block/white.svg'
 import { ReactComponent as CancelReversedIcon } from 'src/styling/icons/button/cancel/white.svg'
+import { ReactComponent as DataReversedIcon } from 'src/styling/icons/button/data/white.svg'
+import { ReactComponent as DataIcon } from 'src/styling/icons/button/data/zodiac.svg'
 import { ReactComponent as ReplaceReversedIcon } from 'src/styling/icons/button/replace/white.svg'
 import { ReactComponent as SaveReversedIcon } from 'src/styling/icons/circle buttons/save/white.svg'
 import { comet } from 'src/styling/variables'
@@ -67,6 +69,13 @@ const fieldStyles = {
         fontSize: 14
       }
     }
+  },
+  readOnlyLabel: {
+    color: comet,
+    margin: [[3, 0, 3, 0]]
+  },
+  readOnlyValue: {
+    margin: 0
   }
 }
 
@@ -105,6 +114,23 @@ const EditableField = ({ editing, field, value, size, ...props }) => {
   )
 }
 
+const ReadOnlyField = ({ field, value, ...props }) => {
+  const classes = fieldUseStyles()
+  const classNames = {
+    [classes.field]: true,
+    [classes.notEditing]: true
+  }
+
+  return (
+    <>
+      <div className={classnames(classNames)}>
+        <Label1 className={classes.readOnlyLabel}>{field.label}</Label1>
+        <P className={classes.readOnlyValue}>{value}</P>
+      </div>
+    </>
+  )
+}
+
 const EditableCard = ({
   fields,
   save,
@@ -117,7 +143,9 @@ const EditableCard = ({
   children,
   validationSchema,
   initialValues,
-  deleteEditedData
+  deleteEditedData,
+  retrieveAdditionalData,
+  hasAdditionalData = true
 }) => {
   const classes = useStyles()
 
@@ -174,7 +202,7 @@ const EditableCard = ({
               setEditing(false)
               setError(false)
             }}>
-            {({ values, touched, errors, setFieldValue }) => (
+            {({ setFieldValue }) => (
               <Form>
                 <PromptWhenDirty />
                 <div className={classes.row}>
@@ -183,12 +211,19 @@ const EditableCard = ({
                       {!hasImage &&
                         fields?.map((field, idx) => {
                           return idx >= 0 && idx < 4 ? (
-                            <EditableField
-                              field={field}
-                              value={initialValues[field.name]}
-                              editing={editing}
-                              size={180}
-                            />
+                            !field.editable ? (
+                              <ReadOnlyField
+                                field={field}
+                                value={initialValues[field.name]}
+                              />
+                            ) : (
+                              <EditableField
+                                field={field}
+                                value={initialValues[field.name]}
+                                editing={editing}
+                                size={180}
+                              />
+                            )
                           ) : null
                         })}
                     </Grid>
@@ -196,12 +231,19 @@ const EditableCard = ({
                       {!hasImage &&
                         fields?.map((field, idx) => {
                           return idx >= 4 ? (
-                            <EditableField
-                              field={field}
-                              value={initialValues[field.name]}
-                              editing={editing}
-                              size={180}
-                            />
+                            !field.editable ? (
+                              <ReadOnlyField
+                                field={field}
+                                value={initialValues[field.name]}
+                              />
+                            ) : (
+                              <EditableField
+                                field={field}
+                                value={initialValues[field.name]}
+                                editing={editing}
+                                size={180}
+                              />
+                            )
                           ) : null
                         })}
                     </Grid>
@@ -210,25 +252,34 @@ const EditableCard = ({
                 <div className={classes.edit}>
                   {!editing && (
                     <div className={classes.editButton}>
-                      {// TODO: Remove false condition for next release
-                      false && (
-                        <div className={classes.deleteButton}>
+                      <div className={classes.deleteButton}>
+                        {false && (
                           <ActionButton
                             color="primary"
                             type="button"
                             Icon={DeleteIcon}
                             InverseIcon={DeleteReversedIcon}
                             onClick={() => deleteEditedData()}>
-                            {`Delete`}
+                            Delete
                           </ActionButton>
-                        </div>
-                      )}
+                        )}
+                        {!hasAdditionalData && (
+                          <ActionButton
+                            color="primary"
+                            type="button"
+                            Icon={DataIcon}
+                            InverseIcon={DataReversedIcon}
+                            onClick={() => retrieveAdditionalData()}>
+                            Retrieve API data
+                          </ActionButton>
+                        )}
+                      </div>
                       <ActionButton
                         color="primary"
                         Icon={EditIcon}
                         InverseIcon={EditReversedIcon}
                         onClick={() => setEditing(true)}>
-                        {`Edit`}
+                        Edit
                       </ActionButton>
                     </div>
                   )}

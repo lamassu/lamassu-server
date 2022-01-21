@@ -355,37 +355,44 @@ const customerDataElements = {
     {
       name: 'firstName',
       label: 'First name',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'documentNumber',
       label: 'ID number',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'dateOfBirth',
       label: 'Birthdate',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'gender',
       label: 'Gender',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'lastName',
       label: 'Last name',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'expirationDate',
       label: 'Expiration Date',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'country',
       label: 'Country',
-      component: TextInput
+      component: TextInput,
+      editable: true
     }
   ],
   usSsn: [
@@ -393,7 +400,8 @@ const customerDataElements = {
       name: 'usSsn',
       label: 'US SSN',
       component: TextInput,
-      size: 190
+      size: 190,
+      editable: true
     }
   ],
   idCardPhoto: [{ name: 'idCardPhoto' }],
