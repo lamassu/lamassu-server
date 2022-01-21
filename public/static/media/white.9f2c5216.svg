@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/button/lock/white</title>
+    <g id="icon/button/lock/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Lock-Icon-White" transform="translate(0.500000, 0.500000)">
+            <path d="M7.98058644,2.48058644 C7.98058644,1.11059638 6.86999006,0 5.5,0 C4.13000994,0 3.01941356,1.11059638 3.01941356,2.48058644 C3.01941356,3.39391315 3.01941356,4.09482878 3.01941356,4.58333333 L7.98058644,4.58333333 C7.98058644,4.09482878 7.98058644,3.39391315 7.98058644,2.48058644 Z" id="Lock" stroke="#FFFFFF" stroke-linejoin="round"></path>
+            <rect id="Body" stroke="#FFFFFF" stroke-linejoin="round" x="0" y="4.58333333" width="11" height="6.41666667"></rect>
+            <circle id="Key-Hole" fill="#FFFFFF" cx="5.5" cy="7.33333333" r="1"></circle>
+        </g>
+    </g>
+</svg>

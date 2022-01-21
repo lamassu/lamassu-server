@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/button/user-role/white</title>
+    <g id="icon/button/user-role/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linejoin="round">
+        <g id="User-Role-Icon-White" transform="translate(2.500000, 0.500000)" stroke="#FFFFFF">
+            <path d="M5.50008791,6.84274776 L5.5,11 L3.66666667,9.35927189 L1.83333333,11 L1.83223109,6.84216075 C2.37179795,7.15453375 2.99835187,7.33333333 3.66666667,7.33333333 C4.33456272,7.33333333 4.96075021,7.15475774 5.50008791,6.84274776 Z" id="Bottom"></path>
+            <circle id="Top" cx="3.66666667" cy="3.66666667" r="3.66666667"></circle>
+        </g>
+    </g>
+</svg>
