@@ -1,6 +1,6 @@
 var db = require('./db')
 const _ = require('lodash/fp')
-const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
 const { getMachines } = require('../lib/machine-loader')
 
 exports.up = function (next) {
@@ -40,7 +40,7 @@ exports.up = function (next) {
         return acc
       }, {}, formattedMachines)
 
-      return saveConfig(newConfig)
+      return migrationSaveConfig(newConfig)
         .then(() => db.multi(sql, next))
     })
 }

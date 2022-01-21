@@ -1,5 +1,5 @@
 const db = require('./db')
-const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   const sql = [
@@ -19,7 +19,7 @@ exports.up = function (next) {
         newConfig.notifications_notificationCenter_security = true
       }
 
-      return saveConfig(newConfig)
+      return migrationSaveConfig(newConfig)
         .then(() => db.multi(sql, next))
         .catch(err => {
           return next(err)

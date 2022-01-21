@@ -33,7 +33,7 @@ exports.up = function (next) {
       }
     })(deviceIds)
 
-    return settingsLoader.saveConfig(config)
+    return settingsLoader.migrationSaveConfig(config)
   })
     .then(() => next())
     .catch(err => next(err))
