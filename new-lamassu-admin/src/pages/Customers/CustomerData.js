@@ -2,7 +2,6 @@ import { DialogActions, DialogContent, Dialog } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { parse, format } from 'date-fns/fp'
-import { parsePhoneNumber } from 'libphonenumber-js'
 import * as R from 'ramda'
 import { useState, React } from 'react'
 import * as Yup from 'yup'
@@ -152,11 +151,16 @@ const CustomerData = ({
   ]
 
   const smsDataSchema = {
-    smsData: Yup.object()
-      .shape({
-        phoneNumber: Yup.string().required()
-      })
-      .required()
+    smsData: Yup.lazy(values => {
+      const additionalData = R.omit(['phoneNumber'])(values)
+      const fields = R.keys(additionalData)
+      if (R.length(fields) === 2) {
+        return Yup.object().shape({
+          [R.head(fields)]: Yup.string().required(),
+          [R.last(fields)]: Yup.string().required()
+        })
+      }
+    })
   }
 
   const cards = [
@@ -186,7 +190,6 @@ const CustomerData = ({
       reject: () => updateCustomer({ phoneOverride: OVERRIDE_REJECTED }),
       save: values => {
         editCustomer({
-          phone: parsePhoneNumber(values.phoneNumber).number,
           subscriberInfo: {
             result: R.merge(smsData, R.omit(['phoneNumber'])(values))
           }
@@ -370,12 +373,6 @@ const CustomerData = ({
       component: TextInput,
       editable: true
     })
-    smsDataSchema.smsData = Yup.object()
-      .shape({
-        [it]: Yup.string()
-      })
-      .required()
-      .concat(smsDataSchema.smsData)
   }, R.keys(smsData) ?? [])
 
   const editableCard = (
