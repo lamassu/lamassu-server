@@ -78,6 +78,27 @@ const CANCEL_CASH_IN_TRANSACTION = gql`
   }
 `
 
+const getCryptoAmount = tx =>
+  coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toNumber()
+
+/* Port of getProfit() from lib/new-admin/services/transactions.js */
+const getCommission = tx => {
+  const calcCashInProfit = (fiat, crypto, tickerPrice, fee) =>
+    fiat - crypto * tickerPrice + fee
+  const calcCashOutProfit = (fiat, crypto, tickerPrice) =>
+    crypto * tickerPrice - fiat
+
+  const fiat = Number.parseFloat(tx.fiat)
+  const crypto = getCryptoAmount(tx)
+  const tickerPrice = Number.parseFloat(tx.rawTickerPrice)
+  const isCashIn = tx.txClass === 'cashIn'
+  const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
+
+  return isCashIn
+    ? calcCashInProfit(fiat, crypto, tickerPrice, cashInFee)
+    : calcCashOutProfit(fiat, crypto, tickerPrice)
+}
+
 const formatAddress = (cryptoCode = '', address = '') =>
   coinUtils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
@@ -108,13 +129,15 @@ const DetailsRow = ({ it: tx, timezone }) => {
     }
   )
 
+  const commission = getCommission(tx).toFixed(2)
+  const commissionPercentage =
+    Number.parseFloat(tx.commissionPercentage, 2) * 100
+  const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
   const fiat = Number.parseFloat(tx.fiat)
-  const crypto = coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
-  const commissionPercentage = Number.parseFloat(tx.commissionPercentage, 2)
-  const commission = Number(fiat * commissionPercentage).toFixed(2)
-  const discount = tx.discount ? `-${tx.discount}%` : null
-  const exchangeRate = BigNumber(fiat / crypto).toFormat(2)
+  const crypto = getCryptoAmount(tx)
+  const exchangeRate = (fiat / crypto).toFixed(2)
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
+  const discount = tx.discount ? `-${tx.discount}%` : null
 
   const parseDateString = parse(new Date(), 'yyyyMMdd')
 
@@ -263,7 +286,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         <div className={classes.commission}>
           <Label>Commission</Label>
           <div className={classes.container}>
-            {`${commission} ${tx.fiatCode} (${commissionPercentage * 100} %)`}
+            {`${commission} ${tx.fiatCode} (${commissionPercentage} %)`}
             {discount && (
               <div className={classes.chip}>
                 <Label1 className={classes.chipLabel}>{discount}</Label1>
@@ -273,11 +296,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         </div>
         <div>
           <Label>Fixed fee</Label>
-          <div>
-            {isCashIn
-              ? `${Number.parseFloat(tx.cashInFee)} ${tx.fiatCode}`
-              : 'N/A'}
-          </div>
+          <div>{isCashIn ? `${cashInFee} ${tx.fiatCode}` : 'N/A'}</div>
         </div>
       </div>
       <div className={classes.secondRow}>
