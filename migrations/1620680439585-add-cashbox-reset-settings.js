@@ -1,4 +1,4 @@
-const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   const newConfig = {
@@ -6,7 +6,7 @@ exports.up = function (next) {
   }
   return loadLatest()
     .then(config => {
-      return saveConfig(newConfig)
+      return migrationSaveConfig(newConfig)
         .then(() => next())
         .catch(err => {
           if (err.message === 'lamassu-server is not configured') {

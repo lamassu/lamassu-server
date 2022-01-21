@@ -1,5 +1,5 @@
 const _ = require('lodash/fp')
-const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
 const { getCryptosFromWalletNamespace } = require('../lib/new-config-manager')
 
 exports.up = function (next) {
@@ -8,7 +8,7 @@ exports.up = function (next) {
     .then(config => {
       const coins = getCryptosFromWalletNamespace(config)
       _.map(coin => { newConfig[`wallets_${coin}_feeMultiplier`] = '1' }, coins)
-      return saveConfig(newConfig)
+      return migrationSaveConfig(newConfig)
     })
     .then(next)
     .catch(err => {

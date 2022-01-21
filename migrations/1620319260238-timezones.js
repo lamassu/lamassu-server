@@ -6,7 +6,7 @@ exports.up = function (next) {
     .then(({ config }) => {
       if (!_.isEmpty(config))
         config.locale_timezone = '0:0'
-      return settingsLoader.saveConfig(config)
+      return settingsLoader.migrationSaveConfig(config)
     })
     .then(() => next())
     .catch(err => next(err))
