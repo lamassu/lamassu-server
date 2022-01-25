@@ -185,12 +185,12 @@ const DataTable = ({
         <TBody className={classes.body}>
           {loading && <H4>Loading...</H4>}
           {!loading && R.isEmpty(data) && <EmptyTable message={emptyText} />}
-          {!R.isEmpty(data) && (
+          {!loading && !R.isEmpty(data) && (
             <AutoSizer disableWidth>
               {({ height }) => (
                 <List
                   // this has to be in a style because of how the component works
-                  style={{ overflow: 'inherit', outline: 'none' }}
+                  style={{ outline: 'none' }}
                   {...props}
                   height={loading ? 0 : height}
                   width={width}
