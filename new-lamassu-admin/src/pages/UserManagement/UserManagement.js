@@ -16,11 +16,13 @@ import { ReactComponent as WhiteLockIcon } from 'src/styling/icons/button/lock/w
 import { ReactComponent as LockIcon } from 'src/styling/icons/button/lock/zodiac.svg'
 import { ReactComponent as WhiteUserRoleIcon } from 'src/styling/icons/button/user-role/white.svg'
 import { ReactComponent as UserRoleIcon } from 'src/styling/icons/button/user-role/zodiac.svg'
+import { IP_CHECK_REGEX } from 'src/utils/constants'
 
 import styles from './UserManagement.styles'
 import ChangeRoleModal from './modals/ChangeRoleModal'
 import CreateUserModal from './modals/CreateUserModal'
 import EnableUserModal from './modals/EnableUserModal'
+import FIDOModal from './modals/FIDOModal'
 import Reset2FAModal from './modals/Reset2FAModal'
 import ResetPasswordModal from './modals/ResetPasswordModal'
 
@@ -194,13 +196,20 @@ const Users = () => {
               InverseIcon={WhiteUserRoleIcon}
               color="primary"
               onClick={() => {
-                setUserInfo(u)
-                generateAttestationOptions({
-                  variables: {
-                    userID: u.id,
-                    domain: window.location.hostname
-                  }
-                })
+                if (IP_CHECK_REGEX.test(window.location.hostname)) {
+                  dispatch({
+                    type: 'open',
+                    payload: 'showFIDOModal'
+                  })
+                } else {
+                  setUserInfo(u)
+                  generateAttestationOptions({
+                    variables: {
+                      userID: u.id,
+                      domain: window.location.hostname
+                    }
+                  })
+                }
               }}>
               Add FIDO
             </ActionButton>
@@ -276,6 +285,7 @@ const Users = () => {
         user={userInfo}
         requiresConfirmation={userInfo?.role === 'superuser'}
       />
+      <FIDOModal state={state} dispatch={dispatch} />
     </>
   )
 }
