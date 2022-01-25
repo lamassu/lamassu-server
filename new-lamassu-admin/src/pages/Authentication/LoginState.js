@@ -24,14 +24,17 @@ const LOGIN = gql`
 `
 
 const GENERATE_ASSERTION = gql`
-  query generateAssertionOptions {
-    generateAssertionOptions
+  query generateAssertionOptions($domain: String!) {
+    generateAssertionOptions(domain: $domain)
   }
 `
 
 const VALIDATE_ASSERTION = gql`
-  mutation validateAssertion($assertionResponse: JSONObject!) {
-    validateAssertion(assertionResponse: $assertionResponse)
+  mutation validateAssertion(
+    $assertionResponse: JSONObject!
+    $domain: String!
+  ) {
+    validateAssertion(assertionResponse: $assertionResponse, domain: $domain)
   }
 `
 
@@ -117,7 +120,8 @@ const LoginState = ({ state, dispatch, strategy }) => {
           .then(res => {
             validateAssertion({
               variables: {
-                assertionResponse: res
+                assertionResponse: res,
+                domain: window.location.hostname
               }
             })
           })
@@ -212,7 +216,9 @@ const LoginState = ({ state, dispatch, strategy }) => {
                 type="button"
                 onClick={() => {
                   return strategy === 'FIDOUsernameless'
-                    ? assertionOptions()
+                    ? assertionOptions({
+                        variables: { domain: window.location.hostname }
+                      })
                     : dispatch({
                         type: 'FIDO',
                         payload: {}

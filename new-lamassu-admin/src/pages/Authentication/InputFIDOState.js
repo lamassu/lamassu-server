@@ -42,10 +42,10 @@ const InputFIDOState = ({ state, strategy }) => {
   const GENERATE_ASSERTION = gql`
     query generateAssertionOptions($username: String!${
       strategy === 'FIDO2FA' ? `, $password: String!` : ``
-    }) {
+    }, $domain: String!) {
       generateAssertionOptions(username: $username${
         strategy === 'FIDO2FA' ? `, password: $password` : ``
-      })
+      }, domain: $domain)
     }
   `
 
@@ -55,12 +55,14 @@ const InputFIDOState = ({ state, strategy }) => {
       ${strategy === 'FIDO2FA' ? `, $password: String!` : ``}
       $rememberMe: Boolean!
       $assertionResponse: JSONObject!
+      $domain: String!
     ) {
       validateAssertion(
         username: $username
         ${strategy === 'FIDO2FA' ? `password: $password` : ``}
         rememberMe: $rememberMe
         assertionResponse: $assertionResponse
+        domain: $domain
       )
     }
   `
@@ -90,10 +92,12 @@ const InputFIDOState = ({ state, strategy }) => {
         strategy === 'FIDO2FA'
           ? {
               username: state.clientField,
-              password: state.passwordField
+              password: state.passwordField,
+              domain: window.location.hostname
             }
           : {
-              username: localClientField
+              username: localClientField,
+              domain: window.location.hostname
             },
       onCompleted: ({ generateAssertionOptions: options }) => {
         startAssertion(options)
@@ -104,12 +108,14 @@ const InputFIDOState = ({ state, strategy }) => {
                     username: state.clientField,
                     password: state.passwordField,
                     rememberMe: state.rememberMeField,
-                    assertionResponse: res
+                    assertionResponse: res,
+                    domain: window.location.hostname
                   }
                 : {
                     username: localClientField,
                     rememberMe: localRememberMeField,
-                    assertionResponse: res
+                    assertionResponse: res,
+                    domain: window.location.hostname
                   }
             validateAssertion({
               variables

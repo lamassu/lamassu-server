@@ -41,8 +41,8 @@ const GET_USERS = gql`
 `
 
 const GENERATE_ATTESTATION = gql`
-  query generateAttestationOptions($userID: ID!) {
-    generateAttestationOptions(userID: $userID)
+  query generateAttestationOptions($userID: ID!, $domain: String!) {
+    generateAttestationOptions(userID: $userID, domain: $domain)
   }
 `
 
@@ -50,10 +50,12 @@ const VALIDATE_ATTESTATION = gql`
   mutation validateAttestation(
     $userID: ID!
     $attestationResponse: JSONObject!
+    $domain: String!
   ) {
     validateAttestation(
       userID: $userID
       attestationResponse: $attestationResponse
+      domain: $domain
     )
   }
 `
@@ -100,11 +102,12 @@ const Users = () => {
 
   const [generateAttestationOptions] = useLazyQuery(GENERATE_ATTESTATION, {
     onCompleted: ({ generateAttestationOptions: options }) => {
-      startAttestation(options).then(res => {
+      return startAttestation(options).then(res => {
         validateAttestation({
           variables: {
             userID: userInfo.id,
-            attestationResponse: res
+            attestationResponse: res,
+            domain: window.location.hostname
           }
         })
       })
@@ -194,7 +197,8 @@ const Users = () => {
                 setUserInfo(u)
                 generateAttestationOptions({
                   variables: {
-                    userID: u.id
+                    userID: u.id,
+                    domain: window.location.hostname
                   }
                 })
               }}>
