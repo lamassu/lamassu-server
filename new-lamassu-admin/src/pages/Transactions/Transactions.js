@@ -116,6 +116,7 @@ const GET_TRANSACTIONS = gql`
       isAnonymous
       batched
       batchTime
+      walletScore
     }
   }
 `
