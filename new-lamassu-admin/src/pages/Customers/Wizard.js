@@ -48,10 +48,6 @@ const styles = {
     margin: [[0, 4, 0, 2]],
     borderBottom: `1px solid ${comet}`,
     display: 'inline-block'
-  },
-  dropdownField: {
-    marginTop: 16,
-    minWidth: 155
   }
 }
 
@@ -78,7 +74,7 @@ const Wizard = ({
   onClose,
   save,
   error,
-  customInfoRequirementOptions,
+  customInfoRequirements,
   addCustomerData,
   addPhoto
 }) => {
@@ -96,6 +92,12 @@ const Wizard = ({
 
   const isLastStep = step === LAST_STEP
   const stepOptions = getStep(step, selectedValues)
+
+  const customInfoRequirementOptions =
+    customInfoRequirements?.map(it => ({
+      value: it.id,
+      display: it.customRequest.name
+    })) ?? []
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
@@ -147,19 +149,25 @@ const Wizard = ({
           onSubmit={onContinue}
           initialValues={stepOptions.initialValues}
           validationSchema={stepOptions.schema}>
-          <Form className={classes.form}>
-            <stepOptions.Component
-              selectedValues={selectedValues}
-              customInfoRequirementOptions={customInfoRequirementOptions}
-              {...stepOptions.props}
-            />
-            <div className={classes.submit}>
-              {error && <ErrorMessage>Failed to save</ErrorMessage>}
-              <Button className={classes.button} type="submit">
-                {isLastStep ? 'Add Data' : 'Next'}
-              </Button>
-            </div>
-          </Form>
+          {({ values }) => (
+            <Form className={classes.form}>
+              <stepOptions.Component
+                selectedValues={selectedValues}
+                customInfoRequirementOptions={customInfoRequirementOptions}
+                customInfoRequirements={customInfoRequirements}
+                selectedCustomInfoRequirementLive={
+                  values.customInfoRequirement ?? null
+                }
+                {...stepOptions.props}
+              />
+              <div className={classes.submit}>
+                {error && <ErrorMessage>Failed to save</ErrorMessage>}
+                <Button className={classes.button} type="submit">
+                  {isLastStep ? 'Add Data' : 'Next'}
+                </Button>
+              </div>
+            </Form>
+          )}
         </Formik>
       </Modal>
     </>

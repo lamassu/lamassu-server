@@ -6,11 +6,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
-import {
-  RadioGroup,
-  TextInput,
-  Autocomplete
-} from 'src/components/inputs/formik'
+import { RadioGroup, TextInput, Dropdown } from 'src/components/inputs/formik'
 import { H4 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 import { MANUAL } from 'src/utils/constants'
@@ -48,6 +44,10 @@ const useStyles = makeStyles({
     '& > *:last-child': {
       marginBottom: 24
     }
+  },
+  dropdownField: {
+    marginTop: 16,
+    minWidth: 155
   }
 })
 
@@ -163,6 +163,14 @@ const entryTypeSchema = Yup.lazy(values => {
   }
 })
 
+const customInfoRequirementSchema = Yup.lazy(values => {
+  if (R.isNil(values.customInfoRequirement)) {
+    return Yup.object().shape({
+      customInfoRequirement: Yup.string().required()
+    })
+  }
+})
+
 const customFileSchema = Yup.object().shape({
   title: Yup.string().required(),
   file: Yup.mixed().required()
@@ -185,6 +193,20 @@ const updateRequirementOptions = it => [
   },
   ...it
 ]
+
+const getCustomInfoRequirementType = R.view(
+  R.lensPath(['customRequest', 'input', 'type'])
+)
+
+const buildCustomInfoRequirementElements = customInfoRequirements => {
+  R.forEach(it => {
+    switch (getCustomInfoRequirementType(it)) {
+      case 'numerical' || 'text':
+      default:
+        break
+    }
+  }, customInfoRequirements)
+}
 
 const EntryType = ({ customInfoRequirementOptions }) => {
   const classes = useStyles()
@@ -230,11 +252,9 @@ const EntryType = ({ customInfoRequirementOptions }) => {
             component={RadioGroup}
             name="requirement"
             options={
-              requirementOptions
-              // TODO: Enable once custom info requirement manual entry is finished
-              // !R.isEmpty(customInfoRequirementOptions)
-              //   ? updateRequirementOptions(requirementOptions)
-              //   : requirementOptions
+              !R.isEmpty(customInfoRequirementOptions)
+                ? updateRequirementOptions(requirementOptions)
+                : requirementOptions
             }
             labelClassName={classes.label}
             radioClassName={classes.radio}
@@ -246,7 +266,12 @@ const EntryType = ({ customInfoRequirementOptions }) => {
   )
 }
 
-const ManualDataEntry = ({ selectedValues, customInfoRequirementOptions }) => {
+const ManualDataEntry = ({
+  selectedValues,
+  customInfoRequirementOptions,
+  customInfoRequirements,
+  selectedCustomInfoRequirementLive
+}) => {
   const classes = useStyles()
 
   const typeOfEntrySelected = selectedValues?.entryType
@@ -279,21 +304,43 @@ const ManualDataEntry = ({ selectedValues, customInfoRequirementOptions }) => {
       requirementSelected === 'frontCamera'
     : dataTypeSelected === 'file' || dataTypeSelected === 'image'
 
+  const customInfoRequirementType = getCustomInfoRequirementType(
+    R.head(
+      R.filter(it => it.id === selectedCustomInfoRequirementLive)(
+        customInfoRequirements
+      )
+    )
+  )
+
+  const customInfoRequirementElements = !R.isNil(customInfoRequirements)
+    ? buildCustomInfoRequirementElements(customInfoRequirements)
+    : []
+  console.log(customInfoRequirementElements, customInfoRequirements)
+
   return (
     <>
       <Box display="flex" alignItems="center">
         <H4>{title}</H4>
       </Box>
       {isCustomInfoRequirement && (
-        <Autocomplete
-          fullWidth
-          label={`Available requests`}
-          className={classes.picker}
-          getOptionSelected={R.eqProps('code')}
-          labelProp={'display'}
-          options={customInfoRequirementOptions}
-          onChange={(evt, it) => {}}
-        />
+        <div>
+          <Field
+            className={classes.dropdownField}
+            component={Dropdown}
+            label="Available requests"
+            name="customInfoRequirement"
+            options={customInfoRequirementOptions}
+          />
+          {(customInfoRequirementType === 'text' ||
+            customInfoRequirementType === 'numerical') && (
+            <div>{console.log('')}</div>
+          )}
+          {customInfoRequirementType === 'choiceList' && (
+            <div>
+              <div>{console.log('')}</div>
+            </div>
+          )}
+        </div>
       )}
       <div className={classes.field}>
         {!upload &&
@@ -475,7 +522,7 @@ const requirementElements = {
     saveType: 'customerDataUpload'
   },
   custom: {
-    // schema: customerDataSchemas.customInfoRequirement,
+    schema: customInfoRequirementSchema,
     Component: ManualDataEntry,
     initialValues: { customInfoRequirement: null },
     saveType: 'customInfoRequirement'
