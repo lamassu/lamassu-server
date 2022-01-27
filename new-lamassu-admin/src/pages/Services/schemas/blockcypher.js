@@ -25,6 +25,7 @@ export default {
       code: 'rbf',
       component: CheckboxInput,
       settings: {
+        field: 'wallets_BTC_wallet',
         enabled: true,
         disabledMessage: 'RBF verification not available',
         label: 'Lower the confidence of RBF transactions',

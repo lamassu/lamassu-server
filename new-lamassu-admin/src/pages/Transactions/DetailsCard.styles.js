@@ -1,5 +1,5 @@
 import typographyStyles from 'src/components/typography/styles'
-import { offColor, comet, white } from 'src/styling/variables'
+import { offColor, comet, white, tomato } from 'src/styling/variables'
 
 const { p } = typographyStyles
 
@@ -113,5 +113,22 @@ export default {
   otherActionsGroup: {
     display: 'flex',
     flexDirection: 'row'
+  },
+  addressHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  walletScore: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    '& > p': {
+      marginLeft: 5
+    }
+  },
+  error: {
+    color: tomato
   }
 }
