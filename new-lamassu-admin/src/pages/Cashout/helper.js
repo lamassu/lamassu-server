@@ -37,11 +37,6 @@ const DenominationsSchema = Yup.object().shape({
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber)
-  // zeroConfLimit: Yup.number()
-  //   .label('0-conf Limit')
-  //   .required()
-  //   .min(0)
-  //   .max(CURRENCY_MAX)
 })
 
 const getElements = (machines, locale = {}, classes) => {
@@ -98,20 +93,6 @@ const getElements = (machines, locale = {}, classes) => {
     },
     1
   )
-
-  // elements.push({
-  //   name: 'zeroConfLimit',
-  //   header: '0-conf Limit',
-  //   size: 'sm',
-  //   stripe: true,
-  //   textAlign: 'right',
-  //   width: widthsByNumberOfCassettes[maxNumberOfCassettes].zeroConf,
-  //   input: NumberInput,
-  //   inputProps: {
-  //     decimalPlaces: 0
-  //   },
-  //   suffix: fiatCurrency
-  // })
 
   return elements
 }
