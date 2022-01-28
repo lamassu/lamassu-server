@@ -117,6 +117,7 @@ const GET_TRANSACTIONS = gql`
       batched
       batchTime
       rawTickerPrice
+      walletScore
     }
   }
 `

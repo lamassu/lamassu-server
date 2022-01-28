@@ -10,13 +10,12 @@ const useStyles = makeStyles({
   imgWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    display: 'flex',
-    width: 550
+    display: 'flex'
   },
   imgInner: {
     objectFit: 'cover',
     objectPosition: 'center',
-    width: 550,
+    width: 500,
     marginBottom: 40
   }
 })
@@ -33,17 +32,16 @@ export const Carousel = memo(({ photosData, slidePhoto }) => {
           style: {
             backgroundColor: 'transparent',
             borderRadius: 0,
-            width: 50,
             color: 'transparent',
             opacity: 1
           }
         }}
-        // navButtonsWrapperProps={{
-        //   style: {
-        //     background: 'linear-gradient(to right, black 10%, transparent 80%)',
-        //     opacity: '0.4'
-        //   }
-        // }}
+        navButtonsWrapperProps={{
+          style: {
+            marginLeft: -22,
+            marginRight: -22
+          }
+        }}
         autoPlay={false}
         indicators={false}
         navButtonsAlwaysVisible={true}

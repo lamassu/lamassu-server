@@ -1,6 +1,7 @@
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
+import classNames from 'classnames'
 import { add, differenceInYears, format, sub, parse } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
@@ -25,6 +26,12 @@ import { ReactComponent as DownloadInverseIcon } from 'src/styling/icons/button/
 import { ReactComponent as Download } from 'src/styling/icons/button/download/zodiac.svg'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import {
+  primaryColor,
+  subheaderColor,
+  errorColor,
+  offErrorColor
+} from 'src/styling/variables'
 import { URI } from 'src/utils/apollo'
 import { onlyFirstToUpper } from 'src/utils/string'
 
@@ -186,6 +193,40 @@ const DetailsRow = ({ it: tx, timezone }) => {
     </>
   )
 
+  const walletScoreEl = (
+    <div className={classes.walletScore}>
+      <svg width={103} height={10}>
+        {R.map(
+          it => (
+            <circle
+              cx={it * 10 + 6}
+              cy={4}
+              r={3.5}
+              fill={
+                it < tx.walletScore
+                  ? !R.includes('score is above', tx.hasError ?? '')
+                    ? primaryColor
+                    : errorColor
+                  : !R.includes('score is above', tx.hasError ?? '')
+                  ? subheaderColor
+                  : offErrorColor
+              }
+            />
+          ),
+          R.range(0, 10)
+        )}
+      </svg>
+      <P
+        noMargin
+        className={classNames({
+          [classes.bold]: true,
+          [classes.error]: R.includes('score is above', tx.hasError ?? '')
+        })}>
+        {tx.walletScore}
+      </P>
+    </div>
+  )
+
   const getCancelMessage = () => {
     const cashInMessage = `The user will not be able to redeem the inserted bills, even if they subsequently confirm the transaction. If they've already deposited bills, you'll need to reconcile this transaction with them manually.`
     const cashOutMessage = `The user will not be able to redeem the cash, even if they subsequently send the required coins. If they've already sent you coins, you'll need to reconcile this transaction with them manually.`
@@ -301,7 +342,14 @@ const DetailsRow = ({ it: tx, timezone }) => {
       </div>
       <div className={classes.secondRow}>
         <div className={classes.address}>
-          <Label>Address</Label>
+          <div className={classes.addressHeader}>
+            <Label>Address</Label>
+            {!R.isNil(tx.walletScore) && (
+              <HoverableTooltip parentElements={walletScoreEl}>
+                {`CipherTrace score: ${tx.walletScore}/10`}
+              </HoverableTooltip>
+            )}
+          </div>
           <div>
             <CopyToClipboard>
               {formatAddress(tx.cryptoCode, tx.toAddress)}

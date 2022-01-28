@@ -58,28 +58,36 @@ const ID_CARD_DATA = 'idCardData'
 
 const getAuthorizedStatus = (it, triggers) => {
   const fields = [
-    'frontCameraPath',
+    'frontCamera',
     'idCardData',
-    'idCardPhotoPath',
+    'idCardPhoto',
     'usSsn',
     'sanctions'
   ]
+  const fieldsWithPathSuffix = ['frontCamera', 'idCardPhoto']
 
   const isManualField = fieldName => {
+    const triggerName = R.equals(fieldName, 'frontCamera')
+      ? 'facephoto'
+      : fieldName
     const manualOverrides = R.filter(
       ite => R.equals(R.toLower(ite.automation), MANUAL),
       triggers?.overrides ?? []
     )
 
     return (
-      !!R.find(ite => R.equals(ite.requirement, fieldName), manualOverrides) ||
-      R.equals(triggers.automation, MANUAL)
+      !!R.find(
+        ite => R.equals(ite.requirement, triggerName),
+        manualOverrides
+      ) || R.equals(R.toLower(triggers.automation), MANUAL)
     )
   }
 
   const pendingFieldStatus = R.map(
     ite =>
-      !R.isNil(it[`${ite}`])
+      !R.isNil(
+        R.includes(ite, fieldsWithPathSuffix) ? it[`${ite}Path`] : it[`${ite}`]
+      )
         ? isManualField(ite)
           ? R.equals(it[`${ite}Override`], 'automatic')
           : false
@@ -347,37 +355,44 @@ const customerDataElements = {
     {
       name: 'firstName',
       label: 'First name',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'documentNumber',
       label: 'ID number',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'dateOfBirth',
       label: 'Birthdate',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'gender',
       label: 'Gender',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'lastName',
       label: 'Last name',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'expirationDate',
       label: 'Expiration Date',
-      component: TextInput
+      component: TextInput,
+      editable: true
     },
     {
       name: 'country',
       label: 'Country',
-      component: TextInput
+      component: TextInput,
+      editable: true
     }
   ],
   usSsn: [
@@ -385,7 +400,8 @@ const customerDataElements = {
       name: 'usSsn',
       label: 'US SSN',
       component: TextInput,
-      size: 190
+      size: 190,
+      editable: true
     }
   ],
   idCardPhoto: [{ name: 'idCardPhoto' }],

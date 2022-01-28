@@ -1,4 +1,4 @@
-const { saveConfig } = require('../lib/new-settings-loader')
+const { migrationSaveConfig } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   const triggersDefault = {
@@ -6,7 +6,7 @@ exports.up = function (next) {
     triggersConfig_automation: 'Automatic'
   }
 
-  return saveConfig(triggersDefault)
+  return migrationSaveConfig(triggersDefault)
     .then(() => next())
     .catch(err => {
       console.log(err.message)
