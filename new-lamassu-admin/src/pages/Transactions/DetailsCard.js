@@ -146,8 +146,8 @@ const DetailsRow = ({ it: tx, timezone }) => {
       ''
   }
 
-  const from = sub({ minutes: MINUTES_OFFSET }, tx.created)
-  const until = add({ minutes: MINUTES_OFFSET }, tx.created)
+  const from = sub({ minutes: MINUTES_OFFSET }, new Date(tx.created))
+  const until = add({ minutes: MINUTES_OFFSET }, new Date(tx.created))
 
   const downloadRawLogs = ({ id: txId, deviceId, txClass }, timezone) => {
     fetchSummary({
