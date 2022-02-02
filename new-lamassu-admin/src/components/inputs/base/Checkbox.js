@@ -41,14 +41,14 @@ const useStyles = makeStyles({
 })
 
 const CheckboxInput = ({ name, onChange, value, settings, ...props }) => {
-  const { enabled, label, disabledMessage } = settings
+  const { enabled, label, disabledMessage, rightSideLabel } = settings
   const classes = useStyles()
 
   return (
     <>
       {enabled ? (
         <div className={classes.checkBoxLabel}>
-          <Label2>{label}</Label2>
+          {!rightSideLabel && <Label2>{label}</Label2>}
           <Checkbox
             id={name}
             classes={{
@@ -67,6 +67,7 @@ const CheckboxInput = ({ name, onChange, value, settings, ...props }) => {
             disableRipple
             {...props}
           />
+          {rightSideLabel && <Label2>{label}</Label2>}
         </div>
       ) : (
         <div className={classes.wrapper}>
