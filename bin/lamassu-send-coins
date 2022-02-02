@@ -3,7 +3,7 @@
 const settingsLoader = require('../lib/new-settings-loader')
 const configManager = require('../lib/new-config-manager')
 const wallet = require('../lib/wallet')
-const coinUtils = require('../lib/coin-utils')
+const { utils: coinUtils } = require('lamassu-coins')
 const BN = require('../lib/bn')
 const inquirer = require('inquirer')
 const ticker = require('../lib/ticker')
