@@ -33,7 +33,7 @@ const WalletSchema = Yup.object().shape({
 
 const AdvancedWalletSchema = Yup.object().shape({
   cryptoUnits: Yup.string().required(),
-  allowTransactionBatching: Yup.boolean().required()
+  allowTransactionBatching: Yup.boolean()
 })
 
 const getAdvancedWalletElements = (cryptoCurrencies, coinUtils, config) => {
