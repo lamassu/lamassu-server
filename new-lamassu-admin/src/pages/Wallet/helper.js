@@ -76,9 +76,13 @@ const getAdvancedWalletElements = (cryptoCurrencies, coinUtils, config) => {
       size: 'sm',
       stripe: true,
       width: 250,
-      view: (_, ite) =>
-        config[`${ite.id}_allowTransactionBatching`] ? 'Yes' : 'No',
-      input: Checkbox
+      view: (_, ite) => {
+        if (ite.id !== 'BTC')
+          return <span style={classes.editDisabled}>{`No`}</span>
+        return config[`${ite.id}_allowTransactionBatching`] ? 'Yes' : 'No'
+      },
+      input: Checkbox,
+      editable: it => it.id === 'BTC'
     }
   ]
 }
