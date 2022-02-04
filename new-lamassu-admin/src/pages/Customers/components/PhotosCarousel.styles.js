@@ -21,7 +21,6 @@ export default {
       display: 'flex',
       flexDirection: 'column',
       '& > div': {
-        width: 144,
         height: 37,
         marginBottom: 15,
         marginRight: 55

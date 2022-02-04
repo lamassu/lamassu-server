@@ -27,9 +27,11 @@ export default {
       settings: {
         field: 'wallets_BTC_wallet',
         enabled: true,
-        disabledMessage: 'RBF verification not available',
+        disabledMessage:
+          'Lower the confidence of RBF transactions (Available when using bitcoind.)',
         label: 'Lower the confidence of RBF transactions',
-        requirement: 'bitcoind'
+        requirement: 'bitcoind',
+        rightSideLabel: true
       },
       face: true
     }

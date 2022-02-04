@@ -1,8 +1,11 @@
 import * as R from 'ramda'
 import * as Yup from 'yup'
 
-import { NumberInput } from 'src/components/inputs/formik'
-import Autocomplete from 'src/components/inputs/formik/Autocomplete.js'
+import {
+  Autocomplete,
+  Checkbox,
+  NumberInput
+} from 'src/components/inputs/formik'
 import { disabledColor } from 'src/styling/variables'
 import { CURRENCY_MAX } from 'src/utils/constants'
 import { transformNumber } from 'src/utils/number'
@@ -29,10 +32,11 @@ const WalletSchema = Yup.object().shape({
 })
 
 const AdvancedWalletSchema = Yup.object().shape({
-  cryptoUnits: Yup.string().required()
+  cryptoUnits: Yup.string().required(),
+  allowTransactionBatching: Yup.boolean()
 })
 
-const getAdvancedWalletElements = (cryptoCurrencies, coinUtils) => {
+const getAdvancedWalletElements = (cryptoCurrencies, coinUtils, config) => {
   const viewCryptoCurrency = it =>
     R.compose(
       R.prop(['display']),
@@ -66,6 +70,19 @@ const getAdvancedWalletElements = (cryptoCurrencies, coinUtils) => {
         valueProp: 'code',
         labelProp: 'display'
       }
+    },
+    {
+      name: 'allowTransactionBatching',
+      size: 'sm',
+      stripe: true,
+      width: 250,
+      view: (_, ite) => {
+        if (ite.id !== 'BTC')
+          return <span style={classes.editDisabled}>{`No`}</span>
+        return config[`${ite.id}_allowTransactionBatching`] ? 'Yes' : 'No'
+      },
+      input: Checkbox,
+      editable: it => it.id === 'BTC'
     }
   ]
 }
