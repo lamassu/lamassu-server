@@ -7,7 +7,11 @@ import React from 'react'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
-import { AdvancedWalletSchema, getAdvancedWalletElements } from './helper'
+import {
+  WalletSchema,
+  AdvancedWalletSchema,
+  getAdvancedWalletElements
+} from './helper'
 
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
@@ -51,8 +55,9 @@ const AdvancedWallet = () => {
       enableEdit
       editWidth={174}
       save={save}
+      stripeWhen={it => !WalletSchema.isValidSync(it)}
       validationSchema={AdvancedWalletSchema}
-      elements={getAdvancedWalletElements(cryptoCurrencies, coinUtils)}
+      elements={getAdvancedWalletElements(cryptoCurrencies, coinUtils, config)}
     />
   )
 }
