@@ -1,3 +1,5 @@
+import * as R from 'ramda'
+
 const getCashOutStatus = it => {
   if (it.hasError === 'Operator cancel') return 'Cancelled'
   if (it.hasError) return 'Error'
@@ -8,7 +10,7 @@ const getCashOutStatus = it => {
 
 const getCashInStatus = it => {
   if (it.operatorCompleted) return 'Cancelled'
-  if (it.hasError) return 'Error'
+  if (it.hasError || it.batchError) return 'Error'
   if (it.sendConfirmed) return 'Sent'
   if (it.expired) return 'Expired'
   if (it.batched) return 'Batched'
@@ -23,11 +25,14 @@ const getStatus = it => {
 }
 
 const getStatusDetails = it => {
-  return it.hasError ? it.hasError : null
+  if (!R.isNil(it.hasError)) return it.hasError
+  if (!R.isNil(it.batchError)) return `Batch error: ${it.batchError}`
+  return null
 }
 
 const getStatusProperties = status => ({
   hasError: status === 'Error' || null,
+  batchError: status === 'Error' || null,
   dispense: status === 'Success' || null,
   expired: status === 'Expired' || null,
   operatorCompleted: status === 'Cancelled' || null,

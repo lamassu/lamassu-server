@@ -419,5 +419,6 @@ export default memo(
   (prev, next) =>
     prev.it.id === next.it.id &&
     prev.it.hasError === next.it.hasError &&
+    prev.it.batchError === next.it.batchError &&
     getStatus(prev.it) === getStatus(next.it)
 )
