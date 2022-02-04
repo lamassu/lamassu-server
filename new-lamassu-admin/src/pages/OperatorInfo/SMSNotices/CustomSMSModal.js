@@ -1,15 +1,15 @@
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik, Field } from 'formik'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
 import { Button } from 'src/components/buttons'
-import { Autocomplete, TextInput } from 'src/components/inputs/formik'
+import { TextInput } from 'src/components/inputs/formik'
 
-import styles from './CustomSMS.styles'
+import styles from './SMSNotices.styles'
 
 const useStyles = makeStyles(styles)
 
@@ -58,17 +58,8 @@ const prefill = {
   }
 }
 
-const CustomSMSModal = ({
-  showModal,
-  onClose,
-  sms,
-  eventOptions,
-  creationError,
-  submit
-}) => {
+const CustomSMSModal = ({ showModal, onClose, sms, creationError, submit }) => {
   const classes = useStyles()
-
-  const [selectedEvent, setSelectedEvent] = useState(sms?.event)
 
   const initialValues = {
     event: !R.isNil(sms) ? sms.event : '',
@@ -78,7 +69,7 @@ const CustomSMSModal = ({
   const validationSchema = Yup.object().shape({
     event: Yup.string().required('An event is required!'),
     message:
-      prefill[selectedEvent]?.validator ??
+      prefill[sms?.event]?.validator ??
       Yup.string()
         .required('The message content is required!')
         .trim()
@@ -106,7 +97,7 @@ const CustomSMSModal = ({
     <>
       {showModal && (
         <Modal
-          title={!R.isNil(sms) ? `Edit custom SMS` : `Add custom SMS`}
+          title={`Edit SMS notice`}
           closeOnBackdropClick={true}
           width={600}
           height={500}
@@ -121,17 +112,7 @@ const CustomSMSModal = ({
               handleSubmit(values, errors, touched)
             }>
             {({ values, errors, touched }) => (
-              <Form id="custom-sms" className={classes.form}>
-                <Field
-                  name="event"
-                  label="Event"
-                  fullWidth
-                  onChange={setSelectedEvent(values.event)}
-                  options={eventOptions}
-                  labelProp="display"
-                  valueProp="code"
-                  component={Autocomplete}
-                />
+              <Form id="sms-notice" className={classes.form}>
                 <Field
                   name="message"
                   label="Message content"
@@ -148,9 +129,9 @@ const CustomSMSModal = ({
                   )}
                   <Button
                     type="submit"
-                    form="custom-sms"
+                    form="sms-notice"
                     className={classes.submit}>
-                    {!R.isNil(sms) ? `Confirm` : `Create SMS`}
+                    Confirm
                   </Button>
                 </div>
               </Form>

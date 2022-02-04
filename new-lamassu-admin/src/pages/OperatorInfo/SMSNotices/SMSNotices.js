@@ -1,65 +1,59 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Box } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { DeleteDialog } from 'src/components/DeleteDialog'
-import { Link, IconButton } from 'src/components/buttons'
+import { IconButton } from 'src/components/buttons'
+import { Switch } from 'src/components/inputs'
 import DataTable from 'src/components/tables/DataTable'
 import { H4 } from 'src/components/typography'
-import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 
-import styles from './CustomSMS.styles'
 import CustomSMSModal from './CustomSMSModal'
+import styles from './SMSNotices.styles'
 
 const useStyles = makeStyles(styles)
 
-const GET_CUSTOM_MESSAGES = gql`
-  query customMessages {
-    customMessages {
+const GET_SMS_NOTICES = gql`
+  query SMSNotices {
+    SMSNotices {
       id
       event
       message
+      messageName
+      enabled
+      allowToggle
     }
   }
 `
 
-const CREATE_CUSTOM_MESSAGE = gql`
-  mutation createCustomMessage($event: CustomMessageEvent!, $message: String!) {
-    createCustomMessage(event: $event, message: $message) {
+const EDIT_SMS_NOTICE = gql`
+  mutation editSMSNotice($id: ID!, $event: SMSNoticeEvent!, $message: String!) {
+    editSMSNotice(id: $id, event: $event, message: $message) {
       id
     }
   }
 `
 
-const EDIT_CUSTOM_MESSAGE = gql`
-  mutation editCustomMessage(
-    $id: ID!
-    $event: CustomMessageEvent!
-    $message: String!
-  ) {
-    editCustomMessage(id: $id, event: $event, message: $message) {
+const ENABLE_SMS_NOTICE = gql`
+  mutation enableSMSNotice($id: ID!) {
+    enableSMSNotice(id: $id) {
       id
     }
   }
 `
 
-const DELETE_CUSTOM_MESSAGE = gql`
-  mutation deleteCustomMessage($id: ID!) {
-    deleteCustomMessage(id: $id) {
+const DISABLE_SMS_NOTICE = gql`
+  mutation disableSMSNotice($id: ID!) {
+    disableSMSNotice(id: $id) {
       id
     }
   }
 `
 
-const EVENT_OPTIONS = [
-  { code: 'smsCode', display: 'On SMS confirmation code' },
-  { code: 'cashOutDispenseReady', display: 'Cash out dispense ready' }
-]
-
-const CustomSMS = () => {
+const SMSNotices = () => {
   const classes = useStyles()
 
   const [deleteDialog, setDeleteDialog] = useState(false)
@@ -68,22 +62,22 @@ const CustomSMS = () => {
   const [errorMsg, setErrorMsg] = useState('')
 
   const { data: messagesData, loading: messagesLoading } = useQuery(
-    GET_CUSTOM_MESSAGES
+    GET_SMS_NOTICES
   )
 
-  const [createMessage] = useMutation(CREATE_CUSTOM_MESSAGE, {
+  const [editMessage] = useMutation(EDIT_SMS_NOTICE, {
     onError: ({ msg }) => setErrorMsg(msg),
-    refetchQueries: () => ['customMessages']
+    refetchQueries: () => ['SMSNotices']
   })
 
-  const [editMessage] = useMutation(EDIT_CUSTOM_MESSAGE, {
+  const [enableMessage] = useMutation(ENABLE_SMS_NOTICE, {
     onError: ({ msg }) => setErrorMsg(msg),
-    refetchQueries: () => ['customMessages']
+    refetchQueries: () => ['SMSNotices']
   })
 
-  const [deleteMessage] = useMutation(DELETE_CUSTOM_MESSAGE, {
+  const [disableMessage] = useMutation(DISABLE_SMS_NOTICE, {
     onError: ({ msg }) => setErrorMsg(msg),
-    refetchQueries: () => ['customMessages']
+    refetchQueries: () => ['SMSNotices']
   })
 
   const loading = messagesLoading
@@ -94,19 +88,15 @@ const CustomSMS = () => {
     setDeleteDialog(false)
   }
 
-  const handleOpen = () => {
-    setErrorMsg('')
-    setShowModal(true)
-  }
+  console.log(messagesData)
 
   const elements = [
     {
-      header: 'Event',
-      width: 600,
+      header: 'Message name',
+      width: 500,
       size: 'sm',
       textAlign: 'left',
-      view: it =>
-        R.find(ite => R.propEq('event', ite.code, it), EVENT_OPTIONS).display
+      view: it => R.prop('messageName', it)
     },
     {
       header: 'Edit',
@@ -124,18 +114,20 @@ const CustomSMS = () => {
       )
     },
     {
-      header: 'Delete',
+      header: 'Enable',
       width: 100,
       size: 'sm',
       textAlign: 'center',
       view: it => (
-        <IconButton
+        <Switch
+          disabled={!it.allowToggle}
           onClick={() => {
-            setSelectedSMS(it)
-            setDeleteDialog(true)
-          }}>
-          <DeleteIcon />
-        </IconButton>
+            it.enabled
+              ? disableMessage({ variables: { id: it.id } })
+              : enableMessage({ variables: { id: it.id } })
+          }}
+          checked={it.enabled}
+        />
       )
     }
   ]
@@ -143,21 +135,15 @@ const CustomSMS = () => {
   return (
     <>
       <div className={classes.header}>
-        <H4>Custom SMS message</H4>
-        <Box display="flex" justifyContent="flex-end">
-          <Link color="primary" onClick={() => handleOpen()}>
-            Add custom SMS
-          </Link>
-        </Box>
+        <H4>SMS Notices</H4>
       </div>
       {showModal && (
         <CustomSMSModal
           showModal={showModal}
           onClose={handleClose}
-          eventOptions={EVENT_OPTIONS}
           sms={selectedSMS}
           creationError={errorMsg}
-          submit={selectedSMS ? editMessage : createMessage}
+          submit={editMessage}
         />
       )}
       <DeleteDialog
@@ -167,22 +153,17 @@ const CustomSMS = () => {
         }}
         onConfirmed={() => {
           handleClose()
-          deleteMessage({
-            variables: {
-              id: selectedSMS.id
-            }
-          })
         }}
         errorMessage={errorMsg}
       />
       <DataTable
-        emptyText="No custom SMS so far"
+        emptyText="No SMS notices so far"
         elements={elements}
         loading={loading}
-        data={R.path(['customMessages'])(messagesData)}
+        data={R.path(['SMSNotices'])(messagesData)}
       />
     </>
   )
 }
 
-export default CustomSMS
+export default SMSNotices
