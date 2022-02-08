@@ -228,7 +228,7 @@ const Transactions = () => {
     {
       header: 'Date',
       view: it =>
-        timezone && formatDate(it.created, timezone, 'yyyy-MM-dd HH:mm:ss'),
+        timezone && formatDate(it.created, timezone, 'yyyy-MM-dd HH:mm'),
       textAlign: 'right',
       size: 'sm',
       width: 195

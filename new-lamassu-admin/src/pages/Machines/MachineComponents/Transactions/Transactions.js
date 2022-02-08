@@ -146,7 +146,7 @@ const Transactions = ({ id }) => {
     },
     {
       header: 'Date',
-      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd'),
+      view: it => formatDate(it.created, timezone, 'yyyy‑MM‑dd'),
       textAlign: 'left',
       size: 'sm',
       width: 140
