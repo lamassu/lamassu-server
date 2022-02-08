@@ -48,9 +48,7 @@ const Subheader = ({ item, classes, user }) => {
                       setPrev(it.route)
                       return true
                     }}>
-                    <span className={classes.forceSize} forcesize={it.label}>
-                      {it.label}
-                    </span>
+                    {it.label}
                   </NavLink>
                 </li>
               )
