@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Chip } from '@material-ui/core'
 import { Form, Formik, Field } from 'formik'
 import * as R from 'ramda'
 import React from 'react'
@@ -27,14 +27,14 @@ const prefill = {
       .required('The message content is required!')
       .trim()
       .test({
-        name: 'has-code-tag',
-        message: 'A #code tag is missing from the message!',
+        name: 'has-code',
+        message: 'The confirmation code is missing from the message!',
         exclusive: false,
         test: value => value?.match(/#code/g || [])?.length > 0
       })
       .test({
-        name: 'has-single-code-tag',
-        message: 'There should be a single #code tag!',
+        name: 'has-single-code',
+        message: 'There should be a single confirmation code!',
         exclusive: false,
         test: value => value?.match(/#code/g || [])?.length === 1
       })
@@ -43,22 +43,33 @@ const prefill = {
     validator: Yup.string()
       .required('The message content is required!')
       .trim()
-      .test({
-        name: 'has-timestamp-tag',
-        message: 'A #timestamp tag is missing from the message!',
-        exclusive: false,
-        test: value => value?.match(/#timestamp/g || [])?.length > 0
-      })
-      .test({
-        name: 'has-single-timestamp-tag',
-        message: 'There should be a single #timestamp tag!',
-        exclusive: false,
-        test: value => value?.match(/#timestamp/g || [])?.length === 1
-      })
+    // .test({
+    //   name: 'has-timestamp-tag',
+    //   message: 'A #timestamp tag is missing from the message!',
+    //   exclusive: false,
+    //   test: value => value?.match(/#timestamp/g || [])?.length > 0
+    // })
+    // .test({
+    //   name: 'has-single-timestamp-tag',
+    //   message: 'There should be a single #timestamp tag!',
+    //   exclusive: false,
+    //   test: value => value?.match(/#timestamp/g || [])?.length === 1
+    // })
   }
 }
 
-const CustomSMSModal = ({ showModal, onClose, sms, creationError, submit }) => {
+const chips = {
+  smsCode: [{ code: '#code', display: 'Confirmation code', removable: false }],
+  cashOutDispenseReady: []
+}
+
+const SMSNoticesModal = ({
+  showModal,
+  onClose,
+  sms,
+  creationError,
+  submit
+}) => {
   const classes = useStyles()
 
   const initialValues = {
@@ -111,7 +122,7 @@ const CustomSMSModal = ({ showModal, onClose, sms, creationError, submit }) => {
             onSubmit={(values, errors, touched) =>
               handleSubmit(values, errors, touched)
             }>
-            {({ values, errors, touched }) => (
+            {({ values, errors, touched, setFieldValue }) => (
               <Form id="sms-notice" className={classes.form}>
                 <Field
                   name="message"
@@ -121,6 +132,22 @@ const CustomSMSModal = ({ showModal, onClose, sms, creationError, submit }) => {
                   rows={6}
                   component={TextInput}
                 />
+                {R.map(
+                  it => (
+                    <Chip
+                      label={it.display}
+                      onClick={() => {
+                        R.includes(it.code, values.message)
+                          ? setFieldValue('message', values.message)
+                          : setFieldValue(
+                              'message',
+                              values.message.concat(' ', it.code, ' ')
+                            )
+                      }}
+                    />
+                  ),
+                  chips[sms?.event]
+                )}
                 <div className={classes.footer}>
                   {getErrorMsg(errors, touched, creationError) && (
                     <ErrorMessage>
@@ -143,4 +170,4 @@ const CustomSMSModal = ({ showModal, onClose, sms, creationError, submit }) => {
   )
 }
 
-export default CustomSMSModal
+export default SMSNoticesModal

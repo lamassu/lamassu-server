@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Paper } from '@material-ui/core'
+import { format } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -8,11 +9,12 @@ import { DeleteDialog } from 'src/components/DeleteDialog'
 import { IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import DataTable from 'src/components/tables/DataTable'
-import { H4 } from 'src/components/typography'
+import { H4, P, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import { ReactComponent as WhiteLogo } from 'src/styling/icons/menu/logo-white.svg'
 
-import CustomSMSModal from './CustomSMSModal'
 import styles from './SMSNotices.styles'
+import CustomSMSModal from './SMSNoticesModal'
 
 const useStyles = makeStyles(styles)
 
@@ -53,12 +55,45 @@ const DISABLE_SMS_NOTICE = gql`
   }
 `
 
+const multiReplace = (str, obj) => {
+  var re = new RegExp(Object.keys(obj).join('|'), 'gi')
+
+  return str.replace(re, function(matched) {
+    return obj[matched.toLowerCase()]
+  })
+}
+
+const SMSPreview = ({ sms, coords }) => {
+  const classes = useStyles(coords)
+
+  const matches = {
+    '#code': 123,
+    '#timestamp': format('HH:mm', new Date())
+  }
+
+  return (
+    <div className={classes.smsPreview}>
+      <div className={classes.smsPreviewContainer}>
+        <div className={classes.smsPreviewIcon}>
+          <WhiteLogo width={22} height={22} />
+        </div>
+        <Paper className={classes.smsPreviewContent}>
+          <P noMargin>{multiReplace(sms?.message, matches)}</P>
+        </Paper>
+        <Label3>{format('HH:mm', new Date())}</Label3>
+      </div>
+    </div>
+  )
+}
+
 const SMSNotices = () => {
   const classes = useStyles()
 
   const [deleteDialog, setDeleteDialog] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [selectedSMS, setSelectedSMS] = useState(null)
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewCoords, setPreviewCoords] = useState({ x: 0, y: 0 })
   const [errorMsg, setErrorMsg] = useState('')
 
   const { data: messagesData, loading: messagesLoading } = useQuery(
@@ -88,8 +123,6 @@ const SMSNotices = () => {
     setDeleteDialog(false)
   }
 
-  console.log(messagesData)
-
   const elements = [
     {
       header: 'Message name',
@@ -106,6 +139,7 @@ const SMSNotices = () => {
       view: it => (
         <IconButton
           onClick={() => {
+            setPreviewOpen(false)
             setSelectedSMS(it)
             setShowModal(true)
           }}>
@@ -129,13 +163,35 @@ const SMSNotices = () => {
           checked={it.enabled}
         />
       )
+    },
+    {
+      header: '',
+      width: 100,
+      size: 'sm',
+      textAlign: 'center',
+      view: it => (
+        <IconButton
+          onClick={e => {
+            setSelectedSMS(it)
+            setPreviewCoords({
+              x: e.currentTarget.getBoundingClientRect().right + 50,
+              y:
+                window.innerHeight -
+                5 -
+                e.currentTarget.getBoundingClientRect().bottom
+            })
+            setPreviewOpen(true)
+          }}>
+          <EditIcon />
+        </IconButton>
+      )
     }
   ]
 
   return (
     <>
       <div className={classes.header}>
-        <H4>SMS Notices</H4>
+        <H4>SMS notices</H4>
       </div>
       {showModal && (
         <CustomSMSModal
@@ -156,6 +212,7 @@ const SMSNotices = () => {
         }}
         errorMessage={errorMsg}
       />
+      {previewOpen && <SMSPreview sms={selectedSMS} coords={previewCoords} />}
       <DataTable
         emptyText="No SMS notices so far"
         elements={elements}
