@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
-import { differenceInSeconds } from 'date-fns/fp'
+import { formatDistance } from 'date-fns'
 import React from 'react'
 
 import { Status } from 'src/components/Status'
@@ -10,24 +10,6 @@ import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard.js'
 
 import styles from '../Machines.styles'
 const useStyles = makeStyles(styles)
-
-const makeLastPing = lastPing => {
-  if (!lastPing) return null
-  const secondsAgo = differenceInSeconds(lastPing, new Date())
-  if (secondsAgo < 60) {
-    return `${secondsAgo} ${secondsAgo === 1 ? 'second' : 'seconds'} ago`
-  }
-  if (secondsAgo < 3600) {
-    const minutes = Math.round(secondsAgo / 60)
-    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`
-  }
-  if (secondsAgo < 3600 * 24) {
-    const hours = Math.round(secondsAgo / 3600)
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`
-  }
-  const days = Math.round(secondsAgo / 3600 / 24)
-  return `${days} ${days === 1 ? 'day' : 'days'} ago`
-}
 
 const Overview = ({ data, onActionSuccess }) => {
   const classes = useStyles()
@@ -48,7 +30,13 @@ const Overview = ({ data, onActionSuccess }) => {
       <div className={classes.row}>
         <div className={classes.rowItem}>
           <Label3 className={classes.label3}>Last ping</Label3>
-          <P>{makeLastPing(data.lastPing)}</P>
+          <P>
+            {data.lastPing
+              ? formatDistance(new Date(data.lastPing), new Date(), {
+                  addSuffix: true
+                })
+              : 'unknown'}
+          </P>
         </div>
       </div>
       <div className={classes.row}>
