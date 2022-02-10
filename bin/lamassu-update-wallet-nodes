@@ -6,8 +6,6 @@ const { utils: coinUtils } = require('lamassu-coins')
 
 const cryptos = coinUtils.cryptoCurrencies()
 
-const supervisorStates = ['RUNNING', 'STARTING']
-
 const PLUGINS = {
   BTC: require('../lib/blockchain/bitcoin.js'),
   LTC: require('../lib/blockchain/litecoin.js'),
@@ -30,7 +28,7 @@ function run () {
     const cryptoPlugin = plugin(crypto)
     const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`).trim()
 
-    cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), _.includes(status, supervisorStates))
+    cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), _.includes(status, ['RUNNING', 'STARTING']))
   }, cryptos)
 }
 
