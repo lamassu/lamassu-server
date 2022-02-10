@@ -57,6 +57,22 @@ const GET_CUSTOMERS = gql`
       sanctionsOverride
       daysSuspended
       isSuspended
+      customInfoRequests {
+        customerId
+        infoRequestId
+        override
+        overrideAt
+        overrideBy
+        customerData
+        customInfoRequest {
+          id
+          enabled
+          customRequest
+        }
+      }
+    }
+    customInfoRequests {
+      id
     }
   }
 `
@@ -110,6 +126,8 @@ const Customers = () => {
   })
 
   const configData = R.path(['config'])(customersResponse) ?? []
+  const customRequirementsData =
+    R.path(['customInfoRequests'], customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
   const triggers = configData && fromNamespace(namespaces.TRIGGERS, configData)
   const customersData = R.sortWith([
@@ -207,6 +225,7 @@ const Customers = () => {
         onClick={handleCustomerClicked}
         loading={customerLoading}
         triggers={triggers}
+        customRequests={customRequirementsData}
       />
       <CreateCustomerModal
         showModal={showCreationModal}
