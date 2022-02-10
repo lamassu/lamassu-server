@@ -21,7 +21,8 @@ const Graph = ({
   timezone,
   setSelectionCoords,
   setSelectionData,
-  setSelectionDateInterval
+  setSelectionDateInterval,
+  selectedMachine
 }) => {
   const ref = useRef(null)
 
@@ -428,5 +429,6 @@ export default memo(
   Graph,
   (prev, next) =>
     R.equals(prev.period, next.period) &&
-    R.equals(prev.selectedDay, next.selectedDay)
+    R.equals(prev.selectedDay, next.selectedDay) &&
+    R.equals(prev.selectedMachine, next.selectedMachine)
 )
