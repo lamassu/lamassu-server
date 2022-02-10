@@ -29,8 +29,7 @@ function run () {
     const cryptoPlugin = plugin(crypto)
     const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`).trim()
 
-    if (status === 'RUNNING') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), true)
-    if (status === 'STOPPED') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), false)
+    cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), _.includes(status, ['RUNNING', 'STARTING']))
   }, cryptos)
 }
 
