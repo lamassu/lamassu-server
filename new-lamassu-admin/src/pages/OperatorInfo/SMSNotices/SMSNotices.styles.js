@@ -1,4 +1,9 @@
-import { spacer } from 'src/styling/variables'
+import {
+  spacer,
+  fontMonospaced,
+  fontSize5,
+  fontColor
+} from 'src/styling/variables'
 
 const styles = {
   header: {
@@ -52,6 +57,38 @@ const styles = {
     width: 225,
     padding: 15,
     borderRadius: '15px 15px 15px 0px'
+  },
+  chipButtons: {
+    width: 480,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'space-between',
+    '& > div': {
+      marginTop: 15
+    },
+    '& > div:first-child': {
+      marginTop: 0
+    },
+    '& > div > div': {
+      margin: [[0, 5, 0, 5]]
+    },
+    '& > div > div > span': {
+      lineHeight: '120%',
+      color: fontColor,
+      fontSize: fontSize5,
+      fontFamily: fontMonospaced,
+      fontWeight: 500
+    },
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  resetToDefault: {
+    width: 145
+  },
+  messageWithTooltip: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 }
 

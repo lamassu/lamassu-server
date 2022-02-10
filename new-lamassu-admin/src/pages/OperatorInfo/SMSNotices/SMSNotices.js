@@ -6,11 +6,14 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { DeleteDialog } from 'src/components/DeleteDialog'
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import DataTable from 'src/components/tables/DataTable'
 import { H4, P, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import { ReactComponent as ExpandIconClosed } from 'src/styling/icons/action/expand/closed.svg'
+import { ReactComponent as ExpandIconOpen } from 'src/styling/icons/action/expand/open.svg'
 import { ReactComponent as WhiteLogo } from 'src/styling/icons/menu/logo-white.svg'
 
 import styles from './SMSNotices.styles'
@@ -63,6 +66,26 @@ const multiReplace = (str, obj) => {
   })
 }
 
+const formatContent = content => {
+  const fragments = R.split(/\n/)(content)
+  return R.map((it, idx) => {
+    if (idx === fragments.length) return <>{it}</>
+    return (
+      <>
+        {it}
+        <br />
+      </>
+    )
+  }, fragments)
+}
+
+const TOOLTIPS = {
+  smsCode: ``,
+  cashOutDispenseReady: ``,
+  smsReceipt: formatContent(`The contents of this notice will be appended to the end of the SMS receipt sent, and not replace it.\n
+  To edit the contents of the SMS receipt, please go to the 'Receipt' tab`)
+}
+
 const SMSPreview = ({ sms, coords }) => {
   const classes = useStyles(coords)
 
@@ -78,7 +101,13 @@ const SMSPreview = ({ sms, coords }) => {
           <WhiteLogo width={22} height={22} />
         </div>
         <Paper className={classes.smsPreviewContent}>
-          <P noMargin>{multiReplace(sms?.message, matches)}</P>
+          <P noMargin>
+            {R.isEmpty(sms?.message) ? (
+              <i>No content available</i>
+            ) : (
+              formatContent(multiReplace(sms?.message, matches))
+            )}
+          </P>
         </Paper>
         <Label3>{format('HH:mm', new Date())}</Label3>
       </div>
@@ -118,8 +147,8 @@ const SMSNotices = () => {
   const loading = messagesLoading
 
   const handleClose = () => {
-    setSelectedSMS(null)
     setShowModal(false)
+    setSelectedSMS(null)
     setDeleteDialog(false)
   }
 
@@ -129,7 +158,17 @@ const SMSNotices = () => {
       width: 500,
       size: 'sm',
       textAlign: 'left',
-      view: it => R.prop('messageName', it)
+      view: it =>
+        !R.isEmpty(TOOLTIPS[it.event]) ? (
+          <div className={classes.messageWithTooltip}>
+            {R.prop('messageName', it)}
+            <HoverableTooltip width={250}>
+              <P>{TOOLTIPS[it.event]}</P>
+            </HoverableTooltip>
+          </div>
+        ) : (
+          R.prop('messageName', it)
+        )
     },
     {
       header: 'Edit',
@@ -180,9 +219,15 @@ const SMSNotices = () => {
                 5 -
                 e.currentTarget.getBoundingClientRect().bottom
             })
-            setPreviewOpen(true)
+            R.equals(selectedSMS, it)
+              ? setPreviewOpen(!previewOpen)
+              : setPreviewOpen(true)
           }}>
-          <EditIcon />
+          {R.equals(selectedSMS, it) && previewOpen ? (
+            <ExpandIconOpen />
+          ) : (
+            <ExpandIconClosed />
+          )}
         </IconButton>
       )
     }

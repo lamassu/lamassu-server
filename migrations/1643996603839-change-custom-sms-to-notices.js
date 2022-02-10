@@ -14,6 +14,7 @@ exports.up = function (next) {
   db.multi(sql, next)
     .then(() => smsNotices.createSMSNotice('sms_code', 'SMS confirmation code', 'Your cryptomat code: #code', true, false))
     .then(() => smsNotices.createSMSNotice('cash_out_dispense_ready', 'Cash is ready', 'Your cash is waiting! Go to the Cryptomat and press Redeem within 24 hours. [#timestamp]', true, false))
+    .then(() => smsNotices.createSMSNotice('sms_receipt', 'SMS receipt', '', true, true))
 }
 
 exports.down = function (next) {

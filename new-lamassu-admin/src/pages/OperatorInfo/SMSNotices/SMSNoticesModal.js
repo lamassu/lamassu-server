@@ -6,8 +6,12 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
-import { Button } from 'src/components/buttons'
+import { ActionButton, Button } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
+import { Info2 } from 'src/components/typography'
+import { ReactComponent as DefaultIconReverse } from 'src/styling/icons/button/retry/white.svg'
+import { ReactComponent as DefaultIcon } from 'src/styling/icons/button/retry/zodiac.svg'
+import { zircon } from 'src/styling/variables'
 
 import styles from './SMSNotices.styles'
 
@@ -21,7 +25,7 @@ const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
   return null
 }
 
-const prefill = {
+const PREFILL = {
   smsCode: {
     validator: Yup.string()
       .required('The message content is required!')
@@ -43,24 +47,28 @@ const prefill = {
     validator: Yup.string()
       .required('The message content is required!')
       .trim()
-    // .test({
-    //   name: 'has-timestamp-tag',
-    //   message: 'A #timestamp tag is missing from the message!',
-    //   exclusive: false,
-    //   test: value => value?.match(/#timestamp/g || [])?.length > 0
-    // })
-    // .test({
-    //   name: 'has-single-timestamp-tag',
-    //   message: 'There should be a single #timestamp tag!',
-    //   exclusive: false,
-    //   test: value => value?.match(/#timestamp/g || [])?.length === 1
-    // })
+  },
+  smsReceipt: {
+    validator: Yup.string().trim()
   }
 }
 
-const chips = {
-  smsCode: [{ code: '#code', display: 'Confirmation code', removable: false }],
-  cashOutDispenseReady: []
+const CHIPS = {
+  smsCode: [
+    { code: '#code', display: 'Confirmation code', obligatory: true },
+    { code: '#timestamp', display: 'Timestamp', obligatory: false }
+  ],
+  cashOutDispenseReady: [
+    { code: '#timestamp', display: 'Timestamp', obligatory: false }
+  ],
+  smsReceipt: [{ code: '#timestamp', display: 'Timestamp', obligatory: false }]
+}
+
+const DEFAULT_MESSAGES = {
+  smsCode: 'Your cryptomat code: #code',
+  cashOutDispenseReady:
+    'Your cash is waiting! Go to the Cryptomat and press Redeem within 24 hours. [#timestamp]',
+  smsReceipt: ''
 }
 
 const SMSNoticesModal = ({
@@ -80,7 +88,7 @@ const SMSNoticesModal = ({
   const validationSchema = Yup.object().shape({
     event: Yup.string().required('An event is required!'),
     message:
-      prefill[sms?.event]?.validator ??
+      PREFILL[sms?.event]?.validator ??
       Yup.string()
         .required('The message content is required!')
         .trim()
@@ -108,7 +116,7 @@ const SMSNoticesModal = ({
     <>
       {showModal && (
         <Modal
-          title={`Edit SMS notice`}
+          title={`SMS notice - ${sms?.messageName}`}
           closeOnBackdropClick={true}
           width={600}
           height={500}
@@ -124,6 +132,17 @@ const SMSNoticesModal = ({
             }>
             {({ values, errors, touched, setFieldValue }) => (
               <Form id="sms-notice" className={classes.form}>
+                <ActionButton
+                  color="primary"
+                  Icon={DefaultIcon}
+                  InverseIcon={DefaultIconReverse}
+                  className={classes.resetToDefault}
+                  type="button"
+                  onClick={() =>
+                    setFieldValue('message', DEFAULT_MESSAGES[sms?.event])
+                  }>
+                  Reset to default
+                </ActionButton>
                 <Field
                   name="message"
                   label="Message content"
@@ -132,22 +151,39 @@ const SMSNoticesModal = ({
                   rows={6}
                   component={TextInput}
                 />
-                {R.map(
-                  it => (
-                    <Chip
-                      label={it.display}
-                      onClick={() => {
-                        R.includes(it.code, values.message)
-                          ? setFieldValue('message', values.message)
-                          : setFieldValue(
-                              'message',
-                              values.message.concat(' ', it.code, ' ')
-                            )
-                      }}
-                    />
-                  ),
-                  chips[sms?.event]
+                {R.length(CHIPS[sms?.event]) > 0 && (
+                  <Info2 noMargin>Values to attach</Info2>
                 )}
+                <div className={classes.chipButtons}>
+                  {R.map(
+                    it => (
+                      <div>
+                        {R.map(
+                          ite => (
+                            <Chip
+                              label={ite.display}
+                              size="small"
+                              style={{ backgroundColor: zircon }}
+                              disabled={R.includes(ite.code, values.message)}
+                              className={classes.chip}
+                              onClick={() => {
+                                setFieldValue(
+                                  'message',
+                                  values.message.concat(
+                                    R.last(values.message) === ' ' ? '' : ' ',
+                                    ite.code
+                                  )
+                                )
+                              }}
+                            />
+                          ),
+                          it
+                        )}
+                      </div>
+                    ),
+                    R.splitEvery(3, CHIPS[sms?.event])
+                  )}
+                </div>
                 <div className={classes.footer}>
                   {getErrorMsg(errors, touched, creationError) && (
                     <ErrorMessage>
