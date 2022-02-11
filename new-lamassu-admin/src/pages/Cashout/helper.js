@@ -61,7 +61,7 @@ const getElements = (machines, locale = {}, classes) => {
     {
       name: 'id',
       header: 'Machine',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
+      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.machine,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -77,7 +77,7 @@ const getElements = (machines, locale = {}, classes) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
         suffix: fiatCurrency,
         bold: bold,
         view: it => it,
