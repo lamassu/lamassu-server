@@ -61,9 +61,9 @@ const Row = ({
             expandable && expandRow(id, data)
             onClick && onClick(data)
           }}
-          error={data.error || data.hasError}
+          error={data.error || data.hasError || data.batchError}
           shouldShowError={false}
-          errorMessage={data.errorMessage || data.hasError}>
+          errorMessage={data.errorMessage || data.hasError || data.batchError}>
           {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
             <Td key={idx} {...props}>
               {view(data)}

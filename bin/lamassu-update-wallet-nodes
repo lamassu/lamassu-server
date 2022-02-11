@@ -8,11 +8,12 @@ const cryptos = coinUtils.cryptoCurrencies()
 
 const PLUGINS = {
   BTC: require('../lib/blockchain/bitcoin.js'),
-  LTC: require('../lib/blockchain/litecoin.js'),
-  ETH: require('../lib/blockchain/ethereum.js'),
+  BCH: require('../lib/blockchain/bitcoincash.js'),
   DASH: require('../lib/blockchain/dash.js'),
-  ZEC: require('../lib/blockchain/zcash.js'),
-  BCH: require('../lib/blockchain/bitcoincash.js')
+  ETH: require('../lib/blockchain/ethereum.js'),
+  LTC: require('../lib/blockchain/litecoin.js'),
+  XMR: require('../lib/blockchain/monero.js'),
+  ZEC: require('../lib/blockchain/zcash.js')
 }
 
 function plugin (crypto) {
@@ -28,8 +29,7 @@ function run () {
     const cryptoPlugin = plugin(crypto)
     const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`).trim()
 
-    if (status === 'RUNNING') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), true)
-    if (status === 'STOPPED') cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), false)
+    cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), _.includes(status, ['RUNNING', 'STARTING']))
   }, cryptos)
 }
 

@@ -116,6 +116,7 @@ const GET_TRANSACTIONS = gql`
       isAnonymous
       batched
       batchTime
+      batchError
       walletScore
     }
   }
@@ -190,7 +191,7 @@ const Transactions = () => {
           <div className={classes.overflowTd}>{getCustomerDisplayName(it)}</div>
           {!it.isAnonymous && (
             <div onClick={() => redirect(it.customerId)}>
-              {it.hasError ? (
+              {it.hasError || it.batchError ? (
                 <CustomerLinkWhiteIcon className={classes.customerLinkIcon} />
               ) : (
                 <CustomerLinkIcon className={classes.customerLinkIcon} />

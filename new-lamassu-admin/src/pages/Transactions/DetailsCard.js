@@ -146,8 +146,8 @@ const DetailsRow = ({ it: tx, timezone }) => {
       ''
   }
 
-  const from = sub({ minutes: MINUTES_OFFSET }, tx.created)
-  const until = add({ minutes: MINUTES_OFFSET }, tx.created)
+  const from = sub({ minutes: MINUTES_OFFSET }, new Date(tx.created))
+  const until = add({ minutes: MINUTES_OFFSET }, new Date(tx.created))
 
   const downloadRawLogs = ({ id: txId, deviceId, txClass }, timezone) => {
     fetchSummary({
@@ -419,5 +419,6 @@ export default memo(
   (prev, next) =>
     prev.it.id === next.it.id &&
     prev.it.hasError === next.it.hasError &&
+    prev.it.batchError === next.it.batchError &&
     getStatus(prev.it) === getStatus(next.it)
 )

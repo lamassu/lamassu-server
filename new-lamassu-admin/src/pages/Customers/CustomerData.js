@@ -293,7 +293,8 @@ const CustomerData = ({
           name: it.customInfoRequest.id,
           label: it.customInfoRequest.customRequest.name,
           value: it.customerData.data ?? '',
-          component: TextInput
+          component: TextInput,
+          editable: true
         }
       ],
       title: it.customInfoRequest.customRequest.name,
@@ -344,7 +345,8 @@ const CustomerData = ({
           name: it.label,
           label: it.label,
           value: it.value ?? '',
-          component: TextInput
+          component: TextInput,
+          editable: true
         }
       ],
       title: it.label,
