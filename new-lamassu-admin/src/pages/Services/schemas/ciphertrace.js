@@ -37,10 +37,12 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      authorizationValue: Yup.string()
+      authorizationValue: Yup.string('The score threshold must be a string')
+        .required('The authorization value is required')
         .max(100, 'Too long')
         .test(secretTest(account?.authorizationValue)),
-      scoreThreshold: Yup.number()
+      scoreThreshold: Yup.number('The score threshold must be a number')
+        .required('A score threshold is required')
         .min(1, 'The number should be between 1 and 10')
         .max(10, 'The number should be between 1 and 10')
         .test(secretTest(account?.scoreThreshold))

@@ -37,17 +37,17 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      userId: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      walletId: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      clientKey: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      clientSecret: Yup.string()
-        .max(100, 'Too long')
+      userId: Yup.string('The user ID must be a string')
+        .max(100, 'The user ID is too long')
+        .required('The user ID is required'),
+      walletId: Yup.string('The wallet ID must be a string')
+        .max(100, 'The wallet ID is too long')
+        .required('The wallet ID is required'),
+      clientKey: Yup.string('The client key must be a string')
+        .max(100, 'The client key is too long')
+        .required('The client key is required'),
+      clientSecret: Yup.string('The client secret must be a string')
+        .max(100, 'The client secret is too long')
         .test(secretTest(account?.clientSecret))
     })
   }

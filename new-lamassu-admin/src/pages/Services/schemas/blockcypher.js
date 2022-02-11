@@ -38,13 +38,13 @@ export default {
   ],
   getValidationSchema: () => {
     return Yup.object().shape({
-      token: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      confidenceFactor: Yup.number()
-        .integer('Please input a positive integer')
-        .positive('Please input a positive integer')
-        .required()
+      token: Yup.string('The token must be a string')
+        .max(100, 'The token is too long')
+        .required('The token is required'),
+      confidenceFactor: Yup.number('The confidence factor must be a number')
+        .integer('The confidence factor must be an integer')
+        .positive('The confidence factor must be positive')
+        .required('The confidence factor is required')
     })
   }
 }

@@ -4,12 +4,19 @@ import { Formik, Form, FastField } from 'formik'
 import * as R from 'ramda'
 import React from 'react'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import { Button } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
+import { spacer } from 'src/styling/variables'
 
 const styles = {
+  footer: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 4, 0]]
+  },
   button: {
-    margin: [['auto', 0, 32, 'auto']]
+    margin: [['auto', 0, 0, 'auto']]
   },
   form: {
     flex: 1,
@@ -61,29 +68,36 @@ const FormRenderer = ({
       initialValues={values}
       validationSchema={validationSchema}
       onSubmit={saveNonEmptySecret}>
-      <Form className={classes.form}>
-        <Grid container spacing={3} className={classes.grid}>
-          {elements.map(
-            ({ component, code, display, settings, inputProps }) => (
-              <Grid item xs={xs} key={code}>
-                <FastField
-                  component={component}
-                  {...inputProps}
-                  name={code}
-                  label={display}
-                  settings={settings}
-                  fullWidth={true}
-                />
-              </Grid>
-            )
-          )}
-        </Grid>
-        <Button
-          className={classnames(classes.button, buttonClass)}
-          type="submit">
-          {buttonLabel}
-        </Button>
-      </Form>
+      {({ errors }) => (
+        <Form className={classes.form}>
+          <Grid container spacing={3} className={classes.grid}>
+            {elements.map(
+              ({ component, code, display, settings, inputProps }) => (
+                <Grid item xs={xs} key={code}>
+                  <FastField
+                    component={component}
+                    {...inputProps}
+                    name={code}
+                    label={display}
+                    settings={settings}
+                    fullWidth={true}
+                  />
+                </Grid>
+              )
+            )}
+          </Grid>
+          <div className={classes.footer}>
+            {!R.isEmpty(errors) && (
+              <ErrorMessage>{R.head(R.values(errors))}</ErrorMessage>
+            )}
+            <Button
+              className={classnames(classes.button, buttonClass)}
+              type="submit">
+              {buttonLabel}
+            </Button>
+          </div>
+        </Form>
+      )}
     </Formik>
   )
 }

@@ -32,14 +32,14 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      clientId: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      key: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      secret: Yup.string()
-        .max(100, 'Too long')
+      clientId: Yup.string('The client ID must be a string')
+        .max(100, 'The client ID is too long')
+        .required('The client ID is required'),
+      key: Yup.string('The key must be a string')
+        .max(100, 'The key is too long')
+        .required('The key is required'),
+      secret: Yup.string('The secret must be a string')
+        .max(100, 'The secret is too long')
         .test(secretTest(account?.secret))
     })
   }

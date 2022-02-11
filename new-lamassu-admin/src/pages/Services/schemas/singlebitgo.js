@@ -44,18 +44,20 @@ const singleBitgo = code => ({
     }
   ],
   validationSchema: Yup.object().shape({
-    token: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    environment: Yup.string()
+    token: Yup.string('The token must be a string')
+      .max(100, 'The token is too long')
+      .required('The token is required'),
+    environment: Yup.string('The environment must be a string')
       .matches(/(prod|test)/)
-      .required(),
-    [`${code}WalletId`]: Yup.string()
-      .max(100, 'Too long')
-      .required(),
-    [`${code}WalletPassphrase`]: Yup.string()
-      .max(100, 'Too long')
-      .required()
+      .required('The environment is required'),
+    [`${code}WalletId`]: Yup.string(`The ${code} wallet ID must be a string`)
+      .max(100, `The ${code} wallet ID is too long`)
+      .required(`The ${code} wallet ID is required`),
+    [`${code}WalletPassphrase`]: Yup.string(
+      `The ${code} passphrase must be a string`
+    )
+      .max(100, `The ${code} wallet passphrase is too long`)
+      .required(`The ${code} wallet passphrase is required`)
   })
 })
 
