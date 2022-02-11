@@ -100,12 +100,33 @@ const getAuthorizedStatus = (it, triggers, customRequests) => {
     return false
   }, fields)
 
+  const rejectedFieldStatus = R.map(ite => {
+    if (isManualField(ite)) {
+      if (uuid.validate(ite)) {
+        const request = R.find(
+          iter => iter.infoRequestId === ite,
+          it.customInfoRequests
+        )
+        return !R.isNil(request) && R.equals(request.override, 'blocked')
+      }
+
+      const regularFieldValue = R.includes(ite, fieldsWithPathSuffix)
+        ? it[`${ite}Path`]
+        : it[`${ite}`]
+      if (R.isNil(regularFieldValue)) return false
+      return R.equals(it[`${ite}Override`], 'blocked')
+    }
+    return false
+  }, fields)
+
   if (it.authorizedOverride === CUSTOMER_BLOCKED)
     return { label: 'Blocked', type: 'error' }
   if (it.isSuspended)
     return it.daysSuspended > 0
       ? { label: `${it.daysSuspended} day suspension`, type: 'warning' }
       : { label: `< 1 day suspension`, type: 'warning' }
+  if (R.any(ite => ite === true, rejectedFieldStatus))
+    return { label: 'Rejected', type: 'error' }
   if (R.any(ite => ite === true, pendingFieldStatus))
     return { label: 'Pending', type: 'warning' }
   return { label: 'Authorized', type: 'success' }
