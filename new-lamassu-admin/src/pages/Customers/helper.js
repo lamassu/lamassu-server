@@ -4,6 +4,7 @@ import { parse, isValid, format } from 'date-fns/fp'
 import { Field, useFormikContext } from 'formik'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as R from 'ramda'
+import * as uuid from 'uuid'
 import * as Yup from 'yup'
 
 import {
@@ -56,14 +57,11 @@ const CUSTOM = 'custom'
 const REQUIREMENT = 'requirement'
 const ID_CARD_DATA = 'idCardData'
 
-const getAuthorizedStatus = (it, triggers) => {
-  const fields = [
-    'frontCamera',
-    'idCardData',
-    'idCardPhoto',
-    'usSsn',
-    'sanctions'
-  ]
+const getAuthorizedStatus = (it, triggers, customRequests) => {
+  const fields = R.concat(
+    ['frontCamera', 'idCardData', 'idCardPhoto', 'usSsn', 'sanctions'],
+    R.map(ite => ite.id, customRequests)
+  )
   const fieldsWithPathSuffix = ['frontCamera', 'idCardPhoto']
 
   const isManualField = fieldName => {
@@ -83,17 +81,43 @@ const getAuthorizedStatus = (it, triggers) => {
     )
   }
 
-  const pendingFieldStatus = R.map(
-    ite =>
-      !R.isNil(
-        R.includes(ite, fieldsWithPathSuffix) ? it[`${ite}Path`] : it[`${ite}`]
-      )
-        ? isManualField(ite)
-          ? R.equals(it[`${ite}Override`], 'automatic')
-          : false
-        : false,
-    fields
-  )
+  const pendingFieldStatus = R.map(ite => {
+    if (isManualField(ite)) {
+      if (uuid.validate(ite)) {
+        const request = R.find(
+          iter => iter.infoRequestId === ite,
+          it.customInfoRequests
+        )
+        return !R.isNil(request) && R.equals(request.override, 'automatic')
+      }
+
+      const regularFieldValue = R.includes(ite, fieldsWithPathSuffix)
+        ? it[`${ite}Path`]
+        : it[`${ite}`]
+      if (R.isNil(regularFieldValue)) return false
+      return R.equals(it[`${ite}Override`], 'automatic')
+    }
+    return false
+  }, fields)
+
+  const rejectedFieldStatus = R.map(ite => {
+    if (isManualField(ite)) {
+      if (uuid.validate(ite)) {
+        const request = R.find(
+          iter => iter.infoRequestId === ite,
+          it.customInfoRequests
+        )
+        return !R.isNil(request) && R.equals(request.override, 'blocked')
+      }
+
+      const regularFieldValue = R.includes(ite, fieldsWithPathSuffix)
+        ? it[`${ite}Path`]
+        : it[`${ite}`]
+      if (R.isNil(regularFieldValue)) return false
+      return R.equals(it[`${ite}Override`], 'blocked')
+    }
+    return false
+  }, fields)
 
   if (it.authorizedOverride === CUSTOMER_BLOCKED)
     return { label: 'Blocked', type: 'error' }
@@ -101,6 +125,8 @@ const getAuthorizedStatus = (it, triggers) => {
     return it.daysSuspended > 0
       ? { label: `${it.daysSuspended} day suspension`, type: 'warning' }
       : { label: `< 1 day suspension`, type: 'warning' }
+  if (R.any(ite => ite === true, rejectedFieldStatus))
+    return { label: 'Rejected', type: 'error' }
   if (R.any(ite => ite === true, pendingFieldStatus))
     return { label: 'Pending', type: 'warning' }
   return { label: 'Authorized', type: 'success' }

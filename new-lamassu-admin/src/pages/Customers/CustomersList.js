@@ -13,7 +13,14 @@ import { getAuthorizedStatus, getFormattedPhone, getName } from './helper'
 
 const useStyles = makeStyles(styles)
 
-const CustomersList = ({ data, locale, onClick, loading, triggers }) => {
+const CustomersList = ({
+  data,
+  locale,
+  onClick,
+  loading,
+  triggers,
+  customRequests
+}) => {
   const classes = useStyles()
 
   const elements = [
@@ -66,7 +73,11 @@ const CustomersList = ({ data, locale, onClick, loading, triggers }) => {
     {
       header: 'Status',
       width: 191,
-      view: it => <MainStatus statuses={[getAuthorizedStatus(it, triggers)]} />
+      view: it => (
+        <MainStatus
+          statuses={[getAuthorizedStatus(it, triggers, customRequests)]}
+        />
+      )
     }
   ]
 
