@@ -11,7 +11,7 @@ import {
   fontColor
 } from 'src/styling/variables'
 
-const { tl2, p } = typographyStyles
+const { p } = typographyStyles
 
 let headerHeight = spacer * 7
 let subheaderHeight = spacer * 5
@@ -115,13 +115,10 @@ const styles = {
   },
   subheaderUl: {
     display: 'flex',
-    paddingLeft: 0
+    paddingLeft: 0,
+    margin: 0
   },
   subheaderLi: {
-    extend: tl2,
-    display: 'flex',
-    alignItems: 'center',
-    height: spacer * 3,
     listStyle: 'none',
     padding: [[0, spacer * 2.5]],
     '&:first-child': {
@@ -135,7 +132,7 @@ const styles = {
     color: placeholderColor
   },
   activeSubheaderLink: {
-    extend: tl2,
+    textShadow: '0.2px 0 0 currentColor',
     color: fontColor
   },
   white: {
