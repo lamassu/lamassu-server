@@ -22,6 +22,18 @@ function plugin (crypto) {
   return plugin
 }
 
+function isWalletNodeInstalled (status) {
+  // From http://supervisord.org/subprocess.html#process-states
+  switch (status) {
+    case 'STARTING' || 'RUNNING' || 'STOPPED' || 'BACKOFF' || 'STOPPING' || 'EXITED' || 'FATAL':
+      return true
+    case 'UNKNOWN':
+      return false
+    default:
+      return false
+  }
+}
+
 function run () {
   _.forEach((crypto) => {
     if (!_.includes(crypto.cryptoCode, _.keys(PLUGINS))) return
@@ -29,6 +41,7 @@ function run () {
     const cryptoPlugin = plugin(crypto)
     const status = common.es(`sudo supervisorctl status ${crypto.code} | awk '{ print $2 }'`).trim()
 
+    if (!isWalletNodeInstalled(status)) return
     cryptoPlugin.updateCore(common.getBinaries(crypto.cryptoCode), _.includes(status, ['RUNNING', 'STARTING']))
   }, cryptos)
 }
