@@ -6,24 +6,15 @@ exports.up = function (next) {
     `ALTER TYPE notification_type ADD VALUE 'security'`
   ]
 
-  return loadLatest()
-    .then(config => {
-      const newConfig = {}
-      if(config.notifications_email_active) {
-        newConfig.notifications_email_security = true
-      }
-      if(config.notifications_sms_active) {
-        newConfig.notifications_sms_security = true
-      }
-      if(config.notifications_notificationCenter_active) {
-        newConfig.notifications_notificationCenter_security = true
-      }
+  const newConfig = {}
+  newConfig.notifications_email_security = true
+  newConfig.notifications_sms_security = true
+  newConfig.notifications_notificationCenter_security = true
 
-      return migrationSaveConfig(newConfig)
-        .then(() => db.multi(sql, next))
-        .catch(err => {
-          return next(err)
-        })
+  return migrationSaveConfig(newConfig)
+    .then(() => db.multi(sql, next))
+    .catch(err => {
+      return next(err)
     })
 }
 
