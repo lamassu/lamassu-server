@@ -36,6 +36,7 @@ export default {
     const shadowSize = size === 'xl' ? 3 : height / 12
     const padding = size === 'xl' ? 20 : height / 2
     const isGrey = backgroundColor === 'grey'
+
     return {
       extend: size === 'xl' ? h1 : h3,
       border: 'none',
