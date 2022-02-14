@@ -119,7 +119,7 @@ const Services = () => {
       {editingSchema && (
         <Modal
           title={`Edit ${editingSchema.name}`}
-          width={478}
+          width={525}
           handleClose={() => setEditingSchema(null)}
           open={true}>
           <FormRenderer

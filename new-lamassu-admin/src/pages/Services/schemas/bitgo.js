@@ -98,37 +98,52 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      token: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      BTCWalletId: Yup.string().max(100, 'Too long'),
+      token: Yup.string('The token must be a string')
+        .max(100, 'The token is too long')
+        .required('The token is required'),
+      BTCWalletId: Yup.string('The BTC wallet ID must be a string').max(
+        100,
+        'The BTC wallet ID is too long'
+      ),
       BTCWalletPassphrase: buildTestValidation(
         'BTCWalletId',
         account?.BTCWalletPassphrase
       ),
-      LTCWalletId: Yup.string().max(100, 'Too long'),
+      LTCWalletId: Yup.string('The LTC wallet ID must be a string').max(
+        100,
+        'The LTC wallet ID is too long'
+      ),
       LTCWalletPassphrase: buildTestValidation(
         'LTCWalletId',
         account?.LTCWalletPassphrase
       ),
-      ZECWalletId: Yup.string().max(100, 'Too long'),
+      ZECWalletId: Yup.string('The ZEC wallet ID must be a string').max(
+        100,
+        'The ZEC wallet ID is too long'
+      ),
       ZECWalletPassphrase: buildTestValidation(
         'ZECWalletId',
         account?.ZECWalletPassphrase
       ),
-      BCHWalletId: Yup.string().max(100, 'Too long'),
+      BCHWalletId: Yup.string('The BCH wallet ID must be a string').max(
+        100,
+        'The BCH wallet ID is too long'
+      ),
       BCHWalletPassphrase: buildTestValidation(
         'BCHWalletId',
         account?.BCHWalletPassphrase
       ),
-      DASHWalletId: Yup.string().max(100, 'Too long'),
+      DASHWalletId: Yup.string('The DASH wallet ID must be a string').max(
+        100,
+        'The DASH wallet ID is too long'
+      ),
       DASHWalletPassphrase: buildTestValidation(
         'DASHWalletId',
         account?.DASHWalletPassphrase
       ),
-      environment: Yup.string()
+      environment: Yup.string('The environment must be a string')
         .matches(/(prod|test)/)
-        .required()
+        .required('The environment is required')
     })
   }
 }

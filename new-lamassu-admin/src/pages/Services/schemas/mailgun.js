@@ -32,20 +32,20 @@ export default {
   ],
   getValidationSchema: () => {
     return Yup.object().shape({
-      apiKey: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      domain: Yup.string()
-        .max(100, 'Too long')
-        .required(),
-      fromEmail: Yup.string()
-        .max(100, 'Too long')
-        .email('Please input a valid email address')
-        .required(),
-      toEmail: Yup.string()
-        .max(100, 'Too long')
-        .email('Please input a valid email address')
-        .required()
+      apiKey: Yup.string('The API key must be a string')
+        .max(100, 'The API key is too long')
+        .required('The API key is required'),
+      domain: Yup.string('The domain must be a string')
+        .max(100, 'The domain is too long')
+        .required('The domain is required'),
+      fromEmail: Yup.string('The from email must be a string')
+        .max(100, 'The from email is too long')
+        .email('The from email must be a valid email address')
+        .required('The from email is required'),
+      toEmail: Yup.string('The to email must be a string')
+        .max(100, 'The to email is too long')
+        .email('The to email must be a valid email address')
+        .required('The to email is required')
     })
   }
 }
