@@ -5,7 +5,6 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { DeleteDialog } from 'src/components/DeleteDialog'
 import { HoverableTooltip } from 'src/components/Tooltip'
 import { IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
@@ -118,7 +117,6 @@ const SMSPreview = ({ sms, coords }) => {
 const SMSNotices = () => {
   const classes = useStyles()
 
-  const [deleteDialog, setDeleteDialog] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [selectedSMS, setSelectedSMS] = useState(null)
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -149,7 +147,6 @@ const SMSNotices = () => {
   const handleClose = () => {
     setShowModal(false)
     setSelectedSMS(null)
-    setDeleteDialog(false)
   }
 
   const elements = [
@@ -247,16 +244,6 @@ const SMSNotices = () => {
           submit={editMessage}
         />
       )}
-      <DeleteDialog
-        open={deleteDialog}
-        onDismissed={() => {
-          handleClose()
-        }}
-        onConfirmed={() => {
-          handleClose()
-        }}
-        errorMessage={errorMsg}
-      />
       {previewOpen && <SMSPreview sms={selectedSMS} coords={previewCoords} />}
       <DataTable
         emptyText="No SMS notices so far"
