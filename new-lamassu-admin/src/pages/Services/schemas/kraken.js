@@ -3,7 +3,7 @@ import * as Yup from 'yup'
 import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
 import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
-import secretTest from './helper'
+import { secretTest } from './helper'
 
 export default {
   code: 'kraken',

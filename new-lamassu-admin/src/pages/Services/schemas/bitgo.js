@@ -6,7 +6,7 @@ import {
   Autocomplete
 } from 'src/components/inputs/formik'
 
-import secretTest from './helper'
+import { secretTest } from './helper'
 
 const isDefined = it => it && it.length
 
