@@ -19,8 +19,8 @@ import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
 import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
-import CustomSMS from 'src/pages/OperatorInfo/CustomSMS/CustomSMS'
 import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
+import SMSNotices from 'src/pages/OperatorInfo/SMSNotices/SMSNotices'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
@@ -169,11 +169,11 @@ const getPazuzRoutes = () => [
             component: ReceiptPrinting
           },
           {
-            key: 'custom-sms',
-            label: 'Custom SMS',
-            route: '/settings/operator-info/custom-sms',
+            key: 'sms-notices',
+            label: 'SMS notices',
+            route: '/settings/operator-info/sms-notices',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
-            component: CustomSMS
+            component: SMSNotices
           },
           {
             key: 'coin-atm-radar',
