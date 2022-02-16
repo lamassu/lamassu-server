@@ -10,7 +10,7 @@ import { toNamespace } from 'src/utils/config'
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 
-const LAST_STEP = 5
+const MAX_STEPS = 5
 const MODAL_WIDTH = 554
 
 const contains = crypto => R.compose(R.contains(crypto), R.prop('cryptos'))
@@ -51,7 +51,6 @@ const Wizard = ({
   })
 
   const title = `Enable ${coin.display}`
-  const isLastStep = step === LAST_STEP
 
   const tickers = { filled: filterConfig(coin.code, 'ticker')(accountsConfig) }
   const wallets = getItems(accountsConfig, accounts, 'wallet', coin.code)
@@ -59,6 +58,34 @@ const Wizard = ({
   const zeroConfs = getItems(accountsConfig, accounts, 'zeroConf', coin.code)
 
   const getValue = code => R.find(R.propEq('code', code))(accounts)
+
+  const commonWizardSteps = [
+    { type: 'ticker', ...tickers },
+    { type: 'wallet', ...wallets },
+    { type: 'exchange', ...exchanges }
+  ]
+
+  const hasZeroConfs =
+    !R.isEmpty(zeroConfs.filled) ||
+    (!R.isNil(zeroConfs.unfilled) && !R.isEmpty(zeroConfs.unfilled))
+
+  const wizardSteps = hasZeroConfs
+    ? R.concat(commonWizardSteps, [
+        {
+          type: 'zeroConf',
+          name: 'confidence checking',
+          schema: Yup.object().shape({
+            zeroConfLimit: Yup.number().required()
+          }),
+          ...zeroConfs
+        },
+        { type: 'zeroConfLimit', name: '0-conf limit', ...zeroConfs }
+      ])
+    : commonWizardSteps
+
+  const lastStep = wizardSteps.length
+  const isLastStep = step === lastStep
+  const stepData = step > 0 ? wizardSteps[step - 1] : null
 
   const onContinue = async (stepConfig, stepAccount) => {
     const newConfig = R.merge(config, stepConfig)
@@ -84,30 +111,6 @@ const Wizard = ({
     })
   }
 
-  const getStepData = () => {
-    switch (step) {
-      case 1:
-        return { type: 'ticker', ...tickers }
-      case 2:
-        return { type: 'wallet', ...wallets }
-      case 3:
-        return { type: 'exchange', ...exchanges }
-      case 4:
-        return {
-          type: 'zeroConf',
-          name: 'confidence checking',
-          schema: Yup.object().shape({
-            zeroConfLimit: Yup.number().required()
-          }),
-          ...zeroConfs
-        }
-      case 5:
-        return { type: 'zeroConfLimit', name: '0-conf limit', ...zeroConfs }
-      default:
-        return null
-    }
-  }
-
   return (
     <Modal
       title={step === 0 ? null : title}
@@ -123,12 +126,14 @@ const Wizard = ({
       )}
       {step !== 0 && (
         <WizardStep
-          step={step}
           coin={coin.display}
           fiatCurrency={fiatCurrency}
           error={error}
-          lastStep={isLastStep}
-          {...getStepData()}
+          step={step}
+          maxSteps={MAX_STEPS}
+          lastStep={lastStep}
+          isLastStep={isLastStep}
+          {...stepData}
           onContinue={onContinue}
           getValue={getValue}
         />

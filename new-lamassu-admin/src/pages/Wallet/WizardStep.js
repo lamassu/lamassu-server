@@ -57,9 +57,11 @@ const WizardStep = ({
   schema: stepSchema,
   coin,
   name,
-  step,
   error,
+  step,
+  maxSteps,
   lastStep,
+  isLastStep,
   onContinue,
   fiatCurrency,
   filled,
@@ -83,7 +85,7 @@ const WizardStep = ({
     onContinue(config, account)
   }
 
-  const label = lastStep ? 'Finish' : 'Next'
+  const label = isLastStep ? 'Finish' : 'Next'
   const displayName = name ?? type
   const subtitleClass = {
     [classes.subtitle]: true,
@@ -92,13 +94,13 @@ const WizardStep = ({
   return (
     <>
       <Info2 className={classes.title}>{startCase(displayName)}</Info2>
-      <Stepper steps={5} currentStep={step} />
+      <Stepper steps={lastStep} currentStep={step} />
       <H4 className={classnames(subtitleClass)}>
-        {step < 4
+        {step < maxSteps - 1
           ? `Select a ${displayName} or set up a new one`
           : `Select ${displayName} for ${coin}`}
       </H4>
-      {step !== 5 && (
+      {!(isLastStep && step === maxSteps) && (
         <RadioGroup
           options={filled}
           value={selected}
@@ -110,7 +112,8 @@ const WizardStep = ({
           radioClassName={classes.radio}
         />
       )}
-      {step === 5 && (
+      {/* Hack to support optional 0conf setup */
+      isLastStep && step === maxSteps && (
         <Formik
           validateOnBlur={false}
           validateOnChange={true}
