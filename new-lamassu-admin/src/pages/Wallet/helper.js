@@ -22,10 +22,9 @@ const WalletSchema = Yup.object().shape({
   ticker: Yup.string().required(),
   wallet: Yup.string().required(),
   exchange: Yup.string().required(),
-  zeroConf: Yup.string().required(),
+  zeroConf: Yup.string(),
   zeroConfLimit: Yup.number()
     .integer()
-    .required('Zero Conf Limit is a required field')
     .min(0)
     .max(CURRENCY_MAX)
     .transform(transformNumber)
