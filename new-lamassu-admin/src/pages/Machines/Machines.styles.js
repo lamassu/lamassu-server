@@ -21,7 +21,8 @@ const styles = {
   },
   label3: {
     color: comet,
-    marginTop: 0
+    marginTop: 0,
+    fontSize: 12
   },
   row: {
     display: 'flex',
@@ -51,6 +52,14 @@ const styles = {
   sidebarContainer: {
     height: 400,
     overflowY: 'auto'
+  },
+  contentContainer: {
+    '& > *': {
+      marginTop: 26
+    },
+    '& > *:first-child': {
+      marginTop: 0
+    }
   }
 }
 
