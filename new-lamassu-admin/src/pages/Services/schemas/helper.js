@@ -9,4 +9,14 @@ const secretTest = secret => ({
   }
 })
 
-export default secretTest
+const leadingZerosTest = (value, context) => {
+  if (
+    R.startsWith('0', context.originalValue) &&
+    R.length(context.originalValue) > 1
+  ) {
+    return context.createError()
+  }
+  return true
+}
+
+export { secretTest, leadingZerosTest }
