@@ -32,7 +32,7 @@ const GET_INFO = gql`
 `
 
 const AdvancedWallet = () => {
-  const ADVANCED = 'advanced'
+  const ADVANCED = namespaces.ADVANCED
   const CRYPTOCURRENCY_KEY = 'cryptoCurrency'
   const SCREEN_KEY = namespaces.WALLETS
   const { data } = useQuery(GET_INFO)
@@ -44,22 +44,15 @@ const AdvancedWallet = () => {
     refetchQueries: () => ['getData']
   })
 
-  const mapConfigKeys = R.curry((fn, obj) =>
-    R.zipObj(R.map(fn, R.keys(obj)), R.values(obj))
-  )
-
   const save = rawConfig => {
     const config = toNamespace(SCREEN_KEY)(
-      mapConfigKeys(it => `${ADVANCED}_` + it, rawConfig.wallets[0])
+      toNamespace(ADVANCED)(rawConfig.wallets[0])
     )
-
     return saveConfig({ variables: { config } })
   }
 
   const saveOverrides = rawConfig => {
-    const config = toNamespace(SCREEN_KEY)(
-      mapConfigKeys(it => `${ADVANCED}_` + it, rawConfig)
-    )
+    const config = toNamespace(SCREEN_KEY)(toNamespace(ADVANCED)(rawConfig))
     return saveConfig({ variables: { config } })
   }
 
@@ -68,12 +61,8 @@ const AdvancedWallet = () => {
 
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
-  const AdvancedWalletSettings = mapConfigKeys(
-    it => R.tail(R.split('_', it)),
-    R.pickBy(
-      (val, key) => R.head(R.split('_', key)) === ADVANCED,
-      data?.config && fromNamespace(SCREEN_KEY)(data.config)
-    )
+  const AdvancedWalletSettings = fromNamespace(ADVANCED)(
+    fromNamespace(SCREEN_KEY)(data?.config)
   )
 
   const AdvancedWalletSettingsOverrides = AdvancedWalletSettings.overrides ?? []

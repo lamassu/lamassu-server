@@ -95,7 +95,7 @@ const getAdvancedWalletElements = () => {
       stripe: true,
       width: 250,
       view: (_, ite) => {
-        return ite.allowTransactionBatching ? 'Yes (Only BTC supports)' : `No`
+        return ite.allowTransactionBatching ? 'Yes' : `No`
       },
       input: Checkbox
     },
