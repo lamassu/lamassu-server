@@ -18,9 +18,9 @@ import styles from './Cassettes.styles'
 const useStyles = makeStyles(styles)
 
 const widthsByNumberOfCassettes = {
-  2: { cashbox: 116, cassette: 280, cassetteGraph: 80, editWidth: 174 },
-  3: { cashbox: 106, cassette: 200, cassetteGraph: 60, editWidth: 145 },
-  4: { cashbox: 106, cassette: 164, cassetteGraph: 40, editWidth: 90 }
+  2: { cashbox: 203, cassette: 280, cassetteGraph: 80, editWidth: 87 },
+  3: { cashbox: 164, cassette: 200, cassetteGraph: 60, editWidth: 87 },
+  4: { cashbox: 131, cassette: 158, cassetteGraph: 40, editWidth: 87 }
 }
 
 const ValidationSchema = Yup.object().shape({
@@ -159,7 +159,7 @@ const CashCassettes = ({ machine, config, refetchData, bills }) => {
   elements.push({
     name: 'edit',
     header: 'Edit',
-    width: 87,
+    width: widthsByNumberOfCassettes[numberOfCassettes].editWidth,
     view: () => {
       return (
         <IconButton

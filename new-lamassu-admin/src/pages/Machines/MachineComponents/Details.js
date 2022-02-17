@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 
 import { Label3, P } from 'src/components/typography'
+import { modelPrettifier } from 'src/utils/machine'
 import { formatDate } from 'src/utils/timezones'
 
 import styles from '../Machines.styles'
@@ -21,7 +22,7 @@ const Details = ({ data, timezone }) => {
       </div>
       <div className={classes.rowItem}>
         <Label3 className={classes.label3}>Machine model</Label3>
-        <P>{data.model}</P>
+        <P>{modelPrettifier[data.model]}</P>
       </div>
       <div className={classes.rowItem}>
         <Label3 className={classes.label3}>Software version</Label3>

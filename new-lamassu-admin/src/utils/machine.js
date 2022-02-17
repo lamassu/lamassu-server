@@ -1,7 +1,8 @@
 const modelPrettifier = {
   douro1: 'Douro',
   sintra: 'Sintra',
-  gaia: 'Gaia'
+  gaia: 'Gaia',
+  tejo: 'Tejo'
 }
 
 export { modelPrettifier }

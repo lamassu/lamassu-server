@@ -5,6 +5,7 @@ import React, { memo, useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import ActionButton from 'src/components/buttons/ActionButton'
+import { H3 } from 'src/components/typography'
 import { ReactComponent as EditReversedIcon } from 'src/styling/icons/button/edit/white.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/button/edit/zodiac.svg'
 import { ReactComponent as RebootReversedIcon } from 'src/styling/icons/button/reboot/white.svg'
@@ -62,12 +63,6 @@ const getState = machineEventsLazy =>
   JSON.parse(machineEventsLazy.machine.latestEvent?.note ?? '{"state": null}')
     .state
 
-const Label = ({ children }) => {
-  const classes = useStyles()
-
-  return <div className={classes.label}>{children}</div>
-}
-
 const MachineActions = memo(({ machine, onActionSuccess }) => {
   const [action, setAction] = useState({ command: null })
   const [preflightOptions, setPreflightOptions] = useState({})
@@ -115,7 +110,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
 
   return (
     <div>
-      <Label>Actions</Label>
+      <H3>Actions</H3>
       <div className={classes.stack}>
         <ActionButton
           color="primary"
