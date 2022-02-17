@@ -607,6 +607,7 @@ const CustomerProfile = memo(() => {
                   photosData={photosData}
                   locale={locale}
                   setShowCompliance={() => setShowCompliance(!showCompliance)}
+                  timezone={timezone}
                 />
               </Box>
               <div>
@@ -646,7 +647,7 @@ const CustomerProfile = memo(() => {
           )}
           {isPhotos && (
             <div>
-              <CustomerPhotos photosData={photosData} />
+              <CustomerPhotos photosData={photosData} timezone={timezone} />
             </div>
           )}
         </div>

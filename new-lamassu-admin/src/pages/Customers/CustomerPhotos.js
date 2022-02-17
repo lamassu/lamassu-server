@@ -13,7 +13,7 @@ import PhotosCarousel from './components/PhotosCarousel'
 
 const useStyles = makeStyles(styles)
 
-const CustomerPhotos = ({ photosData }) => {
+const CustomerPhotos = ({ photosData, timezone }) => {
   const classes = useStyles()
 
   const [photosDialog, setPhotosDialog] = useState(false)
@@ -41,7 +41,9 @@ const CustomerPhotos = ({ photosData }) => {
       <InformativeDialog
         open={photosDialog}
         title={`Photo roll`}
-        data={<PhotosCarousel photosData={orderedPhotosData} />}
+        data={
+          <PhotosCarousel photosData={orderedPhotosData} timezone={timezone} />
+        }
         onDissmised={() => {
           setPhotosDialog(false)
           setPhotoClickIndex(null)
