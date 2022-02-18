@@ -11,7 +11,7 @@ import {
   fontSecondary
 } from 'src/styling/variables'
 
-const Graph = ({ data, machines, currency }) => {
+const Graph = ({ data, machines, currency, selectedMachine }) => {
   const ref = useRef(null)
 
   const AMOUNT_OF_MACHINES = 5
@@ -304,4 +304,9 @@ const Graph = ({ data, machines, currency }) => {
   return <svg ref={ref} />
 }
 
-export default memo(Graph, (prev, next) => R.equals(prev.period, next.period))
+export default memo(
+  Graph,
+  (prev, next) =>
+    R.equals(prev.period, next.period) &&
+    R.equals(prev.selectedMachine, next.selectedMachine)
+)

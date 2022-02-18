@@ -14,7 +14,7 @@ export default {
   },
   select: {
     width: WIDTH,
-    zIndex: 2,
+    zIndex: 1,
     '& label': {
       extend: label1,
       color: offColor,
