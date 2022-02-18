@@ -27,7 +27,7 @@ const BooleanCell = ({ name }) => {
 const BooleanPropertiesTable = memo(
   ({ title, disabled, data, elements, save, forcedEditing = false }) => {
     const initialValues = R.fromPairs(
-      elements.map(it => [it.name, data[it.name] ?? null])
+      elements.map(it => [it.name, data[it.name].toString() ?? null])
     )
 
     const schemaValidation = R.fromPairs(
@@ -38,8 +38,9 @@ const BooleanPropertiesTable = memo(
 
     const classes = useStyles()
 
-    const innerSave = async value => {
-      save(R.filter(R.complement(R.isNil), value))
+    const innerSave = async values => {
+      const toBoolean = (num, _) => R.equals(num, 'true')
+      save(R.mapObjIndexed(toBoolean, R.filter(R.complement(R.isNil))(values)))
       setEditing(false)
     }
 
