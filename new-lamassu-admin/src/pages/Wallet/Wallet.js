@@ -1,18 +1,14 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { DialogActions, makeStyles, Box } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { IconButton, Button } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
-import { RadioGroup } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
-import { P, Label1 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schemas from 'src/pages/Services/schemas'
-import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
@@ -59,8 +55,6 @@ const useStyles = makeStyles(styles)
 
 const Wallet = ({ name: SCREEN_KEY }) => {
   const classes = useStyles()
-  const [editingFeeDiscount, setEditingFeeDiscount] = useState(null)
-  const [selectedDiscount, setSelectedDiscount] = useState(null)
   const [editingSchema, setEditingSchema] = useState(null)
   const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [wizard, setWizard] = useState(false)
@@ -116,25 +110,6 @@ const Wallet = ({ name: SCREEN_KEY }) => {
       return it
     })
 
-  const saveFeeDiscount = rawConfig => {
-    const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setEditingFeeDiscount(false)
-    return saveConfig({ variables: { config } })
-  }
-
-  const handleRadioButtons = evt => {
-    const selectedDiscount = R.path(['target', 'value'])(evt)
-    setSelectedDiscount(selectedDiscount)
-  }
-
-  const radioButtonOptions = [
-    { display: '+20%', code: '1.2' },
-    { display: 'Default', code: '1' },
-    { display: '-20%', code: '0.8' },
-    { display: '-40%', code: '0.6' },
-    { display: '-60%', code: '0.4' }
-  ]
-
   return (
     <>
       <div className={classes.header}>
@@ -149,19 +124,6 @@ const Wallet = ({ name: SCREEN_KEY }) => {
             }
           ]}
         />
-        <Box alignItems="center" justifyContent="end">
-          <Label1 className={classes.feeDiscountLabel}>Fee discount</Label1>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="end"
-            mr="-4px">
-            <P className={classes.selection}>{selectedDiscount}</P>
-            <IconButton onClick={() => setEditingFeeDiscount(true)}>
-              <EditIcon />
-            </IconButton>
-          </Box>
-        </Box>
       </div>
       {!advancedSettings && (
         <>
@@ -209,32 +171,6 @@ const Wallet = ({ name: SCREEN_KEY }) => {
         </>
       )}
       {advancedSettings && <AdvancedWallet></AdvancedWallet>}
-      {editingFeeDiscount && (
-        <Modal
-          title={'Fee discount for BTC'}
-          width={478}
-          handleClose={() => setEditingFeeDiscount(null)}
-          open={true}>
-          <P>
-            Set a priority level for your outgoing BTC transactions, selecting a
-            percentage off of the fee estimate your wallet uses.
-          </P>
-          <RadioGroup
-            name="set-automatic-reset"
-            value={selectedDiscount}
-            options={radioButtonOptions}
-            onChange={handleRadioButtons}
-          />
-          <DialogActions>
-            <Button
-              onClick={() =>
-                saveFeeDiscount({ BTC_feeMultiplier: selectedDiscount })
-              }>
-              Confirm
-            </Button>
-          </DialogActions>
-        </Modal>
-      )}
     </>
   )
 }

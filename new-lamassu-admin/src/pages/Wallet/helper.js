@@ -33,32 +33,50 @@ const WalletSchema = Yup.object().shape({
 
 const AdvancedWalletSchema = Yup.object().shape({
   cryptoUnits: Yup.string().required(),
+  feeMultiplier: Yup.string().required(),
   allowTransactionBatching: Yup.boolean()
 })
 
-const getAdvancedWalletElements = (cryptoCurrencies, coinUtils, config) => {
-  const viewCryptoCurrency = it =>
-    R.compose(
-      R.prop(['display']),
-      R.find(R.propEq('code', it))
-    )(cryptoCurrencies)
+const OverridesSchema = Yup.object().shape({
+  cryptoUnits: Yup.string().required(),
+  feeMultiplier: Yup.string().required(),
+  cryptoCurrency: Yup.string().required(),
+  allowTransactionBatching: Yup.boolean()
+})
 
-  const getOptions = R.curry((coinUtils, it) => {
-    const options = R.keys(coinUtils.getCryptoCurrency(it.id).units)
-    return R.map(option => {
-      return { code: option, display: option }
-    })(options)
-  })
+const OverridesDefaults = {
+  cryptoUnits: '',
+  feeMultiplier: '',
+  cryptoCurrency: '',
+  allowTransactionBatching: null
+}
 
+const viewFeeMultiplier = it =>
+  R.compose(R.prop(['display']), R.find(R.propEq('code', it)))(feeOptions)
+
+const feeOptions = [
+  { display: '+20%', code: '1.2' },
+  { display: 'Default', code: '1' },
+  { display: '-20%', code: '0.8' },
+  { display: '-40%', code: '0.6' },
+  { display: '-60%', code: '0.4' }
+]
+
+const cryptoUnitsDefaultOptions = [
+  { display: 'mili', code: 'mili' },
+  { display: 'full', code: 'full' }
+]
+
+const getCryptoUnitsOptions = R.curry((coinUtils, it) => {
+  if (R.isNil(it.cryptoCurrency)) return cryptoUnitsDefaultOptions
+  const options = R.keys(coinUtils.getCryptoCurrency(it.cryptoCurrency).units)
+  return R.map(option => {
+    return { code: option, display: option }
+  })(options)
+})
+
+const getAdvancedWalletElements = () => {
   return [
-    {
-      name: 'id',
-      header: 'Cryptocurrency',
-      width: 180,
-      view: viewCryptoCurrency,
-      size: 'sm',
-      editable: false
-    },
     {
       name: 'cryptoUnits',
       size: 'sm',
@@ -66,7 +84,7 @@ const getAdvancedWalletElements = (cryptoCurrencies, coinUtils, config) => {
       width: 190,
       input: Autocomplete,
       inputProps: {
-        options: getOptions(coinUtils),
+        options: cryptoUnitsDefaultOptions,
         valueProp: 'code',
         labelProp: 'display'
       }
@@ -77,12 +95,83 @@ const getAdvancedWalletElements = (cryptoCurrencies, coinUtils, config) => {
       stripe: true,
       width: 250,
       view: (_, ite) => {
-        if (ite.id !== 'BTC')
+        return ite.allowTransactionBatching ? 'Yes' : `No`
+      },
+      input: Checkbox
+    },
+    {
+      name: 'feeMultiplier',
+      header: `Miner's Fee`,
+      size: 'sm',
+      stripe: true,
+      width: 250,
+      view: viewFeeMultiplier,
+      input: Autocomplete,
+      inputProps: {
+        options: feeOptions,
+        valueProp: 'code',
+        labelProp: 'display'
+      }
+    }
+  ]
+}
+
+const getAdvancedWalletElementsOverrides = (
+  coinSuggestions,
+  findSuggestion,
+  coinUtils
+) => {
+  return [
+    {
+      name: 'cryptoCurrency',
+      width: 180,
+      input: Autocomplete,
+      inputProps: {
+        options: it => R.concat(coinSuggestions, findSuggestion(it)),
+        optionsLimit: null,
+        valueProp: 'code',
+        labelProp: 'display'
+      },
+      size: 'sm'
+    },
+    {
+      name: 'cryptoUnits',
+      size: 'sm',
+      stripe: true,
+      width: 190,
+      input: Autocomplete,
+      inputProps: {
+        options: getCryptoUnitsOptions(coinUtils),
+        valueProp: 'code',
+        labelProp: 'display'
+      }
+    },
+    {
+      name: 'allowTransactionBatching',
+      size: 'sm',
+      stripe: true,
+      width: 250,
+      view: (_, ite) => {
+        if (ite.cryptoCurrency !== 'BTC')
           return <span style={classes.editDisabled}>{`No`}</span>
-        return config[`${ite.id}_allowTransactionBatching`] ? 'Yes' : 'No'
+        return ite.allowTransactionBatching ? 'Yes' : 'No'
       },
       input: Checkbox,
-      editable: it => it.id === 'BTC'
+      editable: it => it.cryptoCurrency === 'BTC'
+    },
+    {
+      name: 'feeMultiplier',
+      header: `Miner's Fee`,
+      size: 'sm',
+      stripe: true,
+      width: 250,
+      view: viewFeeMultiplier,
+      input: Autocomplete,
+      inputProps: {
+        options: feeOptions,
+        valueProp: 'code',
+        labelProp: 'display'
+      }
     }
   ]
 }
@@ -199,5 +288,8 @@ export {
   AdvancedWalletSchema,
   getElements,
   filterClass,
-  getAdvancedWalletElements
+  getAdvancedWalletElements,
+  getAdvancedWalletElementsOverrides,
+  OverridesDefaults,
+  OverridesSchema
 }
