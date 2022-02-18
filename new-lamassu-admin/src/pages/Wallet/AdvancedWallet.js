@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { utils as coinUtils } from '@lamassu/coins'
 import gql from 'graphql-tag'
-import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
