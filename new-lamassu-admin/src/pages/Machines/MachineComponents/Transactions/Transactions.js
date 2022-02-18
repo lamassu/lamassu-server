@@ -53,6 +53,7 @@ const GET_TRANSACTIONS = gql`
       discount
       customerId
       isAnonymous
+      rawTickerPrice
     }
   }
 `
