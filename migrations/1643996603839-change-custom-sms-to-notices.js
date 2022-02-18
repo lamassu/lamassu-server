@@ -7,7 +7,7 @@ exports.up = function (next) {
     `ALTER TYPE custom_message_event RENAME TO sms_notice_event`,
     `ALTER TYPE sms_notice_event ADD VALUE 'sms_receipt'`,
     `ALTER TABLE sms_notices ADD COLUMN message_name TEXT UNIQUE NOT NULL`,
-    `ALTER TABLE sms_notices ADD COLUMN enabled BOOLEAN NOT NULL DEFAULT true`
+    `ALTER TABLE sms_notices ADD COLUMN enabled BOOLEAN NOT NULL DEFAULT true`,
     `ALTER TABLE sms_notices ADD COLUMN allow_toggle BOOLEAN NOT NULL DEFAULT true`
   ]
 
