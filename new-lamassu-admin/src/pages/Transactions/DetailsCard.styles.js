@@ -27,7 +27,8 @@ export default {
   },
   label: {
     color: offColor,
-    margin: [[0, 0, 6, 0]]
+    margin: [[0, 0, 6, 0]],
+    whiteSpace: 'nowrap'
   },
   txIcon: {
     marginRight: 10
