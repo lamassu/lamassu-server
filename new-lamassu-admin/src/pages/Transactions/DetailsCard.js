@@ -1,4 +1,5 @@
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
@@ -6,7 +7,6 @@ import { add, differenceInYears, format, sub, parse } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import JSZip from 'jszip'
-import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 

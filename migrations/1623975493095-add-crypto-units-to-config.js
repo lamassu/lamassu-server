@@ -1,6 +1,6 @@
 const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
 const { getCryptosFromWalletNamespace } = require('../lib/new-config-manager.js')
-const { utils: coinUtils } = require('lamassu-coins')
+const { utils: coinUtils } = require('@lamassu/coins')
 const _ = require('lodash/fp')
 
 exports.up = function (next) {

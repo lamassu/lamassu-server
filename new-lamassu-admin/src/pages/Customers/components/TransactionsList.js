@@ -1,7 +1,7 @@
+import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles, Box } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { utils as coinUtils } from 'lamassu-coins'
 import * as R from 'ramda'
 import React from 'react'
 

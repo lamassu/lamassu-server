@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "7.6.0-beta.0",
+  "version": "8.0.0-beta.0",
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
@@ -45,7 +45,7 @@
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
     "json2csv": "^5.0.3",
-    "lamassu-coins": "git+https://github.com/lamassu/lamassu-coins.git",
+    "@lamassu/coins": "1.0.0-beta.2",
     "libphonenumber-js": "^1.7.38",
     "lnd-async": "^1.8.0",
     "lodash": "^4.17.10",
