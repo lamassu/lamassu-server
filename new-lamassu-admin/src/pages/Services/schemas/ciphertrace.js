@@ -21,7 +21,7 @@ export default {
       display: 'Score threshold',
       component: NumberInputFormik,
       face: true,
-      long: true
+      long: false
     },
     {
       code: 'enabled',
