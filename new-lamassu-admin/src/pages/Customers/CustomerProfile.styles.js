@@ -31,7 +31,8 @@ export default {
   },
   rightSidePanel: {
     display: 'block',
-    width: 1100
+    width: 1100,
+    marginBottom: 25
   },
   leftSidePanel: {
     width: 300,

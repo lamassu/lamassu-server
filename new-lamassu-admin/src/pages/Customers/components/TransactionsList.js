@@ -120,7 +120,7 @@ const TransactionsList = ({ customer, data, loading, locale }) => {
     {
       header: 'Date',
       width: 100,
-      view: it => formatDate(it.created, timezone, 'yyyy-MM-dd')
+      view: it => formatDate(it.created, timezone, 'yyyy‑MM‑dd')
     },
     {
       header: 'Time (h:m:s)',
