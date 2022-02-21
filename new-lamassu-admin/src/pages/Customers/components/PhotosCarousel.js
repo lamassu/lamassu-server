@@ -38,17 +38,19 @@ const PhotosCarousel = memo(({ photosData, timezone }) => {
       )}
       <div className={classes.secondRow}>
         <div>
-          <div>
-            <Label>Date</Label>
-            <div>
-              {photosData &&
-                formatDate(
-                  photosData[currentIndex]?.date,
-                  timezone,
-                  'yyyy-MM-dd HH:mm'
-                )}
-            </div>
-          </div>
+          {photosData[currentIndex].date && (
+            <>
+              <Label>Date</Label>
+              <div>
+                {photosData &&
+                  formatDate(
+                    photosData[currentIndex]?.date,
+                    timezone,
+                    'yyyy-MM-dd HH:mm'
+                  )}
+              </div>
+            </>
+          )}
         </div>
         <div>
           <Label>Taken by</Label>
