@@ -179,7 +179,8 @@ const CustomerData = ({
         }),
       validationSchema: customerDataSchemas.idCardData,
       initialValues: initialValues.idCardData,
-      isAvailable: !R.isNil(idData)
+      isAvailable: !R.isNil(idData),
+      editable: true
     },
     {
       fields: smsDataElements,
@@ -199,7 +200,8 @@ const CustomerData = ({
       retrieveAdditionalData: () => setRetrieve(true),
       initialValues: initialValues.smsData,
       isAvailable: !R.isNil(phone),
-      hasAdditionalData: !R.isNil(smsData) && !R.isEmpty(smsData)
+      hasAdditionalData: !R.isNil(smsData) && !R.isEmpty(smsData),
+      editable: false
     },
     {
       title: 'Name',
@@ -207,7 +209,8 @@ const CustomerData = ({
       authorize: () => {},
       reject: () => {},
       save: () => {},
-      isAvailable: false
+      isAvailable: false,
+      editable: true
     },
     {
       title: 'Sanctions check',
@@ -217,7 +220,8 @@ const CustomerData = ({
         updateCustomer({ sanctionsOverride: OVERRIDE_AUTHORIZED }),
       reject: () => updateCustomer({ sanctionsOverride: OVERRIDE_REJECTED }),
       children: <Info3>{sanctionsDisplay}</Info3>,
-      isAvailable: !R.isNil(sanctions)
+      isAvailable: !R.isNil(sanctions),
+      editable: true
     },
     {
       fields: customerDataElements.frontCamera,
@@ -244,7 +248,8 @@ const CustomerData = ({
       hasImage: true,
       validationSchema: customerDataSchemas.frontCamera,
       initialValues: initialValues.frontCamera,
-      isAvailable: !R.isNil(customer.frontCameraPath)
+      isAvailable: !R.isNil(customer.frontCameraPath),
+      editable: true
     },
     {
       fields: customerDataElements.idCardPhoto,
@@ -269,7 +274,8 @@ const CustomerData = ({
       hasImage: true,
       validationSchema: customerDataSchemas.idCardPhoto,
       initialValues: initialValues.idCardPhoto,
-      isAvailable: !R.isNil(customer.idCardPhotoPath)
+      isAvailable: !R.isNil(customer.idCardPhotoPath),
+      editable: true
     },
     {
       fields: customerDataElements.usSsn,
@@ -282,7 +288,8 @@ const CustomerData = ({
       deleteEditedData: () => deleteEditedData({ usSsn: null }),
       validationSchema: customerDataSchemas.usSsn,
       initialValues: initialValues.usSsn,
-      isAvailable: !R.isNil(customer.usSsn)
+      isAvailable: !R.isNil(customer.usSsn),
+      editable: true
     }
   ]
 
@@ -392,7 +399,8 @@ const CustomerData = ({
       validationSchema,
       initialValues,
       hasImage,
-      hasAdditionalData
+      hasAdditionalData,
+      editable
     },
     idx
   ) => {
@@ -412,7 +420,8 @@ const CustomerData = ({
         initialValues={initialValues}
         save={save}
         deleteEditedData={deleteEditedData}
-        retrieveAdditionalData={retrieveAdditionalData}></EditableCard>
+        retrieveAdditionalData={retrieveAdditionalData}
+        editable={editable}></EditableCard>
     )
   }
 
