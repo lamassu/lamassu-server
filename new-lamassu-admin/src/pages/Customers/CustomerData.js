@@ -103,7 +103,7 @@ const CustomerData = ({
   )
 
   const phone = R.path(['phone'])(customer)
-  const smsData = R.path(['subscriberInfo', 'result'])(customer)
+  const smsData = R.path(['subscriberInfo'])(customer)
 
   const isEven = elem => elem % 2 === 0
 
@@ -373,7 +373,7 @@ const CustomerData = ({
       name: it,
       label: onlyFirstToUpper(it),
       component: TextInput,
-      editable: true
+      editable: false
     })
   }, R.keys(smsData) ?? [])
 
