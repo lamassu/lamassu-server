@@ -27,7 +27,7 @@ const BooleanCell = ({ name }) => {
 const BooleanPropertiesTable = memo(
   ({ title, disabled, data, elements, save, forcedEditing = false }) => {
     const initialValues = R.fromPairs(
-      elements.map(it => [it.name, data[it.name].toString() ?? null])
+      elements.map(it => [it.name, data[it.name]?.toString() ?? null])
     )
 
     const schemaValidation = R.fromPairs(
