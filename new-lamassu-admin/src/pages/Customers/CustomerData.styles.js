@@ -1,4 +1,4 @@
-import { offColor, spacer } from 'src/styling/variables'
+import { offColor } from 'src/styling/variables'
 
 export default {
   header: {
@@ -45,26 +45,5 @@ export default {
       left: '100%',
       marginLeft: 15
     }
-  },
-  closeButton: {
-    display: 'flex',
-    padding: [[spacer * 2, spacer * 2, 0, spacer * 2]],
-    paddingRight: spacer * 1.5,
-    justifyContent: 'end'
-  },
-  dialogTitle: {
-    margin: [[0, spacer * 2, spacer, spacer * 4 + spacer]]
-  },
-  dialogContent: {
-    width: 615,
-    marginLeft: 16
-  },
-  dialogActions: {
-    padding: spacer * 4,
-    paddingTop: spacer * 2
-  },
-  cancelButton: {
-    marginRight: 8,
-    padding: 0
   }
 }

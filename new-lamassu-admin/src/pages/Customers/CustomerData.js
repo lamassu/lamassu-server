@@ -1,4 +1,3 @@
-import { DialogActions, DialogContent, Dialog } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import { parse, format } from 'date-fns/fp'
@@ -7,9 +6,9 @@ import { useState, React } from 'react'
 import * as Yup from 'yup'
 
 import ImagePopper from 'src/components/ImagePopper'
-import { FeatureButton, Button, IconButton } from 'src/components/buttons'
+import { FeatureButton } from 'src/components/buttons'
 import { TextInput } from 'src/components/inputs/formik'
-import { H3, Info3, H2 } from 'src/components/typography'
+import { H3, Info3 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
   OVERRIDE_REJECTED
@@ -17,7 +16,6 @@ import {
 import { ReactComponent as CardIcon } from 'src/styling/icons/ID/card/comet.svg'
 import { ReactComponent as PhoneIcon } from 'src/styling/icons/ID/phone/comet.svg'
 import { ReactComponent as CrossedCameraIcon } from 'src/styling/icons/ID/photo/crossed-camera.svg'
-import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/comet.svg'
 import { ReactComponent as CustomerListViewReversedIcon } from 'src/styling/icons/circle buttons/customer-list-view/white.svg'
 import { ReactComponent as CustomerListViewIcon } from 'src/styling/icons/circle buttons/customer-list-view/zodiac.svg'
@@ -74,11 +72,11 @@ const CustomerData = ({
   updateCustomRequest,
   authorizeCustomRequest,
   updateCustomEntry,
-  retrieveAdditionalData
+  retrieveAdditionalDataDialog,
+  setRetrieve
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
-  const [retrieve, setRetrieve] = useState(false)
 
   const idData = R.path(['idCardData'])(customer)
   const rawExpirationDate = R.path(['expirationDate'])(idData)
@@ -500,66 +498,8 @@ const CustomerData = ({
           </div>
         )}
       </div>
-      <RetrieveDataDialog
-        setRetrieve={setRetrieve}
-        retrieveAdditionalData={retrieveAdditionalData}
-        open={retrieve}></RetrieveDataDialog>
+      {retrieveAdditionalDataDialog}
     </div>
-  )
-}
-
-const RetrieveDataDialog = ({
-  setRetrieve,
-  retrieveAdditionalData,
-  open,
-  props
-}) => {
-  const classes = useStyles()
-
-  return (
-    <Dialog
-      open={open}
-      aria-labelledby="form-dialog-title"
-      PaperProps={{
-        style: {
-          borderRadius: 8,
-          minWidth: 656,
-          bottom: 125,
-          right: 7
-        }
-      }}
-      {...props}>
-      <div className={classes.closeButton}>
-        <IconButton
-          size={16}
-          aria-label="close"
-          onClick={() => setRetrieve(false)}>
-          <CloseIcon />
-        </IconButton>
-      </div>
-      <H2 className={classes.dialogTitle}>{'Retrieve API data from Twilio'}</H2>
-      <DialogContent className={classes.dialogContent}>
-        <Info3>{`With this action you'll be using Twilio's API to retrieve additional
-  data from this user. This includes name and address, if available.\n`}</Info3>
-        <Info3>{` There is a small cost from Twilio for each retrieval. Would you like
-  to proceed?`}</Info3>
-      </DialogContent>
-      <DialogActions className={classes.dialogActions}>
-        <Button
-          backgroundColor="grey"
-          className={classes.cancelButton}
-          onClick={() => setRetrieve(false)}>
-          Cancel
-        </Button>
-        <Button
-          onClick={() => {
-            retrieveAdditionalData()
-            setRetrieve(false)
-          }}>
-          Confirm
-        </Button>
-      </DialogActions>
-    </Dialog>
   )
 }
 
