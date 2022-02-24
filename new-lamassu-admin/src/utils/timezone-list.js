@@ -143,4 +143,6 @@ const buildTzLabels = timezoneList => {
 
 const labels = buildTzLabels(timezones)
 
-export { labels, timezones }
+const DEFAULT_TIMEZONE = 'GMT'
+
+export { labels, timezones, DEFAULT_TIMEZONE }
