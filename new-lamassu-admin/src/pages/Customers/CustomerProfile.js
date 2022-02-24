@@ -1,18 +1,27 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Breadcrumbs, Box } from '@material-ui/core'
+import {
+  makeStyles,
+  Breadcrumbs,
+  Box,
+  DialogActions,
+  DialogContent,
+  Dialog
+} from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
-import { ActionButton } from 'src/components/buttons'
+import ErrorMessage from 'src/components/ErrorMessage'
+import { Button, IconButton, ActionButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
-import { Label1, Label2 } from 'src/components/typography'
+import { Label1, Label2, H2, Info3 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
+import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
@@ -280,9 +289,10 @@ const GET_ACTIVE_CUSTOM_REQUESTS = gql`
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
+  const [retrieve, setRetrieve] = useState(false)
   const [showCompliance, setShowCompliance] = useState(false)
   const [wizard, setWizard] = useState(false)
-  const [error] = useState(null)
+  const [error, setError] = useState(null)
   const [clickedItem, setClickedItem] = useState('overview')
   const { id: customerId } = useParams()
 
@@ -323,7 +333,11 @@ const CustomerProfile = memo(() => {
   })
 
   const [setCustomer] = useMutation(SET_CUSTOMER, {
-    onCompleted: () => getCustomer()
+    onCompleted: () => {
+      getCustomer()
+      setRetrieve(false)
+    },
+    onError: error => setError(error)
   })
 
   const [authorizeCustomRequest] = useMutation(SET_AUTHORIZED_REQUEST, {
@@ -640,7 +654,20 @@ const CustomerProfile = memo(() => {
                 updateCustomRequest={setCustomerCustomInfoRequest}
                 authorizeCustomRequest={authorizeCustomRequest}
                 updateCustomEntry={updateCustomEntry}
-                retrieveAdditionalData={retrieveAdditionalData}></CustomerData>
+                setRetrieve={setRetrieve}
+                retrieveAdditionalDataDialog={
+                  <RetrieveDataDialog
+                    onDismissed={() => {
+                      setError(null)
+                      setRetrieve(false)
+                    }}
+                    onConfirmed={() => {
+                      setError(null)
+                      retrieveAdditionalData()
+                    }}
+                    error={error}
+                    open={retrieve}></RetrieveDataDialog>
+                }></CustomerData>
             </div>
           )}
           {isNotes && (
@@ -676,5 +703,65 @@ const CustomerProfile = memo(() => {
     </>
   )
 })
+
+const RetrieveDataDialog = ({
+  onConfirmed,
+  onDismissed,
+  open,
+  error,
+  props
+}) => {
+  const classes = useStyles()
+
+  return (
+    <Dialog
+      open={open}
+      aria-labelledby="form-dialog-title"
+      PaperProps={{
+        style: {
+          borderRadius: 8,
+          minWidth: 656,
+          bottom: 125,
+          right: 7
+        }
+      }}
+      {...props}>
+      <div className={classes.closeButton}>
+        <IconButton
+          size={16}
+          aria-label="close"
+          onClick={() => onDismissed(false)}>
+          <CloseIcon />
+        </IconButton>
+      </div>
+      <H2 className={classes.dialogTitle}>{'Retrieve API data from Twilio'}</H2>
+      <DialogContent className={classes.dialogContent}>
+        <Info3>{`With this action you'll be using Twilio's API to retrieve additional
+  data from this user. This includes name and address, if available.\n`}</Info3>
+        <Info3>{` There is a small cost from Twilio for each retrieval. Would you like
+  to proceed?`}</Info3>
+      </DialogContent>
+      {error && (
+        <ErrorMessage className={classes.errorMessage}>
+          Failed to save
+        </ErrorMessage>
+      )}
+      <DialogActions className={classes.dialogActions}>
+        <Button
+          backgroundColor="grey"
+          className={classes.cancelButton}
+          onClick={() => onDismissed(false)}>
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            onConfirmed()
+          }}>
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
 
 export default CustomerProfile

@@ -145,7 +145,8 @@ const EditableCard = ({
   initialValues,
   deleteEditedData,
   retrieveAdditionalData,
-  hasAdditionalData = true
+  hasAdditionalData = true,
+  editable
 }) => {
   const classes = useStyles()
 
@@ -274,13 +275,41 @@ const EditableCard = ({
                           </ActionButton>
                         )}
                       </div>
-                      <ActionButton
-                        color="primary"
-                        Icon={EditIcon}
-                        InverseIcon={EditReversedIcon}
-                        onClick={() => setEditing(true)}>
-                        Edit
-                      </ActionButton>
+                      {editable && (
+                        <ActionButton
+                          color="primary"
+                          Icon={EditIcon}
+                          InverseIcon={EditReversedIcon}
+                          onClick={() => setEditing(true)}>
+                          Edit
+                        </ActionButton>
+                      )}
+                      {!editable &&
+                        authorize &&
+                        authorized.label !== 'Accepted' && (
+                          <div className={classes.button}>
+                            <ActionButton
+                              color="spring"
+                              type="button"
+                              Icon={AuthorizeIcon}
+                              InverseIcon={AuthorizeIcon}
+                              onClick={() => authorize()}>
+                              Authorize
+                            </ActionButton>
+                          </div>
+                        )}
+                      {!editable &&
+                        authorize &&
+                        authorized.label !== 'Rejected' && (
+                          <ActionButton
+                            color="tomato"
+                            type="button"
+                            Icon={BlockIcon}
+                            InverseIcon={BlockIcon}
+                            onClick={() => reject()}>
+                            Reject
+                          </ActionButton>
+                        )}
                     </div>
                   )}
                   {editing && (
