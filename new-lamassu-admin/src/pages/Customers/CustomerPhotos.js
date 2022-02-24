@@ -13,7 +13,7 @@ import PhotosCarousel from './components/PhotosCarousel'
 
 const useStyles = makeStyles(styles)
 
-const CustomerPhotos = ({ photosData }) => {
+const CustomerPhotos = ({ photosData, timezone }) => {
   const classes = useStyles()
 
   const [photosDialog, setPhotosDialog] = useState(false)
@@ -41,7 +41,9 @@ const CustomerPhotos = ({ photosData }) => {
       <InformativeDialog
         open={photosDialog}
         title={`Photo roll`}
-        data={<PhotosCarousel photosData={orderedPhotosData} />}
+        data={
+          <PhotosCarousel photosData={orderedPhotosData} timezone={timezone} />
+        }
         onDissmised={() => {
           setPhotosDialog(false)
           setPhotoClickIndex(null)
@@ -71,7 +73,7 @@ export const PhotoCard = ({
       <div className={classes.footer}>
         <CameraIcon />
         <Label2 className={classes.date}>
-          {format('yyyy-MM-dd', new Date(date))}
+          {date ? format('yyyy-MM-dd', new Date(date)) : 'ID card image'}
         </Label2>
       </div>
     </Paper>

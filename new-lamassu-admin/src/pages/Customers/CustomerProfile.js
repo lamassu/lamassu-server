@@ -480,6 +480,14 @@ const CustomerProfile = memo(() => {
     )
 
   const photosData = formatPhotosData(R.append(frontCameraData, txPhotosData))
+  const IDphotoData = customerData.idCardPhotoPath
+    ? [
+        {
+          photoDir: 'id-card-photo',
+          path: customerData.idCardPhotoPath
+        }
+      ]
+    : []
 
   const loading = customerLoading || configLoading
 
@@ -607,6 +615,7 @@ const CustomerProfile = memo(() => {
                   photosData={photosData}
                   locale={locale}
                   setShowCompliance={() => setShowCompliance(!showCompliance)}
+                  timezone={timezone}
                 />
               </Box>
               <div>
@@ -646,7 +655,10 @@ const CustomerProfile = memo(() => {
           )}
           {isPhotos && (
             <div>
-              <CustomerPhotos photosData={photosData} />
+              <CustomerPhotos
+                photosData={R.concat(photosData, IDphotoData)}
+                timezone={timezone}
+              />
             </div>
           )}
         </div>

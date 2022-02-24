@@ -11,7 +11,8 @@ const styles = {
   photosChipList: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    gap: 14
   },
   image: {
     objectFit: 'cover',
@@ -22,7 +23,7 @@ const styles = {
     borderTopRightRadius: 4
   },
   photoCardChip: {
-    margin: [[0, 16, 0, 0]]
+    cursor: 'pointer'
   },
   footer: {
     display: 'flex',

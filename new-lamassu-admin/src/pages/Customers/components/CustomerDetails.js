@@ -12,7 +12,7 @@ import PhotosCard from './PhotosCard'
 
 const useStyles = makeStyles(mainStyles)
 
-const CustomerDetails = memo(({ customer, photosData, locale }) => {
+const CustomerDetails = memo(({ customer, photosData, locale, timezone }) => {
   const classes = useStyles()
 
   const idNumber = R.path(['idCardData', 'documentNumber'])(customer)
@@ -44,7 +44,7 @@ const CustomerDetails = memo(({ customer, photosData, locale }) => {
 
   return (
     <Box display="flex">
-      <PhotosCard photosData={photosData} />
+      <PhotosCard photosData={photosData} timezone={timezone} />
       <Box display="flex" flexDirection="column">
         <div className={classes.name}>
           <IdIcon className={classes.idIcon} />

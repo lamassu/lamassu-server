@@ -4,6 +4,7 @@ import React, { memo, useState } from 'react'
 
 import { Carousel } from 'src/components/Carousel'
 import { Label1 } from 'src/components/typography'
+import { formatDate } from 'src/utils/timezones'
 
 import CopyToClipboard from '../../Transactions/CopyToClipboard'
 
@@ -11,7 +12,7 @@ import styles from './PhotosCarousel.styles'
 
 const useStyles = makeStyles(styles)
 
-const PhotosCarousel = memo(({ photosData }) => {
+const PhotosCarousel = memo(({ photosData, timezone }) => {
   const classes = useStyles()
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -37,10 +38,19 @@ const PhotosCarousel = memo(({ photosData }) => {
       )}
       <div className={classes.secondRow}>
         <div>
-          <div>
-            <Label>Date</Label>
-            <div>{photosData && photosData[currentIndex]?.date}</div>
-          </div>
+          {photosData[currentIndex].date && (
+            <>
+              <Label>Date</Label>
+              <div>
+                {photosData &&
+                  formatDate(
+                    photosData[currentIndex]?.date,
+                    timezone,
+                    'yyyy-MM-dd HH:mm'
+                  )}
+              </div>
+            </>
+          )}
         </div>
         <div>
           <Label>Taken by</Label>
