@@ -45,54 +45,46 @@ const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
   }
 
   const getMachineCommissions = () => {
-    if (loading || !deviceId || !config) {
-      return []
-    }
-    const commissions = {}
+    if (loading || !deviceId || !config) return []
 
-    // first, get general non overridden commissions
-    const makeInfo = x =>
-      (commissions[R.prop('code')(x)] = {
-        code: x.code,
-        name: x.display,
-        cashIn: config.cashIn,
-        cashOut: config.cashOut,
-        fixedFee: config.fixedFee,
-        minimumTx: config.minimumTx
-      })
-    R.forEach(makeInfo)(data.cryptoCurrencies)
-
-    // second, get overrides for all machines
-    const isId = id => R.propEq('machine', id)
-    const generalOverrides = config.overrides
-      ? R.filter(isId('ALL_MACHINES'))(config.overrides)
+    const overrides = config.overrides
+      ? R.concat(
+          R.filter(R.propEq('machine', 'ALL_MACHINES'), config.overrides),
+          R.filter(R.propEq('machine', deviceId), config.overrides)
+        )
       : []
 
-    const overrideInfo = o => {
-      commissions[o.cryptoCurrencies[0]].cashIn = o.cashIn
-      commissions[o.cryptoCurrencies[0]].cashOut = o.cashOut
-      commissions[o.cryptoCurrencies[0]].fixedFee = o.fixedFee
-      commissions[o.cryptoCurrencies[0]].minimumTx = o.minimumTx
-    }
-    R.forEach(overrideInfo)(generalOverrides)
-
-    // third, get overrides for this machine
-    const machineOverrides = config.overrides
-      ? R.filter(isId(deviceId))(config.overrides)
-      : []
-    R.forEach(overrideInfo)(machineOverrides)
-
-    // in the end, the machine specific overrides overwrite the less general ALL_MACHINE overrides or the general overrides
-    return R.values(commissions)
+    return R.map(
+      coin =>
+        R.reduce(
+          R.mergeDeepRight,
+          {
+            code: coin.code,
+            name: coin.display,
+            cashIn: config.cashIn,
+            cashOut: config.cashOut,
+            fixedFee: config.fixedFee,
+            minimumTx: config.minimumTx
+          },
+          R.project(
+            ['cashIn', 'cashOut', 'fixedFee', 'minimumTx'],
+            R.filter(
+              o =>
+                R.includes(coin.code, o.cryptoCurrencies) ||
+                R.includes('ALL_COINS', o.cryptoCurrencies),
+              overrides
+            )
+          )
+        ),
+      data.cryptoCurrencies
+    )
   }
-
-  const machineCommissions = getMachineCommissions()
 
   return (
     <EditableTable
       name="overrides"
       save={saveOverrides}
-      data={machineCommissions}
+      data={getMachineCommissions()}
       elements={overrides(currency)}
     />
   )
