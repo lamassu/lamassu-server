@@ -24,14 +24,7 @@ function plugin (crypto) {
 
 function isWalletNodeInstalled (status) {
   // From http://supervisord.org/subprocess.html#process-states
-  switch (status) {
-    case 'STARTING' || 'RUNNING' || 'STOPPED' || 'BACKOFF' || 'STOPPING' || 'EXITED' || 'FATAL':
-      return true
-    case 'UNKNOWN':
-      return false
-    default:
-      return false
-  }
+  return _.includes(status, ['STARTING', 'RUNNING', 'STOPPED', 'BACKOFF', 'STOPPING', 'EXITED', 'FATAL'])
 }
 
 function run () {
