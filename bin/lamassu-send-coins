@@ -10,7 +10,7 @@ const ticker = require('../lib/ticker')
 
 const [toAddress, cryptoValue, cryptoCode] = process.argv.slice(2)
 
-function computeCrypto(cryptoCode, value) {
+function computeCrypto (cryptoCode, value) {
   try {
     const cryptoRec = coinUtils.getCryptoCurrency(cryptoCode)
     const unitScale = cryptoRec.unitScale
@@ -75,7 +75,7 @@ settingsLoader.loadLatest()
             }
 
             console.log('Sending...')
-            return wallet.sendCoins(settings, toAddress, cryptoAtoms, cryptoCode)
+            return wallet.sendCoins(settings, { toAddress, cryptoAtoms, cryptoCode })
               .then(() => {
                 console.log('Success.')
                 process.exit(0)
