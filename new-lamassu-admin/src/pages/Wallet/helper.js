@@ -22,10 +22,9 @@ const WalletSchema = Yup.object().shape({
   ticker: Yup.string().required(),
   wallet: Yup.string().required(),
   exchange: Yup.string().required(),
-  zeroConf: Yup.string().required(),
+  zeroConf: Yup.string(),
   zeroConfLimit: Yup.number()
     .integer()
-    .required('Zero Conf Limit is a required field')
     .min(0)
     .max(CURRENCY_MAX)
     .transform(transformNumber)
@@ -176,6 +175,11 @@ const getAdvancedWalletElementsOverrides = (
   ]
 }
 
+const has0Conf = R.complement(
+  /* NOTE: List of coins without 0conf settings. */
+  R.pipe(R.prop('id'), R.flip(R.includes)(['ETH', 'USDT']))
+)
+
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
   const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it => {
@@ -255,7 +259,14 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       header: 'Confidence Checking',
       size: 'sm',
       stripe: true,
-      view: getDisplayName('zeroConf'),
+      view: (it, row) => {
+        const displayName = getDisplayName('zeroConf')(it, row)
+        return has0Conf(row) ? (
+          displayName
+        ) : (
+          <span style={classes.editDisabled}>{displayName}</span>
+        )
+      },
       input: Autocomplete,
       width: 210 - widthAdjust,
       inputProps: {
@@ -264,7 +275,8 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
         labelProp: 'display',
         optionsLimit: null,
         onChange
-      }
+      },
+      editable: has0Conf
     },
     {
       name: 'zeroConfLimit',
@@ -272,13 +284,13 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
       size: 'sm',
       stripe: true,
       view: (it, row) =>
-        row.id === 'ETH' ? <span style={classes.editDisabled}>{it}</span> : it,
+        has0Conf(row) ? it : <span style={classes.editDisabled}>{it}</span>,
       input: NumberInput,
       width: 145 - widthAdjust,
       inputProps: {
         decimalPlaces: 0
       },
-      editable: row => row.id !== 'ETH'
+      editable: has0Conf
     }
   ]
 }
