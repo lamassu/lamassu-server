@@ -32,7 +32,7 @@ const Overview = ({ data, onActionSuccess }) => {
           <Label1 className={classes.label3}>Ping</Label1>
           <P noMargin>
             {data.responseTime
-              ? new BigNumber(data.responseTime).toFixed(3).toString() + '  ms'
+              ? new BigNumber(data.responseTime).toFixed(3).toString() + ' ms'
               : 'unavailable'}
           </P>
         </div>
@@ -50,8 +50,9 @@ const Overview = ({ data, onActionSuccess }) => {
           <Label1 className={classes.label3}>Network speed</Label1>
           <P noMargin>
             {data.downloadSpeed
-              ? new BigNumber(data.downloadSpeed).toFixed(4).toString() +
-                '  MB/s'
+              ? new BigNumber(data.downloadSpeed)
+                  .toFixed(data.downloadSpeed < 10 ? 2 : 0)
+                  .toString() + ' MB/s'
               : 'unavailable'}
           </P>
         </div>
