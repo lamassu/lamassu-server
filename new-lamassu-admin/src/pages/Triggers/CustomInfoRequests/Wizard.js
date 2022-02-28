@@ -53,11 +53,11 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const getStep = step => {
+const getStep = (step, existingRequirements) => {
   switch (step) {
     case 1:
       return {
-        schema: nameOfReqSchema,
+        schema: nameOfReqSchema(existingRequirements),
         Component: NameOfRequirement
       }
     case 2:
@@ -162,11 +162,18 @@ const chooseNotNull = (a, b) => {
   return a
 }
 
-const Wizard = ({ onClose, error = false, toBeEdited, onSave, hasError }) => {
+const Wizard = ({
+  onClose,
+  error = false,
+  toBeEdited,
+  onSave,
+  hasError,
+  existingRequirements
+}) => {
   const classes = useStyles()
   const isEditing = !R.isNil(toBeEdited)
   const [step, setStep] = useState(isEditing ? 1 : 0)
-  const stepOptions = getStep(step)
+  const stepOptions = getStep(step, existingRequirements)
   const isLastStep = step === LAST_STEP
 
   const onContinue = (values, actions) => {
@@ -226,15 +233,21 @@ const Wizard = ({ onClose, error = false, toBeEdited, onSave, hasError }) => {
             editingValues
           )}
           validationSchema={stepOptions.schema}>
-          <Form className={classes.form} id={'custom-requirement-form'}>
-            <stepOptions.Component />
-            <div className={classes.submit}>
-              {hasError && <ErrorMessage>Failed to save</ErrorMessage>}
-              <Button className={classes.button} type="submit">
-                {isLastStep ? 'Save' : 'Next'}
-              </Button>
-            </div>
-          </Form>
+          {({ errors }) => (
+            <Form className={classes.form} id={'custom-requirement-form'}>
+              <stepOptions.Component />
+              <div className={classes.submit}>
+                {(hasError || errors) && (
+                  <ErrorMessage>
+                    {R.head(R.values(errors)) ?? `Failed to save`}
+                  </ErrorMessage>
+                )}
+                <Button className={classes.button} type="submit">
+                  {isLastStep ? 'Save' : 'Next'}
+                </Button>
+              </div>
+            </Form>
+          )}
         </Formik>
       )}
     </Modal>

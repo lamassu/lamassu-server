@@ -276,6 +276,7 @@ const CustomInfoRequests = ({
             }}
             toBeEdited={toBeEdited}
             onSave={(...args) => handleSave(...args)}
+            existingRequirements={customRequests}
           />
         )}
 
