@@ -237,7 +237,7 @@ const Wizard = ({
             <Form className={classes.form} id={'custom-requirement-form'}>
               <stepOptions.Component />
               <div className={classes.submit}>
-                {(hasError || errors) && (
+                {(hasError || !R.isEmpty(errors)) && (
                   <ErrorMessage>
                     {R.head(R.values(errors)) ?? `Failed to save`}
                   </ErrorMessage>
