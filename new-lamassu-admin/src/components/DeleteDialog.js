@@ -64,6 +64,7 @@ export const DeleteDialog = ({
   onDismissed,
   item = 'item',
   confirmationMessage = `Are you sure you want to delete this ${item}?`,
+  extraMessage,
   errorMessage = ''
 }) => {
   const classes = useStyles()
@@ -87,6 +88,7 @@ export const DeleteDialog = ({
       )}
       <DialogContent className={classes.content}>
         {confirmationMessage && <P>{confirmationMessage}</P>}
+        {extraMessage}
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button onClick={onConfirmed}>Confirm</Button>
