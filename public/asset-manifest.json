@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/static/js/main.0c7248b3.chunk.js",
-    "main.js.map": "/static/js/main.0c7248b3.chunk.js.map",
+    "main.js": "/static/js/main.d181456d.chunk.js",
+    "main.js.map": "/static/js/main.d181456d.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.5b925903.js",
     "runtime-main.js.map": "/static/js/runtime-main.5b925903.js.map",
-    "static/js/2.2ce16442.chunk.js": "/static/js/2.2ce16442.chunk.js",
-    "static/js/2.2ce16442.chunk.js.map": "/static/js/2.2ce16442.chunk.js.map",
+    "static/js/2.421aabbe.chunk.js": "/static/js/2.421aabbe.chunk.js",
+    "static/js/2.421aabbe.chunk.js.map": "/static/js/2.421aabbe.chunk.js.map",
     "index.html": "/index.html",
-    "static/js/2.2ce16442.chunk.js.LICENSE.txt": "/static/js/2.2ce16442.chunk.js.LICENSE.txt",
+    "static/js/2.421aabbe.chunk.js.LICENSE.txt": "/static/js/2.421aabbe.chunk.js.LICENSE.txt",
     "static/media/3-cassettes-open-1-left.d6d9aa73.svg": "/static/media/3-cassettes-open-1-left.d6d9aa73.svg",
     "static/media/3-cassettes-open-2-left.a9ee8d4c.svg": "/static/media/3-cassettes-open-2-left.a9ee8d4c.svg",
     "static/media/3-cassettes-open-3-left.08fed660.svg": "/static/media/3-cassettes-open-3-left.08fed660.svg",
@@ -153,7 +153,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.5b925903.js",
-    "static/js/2.2ce16442.chunk.js",
-    "static/js/main.0c7248b3.chunk.js"
+    "static/js/2.421aabbe.chunk.js",
+    "static/js/main.d181456d.chunk.js"
   ]
 }
