@@ -29,7 +29,6 @@ BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_UP })
 
 const getFiats = R.map(R.prop('fiat'))
 const useStyles = makeStyles(styles)
-const mapToFee = R.map(R.prop('cashInFee'))
 
 const getDateSecondsAgo = (seconds = 0, startDate = null) => {
   const date = startDate ? new Date(startDate) : new Date()
@@ -61,6 +60,7 @@ const GET_DATA = gql`
       created
       txClass
       error
+      profit
     }
     fiatRates {
       code
@@ -70,10 +70,6 @@ const GET_DATA = gql`
     config
   }
 `
-
-const reducer = (acc, it) =>
-  (acc +=
-    Number.parseFloat(it.commissionPercentage) * Number.parseFloat(it.fiat))
 
 const SystemPerformance = () => {
   const classes = useStyles()
@@ -123,10 +119,11 @@ const SystemPerformance = () => {
     new BigNumber(R.sum(getFiats(transactionsToShow))).toFormat(2)
 
   const getProfit = transactions => {
-    const cashInFees = R.sum(mapToFee(transactions))
-    const commissionFees = R.reduce(reducer, 0, transactions)
-
-    return new BigNumber(commissionFees + cashInFees)
+    return R.reduce(
+      (acc, value) => acc.plus(value.profit),
+      new BigNumber(0),
+      transactions
+    )
   }
 
   const getPercentChange = () => {
