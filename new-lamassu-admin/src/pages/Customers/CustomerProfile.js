@@ -64,6 +64,7 @@ const GET_CUSTOMER = gql`
       idCardDataExpiration
       idCardPhotoPath
       idCardPhotoOverride
+      idCardPhotoAt
       usSsn
       usSsnOverride
       sanctions
@@ -498,7 +499,8 @@ const CustomerProfile = memo(() => {
     ? [
         {
           photoDir: 'id-card-photo',
-          path: customerData.idCardPhotoPath
+          path: customerData.idCardPhotoPath,
+          date: customerData.idCardPhotoAt
         }
       ]
     : []
