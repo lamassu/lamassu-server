@@ -1,6 +1,5 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { makeStyles, Paper } from '@material-ui/core'
-import { format } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -14,6 +13,7 @@ import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enable
 import { ReactComponent as ExpandIconClosed } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandIconOpen } from 'src/styling/icons/action/expand/open.svg'
 import { ReactComponent as WhiteLogo } from 'src/styling/icons/menu/logo-white.svg'
+import { formatDate } from 'src/utils/timezones'
 
 import styles from './SMSNotices.styles'
 import CustomSMSModal from './SMSNoticesModal'
@@ -30,6 +30,7 @@ const GET_SMS_NOTICES = gql`
       enabled
       allowToggle
     }
+    config
   }
 `
 
@@ -85,12 +86,12 @@ const TOOLTIPS = {
   To edit the contents of the SMS receipt, please go to the 'Receipt' tab`)
 }
 
-const SMSPreview = ({ sms, coords }) => {
+const SMSPreview = ({ sms, coords, timezone }) => {
   const classes = useStyles(coords)
 
   const matches = {
     '#code': 123,
-    '#timestamp': format('HH:mm', new Date())
+    '#timestamp': formatDate(new Date(), timezone, 'HH:mm')
   }
 
   return (
@@ -108,7 +109,7 @@ const SMSPreview = ({ sms, coords }) => {
             )}
           </P>
         </Paper>
-        <Label3>{format('HH:mm', new Date())}</Label3>
+        <Label3>{formatDate(new Date(), timezone, 'HH:mm')}</Label3>
       </div>
     </div>
   )
@@ -126,6 +127,8 @@ const SMSNotices = () => {
   const { data: messagesData, loading: messagesLoading } = useQuery(
     GET_SMS_NOTICES
   )
+
+  const timezone = R.path(['config', 'locale_timezone'])(messagesData)
 
   const [editMessage] = useMutation(EDIT_SMS_NOTICE, {
     onError: ({ msg }) => setErrorMsg(msg),
@@ -244,7 +247,13 @@ const SMSNotices = () => {
           submit={editMessage}
         />
       )}
-      {previewOpen && <SMSPreview sms={selectedSMS} coords={previewCoords} />}
+      {previewOpen && (
+        <SMSPreview
+          sms={selectedSMS}
+          coords={previewCoords}
+          timezone={timezone}
+        />
+      )}
       <DataTable
         emptyText="No SMS notices so far"
         elements={elements}
