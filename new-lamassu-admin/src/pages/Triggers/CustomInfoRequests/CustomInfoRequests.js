@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
@@ -8,9 +8,10 @@ import React, { useState } from 'react'
 import { DeleteDialog } from 'src/components/DeleteDialog'
 import { IconButton, Button, Link } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
-import { Info1, Info3 } from 'src/components/typography'
+import { Info1, Info3, P } from 'src/components/typography'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import styles from './CustomInfoRequests.styles'
 import DetailsRow from './DetailsCard'
@@ -32,6 +33,18 @@ const constraintTypeDisplay = {
   selectMultiple: 'Select multiple',
   spaceSeparation: 'Space separation'
 }
+
+const GET_DATA = gql`
+  query getData {
+    config
+  }
+`
+
+const SAVE_CONFIG = gql`
+  mutation Save($config: JSONObject) {
+    saveConfig(config: $config)
+  }
+`
 
 const ADD_ROW = gql`
   mutation insertCustomInfoRequest($customRequest: CustomRequestInput!) {
@@ -71,6 +84,13 @@ const CustomInfoRequests = ({
   const [deleteDialog, setDeleteDialog] = useState(false)
   const [hasError, setHasError] = useState(false)
 
+  const { data: configData, loading: configLoading } = useQuery(GET_DATA)
+
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    refetchQueries: () => ['getData'],
+    onError: () => setHasError(true)
+  })
+
   const [addEntry] = useMutation(ADD_ROW, {
     onError: () => {
       console.log('Error while adding custom info request')
@@ -108,11 +128,24 @@ const CustomInfoRequests = ({
     refetchQueries: () => ['getData', 'customInfoRequests']
   })
 
+  const config = R.path(['config'])(configData) ?? []
+
   const handleDelete = id => {
     removeEntry({
       variables: {
         id
       }
+    }).then(() => {
+      const triggersConfig =
+        (config && fromNamespace(namespaces.TRIGGERS)(config)) ?? []
+      const cleanConfig = {
+        overrides: R.reject(
+          it => it.requirement === id,
+          triggersConfig.overrides
+        )
+      }
+      const newConfig = toNamespace(namespaces.TRIGGERS)(cleanConfig)
+      saveConfig({ variables: { config: newConfig } })
     })
   }
 
@@ -134,115 +167,131 @@ const CustomInfoRequests = ({
     })
   }
 
-  return (
+  const detailedDeleteMsg = (
     <>
-      {customRequests.length > 0 && (
-        <DataTable
-          emptyText="No custom info requests so far"
-          elements={[
-            {
-              header: 'Requirement name',
-              width: 300,
-              textAlign: 'left',
-              size: 'sm',
-              view: it => it.customRequest.name
-            },
-            {
-              header: 'Data entry type',
-              width: 300,
-              textAlign: 'left',
-              size: 'sm',
-              view: it => inputTypeDisplay[it.customRequest.input.type]
-            },
-            {
-              header: 'Constraints',
-              width: 300,
-              textAlign: 'left',
-              size: 'sm',
-              view: it =>
-                constraintTypeDisplay[it.customRequest.input.constraintType]
-            },
-            {
-              header: 'Edit',
-              width: 100,
-              textAlign: 'center',
-              size: 'sm',
-              view: it => {
-                return (
-                  <IconButton
-                    onClick={() => {
-                      setToBeEdited(it)
-                      return toggleWizard()
-                    }}>
-                    <EditIcon />
-                  </IconButton>
-                )
-              }
-            },
-            {
-              header: 'Delete',
-              width: 100,
-              textAlign: 'center',
-              size: 'sm',
-              view: it => {
-                return (
-                  <IconButton
-                    onClick={() => {
-                      setToBeDeleted(it.id)
-                      return setDeleteDialog(true)
-                    }}>
-                    <DeleteIcon />
-                  </IconButton>
-                )
-              }
-            }
-          ]}
-          data={customRequests}
-          Details={DetailsRow}
-          expandable
-          rowSize="sm"
-        />
-      )}
-      {!customRequests.length && (
-        <div className={classes.centerItems}>
-          <Info1 className={classnames(classes.m0, classes.mb10)}>
-            It seems you haven't added any custom information requests yet.
-          </Info1>
-          <Info3 className={classnames(classes.m0, classes.mb10)}>
-            Please read our{' '}
-            <a href="https://support.lamassu.is/hc/en-us/sections/115000817232-Compliance">
-              <Link>Support Article</Link>
-            </a>{' '}
-            on Compliance before adding new information requests.
-          </Info3>
-          <Button onClick={() => toggleWizard()}>
-            Add custom information request
-          </Button>
-        </div>
-      )}
-      {showWizard && (
-        <Wizard
-          hasError={hasError}
-          onClose={() => {
-            setToBeEdited(null)
-            setHasError(false)
-            toggleWizard()
-          }}
-          toBeEdited={toBeEdited}
-          onSave={(...args) => handleSave(...args)}
-        />
-      )}
-
-      <DeleteDialog
-        errorMessage={hasError ? 'Failed to delete' : ''}
-        open={deleteDialog}
-        onDismissed={() => {
-          setDeleteDialog(false)
-          setHasError(false)
-        }}
-        onConfirmed={() => handleDelete(toBeDeleted)}
-      />
+      <P noMargin>
+        Deleting this item will result in the triggers using it to be removed,
+        together with the advanced trigger overrides you defined for this item.
+      </P>
+      <P noMargin>
+        This action is <b>permanent</b>.
+      </P>
     </>
+  )
+
+  return (
+    !configLoading && (
+      <>
+        {customRequests.length > 0 && (
+          <DataTable
+            emptyText="No custom info requests so far"
+            elements={[
+              {
+                header: 'Requirement name',
+                width: 300,
+                textAlign: 'left',
+                size: 'sm',
+                view: it => it.customRequest.name
+              },
+              {
+                header: 'Data entry type',
+                width: 300,
+                textAlign: 'left',
+                size: 'sm',
+                view: it => inputTypeDisplay[it.customRequest.input.type]
+              },
+              {
+                header: 'Constraints',
+                width: 300,
+                textAlign: 'left',
+                size: 'sm',
+                view: it =>
+                  constraintTypeDisplay[it.customRequest.input.constraintType]
+              },
+              {
+                header: 'Edit',
+                width: 100,
+                textAlign: 'center',
+                size: 'sm',
+                view: it => {
+                  return (
+                    <IconButton
+                      onClick={() => {
+                        setToBeEdited(it)
+                        return toggleWizard()
+                      }}>
+                      <EditIcon />
+                    </IconButton>
+                  )
+                }
+              },
+              {
+                header: 'Delete',
+                width: 100,
+                textAlign: 'center',
+                size: 'sm',
+                view: it => {
+                  return (
+                    <IconButton
+                      onClick={() => {
+                        setToBeDeleted(it.id)
+                        return setDeleteDialog(true)
+                      }}>
+                      <DeleteIcon />
+                    </IconButton>
+                  )
+                }
+              }
+            ]}
+            data={customRequests}
+            Details={DetailsRow}
+            expandable
+            rowSize="sm"
+          />
+        )}
+        {!customRequests.length && (
+          <div className={classes.centerItems}>
+            <Info1 className={classnames(classes.m0, classes.mb10)}>
+              It seems you haven't added any custom information requests yet.
+            </Info1>
+            <Info3 className={classnames(classes.m0, classes.mb10)}>
+              Please read our{' '}
+              <a href="https://support.lamassu.is/hc/en-us/sections/115000817232-Compliance">
+                <Link>Support Article</Link>
+              </a>{' '}
+              on Compliance before adding new information requests.
+            </Info3>
+            <Button onClick={() => toggleWizard()}>
+              Add custom information request
+            </Button>
+          </div>
+        )}
+        {showWizard && (
+          <Wizard
+            hasError={hasError}
+            onClose={() => {
+              setToBeEdited(null)
+              setHasError(false)
+              toggleWizard()
+            }}
+            toBeEdited={toBeEdited}
+            onSave={(...args) => handleSave(...args)}
+          />
+        )}
+
+        <DeleteDialog
+          errorMessage={hasError ? 'Failed to delete' : ''}
+          open={deleteDialog}
+          onDismissed={() => {
+            setDeleteDialog(false)
+            setHasError(false)
+          }}
+          item={`custom information request`}
+          extraMessage={detailedDeleteMsg}
+          onConfirmed={() => handleDelete(toBeDeleted)}
+        />
+      </>
+    )
   )
 }
 
