@@ -73,7 +73,7 @@ export const PhotoCard = ({
       <div className={classes.footer}>
         <CameraIcon />
         <Label2 className={classes.date}>
-          {date ? format('yyyy-MM-dd', new Date(date)) : 'ID card image'}
+          {format('yyyy-MM-dd', new Date(date))}
         </Label2>
       </div>
     </Paper>
