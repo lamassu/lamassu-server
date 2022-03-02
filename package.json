@@ -6,6 +6,7 @@
   "license": "Unlicense",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
+    "@lamassu/coins": "1.0.0-beta.2",
     "@simplewebauthn/server": "^3.0.0",
     "apollo-server-express": "2.25.1",
     "argon2": "0.28.2",
@@ -45,7 +46,6 @@
     "helmet": "^3.8.1",
     "inquirer": "^5.2.0",
     "json2csv": "^5.0.3",
-    "@lamassu/coins": "1.0.0-beta.2",
     "libphonenumber-js": "^1.7.38",
     "lnd-async": "^1.8.0",
     "lodash": "^4.17.10",
@@ -63,6 +63,7 @@
     "numeral": "^2.0.3",
     "otplib": "^12.0.1",
     "p-each-series": "^1.0.0",
+    "p-queue": "^6.6.2",
     "p-retry": "^4.4.0",
     "pg-native": "^3.0.0",
     "pg-promise": "^10.10.2",
