@@ -1,4 +1,5 @@
 import { Field } from 'formik'
+import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
 
@@ -25,9 +26,20 @@ const NameOfRequirement = () => {
   )
 }
 
-const validationSchema = Yup.object().shape({
-  requirementName: Yup.string().required()
-})
+const validationSchema = existingRequirements =>
+  Yup.object().shape({
+    requirementName: Yup.string()
+      .required('A requirement name is required')
+      .test(
+        'unique-name',
+        'A custom information requirement with that name already exists',
+        (value, _context) =>
+          !R.includes(
+            value,
+            R.map(it => it.customRequest.name, existingRequirements)
+          )
+      )
+  })
 
 const defaultValues = {
   requirementName: ''
