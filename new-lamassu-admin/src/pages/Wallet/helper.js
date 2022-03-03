@@ -38,9 +38,13 @@ const AdvancedWalletSchema = Yup.object().shape({
 
 const OverridesSchema = Yup.object().shape({
   cryptoUnits: Yup.string().required(),
-  feeMultiplier: Yup.string(),
+  feeMultiplier: Yup.string()
+    .default(() => '1')
+    .required(),
   cryptoCurrency: Yup.string().required(),
   allowTransactionBatching: Yup.boolean()
+    .default(() => false)
+    .required()
 })
 
 const OverridesDefaults = {
@@ -90,9 +94,10 @@ const getAdvancedWalletElements = () => {
     },
     {
       name: 'allowTransactionBatching',
+      header: `Allow BTC Transaction Batching`,
       size: 'sm',
       stripe: true,
-      width: 250,
+      width: 260,
       view: (_, ite) => {
         return ite.allowTransactionBatching ? 'Yes' : `No`
       },
