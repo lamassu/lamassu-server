@@ -38,9 +38,13 @@ const AdvancedWalletSchema = Yup.object().shape({
 
 const OverridesSchema = Yup.object().shape({
   cryptoUnits: Yup.string().required(),
-  feeMultiplier: Yup.string().required(),
+  feeMultiplier: Yup.string()
+    .default(() => '1')
+    .required(),
   cryptoCurrency: Yup.string().required(),
   allowTransactionBatching: Yup.boolean()
+    .default(() => false)
+    .required()
 })
 
 const OverridesDefaults = {
@@ -90,9 +94,10 @@ const getAdvancedWalletElements = () => {
     },
     {
       name: 'allowTransactionBatching',
+      header: `Allow BTC Transaction Batching`,
       size: 'sm',
       stripe: true,
-      width: 250,
+      width: 260,
       view: (_, ite) => {
         return ite.allowTransactionBatching ? 'Yes' : `No`
       },
@@ -100,7 +105,7 @@ const getAdvancedWalletElements = () => {
     },
     {
       name: 'feeMultiplier',
-      header: `Miner's Fee`,
+      header: `BTC Miner's Fee`,
       size: 'sm',
       stripe: true,
       width: 250,
@@ -164,13 +169,18 @@ const getAdvancedWalletElementsOverrides = (
       size: 'sm',
       stripe: true,
       width: 250,
-      view: viewFeeMultiplier,
+      view: (_, ite) => {
+        if (ite.cryptoCurrency !== 'BTC')
+          return <span style={classes.editDisabled}>{`Default`}</span>
+        return viewFeeMultiplier(ite.feeMultiplier)
+      },
       input: Autocomplete,
       inputProps: {
         options: feeOptions,
         valueProp: 'code',
         labelProp: 'display'
-      }
+      },
+      editable: it => it.cryptoCurrency === 'BTC'
     }
   ]
 }

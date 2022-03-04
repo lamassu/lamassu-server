@@ -11,7 +11,7 @@ const CheckboxInput = memo(
     disabledMessage = '',
     ...props
   }) => {
-    const { name, onChange, value = true } = props.field
+    const { name, onChange, value } = props.field
 
     const settings = {
       enabled: enabled,
