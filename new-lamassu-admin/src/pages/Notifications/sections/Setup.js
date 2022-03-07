@@ -26,25 +26,33 @@ const sizes = {
   active: 263
 }
 
-const Row = ({ namespace, forceDisable, shouldUpperCase }) => {
-  const { data: rawData, save: rawSave } = useContext(NotificationsCtx)
-
-  const save = R.compose(rawSave(null), toNamespace(namespace))
-  const data = fromNamespace(namespace)(rawData)
-
+const Row = ({
+  namespace,
+  data,
+  forceDisable,
+  save,
+  shouldUpperCase,
+  onActivation
+}) => {
   const disabled = forceDisable || !data || !data.active
 
   const Cell = ({ name, disabled }) => {
     const value = !!(data && data[name])
+
+    const onChange = event => {
+      if (name === 'active' && value === false) {
+        if (!onActivation()) return
+      }
+
+      save({ [name]: event.target.checked })
+    }
 
     return (
       <Td width={sizes[name]} textAlign="center">
         <Switch
           disabled={disabled}
           checked={value}
-          onChange={event => {
-            save({ [name]: event.target.checked })
-          }}
+          onChange={onChange}
           value={value}
         />
       </Td>
@@ -71,7 +79,40 @@ const useStyles = makeStyles({
     width: 930
   }
 })
+
 const Setup = ({ wizard, forceDisable }) => {
+  const {
+    data: rawData,
+    save: rawSave,
+    twilioAvailable,
+    setSmsSetupPopup
+  } = useContext(NotificationsCtx)
+
+  const namespaces = [
+    {
+      name: 'email',
+      forceDisable: forceDisable,
+      shouldUpperCase: false,
+      onActivation: () => true
+    },
+    {
+      name: 'sms',
+      forceDisable: forceDisable,
+      shouldUpperCase: true,
+      onActivation: () => {
+        if (twilioAvailable) return true
+        setSmsSetupPopup(true)
+        return false
+      }
+    },
+    {
+      name: 'notificationCenter',
+      forceDisable: forceDisable,
+      shouldUpperCase: false,
+      onActivation: () => true
+    }
+  ]
+
   const widthAdjust = wizard ? 20 : 0
   const classes = useStyles()
   return (
@@ -85,9 +126,16 @@ const Setup = ({ wizard, forceDisable }) => {
         ))}
       </THead>
       <TBody>
-        <Row namespace="email" forceDisable={forceDisable} />
-        <Row namespace="sms" shouldUpperCase forceDisable={forceDisable} />
-        <Row namespace="notificationCenter" forceDisable={forceDisable} />
+        {namespaces.map(namespace => (
+          <Row
+            namespace={namespace.name}
+            forceDisable={namespace.forceDisable}
+            save={R.compose(rawSave(null), toNamespace(namespace.name))}
+            data={fromNamespace(namespace.name)(rawData)}
+            shouldUpperCase={namespace.shouldUpperCase}
+            onActivation={namespace.onActivation}
+          />
+        ))}
       </TBody>
     </Table>
   )
