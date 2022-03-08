@@ -46,24 +46,18 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     })
   }
 
-  const steps = []
-
-  R.until(
-    R.gt(R.__, machine.numberOfCassettes),
-    it => {
-      steps.push({
-        type: `cassette${it}`,
-        display: `Cassette ${it}`,
-        component: Autocomplete,
-        inputProps: {
-          options: R.map(it => ({ code: it, display: it }))(options),
-          labelProp: 'display',
-          valueProp: 'code'
-        }
-      })
-      return R.add(1, it)
-    },
-    1
+  const steps = R.map(
+    it => ({
+      type: `cassette${it}`,
+      display: `Cassette ${it}`,
+      component: Autocomplete,
+      inputProps: {
+        options: R.map(it => ({ code: it, display: it }), options),
+        labelProp: 'display',
+        valueProp: 'code'
+      }
+    }),
+    R.range(1, machine.numberOfCassettes + 1)
   )
 
   const schema = () =>
