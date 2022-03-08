@@ -5,11 +5,14 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import Modal from 'src/components/Modal'
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { Link } from 'src/components/buttons'
+import { Link, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P, Label2 } from 'src/components/typography'
+import FormRenderer from 'src/pages/Services/FormRenderer'
+import twilioSchema from 'src/pages/Services/schemas/twilio'
 import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circle buttons/filter/white.svg'
 import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
@@ -23,6 +26,12 @@ import AdvancedTriggers from './components/AdvancedTriggers'
 import { fromServer } from './helper'
 const useStyles = makeStyles(styles)
 
+const SAVE_ACCOUNT = gql`
+  mutation Save($accounts: JSONObject) {
+    saveAccounts(accounts: $accounts)
+  }
+`
+
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject) {
     saveConfig(config: $config)
@@ -32,6 +41,7 @@ const SAVE_CONFIG = gql`
 const GET_CONFIG = gql`
   query getData {
     config
+    accounts
   }
 `
 
@@ -55,6 +65,8 @@ const Triggers = () => {
   const [error, setError] = useState(null)
   const [subMenu, setSubMenu] = useState(false)
 
+  const [twilioSetupPopup, setTwilioSetupPopup] = useState(false)
+
   const customInfoRequests =
     R.path(['customInfoRequests'])(customInfoReqData) ?? []
   const enabledCustomInfoRequests = R.filter(R.propEq('enabled', true))(
@@ -68,6 +80,12 @@ const Triggers = () => {
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
+  })
+
+  const [saveAccount] = useMutation(SAVE_ACCOUNT, {
+    onCompleted: () => setTwilioSetupPopup(false),
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
   })
@@ -97,6 +115,17 @@ const Triggers = () => {
   }
 
   const loading = configLoading || customInfoLoading
+
+  const twilioSave = it => {
+    setError(null)
+    return saveAccount({
+      variables: { accounts: { twilio: it } }
+    })
+  }
+  const addNewTriger = () => {
+    if (!R.has('twilio', data?.accounts || {})) setTwilioSetupPopup(true)
+    else toggleWizard('newTrigger')()
+  }
 
   return (
     <>
@@ -163,7 +192,7 @@ const Triggers = () => {
           )}
         {!loading && !subMenu && !R.isEmpty(triggers) && (
           <Box display="flex" justifyContent="flex-end">
-            <Link color="primary" onClick={() => toggleWizard('newTrigger')()}>
+            <Link color="primary" onClick={addNewTriger}>
               + Add new trigger
             </Link>
           </Box>
@@ -190,6 +219,27 @@ const Triggers = () => {
           error={error}
           save={saveConfig}
           data={data}></AdvancedTriggers>
+      )}
+      {twilioSetupPopup && (
+        <Modal
+          title={`Configure SMS`}
+          width={478}
+          handleClose={() => setTwilioSetupPopup(false)}
+          open={true}>
+          <P>
+            In order for compliance triggers to work, you'll first need to
+            configure Twilio.
+          </P>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS"
+            label="Lamassu Support Article"
+          />
+          <FormRenderer
+            save={twilioSave}
+            elements={twilioSchema.elements}
+            validationSchema={twilioSchema.getValidationSchema}
+          />
+        </Modal>
       )}
     </>
   )
