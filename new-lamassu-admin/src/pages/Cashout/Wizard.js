@@ -17,7 +17,7 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
 const Wizard = ({ machine, locale, onClose, save, error }) => {
-  const LAST_STEP = machine.numberOfCassettes + 2
+  const LAST_STEP = machine.numberOfCassettes + 1
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
@@ -66,14 +66,6 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     1
   )
 
-  steps.push({
-    type: 'zeroConfLimit',
-    display: '0-conf Limit',
-    schema: Yup.object().shape({
-      zeroConfLimit: Yup.number().required()
-    })
-  })
-
   const schema = () =>
     Yup.object().shape({
       cassette1: Yup.number().required(),
@@ -113,7 +105,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
           name={machine.name}
           numberOfCassettes={machine.numberOfCassettes}
           error={error}
-          lastStep={isLastStep}
+          isLastStep={isLastStep}
           steps={steps}
           fiatCurrency={locale.fiatCurrency}
           options={options}
