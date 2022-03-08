@@ -3,7 +3,7 @@ import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { endOfToday } from 'date-fns'
-import { subDays } from 'date-fns/fp'
+import { subDays, format, add, startOfWeek } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -42,6 +42,16 @@ const TIME_OPTIONS = {
   week: WEEK,
   month: MONTH
 }
+
+const DAY_OPTIONS = R.map(
+  it => ({
+    code: R.toLower(it),
+    display: it
+  }),
+  Array.from(Array(7)).map((_, i) =>
+    format('EEEE', add({ days: i }, startOfWeek(new Date())))
+  )
+)
 
 const GET_TRANSACTIONS = gql`
   query transactions(
@@ -138,6 +148,9 @@ const Analytics = () => {
   const [representing, setRepresenting] = useState(REPRESENTING_OPTIONS[0])
   const [period, setPeriod] = useState(PERIOD_OPTIONS[0])
   const [machine, setMachine] = useState(MACHINE_OPTIONS[0])
+  const [selectedDay, setSelectedDay] = useState(
+    R.equals(representing.code, 'hourOfTheDay') ? DAY_OPTIONS[0] : null
+  )
 
   const loading = txLoading || configLoading
 
@@ -179,15 +192,27 @@ const Analytics = () => {
 
   const filteredData = timeInterval => ({
     current:
-      machineTxs.filter(
-        d => new Date(d.created) >= Date.now() - TIME_OPTIONS[timeInterval]
-      ) ?? [],
+      machineTxs.filter(d => {
+        const txDay = new Date(d.created)
+        const isSameWeekday = !R.isNil(selectedDay)
+          ? R.equals(R.toLower(format('EEEE', txDay)), selectedDay.code)
+          : true
+
+        return isSameWeekday && txDay >= Date.now() - TIME_OPTIONS[timeInterval]
+      }) ?? [],
     previous:
-      machineTxs.filter(
-        d =>
-          new Date(d.created) < Date.now() - TIME_OPTIONS[timeInterval] &&
-          new Date(d.created) >= Date.now() - 2 * TIME_OPTIONS[timeInterval]
-      ) ?? []
+      machineTxs.filter(d => {
+        const txDay = new Date(d.created)
+        const isSameWeekday = !R.isNil(selectedDay)
+          ? R.equals(R.toLower(format('EEEE', txDay)), selectedDay.code)
+          : true
+
+        return (
+          isSameWeekday &&
+          txDay < Date.now() - TIME_OPTIONS[timeInterval] &&
+          txDay >= Date.now() - 2 * TIME_OPTIONS[timeInterval]
+        )
+      }) ?? []
   })
 
   const txs = {
@@ -221,6 +246,13 @@ const Analytics = () => {
         d => d.fiat * d.commissionPercentage,
         filteredData(period.code).previous
       )
+    )
+  }
+
+  const handleRepresentationChange = newRepresentation => {
+    setRepresenting(newRepresentation)
+    setSelectedDay(
+      R.equals(newRepresentation.code, 'hourOfTheDay') ? DAY_OPTIONS[0] : null
     )
   }
 
@@ -264,6 +296,9 @@ const Analytics = () => {
             machines={machineOptions}
             selectedMachine={machine}
             handleMachineChange={setMachine}
+            selectedDay={selectedDay}
+            dayOptions={DAY_OPTIONS}
+            handleDayChange={setSelectedDay}
             timezone={timezone}
             currency={fiatLocale}
           />
@@ -296,7 +331,7 @@ const Analytics = () => {
           <div className={classes.dropdowns}>
             <Select
               label="Representing"
-              onSelectedItemChange={setRepresenting}
+              onSelectedItemChange={handleRepresentationChange}
               items={REPRESENTING_OPTIONS}
               default={REPRESENTING_OPTIONS[0]}
               selectedItem={representing}
