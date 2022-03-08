@@ -70,6 +70,20 @@ const AllSet = ({ data: currentData, doContinue }) => {
     return saveConfig({ variables: { config } })
   }
 
+  const presentableData = R.pipe(
+    R.omit(['coin', 'zeroConf', 'zeroConfLimit']),
+    toNamespace(coin)
+  )(currentData)
+
+  const presentableElements = R.filter(
+    R.pipe(
+      R.prop('name'),
+      R.flip(R.includes)(['zeroConf', 'zeroConfLimit']),
+      R.not()
+    ),
+    getElements(cryptoCurrencies, accountsConfig, null, true)
+  )
+
   return (
     <>
       <H4 className={error && classes.error}>All set</H4>
@@ -82,8 +96,8 @@ const AllSet = ({ data: currentData, doContinue }) => {
         titleLg
         name="All set"
         namespaces={[coin]}
-        data={toNamespace(coin, R.omit('coin', currentData))}
-        elements={getElements(cryptoCurrencies, accountsConfig, true)}
+        data={presentableData}
+        elements={presentableElements}
       />
       <Button size="lg" onClick={save} className={classes.button}>
         Continue
