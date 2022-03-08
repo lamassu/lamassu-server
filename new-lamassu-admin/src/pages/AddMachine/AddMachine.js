@@ -125,7 +125,11 @@ const validationSchema = Yup.object().shape({
     .test(
       'unique-name',
       'Machine name is already in use.',
-      (value, context) => !context.options.context.machineNames.includes(value)
+      (value, context) =>
+        !R.any(
+          it => R.equals(R.toLower(it), R.toLower(value)),
+          context.options.context.machineNames
+        )
     )
 })
 
