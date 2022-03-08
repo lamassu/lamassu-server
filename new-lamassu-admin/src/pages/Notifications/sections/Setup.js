@@ -85,7 +85,9 @@ const Setup = ({ wizard, forceDisable }) => {
     data: rawData,
     save: rawSave,
     twilioAvailable,
-    setSmsSetupPopup
+    setSmsSetupPopup,
+    mailgunAvailable,
+    setEmailSetupPopup
   } = useContext(NotificationsCtx)
 
   const namespaces = [
@@ -93,7 +95,11 @@ const Setup = ({ wizard, forceDisable }) => {
       name: 'email',
       forceDisable: forceDisable,
       shouldUpperCase: false,
-      onActivation: () => true
+      onActivation: () => {
+        if (mailgunAvailable) return true
+        setEmailSetupPopup(true)
+        return false
+      }
     },
     {
       name: 'sms',

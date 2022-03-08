@@ -11,6 +11,7 @@ import twilioSchema from 'src/pages/Services/schemas/twilio'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 import Section from '../../components/layout/Section'
+import mailgunSchema from '../Services/schemas/mailgun'
 
 import NotificationsCtx from './NotificationsContext'
 import CryptoBalanceAlerts from './sections/CryptoBalanceAlerts'
@@ -64,6 +65,7 @@ const Notifications = ({
   const [error, setError] = useState(null)
   const [editingKey, setEditingKey] = useState(null)
   const [smsSetupPopup, setSmsSetupPopup] = useState(false)
+  const [emailSetupPopup, setEmailSetupPopup] = useState(false)
 
   const { data, loading } = useQuery(GET_INFO)
 
@@ -74,7 +76,10 @@ const Notifications = ({
   })
 
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
-    onCompleted: () => setSmsSetupPopup(false),
+    onCompleted: () => {
+      setSmsSetupPopup(false)
+      setEmailSetupPopup(false)
+    },
     refetchQueries: ['getData'],
     onError: error => setError(error)
   })
@@ -83,6 +88,7 @@ const Notifications = ({
   const machines = data?.machines
   const cryptoCurrencies = data?.cryptoCurrencies
   const twilioAvailable = R.has('twilio', data?.accounts || {})
+  const mailgunAvailable = R.has('mailgun', data?.accounts || {})
 
   const currency = R.path(['fiatCurrency'])(
     fromNamespace(namespaces.LOCALE)(data?.config)
@@ -110,6 +116,14 @@ const Notifications = ({
     })
   }
 
+  const mailgunSave = it => {
+    setError(null)
+    R.compose(save(null), toNamespace('email'))({ active: true })
+    return saveAccount({
+      variables: { accounts: { mailgun: it } }
+    })
+  }
+
   const isEditing = key => editingKey === key
   const isDisabled = key => editingKey && editingKey !== key
 
@@ -126,49 +140,55 @@ const Notifications = ({
     machines,
     cryptoCurrencies,
     twilioAvailable,
-    setSmsSetupPopup
+    setSmsSetupPopup,
+    mailgunAvailable,
+    setEmailSetupPopup
   }
 
   return (
     !loading && (
-      <NotificationsCtx.Provider value={contextValue}>
-        {displayTitle && <TitleSection title="Notifications" />}
-        {displaySetup && (
-          <Section title="Setup" error={error && !section}>
-            <Setup forceDisable={!!editingKey} wizard={wizard} />
-          </Section>
-        )}
-        {displayTransactionAlerts && (
-          <Section title="Transaction alerts" error={error && section === 'tx'}>
-            <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
-          </Section>
-        )}
-        {displayFiatAlerts && (
-          <Section
-            title="Fiat balance alerts"
-            error={error && section === 'fiat'}>
-            <FiatBalanceAlerts section="fiat" max={100} fieldWidth={50} />
-            {displayOverrides && (
-              <FiatBalanceOverrides
-                config={fromNamespace(namespaces.CASH_OUT)(data?.config)}
-                section="fiat"
-              />
-            )}
-          </Section>
-        )}
-        {displayCryptoAlerts && (
-          <Section
-            title="Crypto balance alerts"
-            error={error && section === 'crypto'}>
-            <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
-            {displayOverrides && (
-              <CryptoBalanceOverrides
-                section="crypto"
-                fieldWidth={FIELDS_WIDTH}
-              />
-            )}
-          </Section>
-        )}
+      <>
+        <NotificationsCtx.Provider value={contextValue}>
+          {displayTitle && <TitleSection title="Notifications" />}
+          {displaySetup && (
+            <Section title="Setup" error={error && !section}>
+              <Setup forceDisable={!!editingKey} wizard={wizard} />
+            </Section>
+          )}
+          {displayTransactionAlerts && (
+            <Section
+              title="Transaction alerts"
+              error={error && section === 'tx'}>
+              <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
+            </Section>
+          )}
+          {displayFiatAlerts && (
+            <Section
+              title="Fiat balance alerts"
+              error={error && section === 'fiat'}>
+              <FiatBalanceAlerts section="fiat" max={100} fieldWidth={50} />
+              {displayOverrides && (
+                <FiatBalanceOverrides
+                  config={fromNamespace(namespaces.CASH_OUT)(data?.config)}
+                  section="fiat"
+                />
+              )}
+            </Section>
+          )}
+          {displayCryptoAlerts && (
+            <Section
+              title="Crypto balance alerts"
+              error={error && section === 'crypto'}>
+              <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
+              {displayOverrides && (
+                <CryptoBalanceOverrides
+                  section="crypto"
+                  fieldWidth={FIELDS_WIDTH}
+                />
+              )}
+            </Section>
+          )}
+        </NotificationsCtx.Provider>
         {smsSetupPopup && (
           <Modal
             title={`Configure Twilio`}
@@ -186,7 +206,24 @@ const Notifications = ({
             />
           </Modal>
         )}
-      </NotificationsCtx.Provider>
+        {emailSetupPopup && (
+          <Modal
+            title={`Configure Mailgun`}
+            width={478}
+            handleClose={() => setEmailSetupPopup(false)}
+            open={true}>
+            <P>
+              In order for the mail notifications to work, you'll first need to
+              configure Mailgun.
+            </P>
+            <FormRenderer
+              save={mailgunSave}
+              elements={mailgunSchema.elements}
+              validationSchema={mailgunSchema.getValidationSchema}
+            />
+          </Modal>
+        )}
+      </>
     )
   )
 }
