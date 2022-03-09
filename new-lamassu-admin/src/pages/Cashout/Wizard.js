@@ -56,7 +56,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
         display: `Cassette ${it}`,
         component: Autocomplete,
         inputProps: {
-          options: R.map(it => ({ code: it, display: it }))(options),
+          options: options,
           labelProp: 'display',
           valueProp: 'code'
         }

@@ -5,7 +5,7 @@ const getBillOptions = R.curry((locale, denomiations) => {
   return R.compose(
     R.map(code => ({ code: parseInt(code), display: code })),
     R.keys,
-    R.path([currency])
+    R.path([currency, 'lengths'])
   )(denomiations)
 })
 
