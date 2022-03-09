@@ -745,7 +745,7 @@ const RetrieveDataDialog = ({
       </DialogContent>
       {error && (
         <ErrorMessage className={classes.errorMessage}>
-          Failed to save
+          Failed to fetch additional data
         </ErrorMessage>
       )}
       <DialogActions className={classes.dialogActions}>
