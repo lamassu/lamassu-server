@@ -261,25 +261,20 @@ const DetailsRow = ({ it: tx, timezone }) => {
                 {tx.customerPhone}
               </IDButton>
             )}
-            {(tx.customerIdCardPhotoPath || tx.txCustomerPhotoPath) &&
-              !tx.customerIdCardData && (
-                <IDButton
-                  popoverClassname={classes.clipboardPopover}
-                  className={classes.idButton}
-                  name="card"
-                  Icon={CardIdIcon}
-                  InverseIcon={CardIdInverseIcon}>
-                  <img
-                    className={classes.idCardPhoto}
-                    src={`${URI}${
-                      tx.customerIdCardPhotoPath
-                        ? '/id-card-photo/'
-                        : 'operator-data/customersphotos'
-                    }${tx.customerIdCardPhotoPath ?? tx.txCustomerPhotoPath}`}
-                    alt=""
-                  />
-                </IDButton>
-              )}
+            {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
+              <IDButton
+                popoverClassname={classes.clipboardPopover}
+                className={classes.idButton}
+                name="card"
+                Icon={CardIdIcon}
+                InverseIcon={CardIdInverseIcon}>
+                <img
+                  className={classes.idCardPhoto}
+                  src={`${URI}/id-card-photo/${tx.customerIdCardPhotoPath}`}
+                  alt=""
+                />
+              </IDButton>
+            )}
             {tx.customerIdCardData && (
               <IDButton
                 className={classes.idButton}
@@ -321,6 +316,17 @@ const DetailsRow = ({ it: tx, timezone }) => {
                 InverseIcon={CamIdInverseIcon}>
                 <img
                   src={`${URI}/front-camera-photo/${tx.customerFrontCameraPath}`}
+                  alt=""
+                />
+              </IDButton>
+            )}
+            {tx.txCustomerPhotoPath && (
+              <IDButton
+                name="cam"
+                Icon={CamIdIcon}
+                InverseIcon={CamIdInverseIcon}>
+                <img
+                  src={`${URI}/'operator-data/customersphotos'/${tx.txCustomerPhotoPath}`}
                   alt=""
                 />
               </IDButton>
