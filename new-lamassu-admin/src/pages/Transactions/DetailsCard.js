@@ -121,6 +121,8 @@ const DetailsRow = ({ it: tx, timezone }) => {
 
   const isCashIn = tx.txClass === 'cashIn'
 
+  console.log(tx)
+
   const zip = new JSZip()
 
   const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
@@ -259,20 +261,25 @@ const DetailsRow = ({ it: tx, timezone }) => {
                 {tx.customerPhone}
               </IDButton>
             )}
-            {tx.customerIdCardPhotoPath && !tx.customerIdCardData && (
-              <IDButton
-                popoverClassname={classes.clipboardPopover}
-                className={classes.idButton}
-                name="card"
-                Icon={CardIdIcon}
-                InverseIcon={CardIdInverseIcon}>
-                <img
-                  className={classes.idCardPhoto}
-                  src={`${URI}/id-card-photo/${tx.customerIdCardPhotoPath}`}
-                  alt=""
-                />
-              </IDButton>
-            )}
+            {(tx.customerIdCardPhotoPath || tx.txCustomerPhotoPath) &&
+              !tx.customerIdCardData && (
+                <IDButton
+                  popoverClassname={classes.clipboardPopover}
+                  className={classes.idButton}
+                  name="card"
+                  Icon={CardIdIcon}
+                  InverseIcon={CardIdInverseIcon}>
+                  <img
+                    className={classes.idCardPhoto}
+                    src={`${URI}${
+                      tx.customerIdCardPhotoPath
+                        ? '/id-card-photo/'
+                        : 'operator-data/customersphotos'
+                    }${tx.customerIdCardPhotoPath ?? tx.txCustomerPhotoPath}`}
+                    alt=""
+                  />
+                </IDButton>
+              )}
             {tx.customerIdCardData && (
               <IDButton
                 className={classes.idButton}
