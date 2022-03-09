@@ -121,8 +121,6 @@ const DetailsRow = ({ it: tx, timezone }) => {
 
   const isCashIn = tx.txClass === 'cashIn'
 
-  console.log(tx)
-
   const zip = new JSZip()
 
   const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
@@ -311,6 +309,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
             )}
             {tx.customerFrontCameraPath && (
               <IDButton
+                className={classes.idButton}
                 name="cam"
                 Icon={CamIdIcon}
                 InverseIcon={CamIdInverseIcon}>
@@ -326,7 +325,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
                 Icon={CamIdIcon}
                 InverseIcon={CamIdInverseIcon}>
                 <img
-                  src={`${URI}/'operator-data/customersphotos'/${tx.txCustomerPhotoPath}`}
+                  src={`${URI}/operator-data/customersphotos/${tx.txCustomerPhotoPath}`}
                   alt=""
                 />
               </IDButton>

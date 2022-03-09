@@ -49,7 +49,6 @@ const GET_TRANSACTIONS = gql`
       customerIdCardData
       customerIdCardPhotoPath
       customerFrontCameraPath
-      txCustomerPhotoPath
       customerPhone
       discount
       customerId
