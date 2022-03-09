@@ -30,22 +30,21 @@ export default {
   suffix: {
     paddingLeft: spacer * 2
   },
-  button: {
-    marginLeft: 'auto'
-  },
   submit: {
-    float: 'right'
+    alignSelf: 'flex-end'
   },
   picker: {
     width: LABEL_WIDTH
   },
   header: {
-    display: 'flex',
-    marginBottom: 95
+    display: 'flex'
   },
-  thirdStepHeader: {
+  column: {
     display: 'flex',
-    paddingBottom: 188
+    flexGrow: 2,
+    flexDirection: 'column',
+    paddingBottom: 32,
+    justifyContent: 'space-between'
   },
   step: {
     flex: 1
@@ -55,21 +54,8 @@ export default {
     top: -20,
     right: 14
   },
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    flex: 1,
-    paddingBottom: 32
-  },
-  disclaimer: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
   disclaimerIcon: {
     float: 'left',
-    margin: [[-4, 16, 48, 0]]
+    margin: [[2, 16, 48, 0]]
   }
 }

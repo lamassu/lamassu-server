@@ -75,7 +75,7 @@ const WizardStep = ({
           }}
           enableReinitialize
           validationSchema={schema}>
-          <Form>
+          <Form className={classes.column}>
             <div className={classes.header}>
               {steps.map(
                 ({ type, display, component }, idx) =>
@@ -122,31 +122,31 @@ const WizardStep = ({
       )}
 
       {isLastStep && (
-        <div className={classes.disclaimer}>
-          <Info2 className={classes.title}>Cash Cassette Bill Count</Info2>
-          <P>
-            <WarningIcon className={classes.disclaimerIcon} />
-            When enabling cash-out, your bill count will be automatically set to
-            zero. Make sure you physically put cash inside the cash cassettes to
-            allow the machine to dispense it to your users. If you already did,
-            make sure you set the correct cash cassette bill count for this
-            machine on your Cash Boxes & Cassettes tab under Maintenance.
-          </P>
-
-          <Info2 className={classes.title}>Default Commissions</Info2>
-          <P>
-            <WarningIcon className={classes.disclaimerIcon} />
-            When enabling cash-out, default commissions will be set. To change
-            commissions for this machine, please go to the Commissions tab under
-            Settings where you can set exceptions for each of the available
-            cryptocurrencies.
-          </P>
+        <div className={classes.column}>
           <div>
-            {error && <ErrorMessage>Failed to save</ErrorMessage>}
-            <Button className={classes.submit} onClick={() => onContinue()}>
-              {label}
-            </Button>
+            <Info2 className={classes.title}>Cash Cassette Bill Count</Info2>
+            <P>
+              <WarningIcon className={classes.disclaimerIcon} />
+              When enabling cash-out, your bill count will be automatically set
+              to zero. Make sure you physically put cash inside the cash
+              cassettes to allow the machine to dispense it to your users. If
+              you already did, make sure you set the correct cash cassette bill
+              count for this machine on your Cash Boxes & Cassettes tab under
+              Maintenance.
+            </P>
+            <Info2 className={classes.title}>Default Commissions</Info2>
+            <P>
+              <WarningIcon className={classes.disclaimerIcon} />
+              When enabling cash-out, default commissions will be set. To change
+              commissions for this machine, please go to the Commissions tab
+              under Settings where you can set exceptions for each of the
+              available cryptocurrencies.
+            </P>
           </div>
+          {error && <ErrorMessage>Failed to save</ErrorMessage>}
+          <Button className={classes.submit} onClick={() => onContinue()}>
+            {label}
+          </Button>
         </div>
       )}
     </>
