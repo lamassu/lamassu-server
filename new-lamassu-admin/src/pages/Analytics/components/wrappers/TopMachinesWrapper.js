@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { RadioGroup } from 'src/components/inputs'
 import { H2 } from 'src/components/typography'
 
 import styles from '../../Analytics.styles'
@@ -28,7 +27,7 @@ const TopMachinesBarGraphHeader = ({
 }) => {
   const classes = useStyles()
 
-  const [graphType, setGraphType] = useState(options[0].code)
+  const [graphType /*, setGraphType */] = useState(options[0].code)
 
   const legend = {
     cashIn: <div className={classes.cashInIcon}></div>,
@@ -46,12 +45,12 @@ const TopMachinesBarGraphHeader = ({
           </Box>
         </div>
         <div className={classes.graphHeaderRight}>
-          <RadioGroup
+          {/* <RadioGroup
             options={options}
             className={classes.topMachinesRadio}
             value={graphType}
             onChange={e => setGraphType(e.target.value)}
-          />
+          /> */}
         </div>
       </div>
       <Graph

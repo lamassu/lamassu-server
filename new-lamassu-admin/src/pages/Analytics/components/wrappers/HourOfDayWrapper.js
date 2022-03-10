@@ -1,11 +1,10 @@
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { getTimezoneOffset } from 'date-fns-tz'
-import { format, add, startOfWeek } from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { RadioGroup, Select } from 'src/components/inputs'
+import { Select } from 'src/components/inputs'
 import { H2 } from 'src/components/typography'
 import { MINUTE } from 'src/utils/time'
 
@@ -20,16 +19,6 @@ const options = [
   { code: 'hourOfDayVolume', display: 'Volume' }
 ]
 
-const dayOptions = R.map(
-  it => ({
-    code: R.toLower(it),
-    display: it
-  }),
-  Array.from(Array(7)).map((_, i) =>
-    format('EEEE', add({ days: i }, startOfWeek(new Date())))
-  )
-)
-
 const HourOfDayBarGraphHeader = ({
   title,
   period,
@@ -37,13 +26,15 @@ const HourOfDayBarGraphHeader = ({
   machines,
   selectedMachine,
   handleMachineChange,
+  selectedDay,
+  dayOptions,
+  handleDayChange,
   timezone,
   currency
 }) => {
   const classes = useStyles()
 
-  const [graphType, setGraphType] = useState(options[0].code)
-  const [selectedDay, setSelectedDay] = useState(dayOptions[0])
+  const [graphType /*, setGraphType */] = useState(options[0].code)
 
   const legend = {
     cashIn: <div className={classes.cashInIcon}></div>,
@@ -100,18 +91,18 @@ const HourOfDayBarGraphHeader = ({
           </Box>
         </div>
         <div className={classes.graphHeaderRight}>
-          <RadioGroup
+          {/* <RadioGroup
             options={options}
             className={classes.topMachinesRadio}
             value={graphType}
             onChange={e => setGraphType(e.target.value)}
-          />
+          /> */}
           <Select
             label="Day of the week"
             items={dayOptions}
             default={dayOptions[0]}
             selectedItem={selectedDay}
-            onSelectedItemChange={setSelectedDay}
+            onSelectedItemChange={handleDayChange}
           />
           <Select
             label="Machines"
