@@ -79,7 +79,10 @@ const Wizard = ({
           }),
           ...zeroConfs
         },
-        { type: 'zeroConfLimit', name: '0-conf limit', ...zeroConfs }
+        {
+          type: 'zeroConfLimit',
+          name: '0-conf limit'
+        }
       ])
     : commonWizardSteps
 

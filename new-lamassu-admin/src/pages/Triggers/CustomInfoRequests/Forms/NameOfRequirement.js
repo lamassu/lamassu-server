@@ -34,8 +34,8 @@ const validationSchema = existingRequirements =>
         'unique-name',
         'A custom information requirement with that name already exists',
         (value, _context) =>
-          !R.includes(
-            value,
+          !R.any(
+            it => R.equals(R.toLower(it), R.toLower(value)),
             R.map(it => it.customRequest.name, existingRequirements)
           )
       )
