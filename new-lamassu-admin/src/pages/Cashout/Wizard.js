@@ -46,7 +46,6 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     })
   }
 
-
   const steps = R.map(
     it => ({
       type: `cassette${it}`,
