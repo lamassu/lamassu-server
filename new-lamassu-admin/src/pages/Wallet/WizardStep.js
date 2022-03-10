@@ -112,8 +112,7 @@ const WizardStep = ({
           radioClassName={classes.radio}
         />
       )}
-      {/* Hack to support optional 0conf setup */
-      isLastStep && step === maxSteps && (
+      {type === 'zeroConfLimit' && (
         <Formik
           validateOnBlur={false}
           validateOnChange={true}

@@ -44,7 +44,7 @@ const WizardStep = ({
   step,
   schema,
   error,
-  lastStep,
+  isLastStep,
   onContinue,
   steps,
   fiatCurrency,
@@ -53,7 +53,7 @@ const WizardStep = ({
 }) => {
   const classes = useStyles()
 
-  const label = lastStep ? 'Finish' : 'Next'
+  const label = isLastStep ? 'Finish' : 'Next'
 
   return (
     <>
@@ -62,7 +62,7 @@ const WizardStep = ({
         <Stepper steps={steps.length + 1} currentStep={step} />
       </div>
 
-      {step <= numberOfCassettes && (
+      {!isLastStep && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
@@ -121,46 +121,7 @@ const WizardStep = ({
         </Formik>
       )}
 
-      {step === numberOfCassettes + 1 && (
-        <Formik
-          validateOnBlur={false}
-          validateOnChange={false}
-          onSubmit={onContinue}
-          initialValues={{ zeroConfLimit: '' }}
-          enableReinitialize
-          validationSchema={steps[step - 1].schema}>
-          <Form>
-            <div className={classes.thirdStepHeader}>
-              <div className={classes.step}>
-                <H4 className={classes.edit}>Edit 0-conf Limit</H4>
-
-                <Label1>Choose a limit</Label1>
-                <div className={classes.bill}>
-                  <Field
-                    className={classes.billInput}
-                    type="text"
-                    size="lg"
-                    autoFocus={true}
-                    component={NumberInput}
-                    fullWidth
-                    decimalPlaces={0}
-                    name={steps[step - 1].type}
-                  />
-                  <Info1 noMargin className={classes.suffix}>
-                    {fiatCurrency}
-                  </Info1>
-                </div>
-              </div>
-            </div>
-
-            <Button className={classes.submit} type="submit">
-              {label}
-            </Button>
-          </Form>
-        </Formik>
-      )}
-
-      {lastStep && (
+      {isLastStep && (
         <div className={classes.disclaimer}>
           <Info2 className={classes.title}>Cash Cassette Bill Count</Info2>
           <P>
