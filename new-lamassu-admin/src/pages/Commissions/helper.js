@@ -229,9 +229,7 @@ const overrides = (auxData, currency, auxElements) => {
 
 const percentMax = 100
 const getSchema = locale => {
-  const bills = getBillOptions(locale, denominations).map(it =>
-    parseInt(it.code)
-  )
+  const bills = getBillOptions(locale, denominations).map(it => it.code)
   const highestBill = R.isEmpty(bills) ? CURRENCY_MAX : Math.max(...bills)
 
   return Yup.object().shape({
