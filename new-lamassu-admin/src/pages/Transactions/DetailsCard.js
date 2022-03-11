@@ -309,11 +309,23 @@ const DetailsRow = ({ it: tx, timezone }) => {
             )}
             {tx.customerFrontCameraPath && (
               <IDButton
+                className={classes.idButton}
                 name="cam"
                 Icon={CamIdIcon}
                 InverseIcon={CamIdInverseIcon}>
                 <img
                   src={`${URI}/front-camera-photo/${tx.customerFrontCameraPath}`}
+                  alt=""
+                />
+              </IDButton>
+            )}
+            {tx.txCustomerPhotoPath && (
+              <IDButton
+                name="cam"
+                Icon={CamIdIcon}
+                InverseIcon={CamIdInverseIcon}>
+                <img
+                  src={`${URI}/operator-data/customersphotos/${tx.txCustomerPhotoPath}`}
                   alt=""
                 />
               </IDButton>
