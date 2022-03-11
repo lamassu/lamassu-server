@@ -98,6 +98,10 @@ const GET_MACHINES_AND_CONFIG = gql`
       cassette4
       numberOfCassettes
     }
+    unpairedMachines {
+      id: deviceId
+      name
+    }
     config
     bills(filters: $billFilters) {
       id
@@ -160,6 +164,7 @@ const CashCassettes = () => {
   const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
+  const unpairedMachines = R.path(['unpairedMachines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
   const fillingPercentageSettings = fromNamespace('notifications', config)
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
@@ -356,7 +361,10 @@ const CashCassettes = () => {
           </>
         )}
         {showHistory && (
-          <CashboxHistory machines={machines} currency={fiatCurrency} />
+          <CashboxHistory
+            machines={R.concat(machines, unpairedMachines)}
+            currency={fiatCurrency}
+          />
         )}
         <CashCassettesFooter
           currencyCode={fiatCurrency}
