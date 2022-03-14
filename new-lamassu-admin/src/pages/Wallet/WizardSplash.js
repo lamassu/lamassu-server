@@ -53,6 +53,8 @@ const getLogo = code => {
       return ZCashLogo
     case 'XMR':
       return MoneroLogo
+    case 'LN':
+      return BitcoinLogo
     default:
       return null
   }
