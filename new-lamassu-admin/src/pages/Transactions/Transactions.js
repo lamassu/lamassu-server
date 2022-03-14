@@ -158,18 +158,24 @@ const Transactions = () => {
     return history.push(`/compliance/customer/${customerId}`)
   }
 
-  const formatCustomerName = customer => {
-    const { firstName, lastName } = customer
-
-    return `${R.o(R.toUpper, R.head)(firstName)}. ${lastName}`
-  }
+  const formatCustomerName = ({ firstName, lastName }) =>
+    R.isNil(firstName) && R.isNil(lastName)
+      ? null
+      : R.isNil(firstName)
+      ? lastName
+      : R.isNil(lastName)
+      ? firstName
+      : `${R.o(R.toUpper, R.head)(firstName)}. ${lastName}`
 
   const getCustomerDisplayName = tx => {
     if (tx.isAnonymous) return 'Anonymous'
     if (tx.customerName) return tx.customerName
-    if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
-    return tx.customerPhone
+    const customerName = tx.customerIdCardData
+      ? formatCustomerName(tx.customerIdCardData)
+      : null
+    return R.defaultTo(tx.customerPhone, customerName)
   }
+
   const elements = [
     {
       header: '',
