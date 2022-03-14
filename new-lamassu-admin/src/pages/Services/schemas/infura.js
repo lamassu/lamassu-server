@@ -31,12 +31,12 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      apiKey: Yup.string('The API key must be a string')
-        .max(100, 'The API key is too long')
-        .required('The API key is required'),
-      apiSecret: Yup.string('The API secret must be a string')
-        .max(100, 'The API secret is too long')
-        .test(secretTest(account?.apiSecret)),
+      apiKey: Yup.string('The project ID must be a string')
+        .max(100, 'The project ID is too long')
+        .required('The project ID is required'),
+      apiSecret: Yup.string('The project secret must be a string')
+        .max(100, 'The project secret is too long')
+        .test(secretTest(account?.apiSecret, 'project secret')),
       endpoint: Yup.string('The endpoint must be a string')
         .max(100, 'The endpoint is too long')
         .required('The endpoint is required')

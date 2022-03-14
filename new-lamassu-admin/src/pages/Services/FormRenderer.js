@@ -2,7 +2,7 @@ import { makeStyles, Grid } from '@material-ui/core'
 import classnames from 'classnames'
 import { Formik, Form, FastField } from 'formik'
 import * as R from 'ramda'
-import React from 'react'
+import React, { useState } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import { Button } from 'src/components/buttons'
@@ -48,6 +48,8 @@ const FormRenderer = ({
 
   const values = R.merge(initialValues, value)
 
+  const [saveError, setSaveError] = useState([])
+
   const saveNonEmptySecret = it => {
     const emptySecretFields = R.compose(
       R.map(R.prop('code')),
@@ -57,7 +59,9 @@ const FormRenderer = ({
           R.isEmpty(it[R.prop('code', elem)])
       )
     )(elements)
-    return save(R.omit(emptySecretFields, it))
+    return save(R.omit(emptySecretFields, it)).catch(s => {
+      setSaveError({ save: 'Failed to save changes' })
+    })
   }
 
   return (
@@ -87,8 +91,10 @@ const FormRenderer = ({
             )}
           </Grid>
           <div className={classes.footer}>
-            {!R.isEmpty(errors) && (
-              <ErrorMessage>{R.head(R.values(errors))}</ErrorMessage>
+            {!R.isEmpty(R.mergeRight(errors, saveError)) && (
+              <ErrorMessage>
+                {R.head(R.values(R.mergeRight(errors, saveError)))}
+              </ErrorMessage>
             )}
             <Button
               className={classnames(classes.button, buttonClass)}

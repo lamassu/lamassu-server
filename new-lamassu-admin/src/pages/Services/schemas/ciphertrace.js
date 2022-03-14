@@ -39,7 +39,7 @@ export default {
     return Yup.object().shape({
       authorizationValue: Yup.string('The authorization value must be a string')
         .max(100, 'Too long')
-        .test(secretTest(account?.authorizationValue)),
+        .test(secretTest(account?.authorizationValue, 'authorization value')),
       scoreThreshold: Yup.number('The score threshold must be a number')
         .required('A score threshold is required')
         .min(1, 'The score threshold must be between 1 and 10')

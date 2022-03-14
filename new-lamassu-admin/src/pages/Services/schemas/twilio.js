@@ -40,13 +40,13 @@ export default {
         .required('The account SID is required'),
       authToken: Yup.string('The auth token must be a string')
         .max(100, 'The auth token is too long')
-        .test(secretTest(account?.authToken)),
-      fromNumber: Yup.string('The from number must be a string')
-        .max(100, 'The from number is too long')
-        .required('The from number is required'),
-      toNumber: Yup.string('The to number must be a string')
-        .max(100, 'The to number is too long')
-        .required('The to number is required')
+        .test(secretTest(account?.authToken, 'auth token')),
+      fromNumber: Yup.string('The Twilio number must be a string')
+        .max(100, 'The Twilio number is too long')
+        .required('The Twilio number is required'),
+      toNumber: Yup.string('The notifications number must be a string')
+        .max(100, 'The notifications number is too long')
+        .required('The notifications number is required')
     })
   }
 }

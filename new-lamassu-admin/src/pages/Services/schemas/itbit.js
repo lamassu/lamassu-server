@@ -48,7 +48,7 @@ export default {
         .required('The client key is required'),
       clientSecret: Yup.string('The client secret must be a string')
         .max(100, 'The client secret is too long')
-        .test(secretTest(account?.clientSecret))
+        .test(secretTest(account?.clientSecret, 'client secret'))
     })
   }
 }
