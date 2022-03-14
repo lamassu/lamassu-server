@@ -161,9 +161,12 @@ const CashboxHistory = ({ machines, currency }) => {
       header: 'Machine',
       width: 200,
       textAlign: 'left',
-      view: it => {
-        return R.find(R.propEq('id', it.deviceId))(machines).name
-      }
+      view: R.pipe(
+        R.prop('deviceId'),
+        id => R.find(R.propEq('id', id), machines),
+        R.defaultTo({ name: <i>Unpaired device</i> }),
+        R.prop('name')
+      )
     },
     {
       name: 'billCount',
