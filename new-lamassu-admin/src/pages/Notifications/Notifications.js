@@ -110,14 +110,14 @@ const Notifications = ({
 
   const twilioSave = it => {
     setError(null)
-    saveAccount({
+    return saveAccount({
       variables: { accounts: { twilio: it } }
     }).then(() => R.compose(save(null), toNamespace('sms'))({ active: true }))
   }
 
   const mailgunSave = it => {
     setError(null)
-    saveAccount({
+    return saveAccount({
       variables: { accounts: { mailgun: it } }
     }).then(() => R.compose(save(null), toNamespace('email'))({ active: true }))
   }
