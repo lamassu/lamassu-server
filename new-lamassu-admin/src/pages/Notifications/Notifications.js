@@ -110,18 +110,16 @@ const Notifications = ({
 
   const twilioSave = it => {
     setError(null)
-    R.compose(save(null), toNamespace('sms'))({ active: true })
-    return saveAccount({
+    saveAccount({
       variables: { accounts: { twilio: it } }
-    })
+    }).then(() => R.compose(save(null), toNamespace('sms'))({ active: true }))
   }
 
   const mailgunSave = it => {
     setError(null)
-    R.compose(save(null), toNamespace('email'))({ active: true })
-    return saveAccount({
+    saveAccount({
       variables: { accounts: { mailgun: it } }
-    })
+    }).then(() => R.compose(save(null), toNamespace('email'))({ active: true }))
   }
 
   const isEditing = key => editingKey === key
