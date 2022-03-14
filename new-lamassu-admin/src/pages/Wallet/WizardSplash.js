@@ -60,6 +60,8 @@ const getLogo = code => {
       return MoneroLogo
     case 'TRX':
       return TronLogo
+    case 'LN':
+      return BitcoinLogo
     default:
       return null
   }
