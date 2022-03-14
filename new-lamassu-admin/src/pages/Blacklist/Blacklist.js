@@ -142,8 +142,9 @@ const Blacklist = () => {
   const classes = useStyles()
 
   const blacklistData = R.path(['blacklist'])(blacklistResponse) ?? []
-  const availableCurrencies =
-    R.path(['cryptoCurrencies'], blacklistResponse) ?? []
+  const availableCurrencies = R.filter(
+    coin => coinUtils.getExternalCryptoCode(coin.code) === coin.code
+  )(R.path(['cryptoCurrencies'], blacklistResponse) ?? [])
 
   const formattedData = groupByCode(blacklistData)
 
