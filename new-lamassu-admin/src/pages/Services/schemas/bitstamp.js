@@ -35,12 +35,12 @@ export default {
       clientId: Yup.string('The client ID must be a string')
         .max(100, 'The client ID is too long')
         .required('The client ID is required'),
-      key: Yup.string('The key must be a string')
-        .max(100, 'The key is too long')
-        .required('The key is required'),
-      secret: Yup.string('The secret must be a string')
-        .max(100, 'The secret is too long')
-        .test(secretTest(account?.secret))
+      key: Yup.string('The API key must be a string')
+        .max(100, 'The API key is too long')
+        .required('The API key is required'),
+      secret: Yup.string('The API secret must be a string')
+        .max(100, 'The API secret is too long')
+        .test(secretTest(account?.secret, 'API secret'))
     })
   }
 }

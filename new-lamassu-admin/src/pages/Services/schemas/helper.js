@@ -1,6 +1,8 @@
 import * as R from 'ramda'
 
-const secretTest = secret => ({
+const secretTest = (secret, message) => ({
+  name: 'secret-test',
+  message: message ? `The ${message} is invalid` : 'Invalid field',
   test(val) {
     if (R.isNil(secret) && R.isNil(val)) {
       return this.createError()

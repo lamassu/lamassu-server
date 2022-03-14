@@ -30,7 +30,7 @@ export default {
         .required('The API key is required'),
       privateKey: Yup.string('The private key must be a string')
         .max(100, 'The private key is too long')
-        .test(secretTest(account?.privateKey))
+        .test(secretTest(account?.privateKey, 'private key'))
     })
   }
 }
