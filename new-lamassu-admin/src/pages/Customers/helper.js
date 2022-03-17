@@ -77,7 +77,7 @@ const getAuthorizedStatus = (it, triggers, customRequests) => {
       !!R.find(
         ite => R.equals(ite.requirement, triggerName),
         manualOverrides
-      ) || R.equals(R.toLower(triggers.automation), MANUAL)
+      ) || R.equals(R.toLower(triggers.automation ?? ''), MANUAL)
     )
   }
 
