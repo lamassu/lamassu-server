@@ -206,7 +206,7 @@ const SystemPerformance = () => {
                 <Label2 noMargin>Transactions</Label2>
                 <div className={classes.labelWrapper}>
                   <P noMargin>
-                    {timezones[timezone].short ?? timezones[timezone].long}{' '}
+                    {timezones[timezone]?.short ?? timezones[timezone]?.long}{' '}
                     timezone
                   </P>
                   <span className={classes.verticalLine} />
