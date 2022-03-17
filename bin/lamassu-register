@@ -8,7 +8,7 @@ const authErrors = require('../lib/new-admin/graphql/errors/authentication')
 
 const name = process.argv[2]
 const role = process.argv[3]
-const domain = process.env.HOSTNAME
+const domain = process.env.LAMASSU_ADMIN_SERVER_IP || process.env.HOSTNAME
 
 if (!domain) {
   console.error('No hostname configured in the environment')
@@ -35,7 +35,7 @@ if (role !== 'user' && role !== 'superuser') {
 
 asyncLocalStorage.run(defaultStore(), () => {
   userManagement.createRegisterToken(name, role).then(token => {
-    if (domain === 'localhost') {
+    if (domain === 'localhost' && process.env.NODE_ENV !== 'production') {
       console.log(`https://${domain}:3001/register?t=${token.token}`)
     } else {
       console.log(`https://${domain}/register?t=${token.token}`)
