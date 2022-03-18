@@ -11,6 +11,7 @@ import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
 import { getStatus } from 'src/pages/Transactions/helper'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import * as Customer from 'src/utils/customer'
 import { formatDate } from 'src/utils/timezones'
 
 import DataTable from './DataTable'
@@ -95,18 +96,6 @@ const Transactions = ({ id }) => {
     }
   }, [getTx, id])
 
-  const formatCustomerName = customer => {
-    const { firstName, lastName } = customer
-
-    return `${R.o(R.toUpper, R.head)(firstName)}. ${lastName}`
-  }
-
-  const getCustomerDisplayName = tx => {
-    if (tx.customerName) return tx.customerName
-    if (tx.customerIdCardData) return formatCustomerName(tx.customerIdCardData)
-    return tx.customerPhone
-  }
-
   const elements = [
     {
       header: '',
@@ -118,7 +107,7 @@ const Transactions = ({ id }) => {
       header: 'Customer',
       width: 122,
       size: 'sm',
-      view: getCustomerDisplayName
+      view: Customer.displayName
     },
     {
       header: 'Cash',

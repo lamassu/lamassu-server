@@ -33,7 +33,7 @@ import {
   offErrorColor
 } from 'src/styling/variables'
 import { URI } from 'src/utils/apollo'
-import { onlyFirstToUpper } from 'src/utils/string'
+import * as Customer from 'src/utils/customer'
 
 import CopyToClipboard from './CopyToClipboard'
 import styles from './DetailsCard.styles'
@@ -149,9 +149,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const parseDateString = parse(new Date(), 'yyyyMMdd')
 
   const customer = tx.customerIdCardData && {
-    name: `${onlyFirstToUpper(
-      tx.customerIdCardData.firstName
-    )} ${onlyFirstToUpper(tx.customerIdCardData.lastName)}`,
+    name: Customer.formatFullName(tx.customerIdCardData),
     age:
       (tx.customerIdCardData.dateOfBirth &&
         differenceInYears(
