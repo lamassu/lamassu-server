@@ -17,6 +17,7 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { ReactComponent as CustomerLinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { ReactComponent as CustomerLinkWhiteIcon } from 'src/styling/icons/month arrows/right_white.svg'
 import { errorColor } from 'src/styling/variables'
+import * as Customer from 'src/utils/customer'
 import { formatDate } from 'src/utils/timezones'
 
 import DetailsRow from './DetailsCard'
@@ -158,24 +159,6 @@ const Transactions = () => {
     return history.push(`/compliance/customer/${customerId}`)
   }
 
-  const formatCustomerName = ({ firstName, lastName }) =>
-    R.isNil(firstName) && R.isNil(lastName)
-      ? null
-      : R.isNil(firstName)
-      ? lastName
-      : R.isNil(lastName)
-      ? firstName
-      : `${R.o(R.toUpper, R.head)(firstName)}. ${lastName}`
-
-  const getCustomerDisplayName = tx => {
-    if (tx.isAnonymous) return 'Anonymous'
-    if (tx.customerName) return tx.customerName
-    const customerName = tx.customerIdCardData
-      ? formatCustomerName(tx.customerIdCardData)
-      : null
-    return R.defaultTo(tx.customerPhone, customerName)
-  }
-
   const elements = [
     {
       header: '',
@@ -196,7 +179,7 @@ const Transactions = () => {
       size: 'sm',
       view: it => (
         <div className={classes.flexWrapper}>
-          <div className={classes.overflowTd}>{getCustomerDisplayName(it)}</div>
+          <div className={classes.overflowTd}>{Customer.displayName(it)}</div>
           {!it.isAnonymous && (
             <div onClick={() => redirect(it.customerId)}>
               {it.hasError || it.batchError ? (
