@@ -27,6 +27,7 @@ const TriggerView = ({
   showWizard,
   config,
   toggleWizard,
+  addNewTriger,
   customInfoRequests
 }) => {
   const currency = R.path(['fiatCurrency'])(
@@ -36,7 +37,7 @@ const TriggerView = ({
   const [error, setError] = useState(null)
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    onCompleted: () => toggleWizard('off'),
+    onCompleted: () => toggleWizard(true),
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
   })
@@ -74,7 +75,7 @@ const TriggerView = ({
           currency={currency}
           error={error?.message}
           save={add}
-          onClose={toggleWizard}
+          onClose={() => toggleWizard(true)}
           customInfoRequests={customInfoRequests}
         />
       )}
@@ -83,7 +84,7 @@ const TriggerView = ({
           <H2>
             It seems there are no active compliance triggers on your network
           </H2>
-          <Button onClick={() => toggleWizard()}>Add first trigger</Button>
+          <Button onClick={addNewTriger}>Add first trigger</Button>
         </Box>
       )}
     </>

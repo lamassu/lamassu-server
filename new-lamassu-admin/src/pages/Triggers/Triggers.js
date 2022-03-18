@@ -85,7 +85,10 @@ const Triggers = () => {
   })
 
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
-    onCompleted: () => setTwilioSetupPopup(false),
+    onCompleted: () => {
+      setTwilioSetupPopup(false)
+      toggleWizard('newTrigger')()
+    },
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
   })
@@ -211,6 +214,7 @@ const Triggers = () => {
           showWizard={wizardType === 'newTrigger'}
           config={data?.config ?? {}}
           toggleWizard={toggleWizard('newTrigger')}
+          addNewTriger={addNewTriger}
           customInfoRequests={enabledCustomInfoRequests}
         />
       )}
