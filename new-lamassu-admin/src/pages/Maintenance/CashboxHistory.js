@@ -41,12 +41,6 @@ const GET_BATCHES = gql`
   }
 ` */
 
-const GET_DATA = gql`
-  query getData {
-    config
-  }
-`
-
 const styles = {
   operationType: {
     marginLeft: 8
@@ -69,7 +63,7 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const CashboxHistory = ({ machines, currency }) => {
+const CashboxHistory = ({ machines, currency, timezone }) => {
   const classes = useStyles()
 
   /* const [error, setError] = useState(false)
@@ -82,10 +76,7 @@ const CashboxHistory = ({ machines, currency }) => {
     refetchQueries: () => ['cashboxBatches']
   }) */
 
-  const { data: configData, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configData)
-
-  const loading = batchesLoading || configLoading
+  const loading = batchesLoading
 
   const batches = R.path(['cashboxBatches'])(batchesData)
 

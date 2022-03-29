@@ -23,5 +23,8 @@ export default {
   },
   selection: {
     marginRight: 12
+  },
+  downloadLogsButton: {
+    marginLeft: 13
   }
 }

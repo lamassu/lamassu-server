@@ -140,7 +140,8 @@ const LogsDownloaderPopover = ({
   title,
   getLogs,
   timezone,
-  simplified
+  simplified,
+  className
 }) => {
   const [selectedRadio, setSelectedRadio] = useState(ALL)
   const [selectedAdvancedRadio, setSelectedAdvancedRadio] = useState(ADVANCED)
@@ -245,7 +246,7 @@ const LogsDownloaderPopover = ({
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <div>
+      <div className={className}>
         <FeatureButton
           Icon={Download}
           InverseIcon={DownloadInverseIcon}
