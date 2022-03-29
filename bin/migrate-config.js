@@ -3,9 +3,13 @@
 'use strict'
 
 const pgp = require('pg-promise')()
-const psqlUrl = require('../lib/options').postgresql
 
-const db = pgp(psqlUrl)
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
+const { PSQL_URL } = require('../lib/constants')
+
+const db = pgp(PSQL_URL)
 
 db.many('select data from user_config', 'exchanges')
   .then(rows => {

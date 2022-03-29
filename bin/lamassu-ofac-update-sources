@@ -2,22 +2,12 @@
 
 'use strict'
 
-const fs = require('fs')
+const setEnvVariable = require('../tools/set-env-var')
 
-const ofacSources = [
-  {
-    name: 'sdn_advanced',
-    url: 'https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml'
-  },
-  {
-    name: 'cons_advanced',
-    url: 'https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml'
-  }
-]
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
-const options = require('../lib/options-loader')()
-
-if (!options.opts.ofacSources) {
-  options.opts.ofacSources = ofacSources
-  fs.writeFileSync(options.path, JSON.stringify(options.opts, null, '  '), 'utf8')
+if (!process.env.OFAC_SOURCES_NAMES && !process.env.OFAC_SOURCES_URLS) {
+  setEnvVariable('OFAC_SOURCES_NAMES', 'sdn_advanced,cons_advanced')
+  setEnvVariable('OFAC_SOURCES_URLS', 'https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml,https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml')
 }

@@ -6,25 +6,26 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
-const options = require('../lib/options-loader')()
+const setEnvVariable = require('../tools/set-env-var')
 
-if (!options.opts.mnemonicPath && options.opts.seedPath) {
-  const seed = fs.readFileSync(options.opts.seedPath, 'utf8').trim()
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
+if (!process.env.MNEMONIC_PATH && process.env.SEED_PATH) {
+  const seed = fs.readFileSync(process.env.SEED_PATH, 'utf8').trim()
   const mnemonic = mnemonicHelpers.fromSeed(seed)
 
   if (process.argv[2] === '--prod') {
-    options.opts.mnemonicPath = path.resolve('/etc', 'lamassu', 'mnemonics', 'mnemonic.txt')
+    setEnvVariable('MNEMONIC_PATH', path.resolve('/etc', 'lamassu', 'mnemonics', 'mnemonic.txt'))
   } else {
-    options.opts.mnemonicPath = path.resolve(os.homedir(), '.lamassu', 'mnemonics', 'mnemonic.txt')
+    setEnvVariable('MNEMONIC_PATH', path.resolve(os.homedir(), '.lamassu', 'mnemonics', 'mnemonic.txt'))
   }
 
-  if (!fs.existsSync(path.dirname(options.opts.mnemonicPath))) {
-    fs.mkdirSync(path.dirname(options.opts.mnemonicPath))
+  if (!fs.existsSync(path.dirname(process.env.MNEMONIC_PATH))) {
+    fs.mkdirSync(path.dirname(process.env.MNEMONIC_PATH))
   }
 
-  if (!fs.existsSync(options.opts.mnemonicPath)) {
-    fs.writeFileSync(options.opts.mnemonicPath, mnemonic, 'utf8')
+  if (!fs.existsSync(process.env.MNEMONIC_PATH)) {
+    fs.writeFileSync(process.env.MNEMONIC_PATH, mnemonic, 'utf8')
   }
-
-  fs.writeFileSync(options.path, JSON.stringify(options.opts, null, '\t'), 'utf8')
 }
