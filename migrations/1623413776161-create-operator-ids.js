@@ -5,7 +5,6 @@ const hkdf = require('futoin-hkdf')
 
 const state = require('../lib/middlewares/state')
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
-const options = require('../lib/options')
 
 function computeOperatorId (masterSeed) {
   return hkdf(masterSeed, 16, { salt: 'lamassu-server-salt', info: 'operator-id' }).toString('hex')
@@ -13,7 +12,7 @@ function computeOperatorId (masterSeed) {
 
 function getMnemonic () {
   if (state.mnemonic) return Promise.resolve(state.mnemonic)
-  return fs.readFile(options.mnemonicPath, 'utf8').then(mnemonic => {
+  return fs.readFile(process.env.MNEMONIC_PATH, 'utf8').then(mnemonic => {
     state.mnemonic = mnemonic
     return mnemonic
   })

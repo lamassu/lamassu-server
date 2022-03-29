@@ -3,10 +3,14 @@
 const fs = require('fs')
 const hkdf = require('futoin-hkdf')
 
-const options = require('../lib/options')
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 
-const mnemonic = fs.readFileSync(options.mnemonicPath, 'utf8').trim()
+const MNEMONIC_PATH = process.env.MNEMONIC_PATH
+
+const mnemonic = fs.readFileSync(MNEMONIC_PATH, 'utf8').trim()
 const masterSeed = mnemonicHelpers.toEntropyBuffer(mnemonic)
 
 console.log(hkdf(masterSeed, 16, { salt: 'lamassu-server-salt', info: 'operator-id' }).toString('hex'))

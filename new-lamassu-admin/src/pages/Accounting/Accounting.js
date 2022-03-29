@@ -170,22 +170,26 @@ const Accounting = () => {
   ]
 
   return (
-    <>
-      <TitleSection title="Accounting" />
-      <Assets
-        balance={operatorData.fiatBalances[operatorData.preferredFiatCurrency]}
-        hedgingReserve={operatorData.hedgingReserve ?? 0}
-        currency={operatorData.preferredFiatCurrency}
-      />
-      <H4 className={classes.tableTitle}>Fiat balance history</H4>
-      <DataTable
-        loading={loading}
-        emptyText="No transactions so far"
-        elements={elements}
-        data={operatorData.fundings ?? []}
-        rowSize="sm"
-      />
-    </>
+    !loading && (
+      <>
+        <TitleSection title="Accounting" />
+        <Assets
+          balance={
+            operatorData.fiatBalances[operatorData.preferredFiatCurrency]
+          }
+          hedgingReserve={operatorData.hedgingReserve ?? 0}
+          currency={operatorData.preferredFiatCurrency}
+        />
+        <H4 className={classes.tableTitle}>Fiat balance history</H4>
+        <DataTable
+          loading={loading}
+          emptyText="No transactions so far"
+          elements={elements}
+          data={operatorData.fundings ?? []}
+          rowSize="sm"
+        />
+      </>
+    )
   )
 }
 

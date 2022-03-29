@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
 const login = require('../lib/admin/login')
-const options = require('../lib/options')
 
 const name = process.argv[2]
-const domain = options.hostname
+const domain = process.env.HOSTNAME
 
 if (!domain) {
-  console.error('No hostname configured in lamassu.json')
+  console.error('No hostname configured in the environment')
   process.exit(1)
 }
 

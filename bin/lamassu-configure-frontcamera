@@ -2,11 +2,11 @@
 
 'use strict'
 
-const fs = require('fs')
-const options = require('../lib/options-loader')()
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
-if (!options.opts.frontCameraDir) {
-  options.opts.frontCameraDir = '/opt/lamassu-server/frontcamera'
+const setEnvVariable = require('../tools/set-env-var')
 
-  fs.writeFileSync(options.path, JSON.stringify(options.opts, null, '\t'), 'utf8')
+if (!process.env.FRONT_CAMERA_DIR) {
+  setEnvVariable('FRONT_CAMERA_DIR', '/opt/lamassu-server/frontcamera')
 }

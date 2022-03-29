@@ -1,10 +1,16 @@
 #!/usr/bin/env node
 const FileStore = require('migrate/lib/file-store')
 
+const _ = require('lodash/fp')
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
 const db = require('../lib/db')
 const migrate = require('../lib/migrate')
-const options = require('../lib/options')
 const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
+
+const MIGRATE_STATE_PATH = process.env.MIGRATE_STATE_PATH
+
 const createMigration = `CREATE TABLE IF NOT EXISTS migrations (
   id serial PRIMARY KEY,
   data json NOT NULL
@@ -14,7 +20,7 @@ const select = 'select * from migrations limit 1'
 
 const getMigrateFile = () => {
   return new Promise((resolve, reject) => {
-    new FileStore(options.migrateStatePath).load((err, store) => {
+    new FileStore(MIGRATE_STATE_PATH).load((err, store) => {
       if (err) return reject(err)
       return resolve(store)
     })
@@ -26,7 +32,7 @@ asyncLocalStorage.run(store, () => {
   db.none(createMigration)
     .then(() => Promise.all([db.oneOrNone(select), getMigrateFile()]))
     .then(([qResult, migrateFile]) => {
-      process.env.SKIP_SERVER_LOGS = !(qResult && qResult.data.migrations.find(({ title }) => title === '1572524820075-server-support-logs.js'))
+      process.env.SKIP_SERVER_LOGS = !(qResult && _.find(({ title }) => title === '1572524820075-server-support-logs.js', qResult.data.migrations ?? []))
       if (!qResult && migrateFile) {
         return db.none('insert into migrations (id, data) values (1, $1)', [migrateFile])
       }

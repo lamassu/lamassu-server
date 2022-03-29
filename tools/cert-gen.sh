@@ -91,32 +91,6 @@ rm /tmp/Lamassu_OP.csr.pem
 mkdir -p $OFAC_DATA_DIR/sources
 touch $OFAC_DATA_DIR/etags.json
 
-cat <<EOF > $CONFIG_DIR/lamassu.json
-{
-  "postgresql": "psql://postgres:$POSTGRES_PASS@localhost/lamassu",
-  "mnemonicPath": "$MNEMONIC_FILE",
-  "caPath": "$CA_PATH",
-  "certPath": "$SERVER_CERT_PATH",
-  "keyPath": "$SERVER_KEY_PATH",
-  "hostname": "$DOMAIN",
-  "logLevel": "debug",
-  "lamassuCaPath": "$LAMASSU_CA_PATH",
-  "migrateStatePath": "$MIGRATE_STATE_PATH",
-  "ofacDataDir": "$OFAC_DATA_DIR",
-  "ofacSources": [
-    {
-      "name": "sdn_advanced",
-      "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml"
-    },
-    {
-      "name": "cons_advanced",
-      "url": "https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml"
-    }
-  ],
-  "idPhotoCardDir": "$IDPHOTOCARD_DIR",
-  "frontCameraDir": "$FRONTCAMERA_DIR",
-  "operatorDataDir": "$OPERATOR_DIR"
-}
-EOF
+node tools/build-dev-env.js
 
 echo "Done."
