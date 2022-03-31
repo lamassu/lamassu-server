@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import BigNumber from 'bignumber.js'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
@@ -26,7 +27,7 @@ const GET_OPERATOR_BY_USERNAME = gql`
       cryptoBalances
       machines
       joined
-      assetValue
+      assets
       preferredFiatCurrency
       contactInfo {
         name
@@ -169,23 +170,31 @@ const Accounting = () => {
     }
   ]
 
+  const hedgingReserve = BigNumber(
+    R.reduce(
+      (acc, value) => acc.plus(value),
+      BigNumber(0),
+      R.values(operatorData?.assets.values.hedgedContracts) ?? []
+    ) ?? 0
+  ).toNumber()
+
+  console.log(opData)
+
   return (
     !loading && (
       <>
         <TitleSection title="Accounting" />
         <Assets
-          balance={
-            operatorData.fiatBalances[operatorData.preferredFiatCurrency]
-          }
-          hedgingReserve={operatorData.hedgingReserve ?? 0}
-          currency={operatorData.preferredFiatCurrency}
+          balance={operatorData?.assets.total ?? 0}
+          hedgingReserve={hedgingReserve}
+          currency={operatorData?.preferredFiatCurrency ?? ''}
         />
         <H4 className={classes.tableTitle}>Fiat balance history</H4>
         <DataTable
           loading={loading}
           emptyText="No transactions so far"
           elements={elements}
-          data={operatorData.fundings ?? []}
+          data={operatorData?.fundings ?? []}
           rowSize="sm"
         />
       </>

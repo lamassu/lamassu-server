@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -15,7 +16,7 @@ import { ReactComponent as DashLogo } from 'src/styling/logos/icon-dash-colour.s
 import { ReactComponent as EthereumLogo } from 'src/styling/logos/icon-ethereum-colour.svg'
 import { ReactComponent as LitecoinLogo } from 'src/styling/logos/icon-litecoin-colour.svg'
 import { ReactComponent as ZCashLogo } from 'src/styling/logos/icon-zcash-colour.svg'
-import { numberToFiatAmount } from 'src/utils/number'
+import { numberToFiatAmount, numberToCryptoAmount } from 'src/utils/number'
 
 import styles from './ATMWallet.styles'
 
@@ -31,7 +32,7 @@ const GET_OPERATOR_BY_USERNAME = gql`
       cryptoBalances
       machines
       joined
-      assetValue
+      assets
       preferredFiatCurrency
       contactInfo {
         name
@@ -57,9 +58,10 @@ const CHIPS_PER_ROW = 6
 const Assets = ({ balance, wallets, currency }) => {
   const classes = useStyles({ numberOfChips: CHIPS_PER_ROW })
 
-  const walletFiatSum = () => {
-    return R.sum(R.map(it => it.fiatValue, wallets))
-  }
+  const walletFiatSum = R.sum(R.map(it => it.fiatValue, wallets))
+  const totalValue = BigNumber(balance)
+    .plus(walletFiatSum)
+    .toNumber()
 
   return (
     <div className={classes.totalAssetWrapper}>
@@ -79,7 +81,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Total balance in wallets</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {numberToFiatAmount(walletFiatSum())}
+            {numberToFiatAmount(walletFiatSum)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -91,7 +93,7 @@ const Assets = ({ balance, wallets, currency }) => {
         <P className={classes.fieldHeader}>Total assets</P>
         <div className={classes.totalAssetWrapper}>
           <Info2 noMargin className={classes.fieldValue}>
-            {numberToFiatAmount(balance)}
+            {numberToFiatAmount(totalValue)}
           </Info2>
           <Info2 noMargin className={classes.fieldCurrency}>
             {R.toUpper(currency)}
@@ -142,11 +144,11 @@ const WalletInfoChip = ({ wallet, currency }) => {
         <div className={classes.walletValueWrapper}>
           <Label2 className={classes.fieldHeader}>{wallet.name} value</Label2>
           <Label2 className={classes.walletValue}>
-            {numberToFiatAmount(wallet.amount.toFixed(1))} {wallet.cryptoCode}
+            {numberToCryptoAmount(wallet.amount)} {wallet.cryptoCode}
           </Label2>
           <Label2 className={classes.fieldHeader}>Hedged value</Label2>
           <Label2 className={classes.walletValue}>
-            {numberToFiatAmount(wallet.fiatValue)} {currency}
+            {numberToFiatAmount(wallet.hedgedFiatValue)} {currency}
           </Label2>
         </div>
       </Paper>
@@ -170,43 +172,61 @@ const ATMWallet = () => {
       cryptoCode: 'BTC',
       name: 'Bitcoin',
       amount: operatorData?.cryptoBalances.xbt ?? 0,
-      fiatValue: 0,
-      isHedged: true
+      fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.xbt ?? 0,
+      hedgedFiatValue: operatorData?.assets.values.hedgedContracts.xbt ?? 0,
+      isHedged: BigNumber(operatorData?.assets.values.hedgedCrypto.xbt ?? 0).gt(
+        0
+      )
     },
     {
       cryptoCode: 'ETH',
       name: 'Ethereum',
       amount: operatorData?.cryptoBalances.eth ?? 0,
-      fiatValue: 0,
-      isHedged: true
+      fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.eth ?? 0,
+      hedgedFiatValue: operatorData?.assets.values.hedgedContracts.eth ?? 0,
+      isHedged: BigNumber(operatorData?.assets.values.hedgedCrypto.eth ?? 0).gt(
+        0
+      )
     },
     {
       cryptoCode: 'LTC',
       name: 'Litecoin',
       amount: operatorData?.cryptoBalances.ltc ?? 0,
-      fiatValue: 0,
-      isHedged: true
+      fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.ltc ?? 0,
+      hedgedFiatValue: operatorData?.assets.values.hedgedContracts.ltc ?? 0,
+      isHedged: BigNumber(operatorData?.assets.values.hedgedCrypto.ltc ?? 0).gt(
+        0
+      )
     },
     {
       cryptoCode: 'ZEC',
       name: 'Z-Cash',
       amount: operatorData?.cryptoBalances.zec ?? 0,
-      fiatValue: 0,
-      isHedged: false
+      fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.zec ?? 0,
+      hedgedFiatValue: operatorData?.assets.values.hedgedContracts.zec ?? 0,
+      isHedged: BigNumber(operatorData?.assets.values.hedgedCrypto.zec ?? 0).gt(
+        0
+      )
     },
     {
       cryptoCode: 'BCH',
       name: 'Bitcoin Cash',
       amount: operatorData?.cryptoBalances.bch ?? 0,
-      fiatValue: 0,
-      isHedged: true
+      fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.bch ?? 0,
+      hedgedFiatValue: operatorData?.assets.values.hedgedContracts.bch ?? 0,
+      isHedged: BigNumber(operatorData?.assets.values.hedgedCrypto.bch ?? 0).gt(
+        0
+      )
     },
     {
       cryptoCode: 'DASH',
       name: 'Dash',
       amount: operatorData?.cryptoBalances.dash ?? 0,
-      fiatValue: 0,
-      isHedged: false
+      fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.dash ?? 0,
+      hedgedFiatValue: operatorData?.assets.values.hedgedContracts.dash ?? 0,
+      isHedged: BigNumber(
+        operatorData?.assets.values.hedgedCrypto.dash ?? 0
+      ).gt(0)
     }
   ]
 
@@ -216,10 +236,10 @@ const ATMWallet = () => {
         <TitleSection title="ATM Wallets" />
         <Assets
           balance={
-            operatorData.fiatBalances[operatorData.preferredFiatCurrency]
+            operatorData?.fiatBalances[operatorData.preferredFiatCurrency] ?? 0
           }
           wallets={wallets}
-          currency={operatorData.preferredFiatCurrency}
+          currency={operatorData?.preferredFiatCurrency ?? ''}
         />
         <H3 className={classes.walletChipTitle}>ATM Wallets</H3>
         <div className={classes.walletChipList}>

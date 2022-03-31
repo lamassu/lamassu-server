@@ -10,4 +10,12 @@ const defaultToZero = value =>
 const numberToFiatAmount = value =>
   value.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
-export { defaultToZero, transformNumber, numberToFiatAmount }
+const numberToCryptoAmount = value =>
+  value.toLocaleString('en-US', { maximumFractionDigits: 5 })
+
+export {
+  defaultToZero,
+  transformNumber,
+  numberToFiatAmount,
+  numberToCryptoAmount
+}

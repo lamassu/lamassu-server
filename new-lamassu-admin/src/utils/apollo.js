@@ -12,8 +12,7 @@ import AppContext from 'src/AppContext'
 const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
-const ALT_URI =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:4001' : ''
+const ALT_URI = 'http://localhost:4001'
 
 const uploadLink = createUploadLink({
   credentials: 'include',
