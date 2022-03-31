@@ -1,5 +1,6 @@
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
@@ -32,17 +33,21 @@ const TitleSection = ({
         )}
         {buttons.length > 0 && (
           <>
-            {buttons.map((button, idx) => (
-              <SubpageButton
-                key={idx}
-                className={classes.subpageButton}
-                Icon={button.icon}
-                InverseIcon={button.inverseIcon}
-                toggle={button.toggle}
-                forceDisable={button.forceDisable}>
-                <Info1 className={classes.buttonText}>{button.text}</Info1>
-              </SubpageButton>
-            ))}
+            {buttons.map((button, idx) =>
+              !R.isNil(button.component) ? (
+                button.component
+              ) : (
+                <SubpageButton
+                  key={idx}
+                  className={classes.subpageButton}
+                  Icon={button.icon}
+                  InverseIcon={button.inverseIcon}
+                  toggle={button.toggle}
+                  forceDisable={button.forceDisable}>
+                  <Info1 className={classes.buttonText}>{button.text}</Info1>
+                </SubpageButton>
+              )
+            )}
           </>
         )}
       </div>

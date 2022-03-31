@@ -5,6 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
+import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Modal from 'src/components/Modal'
 import { IconButton, Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
@@ -147,6 +148,12 @@ const SET_CASSETTE_BILLS = gql`
   }
 `
 
+const GET_BATCHES_CSV = gql`
+  query cashboxBatchesCsv($from: Date, $until: Date, $timezone: String) {
+    cashboxBatchesCsv(from: $from, until: $until, timezone: $timezone)
+  }
+`
+
 const CashCassettes = () => {
   const classes = useStyles()
   const [showHistory, setShowHistory] = useState(false)
@@ -174,6 +181,8 @@ const CashCassettes = () => {
     onCompleted: () => setEditingSchema(false),
     refetchQueries: () => ['getData']
   })
+
+  const timezone = R.path(['config', 'locale_timezone'], data)
 
   const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
@@ -317,6 +326,21 @@ const CashCassettes = () => {
               icon: HistoryIcon,
               inverseIcon: ReverseHistoryIcon,
               toggle: setShowHistory
+            },
+            {
+              component: showHistory ? (
+                <LogsDowloaderPopover
+                  className={classes.downloadLogsButton}
+                  title="Download logs"
+                  name="cashboxHistory"
+                  query={GET_BATCHES_CSV}
+                  getLogs={logs => R.path(['cashboxBatchesCsv'])(logs)}
+                  timezone={timezone}
+                  args={{ timezone }}
+                />
+              ) : (
+                <></>
+              )
             }
           ]}
           iconClassName={classes.listViewButton}
@@ -364,6 +388,7 @@ const CashCassettes = () => {
           <CashboxHistory
             machines={R.concat(machines, unpairedMachines)}
             currency={fiatCurrency}
+            timezone={timezone}
           />
         )}
         <CashCassettesFooter
