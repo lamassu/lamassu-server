@@ -68,7 +68,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
 
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines),
-    0
+    2
   )
 
   const percentMin = 0
