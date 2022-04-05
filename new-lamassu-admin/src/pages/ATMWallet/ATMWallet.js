@@ -200,7 +200,7 @@ const ATMWallet = () => {
     },
     {
       cryptoCode: 'ZEC',
-      name: 'Z-Cash',
+      name: 'Zcash',
       amount: operatorData?.cryptoBalances.zec ?? 0,
       fiatValue: operatorData?.assets.values.cryptoBalancesInFiat.zec ?? 0,
       hedgedFiatValue: operatorData?.assets.values.hedgedContracts.zec ?? 0,
