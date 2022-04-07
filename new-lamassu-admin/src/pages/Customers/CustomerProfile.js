@@ -10,9 +10,11 @@ import {
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useContext } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
+import AppContext from 'src/AppContext'
+import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import ErrorMessage from 'src/components/ErrorMessage'
 import { Button, IconButton, ActionButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
@@ -22,6 +24,8 @@ import {
   OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
+import { ReactComponent as DeleteIconReversedIcon } from 'src/styling/icons/action/delete/white.svg'
 import { ReactComponent as AuthorizeReversedIcon } from 'src/styling/icons/button/authorize/white.svg'
 import { ReactComponent as AuthorizeIcon } from 'src/styling/icons/button/authorize/zodiac.svg'
 import { ReactComponent as BlockReversedIcon } from 'src/styling/icons/button/block/white.svg'
@@ -260,6 +264,12 @@ const DISABLE_TEST_CUSTOMER = gql`
   }
 `
 
+const DELETE_CUSTOMER = gql`
+  mutation deleteCustomer($customerId: ID!) {
+    deleteCustomer(customerId: $customerId)
+  }
+`
+
 const GET_DATA = gql`
   query getData {
     config
@@ -289,10 +299,12 @@ const GET_ACTIVE_CUSTOM_REQUESTS = gql`
 
 const CustomerProfile = memo(() => {
   const history = useHistory()
+  const { userData } = useContext(AppContext)
 
   const [retrieve, setRetrieve] = useState(false)
   const [showCompliance, setShowCompliance] = useState(false)
   const [wizard, setWizard] = useState(false)
+  const [toDelete, setToDelete] = useState(false)
   const [error, setError] = useState(null)
   const [clickedItem, setClickedItem] = useState('overview')
   const { id: customerId } = useParams()
@@ -393,6 +405,11 @@ const CustomerProfile = memo(() => {
   const [disableTestCustomer] = useMutation(DISABLE_TEST_CUSTOMER, {
     variables: { customerId },
     onCompleted: () => getCustomer()
+  })
+
+  const [deleteCustomer] = useMutation(DELETE_CUSTOMER, {
+    variables: { customerId },
+    onCompleted: () => history.push('/compliance/customers')
   })
 
   const updateCustomer = it =>
@@ -595,6 +612,17 @@ const CustomerProfile = memo(() => {
                     }>
                     {`${blocked ? 'Authorize' : 'Block'} customer`}
                   </ActionButton>
+                  {Boolean(R.path(['isTestCustomer'])(customerData)) &&
+                    userData?.role === 'superuser' && (
+                      <ActionButton
+                        color="primary"
+                        className={classes.actionButton}
+                        Icon={DeleteIcon}
+                        InverseIcon={DeleteIconReversedIcon}
+                        onClick={() => setToDelete(true)}>
+                        {`Delete customer`}
+                      </ActionButton>
+                    )}
                 </div>
               </div>
               <div>
@@ -699,6 +727,17 @@ const CustomerProfile = memo(() => {
             addCustomerData={editCustomer}
             onClose={() => setWizard(null)}
             customInfoRequirementOptions={customInfoRequirementOptions}
+          />
+        )}
+        {toDelete && (
+          <ConfirmDialog
+            open={toDelete}
+            title={`Delete this customer?`}
+            errorMessage={null}
+            toBeConfirmed={R.path(['phone'])(customerData)}
+            message={`This test customer will be deleted and cannot be reinstated. Are you sure?`}
+            onConfirmed={() => deleteCustomer()}
+            onDismissed={() => setToDelete(false)}
           />
         )}
       </div>
