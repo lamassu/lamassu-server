@@ -26,7 +26,7 @@ export default {
   getValidationSchema: account => {
     return Yup.object().shape({
       apiKey: Yup.string('The API key must be a string')
-        .max(100, 'The API key is too long')
+        .max(200, 'The API key is too long')
         .required('The API key is required'),
       walletId: Yup.string('The wallet id must be a string')
         .max(100, 'The wallet id is too long')
