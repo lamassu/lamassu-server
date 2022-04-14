@@ -162,12 +162,87 @@ const EditableCard = ({
     [classes.label1Rejected]: state === OVERRIDE_REJECTED,
     [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
   }
-  const authorized =
-    state === OVERRIDE_PENDING
-      ? { label: 'Pending', type: 'neutral' }
-      : state === OVERRIDE_REJECTED
-      ? { label: 'Rejected', type: 'error' }
-      : { label: 'Accepted', type: 'success' }
+
+  const isPending = state === OVERRIDE_PENDING
+  const isAccepted = state === OVERRIDE_AUTHORIZED
+  const isRejected = state === OVERRIDE_REJECTED
+
+  const authorized = isPending
+    ? { label: 'Pending', type: 'neutral' }
+    : isRejected
+    ? { label: 'Rejected', type: 'error' }
+    : { label: 'Accepted', type: 'success' }
+
+  const ButtonDiv = button => <div className={classes.button}>{button}</div>
+
+  const AuthorizeButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="spring"
+        type="button"
+        Icon={AuthorizeIcon}
+        InverseIcon={AuthorizeIcon}
+        onClick={() => authorize()}>
+        Authorize
+      </ActionButton>
+    )
+
+  const RejectButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="tomato"
+        type="button"
+        Icon={BlockIcon}
+        InverseIcon={BlockIcon}
+        onClick={() => reject()}>
+        Reject
+      </ActionButton>
+    )
+
+  const CancelButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="secondary"
+        Icon={CancelReversedIcon}
+        InverseIcon={CancelReversedIcon}
+        type="reset">
+        Cancel
+      </ActionButton>
+    )
+
+  const RetriveAPIDataButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="primary"
+        type="button"
+        Icon={DataIcon}
+        InverseIcon={DataReversedIcon}
+        onClick={() => retrieveAdditionalData()}>
+        Retrieve API data
+      </ActionButton>
+    )
+
+  const EditButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="primary"
+        Icon={EditIcon}
+        InverseIcon={EditReversedIcon}
+        onClick={() => setEditing(true)}>
+        Edit
+      </ActionButton>
+    )
+
+  const SaveButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="secondary"
+        Icon={SaveReversedIcon}
+        InverseIcon={SaveReversedIcon}
+        type="submit">
+        Save
+      </ActionButton>
+    )
 
   return (
     <div>
@@ -264,52 +339,14 @@ const EditableCard = ({
                             Delete
                           </ActionButton>
                         )}
-                        {!hasAdditionalData && (
-                          <ActionButton
-                            color="primary"
-                            type="button"
-                            Icon={DataIcon}
-                            InverseIcon={DataReversedIcon}
-                            onClick={() => retrieveAdditionalData()}>
-                            Retrieve API data
-                          </ActionButton>
-                        )}
+                        {!hasAdditionalData && RetriveAPIDataButton()}
                       </div>
-                      {editable && (
-                        <ActionButton
-                          color="primary"
-                          Icon={EditIcon}
-                          InverseIcon={EditReversedIcon}
-                          onClick={() => setEditing(true)}>
-                          Edit
-                        </ActionButton>
-                      )}
+                      {editable && EditButton()}
                       {!editable &&
                         authorize &&
-                        authorized.label !== 'Accepted' && (
-                          <div className={classes.button}>
-                            <ActionButton
-                              color="spring"
-                              type="button"
-                              Icon={AuthorizeIcon}
-                              InverseIcon={AuthorizeIcon}
-                              onClick={() => authorize()}>
-                              Authorize
-                            </ActionButton>
-                          </div>
-                        )}
-                      {!editable &&
-                        authorize &&
-                        authorized.label !== 'Rejected' && (
-                          <ActionButton
-                            color="tomato"
-                            type="button"
-                            Icon={BlockIcon}
-                            InverseIcon={BlockIcon}
-                            onClick={() => reject()}>
-                            Reject
-                          </ActionButton>
-                        )}
+                        !isAccepted &&
+                        AuthorizeButton()}
+                      {!editable && authorize && !isRejected && RejectButton()}
                     </div>
                   )}
                   {editing && (
@@ -344,48 +381,10 @@ const EditableCard = ({
                         )}
                       </div>
                       <div className={classes.editingButtons}>
-                        {fields && (
-                          <div className={classes.button}>
-                            <ActionButton
-                              color="secondary"
-                              Icon={SaveReversedIcon}
-                              InverseIcon={SaveReversedIcon}
-                              type="submit">
-                              Save
-                            </ActionButton>
-                          </div>
-                        )}
-                        <div className={classes.button}>
-                          <ActionButton
-                            color="secondary"
-                            Icon={CancelReversedIcon}
-                            InverseIcon={CancelReversedIcon}
-                            type="reset">
-                            Cancel
-                          </ActionButton>
-                        </div>
-                        {authorize && authorized.label !== 'Accepted' && (
-                          <div className={classes.button}>
-                            <ActionButton
-                              color="spring"
-                              type="button"
-                              Icon={AuthorizeIcon}
-                              InverseIcon={AuthorizeIcon}
-                              onClick={() => authorize()}>
-                              Authorize
-                            </ActionButton>
-                          </div>
-                        )}
-                        {authorize && authorized.label !== 'Rejected' && (
-                          <ActionButton
-                            color="tomato"
-                            type="button"
-                            Icon={BlockIcon}
-                            InverseIcon={BlockIcon}
-                            onClick={() => reject()}>
-                            Reject
-                          </ActionButton>
-                        )}
+                        {fields && SaveButton()}
+                        {CancelButton()}
+                        {authorize && !isAccepted && AuthorizeButton()}
+                        {authorize && !isRejected && RejectButton()}
                         {error && (
                           <ErrorMessage>Failed to save changes</ErrorMessage>
                         )}
