@@ -178,9 +178,7 @@ const Calendar = ({ minDate, maxDate, handleSelect, ...props }) => {
           {R.range(1, 8).map((row, key) => (
             <tr key={key}>
               {getRow(currentDisplayedMonth, row).map((day, key) => (
-                <td
-                  key={key}
-                  onClick={() => handleSelect(day, minDate, maxDate)}>
+                <td key={key} onClick={() => handleSelect(day)}>
                   <Tile
                     isDisabled={
                       (maxDate && isAfter(maxDate, day)) ||
