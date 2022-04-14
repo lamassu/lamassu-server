@@ -244,6 +244,36 @@ const EditableCard = ({
       </ActionButton>
     )
 
+  const DeleteButton = () =>
+    ButtonDiv(
+      <ActionButton
+        color="primary"
+        type="button"
+        Icon={DeleteIcon}
+        InverseIcon={DeleteReversedIcon}
+        onClick={() => deleteEditedData()}>
+        Delete
+      </ActionButton>
+    )
+
+  const NotEditing = () => (
+    <div className={classes.editButton}>
+      {isPending ? (
+        <>
+          {EditButton()}
+          {!hasAdditionalData && RetriveAPIDataButton()}
+          {AuthorizeButton()}
+          {RejectButton()}
+        </>
+      ) : (
+        <>
+          {false && DeleteButton()}
+          {EditButton()}
+        </>
+      )}
+    </div>
+  )
+
   return (
     <div>
       <Card className={classes.card}>
@@ -326,29 +356,7 @@ const EditableCard = ({
                   </Grid>
                 </div>
                 <div className={classes.edit}>
-                  {!editing && (
-                    <div className={classes.editButton}>
-                      <div className={classes.deleteButton}>
-                        {false && (
-                          <ActionButton
-                            color="primary"
-                            type="button"
-                            Icon={DeleteIcon}
-                            InverseIcon={DeleteReversedIcon}
-                            onClick={() => deleteEditedData()}>
-                            Delete
-                          </ActionButton>
-                        )}
-                        {!hasAdditionalData && RetriveAPIDataButton()}
-                      </div>
-                      {editable && EditButton()}
-                      {!editable &&
-                        authorize &&
-                        !isAccepted &&
-                        AuthorizeButton()}
-                      {!editable && authorize && !isRejected && RejectButton()}
-                    </div>
-                  )}
+                  {!editing && NotEditing()}
                   {editing && (
                     <div className={classes.editingWrapper}>
                       <div className={classes.replace}>
