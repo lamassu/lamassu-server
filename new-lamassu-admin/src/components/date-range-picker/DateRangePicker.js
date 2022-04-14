@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
-import { differenceInDays, set } from 'date-fns/fp'
+import { compareAsc, differenceInDays, set } from 'date-fns/fp'
 import React, { useState, useEffect } from 'react'
 
 import Calendar from './Calendar'
@@ -24,9 +24,9 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
 
   const classes = useStyles()
 
-  const handleSelect = (day, minDate, maxDate) => {
+  const handleSelect = day => {
     if (
-      (maxDate && differenceInDays(maxDate, day) > 0) ||
+      (maxDate && compareAsc(maxDate, day) > 0) ||
       (minDate && differenceInDays(day, minDate) > 0)
     )
       return

@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/react-hooks'
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
-import { format } from 'date-fns/fp'
+import { format, set } from 'date-fns/fp'
 import FileSaver from 'file-saver'
 import * as R from 'ramda'
 import React, { useState, useCallback } from 'react'
@@ -280,7 +280,15 @@ const LogsDownloaderPopover = ({
                   )}
                 </div>
                 <DateRangePicker
-                  maxDate={new Date()}
+                  maxDate={set(
+                    {
+                      hours: 23,
+                      minutes: 59,
+                      seconds: 59,
+                      milliseconds: 999
+                    },
+                    new Date()
+                  )}
                   onRangeChange={handleRangeChange}
                 />
               </div>
