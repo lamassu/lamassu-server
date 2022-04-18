@@ -274,6 +274,47 @@ const EditableCard = ({
     </div>
   )
 
+  const Editing = ({ setFieldValue }) => (
+    <div className={classes.editingWrapper}>
+      <div className={classes.replace}>
+        {hasImage && (
+          <ActionButton
+            color="secondary"
+            type="button"
+            Icon={ReplaceReversedIcon}
+            InverseIcon={ReplaceReversedIcon}
+            onClick={() => triggerInput()}>
+            {
+              <div>
+                <input
+                  type="file"
+                  alt=""
+                  accept="image/*"
+                  className={classes.input}
+                  ref={fileInput => setInput(fileInput)}
+                  onChange={event => {
+                    // need to store it locally if we want to display it even after saving to db
+                    const file = R.head(event.target.files)
+                    if (!file) return
+                    setFieldValue(R.head(fields).name, file)
+                  }}
+                />
+                Replace
+              </div>
+            }
+          </ActionButton>
+        )}
+      </div>
+      <div className={classes.editingButtons}>
+        {fields && SaveButton()}
+        {CancelButton()}
+        {authorize && !isAccepted && AuthorizeButton()}
+        {authorize && !isRejected && RejectButton()}
+        {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
+      </div>
+    </div>
+  )
+
   return (
     <div>
       <Card className={classes.card}>
@@ -357,48 +398,7 @@ const EditableCard = ({
                 </div>
                 <div className={classes.edit}>
                   {!editing && NotEditing()}
-                  {editing && (
-                    <div className={classes.editingWrapper}>
-                      <div className={classes.replace}>
-                        {hasImage && (
-                          <ActionButton
-                            color="secondary"
-                            type="button"
-                            Icon={ReplaceReversedIcon}
-                            InverseIcon={ReplaceReversedIcon}
-                            onClick={() => triggerInput()}>
-                            {
-                              <div>
-                                <input
-                                  type="file"
-                                  alt=""
-                                  accept="image/*"
-                                  className={classes.input}
-                                  ref={fileInput => setInput(fileInput)}
-                                  onChange={event => {
-                                    // need to store it locally if we want to display it even after saving to db
-                                    const file = R.head(event.target.files)
-                                    if (!file) return
-                                    setFieldValue(R.head(fields).name, file)
-                                  }}
-                                />
-                                Replace
-                              </div>
-                            }
-                          </ActionButton>
-                        )}
-                      </div>
-                      <div className={classes.editingButtons}>
-                        {fields && SaveButton()}
-                        {CancelButton()}
-                        {authorize && !isAccepted && AuthorizeButton()}
-                        {authorize && !isRejected && RejectButton()}
-                        {error && (
-                          <ErrorMessage>Failed to save changes</ErrorMessage>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  {editing && Editing({ setFieldValue })}
                 </div>
               </Form>
             )}
