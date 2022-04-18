@@ -245,6 +245,7 @@ const EditableCard = ({
     )
 
   const DeleteButton = () =>
+    false &&
     ButtonDiv(
       <ActionButton
         color="primary"
@@ -267,7 +268,7 @@ const EditableCard = ({
         </>
       ) : (
         <>
-          {false && DeleteButton()}
+          {DeleteButton()}
           {EditButton()}
         </>
       )}
@@ -306,10 +307,17 @@ const EditableCard = ({
         )}
       </div>
       <div className={classes.editingButtons}>
+        {isPending && DeleteButton()}
+
         {fields && SaveButton()}
         {CancelButton()}
-        {authorize && !isAccepted && AuthorizeButton()}
-        {authorize && !isRejected && RejectButton()}
+
+        {!isPending && (
+          <>
+            {authorize && !isAccepted && AuthorizeButton()}
+            {authorize && !isRejected && RejectButton()}
+          </>
+        )}
         {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
       </div>
     </div>
