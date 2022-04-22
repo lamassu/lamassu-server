@@ -3,7 +3,7 @@ const FileStore = require('migrate/lib/file-store')
 
 const _ = require('lodash/fp')
 const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
 const db = require('../lib/db')
 const migrate = require('../lib/migrate')

@@ -5,7 +5,7 @@
 const pgp = require('pg-promise')()
 
 const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
 const { PSQL_URL } = require('../lib/constants')
 
