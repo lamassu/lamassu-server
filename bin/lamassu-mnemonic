@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
+const path = require('path')
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
-const options = require('../lib/options')
+const MNEMONIC_PATH = process.env.MNEMONIC_PATH
 
-const mnemonic = fs.readFileSync(options.mnemonicPath, 'utf8').trim()
+const mnemonic = fs.readFileSync(MNEMONIC_PATH, 'utf8').trim()
 console.log(mnemonic)

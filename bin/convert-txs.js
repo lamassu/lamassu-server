@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-var pgp = require('pg-promise')()
-var psqlUrl = require('../lib/options').postgresql
+const path = require('path')
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
-var db = pgp(psqlUrl)
+var pgp = require('pg-promise')()
+
+const { PSQL_URL } = require('../lib/constants')
+
+var db = pgp(PSQL_URL)
 
 db.manyOrNone(`select * from transactions where incoming=false
   and stage='final_request' and authority='machine'`)

@@ -2,7 +2,7 @@ require('es6-promise').polyfill()
 
 var notifier = require('../lib/notifier')
 var db = require('../lib/postgresql_interface')
-var psqlUrl = require('../lib/options').postgres
+const { PSQL_URL } = require('../lib/constants')
 
 function getBalances () {
   return [
@@ -11,7 +11,7 @@ function getBalances () {
   ]
 }
 
-db.init(psqlUrl)
+db.init(PSQL_URL)
 notifier.init(db, getBalances, {lowBalanceThreshold: 10})
 console.log('DEBUG0')
 notifier.checkStatus()

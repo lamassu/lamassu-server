@@ -6,21 +6,21 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const bip39 = require('bip39')
-const options = require('../lib/options-loader')()
+const setEnvVariable = require('../tools/set-env-var')
 
-if (options.opts.mnemonicPath && !options.opts.seedPath) {
-  const mnemonic = fs.readFileSync(options.opts.mnemonicPath, 'utf8')
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
+
+if (process.env.MNEMONIC_PATH && !process.env.SEED_PATH) {
+  const mnemonic = fs.readFileSync(process.env.MNEMONIC_PATH, 'utf8')
   const seed = bip39.mnemonicToEntropy(mnemonic.split('\n').join(' ').trim()).toString('hex')
 
-  options.opts.seedPath = path.resolve(os.homedir(), '.lamassu', 'seeds', 'seed.txt')
+  setEnvVariable('SEED_PATH', path.resolve(os.homedir(), '.lamassu', 'seeds', 'seed.txt'))
 
-  if (!fs.existsSync(path.dirname(options.opts.seedPath))) {
-    fs.mkdirSync(path.dirname(options.opts.seedPath))
+  if (!fs.existsSync(path.dirname(process.env.SEED_PATH))) {
+    fs.mkdirSync(path.dirname(process.env.SEED_PATH))
   }
 
-  if (!fs.existsSync(options.opts.seedPath)) {
-    fs.writeFileSync(options.opts.seedPath, seed, 'utf8')
+  if (!fs.existsSync(process.env.SEED_PATH)) {
+    fs.writeFileSync(process.env.SEED_PATH, seed, 'utf8')
   }
-
-  fs.writeFileSync(options.path, JSON.stringify(options.opts, null, '\t'), 'utf8')
 }

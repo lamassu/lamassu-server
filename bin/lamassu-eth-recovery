@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const path = require('path')
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
 const hdkey = require('ethereumjs-wallet/hdkey')
 const hkdf = require('futoin-hkdf')
 const db = require('../lib/db')
@@ -9,14 +11,14 @@ const mnemonicHelpers = require('../lib/mnemonic-helpers')
 const pify = require('pify')
 const fs = pify(require('fs'))
 
-const options = require('../lib/options')
+const MNEMONIC_PATH = process.env.MNEMONIC_PATH
 
 const defaultPrefixPath = "m/44'/60'/1'/0'"
 const paymentPrefixPath = "m/44'/60'/0'/0'"
 
 const address = process.argv[2]
 
-if (!options || !options.mnemonicPath) {
+if (!MNEMONIC_PATH) {
   console.error(`Unable to fetch mnemonic from your account!`)
   process.exit(1)
 }
@@ -47,7 +49,7 @@ function searchForHdIndex (address) {
 }
 
 function fetchMnemonic () {
-  return fs.readFile(options.mnemonicPath, 'utf8')
+  return fs.readFile(MNEMONIC_PATH, 'utf8')
     .then(mnemonic => computeSeed(mnemonic))
 }
 
