@@ -3,7 +3,8 @@ const os = require('os')
 const path = require('path')
 
 const setEnvVariable = (key, value) => {
-  const ENV_VARIABLES = fs.readFileSync(path.resolve(__dirname, '../.env'), 'utf-8').split(os.EOL)
+  const ENV_PATH = process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env')
+  const ENV_VARIABLES = fs.readFileSync(ENV_PATH, 'utf-8').split(os.EOL)
   const target = ENV_VARIABLES.indexOf(ENV_VARIABLES.find(line => line.match(new RegExp(`^${key}=`))))
 
   if (target < 0) {
@@ -18,7 +19,7 @@ const setEnvVariable = (key, value) => {
     ENV_VARIABLES.splice(target, 1, `${key}=${value}`)
   }
 
-  fs.writeFileSync(path.resolve(__dirname, '../.env'), ENV_VARIABLES.join(os.EOL))
+  fs.writeFileSync(ENV_PATH, ENV_VARIABLES.join(os.EOL))
 }
 
 module.exports = setEnvVariable
