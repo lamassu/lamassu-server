@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-const FileStore = require('migrate/lib/file-store')
+const _ = require('lodash/fp')
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
 const _ = require('lodash/fp')
 const path = require('path')
@@ -9,8 +11,6 @@ const db = require('../lib/db')
 const migrate = require('../lib/migrate')
 const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
 
-const MIGRATE_STATE_PATH = process.env.MIGRATE_STATE_PATH
-
 const createMigration = `CREATE TABLE IF NOT EXISTS migrations (
   id serial PRIMARY KEY,
   data json NOT NULL
@@ -18,14 +18,7 @@ const createMigration = `CREATE TABLE IF NOT EXISTS migrations (
 
 const select = 'select * from migrations limit 1'
 
-const getMigrateFile = () => {
-  return new Promise((resolve, reject) => {
-    new FileStore(MIGRATE_STATE_PATH).load((err, store) => {
-      if (err) return reject(err)
-      return resolve(store)
-    })
-  })
-}
+const getMigrateFile = () => Promise.resolve()
 
 const store = defaultStore()
 asyncLocalStorage.run(store, () => {

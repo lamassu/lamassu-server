@@ -1,0 +1,143 @@
+version: "3.8"
+
+networks:
+  lamassu-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.29.0.0/24"
+
+services:
+  database:
+    container_name: postgres-db
+    image: postgres
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=lamassu
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - 15432:5432
+    volumes:
+      - ~/lamassu-data/psql:/var/lib/postgresql/data
+    networks:
+      - lamassu-network
+    healthcheck:
+      test: pg_isready -U postgres -d postgres
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  lamassu-server:
+    container_name: lamassu-server
+    build:
+      context: .
+      dockerfile: Dockerfiles/server.Dockerfile
+      target: production-l-s
+    restart: on-failure
+    ports:
+      - 3000:3000
+    volumes:
+      - ~/lamassu-data/certs:/etc/ssl/certs
+      - ~/lamassu-data/private:/etc/ssl/private
+      - ~/lamassu-data/files:/opt/lamassu-server
+      - ~/lamassu-data/mnemonics:/etc/lamassu/mnemonics
+      - ~/lamassu-data/ofac:/var/lamassu/ofac
+      - ~/lamassu-data/.migrate:/etc/lamassu/.migrate
+      - ~/lamassu-data/blockchains:/mnt/blockchains
+    networks:
+      lamassu-network:
+        ipv4_address: 172.29.0.3
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_HOST=postgres-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=lamassu
+      - LAMASSU_CA_PATH=/etc/ssl/certs/Lamassu_CA.pem
+      - CA_PATH=/etc/ssl/certs/Lamassu_OP_Root_CA.pem
+      - CERT_PATH=/etc/ssl/certs/Lamassu_OP.pem
+      - KEY_PATH=/etc/ssl/private/Lamassu_OP.key
+      - MNEMONIC_PATH=/etc/lamassu/mnemonics/mnemonic.txt
+      - MIGRATE_STATE_PATH=/etc/lamassu/.migrate
+      - BLOCKCHAIN_DIR=/mnt/blockchains
+      - OFAC_DATA_DIR=/var/lamassu/ofac
+      - ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
+      - FRONT_CAMERA_DIR=/opt/lamassu-server/frontcamera
+      - OPERATOR_DATA_DIR=/opt/lamassu-server/operatordata
+      - STRIKE_BASE_URL=https://api.strike.acinq.co/api/
+      - COIN_ATM_RADAR_URL=https://coinatmradar.info/api/lamassu/
+      - OFAC_SOURCES_NAMES=sdn_advanced,cons_advanced
+      - OFAC_SOURCES_URLS=https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml,https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml
+      - HOSTNAME=localhost
+      - LOG_LEVEL=info
+    depends_on:
+      database:
+        condition: service_healthy
+
+  lamassu-admin-server:
+    container_name: lamassu-admin-server
+    build:
+      context: .
+      dockerfile: Dockerfiles/admin-server.Dockerfile
+      target: production-l-a-s
+    restart: on-failure
+    ports:
+      - 443:443
+    volumes:
+      - ~/lamassu-data/certs:/etc/ssl/certs
+      - ~/lamassu-data/private:/etc/ssl/private
+      - ~/lamassu-data/files:/opt/lamassu-server
+      - ~/lamassu-data/mnemonics:/etc/lamassu/mnemonics
+      - ~/lamassu-data/ofac:/var/lamassu/ofac
+      - ~/lamassu-data/.migrate:/etc/lamassu/.migrate
+      - ~/lamassu-data/blockchains:/mnt/blockchains
+    networks:
+      - lamassu-network
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_HOST=postgres-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=lamassu
+      - LAMASSU_CA_PATH=/etc/ssl/certs/Lamassu_CA.pem
+      - CA_PATH=/etc/ssl/certs/Lamassu_OP_Root_CA.pem
+      - CERT_PATH=/etc/ssl/certs/Lamassu_OP.pem
+      - KEY_PATH=/etc/ssl/private/Lamassu_OP.key
+      - MNEMONIC_PATH=/etc/lamassu/mnemonics/mnemonic.txt
+      - MIGRATE_STATE_PATH=/etc/lamassu/.migrate
+      - BLOCKCHAIN_DIR=/mnt/blockchains
+      - OFAC_DATA_DIR=/var/lamassu/ofac
+      - ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
+      - FRONT_CAMERA_DIR=/opt/lamassu-server/frontcamera
+      - OPERATOR_DATA_DIR=/opt/lamassu-server/operatordata
+      - STRIKE_BASE_URL=https://api.strike.acinq.co/api/
+      - COIN_ATM_RADAR_URL=https://coinatmradar.info/api/lamassu/
+      - OFAC_SOURCES_NAMES=sdn_advanced,cons_advanced
+      - OFAC_SOURCES_URLS=https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml,https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml
+      - HOSTNAME=172.29.0.3
+      - LOG_LEVEL=info
+    depends_on:
+      lamassu-server:
+        condition: service_started
+
+  # admin:
+  #   container_name: lamassu-admin
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfiles/admin.Dockerfile
+  #     target: production-admin
+  #   restart: always
+  #   ports:
+  #     - 80:80
+  #   networks:
+  #     - lamassu-network
+  #   depends_on:
+  #     lamassu-admin-server:
+  #       condition: service_started

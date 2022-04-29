@@ -35,7 +35,7 @@ if (role !== 'user' && role !== 'superuser') {
 
 asyncLocalStorage.run(defaultStore(), () => {
   userManagement.createRegisterToken(name, role).then(token => {
-    if (domain === 'localhost') {
+    if (domain === 'localhost' && process.env.NODE_ENV !== 'production') {
       console.log(`https://${domain}:3001/register?t=${token.token}`)
     } else {
       console.log(`https://${domain}/register?t=${token.token}`)
