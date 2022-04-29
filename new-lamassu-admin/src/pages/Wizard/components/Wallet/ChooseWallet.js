@@ -39,7 +39,7 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it => R.contains(it)(['infura', 'bitgo'])
+const isConfigurable = it => R.contains(it)(['infura', 'bitgo', 'galoy'])
 
 const isLocalHosted = it =>
   R.contains(it)([
@@ -147,6 +147,19 @@ const ChooseWallet = ({ data: currentData, addData }) => {
             validationSchema={schema.infura.getValidationSchema(
               accounts.infura
             )}
+            buttonLabel={'Continue'}
+            buttonClass={classes.formButton}
+          />
+        </>
+      )}
+      {selected === 'galoy' && (
+        <>
+          <H4 noMargin>Enter wallet information</H4>
+          <FormRenderer
+            value={accounts.galoy}
+            save={saveWallet(selected)}
+            elements={schema.galoy.elements}
+            validationSchema={schema.galoy.getValidationSchema(accounts.galoy)}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}
           />
