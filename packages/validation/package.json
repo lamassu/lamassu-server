@@ -1,0 +1,14 @@
+{
+    "name": "@lamassu/validation",
+    "version": "1.0.0",
+    "dependencies": {
+      "yup": "0.32.9",
+      "lodash": "^4.17.10"
+    },
+    "description": "",
+    "main": "index.js",
+    "author": "Lamassu Industries",
+    "license": "Unlicense",
+    "devDependencies": {}
+  }
+  
