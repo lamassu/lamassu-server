@@ -10,6 +10,7 @@ const mnemonicHelpers = require('../lib/mnemonic-helpers')
 
 const pify = require('pify')
 const fs = pify(require('fs'))
+const os = require('os')
 
 const MNEMONIC_PATH = process.env.MNEMONIC_PATH
 
