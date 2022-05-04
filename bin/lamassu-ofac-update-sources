@@ -2,6 +2,7 @@
 
 'use strict'
 
+const os = require('os')
 const setEnvVariable = require('../tools/set-env-var')
 
 const path = require('path')

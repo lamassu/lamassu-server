@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path')
+const os = require('os')
 require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
 var pgp = require('pg-promise')()

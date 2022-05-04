@@ -22,6 +22,7 @@ WORKDIR /app
 
 COPY bin/ packages/lamassu-server/bin
 COPY lib/ packages/lamassu-server/lib
+COPY data/ packages/lamassu-server/data
 COPY tools/ packages/lamassu-server/tools
 COPY migrations/ packages/lamassu-server/migrations
 COPY package.json packages/lamassu-server/package.json
