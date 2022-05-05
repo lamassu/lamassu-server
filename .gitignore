@@ -17,6 +17,9 @@ mochahelper.js
 .idea/
 .settings/
 
+.pnpm-debug.log
+.pnpm-store/
+
 dist
 .tmp
 .sass-cache
