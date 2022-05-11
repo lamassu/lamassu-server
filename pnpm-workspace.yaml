@@ -1,0 +1,9 @@
+packages:
+  # the root package.json
+  - '.'
+  # all packages in subdirs of packages/
+  - 'packages/**'
+  # all packages in subdirs of shared/
+  - 'shared/**'
+  # exclude packages that are inside test/ directories
+  - '!**/test/**'
