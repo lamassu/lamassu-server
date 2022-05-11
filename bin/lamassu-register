@@ -2,7 +2,7 @@
 
 const path = require('path')
 const os = require('os')
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
 const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
 const userManagement = require('../lib/new-admin/graphql/modules/userManagement')
 const authErrors = require('../lib/new-admin/graphql/errors/authentication')

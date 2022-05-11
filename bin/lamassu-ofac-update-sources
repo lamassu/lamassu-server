@@ -6,7 +6,7 @@ const os = require('os')
 const setEnvVariable = require('../tools/set-env-var')
 
 const path = require('path')
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
 if (!process.env.OFAC_SOURCES_NAMES && !process.env.OFAC_SOURCES_URLS) {
   setEnvVariable('OFAC_SOURCES_NAMES', 'sdn_advanced,cons_advanced')
