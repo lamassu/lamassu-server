@@ -13,7 +13,9 @@ const URI =
   process.env.NODE_ENV === 'development' ? 'https://localhost:8070' : ''
 
 const ALT_URI =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:4001' : ''
+  process.env.NODE_ENV === 'development'
+    ? 'https://localhost:4001'
+    : `https://${window.location.hostname}:4001`
 
 const uploadLink = createUploadLink({
   credentials: 'include',
