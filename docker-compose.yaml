@@ -35,7 +35,7 @@ services:
   lamassu-server:
     container_name: lamassu-server
     build:
-      context: .
+      context: packages/server
       dockerfile: Dockerfiles/server.Dockerfile
       target: production-l-s
     restart: on-failure
@@ -83,7 +83,7 @@ services:
   lamassu-admin-server:
     container_name: lamassu-admin-server
     build:
-      context: .
+      context: packages/server
       dockerfile: Dockerfiles/admin-server.Dockerfile
       target: production-l-a-s
     restart: on-failure
@@ -130,8 +130,8 @@ services:
   # admin:
   #   container_name: lamassu-admin
   #   build:
-  #     context: .
-  #     dockerfile: Dockerfiles/admin.Dockerfile
+  #     context: packages/admin
+  #     dockerfile: Dockerfiles
   #     target: production-admin
   #   restart: always
   #   ports:
