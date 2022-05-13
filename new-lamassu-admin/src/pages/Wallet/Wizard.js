@@ -9,6 +9,7 @@ import { toNamespace } from 'src/utils/config'
 
 import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
+import { has0Conf } from './helper'
 
 const MAX_STEPS = 5
 const MODAL_WIDTH = 554
@@ -69,21 +70,27 @@ const Wizard = ({
     !R.isEmpty(zeroConfs.filled) ||
     (!R.isNil(zeroConfs.unfilled) && !R.isEmpty(zeroConfs.unfilled))
 
+  const confidenceCheckingStep = {
+    type: 'zeroConf',
+    name: 'confidence checking',
+    schema: Yup.object().shape({
+      zeroConfLimit: Yup.number().required()
+    }),
+    ...zeroConfs
+  }
+
+  const zeroConfLimitStep = {
+    type: 'zeroConfLimit',
+    name: '0-conf limit'
+  }
+
   const wizardSteps = hasZeroConfs
-    ? R.concat(commonWizardSteps, [
-        {
-          type: 'zeroConf',
-          name: 'confidence checking',
-          schema: Yup.object().shape({
-            zeroConfLimit: Yup.number().required()
-          }),
-          ...zeroConfs
-        },
-        {
-          type: 'zeroConfLimit',
-          name: '0-conf limit'
-        }
-      ])
+    ? R.concat(
+        commonWizardSteps,
+        has0Conf(coin)
+          ? [confidenceCheckingStep]
+          : [confidenceCheckingStep, zeroConfLimitStep]
+      )
     : commonWizardSteps
 
   const lastStep = wizardSteps.length
