@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const path = require('path')
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
+require('../lib/environment-helper')
 const hdkey = require('ethereumjs-wallet/hdkey')
 const hkdf = require('futoin-hkdf')
 const db = require('../lib/db')

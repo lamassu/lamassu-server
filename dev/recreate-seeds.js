@@ -6,9 +6,9 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const bip39 = require('bip39')
-const setEnvVariable = require('../tools/set-env-var')
 
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
+require('../lib/environment-helper')
+const setEnvVariable = require('../tools/set-env-var')
 
 if (process.env.MNEMONIC_PATH && !process.env.SEED_PATH) {
   const mnemonic = fs.readFileSync(process.env.MNEMONIC_PATH, 'utf8')

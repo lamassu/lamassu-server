@@ -5,10 +5,10 @@
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
+
+require('../lib/environment-helper')
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 const setEnvVariable = require('../tools/set-env-var')
-
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
 if (!process.env.MNEMONIC_PATH && process.env.SEED_PATH) {
   const seed = fs.readFileSync(process.env.SEED_PATH, 'utf8').trim()

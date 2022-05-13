@@ -2,11 +2,8 @@
 
 const fs = require('fs')
 const hkdf = require('futoin-hkdf')
-const os = require('os')
 
-const path = require('path')
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
-
+require('../lib/environment-helper')
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 
 const MNEMONIC_PATH = process.env.MNEMONIC_PATH

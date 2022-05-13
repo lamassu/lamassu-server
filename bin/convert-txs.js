@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-const path = require('path')
-const os = require('os')
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env') })
 
 var pgp = require('pg-promise')()
 
+require('../lib/environment-helper')
 const { PSQL_URL } = require('../lib/constants')
 
 var db = pgp(PSQL_URL)
