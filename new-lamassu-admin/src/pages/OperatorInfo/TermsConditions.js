@@ -104,6 +104,7 @@ const TermsConditions = () => {
   const formData = termsAndConditions ?? {}
   const showOnScreen = termsAndConditions?.active ?? false
   const addDelayOnScreen = termsAndConditions?.delay ?? false
+  const tcPhoto = termsAndConditions?.tcPhoto ?? false
 
   const save = it =>
     saveConfig({
@@ -181,6 +182,23 @@ const TermsConditions = () => {
             }
           />
           <Label2>{showOnScreen ? 'Yes' : 'No'}</Label2>
+        </div>
+      </div>
+      <div className={classes.switchRow}>
+        <P>
+          Capture customer photo on acceptance <br /> of Terms & Conditions
+          screen
+        </P>
+        <div className={classes.switch}>
+          <Switch
+            checked={tcPhoto}
+            onChange={event =>
+              save({
+                tcPhoto: event.target.checked
+              })
+            }
+          />
+          <Label2>{tcPhoto ? 'Yes' : 'No'}</Label2>
         </div>
       </div>
       <div className={classes.switchRow}>
