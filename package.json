@@ -8,7 +8,7 @@
   "dependencies": {
     "@ethereumjs/common": "^2.6.4",
     "@ethereumjs/tx": "^3.5.1",
-    "@lamassu/coins": "1.1.0",
+    "@lamassu/coins": "1.2.0",
     "@simplewebauthn/server": "^3.0.0",
     "apollo-server-express": "2.25.1",
     "argon2": "0.28.2",
