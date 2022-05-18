@@ -313,5 +313,6 @@ export {
   getAdvancedWalletElements,
   getAdvancedWalletElementsOverrides,
   OverridesDefaults,
-  OverridesSchema
+  OverridesSchema,
+  has0Conf
 }
