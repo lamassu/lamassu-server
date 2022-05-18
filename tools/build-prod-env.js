@@ -13,7 +13,7 @@ if (!_.isEqual(_.intersection(_.keys(argv), requiredParams), requiredParams)) {
   process.exit(2)
 }
 
-fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env'))
+fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env'))
 
 setEnvVariable('POSTGRES_USER', 'lamassu_pg')
 setEnvVariable('POSTGRES_PASSWORD', `${argv['db-password']}`)

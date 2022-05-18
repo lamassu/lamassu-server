@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+require('../lib/environment-helper')
 const db = require('../lib/db')
 
 const getCount = () => {
