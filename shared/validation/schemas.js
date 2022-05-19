@@ -174,7 +174,7 @@ const CASHOUT = {
       .nullable()
       .transform(utils.transformNumber)
   }),
-  WIZARD: Yup.object().shape({
+  WIZARD: machine => Yup.object().shape({
     cassette1: Yup.number().required(),
     cassette2:
       machine.numberOfCassettes > 1 && step >= 2
@@ -551,7 +551,7 @@ const MAINTENANCE = {
 const NOTIFICATIONS = {
   SINGLE_FIELD_EDITABLE_NUMBER: name => Yup.object().shape({
     [name]: Yup.number()
-      .transform(transformNumber)
+      .transform(utils.transformNumber)
       .integer()
       .min(min)
       .max(max)
@@ -569,7 +569,7 @@ const NOTIFICATIONS = {
             is: highBalanceKey => !highBalanceKey,
             then: Yup.number().required()
           })
-          .transform(transformNumber)
+          .transform(utils.transformNumber)
           .integer()
           .min(notesMin)
           .max(CURRENCY_MAX)
@@ -580,7 +580,7 @@ const NOTIFICATIONS = {
             is: lowBalanceKey => !lowBalanceKey,
             then: Yup.number().required()
           })
-          .transform(transformNumber)
+          .transform(utils.transformNumber)
           .integer()
           .min(notesMin)
           .max(CURRENCY_MAX)
@@ -589,25 +589,25 @@ const NOTIFICATIONS = {
     [lowBalanceKey, highBalanceKey]),
   FIAT_BALANCE_ALERTS: (max, min) => Yup.object().shape({
     fillingPercentageCassette1: Yup.number()
-      .transform(transformNumber)
+      .transform(utils.transformNumber)
       .integer()
       .min(min)
       .max(max)
       .nullable(),
     fillingPercentageCassette2: Yup.number()
-      .transform(transformNumber)
+      .transform(utils.transformNumber)
       .integer()
       .min(min)
       .max(max)
       .nullable(),
     fiatBalanceCassette3: Yup.number()
-      .transform(transformNumber)
+      .transform(utils.transformNumber)
       .integer()
       .min(min)
       .max(max)
       .nullable(),
     fiatBalanceCassette4: Yup.number()
-      .transform(transformNumber)
+      .transform(utils.transformNumber)
       .integer()
       .min(min)
       .max(max)
@@ -621,28 +621,28 @@ const NOTIFICATIONS = {
         .required(),
       [CASSETTE_1_KEY]: Yup.number()
         .label('Cassette 1')
-        .transform(transformNumber)
+        .transform(utils.transformNumber)
         .integer()
         .min(percentMin)
         .max(percentMax)
         .nullable(),
       [CASSETTE_2_KEY]: Yup.number()
         .label('Cassette 2')
-        .transform(transformNumber)
+        .transform(utils.transformNumber)
         .integer()
         .min(percentMin)
         .max(percentMax)
         .nullable(),
       [CASSETTE_3_KEY]: Yup.number()
         .label('Cassette 3')
-        .transform(transformNumber)
+        .transform(utils.transformNumber)
         .integer()
         .min(percentMin)
         .max(percentMax)
         .nullable(),
       [CASSETTE_4_KEY]: Yup.number()
         .label('Cassette 4')
-        .transform(transformNumber)
+        .transform(utils.transformNumber)
         .integer()
         .min(percentMin)
         .max(percentMax)
@@ -668,7 +668,7 @@ const SERVICES = {
         .required('The API key is required'),
       privateKey: Yup.string('The private key must be a string')
         .max(100, 'The private key is too long')
-        .test(secretTest(account?.privateKey, 'private key'))
+        .test(utils.secretTest(account?.privateKey, 'private key'))
     })
   },
   BINANCEUS: account => {
@@ -678,7 +678,7 @@ const SERVICES = {
         .required('The API key is required'),
       privateKey: Yup.string('The private key must be a string')
         .max(100, 'The private key is too long')
-        .test(secretTest(account?.privateKey, 'private key'))
+        .test(utils.secretTest(account?.privateKey, 'private key'))
     })
   },
   BITGO: account => {
@@ -741,7 +741,7 @@ const SERVICES = {
         .required('The API key is required'),
       secret: Yup.string('The API secret must be a string')
         .max(100, 'The API secret is too long')
-        .test(secretTest(account?.secret, 'API secret'))
+        .test(utils.secretTest(account?.secret, 'API secret'))
     })
   },
   BLOCKCYPHER: Yup.object().shape({
@@ -760,7 +760,7 @@ const SERVICES = {
         .required('The API key is required'),
       privateKey: Yup.string('The private key must be a string')
         .max(100, 'The private key is too long')
-        .test(secretTest(account?.privateKey, 'private key'))
+        .test(utils.secretTest(account?.privateKey, 'private key'))
     })
   },
   FTX: account => {
@@ -770,14 +770,14 @@ const SERVICES = {
         .required('The API key is required'),
       privateKey: Yup.string('The private key must be a string')
         .max(100, 'The private key is too long')
-        .test(secretTest(account?.privateKey, 'private key'))
+        .test(utils.secretTest(account?.privateKey, 'private key'))
     })
   },
   CIPHETRACE: account => {
     return Yup.object().shape({
       authorizationValue: Yup.string('The authorization value must be a string')
         .max(100, 'Too long')
-        .test(secretTest(account?.authorizationValue, 'authorization value')),
+        .test(utils.secretTest(account?.authorizationValue, 'authorization value')),
       scoreThreshold: Yup.number('The score threshold must be a number')
         .required('A score threshold is required')
         .min(1, 'The score threshold must be between 1 and 10')
@@ -797,7 +797,7 @@ const SERVICES = {
         .required('The project ID is required'),
       apiSecret: Yup.string('The project secret must be a string')
         .max(100, 'The project secret is too long')
-        .test(secretTest(account?.apiSecret, 'project secret')),
+        .test(utils.secretTest(account?.apiSecret, 'project secret')),
       endpoint: Yup.string('The endpoint must be a string')
         .max(100, 'The endpoint is too long')
         .required('The endpoint is required')
@@ -816,7 +816,7 @@ const SERVICES = {
         .required('The client key is required'),
       clientSecret: Yup.string('The client secret must be a string')
         .max(100, 'The client secret is too long')
-        .test(secretTest(account?.clientSecret, 'client secret'))
+        .test(utils.secretTest(account?.clientSecret, 'client secret'))
     })
   },
   KRAKEN: account => {
@@ -826,7 +826,7 @@ const SERVICES = {
         .required('The API key is required'),
       privateKey: Yup.string('The private key must be a string')
         .max(100, 'The private key is too long')
-        .test(secretTest(account?.privateKey, 'private key'))
+        .test(utils.secretTest(account?.privateKey, 'private key'))
     })
   },
   MAILGUN: Yup.object().shape({
@@ -868,7 +868,7 @@ const SERVICES = {
         .required('The account SID is required'),
       authToken: Yup.string('The auth token must be a string')
         .max(100, 'The auth token is too long')
-        .test(secretTest(account?.authToken, 'auth token')),
+        .test(utils.secretTest(account?.authToken, 'auth token')),
       fromNumber: Yup.string('The Twilio number must be a string')
         .max(100, 'The Twilio number is too long')
         .required('The Twilio number is required'),
@@ -951,10 +951,10 @@ const TRIGGERS = {
       triggerType: Yup.string().required(),
       threshold: Yup.object({
         threshold: Yup.number()
-          .transform(transformNumber)
+          .transform(utils.transformNumber)
           .nullable(),
         thresholdDays: Yup.number()
-          .transform(transformNumber)
+          .transform(utils.transformNumber)
           .nullable()
       })
     })
@@ -1007,7 +1007,7 @@ const TRIGGERS = {
           is: value => value === 'suspend',
           then: Yup.number()
             .nullable()
-            .transform(transformNumber),
+            .transform(utils.transformNumber),
           otherwise: Yup.number()
             .nullable()
             .transform(() => null)
@@ -1151,7 +1151,19 @@ const TRIGGERS = {
   }
 }
 
-
+const USER_CONFIG = {
+  ACCOUNTS: config => {
+    return Yup.object().shape(R.reduce(
+      (acc, value) => {
+        acc[R.toLower(value)] = SERVICES[value]
+        return acc
+      },
+      {},
+      R.map(R.toUpper, R.keys(config))
+    ))
+  },
+  CONFIG: {}
+}
 
 const SCHEMAS = {
   WALLET,

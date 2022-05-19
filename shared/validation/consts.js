@@ -27,7 +27,7 @@ const ALL_COINS = {
   code: 'ALL_COINS'
 }
 
-export {
+module.exports = {
   CURRENCY_MAX,
   PASSWORD_MIN_LENGTH,
   percentMax,
