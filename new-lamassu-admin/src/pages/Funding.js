@@ -26,6 +26,9 @@ import { primaryColor } from 'src/styling/variables'
 
 import styles from './Funding.styles'
 
+const NODE_NOT_CONNECTED_ERR =
+  "Couldn't establish connection with the node. Make sure it is installed and try again"
+
 const useStyles = makeStyles(styles)
 const sizes = {
   big: 165,
@@ -176,7 +179,11 @@ const Funding = () => {
         {selected && !viewHistory && selected.errorMsg && (
           <div className={classes.main}>
             <div className={classes.firstSide}>
-              <Info3 className={classes.error}>{selected.errorMsg}</Info3>
+              <Info3 className={classes.error}>
+                {R.includes('ECONNREFUSED', selected.errorMsg)
+                  ? NODE_NOT_CONNECTED_ERR
+                  : selected.errorMsg}
+              </Info3>
             </div>
           </div>
         )}
