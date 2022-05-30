@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+const argv = require('minimist')(process.argv.slice(2))
+const _ = require('lodash')
+const db = require('../lib/db')
+
+const txId = argv.tx
+const customerId = argv.customer
+
+if ((!txId && !customerId) || (txId && customerId)) {
+  console.log('Usage: lamassu-clean-parsed-id [--tx <txId> | --customer <customerId>]')
+  console.log('The command can only be run with EITHER --tx OR --customer, NOT BOTH')
+  process.exit(2)
+}
+
+if (!_.isNil(txId)) {
+  db.oneOrNone('SELECT * FROM (SELECT id, customer_id FROM cash_in_txs UNION SELECT id, customer_id FROM cash_out_txs) as txs WHERE txs.id = $1', [txId])
+    .then(res => {
+      return db.none('UPDATE customers SET id_card_data = null WHERE id = $1', [res.customer_id])
+        .then(() => {
+          console.log(`ID card data from customer ${res.customer_id} was cleared with success`)
+          process.exit(0)
+        })
+    })
+    .catch(() => {
+      console.log('A transaction with that ID was not found')
+      process.exit(0)
+    })
+}
+
+if (!_.isNil(customerId)) {
+  db.none('UPDATE customers SET id_card_data = null WHERE id = $1', [customerId])
+    .then(() => {
+      console.log(`ID card data from customer ${customerId} was cleared with success`)
+      process.exit(0)
+    })
+    .catch(() => {
+      console.log('A customer with that ID was not found')
+      process.exit(0)
+    })
+}
