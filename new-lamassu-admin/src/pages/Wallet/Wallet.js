@@ -61,6 +61,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const [advancedSettings, setAdvancedSettings] = useState(false)
   const { data } = useQuery(GET_INFO)
 
+  console.log(data)
+
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData']
