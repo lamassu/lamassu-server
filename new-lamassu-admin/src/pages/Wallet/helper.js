@@ -195,7 +195,7 @@ const getAdvancedWalletElementsOverrides = (
 
 const has0Conf = R.complement(
   /* NOTE: List of coins without 0conf settings. */
-  R.pipe(R.prop('id'), R.flip(R.includes)(['ETH', 'USDT']))
+  R.pipe(R.prop('id'), R.flip(R.includes)(['ETH']))
 )
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
