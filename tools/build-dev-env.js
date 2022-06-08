@@ -20,6 +20,7 @@ setEnvVariable('KEY_PATH', `${process.env.PWD}/certs/Lamassu_OP.key`)
 setEnvVariable('MNEMONIC_PATH', `${process.env.HOME}/.lamassu/mnemonics/mnemonic.txt`)
 setEnvVariable('MIGRATE_STATE_PATH', `${process.env.HOME}/.lamassu/.migrate`)
 
+setEnvVariable('BLOCKCHAIN_DIR', `${process.env.PWD}/blockchains`)
 setEnvVariable('OFAC_DATA_DIR', `${process.env.HOME}/.lamassu/ofac`)
 setEnvVariable('ID_PHOTO_CARD_DIR', `${process.env.HOME}/.lamassu/idphotocard`)
 setEnvVariable('FRONT_CAMERA_DIR', `${process.env.HOME}/.lamassu/frontcamera`)
