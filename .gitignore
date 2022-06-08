@@ -32,6 +32,7 @@ scratch/
 seeds/
 mnemonics/
 certs/
+blockchains/
 test/stress/machines
 test/stress/config.json
 lamassu.json
