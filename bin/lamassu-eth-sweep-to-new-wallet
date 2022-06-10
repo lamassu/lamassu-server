@@ -6,11 +6,13 @@ const path = require('path')
 const pify = require('pify')
 const fs = pify(require('fs'))
 const _ = require('lodash/fp')
+const { BigNumber } = require('bignumber.js')
 
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 const options = require('../lib/options')
 const settingsLoader = require('../lib/new-settings-loader')
 const wallet = require('../lib/wallet')
+const BN = require('../lib/bn')
 
 const defaultPrefixPath = "m/44'/60'/1'/0'"
 const paymentPrefixPath = "m/44'/60'/0'/0'"
@@ -97,7 +99,7 @@ settingsLoader.loadLatest()
     const tx = {
       cryptoCode: 'ETH',
       toAddress: newAddress,
-      cryptoAtoms: balance
+      cryptoAtoms: BN(balance.times(0.99999).toFixed(0, BigNumber.ROUND_DOWN))
     }
 
     const opts = {
