@@ -202,10 +202,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
               r={3.5}
               fill={
                 it < tx.walletScore
-                  ? !R.includes('score is above', tx.hasError ?? '')
+                  ? R.isNil(tx.hasError)
                     ? primaryColor
                     : errorColor
-                  : !R.includes('score is above', tx.hasError ?? '')
+                  : R.isNil(tx.hasError)
                   ? subheaderColor
                   : offErrorColor
               }
@@ -218,7 +218,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         noMargin
         className={classNames({
           [classes.bold]: true,
-          [classes.error]: R.includes('score is above', tx.hasError ?? '')
+          [classes.error]: !R.isNil(tx.hasError)
         })}>
         {tx.walletScore}
       </P>
