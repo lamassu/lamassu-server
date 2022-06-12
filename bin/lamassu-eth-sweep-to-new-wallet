@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+const hdkey = require('ethereumjs-wallet/hdkey')
+const hkdf = require('futoin-hkdf')
+const crypto = require('crypto')
+const path = require('path')
+const pify = require('pify')
+const fs = pify(require('fs'))
+const _ = require('lodash/fp')
+const { BigNumber } = require('bignumber.js')
+
+const mnemonicHelpers = require('../lib/mnemonic-helpers')
+const options = require('../lib/options')
+const settingsLoader = require('../lib/new-settings-loader')
+const wallet = require('../lib/wallet')
+const BN = require('../lib/bn')
+
+const defaultPrefixPath = "m/44'/60'/1'/0'"
+const paymentPrefixPath = "m/44'/60'/0'/0'"
+
+function writeNewMnemonic (mnemonic) {
+  return fs.writeFile(options.mnemonicPath, mnemonic)
+}
+
+function backupMnemonic () {
+  const folderPath = path.dirname(options.mnemonicPath)
+  const fileName = path.resolve(folderPath, `mnemonic-${Date.now()}.txt`)
+  return fs.copyFile(options.mnemonicPath, fileName)
+    .then(() => fileName)
+}
+
+function computeSeed (seed) {
+  const masterSeed = mnemonicHelpers.toEntropyBuffer(seed)
+  return hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: 'wallet-seed' })
+}
+
+function generateRandomSeed () {
+  const seed = crypto
+    .randomBytes(32)
+    .toString('hex')
+
+  return Buffer.from(seed, 'hex')
+}
+
+function generateNewMnemonic (newSeed) {
+  return mnemonicHelpers.fromSeed(newSeed)
+}
+
+function defaultWallet (seed) {
+  return defaultHdNode(seed).deriveChild(0).getWallet()
+}
+
+function defaultAddress (seed) {
+  return defaultWallet(seed).getChecksumAddressString()
+}
+
+function defaultHdNode (seed) {
+  const key = hdkey.fromMasterSeed(seed)
+  return key.derivePath(defaultPrefixPath)
+}
+
+function getAllBalance () {
+  return settingsLoader.loadLatest()
+    .then(settings => wallet.balance(settings, 'ETH'))
+    .then(r => r.balance)
+}
+
+function isInfuraRunning (settings) {
+  const isInfuraSelected = settings.config.wallets_ETH_wallet === 'infura'
+  const isInfuraConfigured =
+    !_.isNil(settings.accounts.infura) 
+    && !_.isNil(settings.accounts.infura.apiKey)
+    && !_.isNil(settings.accounts.infura.apiSecret)
+    && !_.isNil(settings.accounts.infura.endpoint)
+
+  return isInfuraSelected && isInfuraConfigured
+}
+
+function isGethRunning (settings) {
+  return wallet.checkBlockchainStatus(settings, 'ETH')
+    .then(res => res === 'ready')
+}
+
+const seed = generateRandomSeed()
+const mnemonic = generateNewMnemonic(seed)
+const mnemonicSeed = computeSeed(mnemonic)
+const newAddress = defaultAddress(mnemonicSeed)
+
+settingsLoader.loadLatest()
+  .then(settings => Promise.all([isInfuraRunning(settings), isGethRunning(settings), settings]))
+  .then(([infuraIsRunning, gethIsRunning, settings]) => {
+    if (!infuraIsRunning && !gethIsRunning) {
+      console.log('Neither geth nor Infura are running, so the script cannot be executed.')
+      process.exit(2)
+    }
+
+    return Promise.all([getAllBalance(), settings])
+  })
+  .then(([balance, settings]) => {
+    const tx = {
+      cryptoCode: 'ETH',
+      toAddress: newAddress,
+      cryptoAtoms: BN(balance.times(0.99999).toFixed(0, BigNumber.ROUND_DOWN))
+    }
+
+    const opts = {
+      chainId: 1,
+      nonce: 0,
+      includesFee: true
+    }
+
+    return wallet.sendCoins(settings, tx, opts)
+  })
+  .then(resTx => {
+    console.log('Successfully moved funds from the old wallet to the new one.')
+    console.log('Information about the transaction', resTx)
+    return backupMnemonic()
+  })
+  .then(fileName => {
+    console.log(`Successfully backed up the old mnemonic, new location is ${fileName}`)
+    return writeNewMnemonic(mnemonic)
+  })
+  .then(() => {
+    console.log('New mnemonic stored successfully! All your funds (minus the transaction fee) should be available in the next few minutes.')
+    console.log('Process finished successfully!')
+    process.exit(0)
+  })
+  .catch(err => {
+    console.error(err)
+    process.exit(1)
+  })
