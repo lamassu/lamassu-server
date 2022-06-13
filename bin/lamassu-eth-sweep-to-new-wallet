@@ -265,7 +265,11 @@ settingsLoader.loadLatest()
     return fs.rmdir(LOCKFILE_PATH)
   })
   .then(() => {
-    console.log('lamassu-eth-pending-sweep lock file successfully removed')
+    console.log('lamassu-eth-pending-sweep lock file successfully removed, you may now execute the upgrade script again')
+    return fs.mkdir(`${LOCKFILE_PATH}-finished`)
+  })
+  .then(() => {
+    console.log('lamassu-eth-pending-sweep-finished lock file successfully created, this will automatically be deleted once the upgrade script finishes running')
     console.log('Process finished successfully!')
     process.exit(0)
   })
