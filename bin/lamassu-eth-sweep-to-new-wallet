@@ -7,15 +7,24 @@ const pify = require('pify')
 const fs = pify(require('fs'))
 const _ = require('lodash/fp')
 const { BigNumber } = require('bignumber.js')
+const coins = require('@lamassu/coins')
+const Web3 = require('web3')
+const web3 = new Web3()
+const Tx = require('ethereumjs-tx')
 
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 const options = require('../lib/options')
 const settingsLoader = require('../lib/new-settings-loader')
-const wallet = require('../lib/wallet')
 const BN = require('../lib/bn')
+const ph = require('../lib/plugin-helper')
+const configManager = require('../lib/new-config-manager')
+const walletI = require('../lib/wallet')
 
+const LOCKFILE_PATH = '/var/lock/lamassu-eth-pending-sweep'
 const defaultPrefixPath = "m/44'/60'/1'/0'"
-const paymentPrefixPath = "m/44'/60'/0'/0'"
+let lastUsedNonces = {}
+
+const hex = bigNum => '0x' + bigNum.integerValue(BN.ROUND_DOWN).toString(16)
 
 function writeNewMnemonic (mnemonic) {
   return fs.writeFile(options.mnemonicPath, mnemonic)
@@ -31,6 +40,10 @@ function backupMnemonic () {
 function computeSeed (seed) {
   const masterSeed = mnemonicHelpers.toEntropyBuffer(seed)
   return hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: 'wallet-seed' })
+}
+
+function computeOperatorId (masterSeed) {
+  return hkdf(masterSeed, 16, { salt: 'lamassu-server-salt', info: 'operator-id' }).toString('hex')
 }
 
 function generateRandomSeed () {
@@ -49,6 +62,10 @@ function defaultWallet (seed) {
   return defaultHdNode(seed).deriveChild(0).getWallet()
 }
 
+function defaultWalletAcc (account) {
+  return defaultHdNodeAcc(account).deriveChild(0).getWallet()
+}
+
 function defaultAddress (seed) {
   return defaultWallet(seed).getChecksumAddressString()
 }
@@ -58,9 +75,14 @@ function defaultHdNode (seed) {
   return key.derivePath(defaultPrefixPath)
 }
 
+function defaultHdNodeAcc (account) {
+  const key = hdkey.fromMasterSeed(account.seed)
+  return key.derivePath(defaultPrefixPath)
+}
+
 function getAllBalance () {
   return settingsLoader.loadLatest()
-    .then(settings => wallet.balance(settings, 'ETH'))
+    .then(settings => walletI.balance(settings, 'ETH'))
     .then(r => r.balance)
 }
 
@@ -76,9 +98,119 @@ function isInfuraRunning (settings) {
 }
 
 function isGethRunning (settings) {
-  return wallet.checkBlockchainStatus(settings, 'ETH')
+  return walletI.checkBlockchainStatus(settings, 'ETH')
     .then(res => res === 'ready')
+    .catch(() => false)
 }
+
+function connect (url) {
+  if (!web3.isConnected()) {
+    web3.setProvider(new web3.providers.HttpProvider(url))
+  }
+}
+
+function sendCoins (account, tx, settings, operatorId, feeMultiplier, _opts) {
+  const { toAddress, cryptoAtoms, cryptoCode } = tx
+  const opts = { ..._opts, includesFee: _.defaultTo(false, _opts?.includesFee) }
+  return generateTx(toAddress, defaultWalletAcc(account), cryptoAtoms, cryptoCode, opts)
+    .then(pify(web3.eth.sendRawTransaction))
+    .then(txid => {
+      return pify(web3.eth.getTransaction)(txid)
+        .then(tx => {
+          if (!tx) return { txid }
+
+          const fee = new BN(tx.gas).times(new BN(tx.gasPrice)).decimalPlaces(0)
+
+          return { txid, fee }
+        })
+    })
+}
+
+function generateTx (_toAddress, wallet, amount, cryptoCode, opts) {
+  const fromAddress = '0x' + wallet.getAddress().toString('hex')
+
+  const isErc20Token = coins.utils.isErc20Token(cryptoCode)
+  const toAddress = isErc20Token ? coins.utils.getErc20Token(cryptoCode).contractAddress : _toAddress.toLowerCase()
+
+  let contract, contractData
+  if (isErc20Token) {
+    contract = web3.eth.contract(ABI.ERC20).at(toAddress)
+    contractData = isErc20Token && contract.transfer.getData(_toAddress.toLowerCase(), hex(toSend))
+  }
+
+  const txTemplate = {
+    from: fromAddress,
+    to: toAddress,
+    value: amount.toString()
+  }
+
+  if (isErc20Token) txTemplate.data = contractData
+
+  const promises = [
+    pify(web3.eth.estimateGas)(txTemplate),
+    pify(web3.eth.getGasPrice)(),
+    pify(web3.eth.getTransactionCount)(fromAddress)
+  ]
+
+  return Promise.all(promises)
+    .then(([gas, gasPrice, txCount]) => [
+      BN(gas),
+      BN(gasPrice),
+      _.max([0, txCount, lastUsedNonces[fromAddress] + 1])
+    ])
+    .then(([gas, gasPrice, txCount]) => {
+      lastUsedNonces[fromAddress] = txCount
+
+      const toSend = opts.includesFee
+        ? amount.minus(gasPrice.times(gas))
+        : amount
+
+      const rawTx = {
+        chainId: _.defaultTo(1, opts?.chainId),
+        nonce: _.defaultTo(txCount, opts?.nonce),
+        gasPrice: hex(gasPrice),
+        gasLimit: hex(gas),
+        to: toAddress,
+        from: fromAddress,
+        value: isErc20Token ? hex(BN(0)) : hex(toSend)
+      }
+
+      if (isErc20Token) {
+        rawTx.data = contractData
+      }
+
+      const tx = new Tx(rawTx)
+      const privateKey = wallet.getPrivateKey()
+
+      tx.sign(privateKey)
+
+      return '0x' + tx.serialize().toString('hex')
+    })
+}
+
+function fetchWallet (settings, cryptoCode) {
+  return fs.readFile(options.mnemonicPath, 'utf8')
+    .then(mnemonic => {
+      const computeSeed = masterSeed =>
+        hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: 'wallet-seed' })
+
+      const masterSeed = mnemonicHelpers.toEntropyBuffer(mnemonic)
+      const plugin = configManager.getWalletSettings(cryptoCode, settings.config).wallet
+      const wallet = ph.load(ph.WALLET, plugin)
+      const rawAccount = settings.accounts[plugin]
+      const account = _.set('seed', computeSeed(masterSeed), rawAccount)
+      if (_.isFunction(wallet.run)) wallet.run(account)
+      const operatorId = computeOperatorId(masterSeed)
+      return { wallet, account, operatorId }
+    })
+}
+
+fs.exists(LOCKFILE_PATH, function(exists) {
+  if (!exists) {
+    console.log('Couldn\'t find the lamassu-eth-pending-sweep lock file, exiting...')
+    process.exit(1)
+  }
+})
 
 const seed = generateRandomSeed()
 const mnemonic = generateNewMnemonic(seed)
@@ -93,9 +225,18 @@ settingsLoader.loadLatest()
       process.exit(2)
     }
 
-    return Promise.all([getAllBalance(), settings])
+    if (infuraIsRunning) {
+      const endpoint = _.startsWith('https://')(settings.accounts.infura.endpoint)
+        ? settings.accounts.infura.endpoint
+        : `https://${settings.accounts.infura.endpoint}`
+      connect(endpoint)
+    } else {
+      connect(`http://localhost:${coins.utils.getCryptoCurrency('ETH').defaultPort}`)
+    }
+
+    return Promise.all([getAllBalance(), settings, fetchWallet(settings, 'ETH')])
   })
-  .then(([balance, settings]) => {
+  .then(([balance, settings, { account, operatorId }]) => {
     const tx = {
       cryptoCode: 'ETH',
       toAddress: newAddress,
@@ -103,12 +244,12 @@ settingsLoader.loadLatest()
     }
 
     const opts = {
-      chainId: 1,
+      chainId: 3,
       nonce: 0,
       includesFee: true
     }
 
-    return wallet.sendCoins(settings, tx, opts)
+    return sendCoins(account, tx, settings, operatorId, null, opts)
   })
   .then(resTx => {
     console.log('Successfully moved funds from the old wallet to the new one.')
@@ -121,6 +262,10 @@ settingsLoader.loadLatest()
   })
   .then(() => {
     console.log('New mnemonic stored successfully! All your funds (minus the transaction fee) should be available in the next few minutes.')
+    return fs.rmdir(LOCKFILE_PATH)
+  })
+  .then(() => {
+    console.log('lamassu-eth-pending-sweep lock file successfully removed')
     console.log('Process finished successfully!')
     process.exit(0)
   })
