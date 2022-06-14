@@ -1,7 +1,10 @@
 import * as Yup from 'yup'
 
-import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import {
+  SecretInput,
+  TextInput,
+  Autocomplete
+} from 'src/components/inputs/formik'
 
 import { secretTest } from './helper'
 
@@ -13,14 +16,33 @@ export default {
     {
       code: 'apiKey',
       display: 'API Key',
-      component: TextInputFormik,
+      component: TextInput,
       face: true,
       long: true
     },
     {
+      code: 'environment',
+      display: 'Environment',
+      component: Autocomplete,
+      inputProps: {
+        options: [
+          { code: 'prod', display: 'prod' },
+          { code: 'test', display: 'test' }
+        ],
+        labelProp: 'display',
+        valueProp: 'code'
+      },
+      face: true
+    },
+    {
+      code: 'endpoint',
+      display: 'Endpoint',
+      component: TextInput
+    },
+    {
       code: 'walletId',
       display: 'Wallet ID',
-      component: SecretInputFormik
+      component: SecretInput
     }
   ],
   getValidationSchema: account => {
@@ -30,7 +52,13 @@ export default {
         .required('The API key is required'),
       walletId: Yup.string('The wallet id must be a string')
         .max(100, 'The wallet id is too long')
-        .test(secretTest(account?.walletId))
+        .test(secretTest(account?.walletId)),
+      environment: Yup.string('The environment must be a string')
+        .matches(/(prod|test)/)
+        .required('The environment is required'),
+      endpoint: Yup.string('The endpoint must be a string')
+        .max(100, 'The endpoint is too long')
+        .required('The endpoint is required')
     })
   }
 }
