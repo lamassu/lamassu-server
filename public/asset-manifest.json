@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/static/js/main.a4b79bb3.chunk.js",
-    "main.js.map": "/static/js/main.a4b79bb3.chunk.js.map",
+    "main.js": "/static/js/main.be5427dd.chunk.js",
+    "main.js.map": "/static/js/main.be5427dd.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.5b925903.js",
     "runtime-main.js.map": "/static/js/runtime-main.5b925903.js.map",
     "static/js/2.b2c71226.chunk.js": "/static/js/2.b2c71226.chunk.js",
@@ -61,6 +61,7 @@
     "static/media/icon-ethereum-colour.761723a2.svg": "/static/media/icon-ethereum-colour.761723a2.svg",
     "static/media/icon-litecoin-colour.bd861b5e.svg": "/static/media/icon-litecoin-colour.bd861b5e.svg",
     "static/media/icon-monero-colour.650b7bd1.svg": "/static/media/icon-monero-colour.650b7bd1.svg",
+    "static/media/icon-tether-colour.92d7fda4.svg": "/static/media/icon-tether-colour.92d7fda4.svg",
     "static/media/icon-zcash-colour.68b1c20b.svg": "/static/media/icon-zcash-colour.68b1c20b.svg",
     "static/media/keyboard.cc22b859.svg": "/static/media/keyboard.cc22b859.svg",
     "static/media/keypad.dfb6094e.svg": "/static/media/keypad.dfb6094e.svg",
@@ -153,6 +154,6 @@
   "entrypoints": [
     "static/js/runtime-main.5b925903.js",
     "static/js/2.b2c71226.chunk.js",
-    "static/js/main.a4b79bb3.chunk.js"
+    "static/js/main.be5427dd.chunk.js"
   ]
 }
