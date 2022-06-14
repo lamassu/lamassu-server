@@ -60,8 +60,9 @@ const GET_DATA = gql`
 `
 
 const SAVE_CONFIG = gql`
-  mutation Save($config: JSONObject) {
+  mutation Save($config: JSONObject, $accounts: JSONObject) {
     saveConfig(config: $config)
+    saveAccounts(accounts: $accounts)
   }
 `
 
@@ -133,9 +134,9 @@ const Locales = ({ name: SCREEN_KEY }) => {
     return save(newConfig)
   }
 
-  const save = config => {
+  const save = (config, accounts) => {
     setDataToSave(null)
-    return saveConfig({ variables: { config } })
+    return saveConfig({ variables: { config, accounts } })
   }
 
   const saveOverrides = it => {
@@ -161,8 +162,8 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
 
-  const wizardSave = it =>
-    save(toNamespace(namespaces.WALLETS)(it)).then(it => {
+  const wizardSave = (config, accounts) =>
+    save(toNamespace(namespaces.WALLETS)(config), accounts).then(it => {
       onChangeFunction()
       setOnChangeFunction(null)
       return it
