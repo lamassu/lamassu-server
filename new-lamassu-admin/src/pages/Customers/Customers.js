@@ -111,6 +111,8 @@ const Customers = () => {
     onCompleted: data => setFilteredCustomers(R.path(['customers'])(data))
   })
 
+  console.log(customersResponse)
+
   const { data: filtersResponse, loading: loadingFilters } = useQuery(
     GET_CUSTOMER_FILTERS
   )

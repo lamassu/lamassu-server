@@ -305,6 +305,8 @@ const CustomerProfile = memo(() => {
     variables: { customerId }
   })
 
+  console.log(customerResponse)
+
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
 
   const { data: activeCustomRequests } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
