@@ -26,7 +26,7 @@ export default {
       component: Autocomplete,
       inputProps: {
         options: [
-          { code: 'prod', display: 'prod' },
+          { code: 'main', display: 'prod' },
           { code: 'test', display: 'test' }
         ],
         labelProp: 'display',
@@ -54,7 +54,7 @@ export default {
         .max(100, 'The wallet id is too long')
         .test(secretTest(account?.walletId)),
       environment: Yup.string('The environment must be a string')
-        .matches(/(prod|test)/)
+        .matches(/(main|test)/)
         .required('The environment is required'),
       endpoint: Yup.string('The endpoint must be a string')
         .max(100, 'The endpoint is too long')
