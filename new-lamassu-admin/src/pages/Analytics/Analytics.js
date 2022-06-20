@@ -174,7 +174,9 @@ const Analytics = () => {
     R.map(convertFiatToLocale)(
       transactions?.filter(
         tx =>
-          (!tx.dispensed || !tx.expired) && (tx.sendConfirmed || tx.dispense)
+          (!tx.dispensed || !tx.expired) &&
+          (tx.sendConfirmed || tx.dispense) &&
+          !tx.hasError
       )
     ) ?? []
 
