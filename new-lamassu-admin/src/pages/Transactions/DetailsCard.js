@@ -136,7 +136,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
     }
   )
 
-  const commission = getCommission(tx).toFixed(2)
+  const commission = BigNumber(getCommission(tx))
+    .abs()
+    .toFixed(2, 1) // ROUND_DOWN
   const commissionPercentage =
     Number.parseFloat(tx.commissionPercentage, 2) * 100
   const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
