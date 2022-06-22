@@ -27,7 +27,13 @@ let lastUsedNonces = {}
 const hex = bigNum => '0x' + bigNum.integerValue(BN.ROUND_DOWN).toString(16)
 
 function writeNewMnemonic (mnemonic) {
-  return fs.writeFile(options.mnemonicPath, mnemonic)
+  return fs.writeFile(`${options.mnemonicPath}-new-temp`, mnemonic)
+    .then(() => `${options.mnemonicPath}-new-temp`)
+}
+
+function renameNewMnemonic () {
+  return fs.rename(`${options.mnemonicPath}-new-temp`, `${options.mnemonicPath}`)
+    .then(() => options.mnemonicPath)
 }
 
 function backupMnemonic () {
@@ -225,6 +231,19 @@ settingsLoader.loadLatest()
       process.exit(2)
     }
 
+    console.log(`Backing up old mnemonic...`)
+    return Promise.all([backupMnemonic(), infuraIsRunning, settings])
+  })
+  .then(([fileName, infuraIsRunning, settings]) => {
+    console.log(`Successfully backed up the old mnemonic, new location is ${fileName}`)
+    return Promise.all([writeNewMnemonic(mnemonic), infuraIsRunning, settings])
+  })
+  .then(([tempMnemonicFileName, infuraIsRunning, settings]) => {
+    console.log(`New mnemonic stored temporarily in ${tempMnemonicFileName}`)
+    console.log(`Starting funds transfer...`)
+    return Promise.all([infuraIsRunning, settings])
+  })
+  .then(([infuraIsRunning, settings]) => {
     if (infuraIsRunning) {
       const endpoint = _.startsWith('https://')(settings.accounts.infura.endpoint)
         ? settings.accounts.infura.endpoint
@@ -244,7 +263,7 @@ settingsLoader.loadLatest()
     }
 
     const opts = {
-      chainId: 1,
+      chainId: 3,
       nonce: 0,
       includesFee: true
     }
@@ -254,11 +273,8 @@ settingsLoader.loadLatest()
   .then(resTx => {
     console.log('Successfully moved funds from the old wallet to the new one.')
     console.log('Information about the transaction', resTx)
-    return backupMnemonic()
-  })
-  .then(fileName => {
-    console.log(`Successfully backed up the old mnemonic, new location is ${fileName}`)
-    return writeNewMnemonic(mnemonic)
+    console.log('Moving the current mnemonic to the default file...')
+    return renameNewMnemonic()
   })
   .then(() => {
     console.log('New mnemonic stored successfully! All your funds (minus the transaction fee) should be available in the next few minutes.')
