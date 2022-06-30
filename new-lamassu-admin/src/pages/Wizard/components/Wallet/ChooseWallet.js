@@ -39,7 +39,7 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it => R.contains(it)(['infura', 'bitgo'])
+const isConfigurable = it => R.contains(it, ['infura', 'bitgo', 'electrum'])
 
 const isLocalHosted = it =>
   R.contains(it)([
@@ -137,15 +137,15 @@ const ChooseWallet = ({ data: currentData, addData }) => {
           />
         </>
       )}
-      {selected === 'infura' && (
+      {R.includes(selected, ['infura', 'electrum']) && (
         <>
           <H4 noMargin>Enter wallet information</H4>
           <FormRenderer
-            value={accounts.infura}
+            value={accounts[selected]}
             save={saveWallet(selected)}
-            elements={schema.infura.elements}
-            validationSchema={schema.infura.getValidationSchema(
-              accounts.infura
+            elements={schema[selected].elements}
+            validationSchema={schema[selected].getValidationSchema(
+              accounts[selected]
             )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}
