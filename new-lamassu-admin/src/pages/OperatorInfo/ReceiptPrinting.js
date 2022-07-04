@@ -83,6 +83,28 @@ const ReceiptPrinting = memo(({ wizard }) => {
         </div>
       </div>
       <div className={classes.switchRow}>
+        <P>Automatic receipt printing</P>
+        <div className={classes.switch}>
+          <Switch
+            disabled={!receiptPrintingConfig.active}
+            checked={receiptPrintingConfig.automaticPrint}
+            onChange={event =>
+              saveConfig({
+                variables: {
+                  config: toNamespace(
+                    namespaces.RECEIPT,
+                    R.merge(receiptPrintingConfig, {
+                      automaticPrint: event.target.checked
+                    })
+                  )
+                }
+              })
+            }
+          />
+          <Label2>{receiptPrintingConfig.automaticPrint ? 'Yes' : 'No'}</Label2>
+        </div>
+      </div>
+      <div className={classes.switchRow}>
         <P>Offer SMS receipt</P>
         <div className={classes.switch}>
           <Switch
