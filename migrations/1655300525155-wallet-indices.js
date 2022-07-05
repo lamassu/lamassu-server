@@ -2,7 +2,7 @@ const db = require('./db')
 
 exports.up = (next) => {
   const sql = [
-    `CREATE TABLE IF NOT EXISTS wallet_indeces (
+    `CREATE TABLE IF NOT EXISTS wallet_indices (
       crypto_code VARCHAR(10) NOT NULL,
       wallet_hash CHAR(32) NOT NULL,
       type VARCHAR(10) NOT NULL,
