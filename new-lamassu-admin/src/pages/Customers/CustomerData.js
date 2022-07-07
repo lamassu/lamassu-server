@@ -73,7 +73,8 @@ const CustomerData = ({
   authorizeCustomRequest,
   updateCustomEntry,
   retrieveAdditionalDataDialog,
-  setRetrieve
+  setRetrieve,
+  checkAgainstSanctions
 }) => {
   const classes = useStyles()
   const [listView, setListView] = useState(false)
@@ -176,6 +177,14 @@ const CustomerData = ({
           idCardData: R.merge(idData, formatDates(values))
         }),
       validationSchema: customerDataSchemas.idCardData,
+      checkAgainstSanctions: () =>
+        checkAgainstSanctions({
+          variables: {
+            firstName: initialValues.idCardData.firstName,
+            lastName: initialValues.idCardData.lastName,
+            birthdate: R.replace(/-/g, '')(initialValues.idCardData.dateOfBirth)
+          }
+        }),
       initialValues: initialValues.idCardData,
       isAvailable: !R.isNil(idData),
       editable: true
@@ -398,7 +407,8 @@ const CustomerData = ({
       initialValues,
       hasImage,
       hasAdditionalData,
-      editable
+      editable,
+      checkAgainstSanctions
     },
     idx
   ) => {
@@ -419,6 +429,7 @@ const CustomerData = ({
         save={save}
         deleteEditedData={deleteEditedData}
         retrieveAdditionalData={retrieveAdditionalData}
+        checkAgainstSanctions={checkAgainstSanctions}
         editable={editable}></EditableCard>
     )
   }
