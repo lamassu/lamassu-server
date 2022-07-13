@@ -34,7 +34,7 @@ const Graph = ({
   const GRAPH_MARGIN = useMemo(
     () => ({
       top: 25,
-      right: 0.5,
+      right: 3.5,
       bottom: 27,
       left: 36.5
     }),
@@ -158,6 +158,12 @@ const Graph = ({
     .domain(periodDomains[period.code])
     .range([GRAPH_MARGIN.left, GRAPH_WIDTH - GRAPH_MARGIN.right])
 
+  // Create a second X axis for mouseover events to be placed correctly across the entire graph width and not limited by X's domain
+  const x2 = d3
+    .scaleUtc()
+    .domain(periodDomains[period.code])
+    .range([GRAPH_MARGIN.left, GRAPH_WIDTH])
+
   const y = d3
     .scaleLinear()
     .domain([
@@ -167,11 +173,11 @@ const Graph = ({
     .nice()
     .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
 
-  const getAreaInterval = (breakpoints, limits) => {
+  const getAreaInterval = (breakpoints, dataLimits, graphLimits) => {
     const fullBreakpoints = [
-      limits[1],
-      ...R.filter(it => it > limits[0] && it < limits[1], breakpoints),
-      limits[0]
+      graphLimits[1],
+      ...R.filter(it => it > dataLimits[0] && it < dataLimits[1], breakpoints),
+      dataLimits[0]
     ]
 
     const intervals = []
@@ -238,7 +244,7 @@ const Graph = ({
             .selectAll('.tick line')
             .filter(d => d === 0)
             .clone()
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right - GRAPH_MARGIN.left)
+            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.left)
             .attr('stroke-width', 1)
             .attr('stroke', primaryColor)
         ),
@@ -276,7 +282,7 @@ const Graph = ({
             .attr('y1', d => 0.5 + y(d))
             .attr('y2', d => 0.5 + y(d))
             .attr('x1', GRAPH_MARGIN.left)
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
+            .attr('x2', GRAPH_WIDTH)
         )
         // Vertical transparent rectangles for events
         .call(g =>
@@ -291,7 +297,8 @@ const Graph = ({
               const xValue = Math.round(x(d) * 100) / 100
               const intervals = getAreaInterval(
                 buildAreas(x.domain()).map(it => Math.round(x(it) * 100) / 100),
-                x.range()
+                x.range(),
+                x2.range()
               )
               const interval = getAreaIntervalByX(intervals, xValue)
               return Math.round((interval[0] - interval[1]) * 100) / 100
@@ -307,10 +314,12 @@ const Graph = ({
               const areas = buildAreas(x.domain())
               const intervals = getAreaInterval(
                 buildAreas(x.domain()).map(it => Math.round(x(it) * 100) / 100),
-                x.range()
+                x.range(),
+                x2.range()
               )
 
               const dateInterval = getDateIntervalByX(areas, intervals, xValue)
+              if (!dateInterval) return
               const filteredData = data.filter(it => {
                 const created = new Date(it.created)
                 const tzCreated = created.setTime(created.getTime() + offset)
@@ -426,6 +435,7 @@ const Graph = ({
       buildTicks,
       getPastAndCurrentDayLabels,
       x,
+      x2,
       y,
       period,
       buildAreas,
@@ -482,7 +492,7 @@ const Graph = ({
               0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0)
             )
             .attr('x1', GRAPH_MARGIN.left)
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
+            .attr('x2', GRAPH_WIDTH)
         )
     },
     [GRAPH_MARGIN, y, data]

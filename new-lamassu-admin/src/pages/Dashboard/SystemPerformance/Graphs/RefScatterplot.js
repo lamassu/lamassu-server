@@ -22,9 +22,9 @@ const Graph = ({ data, timeFrame, timezone }) => {
   const GRAPH_MARGIN = useMemo(
     () => ({
       top: 20,
-      right: 0.5,
+      right: 3.5,
       bottom: 27,
-      left: 43.5
+      left: 33.5
     }),
     []
   )
@@ -63,7 +63,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
   )
 
   const filterDay = useCallback(
-    x => (timeFrame === 'day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
+    x => (timeFrame === 'Day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
     [timeFrame]
   )
 
@@ -211,7 +211,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
             .attr('y1', d => 0.5 + y(d))
             .attr('y2', d => 0.5 + y(d))
             .attr('x1', GRAPH_MARGIN.left)
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
+            .attr('x2', GRAPH_WIDTH)
         )
         // Thick vertical lines
         .call(g =>
