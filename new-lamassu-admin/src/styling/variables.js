@@ -32,6 +32,9 @@ const mistyRose = '#ffeceb'
 const pumpkin = '#ff7311'
 const linen = '#fbf3ec'
 
+// Warning
+const orangeYellow = '#ffcc00'
+
 // Color Variables
 const primaryColor = zodiac
 
@@ -136,6 +139,7 @@ export {
   java,
   neon,
   linen,
+  orangeYellow,
   // named colors
   primaryColor,
   secondaryColor,
