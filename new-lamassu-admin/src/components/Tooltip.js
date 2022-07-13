@@ -42,41 +42,6 @@ const usePopperHandler = width => {
   }
 }
 
-const useHoverablePopperHandler = width => {
-  const classes = useStyles({ width })
-  const [helpPopperAnchorEl, setHelpPopperAnchorEl] = useState(null)
-
-  const handleOpenHelpPopper = event => {
-    const boundingRect = event.currentTarget.getBoundingClientRect()
-
-    if (
-      event.pageX < boundingRect.left + window.scrollX + 2 ||
-      event.pageX >
-        boundingRect.left + window.scrollX + boundingRect.width - 2 ||
-      event.pageY < boundingRect.top + window.scrollY + 2 ||
-      event.pageY > boundingRect.top + window.scrollY + boundingRect.height - 2
-    ) {
-      return handleCloseHelpPopper()
-    }
-
-    setHelpPopperAnchorEl(event.currentTarget)
-  }
-
-  const handleCloseHelpPopper = () => {
-    setHelpPopperAnchorEl(null)
-  }
-
-  const helpPopperOpen = Boolean(helpPopperAnchorEl)
-
-  return {
-    classes,
-    helpPopperAnchorEl,
-    helpPopperOpen,
-    handleOpenHelpPopper,
-    handleCloseHelpPopper
-  }
-}
-
 const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
   const handler = usePopperHandler(width)
 
@@ -102,14 +67,14 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
 
 const HoverableTooltip = memo(
   ({ parentElements, children, width, placement }) => {
-    const handler = useHoverablePopperHandler(width)
+    const handler = usePopperHandler(width)
 
     return (
       <div>
         {!R.isNil(parentElements) && (
           <div
             onMouseEnter={handler.handleOpenHelpPopper}
-            onMouseMove={handler.handleOpenHelpPopper}>
+            onMouseLeave={handler.handleCloseHelpPopper}>
             {parentElements}
           </div>
         )}

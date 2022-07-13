@@ -27,10 +27,10 @@ const leadingZerosTest = (value, context) => {
 const buildCurrencyOptions = markets => {
   return R.map(it => {
     const unavailableCryptos = R.difference(ALL_CRYPTOS, markets[it])
-    const unavailableMarkets = R.join(
+    const unavailableMarketsStr = `${R.join(
       ', ',
-      R.map(ite => `${ite}/${it}`, unavailableCryptos)
-    )
+      R.slice(0, -1, unavailableCryptos)
+    )} and ${R.last(unavailableCryptos)}`
 
     const warningLevel = R.isEmpty(unavailableCryptos)
       ? WARNING_LEVELS.CLEAN
@@ -43,8 +43,8 @@ const buildCurrencyOptions = markets => {
       code: R.toUpper(it),
       display: R.toUpper(it),
       warning: warningLevel,
-      warningMessage: !R.isEmpty(unavailableMarkets)
-        ? `No market pairs available for ${unavailableMarkets}`
+      warningMessage: !R.isEmpty(unavailableCryptos)
+        ? `No market pairs available for ${unavailableMarketsStr}`
         : `All market pairs are available`
     }
   }, R.keys(markets))
