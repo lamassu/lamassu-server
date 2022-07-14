@@ -33,6 +33,12 @@ const SAVE_ACCOUNT = gql`
   }
 `
 
+const RESET_ACCOUNT = gql`
+  mutation resetAccount($accountId: String) {
+    resetAccount(accountId: $accountId)
+  }
+`
+
 const styles = {
   wrapper: {
     // widths + spacing is a little over 1200 on the design
@@ -56,6 +62,10 @@ const Services = () => {
   const markets = marketsData?.getMarkets
 
   const schemas = _schemas(markets)
+  const [resetAccount] = useMutation(RESET_ACCOUNT, {
+    onCompleted: () => setEditingSchema(null),
+    refetchQueries: ['getData']
+  })
 
   const classes = useStyles()
 
@@ -145,6 +155,8 @@ const Services = () => {
               elements={getElements(editingSchema)}
               validationSchema={getValidationSchema(editingSchema)}
               value={getAccounts(editingSchema)}
+              accountId={editingSchema.code}
+              reset={resetAccount}
             />
           </Modal>
         )}
