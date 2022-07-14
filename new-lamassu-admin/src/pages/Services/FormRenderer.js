@@ -1,5 +1,4 @@
 import { makeStyles, Grid } from '@material-ui/core'
-import classnames from 'classnames'
 import { Formik, Form, FastField } from 'formik'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -15,7 +14,15 @@ const styles = {
     flexDirection: 'row',
     margin: [['auto', 0, spacer * 4, 0]]
   },
-  button: {
+  buttonWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    '& > *': {
+      marginLeft: 15
+    },
+    '& > :first-child': {
+      marginLeft: 0
+    },
     margin: [['auto', 0, 0, 'auto']]
   },
   form: {
@@ -37,7 +44,9 @@ const FormRenderer = ({
   save,
   buttonLabel = 'Save changes',
   buttonClass,
-  xs = 12
+  xs = 12,
+  accountId,
+  reset
 }) => {
   const classes = useStyles()
 
@@ -96,11 +105,17 @@ const FormRenderer = ({
                 {R.head(R.values(R.mergeRight(errors, saveError)))}
               </ErrorMessage>
             )}
-            <Button
-              className={classnames(classes.button, buttonClass)}
-              type="submit">
-              {buttonLabel}
-            </Button>
+            <div className={classes.buttonWrapper}>
+              <Button
+                className={buttonClass}
+                type="button"
+                onClick={() => reset({ variables: { accountId } })}>
+                Clear
+              </Button>
+              <Button className={buttonClass} type="submit">
+                {buttonLabel}
+              </Button>
+            </div>
           </div>
         </Form>
       )}
