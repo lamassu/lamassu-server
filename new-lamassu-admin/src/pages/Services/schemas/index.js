@@ -3,6 +3,7 @@ import binanceus from './binanceus'
 import bitgo from './bitgo'
 import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
+import blockfrost from './blockfrost'
 import cex from './cex'
 import ciphertrace from './ciphertrace'
 import ftx from './ftx'
@@ -25,5 +26,6 @@ export default {
   [cex.code]: cex,
   [ftx.code]: ftx,
   [ciphertrace.code]: ciphertrace,
-  [binance.code]: binance
+  [binance.code]: binance,
+  [blockfrost.code]: blockfrost
 }

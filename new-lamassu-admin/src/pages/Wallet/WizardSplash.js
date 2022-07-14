@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Button } from 'src/components/buttons'
 import { H1, P } from 'src/components/typography'
+import { ReactComponent as AdaLogo } from 'src/styling/logos/icon-ada-colour.svg'
 import { ReactComponent as BitcoinLogo } from 'src/styling/logos/icon-bitcoin-colour.svg'
 import { ReactComponent as BitcoinCashLogo } from 'src/styling/logos/icon-bitcoincash-colour.svg'
 import { ReactComponent as DashLogo } from 'src/styling/logos/icon-dash-colour.svg'
@@ -56,6 +57,8 @@ const getLogo = code => {
       return TetherLogo
     case 'XMR':
       return MoneroLogo
+    case 'ADA':
+      return AdaLogo
     default:
       return null
   }
