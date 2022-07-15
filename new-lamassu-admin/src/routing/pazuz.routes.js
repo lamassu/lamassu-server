@@ -18,6 +18,7 @@ import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
 import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
+import MachineScreens from 'src/pages/OperatorInfo/MachineScreens'
 import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import SMSNotices from 'src/pages/OperatorInfo/SMSNotices/SMSNotices'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
@@ -172,6 +173,13 @@ const getPazuzRoutes = () => [
             route: '/settings/operator-info/terms-conditions',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: TermsConditions
+          },
+          {
+            key: 'machine-screens',
+            label: 'Machine screens',
+            route: '/settings/operator-info/machine-screens',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: MachineScreens
           }
         ]
       }
