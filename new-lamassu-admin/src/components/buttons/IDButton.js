@@ -56,7 +56,8 @@ const styles = {
     alignItems: 'center',
     borderRadius: 4,
     '& img': {
-      maxHeight: 145
+      height: 145,
+      minWidth: 200
     }
   }
 }
@@ -127,7 +128,8 @@ const IDButton = memo(
           anchorEl={anchorEl}
           onClose={handleClose}
           arrowSize={3}
-          placement="top">
+          placement="top"
+          flip>
           <div className={classes.popoverContent}>
             <div>{children}</div>
           </div>
