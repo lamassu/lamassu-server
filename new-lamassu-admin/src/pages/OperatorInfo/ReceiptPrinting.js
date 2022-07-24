@@ -112,10 +112,6 @@ const ReceiptPrinting = memo(({ wizard }) => {
             display: 'Company number'
           },
           {
-            name: 'machineLocation',
-            display: 'Machine location'
-          },
-          {
             name: 'customerNameOrPhoneNumber',
             display: 'Customer name or phone number (if known)'
           },
