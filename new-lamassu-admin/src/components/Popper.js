@@ -105,20 +105,29 @@ const Popover = ({
 
   const classes = useStyles()
 
-  const arrowClasses = {
+  const getArrowClasses = placement => ({
     [classes.arrow]: true,
-    [classes.arrowBottom]: props.placement === 'bottom',
-    [classes.arrowTop]: props.placement === 'top',
-    [classes.arrowRight]: props.placement === 'right',
-    [classes.arrowLeft]: props.placement === 'left'
+    [classes.arrowBottom]: placement === 'bottom',
+    [classes.arrowTop]: placement === 'top',
+    [classes.arrowRight]: placement === 'right',
+    [classes.arrowLeft]: placement === 'left'
+  })
+
+  const flipPlacements = {
+    top: ['bottom'],
+    bottom: ['top'],
+    left: ['right'],
+    right: ['left']
   }
 
-  const modifiers = R.merge(props.modifiers, {
+  const modifiers = R.mergeDeepLeft(props.modifiers, {
     flip: {
-      enabled: false
+      enabled: R.defaultTo(false, props.flip),
+      allowedAutoPlacements: flipPlacements[props.placement],
+      boundary: 'clippingParents'
     },
     preventOverflow: {
-      enabled: true,
+      enabled: R.defaultTo(true, props.preventOverflow),
       boundariesElement: 'scrollParent'
     },
     offset: {
@@ -126,13 +135,19 @@ const Popover = ({
       offset: '0, 10'
     },
     arrow: {
-      enabled: true,
+      enabled: R.defaultTo(true, props.showArrow),
       element: arrowRef
     },
     computeStyle: {
       gpuAcceleration: false
     }
   })
+
+  if (props.preventOverflow === false) {
+    modifiers.hide = {
+      enabled: false
+    }
+  }
 
   return (
     <>
@@ -141,10 +156,15 @@ const Popover = ({
         modifiers={modifiers}
         className={classes.popover}
         {...props}>
-        <Paper className={classnames(classes.root, className)}>
-          <span className={classnames(arrowClasses)} ref={setArrowRef} />
-          {children}
-        </Paper>
+        {({ placement }) => (
+          <Paper className={classnames(classes.root, className)}>
+            <span
+              className={classnames(getArrowClasses(placement))}
+              ref={setArrowRef}
+            />
+            {children}
+          </Paper>
+        )}
       </MaterialPopper>
     </>
   )
