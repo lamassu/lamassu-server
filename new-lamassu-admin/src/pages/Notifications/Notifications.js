@@ -37,9 +37,9 @@ const GET_INFO = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_NOTIFICATIONS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveNotifications(config: $config)
   }
 `
 
@@ -69,7 +69,7 @@ const Notifications = ({
 
   const { data, loading } = useQuery(GET_INFO)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveNotifications] = useMutation(SAVE_NOTIFICATIONS, {
     refetchQueries: ['getData'],
     onCompleted: () => setEditingKey(null),
     onError: error => setError(error)
@@ -98,7 +98,7 @@ const Notifications = ({
     const config = toNamespace(SCREEN_KEY)(rawConfig)
     setSection(section)
     setError(null)
-    return saveConfig({ variables: { config } })
+    return saveNotifications({ variables: { config } })
   })
 
   const setEditing = (key, state) => {

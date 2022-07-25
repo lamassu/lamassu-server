@@ -89,9 +89,9 @@ const GET_CONFIG = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_OPERATOR_INFO = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveOperatorInfo(config: $config)
   }
 `
 
@@ -103,7 +103,7 @@ const ContactInfo = ({ wizard }) => {
   const [editing, setEditing] = useState(wizard || false)
   const [error, setError] = useState(null)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveOperatorInfo] = useMutation(SAVE_OPERATOR_INFO, {
     onCompleted: () => setEditing(false),
     refetchQueries: () => ['getData'],
     onError: e => setError(e)
@@ -112,7 +112,7 @@ const ContactInfo = ({ wizard }) => {
   const { data } = useQuery(GET_CONFIG)
 
   const save = it => {
-    return saveConfig({
+    return saveOperatorInfo({
       variables: { config: toNamespace(namespaces.OPERATOR_INFO, it) }
     })
   }

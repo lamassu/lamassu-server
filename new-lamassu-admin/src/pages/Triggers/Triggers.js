@@ -32,9 +32,9 @@ const SAVE_ACCOUNT = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COMPLIANCE = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCompliance(config: $config)
   }
 `
 
@@ -78,7 +78,7 @@ const Triggers = () => {
     data?.config && fromNamespace('compliance')(data.config)
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCompliance] = useMutation(SAVE_COMPLIANCE, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
@@ -95,7 +95,7 @@ const Triggers = () => {
 
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
-    return saveConfig({ variables: { config } })
+    return saveCompliance({ variables: { config } })
   }
 
   const titleSectionWidth = {
@@ -125,6 +125,7 @@ const Triggers = () => {
       variables: { accounts: { twilio: it } }
     })
   }
+
   const addNewTriger = () => {
     if (!R.has('twilio', data?.accounts || {})) setTwilioSetupPopup(true)
     else toggleWizard('newTrigger')()
@@ -221,7 +222,7 @@ const Triggers = () => {
       {!loading && subMenu === 'advancedSettings' && (
         <AdvancedTriggers
           error={error}
-          save={saveConfig}
+          save={saveCompliance}
           data={data}></AdvancedTriggers>
       )}
       {twilioSetupPopup && (

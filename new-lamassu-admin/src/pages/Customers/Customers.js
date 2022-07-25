@@ -129,7 +129,8 @@ const Customers = () => {
   const customRequirementsData =
     R.path(['customInfoRequests'], customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
-  const triggers = configData && fromNamespace(namespaces.TRIGGERS, configData)
+  const triggers =
+    configData && fromNamespace(namespaces.TRIGGERS_CONFIG, configData)
   const customersData = R.sortWith([
     R.descend(it => new Date(R.prop('lastActive', it) ?? '0'))
   ])(filteredCustomers ?? [])

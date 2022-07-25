@@ -19,9 +19,9 @@ const GET_CONFIG = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_RECEIPT = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveReceipt(config: $config)
   }
 `
 
@@ -30,12 +30,12 @@ const ReceiptPrinting = memo(({ wizard }) => {
 
   const { data } = useQuery(GET_CONFIG)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveReceipt] = useMutation(SAVE_RECEIPT, {
     refetchQueries: () => ['getData']
   })
 
   const save = it =>
-    saveConfig({
+    saveReceipt({
       variables: { config: toNamespace(namespaces.RECEIPT, it) }
     })
 
@@ -54,16 +54,11 @@ const ReceiptPrinting = memo(({ wizard }) => {
           <Switch
             checked={receiptPrintingConfig.active}
             onChange={event =>
-              saveConfig({
-                variables: {
-                  config: toNamespace(
-                    namespaces.RECEIPT,
-                    R.merge(receiptPrintingConfig, {
-                      active: event.target.checked
-                    })
-                  )
-                }
-              })
+              save(
+                R.merge(receiptPrintingConfig, {
+                  active: event.target.checked
+                })
+              )
             }
           />
           <Label2>{receiptPrintingConfig.active ? 'Yes' : 'No'}</Label2>
@@ -75,16 +70,11 @@ const ReceiptPrinting = memo(({ wizard }) => {
           <Switch
             checked={receiptPrintingConfig.sms}
             onChange={event =>
-              saveConfig({
-                variables: {
-                  config: toNamespace(
-                    namespaces.RECEIPT,
-                    R.merge(receiptPrintingConfig, {
-                      sms: event.target.checked
-                    })
-                  )
-                }
-              })
+              save(
+                R.merge(receiptPrintingConfig, {
+                  sms: event.target.checked
+                })
+              )
             }
           />
           <Label2>{receiptPrintingConfig.sms ? 'Yes' : 'No'}</Label2>

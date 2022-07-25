@@ -46,7 +46,7 @@ const Blockcypher = ({ addData }) => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_CONFIG)
-  const [saveConfig] = useMutation(SAVE_ACCOUNTS, {
+  const [saveAccounts] = useMutation(SAVE_ACCOUNTS, {
     onCompleted: () => addData({ zeroConf: 'blockcypher' })
   })
 
@@ -62,7 +62,7 @@ const Blockcypher = ({ addData }) => {
 
   const save = blockcypher => {
     const accounts = { blockcypher }
-    return saveConfig({ variables: { accounts } })
+    return saveAccounts({ variables: { accounts } })
   }
 
   return (

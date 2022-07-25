@@ -16,11 +16,12 @@ import {
   OverridesSchema
 } from './helper'
 
-const SAVE_CONFIG = gql`
+const SAVE_WALLET_ADVANCED = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveWalletAdvanced(config: $config)
   }
 `
+
 const GET_INFO = gql`
   query getData {
     config
@@ -40,7 +41,7 @@ const AdvancedWallet = () => {
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
 
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveWalletAdvanced, { error }] = useMutation(SAVE_WALLET_ADVANCED, {
     refetchQueries: () => ['getData']
   })
 
@@ -48,12 +49,12 @@ const AdvancedWallet = () => {
     const config = toNamespace(SCREEN_KEY)(
       toNamespace(ADVANCED)(rawConfig.wallets[0])
     )
-    return saveConfig({ variables: { config } })
+    return saveWalletAdvanced({ variables: { config } })
   }
 
   const saveOverrides = rawConfig => {
     const config = toNamespace(SCREEN_KEY)(toNamespace(ADVANCED)(rawConfig))
-    return saveConfig({ variables: { config } })
+    return saveWalletAdvanced({ variables: { config } })
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)

@@ -12,7 +12,7 @@ const namespaces = {
   RECEIPT: 'receipt',
   COIN_ATM_RADAR: 'coinAtmRadar',
   TERMS_CONDITIONS: 'termsConditions',
-  TRIGGERS: 'triggersConfig'
+  TRIGGERS_CONFIG: 'triggersConfig'
 }
 
 const mapKeys = R.curry((fn, obj) =>

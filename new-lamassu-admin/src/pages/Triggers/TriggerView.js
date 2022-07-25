@@ -16,9 +16,9 @@ import { Schema, getElements, sortBy, toServer } from './helper'
 
 const useStyles = makeStyles(styles)
 
-const SAVE_CONFIG = gql`
+const SAVE_TRIGGERS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveTriggers(config: $config)
   }
 `
 
@@ -36,7 +36,9 @@ const TriggerView = ({
   const classes = useStyles()
   const [error, setError] = useState(null)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  console.log(config)
+
+  const [saveTriggers] = useMutation(SAVE_TRIGGERS, {
     onCompleted: () => toggleWizard(true),
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
@@ -44,7 +46,7 @@ const TriggerView = ({
 
   const save = config => {
     setError(null)
-    return saveConfig({
+    return saveTriggers({
       variables: { config: { triggers: toServer(config.triggers) } }
     })
   }
@@ -53,7 +55,9 @@ const TriggerView = ({
     const toSave = R.concat([{ id: v4(), direction: 'both', ...rawConfig }])(
       triggers
     )
-    return saveConfig({ variables: { config: { triggers: toServer(toSave) } } })
+    return saveTriggers({
+      variables: { config: { triggers: toServer(toSave) } }
+    })
   }
 
   return (

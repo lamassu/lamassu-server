@@ -46,9 +46,9 @@ const GET_BLACKLIST = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COMPLIANCE = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCompliance(config: $config)
   }
 `
 
@@ -135,7 +135,7 @@ const Blacklist = () => {
     refetchQueries: () => ['getBlacklistData']
   })
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCompliance] = useMutation(SAVE_COMPLIANCE, {
     refetchQueries: () => ['getData']
   })
 
@@ -156,7 +156,7 @@ const Blacklist = () => {
 
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
-    return saveConfig({ variables: { config } })
+    return saveCompliance({ variables: { config } })
   }
 
   const onClickSidebarItem = e => {

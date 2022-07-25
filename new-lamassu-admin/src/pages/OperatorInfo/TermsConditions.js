@@ -75,9 +75,9 @@ const GET_CONFIG = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_TERMS_AND_CONDITIONS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveTermsAndConditions(config: $config)
   }
 `
 
@@ -86,7 +86,7 @@ const useTermsConditionsStyles = makeStyles(global)
 const TermsConditions = () => {
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveTermsAndConditions] = useMutation(SAVE_TERMS_AND_CONDITIONS, {
     onCompleted: () => {
       setError(null)
       setEditing(false)
@@ -107,7 +107,7 @@ const TermsConditions = () => {
   const tcPhoto = termsAndConditions?.tcPhoto ?? false
 
   const save = it =>
-    saveConfig({
+    saveTermsAndConditions({
       variables: { config: toNamespace(namespaces.TERMS_CONDITIONS, it) }
     })
 

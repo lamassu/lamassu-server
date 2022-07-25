@@ -35,9 +35,9 @@ const GET_DATA = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COMMISSIONS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCommissions(config: $config)
   }
 `
 const removeCoinFromOverride = crypto => override =>
@@ -50,12 +50,10 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const [showMachines, setShowMachines] = useState(false)
   const [error, setError] = useState(null)
   const { data, loading } = useQuery(GET_DATA)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCommissions] = useMutation(SAVE_COMMISSIONS, {
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
   })
-
-  console.log(data)
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
   const localeConfig =
@@ -66,13 +64,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
-    return saveConfig({ variables: { config } })
+    return saveCommissions({ variables: { config } })
   }
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
     setError(null)
-    return saveConfig({ variables: { config } })
+    return saveCommissions({ variables: { config } })
   }
 
   const saveOverridesFromList = it => (_, override) => {
@@ -94,7 +92,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
       commissions_overrides: R.prepend(override, overrides)
     }
 
-    return saveConfig({ variables: { config } })
+    return saveCommissions({ variables: { config } })
   }
 
   const labels = showMachines
