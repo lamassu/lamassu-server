@@ -29,9 +29,9 @@ const useStyles = makeStyles({
   }
 })
 
-const SAVE_CONFIG = gql`
+const SAVE_CASHOUT = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCashOut(config: $config)
   }
 `
 
@@ -56,14 +56,14 @@ const CashOut = ({ name: SCREEN_KEY }) => {
   const [wizard, setWizard] = useState(false)
   const { data, loading } = useQuery(GET_INFO)
 
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveCashOut, { error }] = useMutation(SAVE_CASHOUT, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData']
   })
 
-  const save = (rawConfig, accounts) => {
+  const save = rawConfig => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    return saveConfig({ variables: { config, accounts } })
+    return saveCashOut({ variables: { config } })
   }
 
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)

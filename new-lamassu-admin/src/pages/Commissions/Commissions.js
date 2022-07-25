@@ -55,6 +55,8 @@ const Commissions = ({ name: SCREEN_KEY }) => {
     onError: error => setError(error)
   })
 
+  console.log(data)
+
   const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
   const localeConfig =
     data?.config && fromNamespace(namespaces.LOCALE)(data.config)
