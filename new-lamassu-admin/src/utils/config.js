@@ -9,6 +9,7 @@ const namespaces = {
   NOTIFICATIONS: 'notifications',
   LOCALE: 'locale',
   COMMISSIONS: 'commissions',
+  COMPLIANCE: 'compliance',
   RECEIPT: 'receipt',
   COIN_ATM_RADAR: 'coinAtmRadar',
   TERMS_CONDITIONS: 'termsConditions',

@@ -10,7 +10,7 @@ import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
 import { P, Label2 } from 'src/components/typography'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import Wizard from './Wizard'
 import { DenominationsSchema, getElements } from './helper'
@@ -47,7 +47,8 @@ const GET_INFO = gql`
       cassette4
       numberOfCassettes
     }
-    config
+    cashOutConfig
+    localesConfig
   }
 `
 
@@ -66,10 +67,13 @@ const CashOut = ({ name: SCREEN_KEY }) => {
     return saveCashOut({ variables: { config } })
   }
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.cashOutConfig && fromNamespace(SCREEN_KEY)(data.cashOutConfig)
+
+  const locale =
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
 
   const fudgeFactorActive = config?.fudgeFactorActive ?? false
-  const locale = data?.config && fromNamespace('locale')(data.config)
   const machines = data?.machines ?? []
 
   const onToggle = id => {

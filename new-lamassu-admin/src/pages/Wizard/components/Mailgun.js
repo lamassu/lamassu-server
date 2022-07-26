@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 
 const GET_CONFIG = gql`
   {
-    config
+    notificationsConfig
     accounts
   }
 `
@@ -64,8 +64,8 @@ const Mailgun = () => {
   const accounts = data?.accounts ?? []
 
   const emailConfig =
-    data?.config &&
-    fromNamespace(namespaces.NOTIFICATIONS + '_email')(data.config)
+    data?.notificationsConfig &&
+    fromNamespace(namespaces.NOTIFICATIONS + '_email')(data.notificationsConfig)
 
   useEffect(() => {
     if (emailActive) return

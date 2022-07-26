@@ -85,7 +85,7 @@ const Field = ({ editing, field, displayValue, ...props }) => {
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    operatorInfoConfig
   }
 `
 
@@ -118,7 +118,8 @@ const ContactInfo = ({ wizard }) => {
   }
 
   const info =
-    data?.config && fromNamespace(namespaces.OPERATOR_INFO, data.config)
+    data?.operatorInfoConfig &&
+    fromNamespace(namespaces.OPERATOR_INFO, data.operatorInfoConfig)
 
   if (!info) return null
 

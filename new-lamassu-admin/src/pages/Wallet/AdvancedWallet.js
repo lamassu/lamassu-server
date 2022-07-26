@@ -24,7 +24,7 @@ const SAVE_WALLET_ADVANCED = gql`
 
 const GET_INFO = gql`
   query getData {
-    config
+    advancedWalletConfig
     cryptoCurrencies {
       code
       display
@@ -63,7 +63,7 @@ const AdvancedWallet = () => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
   const AdvancedWalletSettings = fromNamespace(ADVANCED)(
-    fromNamespace(SCREEN_KEY)(data?.config)
+    fromNamespace(SCREEN_KEY)(data?.advancedWalletConfig)
   )
 
   const AdvancedWalletSettingsOverrides = AdvancedWalletSettings.overrides ?? []

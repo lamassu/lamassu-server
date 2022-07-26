@@ -28,7 +28,8 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
+    walletConfig
     accounts
     accountsConfig {
       code
@@ -134,8 +135,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
 
   const [dataToSave, setDataToSave] = useState(null)
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
-  const wallets = data?.config && fromNamespace(namespaces.WALLETS)(data.config)
+  const config =
+    data?.localesConfig && fromNamespace(SCREEN_KEY)(data.localesConfig)
+  const wallets =
+    data?.walletConfig && fromNamespace(namespaces.WALLETS)(data.walletConfig)
 
   const accountsConfig = data?.accountsConfig
   const accounts = data?.accounts ?? []
@@ -256,7 +259,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={wizardSave}
           error={error?.message}
           cryptoCurrencies={cryptoCurrencies}
-          userAccounts={data?.config?.accounts}
           accounts={accounts}
           accountsConfig={accountsConfig}
         />

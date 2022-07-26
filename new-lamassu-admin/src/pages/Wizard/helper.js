@@ -45,6 +45,7 @@ const hasValidCommissions = config => {
 }
 
 const getWizardStep = (config, crypto) => {
+  console.log(config)
   if (!config) return 0
 
   const validWallet = hasValidWallet(config, crypto)

@@ -15,7 +15,7 @@ const useStyles = makeStyles(global)
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    receiptConfig
   }
 `
 
@@ -40,7 +40,8 @@ const ReceiptPrinting = memo(({ wizard }) => {
     })
 
   const receiptPrintingConfig =
-    data?.config && fromNamespace(namespaces.RECEIPT, data.config)
+    data?.receiptConfig && fromNamespace(namespaces.RECEIPT, data.receiptConfig)
+
   if (!receiptPrintingConfig) return null
 
   return (

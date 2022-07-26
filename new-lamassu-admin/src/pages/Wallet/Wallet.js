@@ -11,7 +11,7 @@ import FormRenderer from 'src/pages/Services/FormRenderer'
 import schemas from 'src/pages/Services/schemas'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import AdvancedWallet from './AdvancedWallet'
 import styles from './Wallet.styles.js'
@@ -33,7 +33,8 @@ const SAVE_ACCOUNT = gql`
 
 const GET_INFO = gql`
   query getData {
-    config
+    localesConfig
+    walletConfig
     accounts
     accountsConfig {
       code
@@ -48,8 +49,6 @@ const GET_INFO = gql`
     }
   }
 `
-
-const LOCALE = 'locale'
 
 const useStyles = makeStyles(styles)
 
@@ -77,9 +76,12 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   }
 
   const fiatCurrency =
-    data?.config && fromNamespace(LOCALE)(data.config).fiatCurrency
+    data?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(data.localesConfig).fiatCurrency
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.walletConfig && fromNamespace(SCREEN_KEY)(data.walletConfig)
+
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []

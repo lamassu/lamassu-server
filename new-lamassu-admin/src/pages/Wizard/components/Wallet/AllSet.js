@@ -16,7 +16,6 @@ import styles from './Shared.styles'
 const useStyles = makeStyles(styles)
 const GET_INFO = gql`
   query getData {
-    config
     accounts
     accountsConfig {
       code

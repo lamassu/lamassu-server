@@ -11,7 +11,7 @@ import React, { useState } from 'react'
 import { Label2 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
-import { fromNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import styles from './Footer.styles'
 const GET_DATA = gql`
@@ -21,7 +21,8 @@ const GET_DATA = gql`
       code
       display
     }
-    config
+    localesConfig
+    walletConfig
     accountsConfig {
       code
       display
@@ -37,13 +38,16 @@ const Footer = () => {
 
   const withCommissions = R.path(['cryptoRates', 'withCommissions'])(data) ?? {}
   const classes = useStyles()
-  const config = R.path(['config'])(data) ?? {}
+  const localesConfig = R.path(['localesConfig'])(data) ?? {}
+  const walletConfig = R.path(['walletConfig'])(data) ?? {}
   const canExpand = R.keys(withCommissions).length > 4
 
-  const wallets = fromNamespace('wallets')(config)
+  const wallets = fromNamespace(namespaces.WALLETS)(walletConfig)
   const cryptoCurrencies = R.path(['cryptoCurrencies'])(data) ?? []
   const accountsConfig = R.path(['accountsConfig'])(data) ?? []
-  const localeFiatCurrency = R.path(['locale_fiatCurrency'])(config) ?? ''
+
+  const localeFiatCurrency = fromNamespace(namespaces.LOCALE)(localesConfig)
+    .fiatCurrency
 
   const renderFooterItem = key => {
     const idx = R.findIndex(R.propEq('code', key))(cryptoCurrencies)

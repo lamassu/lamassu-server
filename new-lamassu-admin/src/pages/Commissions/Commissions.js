@@ -23,7 +23,8 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config
+    commissionsConfig
+    localesConfig
     cryptoCurrencies {
       code
       display
@@ -55,9 +56,10 @@ const Commissions = ({ name: SCREEN_KEY }) => {
     onError: error => setError(error)
   })
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.commissionsConfig && fromNamespace(SCREEN_KEY)(data.commissionsConfig)
   const localeConfig =
-    data?.config && fromNamespace(namespaces.LOCALE)(data.config)
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
 
   const currency = R.prop('fiatCurrency')(localeConfig)
   const overrides = R.prop('overrides')(config)

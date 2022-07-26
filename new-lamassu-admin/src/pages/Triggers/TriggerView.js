@@ -8,7 +8,6 @@ import { v4 } from 'uuid'
 import { Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { H2 } from 'src/components/typography'
-import { fromNamespace, namespaces } from 'src/utils/config'
 
 import styles from './Triggers.styles'
 import Wizard from './Wizard'
@@ -30,13 +29,9 @@ const TriggerView = ({
   addNewTriger,
   customInfoRequests
 }) => {
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(config)
-  )
+  const currency = config.fiatCurrency
   const classes = useStyles()
   const [error, setError] = useState(null)
-
-  console.log(config)
 
   const [saveTriggers] = useMutation(SAVE_TRIGGERS, {
     onCompleted: () => toggleWizard(true),

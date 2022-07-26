@@ -13,6 +13,7 @@ import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
 import { ReactComponent as MachineRedirectIcon } from 'src/styling/icons/month arrows/right.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/status/pumpkin.svg'
 import { ReactComponent as ErrorIcon } from 'src/styling/icons/status/tomato.svg'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import MachineDetailsRow from './MachineDetailsCard'
 
@@ -43,7 +44,7 @@ const GET_MACHINES = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -60,7 +61,10 @@ const MachineStatus = () => {
     loading: machinesLoading
   } = useQuery(GET_MACHINES)
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+
+  const timezone =
+    configResponse?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(configResponse.localesConfig).timezone
 
   const elements = [
     {

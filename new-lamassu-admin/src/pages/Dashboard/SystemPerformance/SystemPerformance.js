@@ -14,7 +14,7 @@ import { ReactComponent as PercentDownIcon } from 'src/styling/icons/dashboard/d
 import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboard/equal.svg'
 import { ReactComponent as PercentUpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { java, neon } from 'src/styling/variables'
-import { fromNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { DAY, WEEK, MONTH } from 'src/utils/time'
 import { timezones } from 'src/utils/timezone-list'
 import { toTimezone } from 'src/utils/timezones'
@@ -50,7 +50,7 @@ const GET_DATA = gql`
       name
       rate
     }
-    config
+    localesConfig
   }
 `
 
@@ -60,8 +60,11 @@ const SystemPerformance = () => {
   const { data, loading } = useQuery(GET_DATA, {
     variables: { excludeTestingCustomers: true }
   })
-  const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
-  const timezone = fromNamespace('locale')(data?.config).timezone
+
+  const fiatCurrency = fromNamespace(namespaces.LOCALE)(data?.localesConfig)
+    .fiatCurrency
+  const timezone = fromNamespace(namespaces.LOCALE)(data?.localesConfig)
+    .timezone
 
   const NOW = Date.now()
 
@@ -102,9 +105,9 @@ const SystemPerformance = () => {
   }
 
   const convertFiatToLocale = item => {
-    if (item.fiatCode === fiatLocale) return item
+    if (item.fiatCode === fiatCurrency) return item
     const itemRate = R.find(R.propEq('code', item.fiatCode))(data.fiatRates)
-    const localeRate = R.find(R.propEq('code', fiatLocale))(data.fiatRates)
+    const localeRate = R.find(R.propEq('code', fiatCurrency))(data.fiatRates)
     const multiplier = localeRate.rate / itemRate.rate
     return { ...item, fiat: parseFloat(item.fiat) * multiplier }
   }
@@ -200,7 +203,7 @@ const SystemPerformance = () => {
             <Grid item xs={3}>
               <InfoWithLabel
                 info={getFiatVolume()}
-                label={`${data?.config.locale_fiatCurrency} volume`}
+                label={`${fiatCurrency} volume`}
               />
             </Grid>
             {/* todo new customers */}
@@ -243,9 +246,9 @@ const SystemPerformance = () => {
               </Label2>
               <div className={classes.profitContainer}>
                 <div className={classes.profitLabel}>
-                  {`${getProfit(transactionsToShow).toFormat(2)} ${
-                    data?.config.locale_fiatCurrency
-                  }`}
+                  {`${getProfit(transactionsToShow).toFormat(
+                    2
+                  )} ${fiatCurrency}`}
                 </div>
                 <div className={classnames(percentageClasses)}>
                   {getPercentageIcon()}

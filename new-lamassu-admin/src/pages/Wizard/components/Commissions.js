@@ -20,7 +20,8 @@ const useCommissionStyles = makeStyles({
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
+    commissionsConfig
   }
 `
 const SAVE_COMMISSIONS = gql`
@@ -39,15 +40,12 @@ function Commissions({ isActive, doContinue }) {
   })
 
   const save = it => {
-    const config = toNamespace('commissions')(it.commissions[0])
+    const config = toNamespace(namespaces.COMMISSIONS)(it.commissions[0])
     return saveCommissions({ variables: { config } })
   }
 
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
-  )
-
-  const locale = fromNamespace(namespaces.LOCALE)(data?.config)
+  const locale = fromNamespace(namespaces.LOCALE)(data?.localesConfig)
+  const currency = R.path(['fiatCurrency'])(locale)
 
   return (
     <div className={classes.wrapper}>

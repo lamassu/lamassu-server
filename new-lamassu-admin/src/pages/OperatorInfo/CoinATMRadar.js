@@ -15,7 +15,7 @@ const useStyles = makeStyles(global)
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    coinAtmRadarConfig
   }
 `
 
@@ -58,7 +58,9 @@ const CoinATMRadar = memo(({ wizard }) => {
     })
 
   const coinAtmRadarConfig =
-    data?.config && fromNamespace(namespaces.COIN_ATM_RADAR, data.config)
+    data?.coinAtmRadarConfig &&
+    fromNamespace(namespaces.COIN_ATM_RADAR, data.coinAtmRadarConfig)
+
   if (!coinAtmRadarConfig) return null
 
   return (

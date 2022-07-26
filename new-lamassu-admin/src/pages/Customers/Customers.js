@@ -33,7 +33,8 @@ const GET_CUSTOMERS = gql`
     $address: String
     $id: String
   ) {
-    config
+    localesConfig
+    triggersConfig
     customers(phone: $phone, name: $name, address: $address, id: $id) {
       id
       idCardData
@@ -125,12 +126,13 @@ const Customers = () => {
     ]
   })
 
-  const configData = R.path(['config'])(customersResponse) ?? []
+  const localeData = R.path(['localesConfig'])(customersResponse) ?? {}
+  const triggersData = R.path(['triggersConfig'])(customersResponse) ?? {}
   const customRequirementsData =
     R.path(['customInfoRequests'], customersResponse) ?? []
-  const locale = configData && fromNamespace(namespaces.LOCALE, configData)
+  const locale = localeData && fromNamespace(namespaces.LOCALE, localeData)
   const triggers =
-    configData && fromNamespace(namespaces.TRIGGERS_CONFIG, configData)
+    triggersData && fromNamespace(namespaces.TRIGGERS_CONFIG, triggersData)
   const customersData = R.sortWith([
     R.descend(it => new Date(R.prop('lastActive', it) ?? '0'))
   ])(filteredCustomers ?? [])

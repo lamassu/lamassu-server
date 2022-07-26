@@ -13,7 +13,7 @@ import {
   localeDefaults as defaults,
   LocaleSchema as schema
 } from 'src/pages/Locales/helper'
-import { toNamespace } from 'src/utils/config'
+import { namespaces, toNamespace } from 'src/utils/config'
 
 import { getConfiguredCoins } from '../helper'
 
@@ -21,7 +21,7 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config
+    walletConfig
     accounts
     currencies {
       code
@@ -61,12 +61,12 @@ function Locales({ isActive, doContinue }) {
   })
 
   const save = it => {
-    const config = toNamespace('locale')(it.locale[0])
+    const config = toNamespace(namespaces.LOCALE)(it.locale[0])
     return saveLocales({ variables: { config } })
   }
 
   const cryptoCurrencies = getConfiguredCoins(
-    data?.config || {},
+    data?.walletConfig || {},
     data?.cryptoCurrencies || []
   )
 

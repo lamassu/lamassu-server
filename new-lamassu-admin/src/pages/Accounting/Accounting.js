@@ -10,6 +10,7 @@ import { HoverableTooltip } from 'src/components/Tooltip'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { H4, Info2, P } from 'src/components/typography'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { numberToFiatAmount } from 'src/utils/number'
 import { formatDate } from 'src/utils/timezones'
 
@@ -50,7 +51,7 @@ const GET_OPERATOR_BY_USERNAME = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -111,7 +112,9 @@ const Accounting = () => {
   )
 
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+  const timezone =
+    configResponse?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(configResponse.localesConfig).timezone
 
   const loading = operatorLoading || configLoading
 

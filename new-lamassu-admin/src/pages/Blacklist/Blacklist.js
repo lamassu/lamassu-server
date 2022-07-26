@@ -14,7 +14,7 @@ import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
 import { H4, H2, Label2, P, Info3, Info2 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import styles from './Blacklist.styles'
 import BlackListModal from './BlacklistModal'
@@ -54,7 +54,7 @@ const SAVE_COMPLIANCE = gql`
 
 const GET_INFO = gql`
   query getData {
-    config
+    complianceConfig
   }
 `
 
@@ -148,7 +148,8 @@ const Blacklist = () => {
   const formattedData = groupByCode(blacklistData)
 
   const complianceConfig =
-    configData?.config && fromNamespace('compliance')(configData.config)
+    configData?.complianceConfig &&
+    fromNamespace(namespaces.COMPLIANCE)(configData.complianceConfig)
 
   const rejectAddressReuse = !!complianceConfig?.rejectAddressReuse
 

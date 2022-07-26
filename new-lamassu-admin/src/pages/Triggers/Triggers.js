@@ -17,7 +17,7 @@ import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circl
 import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import CustomInfoRequests from './CustomInfoRequests'
 import TriggerView from './TriggerView'
@@ -40,7 +40,9 @@ const SAVE_COMPLIANCE = gql`
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    triggers
+    complianceConfig
+    localesConfig
     accounts
   }
 `
@@ -73,10 +75,16 @@ const Triggers = () => {
     customInfoRequests
   )
 
-  const triggers = fromServer(data?.config?.triggers ?? [])
+  const triggers = fromServer(data?.triggers.triggers ?? [])
+
   const complianceConfig =
-    data?.config && fromNamespace('compliance')(data.config)
+    data?.complianceConfig &&
+    fromNamespace(namespaces.COMPLIANCE)(data.complianceConfig)
+
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
+
+  const localesConfig =
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
 
   const [saveCompliance] = useMutation(SAVE_COMPLIANCE, {
     onCompleted: () => setWizard(false),
@@ -94,7 +102,7 @@ const Triggers = () => {
   })
 
   const addressReuseSave = rawConfig => {
-    const config = toNamespace('compliance')(rawConfig)
+    const config = toNamespace(namespaces.COMPLIANCE)(rawConfig)
     return saveCompliance({ variables: { config } })
   }
 
@@ -213,7 +221,7 @@ const Triggers = () => {
         <TriggerView
           triggers={triggers}
           showWizard={wizardType === 'newTrigger'}
-          config={data?.config ?? {}}
+          config={localesConfig}
           toggleWizard={toggleWizard('newTrigger')}
           addNewTriger={addNewTriger}
           customInfoRequests={enabledCustomInfoRequests}

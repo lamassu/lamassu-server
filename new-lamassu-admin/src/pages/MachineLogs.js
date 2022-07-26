@@ -16,6 +16,7 @@ import {
   TableCell
 } from 'src/components/table'
 import { Info3, H4 } from 'src/components/typography'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { formatDate } from 'src/utils/timezones'
 
 import styles from './Logs.styles'
@@ -69,7 +70,7 @@ const GET_MACHINE_LOGS = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -86,7 +87,9 @@ const Logs = () => {
   )
 
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+  const timezone =
+    configResponse?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(configResponse.localesConfig).timezone
 
   const { data: logsResponse, loading: logsLoading } = useQuery(
     GET_MACHINE_LOGS,

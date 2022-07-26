@@ -23,7 +23,9 @@ import TransactionAlerts from './sections/TransactionAlerts'
 
 const GET_INFO = gql`
   query getData {
-    config
+    notificationsConfig
+    localesConfig
+    cashOutConfig
     machines {
       name
       deviceId
@@ -84,14 +86,16 @@ const Notifications = ({
     onError: error => setError(error)
   })
 
-  const config = fromNamespace(SCREEN_KEY)(data?.config)
+  const config = fromNamespace(SCREEN_KEY)(data?.notificationsConfig)
+  const cashout = fromNamespace(namespaces.CASH_OUT)(data?.notificationsConfig)
+
   const machines = data?.machines
   const cryptoCurrencies = data?.cryptoCurrencies
   const twilioAvailable = R.has('twilio', data?.accounts || {})
   const mailgunAvailable = R.has('mailgun', data?.accounts || {})
 
   const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
+    fromNamespace(namespaces.LOCALE)(data?.localesConfig)
   )
 
   const save = R.curry((section, rawConfig) => {
@@ -166,10 +170,7 @@ const Notifications = ({
               error={error && section === 'fiat'}>
               <FiatBalanceAlerts section="fiat" max={100} fieldWidth={50} />
               {displayOverrides && (
-                <FiatBalanceOverrides
-                  config={fromNamespace(namespaces.CASH_OUT)(data?.config)}
-                  section="fiat"
-                />
+                <FiatBalanceOverrides config={cashout} section="fiat" />
               )}
             </Section>
           )}

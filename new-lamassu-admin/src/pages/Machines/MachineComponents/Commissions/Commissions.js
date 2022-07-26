@@ -10,7 +10,8 @@ import { overrides } from './helper'
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
+    commissionsConfig
     cryptoCurrencies {
       code
       display
@@ -34,9 +35,11 @@ const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
     refetchQueries: () => ['getData']
   })
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.commissionsConfig && fromNamespace(SCREEN_KEY)(data.commissionsConfig)
+
   const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
+    fromNamespace(namespaces.LOCALE)(data?.localesConfig)
   )
 
   const saveOverrides = it => {

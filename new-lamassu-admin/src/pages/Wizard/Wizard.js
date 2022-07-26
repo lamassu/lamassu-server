@@ -33,7 +33,9 @@ const useStyles = makeStyles({
 
 const GET_DATA = gql`
   query getData {
-    config
+    walletConfig
+    commissionsConfig
+    localesConfig
     accounts
     cryptoCurrencies {
       code
@@ -69,7 +71,13 @@ const Wizard = ({ fromAuthRegister }) => {
     return <></>
   }
 
-  const wizardStep = getWizardStep(data?.config, data?.cryptoCurrencies)
+  const config = R.mergeAll([
+    data?.localesConfig,
+    data?.commissionsConfig,
+    data?.walletConfig
+  ])
+
+  const wizardStep = getWizardStep(config, data?.cryptoCurrencies)
 
   const shouldGoBack =
     history.length && !history.location.state?.fromAuthRegister

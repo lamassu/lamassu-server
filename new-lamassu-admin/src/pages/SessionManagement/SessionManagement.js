@@ -8,6 +8,7 @@ import { IconButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { formatDate } from 'src/utils/timezones'
 
 const GET_SESSIONS = gql`
@@ -30,7 +31,7 @@ const DELETE_SESSION = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -46,7 +47,9 @@ const SessionManagement = () => {
   })
 
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+  const timezone = fromNamespace(namespaces.LOCALE)(
+    configResponse?.localesConfig
+  ).timezone
 
   const loading = sessionsLoading || configLoading
 

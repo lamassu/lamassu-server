@@ -71,7 +71,7 @@ const Field = ({
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    termsAndConditionsConfig
   }
 `
 
@@ -100,7 +100,9 @@ const TermsConditions = () => {
   const { data } = useQuery(GET_CONFIG)
 
   const termsAndConditions =
-    data?.config && fromNamespace(namespaces.TERMS_CONDITIONS, data.config)
+    data?.termsAndConditionsConfig &&
+    fromNamespace(namespaces.TERMS_CONDITIONS, data.termsAndConditionsConfig)
+
   const formData = termsAndConditions ?? {}
   const showOnScreen = termsAndConditions?.active ?? false
   const addDelayOnScreen = termsAndConditions?.delay ?? false
