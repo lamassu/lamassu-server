@@ -5,6 +5,7 @@ import React, { memo } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
+import { SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
@@ -66,18 +67,16 @@ const CoinATMRadar = memo(({ wizard }) => {
       <div>
         <div className={classes.header}>
           <H4>Coin ATM Radar share settings</H4>
-          <HoverableTooltip width={304}>
+          <HoverableTooltip width={320}>
             <P>
               For details on configuring this panel, please read the relevant
-              knowledgebase article{' '}
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar">
-                here
-              </a>
-              .
+              knowledgebase article:
             </P>
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar"
+              label="Lamassu Support Article"
+              bottomSpace="1"
+            />
           </HoverableTooltip>
         </div>
         <Row

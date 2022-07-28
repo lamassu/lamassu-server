@@ -8,7 +8,12 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { Link, Button, IconButton } from 'src/components/buttons'
+import {
+  Link,
+  Button,
+  IconButton,
+  SupportLinkButton
+} from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -278,6 +283,14 @@ const Blacklist = () => {
                   that are used once will be automatically rejected if there's
                   an attempt to use them again on a new transaction.
                 </P>
+                <P>
+                  For details please read the relevant knowledgebase article:
+                </P>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/360033622211-Reject-Address-Reuse"
+                  label="Reject Address Reuse"
+                  bottomSpace="1"
+                />
               </HoverableTooltip>
             </Box>
           </Box>

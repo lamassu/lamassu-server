@@ -10,8 +10,8 @@ const styles = {
     display: 'flex',
     position: 'relative',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: 800
+    width: 800,
+    gap: 5
   },
   form: {
     '& > *': {

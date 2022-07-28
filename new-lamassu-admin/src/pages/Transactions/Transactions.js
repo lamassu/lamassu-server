@@ -11,6 +11,8 @@ import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
 import SearchFilter from 'src/components/SearchFilter'
 import Title from 'src/components/Title'
+import { HoverableTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -226,7 +228,22 @@ const Transactions = () => {
     },
     {
       header: 'Status',
-      view: it => getStatus(it),
+      view: it => {
+        if (getStatus(it) === 'Pending')
+          return (
+            <>
+              {'Pending'}
+              <HoverableTooltip width={220}>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/115001210452-Cancelling-cash-out-transactions"
+                  label="Cancelling cash-out transactions"
+                  bottomSpace="1"
+                />
+              </HoverableTooltip>
+            </>
+          )
+        else return getStatus(it)
+      },
       textAlign: 'left',
       size: 'sm',
       width: 80

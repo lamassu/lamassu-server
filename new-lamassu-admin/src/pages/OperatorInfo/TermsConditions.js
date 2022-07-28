@@ -9,7 +9,8 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link, IconButton } from 'src/components/buttons'
+import { HoverableTooltip } from 'src/components/Tooltip'
+import { Link, IconButton, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
 import { H4, Info2, Info3, Label2, Label3, P } from 'src/components/typography'
@@ -169,6 +170,17 @@ const TermsConditions = () => {
     <>
       <div className={classes.header}>
         <H4>Terms &amp; Conditions</H4>
+        <HoverableTooltip width={320}>
+          <P>
+            For details on configuring this panel, please read the relevant
+            knowledgebase article:
+          </P>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/360015982211-Terms-and-Conditions"
+            label="Lamassu Support Article"
+            bottomSpace="1"
+          />
+        </HoverableTooltip>
       </div>
       <div className={classes.switchRow}>
         <P>Show on screen</P>
