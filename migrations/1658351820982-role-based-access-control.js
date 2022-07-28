@@ -116,8 +116,15 @@ exports.up = function (next) {
     END`,
     `ALTER TABLE users ALTER COLUMN role_id SET NOT NULL`,
     `ALTER TABLE users DROP COLUMN role`,
+    `ALTER TABLE user_register_tokens ADD COLUMN role_id UUID REFERENCES user_roles(id)`,
+    `UPDATE user_register_tokens SET role_id = CASE
+      WHEN role = 'user'::role THEN '${userRoleId}'::UUID
+      WHEN role = 'superuser'::role THEN '${superuserRoleId}'::UUID
+    END`,
+    `ALTER TABLE user_register_tokens DROP COLUMN role`,
     ..._.map(it => `INSERT INTO role_permissions (id, role_id, permission_id) SELECT '${uuid.v4()}'::UUID, '${userRoleId}'::UUID, id FROM system_permissions WHERE name = '${it.name}'`, userPermissions),
-    ..._.map(it => `INSERT INTO role_permissions (id, role_id, permission_id) SELECT '${uuid.v4()}'::UUID, '${superuserRoleId}'::UUID, id FROM system_permissions WHERE name = '${it.name}'`, superuserPermissions)
+    ..._.map(it => `INSERT INTO role_permissions (id, role_id, permission_id) SELECT '${uuid.v4()}'::UUID, '${superuserRoleId}'::UUID, id FROM system_permissions WHERE name = '${it.name}'`, superuserPermissions),
+    `DROP TYPE role`
   ]
 
   db.multi(sql, next)

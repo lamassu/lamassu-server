@@ -4,6 +4,7 @@ import base64 from 'base-64'
 import classnames from 'classnames'
 import { Field, Form, Formik } from 'formik'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
@@ -13,6 +14,7 @@ import { Button } from 'src/components/buttons'
 import { TextInput, RadioGroup } from 'src/components/inputs/formik'
 import { H1, H3, Info2, P, Mono } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
+import { onlyFirstToUpper } from 'src/utils/string'
 import { urlResolver } from 'src/utils/urlResolver'
 
 import styles from '../UserManagement.styles'
@@ -20,8 +22,8 @@ import styles from '../UserManagement.styles'
 const useStyles = makeStyles(styles)
 
 const CREATE_USER = gql`
-  mutation createRegisterToken($username: String!, $role: String!) {
-    createRegisterToken(username: $username, role: $role) {
+  mutation createRegisterToken($username: String!, $roleId: ID!) {
+    createRegisterToken(username: $username, roleId: $roleId) {
       token
       expire
     }
@@ -40,17 +42,6 @@ const initialValues = {
   role: ''
 }
 
-const radioOptions = [
-  {
-    code: 'user',
-    display: 'Regular user'
-  },
-  {
-    code: 'superuser',
-    display: 'Superuser'
-  }
-]
-
 const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
   if (!formikErrors || !formikTouched) return null
   if (mutationError) return 'Internal server error'
@@ -59,7 +50,7 @@ const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
   return null
 }
 
-const CreateUserModal = ({ state, dispatch }) => {
+const CreateUserModal = ({ state, dispatch, roles }) => {
   const classes = useStyles()
 
   const [usernameField, setUsernameField] = useState('')
@@ -103,7 +94,7 @@ const CreateUserModal = ({ state, dispatch }) => {
             onSubmit={values => {
               setUsernameField(values.username)
               createUser({
-                variables: { username: values.username, role: values.role }
+                variables: { username: values.username, roleId: values.role }
               })
             }}>
             {({ errors, touched }) => (
@@ -128,7 +119,13 @@ const CreateUserModal = ({ state, dispatch }) => {
                   name="role"
                   labelClassName={classes.radioLabel}
                   className={classes.radioGroup}
-                  options={radioOptions}
+                  options={R.map(
+                    it => ({
+                      code: it.id,
+                      display: onlyFirstToUpper(it.name)
+                    }),
+                    roles
+                  )}
                 />
                 <div className={classes.footer}>
                   {getErrorMsg(errors, touched, error) && (

@@ -17,6 +17,7 @@ import { ReactComponent as LockIcon } from 'src/styling/icons/button/lock/zodiac
 import { ReactComponent as WhiteUserRoleIcon } from 'src/styling/icons/button/user-role/white.svg'
 import { ReactComponent as UserRoleIcon } from 'src/styling/icons/button/user-role/zodiac.svg'
 import { IP_CHECK_REGEX } from 'src/utils/constants'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './UserManagement.styles'
 import ChangeRoleModal from './modals/ChangeRoleModal'
@@ -38,6 +39,10 @@ const GET_USERS = gql`
       last_accessed
       last_accessed_from
       last_accessed_address
+    }
+    roles {
+      id
+      name
     }
   }
 `
@@ -80,11 +85,6 @@ const reducer = (_, action) => {
     default:
       return initialState
   }
-}
-
-const roleMapper = {
-  user: 'Regular',
-  superuser: 'Superuser'
 }
 
 const Users = () => {
@@ -140,7 +140,7 @@ const Users = () => {
       size: 'sm',
       view: u => (
         <div className={classes.loginWrapper}>
-          <span>{roleMapper[u.role]}</span>
+          <span>{onlyFirstToUpper(u.role)}</span>
           <Switch
             className={classes.roleSwitch}
             disabled={userData.id === u.id}
@@ -260,7 +260,11 @@ const Users = () => {
         </Link>
       </Box>
       <DataTable elements={elements} data={R.path(['users'])(userResponse)} />
-      <CreateUserModal state={state} dispatch={dispatch} />
+      <CreateUserModal
+        state={state}
+        dispatch={dispatch}
+        roles={R.path(['roles'])(userResponse)}
+      />
       <ResetPasswordModal
         state={state}
         dispatch={dispatch}

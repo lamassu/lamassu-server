@@ -21,7 +21,7 @@ const VALIDATE_REGISTER_LINK = gql`
   query validateRegisterLink($token: String!) {
     validateRegisterLink(token: $token) {
       username
-      role
+      roleId
     }
   }
 `
@@ -31,13 +31,13 @@ const REGISTER = gql`
     $token: String!
     $username: String!
     $password: String!
-    $role: String!
+    $roleId: ID!
   ) {
     register(
       token: $token
       username: $username
       password: $password
-      role: $role
+      roleId: $roleId
     )
   }
 `
@@ -62,7 +62,7 @@ const initialValues = {
 
 const initialState = {
   username: null,
-  role: null,
+  roleId: null,
   result: ''
 }
 
@@ -111,7 +111,7 @@ const Register = () => {
         type: 'success',
         payload: {
           username: info.username,
-          role: info.role
+          roleId: info.roleId
         }
       })
     },
@@ -158,7 +158,7 @@ const Register = () => {
                         token: token,
                         username: state.username,
                         password: values.password,
-                        role: state.role
+                        roleId: state.roleId
                       }
                     })
                   }}>
