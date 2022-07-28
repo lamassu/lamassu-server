@@ -231,16 +231,16 @@ const Transactions = () => {
       view: it => {
         if (getStatus(it) === 'Pending')
           return (
-            <>
+            <div className={classes.pendingBox}>
               {'Pending'}
-              <HoverableTooltip width={220}>
+              <HoverableTooltip width={285}>
                 <SupportLinkButton
                   link="https://support.lamassu.is/hc/en-us/articles/115001210452-Cancelling-cash-out-transactions"
                   label="Cancelling cash-out transactions"
-                  bottomSpace="1"
+                  bottomSpace="0"
                 />
               </HoverableTooltip>
-            </>
+            </div>
           )
         else return getStatus(it)
       },
