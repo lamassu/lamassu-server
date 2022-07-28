@@ -405,6 +405,14 @@ const DetailsRow = ({ it: tx, timezone }) => {
             </ActionButton>
           )}
         </div>
+        {!R.isNil(tx.swept) && (
+          <div className={classes.swept}>
+            <Label>Sweep status</Label>
+            <span className={classes.bold}>
+              {tx.swept ? `Swept` : `Unswept`}
+            </span>
+          </div>
+        )}
         <div>
           <Label>Other actions</Label>
           <div className={classes.otherActionsGroup}>
