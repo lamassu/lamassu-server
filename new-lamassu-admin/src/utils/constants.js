@@ -8,6 +8,8 @@ const MANUAL = 'manual'
 
 const IP_CHECK_REGEX = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 
+const SWEEPABLE_CRYPTOS = ['ETH']
+
 export {
   CURRENCY_MAX,
   MIN_NUMBER_OF_CASSETTES,
@@ -15,5 +17,6 @@ export {
   AUTOMATIC,
   MANUAL,
   WALLET_SCORING_DEFAULT_THRESHOLD,
-  IP_CHECK_REGEX
+  IP_CHECK_REGEX,
+  SWEEPABLE_CRYPTOS
 }
