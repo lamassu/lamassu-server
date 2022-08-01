@@ -106,7 +106,7 @@ exports.up = function (next) {
       role_id UUID NOT NULL REFERENCES user_roles(id),
       permission_id INT NOT NULL REFERENCES system_permissions(id)
     )`,
-    ..._.map(it => `INSERT INTO system_permissions (name, description) VALUES ('${it.name}', '${it.description}')`, _.uniq(_.concat(userPermissions, superuserPermissions))),
+    ..._.map(it => `INSERT INTO system_permissions (name, description) VALUES ('${it.name}', '${it.description}')`, _.uniq(superuserPermissions)),
     `INSERT INTO user_roles (id, name) VALUES ('${userRoleId}', 'user')`,
     `INSERT INTO user_roles (id, name) VALUES ('${superuserRoleId}', 'superuser')`,
     `ALTER TABLE users ADD COLUMN role_id UUID REFERENCES user_roles(id)`,
