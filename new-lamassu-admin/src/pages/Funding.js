@@ -1,20 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { useQuery } from '@apollo/react-hooks'
 import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { format } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import QRCode from 'qrcode.react'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import TableLabel from 'src/components/TableLabel'
 import Title from 'src/components/Title'
-import { Tr, Td, THead, TBody, Table } from 'src/components/fake-table/Table'
 import Sidebar from 'src/components/layout/Sidebar'
+import DataTable from 'src/components/tables/DataTable'
 import {
   H3,
+  H4,
   Info1,
   Info2,
   Info3,
@@ -22,7 +22,10 @@ import {
   Label3
 } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
+import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
+import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { primaryColor } from 'src/styling/variables'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './Funding.styles'
 
@@ -30,11 +33,6 @@ const NODE_NOT_CONNECTED_ERR =
   "Couldn't establish connection with the node. Make sure it is installed and try again"
 
 const useStyles = makeStyles(styles)
-const sizes = {
-  big: 165,
-  time: 140,
-  date: 130
-}
 
 const GET_FUNDING = gql`
   {
@@ -50,6 +48,7 @@ const GET_FUNDING = gql`
       fiatCode
       display
       unitScale
+      walletHistory
     }
   }
 `
@@ -79,32 +78,7 @@ const getPendingTotal = list => {
 
 const Funding = () => {
   const [selected, setSelected] = useState(null)
-  const [viewHistory] = useState(false)
   const classes = useStyles()
-  const fundingHistory = [
-    {
-      cryptoAmount: 2.0,
-      balance: 10.23,
-      fiatValue: 1000.0,
-      date: new Date(),
-      performedBy: null,
-      pending: true
-    },
-    {
-      cryptoAmount: 10.0,
-      balance: 12.23,
-      fiatValue: 12000.0,
-      date: new Date(),
-      performedBy: null
-    },
-    {
-      cryptoAmount: 5.0,
-      balance: 5.0,
-      fiatValue: 50000.0,
-      date: new Date(),
-      performedBy: null
-    }
-  ]
 
   const isSelected = it => {
     return selected && selected.cryptoCode === it.cryptoCode
@@ -112,6 +86,8 @@ const Funding = () => {
 
   const { data: fundingResponse, loading } = useQuery(GET_FUNDING)
   const funding = R.path(['funding'])(fundingResponse) ?? []
+
+  console.log(funding)
 
   if (funding.length && !selected) {
     setSelected(funding[0])
@@ -144,15 +120,56 @@ const Funding = () => {
     )
   }
 
+  const elements = [
+    {
+      header: 'Operation',
+      width: 150,
+      size: 'sm',
+      view: it => {
+        switch (it.operation) {
+          case 'cash-in':
+            return (
+              <span>
+                <TxInIcon /> Cash-in Transaction
+              </span>
+            )
+          case 'cash-out':
+            return (
+              <span>
+                <TxOutIcon /> Cash-out Transaction
+              </span>
+            )
+          default:
+            return <span>{onlyFirstToUpper(it.operation)}</span>
+        }
+      }
+    },
+    {
+      header: 'Crypto',
+      width: 150,
+      size: 'sm',
+      view: it => <span>{`${it.amount} ${selected.cryptoCode}`}</span>
+    },
+    {
+      header: 'Address',
+      width: 150,
+      size: 'sm',
+      view: it => <span>{`${it.address}`}</span>
+    },
+    {
+      header: 'Date',
+      width: 150,
+      size: 'sm',
+      view: it => <span>{`${it.date}`}</span>
+    }
+  ]
+
   const pendingTotal = getPendingTotal(funding)
   const signIfPositive = num => (num >= 0 ? '+' : '')
 
   return (
     <>
-      <div>
-        <Title>Funding</Title>
-        {/* <button onClick={it => setViewHistory(!viewHistory)}>history</button> */}
-      </div>
+      <Title>Funding</Title>
       <div className={classes.wrapper}>
         <Sidebar
           data={funding}
@@ -176,7 +193,7 @@ const Funding = () => {
             </div>
           )}
         </Sidebar>
-        {selected && !viewHistory && selected.errorMsg && (
+        {selected && selected.errorMsg && (
           <div className={classes.main}>
             <div className={classes.firstSide}>
               <Info3 className={classes.error}>
@@ -187,110 +204,71 @@ const Funding = () => {
             </div>
           </div>
         )}
-        {selected && !viewHistory && !selected.errorMsg && (
-          <div className={classes.main}>
-            <div className={classes.firstSide}>
-              <H3>Balance ({selected.display})</H3>
-              <div className={classes.coinTotal}>
-                <Info1 inline noMargin>
-                  {`${selected.confirmedBalance} ${selected.cryptoCode}`}
-                </Info1>
-                <Info2 inline noMargin className={classes.leftSpacer}>
-                  {`(${signIfPositive(selected.pending)} ${
-                    selected.pending
-                  } pending)`}
-                </Info2>
-              </div>
+        {selected && !selected.errorMsg && (
+          <div className={classes.mainWrapper}>
+            <div className={classes.main}>
+              <div className={classes.firstSide}>
+                <H3>Balance ({selected.display})</H3>
+                <div className={classes.coinTotal}>
+                  <Info1 inline noMargin>
+                    {`${selected.confirmedBalance} ${selected.cryptoCode}`}
+                  </Info1>
+                  <Info2 inline noMargin className={classes.leftSpacer}>
+                    {`(${signIfPositive(selected.pending)} ${
+                      selected.pending
+                    } pending)`}
+                  </Info2>
+                </div>
 
-              <div className={classes.coinTotal}>
-                <Info3 inline noMargin>
-                  {`= ${formatNumber(selected.fiatConfirmedBalance)} ${
-                    selected.fiatCode
-                  }`}
-                </Info3>
-                <Label3 inline noMargin className={classes.leftSpacer}>
-                  {`(${signIfPositive(selected.fiatPending)} ${formatNumber(
-                    selected.fiatPending
-                  )} pending)`}
-                </Label3>
-              </div>
+                <div className={classes.coinTotal}>
+                  <Info3 inline noMargin>
+                    {`= ${formatNumber(selected.fiatConfirmedBalance)} ${
+                      selected.fiatCode
+                    }`}
+                  </Info3>
+                  <Label3 inline noMargin className={classes.leftSpacer}>
+                    {`(${signIfPositive(selected.fiatPending)} ${formatNumber(
+                      selected.fiatPending
+                    )} pending)`}
+                  </Label3>
+                </div>
 
-              <H3 className={classes.topSpacer}>Address</H3>
-              <div className={classes.addressWrapper}>
-                <div className={classes.mono}>
-                  <strong>
-                    <CopyToClipboard
-                      buttonClassname={classes.copyToClipboard}
-                      key={selected.cryptoCode}>
-                      {formatAddress(
-                        selected.cryptoCode,
-                        selected.fundingAddress
-                      )}
-                    </CopyToClipboard>
-                  </strong>
+                <H3 className={classes.topSpacer}>Address</H3>
+                <div className={classes.addressWrapper}>
+                  <div className={classes.mono}>
+                    <strong>
+                      <CopyToClipboard
+                        buttonClassname={classes.copyToClipboard}
+                        key={selected.cryptoCode}>
+                        {formatAddress(
+                          selected.cryptoCode,
+                          selected.fundingAddress
+                        )}
+                      </CopyToClipboard>
+                    </strong>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className={classes.secondSide}>
-              <Label1>Scan to send {selected.display}</Label1>
-              <QRCode
-                size={240}
-                fgColor={primaryColor}
-                value={selected.fundingAddressUrl}
+              <div className={classes.secondSide}>
+                <Label1>Scan to send {selected.display}</Label1>
+                <QRCode
+                  size={240}
+                  fgColor={primaryColor}
+                  value={selected.fundingAddressUrl}
+                />
+              </div>
+            </div>
+            <div>
+              <H4>Wallet history</H4>
+              <DataTable
+                loading={loading}
+                emptyText="No transactions so far"
+                elements={elements}
+                data={R.path(['walletHistory'], selected)}
+                rowSize="sm"
               />
             </div>
-          </div>
-        )}
-        {selected && viewHistory && (
-          <div>
-            <TableLabel
-              className={classes.tableLabel}
-              label="Pending"
-              color="#cacaca"
-            />
-            <Table className={classes.table}>
-              <THead>
-                <Td header width={sizes.big}>
-                  Amount Entered
-                </Td>
-                <Td header width={sizes.big}>
-                  Balance After
-                </Td>
-                <Td header width={sizes.big}>
-                  Cash Value
-                </Td>
-                <Td header width={sizes.date}>
-                  Date
-                </Td>
-                <Td header width={sizes.time}>
-                  Time (h:m:s)
-                </Td>
-                <Td header width={sizes.big}>
-                  Performed By
-                </Td>
-              </THead>
-              <TBody>
-                {fundingHistory.map((it, idx) => (
-                  <Tr
-                    key={idx}
-                    className={classnames({ [classes.pending]: it.pending })}>
-                    <Td width={sizes.big}>
-                      {it.cryptoAmount} {selected.cryptoCode}
-                    </Td>
-                    <Td width={sizes.big}>
-                      {it.balance} {selected.cryptoCode}
-                    </Td>
-                    <Td width={sizes.big}>
-                      {it.fiatValue} {selected.fiatCode}
-                    </Td>
-                    <Td width={sizes.date}>{format('yyyy-MM-dd', it.date)}</Td>
-                    <Td width={sizes.time}>{format('hh:mm:ss', it.date)}</Td>
-                    <Td width={sizes.big}>add</Td>
-                  </Tr>
-                ))}
-              </TBody>
-            </Table>
           </div>
         )}
       </div>

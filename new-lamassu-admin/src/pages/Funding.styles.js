@@ -19,10 +19,11 @@ export default {
   },
   main: {
     display: 'flex',
-    flex: 1
+    height: 350
   },
   firstSide: {
-    margin: `0 ${spacer * 8}px 0 ${spacer * 6}px`
+    flexGrow: 1,
+    margin: `0 ${spacer * 8}px 0 0`
   },
   secondSide: {
     marginTop: -29
@@ -43,7 +44,8 @@ export default {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: subheaderColor
+    backgroundColor: subheaderColor,
+    width: '100%'
   },
   address: {
     width: 375,
@@ -94,7 +96,12 @@ export default {
   },
   mono: {
     extend: mono,
-    width: 375,
     margin: `${spacer * 1.5}px ${spacer * 3}px`
+  },
+  mainWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    marginLeft: `${spacer * 6}px`
   }
 }
