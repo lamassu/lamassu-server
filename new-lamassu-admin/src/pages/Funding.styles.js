@@ -19,7 +19,7 @@ export default {
   },
   main: {
     display: 'flex',
-    height: 350
+    height: 300
   },
   firstSide: {
     flexGrow: 1,
@@ -102,6 +102,25 @@ export default {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    marginLeft: `${spacer * 6}px`
+    marginLeft: `${spacer * 6}px`,
+    height: '98%'
+  },
+  historyAddress: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+  walletHistory: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1
+  },
+  operationLabel: {
+    '& > *': {
+      marginRight: 5
+    },
+    '& > *:last-child': {
+      marginRight: 0
+    }
   }
 }

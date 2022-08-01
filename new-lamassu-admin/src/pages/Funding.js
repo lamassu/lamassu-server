@@ -25,7 +25,9 @@ import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { primaryColor } from 'src/styling/variables'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { onlyFirstToUpper } from 'src/utils/string'
+import { formatDate } from 'src/utils/timezones'
 
 import styles from './Funding.styles'
 
@@ -36,6 +38,7 @@ const useStyles = makeStyles(styles)
 
 const GET_FUNDING = gql`
   {
+    config
     funding {
       cryptoCode
       errorMsg
@@ -56,7 +59,7 @@ const GET_FUNDING = gql`
 const formatAddress = (cryptoCode = '', address = '') =>
   coinUtils.formatCryptoAddress(cryptoCode, address).replace(/(.{4})/g, '$1 ')
 const sumReducer = (acc, value) => acc.plus(value)
-const formatNumber = it => new BigNumber(it).toFormat(2)
+const formatNumber = (it, decimals = 2) => new BigNumber(it).toFormat(decimals)
 
 const getConfirmedTotal = list => {
   return formatNumber(
@@ -86,8 +89,9 @@ const Funding = () => {
 
   const { data: fundingResponse, loading } = useQuery(GET_FUNDING)
   const funding = R.path(['funding'])(fundingResponse) ?? []
+  const config = R.path(['config'])(fundingResponse) ?? {}
 
-  console.log(funding)
+  const timezone = fromNamespace(namespaces.LOCALE)(config).timezone
 
   if (funding.length && !selected) {
     setSelected(funding[0])
@@ -123,44 +127,57 @@ const Funding = () => {
   const elements = [
     {
       header: 'Operation',
-      width: 150,
+      width: 215,
       size: 'sm',
+      className: classes.operationLabel,
       view: it => {
         switch (it.operation) {
           case 'cash-in':
             return (
-              <span>
-                <TxInIcon /> Cash-in Transaction
-              </span>
+              <>
+                <TxInIcon />
+                <span>Cash-in transaction</span>
+              </>
             )
           case 'cash-out':
             return (
-              <span>
-                <TxOutIcon /> Cash-out Transaction
-              </span>
+              <>
+                <TxOutIcon /> <span>Cash-out transaction</span>
+              </>
             )
           default:
-            return <span>{onlyFirstToUpper(it.operation)}</span>
+            return onlyFirstToUpper(it.operation)
         }
       }
     },
     {
       header: 'Crypto',
-      width: 150,
+      width: 165,
       size: 'sm',
-      view: it => <span>{`${it.amount} ${selected.cryptoCode}`}</span>
+      textAlign: 'right',
+      view: it => `${formatNumber(it.amount, 5)} ${selected.cryptoCode}`
+    },
+    {
+      header: 'Cash value (current)',
+      width: 195,
+      size: 'sm',
+      textAlign: 'right',
+      view: it => `${formatNumber(it.fiatValue)} ${funding[0].fiatCode}`
     },
     {
       header: 'Address',
-      width: 150,
+      width: 180,
       size: 'sm',
-      view: it => <span>{`${it.address}`}</span>
+      className: classes.historyAddress,
+      view: it => it.address
     },
     {
       header: 'Date',
-      width: 150,
+      width: 180,
       size: 'sm',
-      view: it => <span>{`${it.date}`}</span>
+      textAlign: 'right',
+      view: it =>
+        timezone && formatDate(it.created, timezone, 'yyyy-MM-dd HH:mm')
     }
   ]
 
@@ -184,8 +201,7 @@ const Funding = () => {
                 Total Crypto Balance
               </Label1>
               <Info1 noMargin>
-                {getConfirmedTotal(funding)}
-                {funding[0].fiatCode}
+                {`${getConfirmedTotal(funding)} ${funding[0].fiatCode}`}
               </Info1>
               <Label1 className={classes.totalPending}>
                 ({signIfPositive(pendingTotal)} {pendingTotal} pending)
@@ -259,7 +275,7 @@ const Funding = () => {
                 />
               </div>
             </div>
-            <div>
+            <div className={classes.walletHistory}>
               <H4>Wallet history</H4>
               <DataTable
                 loading={loading}
