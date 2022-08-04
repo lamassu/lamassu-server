@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useQuery } from '@apollo/react-hooks'
 import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core/styles'
