@@ -1,7 +1,6 @@
-import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation, useLazyQuery, gql } from '@apollo/client'
 import { makeStyles, Box, Chip } from '@material-ui/core'
 import { startAttestation } from '@simplewebauthn/browser'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useReducer, useState, useContext } from 'react'
 

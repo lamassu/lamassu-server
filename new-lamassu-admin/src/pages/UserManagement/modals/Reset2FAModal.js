@@ -1,6 +1,5 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
-import gql from 'graphql-tag'
 import React, { useEffect, useState } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'

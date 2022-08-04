@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { useMutation, useQuery, gql } from '@apollo/client'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 

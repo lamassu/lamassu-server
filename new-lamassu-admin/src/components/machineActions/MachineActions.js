@@ -1,6 +1,5 @@
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
-import gql from 'graphql-tag'
 import React, { memo, useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'

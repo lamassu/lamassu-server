@@ -1,10 +1,9 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, gql } from '@apollo/client'
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { endOfToday } from 'date-fns'
 import { subDays, format, add, startOfWeek } from 'date-fns/fp'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 

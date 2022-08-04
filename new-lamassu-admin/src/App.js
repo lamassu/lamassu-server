@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, gql } from '@apollo/client'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import Slide from '@material-ui/core/Slide'
@@ -8,7 +8,6 @@ import {
   MuiThemeProvider,
   makeStyles
 } from '@material-ui/core/styles'
-import gql from 'graphql-tag'
 import { create } from 'jss'
 import extendJss from 'jss-plugin-extend'
 import React, { useContext, useState } from 'react'

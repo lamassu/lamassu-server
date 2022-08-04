@@ -1,6 +1,5 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React from 'react'
 

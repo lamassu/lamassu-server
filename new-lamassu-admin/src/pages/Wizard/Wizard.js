@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, gql } from '@apollo/client'
 import { makeStyles, Dialog, DialogContent } from '@material-ui/core'
 import classnames from 'classnames'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'

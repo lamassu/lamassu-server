@@ -1,9 +1,8 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
 import base64 from 'base-64'
 import classnames from 'classnames'
 import { Field, Form, Formik } from 'formik'
-import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 

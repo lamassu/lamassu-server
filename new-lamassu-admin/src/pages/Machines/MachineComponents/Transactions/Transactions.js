@@ -1,8 +1,7 @@
-import { useQuery, useLazyQuery } from '@apollo/react-hooks'
+import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useEffect, useState } from 'react'
 

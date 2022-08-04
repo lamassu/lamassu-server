@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery } from '@apollo/client'
 import { makeStyles, ClickAwayListener } from '@material-ui/core'
 import classnames from 'classnames'
 import { format, set } from 'date-fns/fp'

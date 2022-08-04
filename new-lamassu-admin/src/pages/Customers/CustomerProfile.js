@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, gql } from '@apollo/client'
 import {
   makeStyles,
   Breadcrumbs,
@@ -8,7 +8,6 @@ import {
   Dialog
 } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'

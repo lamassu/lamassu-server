@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import { Formik, Form, Field } from 'formik'
-import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 

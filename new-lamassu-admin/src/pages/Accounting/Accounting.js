@@ -1,7 +1,6 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useContext } from 'react'
 

@@ -1,7 +1,6 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
-import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
