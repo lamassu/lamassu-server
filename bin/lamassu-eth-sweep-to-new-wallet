@@ -263,7 +263,7 @@ settingsLoader.loadLatest()
     }
 
     const opts = {
-      chainId: 3,
+      chainId: 1,
       nonce: 0,
       includesFee: true
     }
