@@ -114,7 +114,8 @@
     "lamassu-operator": "./bin/lamassu-operator",
     "lamassu-coinatmradar": "./bin/lamassu-coinatmradar",
     "lamassu-eth-recovery": "./bin/lamassu-eth-recovery",
-    "lamassu-update-cassettes": "./bin/lamassu-update-cassettes"
+    "lamassu-update-cassettes": "./bin/lamassu-update-cassettes",
+    "lamassu-clean-parsed-id": "./bin/lamassu-clean-parsed-id"
   },
   "scripts": {
     "start": "node bin/lamassu-server",
