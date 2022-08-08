@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -32,7 +32,6 @@ const SAVE_ACCOUNT = gql`
 
 const GET_INFO = gql`
   query getData {
-    config
     accounts
     accountsConfig {
       code
@@ -48,6 +47,12 @@ const GET_INFO = gql`
   }
 `
 
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
+
 const LOCALE = 'locale'
 
 const useStyles = makeStyles(styles)
@@ -60,9 +65,11 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const [advancedSettings, setAdvancedSettings] = useState(false)
   const { data } = useQuery(GET_INFO)
 
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getData', 'getConfig']
   })
 
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
@@ -75,10 +82,9 @@ const Wallet = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config, accounts } })
   }
 
-  const fiatCurrency =
-    data?.config && fromNamespace(LOCALE)(data.config).fiatCurrency
+  const fiatCurrency = fromNamespace(LOCALE)(data.configData).fiatCurrency
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config = fromNamespace(SCREEN_KEY)(configData.config)
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
@@ -148,7 +154,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
               error={error?.message}
               cryptoCurrencies={cryptoCurrencies}
               fiatCurrency={fiatCurrency}
-              userAccounts={data?.config?.accounts}
+              userAccounts={configData?.config?.accounts}
               accounts={accounts}
               accountsConfig={accountsConfig}
             />

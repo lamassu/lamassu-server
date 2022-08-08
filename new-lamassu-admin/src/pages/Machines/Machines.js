@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
@@ -51,6 +51,11 @@ const GET_INFO = gql`
       deviceId
       created
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -95,10 +100,12 @@ const MachineRoute = () => {
 const Machines = ({ data, refetch, reload }) => {
   const classes = useStyles()
 
-  const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
+  const timezone = R.path(['config', 'locale_timezone'], configData) ?? {}
 
   const machine = R.path(['machine'])(data) ?? {}
-  const config = R.path(['config'])(data) ?? {}
+  const config = R.path(['config'])(configData) ?? {}
   const bills = R.path(['bills'])(data) ?? []
 
   const machineName = R.path(['name'])(machine) ?? null

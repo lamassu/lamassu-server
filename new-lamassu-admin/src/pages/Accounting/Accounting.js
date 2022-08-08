@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import * as R from 'ramda'
@@ -47,8 +47,8 @@ const GET_OPERATOR_BY_USERNAME = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -101,18 +101,13 @@ const Accounting = () => {
   const classes = useStyles()
   const { userData } = useContext(AppContext)
 
-  const { data: opData, loading: operatorLoading } = useQuery(
-    GET_OPERATOR_BY_USERNAME,
-    {
-      context: { clientName: 'pazuz' },
-      variables: { username: userData?.username }
-    }
-  )
+  const { data: opData, loading } = useQuery(GET_OPERATOR_BY_USERNAME, {
+    context: { clientName: 'pazuz' },
+    variables: { username: userData?.username }
+  })
 
-  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
-
-  const loading = operatorLoading || configLoading
 
   const operatorData = R.path(['operatorByUsername'], opData)
 

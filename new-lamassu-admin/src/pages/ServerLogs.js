@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState, useRef } from 'react'
@@ -83,8 +83,8 @@ const GET_SERVER_DATA = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -97,13 +97,14 @@ const Logs = () => {
   const [saveMessage, setSaveMessage] = useState(null)
   const [logLevel, setLogLevel] = useState(SHOW_ALL)
 
-  const { data, loading: dataLoading } = useQuery(GET_SERVER_DATA, {
+  const { data, loading } = useQuery(GET_SERVER_DATA, {
     onCompleted: () => setSaveMessage(''),
     variables: {
       limit: NUM_LOG_RESULTS
     }
   })
-  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const defaultLogLevels = [
@@ -130,8 +131,6 @@ const Logs = () => {
 
     setLogLevel(logLevel)
   }
-
-  const loading = dataLoading || configLoading
 
   return (
     <>

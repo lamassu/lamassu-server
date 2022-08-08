@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { utils as coinUtils } from '@lamassu/coins'
 import { Box, Dialog, DialogContent, DialogActions } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
@@ -51,8 +51,8 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const GET_INFO = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -110,7 +110,8 @@ const PaperWalletDialog = ({ onConfirmed, onDissmised, open, props }) => {
 
 const Blacklist = () => {
   const { data: blacklistResponse } = useQuery(GET_BLACKLIST)
-  const { data: configData } = useQuery(GET_INFO)
+  const config = useApolloClient().readQuery({ query: GET_CONFIG })?.config
+
   const [showModal, setShowModal] = useState(false)
   const [clickedItem, setClickedItem] = useState({
     code: 'BTC',
@@ -135,7 +136,7 @@ const Blacklist = () => {
   })
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getConfig']
   })
 
   const classes = useStyles()
@@ -146,8 +147,7 @@ const Blacklist = () => {
 
   const formattedData = groupByCode(blacklistData)
 
-  const complianceConfig =
-    configData?.config && fromNamespace('compliance')(configData.config)
+  const complianceConfig = fromNamespace('compliance')(config)
 
   const rejectAddressReuse = !!complianceConfig?.rejectAddressReuse
 

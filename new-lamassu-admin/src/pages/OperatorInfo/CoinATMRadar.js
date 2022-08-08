@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { memo } from 'react'
 
@@ -13,7 +13,7 @@ import { global } from './OperatorInfo.styles'
 const useStyles = makeStyles(global)
 
 const GET_CONFIG = gql`
-  query getData {
+  query getConfig {
     config
   }
 `
@@ -45,10 +45,10 @@ const Row = memo(({ title, disabled = false, checked, save, label }) => {
 const CoinATMRadar = memo(({ wizard }) => {
   const classes = useStyles()
 
-  const { data } = useQuery(GET_CONFIG)
+  const data = useApolloClient().readQuery({ query: GET_CONFIG })
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: ['getData']
+    refetchQueries: ['getConfig']
   })
 
   const save = it =>

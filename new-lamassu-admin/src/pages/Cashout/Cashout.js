@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -46,6 +46,11 @@ const GET_INFO = gql`
       cassette4
       numberOfCassettes
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -55,9 +60,11 @@ const CashOut = ({ name: SCREEN_KEY }) => {
   const [wizard, setWizard] = useState(false)
   const { data, loading } = useQuery(GET_INFO)
 
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getConfig']
   })
 
   const save = (rawConfig, accounts) => {
@@ -65,10 +72,10 @@ const CashOut = ({ name: SCREEN_KEY }) => {
     return saveConfig({ variables: { config, accounts } })
   }
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config = fromNamespace(SCREEN_KEY)(configData)
 
   const fudgeFactorActive = config?.fudgeFactorActive ?? false
-  const locale = data?.config && fromNamespace('locale')(data.config)
+  const locale = fromNamespace('locale')(configData)
   const machines = data?.machines ?? []
 
   const onToggle = id => {

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 
@@ -21,8 +21,8 @@ const SAVE_CONFIG = gql`
   }
 `
 
-const GET_INFO = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -43,10 +43,9 @@ const AdvancedTriggersSettings = memo(() => {
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
 
-  const { data, loading: configLoading } = useQuery(GET_INFO)
-  const { data: customInfoReqData, loading: customInfoLoading } = useQuery(
-    GET_CUSTOM_REQUESTS
-  )
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
+  const { data: customInfoReqData, loading } = useQuery(GET_CUSTOM_REQUESTS)
 
   const customInfoRequests =
     R.path(['customInfoRequests'])(customInfoReqData) ?? []
@@ -54,10 +53,8 @@ const AdvancedTriggersSettings = memo(() => {
     customInfoRequests
   )
 
-  const loading = configLoading || customInfoLoading
-
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData'],
+    refetchQueries: () => ['getConfig'],
     onError: error => setError(error)
   })
 
@@ -76,7 +73,7 @@ const AdvancedTriggersSettings = memo(() => {
   }
 
   const requirementsData =
-    data?.config && fromNamespace(SCREEN_KEY)(data?.config)
+    configData?.config && fromNamespace(SCREEN_KEY)(configData?.config)
   const requirementsDefaults =
     requirementsData && !R.isEmpty(requirementsData)
       ? requirementsData

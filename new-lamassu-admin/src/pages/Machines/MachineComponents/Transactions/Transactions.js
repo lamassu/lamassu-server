@@ -1,4 +1,4 @@
-import { useQuery, useLazyQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
 import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
@@ -58,8 +58,8 @@ const GET_TRANSACTIONS = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -70,7 +70,7 @@ const Transactions = ({ id }) => {
   const [extraHeight, setExtraHeight] = useState(0)
   const [clickedId, setClickedId] = useState('')
 
-  const [getTx, { data: txResponse, loading: txLoading }] = useLazyQuery(
+  const [getTx, { data: txResponse, loading }] = useLazyQuery(
     GET_TRANSACTIONS,
     {
       variables: {
@@ -80,10 +80,8 @@ const Transactions = ({ id }) => {
     }
   )
 
-  const { data: configData, loading: configLoading } = useQuery(GET_DATA)
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
   const timezone = R.path(['config', 'locale_timezone'], configData)
-
-  const loading = txLoading || configLoading
 
   if (!loading && txResponse) {
     txResponse.transactions = txResponse.transactions.splice(0, 5)

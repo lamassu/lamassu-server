@@ -13,10 +13,9 @@ import { formatLong } from 'src/utils/string'
 import FormRenderer from './FormRenderer'
 import schemas from './schemas'
 
-const GET_INFO = gql`
-  query getData {
+const GET_ACCOUNTS = gql`
+  query getAccounts {
     accounts
-    config
   }
 `
 
@@ -39,10 +38,10 @@ const useStyles = makeStyles(styles)
 const Services = () => {
   const [editingSchema, setEditingSchema] = useState(null)
 
-  const { data } = useQuery(GET_INFO)
+  const { data } = useQuery(GET_ACCOUNTS)
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
     onCompleted: () => setEditingSchema(null),
-    refetchQueries: ['getData']
+    refetchQueries: ['getAccounts']
   })
 
   const classes = useStyles()

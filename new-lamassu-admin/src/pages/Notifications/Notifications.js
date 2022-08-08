@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -22,7 +22,6 @@ import TransactionAlerts from './sections/TransactionAlerts'
 
 const GET_INFO = gql`
   query getData {
-    config
     machines {
       name
       deviceId
@@ -33,6 +32,12 @@ const GET_INFO = gql`
       display
     }
     accounts
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
+    config
   }
 `
 
@@ -68,8 +73,10 @@ const Notifications = ({
 
   const { data, loading } = useQuery(GET_INFO)
 
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: ['getData'],
+    refetchQueries: ['getConfig'],
     onCompleted: () => setEditingKey(null),
     onError: error => setError(error)
   })
@@ -83,14 +90,14 @@ const Notifications = ({
     onError: error => setError(error)
   })
 
-  const config = fromNamespace(SCREEN_KEY)(data?.config)
+  const config = fromNamespace(SCREEN_KEY)(configData?.config)
   const machines = data?.machines
   const cryptoCurrencies = data?.cryptoCurrencies
   const twilioAvailable = R.has('twilio', data?.accounts || {})
   const mailgunAvailable = R.has('mailgun', data?.accounts || {})
 
   const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
+    fromNamespace(namespaces.LOCALE)(configData?.config)
   )
 
   const save = R.curry((section, rawConfig) => {

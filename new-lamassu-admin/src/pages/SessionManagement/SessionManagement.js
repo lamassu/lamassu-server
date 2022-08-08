@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import * as R from 'ramda'
 import React from 'react'
 import parser from 'ua-parser-js'
@@ -27,8 +27,8 @@ const DELETE_SESSION = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -38,16 +38,14 @@ const isLocalhost = ip => {
 }
 
 const SessionManagement = () => {
-  const { data: tknResponse, loading: sessionsLoading } = useQuery(GET_SESSIONS)
+  const { data: tknResponse, loading } = useQuery(GET_SESSIONS)
 
   const [deleteSession] = useMutation(DELETE_SESSION, {
     refetchQueries: () => ['sessions']
   })
 
-  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
-
-  const loading = sessionsLoading || configLoading
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+  const timezone = R.path(['config', 'locale_timezone'], configData)
 
   const elements = [
     {

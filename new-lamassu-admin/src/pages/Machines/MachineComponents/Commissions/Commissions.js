@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import * as R from 'ramda'
 import React from 'react'
 
@@ -9,7 +9,6 @@ import { overrides } from './helper'
 
 const GET_DATA = gql`
   query getData {
-    config
     cryptoCurrencies {
       code
       display
@@ -21,6 +20,12 @@ const GET_DATA = gql`
   }
 `
 
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
+
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject) {
     saveConfig(config: $config)
@@ -28,14 +33,16 @@ const SAVE_CONFIG = gql`
 `
 
 const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
   const { data, loading } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getConfig']
   })
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config = fromNamespace(SCREEN_KEY)(configData?.config)
   const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
+    fromNamespace(namespaces.LOCALE)(configData?.config)
   )
 
   const saveOverrides = it => {

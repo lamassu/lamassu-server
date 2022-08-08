@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { Box, makeStyles } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -26,13 +26,12 @@ const GET_CUSTOMER_FILTERS = gql`
 `
 
 const GET_CUSTOMERS = gql`
-  query configAndCustomers(
+  query customers(
     $phone: String
     $name: String
     $address: String
     $id: String
   ) {
-    config
     customers(phone: $phone, name: $name, address: $address, id: $id) {
       id
       idCardData
@@ -84,6 +83,12 @@ const CREATE_CUSTOMER = gql`
   }
 `
 
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
+
 const useBaseStyles = makeStyles(baseStyles)
 
 const getFiltersObj = filters =>
@@ -100,6 +105,8 @@ const Customers = () => {
   const [variables, setVariables] = useState({})
   const [filters, setFilters] = useState([])
   const [showCreationModal, setShowCreationModal] = useState(false)
+
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })?.config
 
   const {
     data: customersResponse,
@@ -124,7 +131,6 @@ const Customers = () => {
     ]
   })
 
-  const configData = R.path(['config'])(customersResponse) ?? []
   const customRequirementsData =
     R.path(['customInfoRequests'], customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)

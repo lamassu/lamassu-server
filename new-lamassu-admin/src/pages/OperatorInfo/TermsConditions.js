@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
@@ -69,7 +69,7 @@ const Field = ({
 }
 
 const GET_CONFIG = gql`
-  query getData {
+  query getConfig {
     config
   }
 `
@@ -90,16 +90,17 @@ const TermsConditions = () => {
       setError(null)
       setEditing(false)
     },
-    refetchQueries: () => ['getData'],
+    refetchQueries: () => ['getConfig'],
     onError: e => setError(e)
   })
 
   const classes = useTermsConditionsStyles()
 
-  const { data } = useQuery(GET_CONFIG)
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
 
   const termsAndConditions =
-    data?.config && fromNamespace(namespaces.TERMS_CONDITIONS, data.config)
+    configData?.config &&
+    fromNamespace(namespaces.TERMS_CONDITIONS, configData.config)
   const formData = termsAndConditions ?? {}
   const showOnScreen = termsAndConditions?.active ?? false
   const addDelayOnScreen = termsAndConditions?.delay ?? false

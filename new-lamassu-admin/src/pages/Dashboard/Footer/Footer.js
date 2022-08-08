@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Label2 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -20,11 +20,16 @@ const GET_DATA = gql`
       code
       display
     }
-    config
     accountsConfig {
       code
       display
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
+    config
   }
 `
 
@@ -34,9 +39,11 @@ const useStyles = makeStyles(styles)
 const Footer = () => {
   const { data } = useQuery(GET_DATA)
 
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
   const withCommissions = R.path(['cryptoRates', 'withCommissions'])(data) ?? {}
   const classes = useStyles()
-  const config = R.path(['config'])(data) ?? {}
+  const config = R.path(['config'])(configData) ?? {}
   const canExpand = R.keys(withCommissions).length > 4
 
   const wallets = fromNamespace('wallets')(config)

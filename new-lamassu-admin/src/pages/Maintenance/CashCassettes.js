@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { DialogActions, makeStyles, Box } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -112,6 +112,12 @@ const GET_MACHINES_AND_CONFIG = gql`
   }
 `
 
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
+
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject) {
     saveConfig(config: $config)
@@ -171,14 +177,17 @@ const CashCassettes = () => {
 
   const machines = R.path(['machines'])(data) ?? []
   const unpairedMachines = R.path(['unpairedMachines'])(data) ?? []
-  const config = R.path(['config'])(data) ?? {}
+
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+  const config = R.path(['config'])(configData) ?? {}
   const fillingPercentageSettings = fromNamespace('notifications', config)
+
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setEditingSchema(false),
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getConfig']
   })
 
   const timezone = R.path(['config', 'locale_timezone'], data)
@@ -187,8 +196,8 @@ const CashCassettes = () => {
   const deviceIds = R.uniq(
     R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
   )
-  const cashout = data?.config && fromNamespace('cashOut')(data.config)
-  const locale = data?.config && fromNamespace('locale')(data.config)
+  const cashout = fromNamespace('cashOut')(config)
+  const locale = fromNamespace('locale')(config)
   const fiatCurrency = locale?.fiatCurrency
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines),

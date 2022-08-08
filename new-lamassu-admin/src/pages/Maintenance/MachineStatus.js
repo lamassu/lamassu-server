@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import { formatDistance } from 'date-fns'
 import * as R from 'ramda'
@@ -40,8 +40,8 @@ const GET_MACHINES = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -53,12 +53,9 @@ const MachineStatus = () => {
   const history = useHistory()
   const { state } = useLocation()
   const addedMachineId = state?.id
-  const {
-    data: machinesResponse,
-    refetch,
-    loading: machinesLoading
-  } = useQuery(GET_MACHINES)
-  const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const { data: machinesResponse, refetch, loading } = useQuery(GET_MACHINES)
+
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const elements = [
@@ -116,8 +113,6 @@ const MachineStatus = () => {
   const InnerMachineDetailsRow = ({ it }) => (
     <MachineDetailsRow it={it} onActionSuccess={refetch} timezone={timezone} />
   )
-
-  const loading = machinesLoading || configLoading
 
   return (
     <>

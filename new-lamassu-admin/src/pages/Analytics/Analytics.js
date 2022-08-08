@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
@@ -88,7 +88,6 @@ const GET_TRANSACTIONS = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
     machines {
       name
       deviceId
@@ -98,6 +97,12 @@ const GET_DATA = gql`
       name
       rate
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
+    config
   }
 `
 
@@ -135,6 +140,9 @@ const OverviewEntry = ({ label, value, oldValue, currency }) => {
 const Analytics = () => {
   const classes = useStyles()
 
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
+  const config = R.path(['config'])(configResponse) ?? []
+
   const { data: txResponse, loading: txLoading } = useQuery(GET_TRANSACTIONS, {
     variables: {
       from: subDays(65, endOfToday()),
@@ -142,7 +150,7 @@ const Analytics = () => {
       excludeTestingCustomers: true
     }
   })
-  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+  const { data: dataResponse, loading: dataLoading } = useQuery(GET_DATA)
 
   const [representing, setRepresenting] = useState(REPRESENTING_OPTIONS[0])
   const [period, setPeriod] = useState(PERIOD_OPTIONS[0])
@@ -151,12 +159,11 @@ const Analytics = () => {
     R.equals(representing.code, 'hourOfTheDay') ? DAY_OPTIONS[0] : null
   )
 
-  const loading = txLoading || configLoading
+  const loading = txLoading || dataLoading
 
   const transactions = R.path(['transactions'])(txResponse) ?? []
-  const machines = R.path(['machines'])(configResponse) ?? []
-  const config = R.path(['config'])(configResponse) ?? []
-  const rates = R.path(['fiatRates'])(configResponse) ?? []
+  const machines = R.path(['machines'])(dataResponse) ?? []
+  const rates = R.path(['fiatRates'])(dataResponse) ?? []
   const fiatLocale = fromNamespace('locale')(config).fiatCurrency
 
   const timezone = config?.locale_timezone

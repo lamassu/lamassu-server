@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { useApolloClient, useQuery, useMutation, gql } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -22,7 +22,6 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config
     cryptoCurrencies {
       code
       display
@@ -31,6 +30,12 @@ const GET_DATA = gql`
       name
       deviceId
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
+    config
   }
 `
 
@@ -50,13 +55,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const [error, setError] = useState(null)
   const { data, loading } = useQuery(GET_DATA)
   const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData'],
+    refetchQueries: () => ['getConfig'],
     onError: error => setError(error)
   })
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
-  const localeConfig =
-    data?.config && fromNamespace(namespaces.LOCALE)(data.config)
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+  const config = fromNamespace(SCREEN_KEY)(configData?.config)
+  const localeConfig = fromNamespace(namespaces.LOCALE)(configData?.config)
 
   const currency = R.prop('fiatCurrency')(localeConfig)
   const overrides = R.prop('overrides')(config)

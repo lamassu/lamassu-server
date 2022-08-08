@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { useApolloClient, useQuery, useMutation, gql } from '@apollo/client'
 import {
   makeStyles,
   Breadcrumbs,
@@ -46,9 +46,14 @@ import { getFormattedPhone, getName, formatPhotosData } from './helper'
 
 const useStyles = makeStyles(styles)
 
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
+
 const GET_CUSTOMER = gql`
   query customer($customerId: ID!) {
-    config
     customer(customerId: $customerId) {
       id
       authorizedOverride
@@ -259,12 +264,6 @@ const DISABLE_TEST_CUSTOMER = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
-    config
-  }
-`
-
 const SET_CUSTOM_ENTRY = gql`
   mutation addCustomField($customerId: ID!, $label: String!, $value: String!) {
     addCustomField(customerId: $customerId, label: $label, value: $value)
@@ -296,15 +295,14 @@ const CustomerProfile = memo(() => {
   const [clickedItem, setClickedItem] = useState('overview')
   const { id: customerId } = useParams()
 
-  const {
-    data: customerResponse,
-    refetch: getCustomer,
-    loading: customerLoading
-  } = useQuery(GET_CUSTOMER, {
-    variables: { customerId }
-  })
+  const { data: customerResponse, refetch: getCustomer, loading } = useQuery(
+    GET_CUSTOMER,
+    {
+      variables: { customerId }
+    }
+  )
 
-  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
 
   const { data: activeCustomRequests } = useQuery(GET_ACTIVE_CUSTOM_REQUESTS, {
     variables: {
@@ -503,8 +501,6 @@ const CustomerProfile = memo(() => {
         }
       ]
     : []
-
-  const loading = customerLoading || configLoading
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 

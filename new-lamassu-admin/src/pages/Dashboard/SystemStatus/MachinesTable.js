@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient } from '@apollo/client'
 import { makeStyles, withStyles } from '@material-ui/core'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -52,7 +52,9 @@ const MachinesTable = ({ machines = [], numToRender }) => {
   const classes = useStyles()
   const history = useHistory()
 
-  const { data } = useQuery(GET_CONFIG)
+  const apolloClient = useApolloClient()
+  const data = apolloClient.readQuery({ query: GET_CONFIG })
+
   const fillingPercentageSettings = fromNamespace(
     'notifications',
     R.path(['config'], data) ?? {}

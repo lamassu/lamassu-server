@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { useApolloClient, useQuery, useMutation, gql } from '@apollo/client'
 import { makeStyles, Paper } from '@material-ui/core'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -29,6 +29,11 @@ const GET_SMS_NOTICES = gql`
       enabled
       allowToggle
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -127,7 +132,8 @@ const SMSNotices = () => {
     GET_SMS_NOTICES
   )
 
-  const timezone = R.path(['config', 'locale_timezone'])(messagesData)
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+  const timezone = R.path(['config', 'locale_timezone'])(configData)
 
   const [editMessage] = useMutation(EDIT_SMS_NOTICE, {
     onError: ({ msg }) => setErrorMsg(msg),

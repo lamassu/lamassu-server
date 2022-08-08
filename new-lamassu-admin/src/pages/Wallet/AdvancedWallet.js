@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { useApolloClient, useQuery, useMutation, gql } from '@apollo/client'
 import { utils as coinUtils } from '@lamassu/coins'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -22,11 +22,16 @@ const SAVE_CONFIG = gql`
 `
 const GET_INFO = gql`
   query getData {
-    config
     cryptoCurrencies {
       code
       display
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
+    config
   }
 `
 
@@ -35,12 +40,13 @@ const AdvancedWallet = () => {
   const CRYPTOCURRENCY_KEY = 'cryptoCurrency'
   const SCREEN_KEY = namespaces.WALLETS
   const { data } = useQuery(GET_INFO)
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
 
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
 
   const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
-    refetchQueries: () => ['getData']
+    refetchQueries: () => ['getConfig']
   })
 
   const save = rawConfig => {
@@ -61,7 +67,7 @@ const AdvancedWallet = () => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
   const AdvancedWalletSettings = fromNamespace(ADVANCED)(
-    fromNamespace(SCREEN_KEY)(data?.config)
+    fromNamespace(SCREEN_KEY)(configData?.config)
   )
 
   const AdvancedWalletSettingsOverrides = AdvancedWalletSettings.overrides ?? []

@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core'
 import BigNumber from 'bignumber.js'
@@ -27,8 +27,8 @@ const useStyles = makeStyles(mainStyles)
 
 const NUM_LOG_RESULTS = 1000
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -151,7 +151,7 @@ const Transactions = () => {
 
   const txList = txData?.transactions ?? []
 
-  const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const redirect = customerId => {
@@ -294,7 +294,7 @@ const Transactions = () => {
 
   const filterOptions = R.path(['transactionFilters'])(filtersResponse)
 
-  const loading = transactionsLoading || filtersLoading || configLoading
+  const loading = transactionsLoading || filtersLoading
 
   const errorLabel = (
     <svg width={12} height={12}>

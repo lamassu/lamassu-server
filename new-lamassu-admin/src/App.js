@@ -70,6 +70,12 @@ const useStyles = makeStyles({
   }
 })
 
+const GET_CONFIG = gql`
+  query getConfig {
+    config
+  }
+`
+
 const GET_USER_DATA = gql`
   query userData {
     userData {
@@ -96,6 +102,8 @@ const Main = () => {
         setUserData(userResponse.userData)
     }
   })
+
+  useQuery(GET_CONFIG, { fetchPolicy: 'cache-first' })
 
   const route = location.pathname
 

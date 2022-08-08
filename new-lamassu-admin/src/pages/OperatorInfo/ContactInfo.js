@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client'
+import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
@@ -83,7 +83,7 @@ const Field = ({ editing, field, displayValue, ...props }) => {
 }
 
 const GET_CONFIG = gql`
-  query getData {
+  query getConfig {
     config
   }
 `
@@ -104,11 +104,11 @@ const ContactInfo = ({ wizard }) => {
 
   const [saveConfig] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setEditing(false),
-    refetchQueries: () => ['getData'],
+    refetchQueries: () => ['getConfig'],
     onError: e => setError(e)
   })
 
-  const { data } = useQuery(GET_CONFIG)
+  const data = useApolloClient().readQuery({ query: GET_CONFIG })
 
   const save = it => {
     return saveConfig({

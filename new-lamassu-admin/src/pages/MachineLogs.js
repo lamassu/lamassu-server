@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core/styles'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -66,8 +66,8 @@ const GET_MACHINE_LOGS = gql`
   }
 `
 
-const GET_DATA = gql`
-  query getData {
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -84,7 +84,7 @@ const Logs = () => {
     GET_MACHINES
   )
 
-  const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
+  const configResponse = useApolloClient().readQuery({ query: GET_CONFIG })
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
 
   const { data: logsResponse, loading: logsLoading } = useQuery(
@@ -104,7 +104,7 @@ const Logs = () => {
     return R.path(['deviceId'])(selected) === it.deviceId
   }
 
-  const loading = machinesLoading || configLoading || logsLoading
+  const loading = machinesLoading || logsLoading
 
   return (
     <>

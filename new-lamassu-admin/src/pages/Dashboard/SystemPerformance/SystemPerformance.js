@@ -1,4 +1,4 @@
-import { useQuery, gql } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
@@ -49,6 +49,11 @@ const GET_DATA = gql`
       name
       rate
     }
+  }
+`
+
+const GET_CONFIG = gql`
+  query getConfig {
     config
   }
 `
@@ -59,8 +64,11 @@ const SystemPerformance = () => {
   const { data, loading } = useQuery(GET_DATA, {
     variables: { excludeTestingCustomers: true }
   })
-  const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
-  const timezone = fromNamespace('locale')(data?.config).timezone
+
+  const configData = useApolloClient().readQuery({ query: GET_CONFIG })
+
+  const fiatLocale = fromNamespace('locale')(configData?.config).fiatCurrency
+  const timezone = fromNamespace('locale')(configData?.config).timezone
 
   const NOW = Date.now()
 
@@ -199,7 +207,7 @@ const SystemPerformance = () => {
             <Grid item xs={3}>
               <InfoWithLabel
                 info={getFiatVolume()}
-                label={`${data?.config.locale_fiatCurrency} volume`}
+                label={`${configData?.config.locale_fiatCurrency} volume`}
               />
             </Grid>
             {/* todo new customers */}
@@ -243,7 +251,7 @@ const SystemPerformance = () => {
               <div className={classes.profitContainer}>
                 <div className={classes.profitLabel}>
                   {`${getProfit(transactionsToShow).toFormat(2)} ${
-                    data?.config.locale_fiatCurrency
+                    configData?.config.locale_fiatCurrency
                   }`}
                 </div>
                 <div className={classnames(percentageClasses)}>
