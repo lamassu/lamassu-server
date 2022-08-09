@@ -88,24 +88,6 @@ const CANCEL_CASH_IN_TRANSACTION = gql`
 const getCryptoAmount = tx =>
   coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toNumber()
 
-/* Port of getProfit() from lib/new-admin/services/transactions.js */
-const getCommission = tx => {
-  const calcCashInProfit = (fiat, crypto, tickerPrice, fee) =>
-    fiat - crypto * tickerPrice + fee
-  const calcCashOutProfit = (fiat, crypto, tickerPrice) =>
-    crypto * tickerPrice - fiat
-
-  const fiat = Number.parseFloat(tx.fiat)
-  const crypto = getCryptoAmount(tx)
-  const tickerPrice = Number.parseFloat(tx.rawTickerPrice)
-  const isCashIn = tx.txClass === 'cashIn'
-  const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
-
-  return isCashIn
-    ? calcCashInProfit(fiat, crypto, tickerPrice, cashInFee)
-    : calcCashOutProfit(fiat, crypto, tickerPrice)
-}
-
 const formatAddress = (cryptoCode = '', address = '') =>
   coinUtils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
@@ -136,7 +118,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
     }
   )
 
-  const commission = BigNumber(getCommission(tx))
+  const commission = BigNumber(tx.profit)
     .abs()
     .toFixed(2, 1) // ROUND_DOWN
   const commissionPercentage =

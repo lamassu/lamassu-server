@@ -121,6 +121,7 @@ const GET_TRANSACTIONS = gql`
       rawTickerPrice
       batchError
       walletScore
+      profit
     }
   }
 `
