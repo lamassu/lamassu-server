@@ -186,6 +186,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
     FileSaver.saveAs(content, zipFilename)
   }
 
+  const hasCiphertraceError = tx =>
+    !R.isNil(tx.errorCode) &&
+    R.includes(tx.errorCode, ['scoreThresholdReached', 'ciphertraceError'])
+
   const errorElements = (
     <>
       <Label>Transaction status</Label>
@@ -204,10 +208,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
               r={3.5}
               fill={
                 it < tx.walletScore
-                  ? R.isNil(tx.hasError)
+                  ? !hasCiphertraceError(tx)
                     ? primaryColor
                     : errorColor
-                  : R.isNil(tx.hasError)
+                  : !hasCiphertraceError(tx)
                   ? subheaderColor
                   : offErrorColor
               }
@@ -220,7 +224,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         noMargin
         className={classNames({
           [classes.bold]: true,
-          [classes.error]: !R.isNil(tx.hasError)
+          [classes.error]: hasCiphertraceError(tx)
         })}>
         {tx.walletScore}
       </P>

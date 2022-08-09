@@ -99,6 +99,7 @@ const GET_TRANSACTIONS = gql`
       sendConfirmed
       dispense
       hasError: error
+      errorCode
       deviceId
       fiat
       cashInFee
