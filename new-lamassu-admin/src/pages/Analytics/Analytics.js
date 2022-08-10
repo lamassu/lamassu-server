@@ -34,11 +34,13 @@ const REPRESENTING_OPTIONS = [
 ]
 const PERIOD_OPTIONS = [
   { code: 'day', display: 'Last 24 hours' },
+  { code: 'threeDays', display: 'Last 3 days' },
   { code: 'week', display: 'Last 7 days' },
   { code: 'month', display: 'Last 30 days' }
 ]
 const TIME_OPTIONS = {
   day: DAY,
+  threeDays: 3 * DAY,
   week: WEEK,
   month: MONTH
 }

@@ -46,6 +46,7 @@ const Graph = ({
 
   const periodDomains = {
     day: [NOW - DAY, NOW],
+    threeDays: [NOW - 3 * DAY, NOW],
     week: [NOW - WEEK, NOW],
     month: [NOW - MONTH, NOW]
   }
@@ -57,6 +58,12 @@ const Graph = ({
         step: 60 * 60 * 1000,
         tick: d3.utcHour.every(1),
         labelFormat: '%H:%M'
+      },
+      threeDays: {
+        freq: 12,
+        step: 6 * 60 * 60 * 1000,
+        tick: d3.utcDay.every(1),
+        labelFormat: '%a %d'
       },
       week: {
         freq: 7,
