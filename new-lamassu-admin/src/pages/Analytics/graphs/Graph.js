@@ -15,7 +15,8 @@ const GraphWrapper = ({
   currency,
   selectedMachine,
   machines,
-  selectedDay
+  selectedDay,
+  log
 }) => {
   const [selectionCoords, setSelectionCoords] = useState(null)
   const [selectionDateInterval, setSelectionDateInterval] = useState(null)
@@ -33,6 +34,7 @@ const GraphWrapper = ({
             setSelectionDateInterval={setSelectionDateInterval}
             setSelectionData={setSelectionData}
             selectedMachine={selectedMachine}
+            log={log}
           />
         )
       case 'topMachinesVolume':

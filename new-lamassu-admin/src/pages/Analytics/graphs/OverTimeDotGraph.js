@@ -23,7 +23,8 @@ const Graph = ({
   timezone,
   setSelectionCoords,
   setSelectionData,
-  setSelectionDateInterval
+  setSelectionDateInterval,
+  log = false
 }) => {
   const ref = useRef(null)
 
@@ -171,7 +172,7 @@ const Graph = ({
     .domain(periodDomains[period.code])
     .range([GRAPH_MARGIN.left, GRAPH_WIDTH])
 
-  const y = d3
+  const yLin = d3
     .scaleLinear()
     .domain([
       0,
@@ -179,6 +180,16 @@ const Graph = ({
     ])
     .nice()
     .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
+
+  const yLog = d3
+    .scaleLog()
+    .domain([
+      (d3.min(data, d => new BigNumber(d.fiat).toNumber()) ?? 1) * 0.9,
+      (d3.max(data, d => new BigNumber(d.fiat).toNumber()) ?? 1000) * 1.1
+    ])
+    .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
+
+  const y = log ? yLog : yLin
 
   const getAreaInterval = (breakpoints, dataLimits, graphLimits) => {
     const fullBreakpoints = [
@@ -226,14 +237,11 @@ const Graph = ({
                 d.getTime() + d.getTimezoneOffset() * MINUTE
               )
             })
+            .tickSizeOuter(0)
         )
-        .call(g => g.select('.domain').remove())
         .call(g =>
           g
-            .append('line')
-            .attr('x1', GRAPH_MARGIN.left)
-            .attr('y1', -GRAPH_HEIGHT + GRAPH_MARGIN.top + GRAPH_MARGIN.bottom)
-            .attr('x2', GRAPH_MARGIN.left)
+            .select('.domain')
             .attr('stroke', primaryColor)
             .attr('stroke-width', 1)
         ),
@@ -244,18 +252,22 @@ const Graph = ({
     g =>
       g
         .attr('transform', `translate(${GRAPH_MARGIN.left}, 0)`)
-        .call(d3.axisLeft(y).ticks(GRAPH_HEIGHT / 100))
-        .call(g => g.select('.domain').remove())
-        .call(g =>
-          g
-            .selectAll('.tick line')
-            .filter(d => d === 0)
-            .clone()
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.left)
-            .attr('stroke-width', 1)
-            .attr('stroke', primaryColor)
-        ),
-    [GRAPH_MARGIN, y]
+        .call(
+          d3
+            .axisLeft(y)
+            .ticks(GRAPH_HEIGHT / 100)
+            .tickSizeOuter(0)
+            .tickFormat(d => {
+              if (log && !['1', '2', '5'].includes(d.toString()[0])) return ''
+
+              if (d > 1000) return Math.floor(d / 1000) + 'k'
+              else return d
+            })
+        )
+        .select('.domain')
+        .attr('stroke', primaryColor)
+        .attr('stroke-width', 1),
+    [GRAPH_MARGIN, y, log]
   )
 
   const buildGrid = useCallback(
@@ -484,25 +496,23 @@ const Graph = ({
 
   const buildAvg = useCallback(
     g => {
+      const mean = d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0
+
+      if (log && mean === 0) return
+
       g.attr('stroke', primaryColor)
         .attr('stroke-width', 3)
         .attr('stroke-dasharray', '10, 5')
         .call(g =>
           g
             .append('line')
-            .attr(
-              'y1',
-              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0)
-            )
-            .attr(
-              'y2',
-              0.5 + y(d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0)
-            )
+            .attr('y1', 0.5 + y(mean))
+            .attr('y2', 0.5 + y(mean))
             .attr('x1', GRAPH_MARGIN.left)
             .attr('x2', GRAPH_WIDTH)
         )
     },
-    [GRAPH_MARGIN, y, data]
+    [GRAPH_MARGIN, y, data, log]
   )
 
   const drawData = useCallback(
@@ -561,5 +571,6 @@ export default memo(
   Graph,
   (prev, next) =>
     R.equals(prev.period, next.period) &&
-    R.equals(prev.selectedMachine, next.selectedMachine)
+    R.equals(prev.selectedMachine, next.selectedMachine) &&
+    R.equals(prev.log, next.log)
 )
