@@ -23,12 +23,14 @@ import LegendEntry from './components/LegendEntry'
 import HourOfDayWrapper from './components/wrappers/HourOfDayWrapper'
 import OverTimeWrapper from './components/wrappers/OverTimeWrapper'
 import TopMachinesWrapper from './components/wrappers/TopMachinesWrapper'
+import VolumeOverTimeWrapper from './components/wrappers/VolumeOverTimeWrapper'
 
 const useStyles = makeStyles(styles)
 
 const MACHINE_OPTIONS = [{ code: 'all', display: 'All machines' }]
 const REPRESENTING_OPTIONS = [
   { code: 'overTime', display: 'Over time' },
+  { code: 'volumeOverTime', display: 'Volume' },
   { code: 'topMachines', display: 'Top Machines' },
   { code: 'hourOfTheDay', display: 'Hour of the day' }
 ]
@@ -266,6 +268,20 @@ const Analytics = () => {
         return (
           <OverTimeWrapper
             title="Transactions over time"
+            representing={representing}
+            period={period}
+            data={R.map(convertFiatToLocale)(filteredData(period.code).current)}
+            machines={machineOptions}
+            selectedMachine={machine}
+            handleMachineChange={setMachine}
+            timezone={timezone}
+            currency={fiatLocale}
+          />
+        )
+      case 'volumeOverTime':
+        return (
+          <VolumeOverTimeWrapper
+            title="Transactions volume over time"
             representing={representing}
             period={period}
             data={R.map(convertFiatToLocale)(filteredData(period.code).current)}

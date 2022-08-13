@@ -5,6 +5,7 @@ import GraphTooltip from '../components/tooltips/GraphTooltip'
 
 import HourOfDayBarGraph from './HourOfDayBarGraph'
 import OverTimeDotGraph from './OverTimeDotGraph'
+import OverTimeLineGraph from './OverTimeLineGraph'
 import TopMachinesBarGraph from './TopMachinesBarGraph'
 
 const GraphWrapper = ({
@@ -27,6 +28,19 @@ const GraphWrapper = ({
       case 'overTime':
         return (
           <OverTimeDotGraph
+            data={data}
+            period={period}
+            timezone={timezone}
+            setSelectionCoords={setSelectionCoords}
+            setSelectionDateInterval={setSelectionDateInterval}
+            setSelectionData={setSelectionData}
+            selectedMachine={selectedMachine}
+            log={log}
+          />
+        )
+      case 'volumeOverTime':
+        return (
+          <OverTimeLineGraph
             data={data}
             period={period}
             timezone={timezone}
