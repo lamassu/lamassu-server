@@ -26,20 +26,12 @@ const GraphTooltip = ({
 
   const formattedDateInterval = !R.includes('hourOfDay', representing.code)
     ? [
-        formatDate(
-          dateInterval[1],
-          null,
-          R.includes(period.code, ['day', 'threeDays'])
-            ? 'MMM d, HH:mm'
-            : 'MMM d'
-        ),
-        formatDate(
-          dateInterval[0],
-          null,
-          R.includes(period.code, ['day', 'threeDays']) ? 'HH:mm' : 'MMM d'
-        )
+        formatDate(dateInterval[1], null, 'MMM d'),
+        formatDate(dateInterval[1], null, 'HH:mm'),
+        formatDate(dateInterval[0], null, 'HH:mm')
       ]
     : [
+        formatDate(dateInterval[1], null, 'MMM d'),
         formatDateNonUtc(dateInterval[1], 'HH:mm'),
         formatDateNonUtc(dateInterval[0], 'HH:mm')
       ]
@@ -57,11 +49,11 @@ const GraphTooltip = ({
 
   return (
     <Paper className={classes.dotOtWrapper}>
+      {!R.includes('hourOfDay', representing.code) && (
+        <Info2 noMargin>{`${formattedDateInterval[0]}`}</Info2>
+      )}
       <Info2 noMargin>
-        {R.includes(period.code, ['day', 'threeDays']) ||
-        R.includes('hourOfDay', representing.code)
-          ? `${formattedDateInterval[0]} - ${formattedDateInterval[1]}`
-          : `${formattedDateInterval[0]}`}
+        {`${formattedDateInterval[1]} - ${formattedDateInterval[2]}`}
       </Info2>
       <P noMargin className={classes.dotOtTransactionAmount}>
         {R.length(data)}{' '}
