@@ -29,12 +29,14 @@ const GraphTooltip = ({
         formatDate(
           dateInterval[1],
           null,
-          period.code === 'day' ? 'MMM d, HH:mm' : 'MMM d'
+          R.includes(period.code, ['day', 'threeDays'])
+            ? 'MMM d, HH:mm'
+            : 'MMM d'
         ),
         formatDate(
           dateInterval[0],
           null,
-          period.code === 'day' ? 'HH:mm' : 'MMM d'
+          R.includes(period.code, ['day', 'threeDays']) ? 'HH:mm' : 'MMM d'
         )
       ]
     : [
@@ -56,7 +58,8 @@ const GraphTooltip = ({
   return (
     <Paper className={classes.dotOtWrapper}>
       <Info2 noMargin>
-        {period.code === 'day' || R.includes('hourOfDay', representing.code)
+        {R.includes(period.code, ['day', 'threeDays']) ||
+        R.includes('hourOfDay', representing.code)
           ? `${formattedDateInterval[0]} - ${formattedDateInterval[1]}`
           : `${formattedDateInterval[0]}`}
       </Info2>

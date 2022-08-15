@@ -23,6 +23,7 @@ import {
   fontSecondary,
   subheaderColor
 } from 'src/styling/variables'
+import { numberToFiatAmount } from 'src/utils/number'
 import { MINUTE, DAY, WEEK, MONTH } from 'src/utils/time'
 
 const Graph = ({
@@ -45,7 +46,7 @@ const Graph = ({
       top: 25,
       right: 3.5,
       bottom: 27,
-      left: 36.5
+      left: 38
     }),
     []
   )
@@ -234,7 +235,7 @@ const Graph = ({
   const yLog = d3
     .scaleLog()
     .domain([
-      min === 0 ? 1 : min * 0.9,
+      min === 0 ? 0.9 : min * 0.9,
       (max === min ? min + Math.pow(10, 2 * min + 1) : max) * 2
     ])
     .clamp(true)
@@ -311,8 +312,9 @@ const Graph = ({
             .tickFormat(d => {
               if (log && !['1', '2', '5'].includes(d.toString()[0])) return ''
 
-              if (d > 999) return Math.floor(d / 1000) + 'k'
-              else return d
+              if (d >= 1000) return numberToFiatAmount(d / 1000) + 'k'
+
+              return numberToFiatAmount(d)
             })
         )
         .select('.domain')
@@ -564,17 +566,7 @@ const Graph = ({
         .attr('cx', d => x(d.date))
         .attr('cy', d => y(d.cashIn))
         .attr('fill', java)
-        .attr('r', 3.5)
-
-      g.append('g')
-        .attr('clip-path', 'url(#clip-path)')
-        .selectAll('circle .cashIn')
-        .data(bins)
-        .join('circle')
-        .attr('cx', d => x(d.date))
-        .attr('cy', d => y(d.cashOut))
-        .attr('fill', neon)
-        .attr('r', 3.5)
+        .attr('r', d => (d.cashIn === 0 ? 0 : 3.5))
 
       g.append('path')
         .datum(bins)
@@ -590,6 +582,16 @@ const Graph = ({
             .x(d => x(d.date))
             .y(d => y(d.cashIn))
         )
+
+      g.append('g')
+        .attr('clip-path', 'url(#clip-path)')
+        .selectAll('circle .cashIn')
+        .data(bins)
+        .join('circle')
+        .attr('cx', d => x(d.date))
+        .attr('cy', d => y(d.cashOut))
+        .attr('fill', neon)
+        .attr('r', d => (d.cashOut === 0 ? 0 : 3.5))
 
       g.append('path')
         .datum(bins)

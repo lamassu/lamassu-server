@@ -15,6 +15,7 @@ import {
   fontSecondary,
   subheaderColor
 } from 'src/styling/variables'
+import { numberToFiatAmount } from 'src/utils/number'
 import { MINUTE, DAY, WEEK, MONTH } from 'src/utils/time'
 
 const Graph = ({
@@ -37,7 +38,7 @@ const Graph = ({
       top: 25,
       right: 3.5,
       bottom: 27,
-      left: 36.5
+      left: 38
     }),
     []
   )
@@ -260,8 +261,9 @@ const Graph = ({
             .tickFormat(d => {
               if (log && !['1', '2', '5'].includes(d.toString()[0])) return ''
 
-              if (d > 1000) return Math.floor(d / 1000) + 'k'
-              else return d
+              if (d >= 1000) return numberToFiatAmount(d / 1000) + 'k'
+
+              return numberToFiatAmount(d)
             })
         )
         .select('.domain')

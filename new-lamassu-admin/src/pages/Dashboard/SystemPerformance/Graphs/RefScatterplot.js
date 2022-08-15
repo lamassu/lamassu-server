@@ -12,6 +12,7 @@ import {
   fontSecondary,
   backgroundColor
 } from 'src/styling/variables'
+import { numberToFiatAmount } from 'src/utils/number'
 import { MINUTE, DAY, WEEK, MONTH } from 'src/utils/time'
 
 const Graph = ({ data, timeFrame, timezone }) => {
@@ -172,7 +173,16 @@ const Graph = ({ data, timeFrame, timezone }) => {
     g =>
       g
         .attr('transform', `translate(${GRAPH_MARGIN.left}, 0)`)
-        .call(d3.axisLeft(y).ticks(5))
+        .call(
+          d3
+            .axisLeft(y)
+            .ticks(5)
+            .tickFormat(d => {
+              if (d >= 1000) return numberToFiatAmount(d / 1000) + 'k'
+
+              return numberToFiatAmount(d)
+            })
+        )
         .call(g => g.select('.domain').remove())
         .selectAll('text')
         .attr('dy', '-0.25rem'),
