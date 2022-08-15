@@ -498,9 +498,9 @@ const Graph = ({
 
   const buildAvg = useCallback(
     g => {
-      const mean = d3.mean(data, d => new BigNumber(d.fiat).toNumber()) ?? 0
+      const median = d3.median(data, d => new BigNumber(d.fiat).toNumber()) ?? 0
 
-      if (log && mean === 0) return
+      if (log && median === 0) return
 
       g.attr('stroke', primaryColor)
         .attr('stroke-width', 3)
@@ -508,8 +508,8 @@ const Graph = ({
         .call(g =>
           g
             .append('line')
-            .attr('y1', 0.5 + y(mean))
-            .attr('y2', 0.5 + y(mean))
+            .attr('y1', 0.5 + y(median))
+            .attr('y2', 0.5 + y(median))
             .attr('x1', GRAPH_MARGIN.left)
             .attr('x2', GRAPH_WIDTH)
         )

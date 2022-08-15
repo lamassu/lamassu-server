@@ -31,7 +31,7 @@ const OverTimeDotGraphHeader = ({
     cashIn: <div className={classes.cashInIcon}></div>,
     cashOut: <div className={classes.cashOutIcon}></div>,
     transaction: <div className={classes.txIcon}></div>,
-    average: (
+    median: (
       <svg height="12" width="18">
         <path
           stroke={primaryColor}
@@ -55,7 +55,7 @@ const OverTimeDotGraphHeader = ({
               IconElement={legend.transaction}
               label={'One transaction'}
             />
-            <LegendEntry IconElement={legend.average} label={'Average'} />
+            <LegendEntry IconElement={legend.median} label={'Median'} />
           </Box>
         </div>
         <div className={classes.graphHeaderRight}>
