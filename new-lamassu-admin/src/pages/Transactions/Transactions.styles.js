@@ -114,6 +114,21 @@ const mainStyles = {
     marginLeft: 10,
     paddingLeft: 5,
     paddingRight: 5
+  },
+  update: {
+    width: 135,
+    marginLeft: 20,
+    marginBottom: 3
+  },
+  popperText: {
+    color: white
+  },
+  popperContent: {
+    width: 170,
+    height: 31,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }
 

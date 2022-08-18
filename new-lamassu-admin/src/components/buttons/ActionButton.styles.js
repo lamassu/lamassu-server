@@ -109,6 +109,9 @@ export default {
       display: 'flex'
     }
   },
+  disabled: {
+    opacity: 0.4
+  },
   actionButtonIcon: {
     display: 'flex',
     paddingRight: 7,

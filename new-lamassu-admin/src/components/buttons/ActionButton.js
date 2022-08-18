@@ -7,10 +7,11 @@ import styles from './ActionButton.styles'
 const useStyles = makeStyles(styles)
 
 const ActionButton = memo(
-  ({ className, Icon, InverseIcon, color, children, ...props }) => {
+  ({ className, Icon, InverseIcon, color, children, disabled, ...props }) => {
     const classes = useStyles()
     const classNames = {
       [classes.actionButton]: true,
+      [classes.disabled]: disabled,
       [classes.primary]: color === 'primary',
       [classes.secondary]: color === 'secondary',
       [classes.spring]: color === 'spring',
@@ -18,7 +19,10 @@ const ActionButton = memo(
     }
 
     return (
-      <button className={classnames(classNames, className)} {...props}>
+      <button
+        disabled={disabled}
+        className={classnames(classNames, className)}
+        {...props}>
         {Icon && (
           <div className={classes.actionButtonIcon}>
             <Icon />
