@@ -4,6 +4,7 @@ exports.up = function (next) {
   function singleQuotify (item) { return '\'' + item + '\'' }
 
   const updateEvents = [
+    'requested',
     'inProgress',
     'successful',
     'error'
@@ -15,6 +16,7 @@ exports.up = function (next) {
       id UUID PRIMARY KEY,
       device_id TEXT NOT NULL REFERENCES devices(device_id),
       event update_events NOT NULL,
+      note TEXT,
       new_version TEXT NOT NULL,
       previous_version TEXT NOT NULL,
       created TIMESTAMPTZ NOT NULL DEFAULT now(),

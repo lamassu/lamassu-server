@@ -1,4 +1,6 @@
+import { useMutation } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
@@ -57,6 +59,14 @@ const styles = {
   }
 }
 
+const REQUEST_UPDATE = gql`
+  mutation RequestUpdate($deviceId: ID!, $event: String!) {
+    requestUpdate(deviceId: $deviceId, event: $event) {
+      deviceId
+    }
+  }
+`
+
 const useStyles = makeStyles(styles)
 
 const UpdateModal = ({
@@ -64,13 +74,26 @@ const UpdateModal = ({
   handleClose,
   machines,
   updateInfo: { notes, versionName, version },
-  isMachineUpdating,
-  requestUpdate
+  isMachineUpdating
 }) => {
   const classes = useStyles()
-  const [error] = useState(false)
+  const [error, setErrorMessage] = useState(false)
 
   const machine = R.head(R.filter(m => m.name === showModal)(machines))
+
+  const [updateRequest] = useMutation(REQUEST_UPDATE, {
+    onError: ({ message }) => {
+      const errorMessage = message ?? 'An error ocurred'
+      setErrorMessage(errorMessage)
+    },
+    refetchQueries: ['getMachinesUpdateStatus']
+  })
+
+  const update = () => {
+    updateRequest({
+      variables: { deviceId: machine?.deviceId, event: 'requested' }
+    })
+  }
 
   const releaseNotes = (
     <>
@@ -127,9 +150,7 @@ const UpdateModal = ({
       {!isMachineUpdating(machine) && (
         <div className={classes.footer}>
           {error && <ErrorMessage>{}</ErrorMessage>}
-          <Button
-            onClick={() => requestUpdate(true)}
-            className={classes.button}>
+          <Button onClick={() => update()} className={classes.button}>
             Update machine
           </Button>
         </div>

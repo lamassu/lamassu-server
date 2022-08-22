@@ -53,6 +53,14 @@ const GET_DATA = gql`
   }
 `
 
+const GET_MACHINES_UPDATE_STATUS = gql`
+  query getMachinesUpdateStatus {
+    getMachinesUpdateStatus {
+      event
+    }
+  }
+`
+
 const useStyles = makeStyles(mainStyles)
 
 const mockUpdateInfo = {
@@ -88,9 +96,14 @@ const MachineStatus = () => {
     loading: machinesLoading
   } = useQuery(GET_MACHINES)
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
+  const { data: machinesUpdateStatus } = useQuery(GET_MACHINES_UPDATE_STATUS)
+
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
   const isMachineFunctional = m => R.head(m?.statuses).type !== 'error'
-  const isMachineUpdating = m => m?.updateStatus === 'updating'
+  const isMachineUpdating = m => {
+    const status = machinesUpdateStatus && machinesUpdateStatus[m?.deviceId]
+    return !R.isNil(status) && (status !== 'successful' || 'error')
+  }
 
   const handleClick = (m, event) => {
     event.stopPropagation()
@@ -222,6 +235,7 @@ const MachineStatus = () => {
       />
       <UpdateModal
         machines={machines}
+        refetchData={GET_MACHINES_UPDATE_STATUS}
         updateInfo={mockUpdateInfo}
         showModal={showUpdateModal}
         isMachineUpdating={isMachineUpdating}
