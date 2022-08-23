@@ -26,9 +26,10 @@ WORKDIR /lamassu
 RUN git clone https://github.com/lamassu/lamassu-server -b ${SERVER_VERSION}
 RUN rm -rf /lamassu/lamassu-server/public/*
 RUN cd lamassu-server && npm install --production
-RUN ls -la
+
 RUN cd lamassu-server/new-lamassu-admin && npm install && npm run build
 RUN cp -r /lamassu/lamassu-server/new-lamassu-admin/build/* /lamassu/lamassu-server/public
+RUN rm -rf /lamassu/lamassu-server/new-lamassu-admin/node_modules
 
 RUN tar -zcvf lamassu-server-$SERVER_VERSION.tar.gz lamassu-server/
 
