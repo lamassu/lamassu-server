@@ -75,6 +75,7 @@ const GET_TRANSACTIONS = gql`
     $cryptoCode: String
     $toAddress: String
     $status: String
+    $swept: Boolean
   ) {
     transactions(
       limit: $limit
@@ -87,6 +88,7 @@ const GET_TRANSACTIONS = gql`
       cryptoCode: $cryptoCode
       toAddress: $toAddress
       status: $status
+      swept: $swept
     ) {
       id
       txClass
@@ -121,6 +123,8 @@ const GET_TRANSACTIONS = gql`
       rawTickerPrice
       batchError
       walletScore
+      profit
+      swept
     }
   }
 `
@@ -246,7 +250,8 @@ const Transactions = () => {
       fiatCode: filtersObject.fiat,
       cryptoCode: filtersObject.crypto,
       toAddress: filtersObject.address,
-      status: filtersObject.status
+      status: filtersObject.status,
+      swept: filtersObject.swept === 'Swept'
     })
 
     refetch && refetch()
@@ -269,7 +274,8 @@ const Transactions = () => {
       fiatCode: filtersObject.fiat,
       cryptoCode: filtersObject.crypto,
       toAddress: filtersObject.address,
-      status: filtersObject.status
+      status: filtersObject.status,
+      swept: filtersObject.swept === 'Swept'
     })
 
     refetch && refetch()
@@ -287,7 +293,8 @@ const Transactions = () => {
       fiatCode: filtersObject.fiat,
       cryptoCode: filtersObject.crypto,
       toAddress: filtersObject.address,
-      status: filtersObject.status
+      status: filtersObject.status,
+      swept: filtersObject.swept === 'Swept'
     })
 
     refetch && refetch()

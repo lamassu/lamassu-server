@@ -24,7 +24,7 @@ setEnvVariable('POSTGRES_DB', 'lamassu')
 setEnvVariable('LAMASSU_CA_PATH', `/etc/ssl/certs/Lamassu_CA.pem`)
 setEnvVariable('CA_PATH', `/etc/ssl/certs/Lamassu_OP_Root_CA.pem`)
 setEnvVariable('CERT_PATH', `/etc/ssl/certs/Lamassu_OP.pem`)
-setEnvVariable('KEY_PATH', `/etc/ssl/certs/Lamassu_OP.key`)
+setEnvVariable('KEY_PATH', `/etc/ssl/private/Lamassu_OP.key`)
 
 setEnvVariable('MNEMONIC_PATH', `/etc/lamassu/mnemonics/mnemonic.txt`)
 setEnvVariable('MIGRATE_STATE_PATH', `/etc/lamassu/.migrate`)

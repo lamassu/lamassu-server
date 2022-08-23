@@ -131,5 +131,8 @@ export default {
   },
   error: {
     color: tomato
+  },
+  swept: {
+    width: 250
   }
 }
