@@ -43,7 +43,8 @@ export default {
         .required('The token is required'),
       confidenceFactor: Yup.number('The confidence factor must be a number')
         .integer('The confidence factor must be an integer')
-        .positive('The confidence factor must be positive')
+        .min(0, 'The confidence factor must be between 0 and 100')
+        .max(100, 'The confidence factor must be between 0 and 100')
         .required('The confidence factor is required')
     })
   }
