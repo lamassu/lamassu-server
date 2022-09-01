@@ -27,15 +27,20 @@ const leadingZerosTest = (value, context) => {
 const buildCurrencyOptions = markets => {
   return R.map(it => {
     const unavailableCryptos = R.difference(ALL_CRYPTOS, markets[it])
-    const unavailableMarketsStr = `${R.join(
-      ', ',
-      R.slice(0, -1, unavailableCryptos)
-    )} and ${R.last(unavailableCryptos)}`
+    const unavailableCryptosFiltered = R.difference(unavailableCryptos, [it]) // As the markets can have stablecoins to trade against other crypto, filter them out, as there can't be pairs such as USDT/USDT
 
-    const warningLevel = R.isEmpty(unavailableCryptos)
+    const unavailableMarketsStr =
+      R.length(unavailableCryptosFiltered) > 1
+        ? `${R.join(
+            ', ',
+            R.slice(0, -1, unavailableCryptosFiltered)
+          )} and ${R.last(unavailableCryptosFiltered)}`
+        : unavailableCryptosFiltered[0]
+
+    const warningLevel = R.isEmpty(unavailableCryptosFiltered)
       ? WARNING_LEVELS.CLEAN
-      : !R.isEmpty(unavailableCryptos) &&
-        R.length(unavailableCryptos) < R.length(ALL_CRYPTOS)
+      : !R.isEmpty(unavailableCryptosFiltered) &&
+        R.length(unavailableCryptosFiltered) < R.length(ALL_CRYPTOS)
       ? WARNING_LEVELS.PARTIAL
       : WARNING_LEVELS.IMPORTANT
 
@@ -43,7 +48,7 @@ const buildCurrencyOptions = markets => {
       code: R.toUpper(it),
       display: R.toUpper(it),
       warning: warningLevel,
-      warningMessage: !R.isEmpty(unavailableCryptos)
+      warningMessage: !R.isEmpty(unavailableCryptosFiltered)
         ? `No market pairs available for ${unavailableMarketsStr}`
         : `All market pairs are available`
     }
