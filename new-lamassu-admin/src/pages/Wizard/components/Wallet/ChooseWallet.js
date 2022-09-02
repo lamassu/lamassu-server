@@ -39,7 +39,7 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it => R.contains(it)(['infura', 'bitgo'])
+const isConfigurable = it => R.contains(it)(['infura', 'bitgo', 'coinbasepro'])
 
 const isLocalHosted = it =>
   R.contains(it)([
@@ -146,6 +146,21 @@ const ChooseWallet = ({ data: currentData, addData }) => {
             elements={schema.infura.elements}
             validationSchema={schema.infura.getValidationSchema(
               accounts.infura
+            )}
+            buttonLabel={'Continue'}
+            buttonClass={classes.formButton}
+          />
+        </>
+      )}
+      {selected === 'coinbasepro' && (
+        <>
+          <H4 noMargin>Enter wallet information</H4>
+          <FormRenderer
+            value={accounts.coinbasepro}
+            save={saveWallet(selected)}
+            elements={schema.coinbasepro.elements}
+            validationSchema={schema.coinbasepro.getValidationSchema(
+              accounts.coinbasepro
             )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}

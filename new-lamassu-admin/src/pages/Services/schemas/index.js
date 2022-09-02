@@ -5,6 +5,7 @@ import _bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import _cex from './cex'
 import ciphertrace from './ciphertrace'
+import coinbasepro from './coinbasepro'
 import _ftx from './ftx'
 import infura from './infura'
 import _itbit from './itbit'
@@ -34,7 +35,8 @@ const schemas = (markets = {}) => {
     [cex.code]: cex,
     [ftx.code]: ftx,
     [ciphertrace.code]: ciphertrace,
-    [binance.code]: binance
+    [binance.code]: binance,
+    [coinbasepro.code]: coinbasepro
   }
 }
 
