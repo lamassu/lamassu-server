@@ -14,11 +14,9 @@ export default {
   title: 'Galoy (Wallet)',
   elements: [
     {
-      code: 'apiKey',
-      display: 'API Key',
-      component: TextInput,
-      face: true,
-      long: true
+      code: 'apiSecret',
+      display: 'API Secret',
+      component: SecretInput
     },
     {
       code: 'environment',
@@ -47,9 +45,9 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      apiKey: Yup.string('The API key must be a string')
-        .max(200, 'The API key is too long')
-        .required('The API key is required'),
+      apiSecret: Yup.string('The API Secret must be a string')
+        .max(100, 'The API Secret is too long')
+        .test(secretTest(account?.apiSecret)),
       walletId: Yup.string('The wallet id must be a string')
         .max(100, 'The wallet id is too long')
         .test(secretTest(account?.walletId)),
