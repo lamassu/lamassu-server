@@ -5,17 +5,6 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 
 import { secretTest } from './helper'
 
-const isDefined = it => it && it.length
-
-const buildTestValidation = (id, passphrase) => {
-  return Yup.string()
-    .max(100, 'Too long')
-    .when(id, {
-      is: isDefined,
-      then: Yup.string().test(secretTest(passphrase))
-    })
-}
-
 export default {
   code: 'coinbasepro',
   name: 'Coinbase Pro',
@@ -30,12 +19,12 @@ export default {
     },
     {
       code: 'passphrase',
-      display: 'API Passphrase',
+      display: 'Passphrase',
       component: SecretInputFormik
     },
     {
-      code: 'walletId',
-      display: 'Wallet ID',
+      code: 'apiSecret',
+      display: 'API Secret',
       component: SecretInputFormik
     }
   ],
@@ -44,10 +33,8 @@ export default {
       apiKey: Yup.string('The API key must be a string')
         .max(200, 'The API key is too long')
         .required('The API key is required'),
-      passphrase: buildTestValidation('apiKey', account?.passphrase),
-      walletId: Yup.string('The wallet id must be a string')
-        .max(100, 'The wallet id is too long')
-        .test(secretTest(account?.walletId))
+      passphrase: secretTest(account?.passphrase, 'Passphrase'),
+      apiSecret: secretTest(account?.apiSecret, 'API secret')
     })
   }
 }
