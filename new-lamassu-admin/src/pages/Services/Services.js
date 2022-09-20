@@ -17,7 +17,6 @@ import schemas from './schemas'
 const GET_INFO = gql`
   query getData {
     accounts
-    config
   }
 `
 

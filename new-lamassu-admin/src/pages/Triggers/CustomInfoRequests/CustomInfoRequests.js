@@ -36,13 +36,13 @@ const constraintTypeDisplay = {
 
 const GET_DATA = gql`
   query getData {
-    config
+    triggersConfig
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_TRIGGERS_CONFIG = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveTriggersConfig(config: $config)
   }
 `
 
@@ -86,7 +86,7 @@ const CustomInfoRequests = ({
 
   const { data: configData, loading: configLoading } = useQuery(GET_DATA)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveTriggersConfig] = useMutation(SAVE_TRIGGERS_CONFIG, {
     refetchQueries: () => ['getData'],
     onError: () => setHasError(true)
   })
@@ -128,7 +128,10 @@ const CustomInfoRequests = ({
     refetchQueries: () => ['getData', 'customInfoRequests']
   })
 
-  const config = R.path(['config'])(configData) ?? []
+  const triggersConfig =
+    (configData?.triggersConfig &&
+      fromNamespace(namespaces.TRIGGERS_CONFIG)(configData.triggersConfig)) ??
+    {}
 
   const handleDelete = id => {
     removeEntry({
@@ -136,16 +139,13 @@ const CustomInfoRequests = ({
         id
       }
     }).then(() => {
-      const triggersConfig =
-        (config && fromNamespace(namespaces.TRIGGERS)(config)) ?? []
       const cleanConfig = {
-        overrides: R.reject(
-          it => it.requirement === id,
-          triggersConfig.overrides
-        )
+        overrides: !R.isNil(triggersConfig.overrides)
+          ? R.reject(it => it.requirement === id, triggersConfig.overrides)
+          : []
       }
-      const newConfig = toNamespace(namespaces.TRIGGERS)(cleanConfig)
-      saveConfig({ variables: { config: newConfig } })
+      const newConfig = toNamespace(namespaces.TRIGGERS_CONFIG)(cleanConfig)
+      saveTriggersConfig({ variables: { config: newConfig } })
     })
   }
 

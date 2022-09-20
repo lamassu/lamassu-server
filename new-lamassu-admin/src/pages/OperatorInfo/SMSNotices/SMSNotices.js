@@ -13,6 +13,7 @@ import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enable
 import { ReactComponent as ExpandIconClosed } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandIconOpen } from 'src/styling/icons/action/expand/open.svg'
 import { ReactComponent as WhiteLogo } from 'src/styling/icons/menu/logo-white.svg'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { formatDate } from 'src/utils/timezones'
 
 import styles from './SMSNotices.styles'
@@ -30,7 +31,7 @@ const GET_SMS_NOTICES = gql`
       enabled
       allowToggle
     }
-    config
+    localesConfig
   }
 `
 
@@ -128,7 +129,9 @@ const SMSNotices = () => {
     GET_SMS_NOTICES
   )
 
-  const timezone = R.path(['config', 'locale_timezone'])(messagesData)
+  const timezone =
+    messagesData?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(messagesData.localesConfig).timezone
 
   const [editMessage] = useMutation(EDIT_SMS_NOTICE, {
     onError: ({ msg }) => setErrorMsg(msg),

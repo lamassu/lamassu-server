@@ -11,6 +11,7 @@ import { mainStyles } from 'src/pages/Transactions/Transactions.styles'
 import { getStatus } from 'src/pages/Transactions/helper'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import * as Customer from 'src/utils/customer'
 import { formatDate } from 'src/utils/timezones'
 
@@ -61,7 +62,7 @@ const GET_TRANSACTIONS = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -82,7 +83,10 @@ const Transactions = ({ id }) => {
   )
 
   const { data: configData, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configData)
+
+  const timezone =
+    configData?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(configData.localesConfig).timezone
 
   const loading = txLoading || configLoading
 

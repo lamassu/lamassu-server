@@ -19,6 +19,7 @@ import {
 import { Info3, H4 } from 'src/components/typography'
 import typographyStyles from 'src/components/typography/styles'
 import { offColor } from 'src/styling/variables'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { startCase } from 'src/utils/string'
 import { formatDate } from 'src/utils/timezones'
 
@@ -86,7 +87,7 @@ const GET_SERVER_DATA = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -105,7 +106,9 @@ const Logs = () => {
     }
   })
   const { data: configResponse, loading: configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+  const timezone =
+    configResponse?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(configResponse.localesConfig).timezone
 
   const defaultLogLevels = [
     { code: 'error', display: 'Error' },

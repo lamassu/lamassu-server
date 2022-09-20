@@ -16,7 +16,6 @@ import styles from './Shared.styles'
 const useStyles = makeStyles(styles)
 const GET_INFO = gql`
   query getData {
-    config
     accounts
     accountsConfig {
       code
@@ -33,7 +32,7 @@ const GET_INFO = gql`
 
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
-    saveConfig(config: $config)
+    saveWallets(config: $config)
     saveAccounts(accounts: $accounts)
   }
 `
@@ -42,7 +41,7 @@ const AllSet = ({ data: currentData, doContinue }) => {
   const classes = useStyles()
 
   const { data } = useQuery(GET_INFO)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveWallets] = useMutation(SAVE_CONFIG, {
     onCompleted: doContinue
   })
 
@@ -67,7 +66,7 @@ const AllSet = ({ data: currentData, doContinue }) => {
     const withCoin = toNamespace(coin, R.omit('coin', adjustedData))
     const config = toNamespace(namespaces.WALLETS)(withCoin)
     setError(false)
-    return saveConfig({ variables: { config } })
+    return saveWallets({ variables: { config } })
   }
 
   const presentableData = R.pipe(

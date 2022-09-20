@@ -15,13 +15,13 @@ const useStyles = makeStyles(global)
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    coinAtmRadarConfig
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COIN_ATM_RADAR = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCoinAtmRadar(config: $config)
   }
 `
 
@@ -48,17 +48,19 @@ const CoinATMRadar = memo(({ wizard }) => {
 
   const { data } = useQuery(GET_CONFIG)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCoinAtmRadar] = useMutation(SAVE_COIN_ATM_RADAR, {
     refetchQueries: ['getData']
   })
 
   const save = it =>
-    saveConfig({
+    saveCoinAtmRadar({
       variables: { config: toNamespace(namespaces.COIN_ATM_RADAR, it) }
     })
 
   const coinAtmRadarConfig =
-    data?.config && fromNamespace(namespaces.COIN_ATM_RADAR, data.config)
+    data?.coinAtmRadarConfig &&
+    fromNamespace(namespaces.COIN_ATM_RADAR, data.coinAtmRadarConfig)
+
   if (!coinAtmRadarConfig) return null
 
   return (

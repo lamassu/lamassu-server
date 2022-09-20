@@ -14,7 +14,7 @@ import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
 import { H4, H2, Label2, P, Info3, Info2 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import styles from './Blacklist.styles'
 import BlackListModal from './BlacklistModal'
@@ -46,15 +46,15 @@ const GET_BLACKLIST = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COMPLIANCE = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCompliance(config: $config)
   }
 `
 
 const GET_INFO = gql`
   query getData {
-    config
+    complianceConfig
   }
 `
 
@@ -135,7 +135,7 @@ const Blacklist = () => {
     refetchQueries: () => ['getBlacklistData']
   })
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCompliance] = useMutation(SAVE_COMPLIANCE, {
     refetchQueries: () => ['getData']
   })
 
@@ -148,7 +148,8 @@ const Blacklist = () => {
   const formattedData = groupByCode(blacklistData)
 
   const complianceConfig =
-    configData?.config && fromNamespace('compliance')(configData.config)
+    configData?.complianceConfig &&
+    fromNamespace(namespaces.COMPLIANCE)(configData.complianceConfig)
 
   const rejectAddressReuse = !!complianceConfig?.rejectAddressReuse
 
@@ -156,7 +157,7 @@ const Blacklist = () => {
 
   const addressReuseSave = rawConfig => {
     const config = toNamespace('compliance')(rawConfig)
-    return saveConfig({ variables: { config } })
+    return saveCompliance({ variables: { config } })
   }
 
   const onClickSidebarItem = e => {

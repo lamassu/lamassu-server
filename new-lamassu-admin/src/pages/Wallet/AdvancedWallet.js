@@ -16,14 +16,15 @@ import {
   OverridesSchema
 } from './helper'
 
-const SAVE_CONFIG = gql`
+const SAVE_ADVANCED_WALLET = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveAdvancedWallet(config: $config)
   }
 `
+
 const GET_INFO = gql`
   query getData {
-    config
+    advancedWalletConfig
     cryptoCurrencies {
       code
       display
@@ -40,7 +41,7 @@ const AdvancedWallet = () => {
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
 
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveAdvancedWallet, { error }] = useMutation(SAVE_ADVANCED_WALLET, {
     refetchQueries: () => ['getData']
   })
 
@@ -48,12 +49,12 @@ const AdvancedWallet = () => {
     const config = toNamespace(SCREEN_KEY)(
       toNamespace(ADVANCED)(rawConfig.wallets[0])
     )
-    return saveConfig({ variables: { config } })
+    return saveAdvancedWallet({ variables: { config } })
   }
 
   const saveOverrides = rawConfig => {
     const config = toNamespace(SCREEN_KEY)(toNamespace(ADVANCED)(rawConfig))
-    return saveConfig({ variables: { config } })
+    return saveAdvancedWallet({ variables: { config } })
   }
 
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
@@ -62,7 +63,7 @@ const AdvancedWallet = () => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
   const AdvancedWalletSettings = fromNamespace(ADVANCED)(
-    fromNamespace(SCREEN_KEY)(data?.config)
+    fromNamespace(SCREEN_KEY)(data?.advancedWalletConfig)
   )
 
   const AdvancedWalletSettingsOverrides = AdvancedWalletSettings.overrides ?? []

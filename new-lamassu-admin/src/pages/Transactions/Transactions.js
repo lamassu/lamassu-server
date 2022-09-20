@@ -17,6 +17,7 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { ReactComponent as CustomerLinkIcon } from 'src/styling/icons/month arrows/right.svg'
 import { ReactComponent as CustomerLinkWhiteIcon } from 'src/styling/icons/month arrows/right_white.svg'
 import { errorColor } from 'src/styling/variables'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import * as Customer from 'src/utils/customer'
 import { formatDate } from 'src/utils/timezones'
 
@@ -30,7 +31,7 @@ const NUM_LOG_RESULTS = 1000
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
   }
 `
 
@@ -157,7 +158,9 @@ const Transactions = () => {
   const txList = txData?.transactions ?? []
 
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
-  const timezone = R.path(['config', 'locale_timezone'], configResponse)
+  const timezone = fromNamespace(namespaces.LOCALE)(
+    configResponse?.localesConfig
+  ).timezone
 
   const redirect = customerId => {
     return history.push(`/compliance/customer/${customerId}`)

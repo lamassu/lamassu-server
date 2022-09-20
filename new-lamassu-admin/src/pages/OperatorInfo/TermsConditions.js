@@ -71,13 +71,13 @@ const Field = ({
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    termsAndConditionsConfig
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_TERMS_AND_CONDITIONS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveTermsAndConditions(config: $config)
   }
 `
 
@@ -86,7 +86,7 @@ const useTermsConditionsStyles = makeStyles(global)
 const TermsConditions = () => {
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveTermsAndConditions] = useMutation(SAVE_TERMS_AND_CONDITIONS, {
     onCompleted: () => {
       setError(null)
       setEditing(false)
@@ -100,14 +100,16 @@ const TermsConditions = () => {
   const { data } = useQuery(GET_CONFIG)
 
   const termsAndConditions =
-    data?.config && fromNamespace(namespaces.TERMS_CONDITIONS, data.config)
+    data?.termsAndConditionsConfig &&
+    fromNamespace(namespaces.TERMS_CONDITIONS, data.termsAndConditionsConfig)
+
   const formData = termsAndConditions ?? {}
   const showOnScreen = termsAndConditions?.active ?? false
   const addDelayOnScreen = termsAndConditions?.delay ?? false
   const tcPhoto = termsAndConditions?.tcPhoto ?? false
 
   const save = it =>
-    saveConfig({
+    saveTermsAndConditions({
       variables: { config: toNamespace(namespaces.TERMS_CONDITIONS, it) }
     })
 

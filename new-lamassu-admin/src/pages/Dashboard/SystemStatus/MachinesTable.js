@@ -17,7 +17,7 @@ import { Label2, TL2 } from 'src/components/typography'
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { ReactComponent as MachineLinkIcon } from 'src/styling/icons/month arrows/right.svg'
-import { fromNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import styles from './MachinesTable.styles'
 
@@ -26,7 +26,7 @@ const PERCENTAGE_THRESHOLD = 20
 
 const GET_CONFIG = gql`
   query getConfig {
-    config
+    notificationsConfig
   }
 `
 
@@ -55,8 +55,8 @@ const MachinesTable = ({ machines = [], numToRender }) => {
 
   const { data } = useQuery(GET_CONFIG)
   const fillingPercentageSettings = fromNamespace(
-    'notifications',
-    R.path(['config'], data) ?? {}
+    namespaces.NOTIFICATIONS,
+    R.path(['notificationsConfig'], data) ?? {}
   )
 
   const getPercent = (notes, capacity = 500) => {

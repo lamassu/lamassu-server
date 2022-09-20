@@ -16,7 +16,6 @@ import styles from './Wallet/Shared.styles'
 
 const GET_CONFIG = gql`
   {
-    config
     accounts
   }
 `

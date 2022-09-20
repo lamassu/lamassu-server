@@ -10,7 +10,7 @@ import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
 import { P, Label2 } from 'src/components/typography'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import Wizard from './Wizard'
 import { DenominationsSchema, getElements } from './helper'
@@ -29,9 +29,9 @@ const useStyles = makeStyles({
   }
 })
 
-const SAVE_CONFIG = gql`
+const SAVE_CASHOUT = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCashOut(config: $config)
   }
 `
 
@@ -47,7 +47,8 @@ const GET_INFO = gql`
       cassette4
       numberOfCassettes
     }
-    config
+    cashOutConfig
+    localesConfig
   }
 `
 
@@ -56,20 +57,23 @@ const CashOut = ({ name: SCREEN_KEY }) => {
   const [wizard, setWizard] = useState(false)
   const { data, loading } = useQuery(GET_INFO)
 
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveCashOut, { error }] = useMutation(SAVE_CASHOUT, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData']
   })
 
-  const save = (rawConfig, accounts) => {
+  const save = rawConfig => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    return saveConfig({ variables: { config, accounts } })
+    return saveCashOut({ variables: { config } })
   }
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.cashOutConfig && fromNamespace(SCREEN_KEY)(data.cashOutConfig)
+
+  const locale =
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
 
   const fudgeFactorActive = config?.fudgeFactorActive ?? false
-  const locale = data?.config && fromNamespace('locale')(data.config)
   const machines = data?.machines ?? []
 
   const onToggle = id => {

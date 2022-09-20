@@ -10,6 +10,7 @@ import React, { useState } from 'react'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 
 import { TL1, TL2, Label3 } from 'src/components/typography'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import Cassettes from './MachineComponents/Cassettes'
 import Commissions from './MachineComponents/Commissions'
@@ -52,7 +53,9 @@ const GET_INFO = gql`
       deviceId
       created
     }
-    config
+    localesConfig
+    cashOutConfig
+    notificationsConfig
   }
 `
 
@@ -96,10 +99,17 @@ const MachineRoute = () => {
 const Machines = ({ data, refetch, reload }) => {
   const classes = useStyles()
 
-  const timezone = R.path(['config', 'locale_timezone'], data) ?? {}
+  const timezone =
+    data?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(data.localesConfig).timezone
 
   const machine = R.path(['machine'])(data) ?? {}
-  const config = R.path(['config'])(data) ?? {}
+  const config =
+    R.mergeAll([
+      R.path(['localesConfig'])(data),
+      R.path(['cashOutConfig'])(data),
+      R.path(['notificationsConfig'])(data)
+    ]) ?? {}
   const bills = R.path(['bills'])(data) ?? []
 
   const machineName = R.path(['name'])(machine) ?? null

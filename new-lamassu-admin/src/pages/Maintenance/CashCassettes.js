@@ -18,7 +18,7 @@ import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 import { MANUAL, AUTOMATIC } from 'src/utils/constants.js'
 import { onlyFirstToUpper } from 'src/utils/string'
 
@@ -103,7 +103,10 @@ const GET_MACHINES_AND_CONFIG = gql`
       id: deviceId
       name
     }
-    config
+    localesConfig
+    cashInConfig
+    cashOutConfig
+    notificationsConfig
     bills(filters: $billFilters) {
       id
       fiat
@@ -113,9 +116,9 @@ const GET_MACHINES_AND_CONFIG = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_CASH_IN = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCashIn(config: $config)
   }
 `
 
@@ -172,31 +175,49 @@ const CashCassettes = () => {
 
   const machines = R.path(['machines'])(data) ?? []
   const unpairedMachines = R.path(['unpairedMachines'])(data) ?? []
-  const config = R.path(['config'])(data) ?? {}
-  const fillingPercentageSettings = fromNamespace('notifications', config)
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+
+  const [saveCashIn] = useMutation(SAVE_CASH_IN, {
     onCompleted: () => setEditingSchema(false),
     refetchQueries: () => ['getData']
   })
-
-  const timezone = R.path(['config', 'locale_timezone'], data)
 
   const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
   const deviceIds = R.uniq(
     R.map(R.prop('deviceId'))(R.path(['bills'])(data) ?? [])
   )
-  const cashout = data?.config && fromNamespace('cashOut')(data.config)
-  const locale = data?.config && fromNamespace('locale')(data.config)
-  const fiatCurrency = locale?.fiatCurrency
+
+  const cashoutConfig =
+    data?.cashOutConfig &&
+    fromNamespace(namespaces.CASH_OUT)(data.cashOutConfig)
+
+  const localesConfig =
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
+
+  const timezone = localesConfig?.timezone
+  const fiatCurrency = localesConfig?.fiatCurrency
+
+  const cashboxReset =
+    data?.cashInConfig &&
+    fromNamespace(namespaces.CASH_IN)(data.cashInConfig).cashboxReset
+
+  const notificationsConfig =
+    data?.notificationsConfig &&
+    fromNamespace(namespaces.NOTIFICATIONS)(data?.notificationsConfig)
+
+  const fillingPercentageSettings = R.pickBy(
+    (_, key) => R.includes('fillingPercentage', key),
+    notificationsConfig
+  )
+
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines),
     0
   )
 
-  const getCashoutSettings = id => fromNamespace(id)(cashout)
+  const getCashoutSettings = id => fromNamespace(id)(cashoutConfig)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const onSave = (id, cashbox, cassettes) => {
@@ -210,12 +231,9 @@ const CashCassettes = () => {
     })
   }
 
-  const cashboxReset =
-    data?.config && fromNamespace('cashIn')(data.config).cashboxReset
-
   const cashboxResetSave = rawConfig => {
     const config = toNamespace('cashIn')(rawConfig)
-    return saveConfig({ variables: { config } })
+    return saveCashIn({ variables: { config } })
   }
 
   const saveCashboxOption = selection => {
@@ -394,7 +412,7 @@ const CashCassettes = () => {
         <CashCassettesFooter
           currencyCode={fiatCurrency}
           machines={machines}
-          config={config}
+          config={cashoutConfig}
           bills={R.path(['bills'])(data)}
           deviceIds={deviceIds}
         />
@@ -407,7 +425,7 @@ const CashCassettes = () => {
             }}
             error={error?.message}
             save={onSave}
-            locale={locale}
+            locale={localesConfig}
           />
         )}
         {editingSchema && (

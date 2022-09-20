@@ -11,7 +11,7 @@ import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import Wizard from 'src/pages/Maintenance/Wizard/Wizard'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
-import { fromNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces } from 'src/utils/config'
 
 import styles from './Cassettes.styles'
 
@@ -87,10 +87,10 @@ const CashCassettes = ({ machine, config, refetchData, bills }) => {
 
   const [wizard, setWizard] = useState(false)
 
-  const cashout = config && fromNamespace('cashOut')(config)
-  const locale = config && fromNamespace('locale')(config)
+  const cashout = config && fromNamespace(namespaces.CASH_OUT)(config)
+  const locale = config && fromNamespace(namespaces.LOCALE)(config)
   const fillingPercentageSettings =
-    config && fromNamespace('notifications', config)
+    config && fromNamespace(namespaces.NOTIFICATIONS, config)
   const fiatCurrency = locale?.fiatCurrency
   const numberOfCassettes = machine.numberOfCassettes
 

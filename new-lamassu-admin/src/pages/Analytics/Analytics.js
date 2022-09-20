@@ -14,7 +14,7 @@ import { Info2, P } from 'src/components/typography'
 import { ReactComponent as DownIcon } from 'src/styling/icons/dashboard/down.svg'
 import { ReactComponent as EqualIcon } from 'src/styling/icons/dashboard/equal.svg'
 import { ReactComponent as UpIcon } from 'src/styling/icons/dashboard/up.svg'
-import { fromNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { numberToFiatAmount } from 'src/utils/number'
 import { DAY, WEEK, MONTH } from 'src/utils/time'
 
@@ -89,7 +89,7 @@ const GET_TRANSACTIONS = gql`
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
     machines {
       name
       deviceId
@@ -156,11 +156,11 @@ const Analytics = () => {
 
   const transactions = R.path(['transactions'])(txResponse) ?? []
   const machines = R.path(['machines'])(configResponse) ?? []
-  const config = R.path(['config'])(configResponse) ?? []
+  const config = R.path(['localesConfig'])(configResponse) ?? []
   const rates = R.path(['fiatRates'])(configResponse) ?? []
-  const fiatLocale = fromNamespace('locale')(config).fiatCurrency
 
-  const timezone = config?.locale_timezone
+  const fiatLocale = fromNamespace(namespaces.LOCALE)(config).fiatCurrency
+  const timezone = fromNamespace(namespaces.LOCALE)(config).timezone
 
   const convertFiatToLocale = item => {
     if (item.fiatCode === fiatLocale) return item

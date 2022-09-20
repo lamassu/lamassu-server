@@ -17,7 +17,7 @@ import { ReactComponent as ReverseCustomInfoIcon } from 'src/styling/icons/circl
 import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle buttons/filter/zodiac.svg'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import CustomInfoRequests from './CustomInfoRequests'
 import TriggerView from './TriggerView'
@@ -32,15 +32,17 @@ const SAVE_ACCOUNT = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COMPLIANCE = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCompliance(config: $config)
   }
 `
 
 const GET_CONFIG = gql`
   query getData {
-    config
+    triggers
+    complianceConfig
+    localesConfig
     accounts
   }
 `
@@ -73,12 +75,18 @@ const Triggers = () => {
     customInfoRequests
   )
 
-  const triggers = fromServer(data?.config?.triggers ?? [])
+  const triggers = fromServer(data?.triggers.triggers ?? [])
+
   const complianceConfig =
-    data?.config && fromNamespace('compliance')(data.config)
+    data?.complianceConfig &&
+    fromNamespace(namespaces.COMPLIANCE)(data.complianceConfig)
+
   const rejectAddressReuse = complianceConfig?.rejectAddressReuse ?? false
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const localesConfig =
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
+
+  const [saveCompliance] = useMutation(SAVE_COMPLIANCE, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
@@ -94,8 +102,8 @@ const Triggers = () => {
   })
 
   const addressReuseSave = rawConfig => {
-    const config = toNamespace('compliance')(rawConfig)
-    return saveConfig({ variables: { config } })
+    const config = toNamespace(namespaces.COMPLIANCE)(rawConfig)
+    return saveCompliance({ variables: { config } })
   }
 
   const titleSectionWidth = {
@@ -125,6 +133,7 @@ const Triggers = () => {
       variables: { accounts: { twilio: it } }
     })
   }
+
   const addNewTriger = () => {
     if (!R.has('twilio', data?.accounts || {})) setTwilioSetupPopup(true)
     else toggleWizard('newTrigger')()
@@ -212,7 +221,7 @@ const Triggers = () => {
         <TriggerView
           triggers={triggers}
           showWizard={wizardType === 'newTrigger'}
-          config={data?.config ?? {}}
+          config={localesConfig}
           toggleWizard={toggleWizard('newTrigger')}
           addNewTriger={addNewTriger}
           customInfoRequests={enabledCustomInfoRequests}
@@ -221,7 +230,7 @@ const Triggers = () => {
       {!loading && subMenu === 'advancedSettings' && (
         <AdvancedTriggers
           error={error}
-          save={saveConfig}
+          save={saveCompliance}
           data={data}></AdvancedTriggers>
       )}
       {twilioSetupPopup && (

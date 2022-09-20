@@ -23,7 +23,8 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config
+    commissionsConfig
+    localesConfig
     cryptoCurrencies {
       code
       display
@@ -35,9 +36,9 @@ const GET_DATA = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
+const SAVE_COMMISSIONS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCommissions(config: $config)
   }
 `
 const removeCoinFromOverride = crypto => override =>
@@ -50,27 +51,28 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   const [showMachines, setShowMachines] = useState(false)
   const [error, setError] = useState(null)
   const { data, loading } = useQuery(GET_DATA)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCommissions] = useMutation(SAVE_COMMISSIONS, {
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
   })
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.commissionsConfig && fromNamespace(SCREEN_KEY)(data.commissionsConfig)
   const localeConfig =
-    data?.config && fromNamespace(namespaces.LOCALE)(data.config)
+    data?.localesConfig && fromNamespace(namespaces.LOCALE)(data.localesConfig)
 
   const currency = R.prop('fiatCurrency')(localeConfig)
   const overrides = R.prop('overrides')(config)
 
   const save = it => {
     const config = toNamespace(SCREEN_KEY)(it.commissions[0])
-    return saveConfig({ variables: { config } })
+    return saveCommissions({ variables: { config } })
   }
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
     setError(null)
-    return saveConfig({ variables: { config } })
+    return saveCommissions({ variables: { config } })
   }
 
   const saveOverridesFromList = it => (_, override) => {
@@ -92,7 +94,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
       commissions_overrides: R.prepend(override, overrides)
     }
 
-    return saveConfig({ variables: { config } })
+    return saveCommissions({ variables: { config } })
   }
 
   const labels = showMachines

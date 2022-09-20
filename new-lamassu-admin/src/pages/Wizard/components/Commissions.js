@@ -20,12 +20,13 @@ const useCommissionStyles = makeStyles({
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
+    commissionsConfig
   }
 `
-const SAVE_CONFIG = gql`
+const SAVE_COMMISSIONS = gql`
   mutation Save($config: JSONObject) {
-    saveConfig(config: $config)
+    saveCommissions(config: $config)
   }
 `
 
@@ -34,20 +35,17 @@ function Commissions({ isActive, doContinue }) {
   const commissionClasses = useCommissionStyles()
   const { data } = useQuery(GET_DATA)
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [saveCommissions] = useMutation(SAVE_COMMISSIONS, {
     onCompleted: doContinue
   })
 
   const save = it => {
-    const config = toNamespace('commissions')(it.commissions[0])
-    return saveConfig({ variables: { config } })
+    const config = toNamespace(namespaces.COMMISSIONS)(it.commissions[0])
+    return saveCommissions({ variables: { config } })
   }
 
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
-  )
-
-  const locale = fromNamespace(namespaces.LOCALE)(data?.config)
+  const locale = fromNamespace(namespaces.LOCALE)(data?.localesConfig)
+  const currency = R.path(['fiatCurrency'])(locale)
 
   return (
     <div className={classes.wrapper}>

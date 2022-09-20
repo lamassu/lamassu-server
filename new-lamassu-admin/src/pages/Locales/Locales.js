@@ -28,7 +28,8 @@ const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
   query getData {
-    config
+    localesConfig
+    walletConfig
     accounts
     accountsConfig {
       code
@@ -59,10 +60,21 @@ const GET_DATA = gql`
   }
 `
 
-const SAVE_CONFIG = gql`
-  mutation Save($config: JSONObject, $accounts: JSONObject) {
-    saveConfig(config: $config)
+const SAVE_LOCALES = gql`
+  mutation Save($config: JSONObject) {
+    saveLocales(config: $config)
+  }
+`
+
+const SAVE_ACCOUNTS = gql`
+  mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
+  }
+`
+
+const SAVE_WALLETS = gql`
+  mutation Save($config: JSONObject) {
+    saveWallets(config: $config)
   }
 `
 
@@ -105,7 +117,17 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const [isEditingDefault, setEditingDefault] = useState(false)
   const [isEditingOverrides, setEditingOverrides] = useState(false)
   const { data } = useQuery(GET_DATA)
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
+  const [_saveLocales] = useMutation(SAVE_LOCALES, {
+    onCompleted: () => setWizard(false),
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
+  })
+  const [_saveAccounts] = useMutation(SAVE_ACCOUNTS, {
+    onCompleted: () => setWizard(false),
+    refetchQueries: () => ['getData'],
+    onError: error => setError(error)
+  })
+  const [_saveWallets] = useMutation(SAVE_WALLETS, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData'],
     onError: error => setError(error)
@@ -113,8 +135,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
 
   const [dataToSave, setDataToSave] = useState(null)
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
-  const wallets = data?.config && fromNamespace(namespaces.WALLETS)(data.config)
+  const config =
+    data?.localesConfig && fromNamespace(SCREEN_KEY)(data.localesConfig)
+  const wallets =
+    data?.walletConfig && fromNamespace(namespaces.WALLETS)(data.walletConfig)
 
   const accountsConfig = data?.accountsConfig
   const accounts = data?.accounts ?? []
@@ -131,18 +155,28 @@ const Locales = ({ name: SCREEN_KEY }) => {
     )
       return setDataToSave(newConfig)
 
-    return save(newConfig)
+    return saveLocales(newConfig)
   }
 
-  const save = (config, accounts) => {
+  const saveLocales = config => {
     setDataToSave(null)
-    return saveConfig({ variables: { config, accounts } })
+    return _saveLocales({ variables: { config } })
+  }
+
+  const saveWallets = config => {
+    setDataToSave(null)
+    return _saveWallets({ variables: { config } })
+  }
+
+  const saveAccounts = accounts => {
+    setDataToSave(null)
+    return _saveAccounts({ variables: { accounts } })
   }
 
   const saveOverrides = it => {
     const config = toNamespace(SCREEN_KEY)(it)
     setError(null)
-    return saveConfig({ variables: { config } })
+    return _saveLocales({ variables: { config } })
   }
 
   const onChangeCoin = (prev, curr, setValue) => {
@@ -163,7 +197,10 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
 
   const wizardSave = (config, accounts) =>
-    save(toNamespace(namespaces.WALLETS)(config), accounts).then(it => {
+    Promise.all([
+      saveWallets(toNamespace(namespaces.WALLETS)(config)),
+      saveAccounts(accounts)
+    ]).then(it => {
       onChangeFunction()
       setOnChangeFunction(null)
       return it
@@ -174,7 +211,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
       <FiatCurrencyChangeAlert
         open={dataToSave}
         close={() => setDataToSave(null)}
-        save={() => dataToSave && save(dataToSave)}
+        save={() => dataToSave && saveLocales(dataToSave)}
       />
       <TitleSection title="Locales" />
       <Section>
@@ -222,7 +259,6 @@ const Locales = ({ name: SCREEN_KEY }) => {
           save={wizardSave}
           error={error?.message}
           cryptoCurrencies={cryptoCurrencies}
-          userAccounts={data?.config?.accounts}
           accounts={accounts}
           accountsConfig={accountsConfig}
         />

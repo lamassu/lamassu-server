@@ -11,7 +11,7 @@ import FormRenderer from 'src/pages/Services/FormRenderer'
 import schemas from 'src/pages/Services/schemas'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
-import { fromNamespace, toNamespace } from 'src/utils/config'
+import { fromNamespace, namespaces, toNamespace } from 'src/utils/config'
 
 import AdvancedWallet from './AdvancedWallet'
 import styles from './Wallet.styles.js'
@@ -20,7 +20,7 @@ import { WalletSchema, getElements } from './helper'
 
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
-    saveConfig(config: $config)
+    saveWallets(config: $config)
     saveAccounts(accounts: $accounts)
   }
 `
@@ -33,7 +33,8 @@ const SAVE_ACCOUNT = gql`
 
 const GET_INFO = gql`
   query getData {
-    config
+    localesConfig
+    walletConfig
     accounts
     accountsConfig {
       code
@@ -49,8 +50,6 @@ const GET_INFO = gql`
   }
 `
 
-const LOCALE = 'locale'
-
 const useStyles = makeStyles(styles)
 
 const Wallet = ({ name: SCREEN_KEY }) => {
@@ -61,7 +60,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const [advancedSettings, setAdvancedSettings] = useState(false)
   const { data } = useQuery(GET_INFO)
 
-  const [saveConfig, { error }] = useMutation(SAVE_CONFIG, {
+  const [saveWallets, { error }] = useMutation(SAVE_CONFIG, {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData']
   })
@@ -73,13 +72,16 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    return saveConfig({ variables: { config, accounts } })
+    return saveWallets({ variables: { config, accounts } })
   }
 
   const fiatCurrency =
-    data?.config && fromNamespace(LOCALE)(data.config).fiatCurrency
+    data?.localesConfig &&
+    fromNamespace(namespaces.LOCALE)(data.localesConfig).fiatCurrency
 
-  const config = data?.config && fromNamespace(SCREEN_KEY)(data.config)
+  const config =
+    data?.walletConfig && fromNamespace(SCREEN_KEY)(data.walletConfig)
+
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
