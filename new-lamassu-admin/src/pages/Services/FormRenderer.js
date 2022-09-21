@@ -44,9 +44,7 @@ const FormRenderer = ({
   save,
   buttonLabel = 'Save changes',
   buttonClass,
-  xs = 12,
-  accountId,
-  reset
+  xs = 12
 }) => {
   const classes = useStyles()
 
@@ -106,12 +104,6 @@ const FormRenderer = ({
               </ErrorMessage>
             )}
             <div className={classes.buttonWrapper}>
-              <Button
-                className={buttonClass}
-                type="button"
-                onClick={() => reset({ variables: { accountId } })}>
-                Clear
-              </Button>
               <Button className={buttonClass} type="submit">
                 {buttonLabel}
               </Button>

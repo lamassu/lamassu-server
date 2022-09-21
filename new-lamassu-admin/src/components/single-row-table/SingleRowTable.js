@@ -15,6 +15,7 @@ import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/en
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/white.svg'
 import { ReactComponent as InfoIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
+import { Switch } from '../inputs'
 import { P } from '../typography'
 
 import styles from './SingleRowTable.styles'
@@ -26,7 +27,8 @@ const SingleRowTable = ({
   height = 128,
   title,
   items,
-  state = 'enabled',
+  enabled,
+  onSwitchClick,
   onActionClick,
   className
 }) => {
@@ -80,15 +82,22 @@ const SingleRowTable = ({
   return (
     <>
       <Table className={classnames(className, classes.table)}>
-        <THead className={headerClass[state]}>
+        <THead className={enabled ? headerClass.enabled : headerClass.disabled}>
           <Th className={classes.head}>
-            {title}
+            <span className={classes.title}>
+              {title}
+              <Switch
+                checked={enabled}
+                value={enabled}
+                onChange={onSwitchClick}
+              />
+            </span>
             <IconButton onClick={onActionClick} className={classes.button}>
-              {buttonIcon[state]}
+              {enabled ? buttonIcon.enabled : buttonIcon.disabled}
             </IconButton>
           </Th>
         </THead>
-        <TBody>{content[state]}</TBody>
+        <TBody>{enabled ? content.enabled : content.disabled}</TBody>
       </Table>
     </>
   )

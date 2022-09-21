@@ -59,5 +59,10 @@ export default {
     '& > *:last-child': {
       marginRight: 0
     }
+  },
+  title: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 }

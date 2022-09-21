@@ -54,6 +54,7 @@ const useStyles = makeStyles(styles)
 
 const Services = () => {
   const [editingSchema, setEditingSchema] = useState(null)
+  const [addingService, setAddingService] = useState(false)
 
   const { data, loading: configLoading } = useQuery(GET_INFO)
   const { data: marketsData, loading: marketsLoading } = useQuery(GET_MARKETS)
@@ -66,15 +67,12 @@ const Services = () => {
 
   const schemas = _schemas(markets)
   const [resetAccount] = useMutation(RESET_ACCOUNT, {
-    onCompleted: () => setEditingSchema(null),
     refetchQueries: ['getData']
   })
 
   const classes = useStyles()
 
   const accounts = data?.accounts ?? {}
-
-  console.log(accounts)
 
   const getItems = (code, elements) => {
     const faceElements = R.filter(R.prop('face'))(elements)
@@ -96,18 +94,21 @@ const Services = () => {
   }
 
   const getElements = ({ code, elements }) => {
-    return R.map(elem => {
-      if (elem.component === CheckboxInput) return updateSettings(elem)
-      if (elem.component !== SecretInput) return elem
-      return {
-        ...elem,
-        inputProps: {
-          isPasswordFilled:
-            !R.isNil(accounts[code]) &&
-            !R.isNil(R.path([elem.code], accounts[code]))
+    return R.map(
+      elem => {
+        if (elem.component === CheckboxInput) return updateSettings(elem)
+        if (elem.component !== SecretInput) return elem
+        return {
+          ...elem,
+          inputProps: {
+            isPasswordFilled:
+              !R.isNil(accounts[code]) &&
+              !R.isNil(R.path([elem.code], accounts[code]))
+          }
         }
-      }
-    }, elements)
+      },
+      R.filter(it => it.code !== 'enabled', elements)
+    )
   }
 
   const getAccounts = ({ elements, code }) => {
@@ -127,7 +128,36 @@ const Services = () => {
   const getValidationSchema = ({ code, getValidationSchema }) =>
     getValidationSchema(accounts[code])
 
-  const isServiceEnabled = service => !!accounts[service.code]
+  const isServiceEnabled = service =>
+    !R.isNil(accounts[service.code]) && Boolean(accounts[service.code]?.enabled)
+
+  const isServiceDisabled = service =>
+    !R.isNil(accounts[service.code]) && !accounts[service.code]?.enabled
+
+  const enabledServices = R.filter(isServiceEnabled, R.values(schemas))
+  const disabledServices = R.filter(isServiceDisabled, R.values(schemas))
+  const usedServices = R.filter(
+    it => isServiceDisabled(it) || isServiceEnabled(it),
+    R.values(schemas)
+  )
+  const unusedServices = R.filter(
+    it => !isServiceDisabled(it) && !isServiceEnabled(it),
+    R.values(schemas)
+  )
+
+  const enableService = service =>
+    saveAccount({
+      variables: {
+        accounts: { [service.code]: { ...service, enabled: true } }
+      }
+    })
+
+  const disableService = service =>
+    saveAccount({
+      variables: {
+        accounts: { [service.code]: { ...service, enabled: false } }
+      }
+    })
 
   const loading = marketsLoading || configLoading
   return (
@@ -137,39 +167,43 @@ const Services = () => {
           title="3rd Party Services"
           appendixRight={
             <Box display="flex">
-              <Link color="primary" onClick={() => console.log('aaaaa')}>
+              <Link color="primary" onClick={() => setAddingService(true)}>
                 Add new service
               </Link>
             </Box>
           }
         />
-        <Grid container spacing={4}>
-          {R.filter(it => isServiceEnabled(it), R.values(schemas)).map(
-            schema => {
-              return (
-                <EnabledService
-                  service={schema}
-                  setEditingSchema={setEditingSchema}
-                  getItems={getItems}
-                />
-              )
-            }
-          )}
-        </Grid>
-        <HorizontalSeparator title="Disabled services" />
-        <Grid container spacing={4}>
-          {R.filter(it => !isServiceEnabled(it), R.values(schemas)).map(
-            schema => {
-              return (
-                <DisabledService
-                  service={schema}
-                  setEditingSchema={setEditingSchema}
-                  getItems={getItems}
-                />
-              )
-            }
-          )}
-        </Grid>
+        {!R.isEmpty(usedServices) && (
+          <>
+            <Grid container spacing={4}>
+              {R.map(schema => {
+                return (
+                  <EnabledService
+                    account={accounts[schema.code]}
+                    service={schema}
+                    setEditingSchema={setEditingSchema}
+                    getItems={getItems}
+                    disableService={disableService}
+                  />
+                )
+              }, enabledServices)}
+            </Grid>
+            <HorizontalSeparator title="Disabled services" />
+            <Grid container spacing={4}>
+              {R.map(schema => {
+                return (
+                  <DisabledService
+                    account={accounts[schema.code]}
+                    service={schema}
+                    deleteAccount={resetAccount}
+                    getItems={getItems}
+                    enableService={enableService}
+                  />
+                )
+              }, disabledServices)}
+            </Grid>
+          </>
+        )}
         {editingSchema && (
           <Modal
             title={`Edit ${editingSchema.name}`}
@@ -179,14 +213,14 @@ const Services = () => {
             <FormRenderer
               save={it =>
                 saveAccount({
-                  variables: { accounts: { [editingSchema.code]: it } }
+                  variables: {
+                    accounts: { [editingSchema.code]: { ...it, enabled: true } }
+                  }
                 })
               }
               elements={getElements(editingSchema)}
               validationSchema={getValidationSchema(editingSchema)}
               value={getAccounts(editingSchema)}
-              accountId={editingSchema.code}
-              reset={resetAccount}
             />
           </Modal>
         )}
