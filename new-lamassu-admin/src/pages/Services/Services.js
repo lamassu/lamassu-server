@@ -1,17 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Grid } from '@material-ui/core'
+import { Box, makeStyles, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
+import { Link } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
 import CheckboxInput from 'src/components/inputs/formik/Checkbox'
+import HorizontalSeparator from 'src/components/layout/HorizontalSeparator'
 import TitleSection from 'src/components/layout/TitleSection'
-import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
 
 import FormRenderer from './FormRenderer'
+import { DisabledService, EnabledService } from './ServiceCard'
 import _schemas from './schemas'
 
 const GET_INFO = gql`
@@ -71,6 +74,8 @@ const Services = () => {
 
   const accounts = data?.accounts ?? {}
 
+  console.log(accounts)
+
   const getItems = (code, elements) => {
     const faceElements = R.filter(R.prop('face'))(elements)
     const values = accounts[code] || {}
@@ -122,23 +127,48 @@ const Services = () => {
   const getValidationSchema = ({ code, getValidationSchema }) =>
     getValidationSchema(accounts[code])
 
-  const loading = marketsLoading || configLoading
+  const isServiceEnabled = service => !!accounts[service.code]
 
+  const loading = marketsLoading || configLoading
   return (
     !loading && (
       <div className={classes.wrapper}>
-        <TitleSection title="3rd Party Services" />
+        <TitleSection
+          title="3rd Party Services"
+          appendixRight={
+            <Box display="flex">
+              <Link color="primary" onClick={() => console.log('aaaaa')}>
+                Add new service
+              </Link>
+            </Box>
+          }
+        />
         <Grid container spacing={4}>
-          {R.values(schemas).map(schema => (
-            <Grid item key={schema.code}>
-              <SingleRowTable
-                editMessage={'Configure ' + schema.title}
-                title={schema.title}
-                onEdit={() => setEditingSchema(schema)}
-                items={getItems(schema.code, schema.elements)}
-              />
-            </Grid>
-          ))}
+          {R.filter(it => isServiceEnabled(it), R.values(schemas)).map(
+            schema => {
+              return (
+                <EnabledService
+                  service={schema}
+                  setEditingSchema={setEditingSchema}
+                  getItems={getItems}
+                />
+              )
+            }
+          )}
+        </Grid>
+        <HorizontalSeparator title="Disabled services" />
+        <Grid container spacing={4}>
+          {R.filter(it => !isServiceEnabled(it), R.values(schemas)).map(
+            schema => {
+              return (
+                <DisabledService
+                  service={schema}
+                  setEditingSchema={setEditingSchema}
+                  getItems={getItems}
+                />
+              )
+            }
+          )}
         </Grid>
         {editingSchema && (
           <Modal
