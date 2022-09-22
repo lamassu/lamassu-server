@@ -180,8 +180,8 @@ const ChooseWallet = ({ data: currentData, addData }) => {
           <FormRenderer
             value={accounts.coinbasepro}
             save={saveWallet(selected)}
-            elements={schema.coinbasepro.elements}
-            validationSchema={schema.coinbasepro.getValidationSchema(
+            elements={schemas.coinbasepro.elements}
+            validationSchema={schemas.coinbasepro.getValidationSchema(
               accounts.coinbasepro
             )}
             buttonLabel={'Continue'}
