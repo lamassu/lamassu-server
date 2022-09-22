@@ -46,7 +46,7 @@ export default {
   getValidationSchema: account => {
     return Yup.object().shape({
       apiSecret: Yup.string('The API Secret must be a string')
-        .max(100, 'The API Secret is too long')
+        .max(200, 'The API Secret is too long')
         .test(secretTest(account?.apiSecret)),
       walletId: Yup.string('The wallet id must be a string')
         .max(100, 'The wallet id is too long')
