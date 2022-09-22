@@ -13,6 +13,7 @@ const schema = markets => {
     code: 'cex',
     name: 'Cex',
     category: 'Exchange',
+    allowMultiInstances: false,
     elements: [
       {
         code: 'apiKey',

@@ -13,6 +13,7 @@ const schema = markets => {
     code: 'itbit',
     name: 'itBit',
     category: 'Exchange',
+    allowMultiInstances: false,
     elements: [
       {
         code: 'userId',

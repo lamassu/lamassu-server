@@ -5,20 +5,20 @@ import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 
 const EnabledService = ({
   account,
-  service,
+  schema,
   setEditingSchema,
   getItems,
-  disableService
+  disableAccount
 }) => {
   return (
-    <Grid item key={service.code}>
+    <Grid item key={account.id}>
       <SingleRowTable
-        editMessage={'Configure ' + service.name}
-        title={`${service.name} (${service.category})`}
+        editMessage={'Configure ' + schema.name}
+        title={`${schema.name} (${schema.category})`}
         enabled={account?.enabled}
-        onSwitchClick={() => disableService(service)}
-        onActionClick={() => setEditingSchema(service)}
-        items={getItems(service.code, service.elements)}
+        onSwitchClick={() => disableAccount(account)}
+        onActionClick={() => setEditingSchema({ schema, account })}
+        items={getItems(account.id, schema.code, schema.elements)}
       />
     </Grid>
   )
@@ -26,22 +26,24 @@ const EnabledService = ({
 
 const DisabledService = ({
   account,
-  service,
+  schema,
   deleteAccount,
   getItems,
-  enableService
+  enableAccount
 }) => {
   return (
-    <Grid item key={service.code}>
+    <Grid item key={account.id}>
       <SingleRowTable
-        editMessage={'Configure ' + service.name}
-        title={`${service.name} (${service.category})`}
+        editMessage={'Configure ' + schema.name}
+        title={`${schema.name} (${schema.category})`}
         enabled={account?.enabled}
-        onSwitchClick={() => enableService(service)}
+        onSwitchClick={() => enableAccount(account)}
         onActionClick={() =>
-          deleteAccount({ variables: { accountId: service.code } })
+          deleteAccount({
+            variables: { accountId: schema.code, instanceId: account.id }
+          })
         }
-        items={getItems(service.code, service.elements)}
+        items={getItems(account.id, schema.code, schema.elements)}
       />
     </Grid>
   )

@@ -9,6 +9,7 @@ export default {
   code: 'twilio',
   name: 'Twilio',
   category: 'SMS',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'accountSid',
