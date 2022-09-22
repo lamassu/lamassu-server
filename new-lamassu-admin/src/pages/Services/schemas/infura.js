@@ -8,7 +8,7 @@ import { secretTest } from './helper'
 export default {
   code: 'infura',
   name: 'Infura',
-  title: 'Infura (Wallet)',
+  category: 'Wallet',
   elements: [
     {
       code: 'apiKey',

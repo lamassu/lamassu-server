@@ -12,7 +12,7 @@ const schema = markets => {
   return {
     code: 'itbit',
     name: 'itBit',
-    title: 'itBit (Exchange)',
+    category: 'Exchange',
     elements: [
       {
         code: 'userId',

@@ -22,7 +22,7 @@ const buildTestValidation = (id, passphrase) => {
 export default {
   code: 'bitgo',
   name: 'BitGo',
-  title: 'BitGo (Wallet)',
+  category: 'Wallet',
   elements: [
     {
       code: 'token',

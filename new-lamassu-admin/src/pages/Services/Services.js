@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { Box, makeStyles, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
@@ -6,7 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { Link } from 'src/components/buttons'
+import { LinkDropdown } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
 import CheckboxInput from 'src/components/inputs/formik/Checkbox'
 import HorizontalSeparator from 'src/components/layout/HorizontalSeparator'
@@ -54,7 +53,6 @@ const useStyles = makeStyles(styles)
 
 const Services = () => {
   const [editingSchema, setEditingSchema] = useState(null)
-  const [addingService, setAddingService] = useState(false)
 
   const { data, loading: configLoading } = useQuery(GET_INFO)
   const { data: marketsData, loading: marketsLoading } = useQuery(GET_MARKETS)
@@ -167,9 +165,12 @@ const Services = () => {
           title="3rd Party Services"
           appendixRight={
             <Box display="flex">
-              <Link color="primary" onClick={() => setAddingService(true)}>
+              <LinkDropdown
+                color="primary"
+                options={unusedServices}
+                onItemClick={setEditingSchema}>
                 Add new service
-              </Link>
+              </LinkDropdown>
             </Box>
           }
         />
@@ -188,25 +189,31 @@ const Services = () => {
                 )
               }, enabledServices)}
             </Grid>
-            <HorizontalSeparator title="Disabled services" />
-            <Grid container spacing={4}>
-              {R.map(schema => {
-                return (
-                  <DisabledService
-                    account={accounts[schema.code]}
-                    service={schema}
-                    deleteAccount={resetAccount}
-                    getItems={getItems}
-                    enableService={enableService}
-                  />
-                )
-              }, disabledServices)}
-            </Grid>
+            {!R.isEmpty(disabledServices) && (
+              <>
+                <HorizontalSeparator title="Disabled services" />
+                <Grid container spacing={4}>
+                  {R.map(schema => {
+                    return (
+                      <DisabledService
+                        account={accounts[schema.code]}
+                        service={schema}
+                        deleteAccount={resetAccount}
+                        getItems={getItems}
+                        enableService={enableService}
+                      />
+                    )
+                  }, disabledServices)}
+                </Grid>
+              </>
+            )}
           </>
         )}
         {editingSchema && (
           <Modal
-            title={`Edit ${editingSchema.name}`}
+            title={`${
+              R.includes(editingSchema, unusedServices) ? 'Configure' : 'Edit'
+            } ${editingSchema.name}`}
             width={525}
             handleClose={() => setEditingSchema(null)}
             open={true}>

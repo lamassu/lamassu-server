@@ -10,12 +10,11 @@ const EnabledService = ({
   getItems,
   disableService
 }) => {
-  console.log('account', account?.enabled)
   return (
     <Grid item key={service.code}>
       <SingleRowTable
-        editMessage={'Configure ' + service.title}
-        title={service.title}
+        editMessage={'Configure ' + service.name}
+        title={`${service.name} (${service.category})`}
         enabled={account?.enabled}
         onSwitchClick={() => disableService(service)}
         onActionClick={() => setEditingSchema(service)}
@@ -32,12 +31,11 @@ const DisabledService = ({
   getItems,
   enableService
 }) => {
-  console.log('account', account?.enabled)
   return (
     <Grid item key={service.code}>
       <SingleRowTable
-        editMessage={'Configure ' + service.title}
-        title={service.title}
+        editMessage={'Configure ' + service.name}
+        title={`${service.name} (${service.category})`}
         enabled={account?.enabled}
         onSwitchClick={() => enableService(service)}
         onActionClick={() =>

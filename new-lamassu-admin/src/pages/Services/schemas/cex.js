@@ -12,7 +12,7 @@ const schema = markets => {
   return {
     code: 'cex',
     name: 'Cex',
-    title: 'Cex (Exchange)',
+    category: 'Exchange',
     elements: [
       {
         code: 'apiKey',

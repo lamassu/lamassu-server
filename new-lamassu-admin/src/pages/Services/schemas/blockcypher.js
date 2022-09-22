@@ -6,7 +6,7 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 export default {
   code: 'blockcypher',
   name: 'Blockcypher',
-  title: 'Blockcypher (Payments)',
+  category: 'Payments',
   elements: [
     {
       code: 'token',

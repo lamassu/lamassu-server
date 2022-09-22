@@ -8,7 +8,7 @@ import { secretTest, leadingZerosTest } from './helper'
 export default {
   code: 'ciphertrace',
   name: 'CipherTrace',
-  title: 'CipherTrace (Scoring)',
+  category: 'Scoring',
   elements: [
     {
       code: 'authorizationValue',

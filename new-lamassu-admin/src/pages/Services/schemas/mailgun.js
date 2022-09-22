@@ -5,7 +5,7 @@ import TextInputFormik from 'src/components/inputs/formik/TextInput'
 export default {
   code: 'mailgun',
   name: 'Mailgun',
-  title: 'Mailgun (Email)',
+  category: 'Email',
   elements: [
     {
       code: 'apiKey',

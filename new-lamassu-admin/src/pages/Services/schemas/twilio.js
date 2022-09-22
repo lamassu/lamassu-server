@@ -8,7 +8,7 @@ import { secretTest } from './helper'
 export default {
   code: 'twilio',
   name: 'Twilio',
-  title: 'Twilio (SMS)',
+  category: 'SMS',
   elements: [
     {
       code: 'accountSid',

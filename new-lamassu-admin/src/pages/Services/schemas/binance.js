@@ -12,7 +12,7 @@ const schema = markets => {
   return {
     code: 'binance',
     name: 'Binance',
-    title: 'Binance (Exchange)',
+    category: 'Exchange',
     elements: [
       {
         code: 'apiKey',
