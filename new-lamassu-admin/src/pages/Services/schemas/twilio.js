@@ -12,6 +12,7 @@ export default {
   supportArticle:
     'https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS',
   category: 'SMS',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'accountSid',

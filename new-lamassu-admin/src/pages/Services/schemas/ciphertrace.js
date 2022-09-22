@@ -9,6 +9,7 @@ export default {
   code: 'ciphertrace',
   name: 'CipherTrace',
   category: 'Scoring',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'authorizationValue',

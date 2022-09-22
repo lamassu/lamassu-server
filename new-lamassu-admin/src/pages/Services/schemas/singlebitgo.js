@@ -10,6 +10,7 @@ const singleBitgo = code => ({
   code: 'bitgo',
   name: 'BitGo',
   category: 'Wallet',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'token',

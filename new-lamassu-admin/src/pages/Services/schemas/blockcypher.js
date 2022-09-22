@@ -6,6 +6,7 @@ export default {
   code: 'blockcypher',
   name: 'Blockcypher',
   category: 'Payments',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'token',

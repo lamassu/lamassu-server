@@ -13,6 +13,7 @@ const schema = markets => {
     code: 'binanceus',
     name: 'Binance.us',
     category: 'Exchange',
+    allowMultiInstances: false,
     elements: [
       {
         code: 'apiKey',

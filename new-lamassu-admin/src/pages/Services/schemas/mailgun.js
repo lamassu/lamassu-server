@@ -6,6 +6,7 @@ export default {
   code: 'mailgun',
   name: 'Mailgun',
   category: 'Email',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'apiKey',
