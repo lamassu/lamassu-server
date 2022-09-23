@@ -16,6 +16,7 @@ import { fromNamespace, namespaces } from 'src/utils/config'
 
 import CustomersList from './CustomersList'
 import CreateCustomerModal from './components/CreateCustomerModal'
+import { getAuthorizedStatus } from './helper'
 
 const GET_CUSTOMER_FILTERS = gql`
   query filters {
@@ -130,9 +131,20 @@ const Customers = () => {
     R.path(['customInfoRequests'], customersResponse) ?? []
   const locale = configData && fromNamespace(namespaces.LOCALE, configData)
   const triggers = configData && fromNamespace(namespaces.TRIGGERS, configData)
-  const customersData = R.sortWith([
-    R.descend(it => new Date(R.prop('lastActive', it) ?? '0'))
-  ])(filteredCustomers ?? [])
+
+  const setAuthorizedStatus = c =>
+    R.assoc(
+      'authorizedStatus',
+      getAuthorizedStatus(c, triggers, customRequirementsData),
+      c
+    )
+
+  const byAuthorized = c => (c.authorizedStatus.label === 'Pending' ? 0 : 1)
+  const byLastActive = c => new Date(R.prop('lastActive', c) ?? '0')
+  const customersData = R.pipe(
+    R.map(setAuthorizedStatus),
+    R.sortWith([R.ascend(byAuthorized), R.descend(byLastActive)])
+  )(filteredCustomers ?? [])
 
   const onFilterChange = filters => {
     const filtersObject = getFiltersObj(filters)
