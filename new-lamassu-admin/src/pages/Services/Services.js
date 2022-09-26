@@ -132,16 +132,15 @@ const Services = () => {
   const isServiceDisabled = service =>
     !R.isNil(accounts[service.code]) && !accounts[service.code]?.enabled
 
-  const enabledServices = R.filter(isServiceEnabled, R.values(schemas))
-  const disabledServices = R.filter(isServiceDisabled, R.values(schemas))
-  const usedServices = R.filter(
-    it => isServiceDisabled(it) || isServiceEnabled(it),
+  const [enabledServices, limbo] = R.partition(
+    isServiceEnabled,
     R.values(schemas)
   )
-  const unusedServices = R.filter(
-    it => !isServiceDisabled(it) && !isServiceEnabled(it),
-    R.values(schemas)
+  const [disabledServices, unusedServices] = R.partition(
+    isServiceDisabled,
+    limbo
   )
+  const usedServices = R.concat(enabledServices, disabledServices)
 
   const enableService = service =>
     saveAccount({
