@@ -17,6 +17,7 @@ const CopyToClipboard = ({
   buttonClassname,
   children,
   wrapperClassname,
+  removeSpace = true,
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -46,7 +47,8 @@ const CopyToClipboard = ({
             {children}
           </div>
           <div className={classnames(classes.buttonWrapper, buttonClassname)}>
-            <ReactCopyToClipboard text={R.replace(/\s/g, '')(children)}>
+            <ReactCopyToClipboard
+              text={removeSpace ? R.replace(/\s/g, '')(children) : children}>
               <button
                 aria-describedby={id}
                 onClick={event => handleClick(event)}>
