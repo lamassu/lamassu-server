@@ -1,0 +1,24 @@
+{
+    "update": {
+        "package": {
+            "date": "1664297809091",
+            "version": "8.0.2",
+            "versionName": "Forsaken Fiat",
+            "notes": {
+                "features": [
+                "New machine UI, including screens supporting new compliance features and flows",
+                "Add customisable operator contact info on error screens",
+                "Configurable crypto-address blacklist",
+                "Add transactions notifications via SMS and email",
+                "More descriptive SMS alerts, including originating machine"
+                ],
+                "fixes": [
+                "New machine UI, including screens supporting new compliance features and flows",
+                "Add customisable operator contact info on error screens",
+                "Configurable crypto-address blacklist"
+                ]
+            },
+            "url": ""
+        }
+    }
+}
