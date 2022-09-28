@@ -37,6 +37,7 @@ const GET_MACHINES = gql`
       downloadSpeed
       responseTime
       packetLoss
+      isEnabled
     }
   }
 `

@@ -54,7 +54,8 @@ const isStaticState = machineState => {
     'unpaired',
     'maintenance',
     'virgin',
-    'wifiList'
+    'wifiList',
+    'disabled'
   ]
   return staticStates.includes(machineState)
 }
@@ -154,6 +155,25 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
             })
           }>
           Reboot
+        </ActionButton>
+        <ActionButton
+          color="primary"
+          className={classes.mr}
+          Icon={ShutdownIcon}
+          InverseIcon={ShutdownReversedIcon}
+          disabled={loading}
+          onClick={() =>
+            !machine.isEnabled
+              ? setAction({
+                  command: 'enable',
+                  display: 'Enable'
+                })
+              : setAction({
+                  command: 'disable',
+                  display: 'Disable'
+                })
+          }>
+          {!machine.isEnabled ? `Enable` : `Disable`}
         </ActionButton>
         <ActionButton
           color="primary"
