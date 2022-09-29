@@ -17,7 +17,7 @@ const styles = {
   titleWrapper: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 30
   },
   rememberMeWrapper: {
@@ -26,8 +26,7 @@ const styles = {
     flexDirection: 'row'
   },
   icon: {
-    transform: 'scale(1.5)',
-    marginRight: 25
+    width: 400
   },
   checkbox: {
     transform: 'scale(1.5)',

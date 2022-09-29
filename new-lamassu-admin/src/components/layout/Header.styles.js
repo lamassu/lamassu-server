@@ -46,7 +46,7 @@ const styles = {
   },
   ul: {
     display: 'flex',
-    paddingLeft: spacer * 4.5,
+    paddingLeft: spacer * 2.5,
     height: spacer * 7,
     margin: 0
   },
@@ -139,14 +139,14 @@ const styles = {
     color: white
   },
   logo: {
+    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     '& > svg': {
-      marginRight: 16
+      marginRight: 10,
+      width: 35,
+      height: 35
     }
-  },
-  logoLink: {
-    cursor: 'pointer'
   },
   actionButtonsContainer: {
     zIndex: 1,

@@ -60,8 +60,8 @@ const WizardSplash = ({ name, onContinue }) => {
       <div className={classes.warningInfo}>
         <WarningIcon className={classes.warningIcon} />
         <P noMargin className={classes.warningText}>
-          Before updating counts on Lamassu Admin, make sure you've done it
-          before on the machines.
+          Before updating counts on Pazuz, make sure you've done it before on
+          the machines.
         </P>
       </div>
       <div className={classes.warningInfo}>

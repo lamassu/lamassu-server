@@ -14,8 +14,8 @@ import { H4 } from 'src/components/typography'
 import AddMachine from 'src/pages/AddMachine'
 import { ReactComponent as AddIconReverse } from 'src/styling/icons/button/add/white.svg'
 import { ReactComponent as AddIcon } from 'src/styling/icons/button/add/zodiac.svg'
-import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
 import { ReactComponent as NotificationIcon } from 'src/styling/icons/menu/notification.svg'
+import { ReactComponent as Logo } from 'src/styling/icons/menu/pazuz.svg'
 
 import styles from './Header.styles'
 
@@ -121,9 +121,9 @@ const Header = memo(({ tree, user }) => {
               setActive(false)
               history.push('/dashboard')
             }}
-            className={classnames(classes.logo, classes.logoLink)}>
-            <Logo />
-            <H4 className={classes.white}>Lamassu Admin</H4>
+            className={classes.logo}>
+            <Logo fill="white" />
+            <H4 className={classes.white}>Pazuz</H4>
           </div>
           <nav className={classes.nav}>
             <ul className={classes.ul}>

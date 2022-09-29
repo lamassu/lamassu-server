@@ -91,8 +91,7 @@ const Dashboard = () => {
           <div className={classes.emptyMachinesContent}>
             <H1 className={classes.offColor}>No machines on your system yet</H1>
             <Info2 className={classes.offColor}>
-              To fully take advantage of Lamassu Admin, add a new machine to
-              your system
+              To fully take advantage of Pazuz, add a new machine to your system
             </Info2>
             <Button onClick={() => setOpen(true)}>+ Add new machine</Button>
           </div>
