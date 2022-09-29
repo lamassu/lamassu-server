@@ -45,7 +45,15 @@ const styles = {
     marginLeft: 48
   },
   button: {
-    marginTop: 64
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 64,
+    '& > *': {
+      marginRight: 25
+    },
+    '& > *:last-child': {
+      marginRight: 0
+    }
   },
   nameTitle: {
     marginTop: 16,
@@ -143,6 +151,13 @@ const styles = {
     '& > p': {
       marginLeft: 10
     }
+  },
+  locationForm: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  existingLocation: {
+    marginBottom: 45
   }
 }
 
