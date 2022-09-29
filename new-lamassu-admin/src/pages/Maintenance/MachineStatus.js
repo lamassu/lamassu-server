@@ -56,31 +56,21 @@ const GET_DATA = gql`
 const GET_MACHINES_UPDATE_STATUS = gql`
   query getMachinesUpdateStatus {
     getMachinesUpdateStatus {
+      deviceId
       event
     }
   }
 `
 
-const useStyles = makeStyles(mainStyles)
-
-const mockUpdateInfo = {
-  version: '7.6',
-  versionName: 'Forsaken Fiat',
-  notes: {
-    features: [
-      'New machine UI, including screens supporting new compliance features and flows',
-      'Add customisable operator contact info on error screens',
-      'Configurable crypto-address blacklist',
-      'Add transactions notifications via SMS and email',
-      'More descriptive SMS alerts, including originating machine'
-    ],
-    fixes: [
-      'New machine UI, including screens supporting new compliance features and flows',
-      'Add customisable operator contact info on error screens',
-      'Configurable crypto-address blacklist'
-    ]
+const GET_AVAILABLE_UPDATES = gql`
+  query getAvailableUpdates {
+    getAvailableUpdates {
+      info
+    }
   }
-}
+`
+
+const useStyles = makeStyles(mainStyles)
 
 const MachineStatus = () => {
   const classes = useStyles()
@@ -97,12 +87,15 @@ const MachineStatus = () => {
   } = useQuery(GET_MACHINES)
   const { data: configResponse, configLoading } = useQuery(GET_DATA)
   const { data: machinesUpdateStatus } = useQuery(GET_MACHINES_UPDATE_STATUS)
+  const { data: availableUpdates } = useQuery(GET_AVAILABLE_UPDATES)
 
   const timezone = R.path(['config', 'locale_timezone'], configResponse)
   const isMachineFunctional = m => R.head(m?.statuses).type !== 'error'
   const isMachineUpdating = m => {
-    const status = machinesUpdateStatus && machinesUpdateStatus[m?.deviceId]
-    return !R.isNil(status) && (status !== 'successful' || 'error')
+    const status = R.find(R.propEq('deviceId', m?.deviceId))(
+      machinesUpdateStatus?.getMachinesUpdateStatus ?? []
+    )
+    return !R.isNil(status) && (status.event !== 'successful' || 'error')
   }
 
   const handleClick = (m, event) => {
@@ -110,17 +103,21 @@ const MachineStatus = () => {
     setShowUpdateModal(m.name)
   }
 
+  const updateInfo = R.path(['getAvailableUpdates', 'info', 'package'])(
+    availableUpdates
+  )
+
   const updateButton = m => (
     <>
       <ActionButton
-        disabled={!isMachineFunctional(m)}
+        disabled={!isMachineFunctional(m) || !updateInfo?.url}
         color="primary"
         Icon={Download}
         InverseIcon={DownloadInverseIcon}
         className={classes.update}
         onClick={event => handleClick(m, event)}>
         {!isMachineUpdating(m)
-          ? `Update to v${mockUpdateInfo.version}`
+          ? `Update to v${updateInfo?.version}`
           : `Updating...`}
       </ActionButton>
     </>
@@ -236,7 +233,7 @@ const MachineStatus = () => {
       <UpdateModal
         machines={machines}
         refetchData={GET_MACHINES_UPDATE_STATUS}
-        updateInfo={mockUpdateInfo}
+        updateInfo={updateInfo ?? {}}
         showModal={showUpdateModal}
         isMachineUpdating={isMachineUpdating}
         handleClose={() => setShowUpdateModal(false)}></UpdateModal>

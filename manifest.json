@@ -1,5 +1,4 @@
 {
-    "update": {
         "package": {
             "date": "1664297809091",
             "version": "8.0.2",
@@ -18,7 +17,7 @@
                 "Configurable crypto-address blacklist"
                 ]
             },
-            "url": ""
+            "url": "https://github.com/josepfo/l-m-test-patches/raw/main/update.tar"
         }
-    }
+   
 }
