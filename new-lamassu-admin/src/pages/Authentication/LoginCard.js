@@ -2,8 +2,7 @@ import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { useReducer } from 'react'
 
-import { H5 } from 'src/components/typography'
-import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
+import { ReactComponent as Logo } from 'src/styling/icons/menu/pazuzBig.svg'
 
 import Input2FAState from './Input2FAState'
 import InputFIDOState from './InputFIDOState'
@@ -63,7 +62,6 @@ const LoginCard = () => {
       <div className={classes.wrapper}>
         <div className={classes.titleWrapper}>
           <Logo className={classes.icon} />
-          <H5 className={classes.title}>Lamassu Admin</H5>
         </div>
         {renderState()}
       </div>

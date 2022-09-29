@@ -12,7 +12,7 @@ import { H4, P, Label3 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ExpandIconClosed } from 'src/styling/icons/action/expand/closed.svg'
 import { ReactComponent as ExpandIconOpen } from 'src/styling/icons/action/expand/open.svg'
-import { ReactComponent as WhiteLogo } from 'src/styling/icons/menu/logo-white.svg'
+import { ReactComponent as WhiteLogo } from 'src/styling/icons/menu/pazuz.svg'
 import { formatDate } from 'src/utils/timezones'
 
 import styles from './SMSNotices.styles'
@@ -98,7 +98,7 @@ const SMSPreview = ({ sms, coords, timezone }) => {
     <div className={classes.smsPreview}>
       <div className={classes.smsPreviewContainer}>
         <div className={classes.smsPreviewIcon}>
-          <WhiteLogo width={22} height={22} />
+          <WhiteLogo width={22} height={22} fill={'white'} />
         </div>
         <Paper className={classes.smsPreviewContent}>
           <P noMargin>

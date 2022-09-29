@@ -60,7 +60,7 @@ function Footer({ currentStep, steps, subtitle, text, exImage, open, start }) {
             direction={open ? 'column' : 'row'}
             justify="flex-start"
             alignItems="baseline">
-            <H2 className={classes.title}>Setup Lamassu Admin</H2>
+            <H2 className={classes.title}>Setup Pazuz</H2>
             <Info2 className={classes.subtitle}>{subtitle}</Info2>
             {open && <P>{text}</P>}
           </Grid>

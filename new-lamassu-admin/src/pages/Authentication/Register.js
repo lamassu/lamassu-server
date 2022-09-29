@@ -9,8 +9,8 @@ import * as Yup from 'yup'
 
 import { Button } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
-import { H2, Label3, P } from 'src/components/typography'
-import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
+import { Label3, P } from 'src/components/typography'
+import { ReactComponent as Logo } from 'src/styling/icons/menu/pazuzBig.svg'
 
 import styles from './shared.styles'
 
@@ -146,7 +146,6 @@ const Register = () => {
             <div className={classes.wrapper}>
               <div className={classes.titleWrapper}>
                 <Logo className={classes.icon} />
-                <H2 className={classes.title}>Lamassu Admin</H2>
               </div>
               {!loading && state.result === 'success' && (
                 <Formik

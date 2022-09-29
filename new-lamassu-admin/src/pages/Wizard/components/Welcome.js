@@ -29,7 +29,7 @@ function Welcome({ doContinue }) {
 
   return (
     <div className={classes.welcome}>
-      <H1 className={classes.title}>Welcome to the Lamassu Admin</H1>
+      <H1 className={classes.title}>Welcome to the Pazuz</H1>
       <P className={classes.getStarted}>
         To get you started, we’ve put together a wizard that will
         <br />

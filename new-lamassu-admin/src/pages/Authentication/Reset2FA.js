@@ -9,8 +9,8 @@ import { useLocation, useHistory } from 'react-router-dom'
 
 import { ActionButton, Button } from 'src/components/buttons'
 import { CodeInput } from 'src/components/inputs/base'
-import { H2, Label2, Label3, P } from 'src/components/typography'
-import { ReactComponent as Logo } from 'src/styling/icons/menu/logo.svg'
+import { Label2, Label3, P } from 'src/components/typography'
+import { ReactComponent as Logo } from 'src/styling/icons/menu/pazuzBig.svg'
 import { primaryColor } from 'src/styling/variables'
 
 import styles from './shared.styles'
@@ -130,7 +130,6 @@ const Reset2FA = () => {
             <div className={classes.wrapper}>
               <div className={classes.titleWrapper}>
                 <Logo className={classes.icon} />
-                <H2 className={classes.title}>Lamassu Admin</H2>
               </div>
               {!loading && state.result === 'success' && (
                 <>
