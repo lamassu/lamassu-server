@@ -1,14 +1,11 @@
-/* eslint-disable no-unused-vars */
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import { Form, Formik, FastField } from 'formik'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useEffect, useState } from 'react'
-import * as uuid from 'uuid'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
-import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import ErrorMessage from 'src/components/ErrorMessage'
 import { Button } from 'src/components/buttons'
 import { Autocomplete } from 'src/components/inputs'
@@ -16,7 +13,7 @@ import {
   TextInput,
   Autocomplete as FormikAutocomplete
 } from 'src/components/inputs/formik'
-import { spacer, tomato } from 'src/styling/variables'
+import { spacer } from 'src/styling/variables'
 import { fromNamespace, namespaces } from 'src/utils/config'
 
 import Modal from '../Modal'
@@ -36,58 +33,6 @@ const GET_COUNTRIES = gql`
       code
       display
     }
-  }
-`
-
-const EDIT_LOCATION = gql`
-  mutation editMachineLocation(
-    $id: ID
-    $label: String
-    $addressLine1: String
-    $addressLine2: String
-    $zipCode: String
-    $country: String
-  ) {
-    editMachineLocation(
-      id: $id
-      label: $label
-      addressLine1: $addressLine1
-      addressLine2: $addressLine2
-      zipCode: $zipCode
-      country: $country
-    )
-  }
-`
-
-const CREATE_LOCATION = gql`
-  mutation createMachineLocation(
-    $id: ID
-    $label: String
-    $addressLine1: String
-    $addressLine2: String
-    $zipCode: String
-    $country: String
-  ) {
-    createMachineLocation(
-      id: $id
-      label: $label
-      addressLine1: $addressLine1
-      addressLine2: $addressLine2
-      zipCode: $zipCode
-      country: $country
-    )
-  }
-`
-
-const DELETE_LOCATION = gql`
-  mutation deleteMachineLocation($locationId: ID) {
-    deleteMachineLocation(locationId: $locationId)
-  }
-`
-
-const ASSIGN_LOCATION = gql`
-  mutation assignLocation($machineId: ID, $locationId: ID) {
-    assignLocation(machineId: $machineId, locationId: $locationId)
   }
 `
 
@@ -126,9 +71,14 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const EditLocationModal = ({ machine, handleClose }) => {
+const EditLocationModal = ({
+  machine,
+  handleClose,
+  editAction,
+  deleteAction,
+  createAction
+}) => {
   const classes = useStyles()
-  const [confirmDialog, setConfirmDialog] = useState(false)
   const { data, loading, refetch } = useQuery(GET_COUNTRIES, {
     onCompleted: () =>
       setPreset(
@@ -136,10 +86,6 @@ const EditLocationModal = ({ machine, handleClose }) => {
           locationOptions[0]
       )
   })
-  const [deleteMachineLocation] = useMutation(DELETE_LOCATION)
-  const [editMachineLocation] = useMutation(EDIT_LOCATION)
-  const [createMachineLocation] = useMutation(CREATE_LOCATION)
-  const [assignMachineLocation] = useMutation(ASSIGN_LOCATION)
 
   const machineLocations = data?.machineLocations ?? []
   const countries = data?.countries ?? []
@@ -198,34 +144,15 @@ const EditLocationModal = ({ machine, handleClose }) => {
   const isNewLocation = it => R.equals(it, newLocationOption)
 
   const createLocation = location => {
-    const newLocationId = uuid.v4()
-    return createMachineLocation({
-      variables: { ...location, id: newLocationId }
-    })
-      .then(() =>
-        assignMachineLocation({
-          variables: {
-            machineId: machine.deviceId,
-            locationId: newLocationId
-          }
-        })
-      )
-      .then(() => handleClose())
+    return createAction(location)
   }
 
   const editLocation = location => {
-    editMachineLocation({
-      variables: { ...location }
-    })
-      .then(() =>
-        assignMachineLocation({
-          variables: {
-            machineId: machine.deviceId,
-            locationId: location.id
-          }
-        })
-      )
-      .then(() => handleClose())
+    return editAction(location)
+  }
+
+  const deleteLocation = (location, onActionSuccess) => {
+    return deleteAction(location, onActionSuccess)
   }
 
   return (
@@ -249,7 +176,7 @@ const EditLocationModal = ({ machine, handleClose }) => {
             }
             return editLocation(location)
           }}>
-          {({ errors, setFieldValue }) => (
+          {({ values, errors, setFieldValue }) => (
             <>
               {!R.isEmpty(machineLocations) && (
                 <div className={classes.existingLocation}>
@@ -317,7 +244,18 @@ const EditLocationModal = ({ machine, handleClose }) => {
                     {!isNewLocation(preset) && (
                       <Button
                         type="button"
-                        onClick={() => setConfirmDialog(true)}>
+                        onClick={() =>
+                          deleteLocation(values.location, () =>
+                            refetch()
+                              .then(() =>
+                                setFieldValue(
+                                  'location',
+                                  newLocationValues.location
+                                )
+                              )
+                              .then(() => setPreset(newLocationOption))
+                          )
+                        }>
                         Delete
                       </Button>
                     )}
@@ -325,23 +263,6 @@ const EditLocationModal = ({ machine, handleClose }) => {
                   </div>
                 </div>
               </Form>
-              <ConfirmDialog
-                open={confirmDialog}
-                title={`Delete this location?`}
-                toBeConfirmed={preset?.value?.label}
-                onConfirmed={() => {
-                  deleteMachineLocation({
-                    variables: { locationId: preset.value.id }
-                  })
-                    .then(() => setConfirmDialog(false))
-                    .then(() => refetch())
-                    .then(() =>
-                      setFieldValue('location', newLocationValues.location)
-                    )
-                    .then(() => setPreset(newLocationOption))
-                }}
-                onDismissed={() => setConfirmDialog(false)}
-              />
             </>
           )}
         </Formik>

@@ -25,8 +25,14 @@ const MACHINE_ACTION = gql`
     $deviceId: ID!
     $action: MachineAction!
     $newName: String
+    $location: JSONObject
   ) {
-    machineAction(deviceId: $deviceId, action: $action, newName: $newName) {
+    machineAction(
+      deviceId: $deviceId
+      action: $action
+      newName: $newName
+      location: $location
+    ) {
       deviceId
     }
   }
@@ -89,7 +95,11 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       setErrorMessage(errorMessage)
     },
     onCompleted: () => {
-      onActionSuccess && onActionSuccess()
+      if (action.onActionSuccess) {
+        action.onActionSuccess()
+      } else {
+        onActionSuccess && onActionSuccess()
+      }
       setAction({ display: action.display, command: null })
     }
   })
@@ -115,6 +125,29 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       {showLocationModal && (
         <EditLocationModal
           machine={machine}
+          editAction={location =>
+            setAction({
+              command: 'editLocation',
+              title: "Edit this machine's location",
+              arguments: { location }
+            })
+          }
+          deleteAction={(location, onActionSuccess) =>
+            setAction({
+              command: 'deleteLocation',
+              title: `Delete location '${location?.label}'`,
+              toBeConfirmed: location?.label,
+              arguments: { location },
+              onActionSuccess
+            })
+          }
+          createAction={location =>
+            setAction({
+              command: 'createLocation',
+              title: 'Create a new location for this machine',
+              arguments: { location }
+            })
+          }
           handleClose={() => {
             onActionSuccess && onActionSuccess()
             setShowLocationModal(false)
@@ -209,9 +242,9 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       <ConfirmDialog
         disabled={disabled}
         open={confirmDialogOpen}
-        title={`${action.display} this machine?`}
+        title={action.title ?? `${action.display} this machine?`}
         errorMessage={errorMessage}
-        toBeConfirmed={machine.name}
+        toBeConfirmed={action.toBeConfirmed ?? machine.name}
         message={action?.message}
         confirmationMessage={action?.confirmationMessage}
         saveButtonAlwaysEnabled={action?.command === 'rename'}
@@ -221,7 +254,8 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
             variables: {
               deviceId: machine.deviceId,
               action: `${action?.command}`,
-              ...(action?.command === 'rename' && { newName: value })
+              ...(action?.command === 'rename' && { newName: value }),
+              ...(action?.arguments ?? {})
             }
           })
         }}
