@@ -15,6 +15,7 @@ import { ReactComponent as ShutdownIcon } from 'src/styling/icons/button/shut do
 import { ReactComponent as UnpairReversedIcon } from 'src/styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zodiac.svg'
 
+import EditLocationModal from './EditLocationModal'
 import { machineActionsStyles } from './MachineActions.styles'
 
 const useStyles = makeStyles(machineActionsStyles)
@@ -67,6 +68,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
   const [action, setAction] = useState({ command: null })
   const [preflightOptions, setPreflightOptions] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
+  const [showLocationModal, setShowLocationModal] = useState(false)
   const classes = useStyles()
 
   const warningMessage = (
@@ -110,6 +112,15 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
 
   return (
     <div>
+      {showLocationModal && (
+        <EditLocationModal
+          machine={machine}
+          handleClose={() => {
+            onActionSuccess && onActionSuccess()
+            setShowLocationModal(false)
+          }}
+        />
+      )}
       <H3>Actions</H3>
       <div className={classes.stack}>
         <ActionButton
@@ -184,6 +195,15 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
             })
           }}>
           Restart services
+        </ActionButton>
+        <ActionButton
+          color="primary"
+          className={classes.mr}
+          Icon={EditIcon}
+          InverseIcon={EditReversedIcon}
+          disabled={loading}
+          onClick={() => setShowLocationModal(true)}>
+          Change location
         </ActionButton>
       </div>
       <ConfirmDialog

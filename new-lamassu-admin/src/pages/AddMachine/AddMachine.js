@@ -240,7 +240,7 @@ const LocationComponent = ({
       addressLine1: location?.addressLine1 ?? '',
       addressLine2: location?.addressLine2 ?? '',
       zipCode: location?.zipCode ?? '',
-      country: location?.country ?? localeCountry?.code ?? ''
+      country: location?.country ?? localeCountry?.display ?? ''
     }
   }
 
@@ -266,6 +266,11 @@ const LocationComponent = ({
     { label: 'New location' },
     ...R.map(it => ({ label: it.label, value: it }), machineLocations)
   ]
+  const [preset, setPreset] = useState(locationOptions[0])
+
+  const newLocationOption = R.find(it => !it.value, locationOptions)
+
+  const isNewLocation = it => R.equals(it, newLocationOption)
 
   return (
     !loading && (
@@ -296,17 +301,19 @@ const LocationComponent = ({
                     label={`Select an existing location`}
                     getOptionSelected={R.eqProps('value')}
                     labelProp={'label'}
+                    value={preset}
                     options={locationOptions}
                     onChange={(_, it) => {
+                      setPreset(it)
                       setFieldValue(
                         'location',
-                        !it.value ? initialValues.location : it.value
+                        isNewLocation(it) ? initialValues.location : it.value
                       )
-                      setDisabled(!!it.value)
+                      setDisabled(!isNewLocation(it))
                       // NOTE: Autocomplete fields have a weird behavior with the disabled prop, when they already have a value in them (see initialValues),
                       // where they do not disable until being touched, remaining permanently disabled until touched again (if the 'disabled' flag allows it in this case).
                       // Touching the field makes the behavior work as intended
-                      setFieldTouched('location.country', !it.value)
+                      setFieldTouched('location.country', !!isNewLocation(it))
                     }}
                   />
                 </div>
@@ -348,7 +355,7 @@ const LocationComponent = ({
                     fullWidth
                     options={countries}
                     labelProp="display"
-                    valueProp="code"
+                    valueProp="display"
                     error={errors.location?.country}
                     disabled={disabled}
                   />

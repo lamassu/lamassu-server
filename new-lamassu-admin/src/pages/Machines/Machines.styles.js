@@ -1,4 +1,4 @@
-import { spacer, comet } from 'src/styling/variables'
+import { spacer, comet, zircon } from 'src/styling/variables'
 
 const styles = {
   grid: {
@@ -56,10 +56,23 @@ const styles = {
   contentContainer: {
     '& > *': {
       marginTop: 26
-    },
-    '& > *:first-child': {
-      marginTop: 0
     }
+  },
+  overviewRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    '& > *': {
+      marginRight: 26
+    },
+    '& > *:last-child': {
+      marginRight: 0
+    }
+  },
+  machineBackground: {
+    minWidth: 116,
+    minHeight: 116,
+    backgroundColor: zircon,
+    borderRadius: 8
   }
 }
 
