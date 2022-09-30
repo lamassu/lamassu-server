@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import { formatDistance } from 'date-fns'
+import * as R from 'ramda'
 import React from 'react'
 
 import { Status } from 'src/components/Status'
@@ -16,14 +17,31 @@ const Overview = ({ data, onActionSuccess }) => {
 
   return (
     <div className={classes.contentContainer}>
-      <div className={classes.row}>
-        <div className={classes.rowItem}>
-          <H3>{data.name}</H3>
+      <div className={classes.overviewRow}>
+        <div className={classes.machineBackground}></div>
+        <div className={classes.overviewInfo}>
+          <div className={classes.rowItem}>
+            <H3>{data.name}</H3>
+          </div>
+          {!R.isNil(data.location) && (
+            <div>
+              <Label1 noMargin>Address</Label1>
+              <P noMargin>
+                {`${data.location.addressLine1}${
+                  data.location.addressLine2
+                    ? `, ${data.location.addressLine2}`
+                    : ``
+                }, ${data.location.zipCode}, ${data.location.country}`}
+              </P>
+            </div>
+          )}
         </div>
       </div>
       <div className={classes.row}>
         <div className={classes.rowItem}>
-          <Label1 className={classes.label3}>Status</Label1>
+          <Label1 noMargin className={classes.label3}>
+            Status
+          </Label1>
           {data && data.statuses ? <Status status={data.statuses[0]} /> : null}
         </div>
       </div>

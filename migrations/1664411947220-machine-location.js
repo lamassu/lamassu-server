@@ -8,7 +8,8 @@ exports.up = function (next) {
       address_line_1 TEXT NOT NULL,
       address_line_2 TEXT,
       zip_code TEXT NOT NULL,
-      country TEXT NOT NULL
+      country TEXT NOT NULL,
+      created TIMESTAMPTZ NOT NULL DEFAULT now()
     )`,
     `ALTER TABLE devices ADD COLUMN machine_location UUID REFERENCES machine_locations(id)`,
     `ALTER TABLE pairing_tokens ADD COLUMN machine_location UUID REFERENCES machine_locations(id)`

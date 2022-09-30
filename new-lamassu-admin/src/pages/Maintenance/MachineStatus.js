@@ -37,6 +37,14 @@ const GET_MACHINES = gql`
       downloadSpeed
       responseTime
       packetLoss
+      location {
+        id
+        label
+        addressLine1
+        addressLine2
+        zipCode
+        country
+      }
     }
   }
 `
@@ -115,7 +123,11 @@ const MachineStatus = () => {
   )
 
   const InnerMachineDetailsRow = ({ it }) => (
-    <MachineDetailsRow it={it} onActionSuccess={refetch} timezone={timezone} />
+    <MachineDetailsRow
+      it={it}
+      onActionSuccess={() => refetch()}
+      timezone={timezone}
+    />
   )
 
   const loading = machinesLoading || configLoading
