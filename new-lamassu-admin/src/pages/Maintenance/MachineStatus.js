@@ -164,7 +164,7 @@ const MachineStatus = () => {
     },
     {
       header: 'Software Version',
-      width: 250,
+      width: 320,
       size: 'sm',
       textAlign: 'left',
       view: m => (

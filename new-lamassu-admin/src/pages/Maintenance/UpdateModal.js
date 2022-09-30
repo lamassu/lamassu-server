@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -60,9 +60,21 @@ const styles = {
 }
 
 const REQUEST_UPDATE = gql`
-  mutation RequestUpdate($deviceId: ID!, $event: String!) {
-    requestUpdate(deviceId: $deviceId, event: $event) {
+  mutation RequestUpdate($deviceId: ID!, $event: String!, $note: String!) {
+    requestUpdate(deviceId: $deviceId, event: $event, note: $note) {
       deviceId
+    }
+  }
+`
+
+const GET_UPDATE_STATUSES = gql`
+  query getUpdateStatuses($deviceId: ID!) {
+    getUpdateStatuses(deviceId: $deviceId) {
+      event
+      note
+      newVersion
+      previousVersion
+      deviceTime
     }
   }
 `
@@ -89,11 +101,21 @@ const UpdateModal = ({
     refetchQueries: ['getMachinesUpdateStatus']
   })
 
+  const { data: updateStatuses } = useQuery(GET_UPDATE_STATUSES, {
+    variables: { deviceId: machine?.deviceId ?? '' }
+  })
+
   const update = () => {
     updateRequest({
-      variables: { deviceId: machine?.deviceId, event: 'requested' }
+      variables: {
+        deviceId: machine?.deviceId,
+        event: 'requested',
+        note: 'Update request sent.'
+      }
     })
   }
+
+  console.log(machine?.version < version, machine?.version, version)
 
   const releaseNotes = (
     <>
@@ -120,7 +142,11 @@ const UpdateModal = ({
 
   const updateLogs = (
     <>
-      <div className={classes.outerNotes}></div>
+      <div className={classes.outerNotes}>
+        {R.map(elem => <P>{`${elem?.deviceTime}: ${elem?.note}\n`}</P>)(
+          updateStatuses?.getUpdateStatuses ?? []
+        )}
+      </div>
     </>
   )
 
@@ -147,7 +173,7 @@ const UpdateModal = ({
           : `Update logs:`}
       </P>
       {!isMachineUpdating(machine) ? releaseNotes : updateLogs}
-      {!isMachineUpdating(machine) && (
+      {!isMachineUpdating(machine) && machine?.version < version && (
         <div className={classes.footer}>
           {error && <ErrorMessage>{}</ErrorMessage>}
           <Button onClick={() => update()} className={classes.button}>
