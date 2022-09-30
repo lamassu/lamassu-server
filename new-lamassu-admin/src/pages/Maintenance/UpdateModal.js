@@ -115,8 +115,6 @@ const UpdateModal = ({
     })
   }
 
-  console.log(machine?.version < version, machine?.version, version)
-
   const releaseNotes = (
     <>
       <div className={classes.outerNotes}>
@@ -173,14 +171,15 @@ const UpdateModal = ({
           : `Update logs:`}
       </P>
       {!isMachineUpdating(machine) ? releaseNotes : updateLogs}
-      {!isMachineUpdating(machine) && machine?.version < version && (
-        <div className={classes.footer}>
-          {error && <ErrorMessage>{}</ErrorMessage>}
-          <Button onClick={() => update()} className={classes.button}>
-            Update machine
-          </Button>
-        </div>
-      )}
+      {!isMachineUpdating(machine) &&
+        R.head(R.split('-')(machine?.version ?? '')) < version && (
+          <div className={classes.footer}>
+            {error && <ErrorMessage>{}</ErrorMessage>}
+            <Button onClick={() => update()} className={classes.button}>
+              Update machine
+            </Button>
+          </div>
+        )}
     </Modal>
   )
 }
