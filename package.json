@@ -131,7 +131,8 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "new-lamassu-admin/*"
+      "new-lamassu-admin/*",
+      "manifest.json"
     ]
   },
   "devDependencies": {

@@ -65,34 +65,42 @@ const Tooltip = memo(({ children, width, Icon = HelpIcon }) => {
   )
 })
 
-const HoverableTooltip = memo(({ parentElements, children, width }) => {
-  const handler = usePopperHandler(width)
+const HoverableTooltip = memo(
+  ({ parentElements, children, width, className, ...props }) => {
+    const handler = usePopperHandler(width)
 
-  return (
-    <ClickAwayListener onClickAway={handler.handleCloseHelpPopper}>
-      <div>
-        {!R.isNil(parentElements) && (
-          <div onMouseEnter={handler.handleOpenHelpPopper}>
-            {parentElements}
-          </div>
-        )}
-        {R.isNil(parentElements) && (
-          <button
-            type="button"
-            onMouseEnter={handler.handleOpenHelpPopper}
-            className={handler.classes.transparentButton}>
-            <HelpIcon />
-          </button>
-        )}
-        <Popper
-          open={handler.helpPopperOpen}
-          anchorEl={handler.helpPopperAnchorEl}
-          placement="bottom">
-          <div className={handler.classes.popoverContent}>{children}</div>
-        </Popper>
-      </div>
-    </ClickAwayListener>
-  )
-})
+    return (
+      <ClickAwayListener onClickAway={handler.handleCloseHelpPopper}>
+        <div>
+          {!R.isNil(parentElements) && (
+            <div
+              onMouseEnter={handler.handleOpenHelpPopper}
+              onMouseLeave={handler.handleCloseHelpPopper}>
+              {parentElements}
+            </div>
+          )}
+          {R.isNil(parentElements) && (
+            <button
+              type="button"
+              onMouseEnter={handler.handleOpenHelpPopper}
+              onMouseLeave={handler.handleCloseHelpPopper}
+              className={handler.classes.transparentButton}>
+              <HelpIcon />
+            </button>
+          )}
+          <Popper
+            open={handler.helpPopperOpen}
+            anchorEl={handler.helpPopperAnchorEl}
+            placement="bottom"
+            {...props}>
+            <div className={className ?? handler.classes.popoverContent}>
+              {children}
+            </div>
+          </Popper>
+        </div>
+      </ClickAwayListener>
+    )
+  }
+)
 
 export { Tooltip, HoverableTooltip }

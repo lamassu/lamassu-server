@@ -3,21 +3,20 @@ import classnames from 'classnames'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { white } from 'src/styling/variables'
+import { white, errorColor } from 'src/styling/variables'
 
-const Popover = ({
-  children,
-  bgColor = white,
-  arrowSize = 6,
-  className,
-  ...props
-}) => {
+const colors = {
+  white: white,
+  tomato: errorColor
+}
+
+const Popover = ({ children, bgColor, arrowSize = 6, className, ...props }) => {
   const [arrowRef, setArrowRef] = useState(null)
 
   const styles = {
     popover: {
       zIndex: 3000,
-      backgroundColor: bgColor,
+      backgroundColor: colors[bgColor] ?? white,
       borderRadius: 4
     },
     arrow: {
@@ -32,7 +31,7 @@ const Popover = ({
       height: 0,
       borderLeft: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', 'transparent']],
-      borderBottom: [['2em', 'solid', bgColor]],
+      borderBottom: [['2em', 'solid', colors[bgColor] ?? white]],
       marginTop: '-1.9em',
       '&:after': {
         zIndex: -10,
@@ -58,7 +57,7 @@ const Popover = ({
       height: 0,
       borderLeft: [['2em', 'solid', 'transparent']],
       borderRight: [['2em', 'solid', 'transparent']],
-      borderTop: [['2em', 'solid', bgColor]],
+      borderTop: [['2em', 'solid', colors[bgColor] ?? white]],
       marginBottom: '-1.9em',
       '&:after': {
         zIndex: -10,
@@ -84,7 +83,7 @@ const Popover = ({
       height: 0,
       borderTop: [['2em', 'solid', 'transparent']],
       borderBottom: [['2em', 'solid', 'transparent']],
-      borderRight: [['2em', 'solid', bgColor]],
+      borderRight: [['2em', 'solid', colors[bgColor] ?? white]],
       marginLeft: '-1.9em'
     },
     arrowLeft: {
@@ -93,11 +92,11 @@ const Popover = ({
       height: 0,
       borderTop: [['2em', 'solid', 'transparent']],
       borderBottom: [['2em', 'solid', 'transparent']],
-      borderLeft: [['2em', 'solid', bgColor]],
+      borderLeft: [['2em', 'solid', colors[bgColor] ?? white]],
       marginRight: '-1.9em'
     },
     root: {
-      backgroundColor: bgColor
+      backgroundColor: colors[bgColor] ?? white
     }
   }
 
