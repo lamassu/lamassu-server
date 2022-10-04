@@ -15,6 +15,12 @@ const useStyles = makeStyles(styles)
 const Overview = ({ data, onActionSuccess }) => {
   const classes = useStyles()
 
+  const getAddressString = location => {
+    return `${location.addressLine1}${
+      location.addressLine2 ? `, ${location.addressLine2}` : ``
+    }, ${location.zipCode}, ${location.country}`
+  }
+
   return (
     <div className={classes.contentContainer}>
       <div className={classes.overviewRow}>
@@ -26,13 +32,7 @@ const Overview = ({ data, onActionSuccess }) => {
           {!R.isNil(data.location) && (
             <div>
               <Label1 noMargin>Address</Label1>
-              <P noMargin>
-                {`${data.location.addressLine1}${
-                  data.location.addressLine2
-                    ? `, ${data.location.addressLine2}`
-                    : ``
-                }, ${data.location.zipCode}, ${data.location.country}`}
-              </P>
+              <P noMargin>{getAddressString(data.location)}</P>
             </div>
           )}
         </div>
