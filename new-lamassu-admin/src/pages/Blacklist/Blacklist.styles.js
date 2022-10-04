@@ -7,11 +7,15 @@ const styles = {
   content: {
     display: 'flex',
     flexDirection: 'column',
-    flex: 1,
-    marginLeft: spacer * 6
+    flex: 1
   },
   footer: {
-    margin: [['auto', 0, spacer * 3, 'auto']]
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 3, 0]]
+  },
+  submit: {
+    margin: [['auto', 0, 0, 'auto']]
   },
   modalTitle: {
     margin: [['auto', 0, 8.5, 'auto']]

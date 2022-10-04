@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { DeleteDialog } from 'src/components/DeleteDialog'
 import { IconButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
-import { Label1 } from 'src/components/typography'
 import CopyToClipboard from 'src/pages/Transactions/CopyToClipboard'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
 
@@ -15,7 +14,6 @@ const useStyles = makeStyles(styles)
 
 const BlacklistTable = ({
   data,
-  selectedCoin,
   handleDeleteEntry,
   errorMessage,
   setErrorMessage,
@@ -29,8 +27,8 @@ const BlacklistTable = ({
   const elements = [
     {
       name: 'address',
-      header: <Label1 className={classes.white}>{'Addresses'}</Label1>,
-      width: 800,
+      header: 'Address',
+      width: 1070,
       textAlign: 'left',
       size: 'sm',
       view: it => (
@@ -41,7 +39,7 @@ const BlacklistTable = ({
     },
     {
       name: 'deleteButton',
-      header: <Label1 className={classes.white}>{'Delete'}</Label1>,
+      header: 'Delete',
       width: 130,
       textAlign: 'center',
       size: 'sm',
@@ -57,14 +55,11 @@ const BlacklistTable = ({
       )
     }
   ]
-  const dataToShow = selectedCoin
-    ? data[selectedCoin.code]
-    : data[R.keys(data)[0]]
 
   return (
     <>
       <DataTable
-        data={dataToShow}
+        data={data}
         elements={elements}
         emptyText="No blacklisted addresses so far"
         name="blacklistTable"
