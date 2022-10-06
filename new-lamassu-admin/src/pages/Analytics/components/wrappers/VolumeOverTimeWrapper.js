@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 import { Select, Switch } from 'src/components/inputs'
 import { H2 } from 'src/components/typography'
-import { primaryColor } from 'src/styling/variables'
+import { neon, java } from 'src/styling/variables'
 
 import styles from '../../Analytics.styles'
 import Graph from '../../graphs/Graph'
@@ -12,7 +12,7 @@ import LegendEntry from '../LegendEntry'
 
 const useStyles = makeStyles(styles)
 
-const OverTimeDotGraphHeader = ({
+const VolumeOverTimeGraphHeader = ({
   title,
   representing,
   period,
@@ -28,16 +28,23 @@ const OverTimeDotGraphHeader = ({
   const [logarithmic, setLogarithmic] = useState()
 
   const legend = {
-    cashIn: <div className={classes.cashInIcon}></div>,
-    cashOut: <div className={classes.cashOutIcon}></div>,
-    transaction: <div className={classes.txIcon}></div>,
-    median: (
+    cashIn: (
       <svg height="12" width="18">
         <path
-          stroke={primaryColor}
+          stroke={java}
           strokeWidth="3"
-          strokeDasharray="5, 2"
-          d="M 5 6 l 20 0"
+          d="M 3 6 l 12 0"
+          stroke-linecap="round"
+        />
+      </svg>
+    ),
+    cashOut: (
+      <svg height="12" width="18">
+        <path
+          stroke={neon}
+          strokeWidth="3"
+          d="M 3 6 l 12 0"
+          stroke-linecap="round"
         />
       </svg>
     )
@@ -51,11 +58,6 @@ const OverTimeDotGraphHeader = ({
           <Box className={classes.graphLegend}>
             <LegendEntry IconElement={legend.cashIn} label={'Cash-in'} />
             <LegendEntry IconElement={legend.cashOut} label={'Cash-out'} />
-            <LegendEntry
-              IconElement={legend.transaction}
-              label={'One transaction'}
-            />
-            <LegendEntry IconElement={legend.median} label={'Median'} />
           </Box>
         </div>
         <div className={classes.graphHeaderRight}>
@@ -86,4 +88,4 @@ const OverTimeDotGraphHeader = ({
   )
 }
 
-export default OverTimeDotGraphHeader
+export default VolumeOverTimeGraphHeader

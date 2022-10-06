@@ -1,7 +1,15 @@
 import BigNumber from 'bignumber.js'
 import * as d3 from 'd3'
 import { getTimezoneOffset } from 'date-fns-tz'
-import { add, format, startOfWeek, startOfYear } from 'date-fns/fp'
+import {
+  add,
+  addMilliseconds,
+  compareDesc,
+  differenceInMilliseconds,
+  format,
+  startOfWeek,
+  startOfYear
+} from 'date-fns/fp'
 import * as R from 'ramda'
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -173,21 +181,64 @@ const Graph = ({
     .domain(periodDomains[period.code])
     .range([GRAPH_MARGIN.left, GRAPH_WIDTH])
 
+  const bins = buildAreas(x.domain())
+    .sort((a, b) => compareDesc(a.date, b.date))
+    .map(addMilliseconds(-dataPoints[period.code].step))
+    .map((date, i, dates) => {
+      // move first and last bin in such way
+      // that all bin have uniform width
+      if (i === 0)
+        return addMilliseconds(dataPoints[period.code].step, dates[1])
+      else if (i === dates.length - 1)
+        return addMilliseconds(
+          -dataPoints[period.code].step,
+          dates[dates.length - 2]
+        )
+      else return date
+    })
+    .map(date => {
+      const middleOfBin = addMilliseconds(
+        dataPoints[period.code].step / 2,
+        date
+      )
+
+      const txs = data.filter(tx => {
+        const txCreated = new Date(tx.created)
+        const shift = new Date(txCreated.getTime() + offset)
+
+        return (
+          Math.abs(differenceInMilliseconds(shift, middleOfBin)) <
+          dataPoints[period.code].step / 2
+        )
+      })
+
+      const cashIn = txs
+        .filter(tx => tx.txClass === 'cashIn')
+        .reduce((sum, tx) => sum + new BigNumber(tx.fiat).toNumber(), 0)
+
+      const cashOut = txs
+        .filter(tx => tx.txClass === 'cashOut')
+        .reduce((sum, tx) => sum + new BigNumber(tx.fiat).toNumber(), 0)
+
+      return { date: middleOfBin, cashIn, cashOut }
+    })
+
+  const min = d3.min(bins, d => Math.min(d.cashIn, d.cashOut)) ?? 0
+  const max = d3.max(bins, d => Math.max(d.cashIn, d.cashOut)) ?? 1000
+
   const yLin = d3
     .scaleLinear()
-    .domain([
-      0,
-      (d3.max(data, d => new BigNumber(d.fiat).toNumber()) ?? 1000) * 1.03
-    ])
+    .domain([0, (max === min ? min + 1000 : max) * 1.03])
     .nice()
     .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
 
   const yLog = d3
     .scaleLog()
     .domain([
-      (d3.min(data, d => new BigNumber(d.fiat).toNumber()) ?? 1) * 0.9,
-      (d3.max(data, d => new BigNumber(d.fiat).toNumber()) ?? 1000) * 1.1
+      min === 0 ? 0.9 : min * 0.9,
+      (max === min ? min + Math.pow(10, 2 * min + 1) : max) * 2
     ])
+    .clamp(true)
     .range([GRAPH_HEIGHT - GRAPH_MARGIN.bottom, GRAPH_MARGIN.top])
 
   const y = log ? yLog : yLin
@@ -496,41 +547,68 @@ const Graph = ({
       .style('fill', primaryColor)
   }, [])
 
-  const buildAvg = useCallback(
-    g => {
-      const median = d3.median(data, d => new BigNumber(d.fiat).toNumber()) ?? 0
-
-      if (log && median === 0) return
-
-      g.attr('stroke', primaryColor)
-        .attr('stroke-width', 3)
-        .attr('stroke-dasharray', '10, 5')
-        .call(g =>
-          g
-            .append('line')
-            .attr('y1', 0.5 + y(median))
-            .attr('y2', 0.5 + y(median))
-            .attr('x1', GRAPH_MARGIN.left)
-            .attr('x2', GRAPH_WIDTH)
-        )
-    },
-    [GRAPH_MARGIN, y, data, log]
-  )
-
   const drawData = useCallback(
     g => {
-      g.selectAll('circle')
-        .data(data)
+      g.append('clipPath')
+        .attr('id', 'clip-path')
+        .append('rect')
+        .attr('x', GRAPH_MARGIN.left)
+        .attr('y', GRAPH_MARGIN.top)
+        .attr('width', GRAPH_WIDTH)
+        .attr('height', GRAPH_HEIGHT - GRAPH_MARGIN.bottom - GRAPH_MARGIN.top)
+        .attr('fill', java)
+
+      g.append('g')
+        .attr('clip-path', 'url(#clip-path)')
+        .selectAll('circle .cashIn')
+        .data(bins)
         .join('circle')
-        .attr('cx', d => {
-          const created = new Date(d.created)
-          return x(created.setTime(created.getTime() + offset))
-        })
-        .attr('cy', d => y(new BigNumber(d.fiat).toNumber()))
-        .attr('fill', d => (d.txClass === 'cashIn' ? java : neon))
-        .attr('r', 3.5)
+        .attr('cx', d => x(d.date))
+        .attr('cy', d => y(d.cashIn))
+        .attr('fill', java)
+        .attr('r', d => (d.cashIn === 0 ? 0 : 3.5))
+
+      g.append('path')
+        .datum(bins)
+        .attr('fill', 'none')
+        .attr('stroke', java)
+        .attr('stroke-width', 3)
+        .attr('clip-path', 'url(#clip-path)')
+        .attr(
+          'd',
+          d3
+            .line()
+            .curve(d3.curveMonotoneX)
+            .x(d => x(d.date))
+            .y(d => y(d.cashIn))
+        )
+
+      g.append('g')
+        .attr('clip-path', 'url(#clip-path)')
+        .selectAll('circle .cashIn')
+        .data(bins)
+        .join('circle')
+        .attr('cx', d => x(d.date))
+        .attr('cy', d => y(d.cashOut))
+        .attr('fill', neon)
+        .attr('r', d => (d.cashOut === 0 ? 0 : 3.5))
+
+      g.append('path')
+        .datum(bins)
+        .attr('fill', 'none')
+        .attr('stroke', neon)
+        .attr('stroke-width', 3)
+        .attr('clip-path', 'url(#clip-path)')
+        .attr(
+          'd',
+          d3
+            .line()
+            .curve(d3.curveMonotoneX)
+            .x(d => x(d.date))
+            .y(d => y(d.cashOut))
+        )
     },
-    [data, offset, x, y]
+    [x, y, bins, GRAPH_MARGIN]
   )
 
   const drawChart = useCallback(() => {
@@ -539,17 +617,15 @@ const Graph = ({
       .attr('viewBox', [0, 0, GRAPH_WIDTH, GRAPH_HEIGHT])
 
     svg.append('g').call(buildGrid)
-    svg.append('g').call(buildAvg)
+    svg.append('g').call(drawData)
     svg.append('g').call(buildXAxis)
     svg.append('g').call(buildYAxis)
     svg.append('g').call(formatTicksText)
     svg.append('g').call(formatText)
     svg.append('g').call(formatTicks)
-    svg.append('g').call(drawData)
 
     return svg.node()
   }, [
-    buildAvg,
     buildGrid,
     buildXAxis,
     buildYAxis,
