@@ -114,6 +114,10 @@ const mainStyles = {
     marginLeft: 10,
     paddingLeft: 5,
     paddingRight: 5
+  },
+  pendingBox: {
+    display: 'flex',
+    alignItems: 'center'
   }
 }
 

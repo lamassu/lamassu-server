@@ -8,7 +8,8 @@ const global = {
     display: 'flex',
     alignItems: 'center',
     position: 'relative',
-    flex: 'wrap'
+    flex: 'wrap',
+    gap: 5
   },
   section: {
     marginBottom: 52

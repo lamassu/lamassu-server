@@ -4,7 +4,10 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import { HoverableTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
+import { P } from 'src/components/typography'
 import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
 import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
 import { ReactComponent as OverrideLabelIcon } from 'src/styling/icons/status/spring2.svg'
@@ -118,6 +121,24 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           }
         ]}
         iconClassName={classes.listViewButton}
+        appendix={
+          <HoverableTooltip width={320}>
+            <P>
+              For details about commissions, please read the relevant
+              knowledgebase articles:
+            </P>
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/115001211752-Fixed-fees-Minimum-transaction"
+              label="Fixed fees & Minimum transaction"
+              bottomSpace="1"
+            />
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/360061558352-Commissions-and-Profit-Calculations"
+              label="SCommissions and Profit Calculations"
+              bottomSpace="1"
+            />
+          </HoverableTooltip>
+        }
       />
 
       {!showMachines && !loading && (
