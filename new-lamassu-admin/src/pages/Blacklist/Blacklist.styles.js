@@ -9,6 +9,14 @@ const styles = {
     flexDirection: 'column',
     flex: 1
   },
+  advancedForm: {
+    '& > *': {
+      marginTop: 20
+    },
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  },
   footer: {
     display: 'flex',
     flexDirection: 'row',
@@ -58,6 +66,9 @@ const styles = {
   cancelButton: {
     marginRight: 8,
     padding: 0
+  },
+  resetToDefault: {
+    width: 145
   }
 }
 
