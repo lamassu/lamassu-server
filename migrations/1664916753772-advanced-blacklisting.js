@@ -13,9 +13,7 @@ exports.up = function (next) {
       allow_toggle BOOLEAN NOT NULL DEFAULT true
     )`,
     `INSERT INTO blacklist_messages (id, label, content, allow_toggle) VALUES ('${defaultMessageId}', 'Suspicious address', 'This address may be associated with a deceptive offer or a prohibited group. Please make sure you''re using an address from your own wallet.', false)`,
-    `ALTER TABLE blacklist ADD COLUMN blacklist_message_id UUID REFERENCES blacklist_messages(id)`,
-    `UPDATE blacklist SET blacklist_message_id = '${defaultMessageId}'`,
-    `ALTER TABLE blacklist ALTER COLUMN blacklist_message_id SET NOT NULL`
+    `ALTER TABLE blacklist ADD COLUMN blacklist_message_id UUID REFERENCES blacklist_messages(id) NOT NULL DEFAULT '${defaultMessageId}'`
   ]
 
   db.multi(sql, next)
