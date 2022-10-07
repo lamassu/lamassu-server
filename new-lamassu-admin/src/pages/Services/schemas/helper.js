@@ -1,7 +1,11 @@
 import { ALL_CRYPTOS } from '@lamassu/coins'
 import * as R from 'ramda'
 
-import { WARNING_LEVELS } from 'src/utils/constants'
+const WARNING_LEVELS = {
+  CLEAN: 'clean',
+  PARTIAL: 'partial',
+  IMPORTANT: 'important'
+}
 
 const secretTest = (secret, message) => ({
   name: 'secret-test',

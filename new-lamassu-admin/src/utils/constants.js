@@ -9,11 +9,6 @@ const MANUAL = 'manual'
 const IP_CHECK_REGEX = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 
 const SWEEPABLE_CRYPTOS = ['ETH']
-const WARNING_LEVELS = {
-  CLEAN: 'clean',
-  PARTIAL: 'partial',
-  IMPORTANT: 'important'
-}
 
 export {
   CURRENCY_MAX,
@@ -23,6 +18,5 @@ export {
   MANUAL,
   WALLET_SCORING_DEFAULT_THRESHOLD,
   IP_CHECK_REGEX,
-  SWEEPABLE_CRYPTOS,
-  WARNING_LEVELS
+  SWEEPABLE_CRYPTOS
 }
