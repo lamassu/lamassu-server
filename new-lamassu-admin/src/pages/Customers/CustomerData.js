@@ -180,9 +180,7 @@ const CustomerData = ({
       checkAgainstSanctions: () =>
         checkAgainstSanctions({
           variables: {
-            firstName: initialValues.idCardData.firstName,
-            lastName: initialValues.idCardData.lastName,
-            birthdate: R.replace(/-/g, '')(initialValues.idCardData.dateOfBirth)
+            customerId: R.path(['id'])(customer)
           }
         }),
       initialValues: initialValues.idCardData,

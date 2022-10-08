@@ -288,16 +288,8 @@ const GET_ACTIVE_CUSTOM_REQUESTS = gql`
 `
 
 const CHECK_AGAINST_SANCTIONS = gql`
-  query checkAgainstSanctions(
-    $firstName: String
-    $lastName: String
-    $birthdate: String
-  ) {
-    checkAgainstSanctions(
-      firstName: $firstName
-      lastName: $lastName
-      birthdate: $birthdate
-    ) {
+  query checkAgainstSanctions($customerId: ID) {
+    checkAgainstSanctions(customerId: $customerId) {
       ofacSanctioned
     }
   }
@@ -412,10 +404,7 @@ const CustomerProfile = memo(() => {
   })
 
   const [checkAgainstSanctions] = useLazyQuery(CHECK_AGAINST_SANCTIONS, {
-    onCompleted: ({ checkAgainstSanctions: { ofacSanctioned } }) =>
-      updateCustomer({
-        sanctions: !ofacSanctioned
-      })
+    onCompleted: () => getCustomer()
   })
 
   const updateCustomer = it =>
