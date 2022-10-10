@@ -19,7 +19,7 @@ const ALL_MACHINES = {
 }
 
 const ALL_COINS = {
-  display: 'All Coins',
+  header: 'All Coins',
   code: 'ALL_COINS'
 }
 
@@ -51,7 +51,7 @@ const getView = (data, code, compare) => it => {
 const displayCodeArray = data => it => {
   if (!it) return it
 
-  return R.compose(R.join(', '), R.map(getView(data, 'display')))(it)
+  return R.compose(R.join(', '), R.map(getView(data, 'header')))(it)
 }
 
 const onCryptoChange = (prev, curr, setValue) => {
@@ -73,7 +73,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const rawCryptos = getData(['cryptoCurrencies'])
   const cryptoData = [ALL_COINS].concat(
-    R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
+    R.map(it => ({ header: it.code, code: it.code }))(rawCryptos ?? [])
   )
 
   return [
@@ -98,7 +98,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       inputProps: {
         options: cryptoData,
         valueProp: 'code',
-        labelProp: 'display',
+        labelProp: 'header',
         multiple: true,
         onChange: onCryptoChange,
         shouldStayOpen: true
@@ -107,7 +107,6 @@ const getOverridesFields = (getData, currency, auxElements) => {
     {
       header: cashInHeader,
       name: 'cashIn',
-      display: 'Cash-in',
       width: 130,
       input: NumberInput,
       textAlign: 'right',
@@ -120,7 +119,6 @@ const getOverridesFields = (getData, currency, auxElements) => {
     {
       header: cashOutHeader,
       name: 'cashOut',
-      display: 'Cash-out',
       width: 130,
       input: NumberInput,
       textAlign: 'right',
@@ -132,7 +130,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'fixedFee',
-      display: 'Fixed fee',
+      header: 'Fixed Fee',
       width: 144,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
@@ -145,7 +143,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimum Tx',
+      header: 'Minimum Tx',
       width: 169,
       doubleHeader: 'Cash-in only',
       textAlign: 'center',
@@ -159,7 +157,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'cashOutFixedFee',
-      display: 'Fixed Fee',
+      header: 'Fixed Fee',
       width: 144,
       doubleHeader: 'Cash-out only',
       textAlign: 'center',
@@ -178,7 +176,6 @@ const mainFields = currency => [
   {
     header: cashInHeader,
     name: 'cashIn',
-    display: 'Cash-in',
     width: 169,
     size: 'lg',
     editingAlign: 'right',
@@ -192,7 +189,6 @@ const mainFields = currency => [
   {
     header: cashOutHeader,
     name: 'cashOut',
-    display: 'Cash-out',
     width: 169,
     size: 'lg',
     editingAlign: 'right',
@@ -205,7 +201,7 @@ const mainFields = currency => [
   },
   {
     name: 'fixedFee',
-    display: 'Fixed fee',
+    header: 'Fixed Fee',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
@@ -220,7 +216,7 @@ const mainFields = currency => [
   },
   {
     name: 'minimumTx',
-    display: 'Minimum Tx',
+    header: 'Minimum Tx',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
@@ -235,7 +231,7 @@ const mainFields = currency => [
   },
   {
     name: 'cashOutFixedFee',
-    display: 'Fixed Fee',
+    header: 'Fixed Fee',
     width: 169,
     doubleHeader: 'Cash-out only',
     textAlign: 'center',
@@ -315,7 +311,7 @@ const getOverridesSchema = (values, rawData, locale) => {
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const rawCryptos = getData(['cryptoCurrencies'])
   const cryptoData = [ALL_COINS].concat(
-    R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
+    R.map(it => ({ header: it.code, code: it.code }))(rawCryptos ?? [])
   )
 
   const bills = getBillOptions(locale, denominations).map(it =>
@@ -531,7 +527,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'cryptoCurrencies',
-      display: 'Crypto Currency',
+      header: 'Crypto Currency',
       width: 255,
       view: R.prop(0),
       size: 'sm',
@@ -540,7 +536,6 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     {
       header: cashInHeader,
       name: 'cashIn',
-      display: 'Cash-in',
       width: 130,
       input: NumberInput,
       textAlign: 'right',
@@ -553,7 +548,6 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     {
       header: cashOutHeader,
       name: 'cashOut',
-      display: 'Cash-out',
       width: 140,
       input: NumberInput,
       textAlign: 'right',
@@ -566,7 +560,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'fixedFee',
-      display: 'Fixed fee',
+      header: 'Fixed Fee',
       width: 144,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
@@ -579,7 +573,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimum Tx',
+      header: 'Minimum Tx',
       width: 144,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
@@ -592,7 +586,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'cashOutFixedFee',
-      display: 'Fixed Fee',
+      header: 'Fixed Fee',
       width: 144,
       doubleHeader: 'Cash-out only',
       textAlign: 'center',
