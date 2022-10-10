@@ -145,7 +145,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimun Tx',
+      display: 'Minimum Tx',
       width: 169,
       doubleHeader: 'Cash-in only',
       textAlign: 'center',
@@ -220,7 +220,7 @@ const mainFields = currency => [
   },
   {
     name: 'minimumTx',
-    display: 'Minimun Tx',
+    display: 'Minimum Tx',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
@@ -579,7 +579,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimun Tx',
+      display: 'Minimum Tx',
       width: 144,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
