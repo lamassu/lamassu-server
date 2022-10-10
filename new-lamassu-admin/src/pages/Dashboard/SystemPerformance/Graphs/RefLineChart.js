@@ -5,10 +5,10 @@ import React, { useEffect, useRef, useCallback } from 'react'
 import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 
 const transactionProfit = tx => {
-  const cashInFee = tx.cashInFee ? Number.parseFloat(tx.cashInFee) : 0
+  const fixedFee = tx.fixedFee ? Number.parseFloat(tx.fixedFee) : 0
   const commission =
     Number.parseFloat(tx.commissionPercentage) * Number.parseFloat(tx.fiat)
-  return commission + cashInFee
+  return commission + fixedFee
 }
 
 const mockPoint = (tx, offsetMs, profit) => {
