@@ -64,10 +64,11 @@ const Commissions = ({ name: SCREEN_KEY, id: deviceId }) => {
             cashIn: config.cashIn,
             cashOut: config.cashOut,
             fixedFee: config.fixedFee,
-            minimumTx: config.minimumTx
+            minimumTx: config.minimumTx,
+            cashOutFixedFee: config.cashOutFixedFee
           },
           R.project(
-            ['cashIn', 'cashOut', 'fixedFee', 'minimumTx'],
+            ['cashIn', 'cashOut', 'fixedFee', 'minimumTx', 'cashOutFixedFee'],
             R.filter(
               o =>
                 R.includes(coin.code, o.cryptoCurrencies) ||

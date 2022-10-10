@@ -156,6 +156,20 @@ const getOverridesFields = (getData, currency, auxElements) => {
       inputProps: {
         decimalPlaces: 2
       }
+    },
+    {
+      name: 'cashOutFixedFee',
+      display: 'Fixed Fee',
+      width: 144,
+      doubleHeader: 'Cash-out only',
+      textAlign: 'center',
+      editingAlign: 'right',
+      input: NumberInput,
+      suffix: currency,
+      bold: bold,
+      inputProps: {
+        decimalPlaces: 2
+      }
     }
   ]
 }
@@ -218,6 +232,20 @@ const mainFields = currency => [
     inputProps: {
       decimalPlaces: 2
     }
+  },
+  {
+    name: 'cashOutFixedFee',
+    display: 'Fixed Fee',
+    width: 169,
+    doubleHeader: 'Cash-out only',
+    textAlign: 'center',
+    editingAlign: 'right',
+    input: NumberInput,
+    suffix: currency,
+    bold: bold,
+    inputProps: {
+      decimalPlaces: 2
+    }
   }
 ]
 
@@ -244,12 +272,17 @@ const getSchema = locale => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Fixed Fee')
+      .label('Cash-in Fixed Fee')
       .min(0)
       .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    cashOutFixedFee: Yup.number()
+      .label('Cash-out Fixed Fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -339,12 +372,17 @@ const getOverridesSchema = (values, rawData, locale) => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Fixed Fee')
+      .label('Cash-in Fixed Fee')
       .min(0)
       .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    cashOutFixedFee: Yup.number()
+      .label('Cash-out Fixed Fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -355,7 +393,8 @@ const defaults = {
   cashIn: '',
   cashOut: '',
   fixedFee: '',
-  minimumTx: ''
+  minimumTx: '',
+  cashOutFixedFee: ''
 }
 
 const overridesDefaults = {
@@ -364,7 +403,8 @@ const overridesDefaults = {
   cashIn: '',
   cashOut: '',
   fixedFee: '',
-  minimumTx: ''
+  minimumTx: '',
+  cashOutFixedFee: ''
 }
 
 const getOrder = ({ machine, cryptoCurrencies }) => {
@@ -384,6 +424,7 @@ const createCommissions = (cryptoCode, deviceId, isDefault, config) => {
     fixedFee: config.fixedFee,
     cashOut: config.cashOut,
     cashIn: config.cashIn,
+    cashOutFixedFee: config.cashOutFixedFee,
     machine: deviceId,
     cryptoCurrencies: [cryptoCode],
     default: isDefault,
@@ -450,12 +491,17 @@ const getListCommissionsSchema = locale => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Fixed Fee')
+      .label('Cash-in Fixed Fee')
       .min(0)
       .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    cashOutFixedFee: Yup.number()
+      .label('Cash-out Fixed Fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -540,6 +586,20 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       textAlign: 'right',
       suffix: currency,
       textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 2
+      }
+    },
+    {
+      name: 'cashOutFixedFee',
+      display: 'Fixed Fee',
+      width: 144,
+      doubleHeader: 'Cash-out only',
+      textAlign: 'center',
+      editingAlign: 'right',
+      input: NumberInput,
+      suffix: currency,
+      bold: bold,
       inputProps: {
         decimalPlaces: 2
       }
