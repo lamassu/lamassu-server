@@ -61,6 +61,14 @@ const getOverridesFields = currency => {
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
       suffix: currency
+    },
+    {
+      name: 'cashOutFixedFee',
+      display: 'Fixed fee',
+      width: 155,
+      doubleHeader: 'Cash-out only',
+      textAlign: 'right',
+      suffix: currency
     }
   ]
 }

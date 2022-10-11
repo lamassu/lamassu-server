@@ -22,22 +22,27 @@ const styles = {
 const useStyles = makeStyles(styles)
 
 const groupSecondHeader = elements => {
-  const [toSHeader, noSHeader] = R.partition(R.has('doubleHeader'))(elements)
-
-  if (!toSHeader.length) {
-    return [elements, THead]
-  }
-
-  const index = R.indexOf(toSHeader[0], elements)
-  const width = R.compose(R.sum, R.map(R.path(['width'])))(toSHeader)
-
-  const innerElements = R.insert(
-    index,
-    { width, elements: toSHeader, name: toSHeader[0].doubleHeader },
-    noSHeader
+  const doubleHeader = R.prop('doubleHeader')
+  const sameDoubleHeader = (a, b) => doubleHeader(a) === doubleHeader(b)
+  const group = R.pipe(
+    R.groupWith(sameDoubleHeader),
+    R.map(group =>
+      R.isNil(doubleHeader(group[0])) // No doubleHeader
+        ? group
+        : [
+            {
+              width: R.sum(R.map(R.prop('width'), group)),
+              elements: group,
+              name: doubleHeader(group[0])
+            }
+          ]
+    ),
+    R.reduce(R.concat, [])
   )
 
-  return [innerElements, TDoubleLevelHead]
+  return R.all(R.pipe(doubleHeader, R.isNil), elements)
+    ? [elements, THead]
+    : [group(elements), TDoubleLevelHead]
 }
 
 const Header = () => {

@@ -124,7 +124,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
     .toFixed(2, 1) // ROUND_DOWN
   const commissionPercentage =
     Number.parseFloat(tx.commissionPercentage, 2) * 100
-  const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
+  const fixedFee = Number.parseFloat(tx.fixedFee) || 0
   const fiat = Number.parseFloat(tx.fiat)
   const crypto = getCryptoAmount(tx)
   const exchangeRate = (fiat / crypto).toFixed(2)
@@ -339,7 +339,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         </div>
         <div>
           <Label>Fixed fee</Label>
-          <div>{isCashIn ? `${cashInFee} ${tx.fiatCode}` : 'N/A'}</div>
+          <div>{`${fixedFee} ${tx.fiatCode}`}</div>
         </div>
       </div>
       <div className={classes.secondRow}>

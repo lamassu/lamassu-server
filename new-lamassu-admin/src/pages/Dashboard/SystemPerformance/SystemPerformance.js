@@ -36,7 +36,7 @@ const GET_DATA = gql`
     transactions(excludeTestingCustomers: $excludeTestingCustomers) {
       fiatCode
       fiat
-      cashInFee
+      fixedFee
       commissionPercentage
       created
       txClass
