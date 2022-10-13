@@ -47,10 +47,10 @@ const FiatBalanceOverrides = ({ config, section }) => {
 
   const cashoutConfig = it => fromNamespace(it)(config)
 
-  const overridenMachines = R.map(override => override.machine, setupValues)
+  const overriddenMachines = R.map(override => override.machine, setupValues)
   const suggestionFilter = R.filter(
     it =>
-      !R.includes(it.deviceId, overridenMachines) &&
+      !R.includes(it.deviceId, overriddenMachines) &&
       cashoutConfig(it.deviceId).active
   )
   const suggestions = suggestionFilter(machines)

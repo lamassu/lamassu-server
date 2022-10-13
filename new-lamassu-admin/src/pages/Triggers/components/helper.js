@@ -52,10 +52,10 @@ const getOverridesSchema = (values, customInfoRequests) => {
           const _values = R.filter(it => it.id !== id, values)
           if (R.find(R.propEq('requirement', requirement))(_values)) {
             return this.createError({
-              message: `Requirement ${displayRequirement(
+              message: `Requirement '${displayRequirement(
                 requirement,
                 customInfoRequests
-              )} already overriden`
+              )}' already overridden`
             })
           }
           return true

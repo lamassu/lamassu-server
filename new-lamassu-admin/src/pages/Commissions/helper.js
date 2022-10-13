@@ -318,7 +318,7 @@ const getOverridesSchema = (values, rawData, locale) => {
               'deviceId'
             )(machine)
 
-            const message = `${codes} already overriden for machine: ${machineView}`
+            const message = `${codes} already overridden for machine: ${machineView}`
 
             return this.createError({ message })
           }

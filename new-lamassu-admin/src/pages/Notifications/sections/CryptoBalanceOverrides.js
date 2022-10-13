@@ -35,9 +35,9 @@ const CryptoBalanceOverrides = ({ section }) => {
     return save(newOverrides)
   }
 
-  const overridenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(setupValues)
+  const overriddenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(setupValues)
   const suggestionFilter = R.filter(
-    it => !R.contains(it.code, overridenCryptos)
+    it => !R.contains(it.code, overriddenCryptos)
   )
   const suggestions = suggestionFilter(cryptoCurrencies)
 
