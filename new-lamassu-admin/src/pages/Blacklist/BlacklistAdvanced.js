@@ -22,8 +22,8 @@ const useStyles = makeStyles(styles)
 const DEFAULT_MESSAGE = `This address may be associated with a deceptive offer or a prohibited group. Please make sure you're using an address from your own wallet.`
 
 const getErrorMsg = (formikErrors, formikTouched, mutationError) => {
-  if (!formikErrors || !formikTouched) return null
   if (mutationError) return 'Internal server error'
+  if (!formikErrors || !formikTouched) return null
   if (formikErrors.event && formikTouched.event) return formikErrors.event
   if (formikErrors.message && formikTouched.message) return formikErrors.message
   return null
@@ -79,7 +79,8 @@ const BlacklistAdvanced = ({
         <IconButton
           className={classes.deleteButton}
           disabled={
-            !R.isNil(R.path(['allowToggle']) && !R.path(['allowToggle'], it))
+            !R.isNil(R.path(['allowToggle'], it)) &&
+            !R.path(['allowToggle'], it)
           }>
           {R.path(['allowToggle'], it) ? (
             <DeleteIcon />
