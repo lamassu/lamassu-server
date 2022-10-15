@@ -35,11 +35,6 @@ const GET_BLACKLIST = gql`
   query getBlacklistData {
     blacklist {
       address
-      blacklistMessage {
-        id
-        label
-        content
-      }
     }
     cryptoCurrencies {
       display
