@@ -3,10 +3,10 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { isAfter, subDays, endOfMinute, subMinutes } from 'date-fns/fp'
+import { isAfter, subDays, startOfMinute, startOfHour } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { EmptyTable } from 'src/components/table'
 import { Label1, Label2, P } from 'src/components/typography/index'
@@ -43,10 +43,15 @@ const GET_DATA = gql`
 `
 
 const GET_TRANSACTION = gql`
-  query getTransactions($from: Date, $excludeTestingCustomers: Boolean) {
+  query getTransactions(
+    $from: Date
+    $excludeTestingCustomers: Boolean
+    $updatedSince: Date
+  ) {
     transactions(
       from: $from
       excludeTestingCustomers: $excludeTestingCustomers
+      updatedSince: $updatedSince
     ) {
       id
       fiatCode
@@ -66,29 +71,42 @@ const GET_TRANSACTION = gql`
 const SystemPerformance = () => {
   const classes = useStyles()
   const [selectedRange, setSelectedRange] = useState('Day')
-  const [transactions, setTransactions] = useState([])
-  const [initialTxLoading, setInitialTxLoading] = useState(true)
-  const { data, loading: dataLoading } = useQuery(GET_DATA)
+  const initialTimestamp = startOfHour(Date.now())
   const NOW = Date.now()
 
-  useQuery(GET_TRANSACTION, {
+  const { data, loading: dataLoading } = useQuery(GET_DATA)
+
+  const { data: initialTxs, loading: loadingTxs } = useQuery(GET_TRANSACTION, {
     variables: {
-      from: R.isEmpty(transactions)
-        ? endOfMinute(subDays(31, NOW))
-        : endOfMinute(subMinutes(2, NOW)),
+      from: startOfMinute(subDays(31, initialTimestamp)),
+      updatedSince: null,
       excludeTestingCustomers: true
-    },
-    pollInterval: 10000,
-    notifyOnNetworkStatusChange: true,
-    onCompleted: data => {
-      setInitialTxLoading(false)
-      setTransactions(
-        R.unionWith(R.eqBy(R.prop('id')), data.transactions || [], transactions)
-      )
     }
   })
 
-  const loading = dataLoading || initialTxLoading
+  const { data: updatedTxs, startPolling, stopPolling } = useQuery(
+    GET_TRANSACTION,
+    {
+      variables: {
+        from: startOfMinute(subDays(31, initialTimestamp)),
+        updatedSince: initialTimestamp,
+        excludeTestingCustomers: true
+      }
+    }
+  )
+
+  useEffect(() => {
+    startPolling(10000)
+    return stopPolling
+  })
+
+  const transactions = R.unionWith(
+    R.eqBy(R.prop('id')),
+    updatedTxs?.transactions ?? [],
+    initialTxs?.transactions ?? []
+  )
+
+  const loading = dataLoading || loadingTxs
 
   const fiatLocale =
     !loading && fromNamespace('locale')(data?.config).fiatCurrency
