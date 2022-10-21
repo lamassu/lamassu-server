@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { isAfter } from 'date-fns/fp'
+import { isAfter, subDays, endOfMinute, subMinutes } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -32,8 +32,23 @@ const getFiats = R.map(R.prop('fiat'))
 const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
-  query getData($excludeTestingCustomers: Boolean) {
-    transactions(excludeTestingCustomers: $excludeTestingCustomers) {
+  query getData {
+    fiatRates {
+      code
+      name
+      rate
+    }
+    config
+  }
+`
+
+const GET_TRANSACTION = gql`
+  query getTransactions($from: Date, $excludeTestingCustomers: Boolean) {
+    transactions(
+      from: $from
+      excludeTestingCustomers: $excludeTestingCustomers
+    ) {
+      id
       fiatCode
       fiat
       fixedFee
@@ -45,25 +60,47 @@ const GET_DATA = gql`
       dispense
       sendConfirmed
     }
-    fiatRates {
-      code
-      name
-      rate
-    }
-    config
   }
 `
 
 const SystemPerformance = () => {
   const classes = useStyles()
   const [selectedRange, setSelectedRange] = useState('Day')
-  const { data, loading } = useQuery(GET_DATA, {
-    variables: { excludeTestingCustomers: true }
-  })
-  const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
-  const timezone = fromNamespace('locale')(data?.config).timezone
-
+  const [transactions, setTransactions] = useState([])
+  const { data, loading: dataLoading } = useQuery(GET_DATA)
   const NOW = Date.now()
+
+  const { loading: transactionsLoading } = useQuery(GET_TRANSACTION, {
+    variables: {
+      from: endOfMinute(subDays(31, NOW)),
+      excludeTestingCustomers: true
+    },
+    onCompleted: data => setTransactions(data?.transactions || [])
+  })
+
+  useQuery(GET_TRANSACTION, {
+    variables: {
+      from: endOfMinute(subMinutes(3, NOW)),
+      excludeTestingCustomers: true
+    },
+    pollInterval: 10000,
+    notifyOnNetworkStatusChange: true,
+    onCompleted: data => {
+      setTransactions(
+        R.unionWith(
+          R.eqBy(R.prop('id')),
+          data?.transactions || [],
+          transactions
+        )
+      )
+    }
+  })
+
+  const loading = transactionsLoading || dataLoading
+
+  const fiatLocale =
+    !loading && fromNamespace('locale')(data?.config).fiatCurrency
+  const timezone = !loading && fromNamespace('locale')(data?.config).timezone
 
   const periodDomains = {
     Day: [NOW - DAY, NOW],
@@ -103,17 +140,19 @@ const SystemPerformance = () => {
 
   const convertFiatToLocale = item => {
     if (item.fiatCode === fiatLocale) return item
-    const itemRate = R.find(R.propEq('code', item.fiatCode))(data.fiatRates)
-    const localeRate = R.find(R.propEq('code', fiatLocale))(data.fiatRates)
+    const itemRate =
+      !loading && R.find(R.propEq('code', item.fiatCode))(data?.fiatRates)
+    const localeRate =
+      !loading && R.find(R.propEq('code', fiatLocale))(data?.fiatRates)
     const multiplier = localeRate.rate / itemRate.rate
     return { ...item, fiat: parseFloat(item.fiat) * multiplier }
   }
 
   const transactionsToShow = R.map(convertFiatToLocale)(
-    R.filter(isInRangeAndNoError(false), data?.transactions ?? [])
+    R.filter(isInRangeAndNoError(false), transactions)
   )
   const transactionsLastTimePeriod = R.map(convertFiatToLocale)(
-    R.filter(isInRangeAndNoError(true), data?.transactions ?? [])
+    R.filter(isInRangeAndNoError(true), transactions)
   )
 
   const getNumTransactions = () => {
@@ -179,16 +218,16 @@ const SystemPerformance = () => {
   return (
     <>
       <Nav
-        showPicker={!loading && !R.isEmpty(data.transactions)}
+        showPicker={!loading && !R.isEmpty(transactions)}
         handleSetRange={setSelectedRange}
       />
-      {!loading && R.isEmpty(data.transactions) && (
+      {!loading && R.isEmpty(transactions) && (
         <EmptyTable
           className={classes.emptyTransactions}
           message="No transactions so far"
         />
       )}
-      {!loading && !R.isEmpty(data.transactions) && (
+      {!loading && !R.isEmpty(transactions) && (
         <>
           <Grid container spacing={2}>
             <Grid item xs={3}>
