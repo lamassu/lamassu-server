@@ -67,36 +67,28 @@ const SystemPerformance = () => {
   const classes = useStyles()
   const [selectedRange, setSelectedRange] = useState('Day')
   const [transactions, setTransactions] = useState([])
+  const [initialTxLoading, setInitialTxLoading] = useState(true)
   const { data, loading: dataLoading } = useQuery(GET_DATA)
   const NOW = Date.now()
 
-  const { loading: transactionsLoading } = useQuery(GET_TRANSACTION, {
-    variables: {
-      from: endOfMinute(subDays(31, NOW)),
-      excludeTestingCustomers: true
-    },
-    onCompleted: data => setTransactions(data?.transactions || [])
-  })
-
   useQuery(GET_TRANSACTION, {
     variables: {
-      from: endOfMinute(subMinutes(3, NOW)),
+      from: R.isEmpty(transactions)
+        ? endOfMinute(subDays(31, NOW))
+        : endOfMinute(subMinutes(2, NOW)),
       excludeTestingCustomers: true
     },
     pollInterval: 10000,
     notifyOnNetworkStatusChange: true,
     onCompleted: data => {
+      setInitialTxLoading(false)
       setTransactions(
-        R.unionWith(
-          R.eqBy(R.prop('id')),
-          data?.transactions || [],
-          transactions
-        )
+        R.unionWith(R.eqBy(R.prop('id')), data.transactions || [], transactions)
       )
     }
   })
 
-  const loading = transactionsLoading || dataLoading
+  const loading = dataLoading || initialTxLoading
 
   const fiatLocale =
     !loading && fromNamespace('locale')(data?.config).fiatCurrency
