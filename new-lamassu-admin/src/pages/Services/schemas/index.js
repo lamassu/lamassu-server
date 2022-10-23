@@ -1,3 +1,4 @@
+import binance from './binance'
 import binanceus from './binanceus'
 import bitgo from './bitgo'
 import bitstamp from './bitstamp'
@@ -23,5 +24,6 @@ export default {
   [binanceus.code]: binanceus,
   [cex.code]: cex,
   [ftx.code]: ftx,
-  [ciphertrace.code]: ciphertrace
+  [ciphertrace.code]: ciphertrace,
+  [binance.code]: binance
 }
