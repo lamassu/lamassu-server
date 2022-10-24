@@ -8,7 +8,7 @@ import { useState, React } from 'react'
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { MainStatus } from 'src/components/Status'
-// import { HoverableTooltip } from 'src/components/Tooltip'
+// import { HelpTooltip } from 'src/components/Tooltip'
 import { ActionButton } from 'src/components/buttons'
 import { Label1, P, H3 } from 'src/components/typography'
 import {
@@ -179,7 +179,7 @@ const EditableCard = ({
               <H3 className={classes.cardTitle}>{title}</H3>
               {
                 // TODO: Enable for next release
-                /* <HoverableTooltip width={304}></HoverableTooltip> */
+                /* <HelpTooltip width={304}></HelpTooltip> */
               }
             </div>
             {state && authorize && (

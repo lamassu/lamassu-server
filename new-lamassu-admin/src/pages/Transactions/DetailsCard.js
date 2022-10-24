@@ -11,7 +11,7 @@ import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { IDButton, ActionButton } from 'src/components/buttons'
 import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
@@ -340,9 +340,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
           <div className={classes.addressHeader}>
             <Label>Address</Label>
             {!R.isNil(tx.walletScore) && (
-              <HoverableTooltip parentElements={walletScoreEl}>
+              <HelpTooltip parentElements={walletScoreEl}>
                 {`CipherTrace score: ${tx.walletScore}/10`}
-              </HoverableTooltip>
+              </HelpTooltip>
             )}
           </div>
           <div>
@@ -369,9 +369,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
       <div className={classes.lastRow}>
         <div className={classes.status}>
           {getStatusDetails(tx) ? (
-            <HoverableTooltip parentElements={errorElements} width={200}>
+            <HelpTooltip parentElements={errorElements} width={200}>
               <P>{getStatusDetails(tx)}</P>
-            </HoverableTooltip>
+            </HelpTooltip>
           ) : (
             errorElements
           )}

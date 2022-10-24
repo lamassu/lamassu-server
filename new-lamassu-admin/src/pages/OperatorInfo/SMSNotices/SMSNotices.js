@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import DataTable from 'src/components/tables/DataTable'
@@ -162,9 +162,9 @@ const SMSNotices = () => {
         !R.isEmpty(TOOLTIPS[it.event]) ? (
           <div className={classes.messageWithTooltip}>
             {R.prop('messageName', it)}
-            <HoverableTooltip width={250}>
+            <HelpTooltip width={250}>
               <P>{TOOLTIPS[it.event]}</P>
-            </HoverableTooltip>
+            </HelpTooltip>
           </div>
         ) : (
           R.prop('messageName', it)
