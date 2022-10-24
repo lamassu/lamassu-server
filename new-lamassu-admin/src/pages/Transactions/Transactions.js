@@ -11,7 +11,7 @@ import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
 import SearchFilter from 'src/components/SearchFilter'
 import Title from 'src/components/Title'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -237,13 +237,13 @@ const Transactions = () => {
           return (
             <div className={classes.pendingBox}>
               {'Pending'}
-              <HoverableTooltip width={285}>
+              <HelpTooltip width={285}>
                 <SupportLinkButton
                   link="https://support.lamassu.is/hc/en-us/articles/115001210452-Cancelling-cash-out-transactions"
                   label="Cancelling cash-out transactions"
                   bottomSpace="0"
                 />
-              </HoverableTooltip>
+              </HelpTooltip>
             </div>
           )
         else return getStatus(it)

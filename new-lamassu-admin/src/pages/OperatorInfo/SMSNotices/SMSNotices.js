@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { IconButton, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import DataTable from 'src/components/tables/DataTable'
@@ -162,9 +162,9 @@ const SMSNotices = () => {
         !R.isEmpty(TOOLTIPS[it.event]) ? (
           <div className={classes.messageWithTooltip}>
             {R.prop('messageName', it)}
-            <HoverableTooltip width={250}>
+            <HelpTooltip width={250}>
               <P>{TOOLTIPS[it.event]}</P>
-            </HoverableTooltip>
+            </HelpTooltip>
           </div>
         ) : (
           R.prop('messageName', it)
@@ -237,7 +237,7 @@ const SMSNotices = () => {
     <>
       <div className={classes.header}>
         <H4>SMS notices</H4>
-        <HoverableTooltip width={320}>
+        <HelpTooltip width={320}>
           <P>
             For details on configuring this panel, please read the relevant
             knowledgebase article:
@@ -247,7 +247,7 @@ const SMSNotices = () => {
             label="Lamassu Support Article"
             bottomSpace="1"
           />
-        </HoverableTooltip>
+        </HelpTooltip>
       </div>
       {showModal && (
         <CustomSMSModal

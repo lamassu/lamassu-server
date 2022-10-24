@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 
 import InfoMessage from 'src/components/InfoMessage'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H1, H4, P } from 'src/components/typography'
@@ -102,7 +102,7 @@ function Twilio({ doContinue }) {
           <H4 noMargin className={classnames(titleClasses)}>
             Will you setup a two way machine or compliance?
           </H4>
-          <HoverableTooltip width={304}>
+          <HelpTooltip width={304}>
             <P>
               Two-way machines allow your customers not only to buy (cash-in)
               but also sell cryptocurrencies (cash-out).
@@ -111,7 +111,7 @@ function Twilio({ doContinue }) {
               You’ll need an SMS service for cash-out transactions and for any
               compliance triggers
             </P>
-          </HoverableTooltip>
+          </HelpTooltip>
         </Box>
 
         <RadioGroup

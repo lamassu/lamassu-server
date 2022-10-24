@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
@@ -87,7 +87,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
         <TitleSection
           title="Cash-out"
           appendix={
-            <HoverableTooltip width={320}>
+            <HelpTooltip width={320}>
               <P>
                 For details on configuring cash-out, please read the relevant
                 knowledgebase article:
@@ -97,7 +97,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
                 label="Enabling cash-out on the admin"
                 bottomSpace="1"
               />
-            </HoverableTooltip>
+            </HelpTooltip>
           }>
           <div className={classes.fudgeFactor}>
             <P>Transaction fudge factor</P>
@@ -111,7 +111,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
             <Label2 className={classes.switchLabel}>
               {fudgeFactorActive ? 'On' : 'Off'}
             </Label2>
-            <HoverableTooltip width={304}>
+            <HelpTooltip width={304}>
               <P>
                 Automatically accept customer deposits as complete if their
                 received amount is 100 crypto atoms or less.
@@ -126,7 +126,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
                 label="Lamassu Support Article"
                 bottomSpace="1"
               />
-            </HoverableTooltip>
+            </HelpTooltip>
           </div>
         </TitleSection>
         <EditableTable
