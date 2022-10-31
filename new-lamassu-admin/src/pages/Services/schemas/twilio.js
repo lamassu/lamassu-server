@@ -47,6 +47,10 @@ export default {
       toNumber: Yup.string('The notifications number must be a string')
         .max(100, 'The notifications number is too long')
         .required('The notifications number is required')
+        .notOneOf(
+          [Yup.ref('fromNumber')],
+          'Twilio number and notifications number must be different'
+        )
     })
   }
 }
