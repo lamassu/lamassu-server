@@ -9,6 +9,8 @@ export default {
   code: 'twilio',
   name: 'Twilio',
   title: 'Twilio (SMS)',
+  supportArticle:
+    'https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS',
   elements: [
     {
       code: 'accountSid',

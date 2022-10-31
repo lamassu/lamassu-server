@@ -28,7 +28,8 @@ const SupportLinkButton = ({ link, label, bottomSpace = 4 }) => {
         className={classes.actionButton}
         color="primary"
         Icon={LinkIcon}
-        InverseIcon={InverseLinkIcon}>
+        InverseIcon={InverseLinkIcon}
+        type="button">
         {label}
       </ActionButton>
     </a>

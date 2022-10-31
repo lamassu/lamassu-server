@@ -145,6 +145,7 @@ const Services = () => {
               elements={getElements(editingSchema)}
               validationSchema={getValidationSchema(editingSchema)}
               value={getAccounts(editingSchema)}
+              supportArticle={editingSchema?.supportArticle}
             />
           </Modal>
         )}
