@@ -17,7 +17,7 @@ const useStyles = makeStyles(styles)
 
 const TModal = ({ onClose, selectedCoin, addTestingAddress, errorMsg }) => {
   const classes = useStyles()
-  const handleAddToBlacklist = address => {
+  const handleAddToTesting = address => {
     if (selectedCoin.code === 'BCH' && !address.startsWith('bitcoincash:')) {
       address = 'bitcoincash:' + address
     }
@@ -43,7 +43,7 @@ const TModal = ({ onClose, selectedCoin, addTestingAddress, errorMsg }) => {
             .required('An address is required')
         })}
         onSubmit={({ address }) => {
-          handleAddToBlacklist(address.trim())
+          handleAddToTesting(address.trim())
         }}>
         <Form id="address-form">
           <H3 className={classes.modalTitle}>
