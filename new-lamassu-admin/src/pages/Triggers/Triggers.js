@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import { getAccountInstance } from 'src/utils/accounts'
 
 import Modal from 'src/components/Modal'
 import { HoverableTooltip } from 'src/components/Tooltip'
@@ -18,6 +19,7 @@ import { ReactComponent as CustomInfoIcon } from 'src/styling/icons/circle butto
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
+import { COMPLIANCE_SERVICES } from 'src/utils/constants'
 
 import CustomInfoRequests from './CustomInfoRequests'
 import TriggerView from './TriggerView'
@@ -132,32 +134,67 @@ const Triggers = () => {
     else toggleWizard('newTrigger')()
   }
 
+  const accounts = data?.accounts ?? {}
+  const isAnyExternalValidationAccountEnabled = () => {
+    try {
+      return R.any(
+        it => it === true,
+        R.map(
+          ite => getAccountInstance(accounts[ite], ite)?.enabled,
+          COMPLIANCE_SERVICES
+        )
+      )
+    } catch (e) {
+      return false
+    }
+  }
+
+  const buttons = []
+  const externalValidationLevels = !R.isEmpty(accounts)
+    ? R.reduce(
+        (acc, value) => {
+          const instances = accounts[value]?.instances ?? {}
+          return {
+            ...acc,
+            [value]: R.map(
+              it => ({ value: it, display: it }),
+              R.uniq(R.map(ite => ite.applicantLevel, instances) ?? [])
+            )
+          }
+        },
+        {},
+        COMPLIANCE_SERVICES
+      )
+    : []
+
+  !isAnyExternalValidationAccountEnabled() &&
+    buttons.push({
+      text: 'Advanced settings',
+      icon: SettingsIcon,
+      inverseIcon: ReverseSettingsIcon,
+      forceDisable: !(subMenu === 'advancedSettings'),
+      toggle: show => {
+        refetch()
+        setSubMenu(show ? 'advancedSettings' : false)
+      }
+    })
+
+  buttons.push({
+    text: 'Custom info requests',
+    icon: CustomInfoIcon,
+    inverseIcon: ReverseCustomInfoIcon,
+    forceDisable: !(subMenu === 'customInfoRequests'),
+    toggle: show => {
+      refetch()
+      setSubMenu(show ? 'customInfoRequests' : false)
+    }
+  })
+
   return (
     <>
       <TitleSection
-        title="Compliance Triggers"
-        buttons={[
-          {
-            text: 'Advanced settings',
-            icon: SettingsIcon,
-            inverseIcon: ReverseSettingsIcon,
-            forceDisable: !(subMenu === 'advancedSettings'),
-            toggle: show => {
-              refetch()
-              setSubMenu(show ? 'advancedSettings' : false)
-            }
-          },
-          {
-            text: 'Custom info requests',
-            icon: CustomInfoIcon,
-            inverseIcon: ReverseCustomInfoIcon,
-            forceDisable: !(subMenu === 'customInfoRequests'),
-            toggle: show => {
-              refetch()
-              setSubMenu(show ? 'customInfoRequests' : false)
-            }
-          }
-        ]}
+        title="Compliance triggers"
+        buttons={buttons}
         className={classnames(titleSectionWidth)}>
         {!subMenu && (
           <Box display="flex" alignItems="center">
@@ -219,8 +256,11 @@ const Triggers = () => {
           config={data?.config ?? {}}
           toggleWizard={toggleWizard('newTrigger')}
           addNewTriger={addNewTriger}
-          customInfoRequests={enabledCustomInfoRequests}
           emailAuth={emailAuth}
+          additionalInfo={{
+            customInfoRequests: enabledCustomInfoRequests,
+            externalValidationLevels: externalValidationLevels
+          }}
         />
       )}
       {!loading && subMenu === 'advancedSettings' && (

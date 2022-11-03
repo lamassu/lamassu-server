@@ -8,7 +8,7 @@ import { useState, React } from 'react'
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { MainStatus } from 'src/components/Status'
-// import { HoverableTooltip } from 'src/components/Tooltip'
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { ActionButton } from 'src/components/buttons'
 import { Label1, P, H3 } from 'src/components/typography'
 import {
@@ -402,4 +402,85 @@ const EditableCard = ({
   )
 }
 
-export default EditableCard
+const NonEditableCard = ({
+  fields,
+  hasImage,
+  state: _state,
+  title,
+  titleIcon
+}) => {
+  const classes = useStyles()
+
+  const { state, comment, labels } = _state
+
+  const label1ClassNames = {
+    [classes.label1]: true,
+    [classes.label1Pending]: state === OVERRIDE_PENDING,
+    [classes.label1Rejected]: state === OVERRIDE_REJECTED,
+    [classes.label1Accepted]: state === OVERRIDE_AUTHORIZED
+  }
+  const authorized =
+    state === OVERRIDE_PENDING
+      ? { label: 'Pending', type: 'neutral' }
+      : state === OVERRIDE_REJECTED
+      ? { label: 'Rejected', type: 'error' }
+      : { label: 'Accepted', type: 'success' }
+
+  return (
+    <div>
+      <Card className={classes.card}>
+        <CardContent>
+          <div className={classes.headerWrapper}>
+            <div className={classes.cardHeader}>
+              {titleIcon}
+              <H3 className={classes.cardTitle}>{title}</H3>
+              {
+                // TODO: Enable for next release
+                /* <HoverableTooltip width={304}></HoverableTooltip> */
+              }
+            </div>
+            {state && (
+              <div className={classnames(label1ClassNames)}>
+                <MainStatus statuses={[authorized]} />
+                {comment && labels && (
+                  <HoverableTooltip width={304}>
+                    <P>Comments about this decision:</P>
+                    {R.map(
+                      it => (
+                        <P noMargin>{it}</P>
+                      ),
+                      R.split('\n', comment)
+                    )}
+                    <P>Relevant labels: {R.join(',', labels)}</P>
+                  </HoverableTooltip>
+                )}
+              </div>
+            )}
+          </div>
+          <div className={classes.row}>
+            <Grid container>
+              <Grid container direction="column" item xs={6}>
+                {!hasImage &&
+                  fields?.map((field, idx) => {
+                    return idx >= 0 && idx < 4 ? (
+                      <ReadOnlyField field={field} value={field.value} />
+                    ) : null
+                  })}
+              </Grid>
+              <Grid container direction="column" item xs={6}>
+                {!hasImage &&
+                  fields?.map((field, idx) => {
+                    return idx >= 4 ? (
+                      <ReadOnlyField field={field} value={field.value} />
+                    ) : null
+                  })}
+              </Grid>
+            </Grid>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export { EditableCard, NonEditableCard }

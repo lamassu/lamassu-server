@@ -11,6 +11,7 @@ import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
 import scorechain from './scorechain'
+import sumsub from './sumsub'
 import telnyx from './telnyx'
 import trongrid from './trongrid'
 import twilio from './twilio'
@@ -33,5 +34,6 @@ export default {
   [scorechain.code]: scorechain,
   [trongrid.code]: trongrid,
   [binance.code]: binance,
-  [bitfinex.code]: bitfinex
+  [bitfinex.code]: bitfinex,
+  [sumsub.code]: sumsub
 }

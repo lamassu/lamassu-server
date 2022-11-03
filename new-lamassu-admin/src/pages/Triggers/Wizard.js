@@ -48,14 +48,27 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const getStep = (step, currency, customInfoRequests, emailAuth) => {
+const getStep = (
+  { step, config },
+  currency,
+  customInfoRequests,
+  emailAuth,
+  triggers,
+  additionalInfo
+) => {
   switch (step) {
     // case 1:
     //   return txDirection
     case 1:
       return type(currency)
     case 2:
-      return requirements(customInfoRequests, emailAuth)
+      return requirements(
+        customInfoRequests,
+        emailAuth,
+        config,
+        triggers,
+        additionalInfo
+      )
     default:
       return Fragment
   }
@@ -166,6 +179,8 @@ const getRequirementText = (config, classes) => {
       return <>blocked</>
     case 'custom':
       return <>asked to fulfill a custom requirement</>
+    case 'external':
+      return <>redirected to an external verification process</>
     default:
       return orUnderline(null, classes)
   }
@@ -210,7 +225,9 @@ const Wizard = ({
   error,
   currency,
   customInfoRequests,
-  emailAuth
+  emailAuth,
+  triggers,
+  additionalInfo
 }) => {
   const classes = useStyles()
 
@@ -220,7 +237,14 @@ const Wizard = ({
   })
 
   const isLastStep = step === LAST_STEP
-  const stepOptions = getStep(step, currency, customInfoRequests, emailAuth)
+  const stepOptions = getStep(
+    { step, config },
+    currency,
+    customInfoRequests,
+    emailAuth,
+    triggers,
+    additionalInfo
+  )
 
   const onContinue = async it => {
     const newConfig = R.merge(config, stepOptions.schema.cast(it))
