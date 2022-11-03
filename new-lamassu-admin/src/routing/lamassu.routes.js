@@ -23,6 +23,7 @@ import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
 import Services from 'src/pages/Services/Services'
 import SessionManagement from 'src/pages/SessionManagement/SessionManagement'
+import TestingAddresses from 'src/pages/TestingAddresses'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
 import UserManagement from 'src/pages/UserManagement/UserManagement'
@@ -235,6 +236,13 @@ const getLamassuRoutes = () => [
         route: '/compliance/blacklist',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: Blacklist
+      },
+      {
+        key: 'testing-addresses',
+        label: 'Testing addresses',
+        route: '/compliance/testing',
+        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+        component: TestingAddresses
       },
       {
         key: 'loyalty',

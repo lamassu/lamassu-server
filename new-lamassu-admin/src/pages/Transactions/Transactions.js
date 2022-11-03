@@ -127,6 +127,7 @@ const GET_TRANSACTIONS = gql`
       walletScore
       profit
       swept
+      isTestTransaction
     }
   }
 `

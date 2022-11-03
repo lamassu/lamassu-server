@@ -113,7 +113,8 @@ export default {
   },
   otherActionsGroup: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    width: 230
   },
   addressHeader: {
     display: 'flex',
@@ -138,5 +139,8 @@ export default {
   errorCopy: {
     lineBreak: 'normal',
     maxWidth: 180
+  },
+  testingSwitch: {
+    margin: 0
   }
 }
