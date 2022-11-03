@@ -13,7 +13,6 @@ import React, { memo, useState } from 'react'
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
 import { HoverableTooltip } from 'src/components/Tooltip'
 import { IDButton, ActionButton } from 'src/components/buttons'
-import { Switch } from 'src/components/inputs'
 import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
 import { ReactComponent as CardIdIcon } from 'src/styling/icons/ID/card/zodiac.svg'
@@ -87,22 +86,6 @@ const CANCEL_CASH_IN_TRANSACTION = gql`
   }
 `
 
-const ENABLE_TEST_TRANSACTION = gql`
-  mutation AddTestingAddress($txClass: String!, $id: ID!) {
-    enableTestTransaction(txClass: $txClass, id: $id) {
-      id
-    }
-  }
-`
-
-const DISABLE_TEST_TRANSACTION = gql`
-  mutation AddTestingAddress($txClass: String!, $id: ID!) {
-    disableTestTransaction(txClass: $txClass, id: $id) {
-      id
-    }
-  }
-`
-
 const getCryptoAmount = tx =>
   coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toNumber()
 
@@ -135,16 +118,6 @@ const DetailsRow = ({ it: tx, timezone }) => {
       refetchQueries: () => ['transactions']
     }
   )
-
-  const [enableTestTransaction] = useMutation(ENABLE_TEST_TRANSACTION, {
-    onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
-    refetchQueries: () => ['transactions']
-  })
-
-  const [disableTestTransaction] = useMutation(DISABLE_TEST_TRANSACTION, {
-    onError: ({ message }) => setErrorMessage(message ?? 'An error occurred.'),
-    refetchQueries: () => ['transactions']
-  })
 
   const commission = BigNumber(tx.profit)
     .abs()
@@ -439,29 +412,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
             </ActionButton>
           </div>
         </div>
-        <div>
-          <Label>Testing Status</Label>
-          <div>
-            <Switch
-              checked={tx.isTestTransaction}
-              className={classes.testingSwitch}
-              onChange={() =>
-                tx.isTestTransaction
-                  ? disableTestTransaction({
-                      variables: {
-                        txClass: tx.txClass,
-                        id: tx.id
-                      }
-                    })
-                  : enableTestTransaction({
-                      variables: {
-                        txClass: tx.txClass,
-                        id: tx.id
-                      }
-                    })
-              }
-            />
-          </div>
+        <div className={classes.testing}>
+          <Label>Testing</Label>
+          <div>{tx.isTestTransaction ? 'Testing' : 'Not testing'}</div>
         </div>
       </div>
       <ConfirmDialog
@@ -494,6 +447,5 @@ export default memo(
     prev.it.id === next.it.id &&
     prev.it.hasError === next.it.hasError &&
     prev.it.batchError === next.it.batchError &&
-    prev.it.isTestTransaction === next.it.isTestTransaction &&
     getStatus(prev.it) === getStatus(next.it)
 )

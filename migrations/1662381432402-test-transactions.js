@@ -6,9 +6,7 @@ exports.up = function (next) {
         crypto_code TEXT NOT NULL,
         address TEXT NOT NULL,
         unique (crypto_code, address)
-      )`,
-    `ALTER TABLE cash_out_txs ADD COLUMN is_test_transaction BOOLEAN NOT NULL DEFAULT FALSE`,
-    `ALTER TABLE cash_in_txs ADD COLUMN is_test_transaction BOOLEAN NOT NULL DEFAULT FALSE`,
+      )`
   ]
 
   db.multi(sql, next)

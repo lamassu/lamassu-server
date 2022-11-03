@@ -113,8 +113,7 @@ export default {
   },
   otherActionsGroup: {
     display: 'flex',
-    flexDirection: 'row',
-    width: 230
+    flexDirection: 'row'
   },
   addressHeader: {
     display: 'flex',
@@ -140,7 +139,8 @@ export default {
     lineBreak: 'normal',
     maxWidth: 180
   },
-  testingSwitch: {
-    margin: 0
+  testing: {
+    width: 215,
+    marginLeft: 'auto'
   }
 }
