@@ -1,6 +1,6 @@
 import * as R from 'ramda'
 
-const getAccountInstance = plugin => {
+const getAccountInstance = (plugin, code) => {
   if (!plugin) return
 
   const instances = plugin?.instances ?? []
@@ -8,13 +8,13 @@ const getAccountInstance = plugin => {
 
   if (R.isEmpty(activeInstances)) {
     throw new Error(
-      `No active service configuration for plugin '${plugin?.code}'. Please check your 3rd party services options`
+      `No active service configuration for plugin '${code}'. Please check your 3rd party services options`
     )
   }
 
   if (R.length(activeInstances) > 1) {
     throw new Error(
-      `Plugin '${plugin?.code}' has two or more active instances. Please make sure only a single instance is active at any given time`
+      `Plugin '${code}' has two or more active instances. Please make sure only a single instance is active at any given time`
     )
   }
 

@@ -37,7 +37,6 @@ const Footer = () => {
   const withCommissions = R.path(['cryptoRates', 'withCommissions'])(data) ?? {}
   const classes = useStyles()
   const config = R.path(['config'])(data) ?? {}
-  // const canExpand = R.keys(withCommissions).length > 4
 
   const wallets = fromNamespace('wallets')(config)
   const cryptoCurrencies = R.path(['cryptoCurrencies'])(data) ?? []

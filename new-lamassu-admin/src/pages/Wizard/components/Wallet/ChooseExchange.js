@@ -146,11 +146,11 @@ const ChooseExchange = ({ data: currentData, addData }) => {
 
             <H4 noMargin>Enter exchange information</H4>
             <FormRenderer
-              value={getAccountInstance(accounts[selected])}
+              value={getAccountInstance(accounts[selected], selected)}
               save={saveExchange(selected)}
               elements={schemas[selected].elements}
               validationSchema={schemas[selected].getValidationSchema(
-                getAccountInstance(accounts[selected])
+                getAccountInstance(accounts[selected], selected)
               )}
               buttonLabel={'Continue'}
               buttonClass={classes.formButton}

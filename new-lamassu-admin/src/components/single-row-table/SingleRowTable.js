@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React from 'react'
 
 import { IconButton } from 'src/components/buttons'
@@ -53,13 +54,37 @@ const SingleRowTable = ({
               {items[0] && (
                 <div className={classes.itemWrapper}>
                   <div className={classes.label}>{items[0].label}</div>
-                  <div className={classes.item}>{items[0].value}</div>
+                  <div className={classes.item}>
+                    {Array.isArray(items[0].value)
+                      ? R.map(
+                          it => (
+                            <>
+                              {it}
+                              <br />
+                            </>
+                          ),
+                          items[0].value
+                        )
+                      : items[0].value}
+                  </div>
                 </div>
               )}
               {items[1] && (
                 <div className={classes.itemWrapper}>
                   <div className={classes.label}>{items[1].label}</div>
-                  <div className={classes.item}>{items[1].value}</div>
+                  <div className={classes.item}>
+                    {Array.isArray(items[1].value)
+                      ? R.map(
+                          it => (
+                            <>
+                              {it}
+                              <br />
+                            </>
+                          ),
+                          items[1].value
+                        )
+                      : items[1].value}
+                  </div>
                 </div>
               )}
             </>

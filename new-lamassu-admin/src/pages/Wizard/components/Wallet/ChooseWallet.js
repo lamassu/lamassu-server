@@ -163,11 +163,11 @@ const ChooseWallet = ({ data: currentData, addData }) => {
         <>
           <H4 noMargin>Enter wallet information</H4>
           <FormRenderer
-            value={getAccountInstance(accounts.infura)}
+            value={getAccountInstance(accounts.infura, 'infura')}
             save={saveWallet(selected)}
             elements={schemas.infura.elements}
             validationSchema={schemas.infura.getValidationSchema(
-              getAccountInstance(accounts.infura)
+              getAccountInstance(accounts.infura, 'infura')
             )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}

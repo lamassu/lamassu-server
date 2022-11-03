@@ -57,8 +57,6 @@ const Blockcypher = ({ addData }) => {
 
   const accounts = data?.accounts ?? []
 
-  console.log(accounts)
-
   const onSelect = e => {
     setSelected(e.target.value)
     setError(false)

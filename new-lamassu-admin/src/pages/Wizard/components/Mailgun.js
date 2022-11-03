@@ -146,11 +146,11 @@ const Mailgun = () => {
         <>
           <H4>Mailgun credentials</H4>
           <FormRenderer
-            value={getAccountInstance(accounts.mailgun)}
+            value={getAccountInstance(accounts.mailgun, 'mailgun')}
             save={saveAccount}
             elements={schemas.mailgun.elements}
             validationSchema={schemas.mailgun.getValidationSchema(
-              getAccountInstance(accounts.mailgun)
+              getAccountInstance(accounts.mailgun, 'mailgun')
             )}
             buttonLabel={'Save'}
           />

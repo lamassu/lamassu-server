@@ -81,6 +81,7 @@ const GET_CUSTOMER = gql`
       isTestCustomer
       subscriberInfo
       phoneOverride
+      externalCompliance
       customFields {
         id
         label
@@ -151,6 +152,7 @@ const SET_CUSTOMER = gql`
       lastTxClass
       subscriberInfo
       phoneOverride
+      externalCompliance
     }
   }
 `

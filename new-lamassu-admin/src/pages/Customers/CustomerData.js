@@ -11,7 +11,8 @@ import { TextInput } from 'src/components/inputs/formik'
 import { H3, Info3 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
-  OVERRIDE_REJECTED
+  OVERRIDE_REJECTED,
+  OVERRIDE_PENDING
 } from 'src/pages/Customers/components/propertyCard'
 import { ReactComponent as CardIcon } from 'src/styling/icons/ID/card/comet.svg'
 import { ReactComponent as PhoneIcon } from 'src/styling/icons/ID/phone/comet.svg'
@@ -25,7 +26,7 @@ import { URI } from 'src/utils/apollo'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './CustomerData.styles.js'
-import { EditableCard } from './components'
+import { EditableCard, NonEditableCard } from './components'
 import {
   customerDataElements,
   customerDataSchemas,
@@ -64,7 +65,7 @@ const Photo = ({ show, src }) => {
 
 const CustomerData = ({
   locale,
-  customer,
+  customer = {},
   updateCustomer,
   replacePhoto,
   editCustomer,
@@ -102,6 +103,7 @@ const CustomerData = ({
   const customInfoRequests = sortByName(
     R.path(['customInfoRequests'])(customer) ?? []
   )
+  const externalCompliance = []
 
   const phone = R.path(['phone'])(customer)
   const smsData = R.path(['subscriberInfo'])(customer)
@@ -417,6 +419,60 @@ const CustomerData = ({
     })
   }, R.keys(smsData) ?? [])
 
+  const externalComplianceProvider =
+    R.path([`externalCompliance`, `provider`])(customer) ?? undefined
+
+  const externalComplianceData = {
+    sumsub: {
+      getApplicantInfo: data => {
+        return R.path(['fixedInfo'])(data) ?? {}
+      },
+      getVerificationState: data => {
+        const reviewStatus = R.path(['review', 'reviewStatus'])(data)
+        const reviewResult = R.path(['review', 'reviewResult', 'reviewAnswer'])(
+          data
+        )
+
+        const state =
+          reviewStatus === 'completed'
+            ? reviewResult === 'GREEN'
+              ? OVERRIDE_AUTHORIZED
+              : OVERRIDE_REJECTED
+            : OVERRIDE_PENDING
+
+        const comment = R.path(['review', 'reviewResult', 'clientComment'])(
+          data
+        )
+
+        const labels = R.path(['review', 'reviewResult', 'rejectLabels'])(data)
+
+        return { state, comment, labels }
+      }
+    }
+  }
+
+  const externalComplianceValues = R.path(['externalCompliance'])(customer)
+
+  if (
+    !R.isNil(externalComplianceValues) &&
+    !R.isEmpty(externalComplianceValues)
+  ) {
+    externalCompliance.push({
+      fields: R.map(it => ({ name: it[0], label: it[0], value: it[1] }))(
+        R.toPairs(
+          externalComplianceData[externalComplianceProvider]?.getApplicantInfo(
+            externalComplianceValues
+          )
+        )
+      ),
+      titleIcon: <CardIcon className={classes.cardIcon} />,
+      state: externalComplianceData[
+        externalComplianceProvider
+      ]?.getVerificationState(externalComplianceValues),
+      title: 'External Info'
+    })
+  }
+
   const editableCard = (
     {
       title,
@@ -459,6 +515,21 @@ const CustomerData = ({
         retrieveAdditionalData={retrieveAdditionalData}
         checkAgainstSanctions={checkAgainstSanctions}
         editable={editable}></EditableCard>
+    )
+  }
+
+  const nonEditableCard = (
+    { title, state, titleIcon, fields, hasImage },
+    idx
+  ) => {
+    return (
+      <NonEditableCard
+        title={title}
+        key={idx}
+        state={state}
+        titleIcon={titleIcon}
+        hasImage={hasImage}
+        fields={fields}></NonEditableCard>
     )
   }
 
@@ -531,6 +602,25 @@ const CustomerData = ({
               <Grid container direction="column" item xs={6}>
                 {customRequirements.map((elem, idx) => {
                   return !isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+            </Grid>
+          </div>
+        )}
+        {!R.isEmpty(externalCompliance) && (
+          <div className={classes.wrapper}>
+            <span className={classes.separator}>
+              External compliance information
+            </span>
+            <Grid container>
+              <Grid container direction="column" item xs={6}>
+                {externalCompliance.map((elem, idx) => {
+                  return isEven(idx) ? nonEditableCard(elem, idx) : null
+                })}
+              </Grid>
+              <Grid container direction="column" item xs={6}>
+                {externalCompliance.map((elem, idx) => {
+                  return !isEven(idx) ? nonEditableCard(elem, idx) : null
                 })}
               </Grid>
             </Grid>

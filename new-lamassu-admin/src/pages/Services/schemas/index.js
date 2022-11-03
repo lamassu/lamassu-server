@@ -10,6 +10,7 @@ import _infura from './infura'
 import _itbit from './itbit'
 import _kraken from './kraken'
 import mailgun from './mailgun'
+import sumsub from './sumsub'
 import twilio from './twilio'
 
 const schemas = ({ markets = {}, cryptos = {} }) => {
@@ -36,7 +37,8 @@ const schemas = ({ markets = {}, cryptos = {} }) => {
     [cex.code]: cex,
     [ciphertrace.code]: ciphertrace,
     [binance.code]: binance,
-    [coinbasepro.code]: coinbasepro
+    [coinbasepro.code]: coinbasepro,
+    [sumsub.code]: sumsub
   }
 }
 

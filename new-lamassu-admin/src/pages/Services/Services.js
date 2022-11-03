@@ -314,6 +314,7 @@ const Services = () => {
                 editingSchema.account ?? {}
               )}
               supportArticle={editingSchema?.supportArticle}
+              SplashScreenComponent={editingSchema.schema.SplashScreenComponent}
             />
           </Modal>
         )}

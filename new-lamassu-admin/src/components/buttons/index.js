@@ -1,6 +1,7 @@
 import ActionButton from './ActionButton'
 import AddButton from './AddButton'
 import Button from './Button'
+import DeleteButton from './DeleteButton'
 import FeatureButton from './FeatureButton'
 import IDButton from './IDButton'
 import IconButton from './IconButton'
@@ -21,5 +22,6 @@ export {
   IDButton,
   AddButton,
   SupportLinkButton,
-  SubpageButton
+  SubpageButton,
+  DeleteButton
 }

@@ -9,6 +9,7 @@ import { NumberInput, RadioGroup, Dropdown } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 import { transformNumber } from 'src/utils/number'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 // import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -82,6 +83,14 @@ const useStyles = makeStyles({
   dropdownField: {
     marginTop: 16,
     minWidth: 155
+  },
+  externalFields: {
+    '& > *': {
+      marginRight: 15
+    },
+    '& > *:last-child': {
+      marginRight: 0
+    }
   }
 })
 
@@ -488,6 +497,20 @@ const requirementSchema = Yup.object()
         otherwise: Yup.string()
           .nullable()
           .transform(() => '')
+      }),
+      externalService: Yup.string().when('requirement', {
+        is: value => value === 'external',
+        then: Yup.string(),
+        otherwise: Yup.string()
+          .nullable()
+          .transform(() => '')
+      }),
+      externalServiceApplicantLevel: Yup.string().when('requirement', {
+        is: value => value === 'external',
+        then: Yup.string(),
+        otherwise: Yup.string()
+          .nullable()
+          .transform(() => '')
       })
     }).required()
   })
@@ -502,6 +525,11 @@ const requirementSchema = Yup.object()
           return requirement.requirement === type
             ? !R.isNil(requirement.customInfoRequestId)
             : true
+        case 'external':
+          return requirement.requirement === type
+            ? !R.isNil(requirement.externalService) &&
+                !R.isNil(requirement.externalServiceApplicantLevel)
+            : true
         default:
           return true
       }
@@ -514,6 +542,12 @@ const requirementSchema = Yup.object()
       })
 
     if (requirement && !requirementValidator(requirement, 'custom'))
+      return context.createError({
+        path: 'requirement',
+        message: 'You must select an item'
+      })
+
+    if (requirement && !requirementValidator(requirement, 'external'))
       return context.createError({
         path: 'requirement',
         message: 'You must select an item'
@@ -544,7 +578,20 @@ const hasCustomRequirementError = (errors, touched, values) =>
   (!values.requirement?.customInfoRequestId ||
     !R.isNil(values.requirement?.customInfoRequestId))
 
-const Requirement = ({ customInfoRequests }) => {
+const hasExternalRequirementError = (errors, touched, values) =>
+  !!errors.requirement &&
+  !!touched.requirement?.externalService &&
+  !!touched.requirement?.externalServiceApplicantLevel &&
+  (!values.requirement?.externalService ||
+    !R.isNil(values.requirement?.externalService)) &&
+  (!values.requirement?.externalServiceApplicantLevel ||
+    !R.isNil(values.requirement?.externalServiceApplicantLevel))
+
+const Requirement = ({
+  config = {},
+  triggers,
+  additionalInfo: { customInfoRequests = [], externalValidationLevels = {} }
+}) => {
   const classes = useStyles()
   const {
     touched,
@@ -556,26 +603,70 @@ const Requirement = ({ customInfoRequests }) => {
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
   const isCustom = values?.requirement?.requirement === 'custom'
+  const isExternal = values?.requirement?.requirement === 'external'
+
+  const customRequirementsInUse = R.reduce(
+    (acc, value) => {
+      if (value.requirement.requirement === 'custom')
+        acc.push({
+          triggerType: value.triggerType,
+          id: value.requirement.customInfoRequestId
+        })
+      return acc
+    },
+    [],
+    triggers
+  )
+
+  const availableCustomRequirements = R.filter(
+    it =>
+      !R.includes(
+        { triggerType: config.triggerType, id: it.id },
+        customRequirementsInUse
+      ),
+    customInfoRequests
+  )
+
   const makeCustomReqOptions = () =>
-    customInfoRequests.map(it => ({
+    availableCustomRequirements.map(it => ({
       value: it.id,
       display: it.customRequest.name
     }))
 
-  const enableCustomRequirement = customInfoRequests?.length > 0
+  const enableCustomRequirement = !R.isEmpty(availableCustomRequirements)
+  const enableExternalRequirement = !R.any(
+    // TODO: right now this condition is directly related with sumsub. On adding external validation, this needs to be generalized
+    ite => ite.requirement === 'external' && ite.externalService === 'sumsub',
+    R.map(it => ({
+      requirement: it.requirement.requirement,
+      externalService: it.requirement.externalService
+    }))(triggers)
+  )
+
   const customInfoOption = {
     display: 'Custom information requirement',
     code: 'custom'
   }
-  const options = enableCustomRequirement
-    ? [...requirementOptions, customInfoOption]
-    : [...requirementOptions]
+  const externalOption = { display: 'External verification', code: 'external' }
+
+  const options = R.clone(requirementOptions)
+  enableCustomRequirement && options.push(customInfoOption)
+  enableExternalRequirement && options.push(externalOption)
+
   const titleClass = {
     [classes.error]:
       (!!errors.requirement && !isSuspend && !isCustom) ||
       (isSuspend && hasRequirementError(errors, touched, values)) ||
-      (isCustom && hasCustomRequirementError(errors, touched, values))
+      (isCustom && hasCustomRequirementError(errors, touched, values)) ||
+      (isExternal && hasExternalRequirementError(errors, touched, values))
   }
+
+  const externalServices = [
+    {
+      value: 'sumsub',
+      display: 'Sumsub'
+    }
+  ]
 
   return (
     <>
@@ -617,22 +708,49 @@ const Requirement = ({ customInfoRequests }) => {
           />
         </div>
       )}
+      {isExternal && (
+        <div className={classes.externalFields}>
+          <Field
+            className={classes.dropdownField}
+            component={Dropdown}
+            label="Service"
+            name="requirement.externalService"
+            options={externalServices}
+          />
+          {!R.isNil(
+            externalValidationLevels[values.requirement.externalService]
+          ) && (
+            <Field
+              className={classes.dropdownField}
+              component={Dropdown}
+              label="Applicant level"
+              name="requirement.externalServiceApplicantLevel"
+              options={
+                externalValidationLevels[values.requirement.externalService]
+              }
+            />
+          )}
+        </div>
+      )}
     </>
   )
 }
 
-const requirements = customInfoRequests => ({
+const requirements = (config, triggers, additionalInfo) => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  props: { customInfoRequests },
+  props: { config, triggers, additionalInfo },
   hasRequirementError: hasRequirementError,
   hasCustomRequirementError: hasCustomRequirementError,
+  hasExternalRequirementError: hasExternalRequirementError,
   initialValues: {
     requirement: {
       requirement: '',
       suspensionDays: '',
-      customInfoRequestId: ''
+      customInfoRequestId: '',
+      externalService: '',
+      externalServiceApplicantLevel: ''
     }
   }
 })
@@ -662,7 +780,9 @@ const customReqIdMatches = customReqId => it => {
   return it.id === customReqId
 }
 
-const RequirementInput = ({ customInfoRequests }) => {
+const RequirementInput = ({
+  additionalInfo: { customInfoRequests = [], externalValidationLevels = {} }
+}) => {
   const { values } = useFormikContext()
   const classes = useStyles()
 
@@ -697,7 +817,8 @@ const RequirementView = ({
   requirement,
   suspensionDays,
   customInfoRequestId,
-  customInfoRequests
+  externalService,
+  additionalInfo: { customInfoRequests = [], externalValidationLevels = {} }
 }) => {
   const classes = useStyles()
   const display =
@@ -705,6 +826,8 @@ const RequirementView = ({
       ? R.path(['customRequest', 'name'])(
           R.find(customReqIdMatches(customInfoRequestId))(customInfoRequests)
         ) ?? ''
+      : requirement === 'external'
+      ? `External validation (${onlyFirstToUpper(externalService)})`
       : getView(requirementOptions, 'display')(requirement)
   const isSuspend = requirement === 'suspend'
   return (
@@ -818,7 +941,7 @@ const ThresholdView = ({ config, currency }) => {
   return <DisplayThreshold config={config} currency={currency} />
 }
 
-const getElements = (currency, classes, customInfoRequests) => [
+const getElements = (currency, classes, additionalInfo) => [
   {
     name: 'triggerType',
     size: 'sm',
@@ -837,17 +960,15 @@ const getElements = (currency, classes, customInfoRequests) => [
   {
     name: 'requirement',
     size: 'sm',
-    width: 230,
+    width: 260,
     bypassField: true,
-    input: () => <RequirementInput customInfoRequests={customInfoRequests} />,
-    view: it => (
-      <RequirementView {...it} customInfoRequests={customInfoRequests} />
-    )
+    input: () => <RequirementInput additionalInfo={additionalInfo} />,
+    view: it => <RequirementView {...it} additionalInfo={additionalInfo} />
   },
   {
     name: 'threshold',
     size: 'sm',
-    width: 284,
+    width: 254,
     textAlign: 'right',
     input: () => <ThresholdInput currency={currency} />,
     view: (it, config) => <ThresholdView config={config} currency={currency} />
@@ -882,12 +1003,16 @@ const fromServer = (triggers, customInfoRequests) => {
       threshold,
       thresholdDays,
       customInfoRequestId,
+      externalService,
+      externalServiceApplicantLevel,
       ...rest
     }) => ({
       requirement: {
         requirement,
         suspensionDays,
-        customInfoRequestId
+        customInfoRequestId,
+        externalService,
+        externalServiceApplicantLevel
       },
       threshold: {
         threshold,
@@ -905,6 +1030,8 @@ const toServer = triggers =>
     threshold: threshold.threshold,
     thresholdDays: threshold.thresholdDays,
     customInfoRequestId: requirement.customInfoRequestId,
+    externalService: requirement.externalService,
+    externalServiceApplicantLevel: requirement.externalServiceApplicantLevel,
     ...rest
   }))(triggers)
 

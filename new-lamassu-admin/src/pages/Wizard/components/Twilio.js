@@ -159,10 +159,10 @@ function Twilio({ doContinue }) {
             <FormRenderer
               xs={6}
               save={save}
-              value={getAccountInstance(accounts.twilio)}
+              value={getAccountInstance(accounts.twilio, 'twilio')}
               elements={schemas.twilio.elements}
               validationSchema={schemas.twilio.getValidationSchema(
-                getAccountInstance(accounts.twilio)
+                getAccountInstance(accounts.twilio, 'twilio')
               )}
               buttonLabel={'Continue'}
               buttonClass={classes.formButton}
