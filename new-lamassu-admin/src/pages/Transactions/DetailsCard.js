@@ -107,7 +107,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const zip = new JSZip()
 
   const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
-    onCompleted: data => createCsv(data)
+    onCompleted: data => createCsv(R.filter(it => !R.isEmpty(it), data))
   })
 
   const [cancelTransaction] = useMutation(
