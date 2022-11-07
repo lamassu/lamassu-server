@@ -64,6 +64,9 @@ export default {
     // forcing styling onto inner container
     '.ReactVirtualized__Grid__innerScrollContainer': {
       overflow: 'inherit !important'
+    },
+    '.ReactVirtualized__Grid.ReactVirtualized__List': {
+      overflowY: 'overlay !important'
     }
   }
 }
