@@ -51,7 +51,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
   const suggestions = suggestionFilter(machines)
 
   const findSuggestion = it => {
-    const coin = R.compose(R.find(R.propEq('deviceId', it?.machine)))(machines)
+    const coin = R.find(R.propEq('deviceId', it?.machine), machines)
     return coin ? [coin] : []
   }
 
@@ -130,37 +130,35 @@ const FiatBalanceOverrides = ({ config, section }) => {
   const viewMachine = it =>
     R.compose(R.path(['name']), R.find(R.propEq('deviceId', it)))(machines)
 
-  const elements = [
-    {
-      name: MACHINE_KEY,
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
-      size: 'sm',
-      view: viewMachine,
-      input: Autocomplete,
-      inputProps: {
-        options: it => R.concat(suggestions, findSuggestion(it)),
-        valueProp: 'deviceId',
-        labelProp: 'name'
+  const elements = R.concat(
+    [
+      {
+        name: MACHINE_KEY,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
+        size: 'sm',
+        view: viewMachine,
+        input: Autocomplete,
+        inputProps: {
+          options: it => R.concat(suggestions, findSuggestion(it)),
+          valueProp: 'deviceId',
+          labelProp: 'name'
+        }
+      },
+      {
+        name: CASHBOX_KEY,
+        display: 'Cashbox',
+        width: 155,
+        textAlign: 'right',
+        bold: true,
+        input: NumberInput,
+        suffix: 'notes',
+        inputProps: {
+          decimalPlaces: 0
+        }
       }
-    },
-    {
-      name: CASHBOX_KEY,
-      display: 'Cashbox',
-      width: 155,
-      textAlign: 'right',
-      bold: true,
-      input: NumberInput,
-      suffix: 'notes',
-      inputProps: {
-        decimalPlaces: 0
-      }
-    }
-  ]
-
-  R.until(
-    R.gt(R.__, maxNumberOfCassettes),
-    it => {
-      elements.push({
+    ],
+    R.map(
+      it => ({
         name: `fillingPercentageCassette${it}`,
         display: `Cash cassette ${it}`,
         width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
@@ -172,15 +170,14 @@ const FiatBalanceOverrides = ({ config, section }) => {
         inputProps: {
           decimalPlaces: 0
         },
-        view: it => it?.toString() ?? '—',
+        view: el => el?.toString() ?? '—',
         isHidden: value =>
           it >
           machines.find(({ deviceId }) => deviceId === value.machine)
             ?.numberOfCassettes
-      })
-      return R.add(1, it)
-    },
-    1
+      }),
+      R.range(1, maxNumberOfCassettes + 1)
+    )
   )
 
   return (
