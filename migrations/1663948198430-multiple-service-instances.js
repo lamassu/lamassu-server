@@ -8,7 +8,7 @@ exports.up = function (next) {
       const accountElements = [..._.map(ite => ite.code, it.elements), 'enabled']
       const elementValues = _.zipObject(accountElements, [..._.map(ite => it[ite], accountElements)])
       elementValues.id = uuid.v4()
-      return { ..._.omit([accountElements, 'title'], it), instances: [elementValues] }
+      return { ..._.omit([...accountElements, 'title'], it), instances: [elementValues] }
     }, _.cloneDeep(accounts)), false))
     .then(() => next())
     .catch(err => {

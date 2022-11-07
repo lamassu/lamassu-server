@@ -23,7 +23,7 @@ function fetchWallet (settings, cryptoCode) {
       const masterSeed = mnemonicHelpers.toEntropyBuffer(mnemonic)
       const plugin = configManager.getWalletSettings(cryptoCode, settings.config).wallet
       const wallet = ph.load(ph.WALLET, plugin)
-      const rawAccount = settings.accounts[plugin]
+      const rawAccount = ph.getAccountInstance(settings.accounts[plugin])
       const account = _.set('seed', computeSeed(masterSeed), rawAccount)
       if (_.isFunction(wallet.run)) wallet.run(account)
       return { wallet, account }

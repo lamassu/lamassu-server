@@ -94,11 +94,12 @@ function getAllBalance () {
 
 function isInfuraRunning (settings) {
   const isInfuraSelected = settings.config.wallets_ETH_wallet === 'infura'
+  const account = ph.getAccountInstance(settings.accounts.infura)
   const isInfuraConfigured =
-    !_.isNil(settings.accounts.infura) 
-    && !_.isNil(settings.accounts.infura.apiKey)
-    && !_.isNil(settings.accounts.infura.apiSecret)
-    && !_.isNil(settings.accounts.infura.endpoint)
+    !_.isNil(account) 
+    && !_.isNil(account.apiKey)
+    && !_.isNil(account.apiSecret)
+    && !_.isNil(account.endpoint)
 
   return isInfuraSelected && isInfuraConfigured
 }
@@ -245,9 +246,10 @@ settingsLoader.loadLatest()
   })
   .then(([infuraIsRunning, settings]) => {
     if (infuraIsRunning) {
-      const endpoint = _.startsWith('https://')(settings.accounts.infura.endpoint)
-        ? settings.accounts.infura.endpoint
-        : `https://${settings.accounts.infura.endpoint}`
+      const account = ph.getAccountInstance(settings.accounts.infura)
+      const endpoint = _.startsWith('https://')(account.endpoint)
+        ? account.endpoint
+        : `https://${account.endpoint}`
       connect(endpoint)
     } else {
       connect(`http://localhost:${coins.utils.getCryptoCurrency('ETH').defaultPort}`)
