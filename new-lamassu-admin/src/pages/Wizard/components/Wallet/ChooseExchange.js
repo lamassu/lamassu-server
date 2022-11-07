@@ -8,7 +8,7 @@ import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H4, Info3 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
-import schema from 'src/pages/Services/schemas'
+import _schema from 'src/pages/Services/schemas'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
 
 import styles from './Shared.styles'
@@ -32,6 +32,12 @@ const GET_CONFIG = gql`
   }
 `
 
+const GET_MARKETS = gql`
+  query getMarkets {
+    getMarkets
+  }
+`
+
 const SAVE_ACCOUNTS = gql`
   mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
@@ -43,7 +49,8 @@ const isConfigurable = it =>
 
 const ChooseExchange = ({ data: currentData, addData }) => {
   const classes = useStyles()
-  const { data } = useQuery(GET_CONFIG)
+  const { data, loading: configLoading } = useQuery(GET_CONFIG)
+  const { data: marketsData, loading: marketsLoading } = useQuery(GET_MARKETS)
   const [saveAccounts] = useMutation(SAVE_ACCOUNTS, {
     onCompleted: () => submit()
   })
@@ -51,6 +58,8 @@ const ChooseExchange = ({ data: currentData, addData }) => {
   const [selected, setSelected] = useState(null)
   const [error, setError] = useState(false)
 
+  const markets = marketsData?.getMarkets
+  const schema = _schema({ markets })
   const accounts = data?.accounts ?? []
   const accountsConfig = data?.accountsConfig ?? []
 
@@ -81,48 +90,52 @@ const ChooseExchange = ({ data: currentData, addData }) => {
       'https://support.lamassu.is/hc/en-us/articles/115001206911-Bitstamp-trading'
   }
 
-  return (
-    <div className={classes.mdForm}>
-      <H4 className={error && classes.error}>Choose your exchange</H4>
-      <RadioGroup
-        labelClassName={classes.radioLabel}
-        className={classes.radioGroup}
-        options={R.union(exchanges.filled, exchanges.unfilled)}
-        value={selected}
-        onChange={onSelect}
-      />
-      {!isConfigurable(selected) && (
-        <Button size="lg" onClick={submit} className={classes.button}>
-          Continue
-        </Button>
-      )}
-      {isConfigurable(selected) && (
-        <>
-          <div className={classes.infoMessage}>
-            <WarningIcon />
-            <Info3>
-              Make sure you set up {schema[selected].name} to enter the
-              necessary information below. Please follow the instructions on our
-              support page if you haven’t.
-            </Info3>
-          </div>
-          <SupportLinkButton
-            link={supportArticles[selected]}
-            label={`${schema[selected].name} trading`}
-          />
+  const loading = configLoading || marketsLoading
 
-          <H4 noMargin>Enter exchange information</H4>
-          <FormRenderer
-            value={accounts[selected]}
-            save={saveExchange(selected)}
-            elements={schema[selected].elements}
-            validationSchema={schema[selected].validationSchema}
-            buttonLabel={'Continue'}
-            buttonClass={classes.formButton}
-          />
-        </>
-      )}
-    </div>
+  return (
+    !loading && (
+      <div className={classes.mdForm}>
+        <H4 className={error && classes.error}>Choose your exchange</H4>
+        <RadioGroup
+          labelClassName={classes.radioLabel}
+          className={classes.radioGroup}
+          options={R.union(exchanges.filled, exchanges.unfilled)}
+          value={selected}
+          onChange={onSelect}
+        />
+        {!isConfigurable(selected) && (
+          <Button size="lg" onClick={submit} className={classes.button}>
+            Continue
+          </Button>
+        )}
+        {isConfigurable(selected) && (
+          <>
+            <div className={classes.infoMessage}>
+              <WarningIcon />
+              <Info3>
+                Make sure you set up {schema[selected].name} to enter the
+                necessary information below. Please follow the instructions on
+                our support page if you haven’t.
+              </Info3>
+            </div>
+            <SupportLinkButton
+              link={supportArticles[selected]}
+              label={`${schema[selected].name} trading`}
+            />
+
+            <H4 noMargin>Enter exchange information</H4>
+            <FormRenderer
+              value={accounts[selected]}
+              save={saveExchange(selected)}
+              elements={schema[selected].elements}
+              validationSchema={schema[selected].validationSchema}
+              buttonLabel={'Continue'}
+              buttonClass={classes.formButton}
+            />
+          </>
+        )}
+      </div>
+    )
   )
 }
 
