@@ -173,8 +173,11 @@ const FiatBalanceOverrides = ({ config, section }) => {
         view: el => el?.toString() ?? '—',
         isHidden: value =>
           it >
-          machines.find(({ deviceId }) => deviceId === value.machine)
-            ?.numberOfCassettes
+          R.defaultTo(
+            0,
+            machines.find(({ deviceId }) => deviceId === value.machine)
+              ?.numberOfCassettes
+          )
       }),
       R.range(1, maxNumberOfCassettes + 1)
     )
