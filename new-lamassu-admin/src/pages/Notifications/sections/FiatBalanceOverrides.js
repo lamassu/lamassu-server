@@ -26,9 +26,9 @@ const CASSETTE_LIST = [
 ]
 
 const widthsByNumberOfCassettes = {
-  2: { machine: 230, cassette: 250 },
-  3: { machine: 216, cassette: 270 },
-  4: { machine: 210, cassette: 204 }
+  2: { machine: 230, cashbox: 150, cassette: 250 },
+  3: { machine: 216, cashbox: 150, cassette: 270 },
+  4: { machine: 210, cashbox: 150, cassette: 204 }
 }
 
 const FiatBalanceOverrides = ({ config, section }) => {
@@ -147,7 +147,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
       {
         name: CASHBOX_KEY,
         display: 'Cash box',
-        width: 155,
+        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cashbox,
         textAlign: 'right',
         bold: true,
         input: NumberInput,
