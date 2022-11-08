@@ -45,10 +45,11 @@ const FiatBalanceOverrides = ({ config, section }) => {
   const innerSetEditing = it => setEditing(NAME, it)
 
   const overriddenMachines = R.map(override => override.machine, setupValues)
-  const suggestionFilter = R.filter(
-    it => !R.includes(it.deviceId, overriddenMachines)
+  const suggestions = R.differenceWith(
+    (it, m) => it.deviceId === m,
+    machines,
+    overriddenMachines
   )
-  const suggestions = suggestionFilter(machines)
 
   const findSuggestion = it => {
     const coin = R.find(R.propEq('deviceId', it?.machine), machines)
@@ -78,7 +79,6 @@ const FiatBalanceOverrides = ({ config, section }) => {
     .shape({
       [MACHINE_KEY]: Yup.string()
         .label('Machine')
-        .nullable()
         .required(),
       [CASHBOX_KEY]: Yup.number()
         .label('Cash box')
@@ -116,16 +116,15 @@ const FiatBalanceOverrides = ({ config, section }) => {
         .max(percentMax)
         .nullable()
     })
-    .test((values, context) => {
-      const picked = R.pick(CASSETTE_LIST, values)
-
-      if (CASSETTE_LIST.some(it => !R.isNil(picked[it]))) return
-
-      return context.createError({
-        path: CASSETTE_1_KEY,
-        message: 'At least one of the cassettes must have a value'
-      })
-    })
+    .test((values, context) =>
+      R.any(key => !R.isNil(values[key]), R.prepend(CASHBOX_KEY, CASSETTE_LIST))
+        ? undefined
+        : context.createError({
+            path: CASHBOX_KEY,
+            message:
+              'The cash box or at least one of the cassettes must have a value'
+          })
+    )
 
   const viewMachine = it =>
     R.compose(R.path(['name']), R.find(R.propEq('deviceId', it)))(machines)
@@ -134,6 +133,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
     [
       {
         name: MACHINE_KEY,
+        display: 'Machine',
         width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
         size: 'sm',
         view: viewMachine,
@@ -146,7 +146,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
       },
       {
         name: CASHBOX_KEY,
-        display: 'Cashbox',
+        display: 'Cash box',
         width: 155,
         textAlign: 'right',
         bold: true,
