@@ -4,12 +4,17 @@ const { saveAccounts, loadLatest } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   loadLatest()
-    .then(({ accounts }) => saveAccounts(_.mapValues(it => {
-      const accountElements = [..._.map(ite => ite.code, it.elements), 'enabled']
-      const elementValues = _.zipObject(accountElements, [..._.map(ite => it[ite], accountElements)])
-      elementValues.id = uuid.v4()
-      return { ..._.omit([...accountElements, 'title'], it), instances: [elementValues] }
-    }, _.cloneDeep(accounts)), false))
+    .then(({ accounts: _accounts }) => {
+      const accounts = _.cloneDeep(_accounts)
+      const newAccounts = _.mapValues((it, key) => {
+        const elementValues = _.zipObject(_.keys(it), [..._.map(ite => it[ite], _.keys(it))])
+        elementValues.id = uuid.v4()
+        elementValues.enabled = it.enabled ?? true
+        elementValues.code = key
+        return { instances: [elementValues] }
+      }, accounts)
+      return saveAccounts(newAccounts, false)
+    })
     .then(() => next())
     .catch(err => {
       console.log(err.message)

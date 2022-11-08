@@ -87,11 +87,16 @@ const Services = () => {
 
   const serviceInstances = R.reduce(
     (acc, value) => {
-      acc.push(...R.map(ite => ({ code: value.code, ...ite }), value.instances))
+      acc.push(
+        ...R.map(
+          ite => ({ code: accounts[value].code ?? value, ...ite }),
+          accounts[value].instances
+        )
+      )
       return acc
     },
     [],
-    R.values(accounts)
+    R.keys(accounts)
   )
 
   const getItems = (id, code, elements) => {
@@ -169,11 +174,6 @@ const Services = () => {
   const usedServices = R.concat(enabledServices, disabledServices)
 
   const createAccount = (schema, newAccount) => {
-    const accountObj = R.pick(
-      ['category', 'code', 'elements', 'name'],
-      schemas[schema.code]
-    )
-
     const accountInstances = R.isNil(accounts[schema.code])
       ? []
       : R.clone(accounts[schema.code].instances)
@@ -184,7 +184,6 @@ const Services = () => {
       variables: {
         accounts: {
           [schema.code]: {
-            ...accountObj,
             instances: accountInstances
           }
         }

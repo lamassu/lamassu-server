@@ -2,7 +2,9 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import { makeStyles, Box } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React, { useState } from 'react'
+import * as uuid from 'uuid'
 
 import InfoMessage from 'src/components/InfoMessage'
 import { HoverableTooltip } from 'src/components/Tooltip'
@@ -10,7 +12,8 @@ import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H1, H4, P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
-import twilio from 'src/pages/Services/schemas/twilio'
+import _schemas from 'src/pages/Services/schemas'
+import { getAccountInstance } from 'src/utils/accounts'
 
 import styles from './Wallet/Shared.styles'
 
@@ -84,9 +87,29 @@ function Twilio({ doContinue }) {
     doContinue()
   }
 
-  const save = twilio => {
-    const accounts = { twilio }
-    return saveAccounts({ variables: { accounts } }).then(() => refetch())
+  const schemas = _schemas({})
+  const save = newAccount => {
+    const accountObj = R.pick(
+      ['category', 'code', 'elements', 'name'],
+      schemas.twilio
+    )
+
+    const accountInstances = R.isNil(accounts.twilio)
+      ? []
+      : R.clone(accounts.twilio.instances)
+
+    accountInstances.push(R.merge(newAccount, { id: uuid.v4(), enabled: true }))
+
+    return saveAccounts({
+      variables: {
+        accounts: {
+          twilio: {
+            ...accountObj,
+            instances: accountInstances
+          }
+        }
+      }
+    }).then(() => refetch())
   }
 
   const titleClasses = {
@@ -136,9 +159,11 @@ function Twilio({ doContinue }) {
             <FormRenderer
               xs={6}
               save={save}
-              value={accounts.twilio}
-              elements={twilio.elements}
-              validationSchema={twilio.validationSchema}
+              value={getAccountInstance(accounts.twilio)}
+              elements={schemas.twilio.elements}
+              validationSchema={schemas.twilio.getValidationSchema(
+                getAccountInstance(accounts.twilio)
+              )}
               buttonLabel={'Continue'}
               buttonClass={classes.formButton}
             />

@@ -3,13 +3,15 @@ import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import * as uuid from 'uuid'
 
 import { Button, SupportLinkButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H4, Info3 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
-import _schema from 'src/pages/Services/schemas'
+import _schemas from 'src/pages/Services/schemas'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+import { getAccountInstance } from 'src/utils/accounts'
 
 import styles from './Shared.styles'
 import { getItems } from './getItems'
@@ -59,7 +61,7 @@ const ChooseExchange = ({ data: currentData, addData }) => {
   const [error, setError] = useState(false)
 
   const markets = marketsData?.getMarkets
-  const schema = _schema({ markets })
+  const schemas = _schemas({ markets })
   const accounts = data?.accounts ?? []
   const accountsConfig = data?.accountsConfig ?? []
 
@@ -71,9 +73,28 @@ const ChooseExchange = ({ data: currentData, addData }) => {
     addData({ exchange: selected })
   }
 
-  const saveExchange = name => exchange => {
-    const accounts = { [name]: exchange }
-    return saveAccounts({ variables: { accounts } })
+  const saveExchange = name => newAccount => {
+    const accountObj = R.pick(
+      ['category', 'code', 'elements', 'name'],
+      schemas[name]
+    )
+
+    const accountInstances = R.isNil(accounts[name])
+      ? []
+      : R.clone(accounts[name].instances)
+
+    accountInstances.push(R.merge(newAccount, { id: uuid.v4(), enabled: true }))
+
+    return saveAccounts({
+      variables: {
+        accounts: {
+          [name]: {
+            ...accountObj,
+            instances: accountInstances
+          }
+        }
+      }
+    })
   }
 
   const onSelect = e => {
@@ -113,22 +134,24 @@ const ChooseExchange = ({ data: currentData, addData }) => {
             <div className={classes.infoMessage}>
               <WarningIcon />
               <Info3>
-                Make sure you set up {schema[selected].name} to enter the
+                Make sure you set up {schemas[selected].name} to enter the
                 necessary information below. Please follow the instructions on
                 our support page if you haven’t.
               </Info3>
             </div>
             <SupportLinkButton
               link={supportArticles[selected]}
-              label={`${schema[selected].name} trading`}
+              label={`${schemas[selected].name} trading`}
             />
 
             <H4 noMargin>Enter exchange information</H4>
             <FormRenderer
-              value={accounts[selected]}
+              value={getAccountInstance(accounts[selected])}
               save={saveExchange(selected)}
-              elements={schema[selected].elements}
-              validationSchema={schema[selected].validationSchema}
+              elements={schemas[selected].elements}
+              validationSchema={schemas[selected].getValidationSchema(
+                getAccountInstance(accounts[selected])
+              )}
               buttonLabel={'Continue'}
               buttonClass={classes.formButton}
             />
