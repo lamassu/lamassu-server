@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
+import { fromNamespace } from 'src/utils/config'
 import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
@@ -43,6 +44,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
 
   const setupValues = data?.fiatBalanceOverrides ?? []
   const innerSetEditing = it => setEditing(NAME, it)
+  const cashoutConfig = it => fromNamespace(it)(config)
 
   const overriddenMachines = R.map(override => override.machine, setupValues)
   const suggestions = R.differenceWith(
@@ -172,12 +174,13 @@ const FiatBalanceOverrides = ({ config, section }) => {
         },
         view: el => el?.toString() ?? '—',
         isHidden: value =>
+          !cashoutConfig(value.machine).active ||
           it >
-          R.defaultTo(
-            0,
-            machines.find(({ deviceId }) => deviceId === value.machine)
-              ?.numberOfCassettes
-          )
+            R.defaultTo(
+              0,
+              machines.find(({ deviceId }) => deviceId === value.machine)
+                ?.numberOfCassettes
+            )
       }),
       R.range(1, maxNumberOfCassettes + 1)
     )
