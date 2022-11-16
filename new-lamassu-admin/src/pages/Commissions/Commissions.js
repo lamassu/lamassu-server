@@ -77,13 +77,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   }
 
   const saveOverridesFromList = it => (_, override) => {
-    const cryptoOverriden = R.path(['cryptoCurrencies', 0], override)
+    const cryptoOverridden = R.path(['cryptoCurrencies', 0], override)
 
     const sameMachine = R.eqProps('machine', override)
     const notSameOverride = it => !R.eqProps('cryptoCurrencies', override, it)
 
     const filterMachine = R.filter(R.both(sameMachine, notSameOverride))
-    const removeCoin = removeCoinFromOverride(cryptoOverriden)
+    const removeCoin = removeCoinFromOverride(cryptoOverridden)
 
     const machineOverrides = R.map(removeCoin)(filterMachine(it))
 

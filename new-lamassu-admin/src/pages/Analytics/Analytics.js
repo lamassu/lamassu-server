@@ -293,7 +293,7 @@ const Analytics = () => {
       case 'topMachines':
         return (
           <TopMachinesWrapper
-            title="Transactions over time"
+            title="Top 5 Machines"
             representing={representing}
             period={period}
             data={R.map(convertFiatToLocale)(filteredData(period.code).current)}

@@ -257,6 +257,7 @@ const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
       size={rowSize}
       error={editing && hasErrors}
       newRow={newRow && !hasErrors}
+      shouldShowError
       errorMessage={errorMessage}>
       {innerElements.map((it, idx) => {
         return (

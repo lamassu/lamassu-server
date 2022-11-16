@@ -74,11 +74,11 @@ const MachineRoute = () => {
       setLoading(false)
     },
     variables: {
-      deviceId: id
-    },
-    billFilters: {
       deviceId: id,
-      batch: 'none'
+      billFilters: {
+        deviceId: id,
+        batch: 'none'
+      }
     }
   })
 

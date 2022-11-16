@@ -75,7 +75,7 @@ const Header = () => {
   }
 
   const mapElement = (
-    { name, width = DEFAULT_COL_SIZE, header, textAlign },
+    { name, display, width = DEFAULT_COL_SIZE, header, textAlign },
     idx
   ) => {
     const orderClasses = classnames({
@@ -104,7 +104,7 @@ const Header = () => {
           <>{attachOrderedByToComplexHeader(header) ?? header}</>
         ) : (
           <span className={orderClasses}>
-            {startCase(name)}{' '}
+            {!R.isNil(display) ? display : startCase(name)}{' '}
             {!R.isNil(orderedBy) && R.equals(name, orderedBy.code) && '-'}
           </span>
         )}
