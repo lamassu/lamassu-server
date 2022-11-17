@@ -83,6 +83,7 @@ const GET_TRANSACTIONS = gql`
       cryptoCode
       toAddress
       created
+      profit
     }
   }
 `
@@ -237,18 +238,8 @@ const Analytics = () => {
   }
 
   const commissions = {
-    current: R.sum(
-      R.map(
-        d => d.fiat * d.commissionPercentage,
-        filteredData(period.code).current
-      )
-    ),
-    previous: R.sum(
-      R.map(
-        d => d.fiat * d.commissionPercentage,
-        filteredData(period.code).previous
-      )
-    )
+    current: R.sum(R.map(d => d.profit, filteredData(period.code).current)),
+    previous: R.sum(R.map(d => d.profit, filteredData(period.code).previous))
   }
 
   const handleRepresentationChange = newRepresentation => {
