@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('../lib/environment-helper')
+
 const ofac = require('../lib/ofac/update')
 
 console.log('Updating OFAC databases.')

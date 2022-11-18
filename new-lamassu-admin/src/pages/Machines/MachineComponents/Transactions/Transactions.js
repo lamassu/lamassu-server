@@ -55,6 +55,7 @@ const GET_TRANSACTIONS = gql`
       customerId
       isAnonymous
       rawTickerPrice
+      profit
     }
   }
 `

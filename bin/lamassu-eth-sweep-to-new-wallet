@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+
+require('../lib/environment-helper')
+
 const hdkey = require('ethereumjs-wallet/hdkey')
 const hkdf = require('futoin-hkdf')
 const crypto = require('crypto')
@@ -263,7 +266,7 @@ settingsLoader.loadLatest()
     }
 
     const opts = {
-      chainId: 3,
+      chainId: 1,
       nonce: 0,
       includesFee: true
     }

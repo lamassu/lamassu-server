@@ -4,6 +4,7 @@ import { Formik, Form, Field } from 'formik'
 import * as R from 'ramda'
 import React from 'react'
 
+import ErrorMessage from 'src/components/ErrorMessage'
 import Stepper from 'src/components/Stepper'
 import { HoverableTooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
@@ -94,6 +95,10 @@ const styles = {
   },
   errorMessage: {
     color: errorColor
+  },
+  stepErrorMessage: {
+    maxWidth: 275,
+    marginTop: 25
   }
 }
 
@@ -284,6 +289,11 @@ const WizardStep = ({
                       = {numberToFiatAmount(cassetteTotal(values))}{' '}
                       {fiatCurrency}
                     </P>
+                    {!R.isEmpty(errors) && (
+                      <ErrorMessage className={classes.stepErrorMessage}>
+                        {R.head(R.values(errors))}
+                      </ErrorMessage>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,3 +1,5 @@
+require('../lib/environment-helper')
+
 const settingsLoader = require('../lib/new-settings-loader')
 const pp = require('../lib/pp')
 

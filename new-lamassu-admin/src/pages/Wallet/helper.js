@@ -8,7 +8,7 @@ import {
 } from 'src/components/inputs/formik'
 import { disabledColor } from 'src/styling/variables'
 import { CURRENCY_MAX } from 'src/utils/constants'
-import { transformNumber } from 'src/utils/number'
+import { defaultToZero } from 'src/utils/number'
 
 const classes = {
   editDisabled: {
@@ -19,15 +19,21 @@ const filterClass = type => R.filter(it => it.class === type)
 const filterCoins = ({ id }) => R.filter(it => R.contains(id)(it.cryptos))
 
 const WalletSchema = Yup.object().shape({
-  ticker: Yup.string().required(),
-  wallet: Yup.string().required(),
-  exchange: Yup.string().required(),
-  zeroConf: Yup.string(),
-  zeroConfLimit: Yup.number()
-    .integer()
-    .min(0)
+  ticker: Yup.string('The ticker must be a string').required(
+    'The ticker is required'
+  ),
+  wallet: Yup.string('The wallet must be a string').required(
+    'The wallet is required'
+  ),
+  exchange: Yup.string('The exchange must be a string').required(
+    'The exchange is required'
+  ),
+  zeroConf: Yup.string('The confidence checking must be a string'),
+  zeroConfLimit: Yup.number('The 0-conf limit must be an integer')
+    .integer('The 0-conf limit must be an integer')
+    .min(0, 'The 0-conf limit must be a positive integer')
     .max(CURRENCY_MAX)
-    .transform(transformNumber)
+    .transform(defaultToZero)
 })
 
 const AdvancedWalletSchema = Yup.object().shape({
@@ -195,7 +201,7 @@ const getAdvancedWalletElementsOverrides = (
 
 const has0Conf = R.complement(
   /* NOTE: List of coins without 0conf settings. */
-  R.pipe(R.prop('id'), R.flip(R.includes)(['ETH']))
+  R.pipe(R.prop('id'), R.flip(R.includes)(['ETH', 'USDT']))
 )
 
 const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {

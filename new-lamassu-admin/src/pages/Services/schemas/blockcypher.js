@@ -1,7 +1,6 @@
 import * as Yup from 'yup'
 
-import CheckboxInput from 'src/components/inputs/formik/Checkbox'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import { Checkbox, TextInput, NumberInput } from 'src/components/inputs/formik'
 
 export default {
   code: 'blockcypher',
@@ -11,19 +10,19 @@ export default {
     {
       code: 'token',
       display: 'API Token',
-      component: TextInputFormik,
+      component: TextInput,
       face: true,
       long: true
     },
     {
       code: 'confidenceFactor',
       display: 'Confidence Factor',
-      component: TextInputFormik,
+      component: NumberInput,
       face: true
     },
     {
       code: 'rbf',
-      component: CheckboxInput,
+      component: Checkbox,
       settings: {
         field: 'wallets_BTC_wallet',
         enabled: true,
@@ -43,7 +42,8 @@ export default {
         .required('The token is required'),
       confidenceFactor: Yup.number('The confidence factor must be a number')
         .integer('The confidence factor must be an integer')
-        .positive('The confidence factor must be positive')
+        .min(0, 'The confidence factor must be between 0 and 100')
+        .max(100, 'The confidence factor must be between 0 and 100')
         .required('The confidence factor is required')
     })
   }
