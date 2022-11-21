@@ -6,17 +6,17 @@ import { ReactComponent as InverseLinkIcon } from 'src/styling/icons/action/exte
 import { ReactComponent as LinkIcon } from 'src/styling/icons/action/external link/zodiac.svg'
 import { spacer, primaryColor } from 'src/styling/variables'
 
-const useStyles = makeStyles({
-  actionButton: {
-    marginBottom: spacer * 4
-  },
-  actionButtonLink: {
-    textDecoration: 'none',
-    color: primaryColor
-  }
-})
+const SupportLinkButton = ({ link, label, bottomSpace = 4 }) => {
+  const useStyles = makeStyles({
+    actionButton: {
+      marginBottom: spacer * bottomSpace
+    },
+    actionButtonLink: {
+      textDecoration: 'none',
+      color: primaryColor
+    }
+  })
 
-const SupportLinkButton = ({ link, label }) => {
   const classes = useStyles()
   return (
     <a

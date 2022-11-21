@@ -1,5 +1,4 @@
 const fs = require('fs')
-const os = require('os')
 const path = require('path')
 const argv = require('minimist')(process.argv.slice(2))
 const _ = require('lodash/fp')
@@ -13,7 +12,7 @@ if (!_.isEqual(_.intersection(_.keys(argv), requiredParams), requiredParams)) {
   process.exit(2)
 }
 
-fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env'))
+fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), path.resolve('/etc', 'lamassu', '.env'))
 
 setEnvVariable('POSTGRES_USER', 'lamassu_pg')
 setEnvVariable('POSTGRES_PASSWORD', `${argv['db-password']}`)
@@ -24,7 +23,7 @@ setEnvVariable('POSTGRES_DB', 'lamassu')
 setEnvVariable('LAMASSU_CA_PATH', `/etc/ssl/certs/Lamassu_CA.pem`)
 setEnvVariable('CA_PATH', `/etc/ssl/certs/Lamassu_OP_Root_CA.pem`)
 setEnvVariable('CERT_PATH', `/etc/ssl/certs/Lamassu_OP.pem`)
-setEnvVariable('KEY_PATH', `/etc/ssl/certs/Lamassu_OP.key`)
+setEnvVariable('KEY_PATH', `/etc/ssl/private/Lamassu_OP.key`)
 
 setEnvVariable('MNEMONIC_PATH', `/etc/lamassu/mnemonics/mnemonic.txt`)
 setEnvVariable('MIGRATE_STATE_PATH', `/etc/lamassu/.migrate`)

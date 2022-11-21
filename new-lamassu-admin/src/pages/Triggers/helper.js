@@ -253,7 +253,9 @@ const Schema = Yup.object()
 // TYPE
 const typeSchema = Yup.object()
   .shape({
-    triggerType: Yup.string().required(),
+    triggerType: Yup.string('The trigger type must be a string').required(
+      'The trigger type is required'
+    ),
     threshold: Yup.object({
       threshold: Yup.number()
         .transform(transformNumber)
@@ -296,6 +298,8 @@ const typeSchema = Yup.object()
         threshold.threshold > 0 && threshold.thresholdDays > 0,
       consecutiveDays: threshold => threshold.thresholdDays > 0
     }
+
+    if (!triggerType) return
 
     if (triggerType && thresholdValidator[triggerType](threshold)) return
 

@@ -4,6 +4,8 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
+import { HoverableTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
@@ -147,7 +149,24 @@ const Notifications = ({
     !loading && (
       <>
         <NotificationsCtx.Provider value={contextValue}>
-          {displayTitle && <TitleSection title="Notifications" />}
+          {displayTitle && (
+            <TitleSection
+              title="Notifications"
+              appendix={
+                <HoverableTooltip width={250}>
+                  <P>
+                    For details on configuring notifications, please read the
+                    relevant knowledgebase article:
+                  </P>
+                  <SupportLinkButton
+                    link="https://support.lamassu.is/hc/en-us/articles/115001210592-Enabling-notifications"
+                    label="Enabling notifications"
+                    bottomSpace="1"
+                  />
+                </HoverableTooltip>
+              }
+            />
+          )}
           {displaySetup && (
             <Section title="Setup" error={error && !section}>
               <Setup forceDisable={!!editingKey} wizard={wizard} />

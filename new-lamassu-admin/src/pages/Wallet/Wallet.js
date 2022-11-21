@@ -1,12 +1,14 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
+import { HoverableTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
+import { P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import schemas from 'src/pages/Services/schemas'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
@@ -14,7 +16,6 @@ import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import AdvancedWallet from './AdvancedWallet'
-import styles from './Wallet.styles.js'
 import Wizard from './Wizard'
 import { WalletSchema, getElements } from './helper'
 
@@ -51,10 +52,7 @@ const GET_INFO = gql`
 
 const LOCALE = 'locale'
 
-const useStyles = makeStyles(styles)
-
 const Wallet = ({ name: SCREEN_KEY }) => {
-  const classes = useStyles()
   const [editingSchema, setEditingSchema] = useState(null)
   const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [wizard, setWizard] = useState(false)
@@ -112,19 +110,30 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   return (
     <>
-      <div className={classes.header}>
-        <TitleSection
-          title="Wallet Settings"
-          buttons={[
-            {
-              text: 'Advanced settings',
-              icon: SettingsIcon,
-              inverseIcon: ReverseSettingsIcon,
-              toggle: setAdvancedSettings
-            }
-          ]}
-        />
-      </div>
+      <TitleSection
+        title="Wallet Settings"
+        buttons={[
+          {
+            text: 'Advanced settings',
+            icon: SettingsIcon,
+            inverseIcon: ReverseSettingsIcon,
+            toggle: setAdvancedSettings
+          }
+        ]}
+        appendix={
+          <HoverableTooltip width={340}>
+            <P>
+              For details on configuring wallets, please read the relevant
+              knowledgebase article:
+            </P>
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/360000725832-Wallets-Exchange-Linkage-and-Volatility"
+              label="Wallets, Exchange Linkage, and Volatility"
+              bottomSpace="1"
+            />
+          </HoverableTooltip>
+        }
+      />
       {!advancedSettings && (
         <>
           <EditableTable

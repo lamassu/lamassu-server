@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { makeStyles, Dialog, DialogContent } from '@material-ui/core'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -52,6 +53,18 @@ const Wizard = ({ fromAuthRegister }) => {
 
   const [footerExp, setFooterExp] = useState(false)
 
+  const getSteps = STEPS => {
+    const buildTarget = process.env.REACT_APP_BUILD_TARGET
+    if (buildTarget === 'PAZUZ') {
+      return R.filter(step => step.id !== 'wallet' && step.id !== 'twilio')(
+        STEPS
+      )
+    }
+    return STEPS
+  }
+
+  const steps = getSteps(STEPS)
+
   if (loading) {
     return <></>
   }
@@ -78,7 +91,7 @@ const Wizard = ({ fromAuthRegister }) => {
   }
 
   const doContinue = () => {
-    if (step >= STEPS.length - 1) {
+    if (step >= steps.length - 1) {
       setOpen(false)
       history.push('/')
     }
@@ -89,7 +102,7 @@ const Wizard = ({ fromAuthRegister }) => {
     setStep(nextStep)
   }
 
-  const current = STEPS[step]
+  const current = steps[step]
 
   return (
     <Dialog fullScreen open={open}>
@@ -99,7 +112,7 @@ const Wizard = ({ fromAuthRegister }) => {
       {!isWelcome && (
         <Footer
           currentStep={step}
-          steps={STEPS.length - 1}
+          steps={steps.length - 1}
           exImage={current.exImage}
           subtitle={current.subtitle}
           text={current.text}

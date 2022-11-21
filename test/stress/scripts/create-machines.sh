@@ -20,8 +20,8 @@ fi
 rm -rf ./machines/*
 
 # Create stress database
-sudo -u postgres psql postgres -c "drop database if exists lamassu_stress"
-sudo -u postgres psql postgres -c "create database lamassu_stress with template lamassu"
+sudo psql postgres -c "drop database if exists lamassu_stress" -U postgres
+sudo psql postgres -c "create database lamassu_stress with template lamassu" -U postgres
 
 START=1
 END=$1
@@ -46,13 +46,13 @@ EOL
 
   # Update db config
   NEW_CONFIG=$(node ./utils/save-config.js $NUMBER $DEVICE_ID)
-  sudo -u postgres psql "lamassu_stress" << EOF
+  sudo psql "lamassu_stress" -U postgres << EOF
     insert into user_config(type, data, created, valid) 
     values('config', '$NEW_CONFIG', now(), 't')
 EOF
 
   # Add device on db
-  sudo -u postgres psql "lamassu_stress" << EOF
+  sudo psql "lamassu_stress" -U postgres << EOF
     insert into devices(device_id, cashbox, cassette1, cassette2, paired, display, created, name, last_online, location) 
     values ('$DEVICE_ID', 0, 0, 0, 't', 't', now(), $NUMBER, now(), '{}'::json)
 EOF

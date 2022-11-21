@@ -10,7 +10,7 @@ import WizardSplash from './WizardSplash'
 import WizardStep from './WizardStep'
 
 const MODAL_WIDTH = 554
-const MODAL_HEIGHT = 520
+const MODAL_HEIGHT = 535
 const CASHBOX_DEFAULT_CAPACITY = 500
 
 const CASSETTE_FIELDS = R.map(

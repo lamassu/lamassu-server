@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { IconButton } from 'src/components/buttons'
+import { IconButton, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import DataTable from 'src/components/tables/DataTable'
 import { H4, P, Label3 } from 'src/components/typography'
@@ -237,6 +237,17 @@ const SMSNotices = () => {
     <>
       <div className={classes.header}>
         <H4>SMS notices</H4>
+        <HoverableTooltip width={320}>
+          <P>
+            For details on configuring this panel, please read the relevant
+            knowledgebase article:
+          </P>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/115001205591-SMS-Phone-Verification"
+            label="Lamassu Support Article"
+            bottomSpace="1"
+          />
+        </HoverableTooltip>
       </div>
       {showModal && (
         <CustomSMSModal

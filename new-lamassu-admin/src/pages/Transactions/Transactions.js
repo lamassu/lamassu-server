@@ -11,6 +11,8 @@ import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
 import SearchFilter from 'src/components/SearchFilter'
 import Title from 'src/components/Title'
+import { HoverableTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -75,6 +77,7 @@ const GET_TRANSACTIONS = gql`
     $cryptoCode: String
     $toAddress: String
     $status: String
+    $swept: Boolean
   ) {
     transactions(
       limit: $limit
@@ -87,6 +90,7 @@ const GET_TRANSACTIONS = gql`
       cryptoCode: $cryptoCode
       toAddress: $toAddress
       status: $status
+      swept: $swept
     ) {
       id
       txClass
@@ -101,7 +105,7 @@ const GET_TRANSACTIONS = gql`
       hasError: error
       deviceId
       fiat
-      cashInFee
+      fixedFee
       fiatCode
       cryptoAtoms
       cryptoCode
@@ -121,6 +125,8 @@ const GET_TRANSACTIONS = gql`
       rawTickerPrice
       batchError
       walletScore
+      profit
+      swept
     }
   }
 `
@@ -226,7 +232,22 @@ const Transactions = () => {
     },
     {
       header: 'Status',
-      view: it => getStatus(it),
+      view: it => {
+        if (getStatus(it) === 'Pending')
+          return (
+            <div className={classes.pendingBox}>
+              {'Pending'}
+              <HoverableTooltip width={285}>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/115001210452-Cancelling-cash-out-transactions"
+                  label="Cancelling cash-out transactions"
+                  bottomSpace="0"
+                />
+              </HoverableTooltip>
+            </div>
+          )
+        else return getStatus(it)
+      },
       textAlign: 'left',
       size: 'sm',
       width: 80
@@ -246,7 +267,8 @@ const Transactions = () => {
       fiatCode: filtersObject.fiat,
       cryptoCode: filtersObject.crypto,
       toAddress: filtersObject.address,
-      status: filtersObject.status
+      status: filtersObject.status,
+      swept: filtersObject.swept === 'Swept'
     })
 
     refetch && refetch()
@@ -269,7 +291,8 @@ const Transactions = () => {
       fiatCode: filtersObject.fiat,
       cryptoCode: filtersObject.crypto,
       toAddress: filtersObject.address,
-      status: filtersObject.status
+      status: filtersObject.status,
+      swept: filtersObject.swept === 'Swept'
     })
 
     refetch && refetch()
@@ -287,7 +310,8 @@ const Transactions = () => {
       fiatCode: filtersObject.fiat,
       cryptoCode: filtersObject.crypto,
       toAddress: filtersObject.address,
-      status: filtersObject.status
+      status: filtersObject.status,
+      swept: filtersObject.swept === 'Swept'
     })
 
     refetch && refetch()

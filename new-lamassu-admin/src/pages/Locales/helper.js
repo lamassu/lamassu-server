@@ -27,10 +27,10 @@ const allFields = (getData, onChange, auxElements = []) => {
     return R.compose(R.join(', '), R.map(getView(data, 'code')))(it)
   }
 
-  const overridenMachines = R.map(override => override.machine, auxElements)
+  const overriddenMachines = R.map(override => override.machine, auxElements)
 
   const suggestionFilter = it =>
-    R.differenceWith((x, y) => x.deviceId === y, it, overridenMachines)
+    R.differenceWith((x, y) => x.deviceId === y, it, overriddenMachines)
 
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])

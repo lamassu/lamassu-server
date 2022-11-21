@@ -5,9 +5,9 @@
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
     "@lamassu/coins": "1.3.0-ln-galoy",
-    "@material-ui/core": "4.11.0",
+    "@material-ui/core": "4.12.4",
     "@material-ui/icons": "4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/lab": "^4.0.0-alpha.61",
     "@simplewebauthn/browser": "^3.0.0",
     "@use-hooks/axios": "1.3.0",
     "apollo-cache-inmemory": "^1.6.6",

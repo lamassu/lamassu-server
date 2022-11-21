@@ -9,7 +9,6 @@ import Blacklist from 'src/pages/Blacklist'
 import Cashout from 'src/pages/Cashout'
 import Commissions from 'src/pages/Commissions'
 import { Customers, CustomerProfile } from 'src/pages/Customers'
-import Funding from 'src/pages/Funding'
 import Locales from 'src/pages/Locales'
 import IndividualDiscounts from 'src/pages/LoyaltyPanel/IndividualDiscounts'
 import PromoCodes from 'src/pages/LoyaltyPanel/PromoCodes'
@@ -19,11 +18,11 @@ import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
 import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
+import MachineScreens from 'src/pages/OperatorInfo/MachineScreens'
 import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import SMSNotices from 'src/pages/OperatorInfo/SMSNotices/SMSNotices'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
 import ServerLogs from 'src/pages/ServerLogs'
-import Services from 'src/pages/Services/Services'
 import SessionManagement from 'src/pages/SessionManagement/SessionManagement'
 import Transactions from 'src/pages/Transactions/Transactions'
 import Triggers from 'src/pages/Triggers'
@@ -55,13 +54,6 @@ const getPazuzRoutes = () => [
         route: '/maintenance/cash-cassettes',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: CashCassettes
-      },
-      {
-        key: 'funding',
-        label: 'Funding',
-        route: '/maintenance/funding',
-        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
-        component: Funding
       },
       {
         key: 'logs',
@@ -131,13 +123,6 @@ const getPazuzRoutes = () => [
         component: Notifications
       },
       {
-        key: 'services',
-        label: '3rd Party Services',
-        route: '/settings/3rd-party-services',
-        allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
-        component: Services
-      },
-      {
         key: namespaces.OPERATOR_INFO,
         label: 'Operator Info',
         route: '/settings/operator-info',
@@ -188,6 +173,13 @@ const getPazuzRoutes = () => [
             route: '/settings/operator-info/terms-conditions',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: TermsConditions
+          },
+          {
+            key: 'machine-screens',
+            label: 'Machine screens',
+            route: '/settings/operator-info/machine-screens',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: MachineScreens
           }
         ]
       }
