@@ -30,7 +30,7 @@ const GET_OPERATOR_BY_USERNAME = gql`
       cryptoBalances
       machines
       joined
-      assetValue
+      assets
       preferredFiatCurrency
       contactInfo {
         name
@@ -147,8 +147,7 @@ const Assets = () => {
     {
       id: 'fiatBalance',
       display: 'Fiat balance',
-      amount:
-        operatorData?.fiatBalances[operatorData?.preferredFiatCurrency] ?? 0,
+      amount: operatorData?.assets.total ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       class: 'Available balance'
     },
@@ -156,7 +155,7 @@ const Assets = () => {
       id: 'hedgingReserve',
       display: 'Hedging reserve',
       amount:
-        operatorData?.fiatBalances[operatorData?.preferredFiatCurrency] ?? 0,
+        -R.sum(R.values(operatorData?.assets.values.hedgedContracts)) ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       class: 'Available balance',
       direction: 'out'
@@ -167,7 +166,7 @@ const Assets = () => {
     {
       id: 'hedgedWalletAssets',
       display: 'Hedged wallet assets',
-      amount: 0,
+      amount: R.sum(R.values(operatorData?.assets.values.hedgedContracts)) ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       class: 'Wallet assets',
       direction: 'in'
@@ -175,7 +174,7 @@ const Assets = () => {
     {
       id: 'unhedgedWalletAssets',
       display: 'Unhedged wallet assets',
-      amount: 0,
+      amount: R.sum(R.values(operatorData?.assets.values.unhedgedFiat)) ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       class: 'Wallet assets',
       direction: 'in'
@@ -193,21 +192,22 @@ const Assets = () => {
     {
       id: 'hedgingReserve',
       display: 'Hedging reserve',
-      amount: 0,
+      amount:
+        -R.sum(R.values(operatorData?.assets.values.hedgedContracts)) ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       direction: 'out'
     },
     {
       id: 'hedgedWalletAssets',
       display: 'Market value of hedged wallet assets',
-      amount: 0,
+      amount: R.sum(R.values(operatorData?.assets.values.hedgedContracts)) ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       direction: 'in'
     },
     {
       id: 'unhedgedWalletAssets',
       display: 'Unhedged wallet assets',
-      amount: 0,
+      amount: R.sum(R.values(operatorData?.assets.values.unhedgedFiat)) ?? 0,
       currency: R.toUpper(operatorData?.preferredFiatCurrency ?? ''),
       direction: 'in'
     }

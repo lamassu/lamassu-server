@@ -1,7 +1,7 @@
 with import (fetchTarball {
-  name = "nixpkgs-19.03";
-  url = https://github.com/NixOS/nixpkgs/archive/0b8799ecaaf0dc6b4c11583a3c96ca5b40fcfdfb.tar.gz;
-  sha256 = "11m4aig6cv0zi3gbq2xn9by29cfvnsxgzf9qsvz67qr0yq29ryyz";
+  name = "nixpkgs-21.11";
+  url = https://github.com/NixOS/nixpkgs/archive/a7ecde854aee5c4c7cd6177f54a99d2c1ff28a31.tar.gz;
+  sha256 = "162dywda2dvfj1248afxc45kcrg83appjd0nmdb541hl7rnncf02";
 }) {};
 
 stdenv.mkDerivation {
@@ -10,7 +10,7 @@ stdenv.mkDerivation {
         nodejs-14_x
         python2Full
         openssl
-        postgresql_9_6
+        postgresql_14
     ];
     shellHook = ''
         export PATH="$PWD/node_modules/.bin/:$PATH"

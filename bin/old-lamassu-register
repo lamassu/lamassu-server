@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-const path = require('path')
-const os = require('os')
-require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env') })
-
+require('../lib/environment-helper')
 const login = require('../lib/admin/login')
 
 const name = process.argv[2]

@@ -4,7 +4,9 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
+import { HoverableTooltip } from 'src/components/Tooltip'
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
+import { SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
@@ -47,6 +49,17 @@ const ReceiptPrinting = memo(({ wizard }) => {
     <>
       <div className={classes.header}>
         <H4>Receipt options</H4>
+        <HoverableTooltip width={320}>
+          <P>
+            For details on configuring this panel, please read the relevant
+            knowledgebase article:
+          </P>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/360058513951-Receipt-options-printers"
+            label="Lamassu Support Article"
+            bottomSpace="1"
+          />
+        </HoverableTooltip>
       </div>
       <div className={classes.switchRow}>
         <P>Enable receipt printing</P>
@@ -110,10 +123,6 @@ const ReceiptPrinting = memo(({ wizard }) => {
           {
             name: 'companyNumber',
             display: 'Company number'
-          },
-          {
-            name: 'machineLocation',
-            display: 'Machine location'
           },
           {
             name: 'customerNameOrPhoneNumber',

@@ -131,5 +131,12 @@ export default {
   },
   error: {
     color: tomato
+  },
+  swept: {
+    width: 250
+  },
+  errorCopy: {
+    lineBreak: 'normal',
+    maxWidth: 180
   }
 }

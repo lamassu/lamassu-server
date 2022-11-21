@@ -47,13 +47,15 @@ const getOverridesSchema = (values, customInfoRequests) => {
       .required()
       .test({
         test() {
-          const { requirement } = this.parent
-          if (R.find(R.propEq('requirement', requirement))(values)) {
+          const { id, requirement } = this.parent
+          // If we're editing, filter out the override being edited so that validation schemas don't enter in circular conflicts
+          const _values = R.filter(it => it.id !== id, values)
+          if (R.find(R.propEq('requirement', requirement))(_values)) {
             return this.createError({
-              message: `Requirement ${displayRequirement(
+              message: `Requirement '${displayRequirement(
                 requirement,
                 customInfoRequests
-              )} already overriden`
+              )}' already overridden`
             })
           }
           return true

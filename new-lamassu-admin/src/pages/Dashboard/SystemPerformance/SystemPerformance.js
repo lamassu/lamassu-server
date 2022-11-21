@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { isAfter, sub } from 'date-fns/fp'
+import { isAfter } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
@@ -15,6 +15,7 @@ import { ReactComponent as PercentNeutralIcon } from 'src/styling/icons/dashboar
 import { ReactComponent as PercentUpIcon } from 'src/styling/icons/dashboard/up.svg'
 import { java, neon } from 'src/styling/variables'
 import { fromNamespace } from 'src/utils/config'
+import { DAY, WEEK, MONTH } from 'src/utils/time'
 import { timezones } from 'src/utils/timezone-list'
 import { toTimezone } from 'src/utils/timezones'
 
@@ -30,37 +31,19 @@ BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_UP })
 const getFiats = R.map(R.prop('fiat'))
 const useStyles = makeStyles(styles)
 
-const getDateSecondsAgo = (seconds = 0, startDate = null) => {
-  const date = startDate ? new Date(startDate) : new Date()
-  return sub({ seconds: seconds }, date)
-}
-
-const ranges = {
-  Day: {
-    left: getDateSecondsAgo(2 * 24 * 3600, new Date()),
-    right: getDateSecondsAgo(24 * 3600, new Date())
-  },
-  Week: {
-    left: getDateSecondsAgo(14 * 24 * 3600, new Date()),
-    right: getDateSecondsAgo(7 * 24 * 3600, new Date())
-  },
-  Month: {
-    left: getDateSecondsAgo(60 * 24 * 3600, new Date()),
-    right: getDateSecondsAgo(30 * 24 * 3600, new Date())
-  }
-}
-
 const GET_DATA = gql`
   query getData($excludeTestingCustomers: Boolean) {
     transactions(excludeTestingCustomers: $excludeTestingCustomers) {
       fiatCode
       fiat
-      cashInFee
+      fixedFee
       commissionPercentage
       created
       txClass
       error
       profit
+      dispense
+      sendConfirmed
     }
     fiatRates {
       code
@@ -80,19 +63,41 @@ const SystemPerformance = () => {
   const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
   const timezone = fromNamespace('locale')(data?.config).timezone
 
+  const NOW = Date.now()
+
+  const periodDomains = {
+    Day: [NOW - DAY, NOW],
+    Week: [NOW - WEEK, NOW],
+    Month: [NOW - MONTH, NOW]
+  }
+
   const isInRangeAndNoError = getLastTimePeriod => t => {
     if (t.error !== null) return false
+    if (t.txClass === 'cashOut' && !t.dispense) return false
+    if (t.txClass === 'cashIn' && !t.sendConfirmed) return false
     if (!getLastTimePeriod) {
       return (
         t.error === null &&
-        isAfter(ranges[selectedRange].right, toTimezone(t.created, timezone)) &&
-        isAfter(toTimezone(t.created, timezone), new Date())
+        isAfter(
+          toTimezone(t.created, timezone),
+          toTimezone(periodDomains[selectedRange][1], timezone)
+        ) &&
+        isAfter(
+          toTimezone(periodDomains[selectedRange][0], timezone),
+          toTimezone(t.created, timezone)
+        )
       )
     }
     return (
       t.error === null &&
-      isAfter(ranges[selectedRange].left, toTimezone(t.created, timezone)) &&
-      isAfter(toTimezone(t.created, timezone), ranges[selectedRange].right)
+      isAfter(
+        toTimezone(periodDomains[selectedRange][1], timezone),
+        toTimezone(t.created, timezone)
+      ) &&
+      isAfter(
+        toTimezone(t.created, timezone),
+        toTimezone(periodDomains[selectedRange][0], timezone)
+      )
     )
   }
 

@@ -12,6 +12,7 @@ import {
   fontSecondary,
   backgroundColor
 } from 'src/styling/variables'
+import { numberToFiatAmount } from 'src/utils/number'
 import { MINUTE, DAY, WEEK, MONTH } from 'src/utils/time'
 
 const Graph = ({ data, timeFrame, timezone }) => {
@@ -22,9 +23,9 @@ const Graph = ({ data, timeFrame, timezone }) => {
   const GRAPH_MARGIN = useMemo(
     () => ({
       top: 20,
-      right: 0.5,
+      right: 3.5,
       bottom: 27,
-      left: 43.5
+      left: 33.5
     }),
     []
   )
@@ -63,7 +64,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
   )
 
   const filterDay = useCallback(
-    x => (timeFrame === 'day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
+    x => (timeFrame === 'Day' ? x.getUTCHours() === 0 : x.getUTCDate() === 1),
     [timeFrame]
   )
 
@@ -172,7 +173,16 @@ const Graph = ({ data, timeFrame, timezone }) => {
     g =>
       g
         .attr('transform', `translate(${GRAPH_MARGIN.left}, 0)`)
-        .call(d3.axisLeft(y).ticks(5))
+        .call(
+          d3
+            .axisLeft(y)
+            .ticks(5)
+            .tickFormat(d => {
+              if (d >= 1000) return numberToFiatAmount(d / 1000) + 'k'
+
+              return numberToFiatAmount(d)
+            })
+        )
         .call(g => g.select('.domain').remove())
         .selectAll('text')
         .attr('dy', '-0.25rem'),
@@ -211,7 +221,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
             .attr('y1', d => 0.5 + y(d))
             .attr('y2', d => 0.5 + y(d))
             .attr('x1', GRAPH_MARGIN.left)
-            .attr('x2', GRAPH_WIDTH - GRAPH_MARGIN.right)
+            .attr('x2', GRAPH_WIDTH)
         )
         // Thick vertical lines
         .call(g =>

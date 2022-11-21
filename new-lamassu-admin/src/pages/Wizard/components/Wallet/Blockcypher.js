@@ -96,7 +96,7 @@ const Blockcypher = ({ addData }) => {
             value={accounts.blockcypher}
             save={save}
             elements={schema.blockcypher.elements}
-            validationSchema={schema.blockcypher.validationSchema}
+            validationSchema={schema.blockcypher.getValidationSchema}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}
           />

@@ -3,7 +3,7 @@ const os = require('os')
 const path = require('path')
 
 const setEnvVariable = (key, value) => {
-  const ENV_PATH = process.env.NODE_ENV === 'production' ? path.resolve(os.homedir(), '.lamassu', '.env') : path.resolve(__dirname, '../.env')
+  const ENV_PATH = path.resolve(__dirname, '../.env')
   const ENV_VARIABLES = fs.readFileSync(ENV_PATH, 'utf-8').split(os.EOL)
   const target = ENV_VARIABLES.indexOf(ENV_VARIABLES.find(line => line.match(new RegExp(`^${key}=`))))
 

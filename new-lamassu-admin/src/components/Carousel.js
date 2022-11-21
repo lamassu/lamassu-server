@@ -13,9 +13,10 @@ const useStyles = makeStyles({
     display: 'flex'
   },
   imgInner: {
-    objectFit: 'cover',
+    objectFit: 'contain',
     objectPosition: 'center',
     width: 500,
+    height: 400,
     marginBottom: 40
   }
 })

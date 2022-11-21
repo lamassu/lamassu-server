@@ -12,12 +12,18 @@ import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
 
 import FormRenderer from './FormRenderer'
-import schemas from './schemas'
+import _schemas from './schemas'
 
 const GET_INFO = gql`
   query getData {
     accounts
     config
+  }
+`
+
+const GET_MARKETS = gql`
+  query getMarkets {
+    getMarkets
   }
 `
 
@@ -40,11 +46,16 @@ const useStyles = makeStyles(styles)
 const Services = () => {
   const [editingSchema, setEditingSchema] = useState(null)
 
-  const { data } = useQuery(GET_INFO)
+  const { data, loading: configLoading } = useQuery(GET_INFO)
+  const { data: marketsData, loading: marketsLoading } = useQuery(GET_MARKETS)
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
     onCompleted: () => setEditingSchema(null),
     refetchQueries: ['getData']
   })
+
+  const markets = marketsData?.getMarkets
+
+  const schemas = _schemas(markets)
 
   const classes = useStyles()
 
@@ -101,40 +112,44 @@ const Services = () => {
   const getValidationSchema = ({ code, getValidationSchema }) =>
     getValidationSchema(accounts[code])
 
+  const loading = marketsLoading || configLoading
+
   return (
-    <div className={classes.wrapper}>
-      <TitleSection title="3rd Party Services" />
-      <Grid container spacing={4}>
-        {R.values(schemas).map(schema => (
-          <Grid item key={schema.code}>
-            <SingleRowTable
-              editMessage={'Configure ' + schema.title}
-              title={schema.title}
-              onEdit={() => setEditingSchema(schema)}
-              items={getItems(schema.code, schema.elements)}
+    !loading && (
+      <div className={classes.wrapper}>
+        <TitleSection title="3rd Party Services" />
+        <Grid container spacing={4}>
+          {R.values(schemas).map(schema => (
+            <Grid item key={schema.code}>
+              <SingleRowTable
+                editMessage={'Configure ' + schema.title}
+                title={schema.title}
+                onEdit={() => setEditingSchema(schema)}
+                items={getItems(schema.code, schema.elements)}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        {editingSchema && (
+          <Modal
+            title={`Edit ${editingSchema.name}`}
+            width={525}
+            handleClose={() => setEditingSchema(null)}
+            open={true}>
+            <FormRenderer
+              save={it =>
+                saveAccount({
+                  variables: { accounts: { [editingSchema.code]: it } }
+                })
+              }
+              elements={getElements(editingSchema)}
+              validationSchema={getValidationSchema(editingSchema)}
+              value={getAccounts(editingSchema)}
             />
-          </Grid>
-        ))}
-      </Grid>
-      {editingSchema && (
-        <Modal
-          title={`Edit ${editingSchema.name}`}
-          width={525}
-          handleClose={() => setEditingSchema(null)}
-          open={true}>
-          <FormRenderer
-            save={it =>
-              saveAccount({
-                variables: { accounts: { [editingSchema.code]: it } }
-              })
-            }
-            elements={getElements(editingSchema)}
-            validationSchema={getValidationSchema(editingSchema)}
-            value={getAccounts(editingSchema)}
-          />
-        </Modal>
-      )}
-    </div>
+          </Modal>
+        )}
+      </div>
+    )
   )
 }
 
