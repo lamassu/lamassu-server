@@ -173,7 +173,12 @@ const Wizard = ({
   const classes = useStyles()
   const isEditing = !R.isNil(toBeEdited)
   const [step, setStep] = useState(isEditing ? 1 : 0)
-  const stepOptions = getStep(step, existingRequirements)
+
+  // If we're editing, filter out the requirement being edited so that validation schemas don't enter in circular conflicts
+  const _existingRequirements = isEditing
+    ? R.filter(it => it.id !== toBeEdited.id, existingRequirements)
+    : existingRequirements
+  const stepOptions = getStep(step, _existingRequirements)
   const isLastStep = step === LAST_STEP
 
   const onContinue = (values, actions) => {
