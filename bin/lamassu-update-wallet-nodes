@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('../lib/environment-helper')
 const _ = require('lodash/fp')
 const common = require('../lib/blockchain/common')
 const { utils: coinUtils } = require('@lamassu/coins')

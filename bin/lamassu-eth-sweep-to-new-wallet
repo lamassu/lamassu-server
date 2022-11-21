@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+
+require('../lib/environment-helper')
+
 const hdkey = require('ethereumjs-wallet/hdkey')
 const hkdf = require('futoin-hkdf')
 const crypto = require('crypto')

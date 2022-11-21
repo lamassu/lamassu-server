@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('../lib/environment-helper')
+
 const _ = require('lodash')
 const db = require('../lib/db')
 

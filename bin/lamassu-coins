@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('../lib/environment-helper')
+
 const install = require('../lib/blockchain/install')
 
 install.run()
