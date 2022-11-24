@@ -42,7 +42,7 @@ function paymentHdNode (account) {
 }
 
 const getHdIndices = db => {
-  const sql = `SELECT id, crypto_code, hd_index FROM cash_out_txs WHERE hd_index IS NOT NULL AND status IN ('confirmed', 'instant') AND crypto_code = 'ETH'`
+  const sql = `SELECT id, crypto_code, hd_index FROM cash_out_txs WHERE hd_index IS NOT NULL AND crypto_code = 'ETH'`
   return db.any(sql)
 }
 
@@ -63,9 +63,11 @@ Promise.all([getHdIndices(db), loadLatest()])
 
     return Promise.all(_.map(it => {
       // If the address only has dust in it, don't bother sweeping
-      if (web3.utils.fromWei(it.balance.toString()) > 0.00001) {
+      if (web3.utils.fromWei(it.balance.toString()) > 0.0005) {
         console.log(`Address ${it.address} found to have ${web3.utils.fromWei(it.balance.toString())} ETH in it. Sweeping...`)
         return sweep(settings, it.cryptoCode, it.index)
+          .catch(e => `The following error occured: ${e}\n\nThis might be an expected error, based on the balance of the address being swept.\nAddress: ${it.address} | Balance: ${it.balance.toString()}`)
+          .finally(() => `Sweeping process for address ${it.address} finished`)
       }
 
       console.log(`Address ${it.address} contains no significant balance (${web3.utils.fromWei(it.balance.toString())}). Skipping the sweep process...`)
