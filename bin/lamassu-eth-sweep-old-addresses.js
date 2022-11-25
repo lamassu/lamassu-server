@@ -1,5 +1,3 @@
-require('../lib/environment-helper')
-
 const hdkey = require('ethereumjs-wallet/hdkey')
 const _ = require('lodash/fp')
 const hkdf = require('futoin-hkdf')
@@ -14,8 +12,9 @@ const { loadLatest } = require('../lib/new-settings-loader')
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
 const { sweep } = require('../lib/wallet')
 const ph = require('../lib/plugin-helper')
+const options = require('../lib/options')
 
-const MNEMONIC_PATH = process.env.MNEMONIC_PATH
+const MNEMONIC_PATH = options.mnemonicPath
 
 function fetchWallet (settings, cryptoCode) {
   return fs.readFile(MNEMONIC_PATH, 'utf8')
