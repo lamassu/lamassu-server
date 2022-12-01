@@ -5,7 +5,6 @@ import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import cex from './cex'
 import ciphertrace from './ciphertrace'
-import ftx from './ftx'
 import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
@@ -23,7 +22,6 @@ export default {
   [twilio.code]: twilio,
   [binanceus.code]: binanceus,
   [cex.code]: cex,
-  [ftx.code]: ftx,
   [ciphertrace.code]: ciphertrace,
   [binance.code]: binance
 }
