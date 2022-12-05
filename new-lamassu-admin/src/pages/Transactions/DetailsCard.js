@@ -129,7 +129,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
     .minus(cashInFee)
     .toFixed(2, 1) // ROUND_DOWN
   const crypto = getCryptoAmount(tx)
-  const exchangeRate = (fiat / crypto).toFixed(2)
+  const exchangeRate = BigNumber(fiat)
+    .div(crypto)
+    .toFixed(2, 1) // ROUND_DOWN
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
   const discount = tx.discount ? `-${tx.discount}%` : null
 
