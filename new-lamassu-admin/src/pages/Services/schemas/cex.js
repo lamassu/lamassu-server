@@ -7,8 +7,8 @@ import { secretTest } from './helper'
 
 export default {
   code: 'cex',
-  name: 'Cex',
-  title: 'Cex (Exchange)',
+  name: 'CEX.IO',
+  title: 'CEX.IO (Exchange)',
   elements: [
     {
       code: 'apiKey',
