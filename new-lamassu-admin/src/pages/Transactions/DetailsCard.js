@@ -125,9 +125,13 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const commissionPercentage =
     Number.parseFloat(tx.commissionPercentage, 2) * 100
   const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
-  const fiat = Number.parseFloat(tx.fiat)
+  const fiat = BigNumber(tx.fiat)
+    .minus(cashInFee)
+    .toFixed(2, 1) // ROUND_DOWN
   const crypto = getCryptoAmount(tx)
-  const exchangeRate = (fiat / crypto).toFixed(2)
+  const exchangeRate = BigNumber(fiat)
+    .div(crypto)
+    .toFixed(2, 1) // ROUND_DOWN
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
   const discount = tx.discount ? `-${tx.discount}%` : null
 
