@@ -138,5 +138,9 @@ export default {
   errorCopy: {
     lineBreak: 'normal',
     maxWidth: 180
+  },
+  testing: {
+    width: 215,
+    marginLeft: 'auto'
   }
 }

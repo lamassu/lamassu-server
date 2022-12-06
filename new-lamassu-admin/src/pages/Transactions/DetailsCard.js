@@ -412,6 +412,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
             </ActionButton>
           </div>
         </div>
+        <div className={classes.testing}>
+          <Label>Testing</Label>
+          <div>{tx.isTestTransaction ? 'Testing' : 'Not testing'}</div>
+        </div>
       </div>
       <ConfirmDialog
         open={action.command === 'cancelTx'}

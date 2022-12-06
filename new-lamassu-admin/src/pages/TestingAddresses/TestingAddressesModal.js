@@ -12,21 +12,16 @@ import { TextInput } from 'src/components/inputs/formik'
 import { H3 } from 'src/components/typography'
 import { PLACEHOLDER_ADDRESSES } from 'src/utils/constants'
 
-import styles from './Blacklist.styles'
+import styles from './TestingAddresses.styles'
 const useStyles = makeStyles(styles)
 
-const BlackListModal = ({
-  onClose,
-  selectedCoin,
-  addToBlacklist,
-  errorMsg
-}) => {
+const TModal = ({ onClose, selectedCoin, addTestingAddress, errorMsg }) => {
   const classes = useStyles()
-  const handleAddToBlacklist = address => {
+  const handleAddToTesting = address => {
     if (selectedCoin.code === 'BCH' && !address.startsWith('bitcoincash:')) {
       address = 'bitcoincash:' + address
     }
-    addToBlacklist(selectedCoin.code, address)
+    addTestingAddress(selectedCoin.code, address)
   }
 
   return (
@@ -48,19 +43,19 @@ const BlackListModal = ({
             .required('An address is required')
         })}
         onSubmit={({ address }) => {
-          handleAddToBlacklist(address.trim())
+          handleAddToTesting(address.trim())
         }}>
         <Form id="address-form">
           <H3 className={classes.modalTitle}>
             {selectedCoin.display
-              ? `Blacklist ${R.toLower(selectedCoin.display)} address`
+              ? `Add testing ${R.toLower(selectedCoin.display)} address`
               : ''}
           </H3>
           <Field
             name="address"
             fullWidth
             autoComplete="off"
-            label="Paste new address to blacklist here"
+            label="Add new testing address here"
             placeholder={`ex: ${PLACEHOLDER_ADDRESSES[selectedCoin.code]}`}
             component={TextInput}
           />
@@ -72,7 +67,7 @@ const BlackListModal = ({
       <div className={classes.footer}>
         <Box display="flex" justifyContent="flex-end">
           <Link type="submit" form="address-form">
-            Blacklist address
+            Add address
           </Link>
         </Box>
       </div>
@@ -80,4 +75,4 @@ const BlackListModal = ({
   )
 }
 
-export default BlackListModal
+export default TModal
