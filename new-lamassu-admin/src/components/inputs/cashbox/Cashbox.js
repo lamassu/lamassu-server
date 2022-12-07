@@ -85,7 +85,7 @@ const CashOut = ({
   threshold,
   width
 }) => {
-  const percent = (100 * notes) / capacity
+  const percent = Math.round((notes / capacity) * 100)
   const isLow = percent < threshold
   const classes = gridClasses()
   return (
