@@ -41,12 +41,12 @@ const Cashbox = ({
     <div className={classnames(className, showCashBox)}>
       <div className={classnames(emptyPartClassName, classes.emptyPart)}>
         {!omitInnerPercentage && ltHalf && (
-          <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
+          <Label2 className={labelClassName}>{percent}%</Label2>
         )}
       </div>
       <div className={classes.fullPart}>
         {!omitInnerPercentage && !ltHalf && (
-          <Label2 className={labelClassName}>{percent.toFixed(0)}%</Label2>
+          <Label2 className={labelClassName}>{percent}%</Label2>
         )}
       </div>
     </div>
