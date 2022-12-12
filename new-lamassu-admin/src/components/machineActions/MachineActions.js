@@ -15,6 +15,7 @@ import { ReactComponent as ShutdownIcon } from 'src/styling/icons/button/shut do
 import { ReactComponent as UnpairReversedIcon } from 'src/styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zodiac.svg'
 
+import EditLocationModal from './EditLocationModal'
 import { machineActionsStyles } from './MachineActions.styles'
 
 const useStyles = makeStyles(machineActionsStyles)
@@ -24,8 +25,14 @@ const MACHINE_ACTION = gql`
     $deviceId: ID!
     $action: MachineAction!
     $newName: String
+    $location: JSONObject
   ) {
-    machineAction(deviceId: $deviceId, action: $action, newName: $newName) {
+    machineAction(
+      deviceId: $deviceId
+      action: $action
+      newName: $newName
+      location: $location
+    ) {
       deviceId
     }
   }
@@ -67,6 +74,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
   const [action, setAction] = useState({ command: null })
   const [preflightOptions, setPreflightOptions] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
+  const [showLocationModal, setShowLocationModal] = useState(false)
   const classes = useStyles()
 
   const warningMessage = (
@@ -87,7 +95,11 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       setErrorMessage(errorMessage)
     },
     onCompleted: () => {
-      onActionSuccess && onActionSuccess()
+      if (action.onActionSuccess) {
+        action.onActionSuccess()
+      } else {
+        onActionSuccess && onActionSuccess()
+      }
       setAction({ display: action.display, command: null })
     }
   })
@@ -110,6 +122,38 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
 
   return (
     <div>
+      {showLocationModal && (
+        <EditLocationModal
+          machine={machine}
+          editAction={location =>
+            setAction({
+              command: 'editLocation',
+              title: "Edit this machine's location",
+              arguments: { location }
+            })
+          }
+          deleteAction={(location, onActionSuccess) =>
+            setAction({
+              command: 'deleteLocation',
+              title: `Delete location '${location?.label}'`,
+              toBeConfirmed: location?.label,
+              arguments: { location },
+              onActionSuccess
+            })
+          }
+          createAction={location =>
+            setAction({
+              command: 'createLocation',
+              title: 'Create a new location for this machine',
+              arguments: { location }
+            })
+          }
+          handleClose={() => {
+            onActionSuccess && onActionSuccess()
+            setShowLocationModal(false)
+          }}
+        />
+      )}
       <H3>Actions</H3>
       <div className={classes.stack}>
         <ActionButton
@@ -185,13 +229,22 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
           }}>
           Restart Services
         </ActionButton>
+        <ActionButton
+          color="primary"
+          className={classes.mr}
+          Icon={EditIcon}
+          InverseIcon={EditReversedIcon}
+          disabled={loading}
+          onClick={() => setShowLocationModal(true)}>
+          Change location
+        </ActionButton>
       </div>
       <ConfirmDialog
         disabled={disabled}
         open={confirmDialogOpen}
-        title={`${action.display} this machine?`}
+        title={action.title ?? `${action.display} this machine?`}
         errorMessage={errorMessage}
-        toBeConfirmed={machine.name}
+        toBeConfirmed={action.toBeConfirmed ?? machine.name}
         message={action?.message}
         confirmationMessage={action?.confirmationMessage}
         saveButtonAlwaysEnabled={action?.command === 'rename'}
@@ -201,7 +254,8 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
             variables: {
               deviceId: machine.deviceId,
               action: `${action?.command}`,
-              ...(action?.command === 'rename' && { newName: value })
+              ...(action?.command === 'rename' && { newName: value }),
+              ...(action?.arguments ?? {})
             }
           })
         }}
