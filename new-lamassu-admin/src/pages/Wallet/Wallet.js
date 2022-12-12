@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -133,7 +133,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           }
         ]}
         appendix={
-          <HoverableTooltip width={340}>
+          <HelpTooltip width={340}>
             <P>
               For details on configuring wallets, please read the relevant
               knowledgebase article:
@@ -143,7 +143,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
               label="Wallets, Exchange Linkage, and Volatility"
               bottomSpace="1"
             />
-          </HoverableTooltip>
+          </HelpTooltip>
         }
       />
       {!advancedSettings && (

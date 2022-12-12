@@ -6,7 +6,7 @@ import React from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Stepper from 'src/components/Stepper'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
 import { Cashbox } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, RadioGroup } from 'src/components/inputs/formik'
@@ -193,12 +193,12 @@ const WizardStep = ({
                         classes.centerAlignment
                       )}>
                       <P>Since previous update</P>
-                      <HoverableTooltip width={215}>
+                      <HelpTooltip width={215}>
                         <P>
                           Number of bills inside the cash box, since the last
                           cash box changes.
                         </P>
-                      </HoverableTooltip>
+                      </HelpTooltip>
                     </div>
                     <div
                       className={classnames(

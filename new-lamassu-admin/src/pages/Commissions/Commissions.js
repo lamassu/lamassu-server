@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
@@ -122,7 +122,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
         ]}
         iconClassName={classes.listViewButton}
         appendix={
-          <HoverableTooltip width={320}>
+          <HelpTooltip width={320}>
             <P>
               For details about commissions, please read the relevant
               knowledgebase articles:
@@ -137,7 +137,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
               label="SCommissions and Profit Calculations"
               bottomSpace="1"
             />
-          </HoverableTooltip>
+          </HelpTooltip>
         }
       />
 

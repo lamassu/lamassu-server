@@ -6,7 +6,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Link, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -173,13 +173,13 @@ const Triggers = () => {
               <Label2 className={classes.switchLabel}>
                 {rejectAddressReuse ? 'On' : 'Off'}
               </Label2>
-              <HoverableTooltip width={304}>
+              <HelpTooltip width={304}>
                 <P>
                   This option requires a user to scan a different cryptocurrency
                   address if they attempt to scan one that had been previously
                   used for a transaction in your network
                 </P>
-              </HoverableTooltip>
+              </HelpTooltip>
             </Box>
           </Box>
         )}
