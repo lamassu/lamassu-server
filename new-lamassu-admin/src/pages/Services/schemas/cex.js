@@ -11,8 +11,8 @@ import { secretTest, buildCurrencyOptions } from './helper'
 const schema = markets => {
   return {
     code: 'cex',
-    name: 'Cex',
-    title: 'Cex (Exchange)',
+    name: 'CEX.IO',
+    title: 'CEX.IO (Exchange)',
     elements: [
       {
         code: 'apiKey',

@@ -124,10 +124,16 @@ const DetailsRow = ({ it: tx, timezone }) => {
     .toFixed(2, 1) // ROUND_DOWN
   const commissionPercentage =
     Number.parseFloat(tx.commissionPercentage, 2) * 100
+
   const fixedFee = Number.parseFloat(tx.fixedFee) || 0
-  const fiat = Number.parseFloat(tx.fiat)
+  const fiat = BigNumber(tx.fiat)
+
   const crypto = getCryptoAmount(tx)
-  const exchangeRate = (fiat / crypto).toFixed(2)
+  const exchangeRate = BigNumber(fiat)
+    .minus(fixedFee)
+    .div(crypto)
+    .toFixed(2, 1) // ROUND_DOWN
+
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
   const discount = tx.discount ? `-${tx.discount}%` : null
 
@@ -169,6 +175,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
     FileSaver.saveAs(content, zipFilename)
   }
 
+  const hasCiphertraceError = tx =>
+    !R.isNil(tx.errorCode) &&
+    R.includes(tx.errorCode, ['scoreThresholdReached', 'ciphertraceError'])
+
   const errorElements = (
     <>
       <Label>Transaction status</Label>
@@ -194,10 +204,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
               r={3.5}
               fill={
                 it < tx.walletScore
-                  ? R.isNil(tx.hasError)
+                  ? !hasCiphertraceError(tx)
                     ? primaryColor
                     : errorColor
-                  : R.isNil(tx.hasError)
+                  : !hasCiphertraceError(tx)
                   ? subheaderColor
                   : offErrorColor
               }
@@ -210,7 +220,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         noMargin
         className={classNames({
           [classes.bold]: true,
-          [classes.error]: !R.isNil(tx.hasError)
+          [classes.error]: hasCiphertraceError(tx)
         })}>
         {tx.walletScore}
       </P>
