@@ -9,6 +9,8 @@ export default {
   code: 'twilio',
   name: 'Twilio',
   title: 'Twilio (SMS)',
+  supportArticle:
+    'https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS',
   elements: [
     {
       code: 'accountSid',
@@ -47,6 +49,10 @@ export default {
       toNumber: Yup.string('The notifications number must be a string')
         .max(100, 'The notifications number is too long')
         .required('The notifications number is required')
+        .notOneOf(
+          [Yup.ref('fromNumber')],
+          'Twilio number and notifications number must be different'
+        )
     })
   }
 }
