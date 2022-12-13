@@ -117,7 +117,7 @@ const Services = () => {
   return (
     !loading && (
       <div className={classes.wrapper}>
-        <TitleSection title="3rd Party services" />
+        <TitleSection title="Third-party services" />
         <Grid container spacing={4}>
           {R.values(schemas).map(schema => (
             <Grid item key={schema.code}>

@@ -119,7 +119,7 @@ const getAdvancedWalletElements = () => {
     },
     {
       name: 'feeMultiplier',
-      header: `BTC Miner's fee`,
+      header: `BTC miner's fee`,
       size: 'sm',
       stripe: true,
       width: 250,

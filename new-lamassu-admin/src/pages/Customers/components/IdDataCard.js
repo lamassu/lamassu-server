@@ -32,7 +32,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
       size: 160
     },
     {
-      header: 'Birth Date',
+      header: 'Birth date',
       display:
         (rawDob &&
           format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDob))) ??
@@ -61,7 +61,7 @@ const IdDataCard = memo(({ customerData, updateCustomer }) => {
       size: 120
     },
     {
-      header: 'Expiration Date',
+      header: 'Expiration date',
       display: ifNotNull(
         rawExpirationDate,
         format('yyyy-MM-dd', rawExpirationDate)

@@ -233,7 +233,7 @@ const getPazuzRoutes = () => [
         children: [
           {
             key: 'individual-discounts',
-            label: 'Individual Discounts',
+            label: 'Individual discounts',
             route: '/compliance/loyalty/individual-discounts',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: IndividualDiscounts

@@ -201,7 +201,6 @@ const mainFields = currency => [
   },
   {
     name: 'fixedFee',
-    header: 'Fixed fee',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
@@ -269,7 +268,7 @@ const getSchema = locale => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Cash-in Fixed Fee')
+      .label('Cash-in fixed fee')
       .min(0)
       .max(highestBill)
       .required(),
@@ -279,7 +278,7 @@ const getSchema = locale => {
       .max(highestBill)
       .required(),
     cashOutFixedFee: Yup.number()
-      .label('Cash-out Fixed Fee')
+      .label('Cash-out fixed fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -355,7 +354,7 @@ const getOverridesSchema = (values, rawData, locale) => {
           return true
         }
       })
-      .label('Crypto Currencies')
+      .label('Crypto currencies')
       .required()
       .min(1),
     cashIn: Yup.number()
@@ -369,7 +368,7 @@ const getOverridesSchema = (values, rawData, locale) => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Cash-in Fixed Fee')
+      .label('Cash-in fixed fee')
       .min(0)
       .max(highestBill)
       .required(),
@@ -379,7 +378,7 @@ const getOverridesSchema = (values, rawData, locale) => {
       .max(highestBill)
       .required(),
     cashOutFixedFee: Yup.number()
-      .label('Cash-out Fixed Fee')
+      .label('Cash-out fixed fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -474,7 +473,7 @@ const getListCommissionsSchema = locale => {
       .label('Machine')
       .required(),
     cryptoCurrencies: Yup.array()
-      .label('Crypto Currency')
+      .label('Crypto currency')
       .required()
       .min(1),
     cashIn: Yup.number()
@@ -488,7 +487,7 @@ const getListCommissionsSchema = locale => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Cash-in Fixed Fee')
+      .label('Cash-in fixed fee')
       .min(0)
       .max(highestBill)
       .required(),
@@ -498,7 +497,7 @@ const getListCommissionsSchema = locale => {
       .max(highestBill)
       .required(),
     cashOutFixedFee: Yup.number()
-      .label('Cash-out Fixed Fee')
+      .label('Cash-out fixed fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -561,7 +560,6 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'fixedFee',
-      header: 'Fixed fee',
       width: 140,
       input: NumberInput,
       doubleHeader: 'Cash-in only',

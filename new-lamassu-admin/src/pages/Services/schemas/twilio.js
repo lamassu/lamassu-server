@@ -19,18 +19,18 @@ export default {
     },
     {
       code: 'authToken',
-      display: 'Auth Token',
+      display: 'Auth token',
       component: SecretInputFormik
     },
     {
       code: 'fromNumber',
-      display: 'Twilio Number (international format)',
+      display: 'Twilio number (international format)',
       component: TextInputFormik,
       face: true
     },
     {
       code: 'toNumber',
-      display: 'Notifications Number (international format)',
+      display: 'Notifications number (international format)',
       component: TextInputFormik,
       face: true
     }

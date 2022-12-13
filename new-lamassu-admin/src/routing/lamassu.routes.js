@@ -131,7 +131,7 @@ const getLamassuRoutes = () => [
       },
       {
         key: 'services',
-        label: '3rd Party services',
+        label: 'Third-party services',
         route: '/settings/3rd-party-services',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: Services
