@@ -133,7 +133,7 @@ const Triggers = () => {
   return (
     <>
       <TitleSection
-        title="Compliance Triggers"
+        title="Compliance triggers"
         buttons={[
           {
             text: 'Advanced settings',

@@ -37,7 +37,7 @@ const SHOW_ALL = {
 const ORDER_OPTIONS = [
   {
     code: 'machine',
-    display: 'Machine Name'
+    display: 'Machine name'
   },
   {
     code: 'cryptoCurrencies',
@@ -53,7 +53,7 @@ const ORDER_OPTIONS = [
   },
   {
     code: 'fixedFee',
-    display: 'Fixed Fee'
+    display: 'Fixed fee'
   },
   {
     code: 'minimumTx',

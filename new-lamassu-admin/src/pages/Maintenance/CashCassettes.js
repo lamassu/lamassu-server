@@ -320,7 +320,7 @@ const CashCassettes = () => {
     !dataLoading && (
       <>
         <TitleSection
-          title="Cash Boxes & Cassettes"
+          title="Cash boxes & cassettes"
           buttons={[
             {
               text: 'Cash box history',
@@ -354,7 +354,7 @@ const CashCassettes = () => {
               </P>
               <SupportLinkButton
                 link="https://support.lamassu.is/hc/en-us/articles/4420839641229-Cash-Boxes-Cassettess"
-                label="Cash Boxes & Cassettes"
+                label="Cash boxes & cassettes"
                 bottomSpace="1"
               />
             </HelpTooltip>

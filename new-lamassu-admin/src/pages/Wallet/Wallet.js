@@ -123,7 +123,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   return (
     <>
       <TitleSection
-        title="Wallet Settings"
+        title="Wallet settings"
         buttons={[
           {
             text: 'Advanced settings',

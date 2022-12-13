@@ -31,7 +31,7 @@ const MACHINE_OPTIONS = [{ code: 'all', display: 'All machines' }]
 const REPRESENTING_OPTIONS = [
   { code: 'overTime', display: 'Over time' },
   { code: 'volumeOverTime', display: 'Volume' },
-  { code: 'topMachines', display: 'Top Machines' },
+  { code: 'topMachines', display: 'Top machines' },
   { code: 'hourOfTheDay', display: 'Hour of the day' }
 ]
 const PERIOD_OPTIONS = [

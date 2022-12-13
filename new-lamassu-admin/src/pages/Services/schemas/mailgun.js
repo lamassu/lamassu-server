@@ -9,7 +9,7 @@ export default {
   elements: [
     {
       code: 'apiKey',
-      display: 'API Key',
+      display: 'API key',
       component: TextInputFormik
     },
     {
@@ -19,13 +19,13 @@ export default {
     },
     {
       code: 'fromEmail',
-      display: 'From Email',
+      display: 'From email',
       component: TextInputFormik,
       face: true
     },
     {
       code: 'toEmail',
-      display: 'To Email',
+      display: 'To email',
       component: TextInputFormik,
       face: true
     }

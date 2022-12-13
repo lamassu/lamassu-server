@@ -108,7 +108,7 @@ const getAdvancedWalletElements = () => {
     },
     {
       name: 'allowTransactionBatching',
-      header: `Allow BTC Transaction Batching`,
+      header: `Allow BTC transaction batching`,
       size: 'sm',
       stripe: true,
       width: 260,
@@ -119,7 +119,7 @@ const getAdvancedWalletElements = () => {
     },
     {
       name: 'feeMultiplier',
-      header: `BTC Miner's Fee`,
+      header: `BTC miner's fee`,
       size: 'sm',
       stripe: true,
       width: 250,
@@ -179,7 +179,7 @@ const getAdvancedWalletElementsOverrides = (
     },
     {
       name: 'feeMultiplier',
-      header: `Miner's Fee`,
+      header: `Miner's fee`,
       size: 'sm',
       stripe: true,
       width: 250,
@@ -280,7 +280,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
     },
     {
       name: 'zeroConf',
-      header: 'Confidence Checking',
+      header: 'Confidence checking',
       size: 'sm',
       stripe: true,
       view: (it, row) => {
@@ -304,7 +304,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
     },
     {
       name: 'zeroConfLimit',
-      header: '0-conf Limit',
+      header: '0-conf limit',
       size: 'sm',
       stripe: true,
       view: (it, row) =>

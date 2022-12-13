@@ -338,7 +338,7 @@ const Transactions = () => {
               loading={filtersLoading}
               filters={filters}
               options={filterOptions}
-              inputPlaceholder={'Search Transactions'}
+              inputPlaceholder={'Search transactions'}
               onChange={onFilterChange}
             />
           </div>
