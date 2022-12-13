@@ -164,7 +164,7 @@ const Funding = () => {
           {funding.length && (
             <div className={classes.total}>
               <Label1 className={classes.totalTitle}>
-                Total Crypto Balance
+                Total crypto balance
               </Label1>
               <Info1 noMargin>
                 {getConfirmedTotal(funding)}

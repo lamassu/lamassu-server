@@ -131,7 +131,6 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'fixedFee',
-      header: 'Fixed Fee',
       width: 126,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
@@ -158,7 +157,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'cashOutFixedFee',
-      header: 'Fixed Fee',
+      header: 'Fixed fee',
       width: 134,
       doubleHeader: 'Cash-out only',
       textAlign: 'center',
@@ -202,7 +201,7 @@ const mainFields = currency => [
   },
   {
     name: 'fixedFee',
-    header: 'Fixed Fee',
+    header: 'Fixed fee',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
@@ -232,7 +231,7 @@ const mainFields = currency => [
   },
   {
     name: 'cashOutFixedFee',
-    header: 'Fixed Fee',
+    header: 'Fixed fee',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-out only',
@@ -562,7 +561,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'fixedFee',
-      header: 'Fixed Fee',
+      header: 'Fixed fee',
       width: 140,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
@@ -588,7 +587,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'cashOutFixedFee',
-      header: 'Fixed Fee',
+      header: 'Fixed fee',
       width: 140,
       input: NumberInput,
       doubleHeader: 'Cash-out only',

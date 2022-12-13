@@ -9,7 +9,7 @@ import {
   TDoubleLevelHead,
   ThDoubleLevel
 } from 'src/components/fake-table/Table'
-import { startCase } from 'src/utils/string'
+import { sentenceCase } from 'src/utils/string'
 
 import TableCtx from './Context'
 
@@ -104,7 +104,7 @@ const Header = () => {
           <>{attachOrderedByToComplexHeader(header) ?? header}</>
         ) : (
           <span className={orderClasses}>
-            {!R.isNil(display) ? display : startCase(name)}{' '}
+            {!R.isNil(display) ? display : sentenceCase(name)}{' '}
             {!R.isNil(orderedBy) && R.equals(name, orderedBy.code) && '-'}
           </span>
         )}

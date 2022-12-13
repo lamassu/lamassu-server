@@ -144,7 +144,7 @@ const ReceiptPrinting = memo(({ wizard }) => {
           },
           {
             name: 'companyNumber',
-            display: 'Company number'
+            display: 'Company registration number'
           },
           {
             name: 'customerNameOrPhoneNumber',
