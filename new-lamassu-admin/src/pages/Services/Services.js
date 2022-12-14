@@ -117,7 +117,7 @@ const Services = () => {
   return (
     !loading && (
       <div className={classes.wrapper}>
-        <TitleSection title="3rd Party Services" />
+        <TitleSection title="Third-party services" />
         <Grid container spacing={4}>
           {R.values(schemas).map(schema => (
             <Grid item key={schema.code}>
@@ -145,6 +145,7 @@ const Services = () => {
               elements={getElements(editingSchema)}
               validationSchema={getValidationSchema(editingSchema)}
               value={getAccounts(editingSchema)}
+              supportArticle={editingSchema?.supportArticle}
             />
           </Modal>
         )}

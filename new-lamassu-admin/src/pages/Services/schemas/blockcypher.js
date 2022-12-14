@@ -1,7 +1,6 @@
 import * as Yup from 'yup'
 
-import CheckboxInput from 'src/components/inputs/formik/Checkbox'
-import TextInputFormik from 'src/components/inputs/formik/TextInput'
+import { Checkbox, TextInput, NumberInput } from 'src/components/inputs/formik'
 
 export default {
   code: 'blockcypher',
@@ -10,20 +9,20 @@ export default {
   elements: [
     {
       code: 'token',
-      display: 'API Token',
-      component: TextInputFormik,
+      display: 'API token',
+      component: TextInput,
       face: true,
       long: true
     },
     {
       code: 'confidenceFactor',
-      display: 'Confidence Factor',
-      component: TextInputFormik,
+      display: 'Confidence factor',
+      component: NumberInput,
       face: true
     },
     {
       code: 'rbf',
-      component: CheckboxInput,
+      component: Checkbox,
       settings: {
         field: 'wallets_BTC_wallet',
         enabled: true,

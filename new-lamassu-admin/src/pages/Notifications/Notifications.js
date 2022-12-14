@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
@@ -153,7 +153,7 @@ const Notifications = ({
             <TitleSection
               title="Notifications"
               appendix={
-                <HoverableTooltip width={250}>
+                <HelpTooltip width={250}>
                   <P>
                     For details on configuring notifications, please read the
                     relevant knowledgebase article:
@@ -163,7 +163,7 @@ const Notifications = ({
                     label="Enabling notifications"
                     bottomSpace="1"
                   />
-                </HoverableTooltip>
+                </HelpTooltip>
               }
             />
           )}

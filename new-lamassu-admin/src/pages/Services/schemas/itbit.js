@@ -30,17 +30,17 @@ const schema = markets => {
       },
       {
         code: 'clientKey',
-        display: 'Client Key',
+        display: 'Client key',
         component: TextInput
       },
       {
         code: 'clientSecret',
-        display: 'Client Secret',
+        display: 'Client secret',
         component: SecretInput
       },
       {
         code: 'currencyMarket',
-        display: 'Currency Market',
+        display: 'Currency market',
         component: Autocomplete,
         inputProps: {
           options: buildCurrencyOptions(markets),

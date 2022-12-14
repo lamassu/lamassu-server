@@ -19,7 +19,7 @@ export default {
     },
     {
       code: 'apiSecret',
-      display: 'Project Secret',
+      display: 'Project secret',
       component: SecretInputFormik
     },
     {

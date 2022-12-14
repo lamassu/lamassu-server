@@ -111,7 +111,7 @@ const Logs = () => {
     <>
       <div className={classes.titleWrapper}>
         <div className={classes.titleAndButtonsContainer}>
-          <Title>Machine Logs</Title>
+          <Title>Machine logs</Title>
           {logsResponse && (
             <div className={classes.buttonsWrapper}>
               <LogsDowloaderPopover

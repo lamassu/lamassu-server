@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('../lib/environment-helper')
+
 const migrate = require('../lib/migrate-options')
 
 migrate.run()

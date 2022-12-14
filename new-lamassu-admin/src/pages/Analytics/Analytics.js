@@ -31,7 +31,7 @@ const MACHINE_OPTIONS = [{ code: 'all', display: 'All machines' }]
 const REPRESENTING_OPTIONS = [
   { code: 'overTime', display: 'Over time' },
   { code: 'volumeOverTime', display: 'Volume' },
-  { code: 'topMachines', display: 'Top Machines' },
+  { code: 'topMachines', display: 'Top machines' },
   { code: 'hourOfTheDay', display: 'Hour of the day' }
 ]
 const PERIOD_OPTIONS = [
@@ -87,6 +87,7 @@ const GET_TRANSACTIONS = gql`
       cryptoCode
       toAddress
       created
+      profit
     }
   }
 `
@@ -239,18 +240,8 @@ const Analytics = () => {
   }
 
   const commissions = {
-    current: R.sum(
-      R.map(
-        d => d.fiat * d.commissionPercentage,
-        filteredData(period.code).current
-      )
-    ),
-    previous: R.sum(
-      R.map(
-        d => d.fiat * d.commissionPercentage,
-        filteredData(period.code).previous
-      )
-    )
+    current: R.sum(R.map(d => d.profit, filteredData(period.code).current)),
+    previous: R.sum(R.map(d => d.profit, filteredData(period.code).previous))
   }
 
   const handleRepresentationChange = newRepresentation => {
@@ -293,7 +284,7 @@ const Analytics = () => {
       case 'topMachines':
         return (
           <TopMachinesWrapper
-            title="Transactions over time"
+            title="Top 5 Machines"
             representing={representing}
             period={period}
             data={R.map(convertFiatToLocale)(filteredData(period.code).current)}

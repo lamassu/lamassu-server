@@ -16,19 +16,19 @@ const schema = markets => {
     elements: [
       {
         code: 'apiKey',
-        display: 'API Key',
+        display: 'API key',
         component: TextInput,
         face: true,
         long: true
       },
       {
         code: 'privateKey',
-        display: 'Private Key',
+        display: 'Private key',
         component: SecretInput
       },
       {
         code: 'currencyMarket',
-        display: 'Currency Market',
+        display: 'Currency market',
         component: Autocomplete,
         inputProps: {
           options: buildCurrencyOptions(markets),

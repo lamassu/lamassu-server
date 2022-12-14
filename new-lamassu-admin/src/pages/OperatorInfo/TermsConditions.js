@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Link, IconButton, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { TextInput } from 'src/components/inputs/formik'
@@ -154,23 +154,25 @@ const TermsConditions = () => {
   }
 
   const validationSchema = Yup.object().shape({
-    title: Yup.string()
-      .required()
+    title: Yup.string('The screen title must be a string')
+      .required('The screen title is required')
       .max(50, 'Too long'),
-    text: Yup.string().required(),
-    acceptButtonText: Yup.string()
-      .required()
-      .max(50, 'Too long'),
-    cancelButtonText: Yup.string()
-      .required()
-      .max(50, 'Too long')
+    text: Yup.string('The text content must be a string').required(
+      'The text content is required'
+    ),
+    acceptButtonText: Yup.string('The accept button text must be a string')
+      .required('The accept button text is required')
+      .max(50, 'The accept button text is too long'),
+    cancelButtonText: Yup.string('The cancel button text must be a string')
+      .required('The cancel button text is required')
+      .max(50, 'The cancel button text is too long')
   })
 
   return (
     <>
       <div className={classes.header}>
         <H4>Terms &amp; Conditions</H4>
-        <HoverableTooltip width={320}>
+        <HelpTooltip width={320}>
           <P>
             For details on configuring this panel, please read the relevant
             knowledgebase article:
@@ -180,7 +182,7 @@ const TermsConditions = () => {
             label="Lamassu Support Article"
             bottomSpace="1"
           />
-        </HoverableTooltip>
+        </HelpTooltip>
       </div>
       <div className={classes.switchRow}>
         <P>Show on screen</P>
@@ -248,37 +250,42 @@ const TermsConditions = () => {
           setEditing(false)
           setError(null)
         }}>
-        <Form>
-          <PromptWhenDirty />
-          {fields.map((f, idx) => (
-            <div className={classes.row} key={idx}>
-              <Field
-                editing={editing}
-                name={f.name}
-                width={f.width}
-                placeholder={f.placeholder}
-                label={f.label}
-                value={f.value}
-                multiline={f.multiline}
-                rows={f.rows}
-                onFocus={() => setError(null)}
-              />
+        {({ errors }) => (
+          <Form>
+            <PromptWhenDirty />
+            {fields.map((f, idx) => (
+              <div className={classes.row} key={idx}>
+                <Field
+                  editing={editing}
+                  name={f.name}
+                  width={f.width}
+                  placeholder={f.placeholder}
+                  label={f.label}
+                  value={f.value}
+                  multiline={f.multiline}
+                  rows={f.rows}
+                  onFocus={() => setError(null)}
+                />
+              </div>
+            ))}
+            <div className={classnames(classes.row, classes.submit)}>
+              {editing && (
+                <>
+                  <Link color="primary" type="submit">
+                    Save
+                  </Link>
+                  <Link color="secondary" type="reset">
+                    Cancel
+                  </Link>
+                  {!R.isEmpty(errors) && (
+                    <ErrorMessage>{R.head(R.values(errors))}</ErrorMessage>
+                  )}
+                  {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
+                </>
+              )}
             </div>
-          ))}
-          <div className={classnames(classes.row, classes.submit)}>
-            {editing && (
-              <>
-                <Link color="primary" type="submit">
-                  Save
-                </Link>
-                <Link color="secondary" type="reset">
-                  Cancel
-                </Link>
-                {error && <ErrorMessage>Failed to save changes</ErrorMessage>}
-              </>
-            )}
-          </div>
-        </Form>
+          </Form>
+        )}
       </Formik>
     </>
   )

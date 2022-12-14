@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Link, IconButton, SupportLinkButton } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import { TextInput } from 'src/components/inputs/formik'
@@ -137,7 +137,7 @@ const ContactInfo = ({ wizard }) => {
   const fields = [
     {
       name: 'name',
-      label: 'Full name',
+      label: 'Company name',
       value: info.name ?? '',
       component: TextInput
     },
@@ -161,7 +161,7 @@ const ContactInfo = ({ wizard }) => {
     },
     {
       name: 'companyNumber',
-      label: 'Company number',
+      label: 'Company registration number',
       value: info.companyNumber ?? '',
       component: TextInput
     }
@@ -190,7 +190,7 @@ const ContactInfo = ({ wizard }) => {
     <>
       <div className={classes.header}>
         <H4>Contact information</H4>
-        <HoverableTooltip width={320}>
+        <HelpTooltip width={320}>
           <P>
             For details on configuring this panel, please read the relevant
             knowledgebase article:
@@ -200,7 +200,7 @@ const ContactInfo = ({ wizard }) => {
             label="Lamassu Support Article"
             bottomSpace="1"
           />
-        </HoverableTooltip>
+        </HelpTooltip>
       </div>
       <div className={classes.switchRow}>
         <P>Info card enabled?</P>

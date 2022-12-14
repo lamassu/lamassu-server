@@ -26,7 +26,7 @@ const CustomerSidebar = ({ isSelected, onClick }) => {
     },
     {
       code: 'customerData',
-      display: 'Customer Data',
+      display: 'Customer data',
       Icon: CustomerDataIcon,
       InverseIcon: CustomerDataReversedIcon
     },

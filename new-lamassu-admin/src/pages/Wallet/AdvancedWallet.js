@@ -67,11 +67,11 @@ const AdvancedWallet = () => {
 
   const AdvancedWalletSettingsOverrides = AdvancedWalletSettings.overrides ?? []
 
-  const overridenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(
+  const overriddenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(
     AdvancedWalletSettingsOverrides
   )
   const suggestionFilter = R.filter(
-    it => !R.contains(it.code, overridenCryptos)
+    it => !R.contains(it.code, overriddenCryptos)
   )
   const coinSuggestions = suggestionFilter(cryptoCurrencies)
 

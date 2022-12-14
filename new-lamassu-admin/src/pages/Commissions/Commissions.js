@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
@@ -77,13 +77,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   }
 
   const saveOverridesFromList = it => (_, override) => {
-    const cryptoOverriden = R.path(['cryptoCurrencies', 0], override)
+    const cryptoOverridden = R.path(['cryptoCurrencies', 0], override)
 
     const sameMachine = R.eqProps('machine', override)
     const notSameOverride = it => !R.eqProps('cryptoCurrencies', override, it)
 
     const filterMachine = R.filter(R.both(sameMachine, notSameOverride))
-    const removeCoin = removeCoinFromOverride(cryptoOverriden)
+    const removeCoin = removeCoinFromOverride(cryptoOverridden)
 
     const machineOverrides = R.map(removeCoin)(filterMachine(it))
 
@@ -122,7 +122,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
         ]}
         iconClassName={classes.listViewButton}
         appendix={
-          <HoverableTooltip width={320}>
+          <HelpTooltip width={320}>
             <P>
               For details about commissions, please read the relevant
               knowledgebase articles:
@@ -137,7 +137,7 @@ const Commissions = ({ name: SCREEN_KEY }) => {
               label="SCommissions and Profit Calculations"
               bottomSpace="1"
             />
-          </HoverableTooltip>
+          </HelpTooltip>
         }
       />
 

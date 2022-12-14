@@ -7,7 +7,7 @@ import * as Yup from 'yup'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip.js'
+import { HelpTooltip } from 'src/components/Tooltip.js'
 import { IconButton, Button, SupportLinkButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { RadioGroup } from 'src/components/inputs'
@@ -320,7 +320,7 @@ const CashCassettes = () => {
     !dataLoading && (
       <>
         <TitleSection
-          title="Cash Boxes & Cassettes"
+          title="Cash boxes & cassettes"
           buttons={[
             {
               text: 'Cash box history',
@@ -347,17 +347,17 @@ const CashCassettes = () => {
           iconClassName={classes.listViewButton}
           className={classes.tableWidth}
           appendix={
-            <HoverableTooltip width={220}>
+            <HelpTooltip width={220}>
               <P>
                 For details on configuring cash boxes and cassettes, please read
                 the relevant knowledgebase article:
               </P>
               <SupportLinkButton
                 link="https://support.lamassu.is/hc/en-us/articles/4420839641229-Cash-Boxes-Cassettess"
-                label="Cash Boxes & Cassettes"
+                label="Cash boxes & cassettes"
                 bottomSpace="1"
               />
-            </HoverableTooltip>
+            </HelpTooltip>
           }>
           {!showHistory && (
             <Box alignItems="center" justifyContent="flex-end">

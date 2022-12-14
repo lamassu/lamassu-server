@@ -11,24 +11,24 @@ import { secretTest, buildCurrencyOptions } from './helper'
 const schema = markets => {
   return {
     code: 'cex',
-    name: 'Cex',
-    title: 'Cex (Exchange)',
+    name: 'CEX.IO',
+    title: 'CEX.IO (Exchange)',
     elements: [
       {
         code: 'apiKey',
-        display: 'API Key',
+        display: 'API key',
         component: TextInput,
         face: true,
         long: true
       },
       {
         code: 'privateKey',
-        display: 'Private Key',
+        display: 'Private key',
         component: SecretInput
       },
       {
         code: 'currencyMarket',
-        display: 'Currency Market',
+        display: 'Currency market',
         component: Autocomplete,
         inputProps: {
           options: buildCurrencyOptions(markets),

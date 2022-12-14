@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { compareAsc, differenceInDays, set } from 'date-fns/fp'
+import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
 
 import Calendar from './Calendar'
@@ -37,7 +38,12 @@ const DateRangePicker = ({ minDate, maxDate, className, onRangeChange }) => {
           set({ hours: 23, minutes: 59, seconds: 59, milliseconds: 999 }, day)
         )
       } else {
-        setTo(from)
+        setTo(
+          set(
+            { hours: 23, minutes: 59, seconds: 59, milliseconds: 999 },
+            R.clone(from)
+          )
+        )
         setFrom(day)
       }
       return
