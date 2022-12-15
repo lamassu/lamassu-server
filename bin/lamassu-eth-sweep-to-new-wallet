@@ -16,7 +16,6 @@ const web3 = new Web3()
 const Tx = require('ethereumjs-tx')
 
 const mnemonicHelpers = require('../lib/mnemonic-helpers')
-const options = require('../lib/options')
 const settingsLoader = require('../lib/new-settings-loader')
 const BN = require('../lib/bn')
 const ph = require('../lib/plugin-helper')
@@ -28,21 +27,22 @@ const defaultPrefixPath = "m/44'/60'/1'/0'"
 let lastUsedNonces = {}
 
 const hex = bigNum => '0x' + bigNum.integerValue(BN.ROUND_DOWN).toString(16)
+const MNEMONIC_PATH = process.env.MNEMONIC_PATH
 
 function writeNewMnemonic (mnemonic) {
-  return fs.writeFile(`${options.mnemonicPath}-new-temp`, mnemonic)
-    .then(() => `${options.mnemonicPath}-new-temp`)
+  return fs.writeFile(`${MNEMONIC_PATH}-new-temp`, mnemonic)
+    .then(() => `${MNEMONIC_PATH}-new-temp`)
 }
 
 function renameNewMnemonic () {
-  return fs.rename(`${options.mnemonicPath}-new-temp`, `${options.mnemonicPath}`)
-    .then(() => options.mnemonicPath)
+  return fs.rename(`${MNEMONIC_PATH}-new-temp`, `${MNEMONIC_PATH}`)
+    .then(() => MNEMONIC_PATH)
 }
 
 function backupMnemonic () {
-  const folderPath = path.dirname(options.mnemonicPath)
+  const folderPath = path.dirname(MNEMONIC_PATH)
   const fileName = path.resolve(folderPath, `mnemonic-${Date.now()}.txt`)
-  return fs.copyFile(options.mnemonicPath, fileName)
+  return fs.copyFile(MNEMONIC_PATH, fileName)
     .then(() => fileName)
 }
 
@@ -198,7 +198,7 @@ function generateTx (_toAddress, wallet, amount, cryptoCode, opts) {
 }
 
 function fetchWallet (settings, cryptoCode) {
-  return fs.readFile(options.mnemonicPath, 'utf8')
+  return fs.readFile(MNEMONIC_PATH, 'utf8')
     .then(mnemonic => {
       const computeSeed = masterSeed =>
         hkdf(masterSeed, 32, { salt: 'lamassu-server-salt', info: 'wallet-seed' })
