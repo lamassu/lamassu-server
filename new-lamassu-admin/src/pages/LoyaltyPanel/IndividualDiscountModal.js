@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Button } from 'src/components/buttons'
 import { NumberInput, Autocomplete } from 'src/components/inputs/formik'
 import { H3, TL1, P } from 'src/components/typography'
@@ -99,7 +99,7 @@ const IndividualDiscountModal = ({
                 <div>
                   <div className={classes.discountRateWrapper}>
                     <H3>Define discount rate</H3>
-                    <HoverableTooltip width={304}>
+                    <HelpTooltip width={304}>
                       <P>
                         This is a percentage discount off of your existing
                         commission rates for a customer entering this code at
@@ -110,7 +110,7 @@ const IndividualDiscountModal = ({
                         code is set for 50%, then you'll instead be charging 4%
                         on transactions using the code.
                       </P>
-                    </HoverableTooltip>
+                    </HelpTooltip>
                   </div>
                   <div className={classes.discountInput}>
                     <Field

@@ -30,7 +30,6 @@ const getOverridesFields = currency => {
     {
       header: cashInHeader,
       name: 'cashIn',
-      display: 'Cash-in',
       width: 130,
       textAlign: 'right',
       suffix: '%'
@@ -38,7 +37,6 @@ const getOverridesFields = currency => {
     {
       header: cashOutHeader,
       name: 'cashOut',
-      display: 'Cash-out',
       width: 130,
       textAlign: 'right',
       suffix: '%',
@@ -48,7 +46,6 @@ const getOverridesFields = currency => {
     },
     {
       name: 'fixedFee',
-      display: 'Fixed fee',
       width: 155,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
@@ -56,9 +53,17 @@ const getOverridesFields = currency => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimun Tx',
+      header: 'Minimum Tx',
       width: 155,
       doubleHeader: 'Cash-in only',
+      textAlign: 'right',
+      suffix: currency
+    },
+    {
+      name: 'cashOutFixedFee',
+      header: 'Fixed fee',
+      width: 155,
+      doubleHeader: 'Cash-out only',
       textAlign: 'right',
       suffix: currency
     }

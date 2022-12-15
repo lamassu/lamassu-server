@@ -9,6 +9,7 @@ const Popover = ({
   children,
   bgColor = white,
   arrowSize = 6,
+  arrowEnabled = true,
   className,
   ...props
 }) => {
@@ -158,10 +159,12 @@ const Popover = ({
         {...props}>
         {({ placement }) => (
           <Paper className={classnames(classes.root, className)}>
-            <span
-              className={classnames(getArrowClasses(placement))}
-              ref={setArrowRef}
-            />
+            {arrowEnabled && (
+              <span
+                className={classnames(getArrowClasses(placement))}
+                ref={setArrowRef}
+              />
+            )}
             {children}
           </Paper>
         )}

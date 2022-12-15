@@ -7,8 +7,8 @@ For a dev environment with nix package manager a postgres install on the base sy
 ### Set up PostgreSQL
 
 ```
-sudo -u postgres createdb lamassu
-sudo -u postgres psql postgres
+sudo createdb lamassu -U postgres
+sudo psql postgres -U postgres
 ```
 
 In ``psql``, run the following and set password to ``postgres123``:

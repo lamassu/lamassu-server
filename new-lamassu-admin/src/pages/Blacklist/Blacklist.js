@@ -7,8 +7,13 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
-import { Link, Button, IconButton } from 'src/components/buttons'
+import { HelpTooltip } from 'src/components/Tooltip'
+import {
+  Link,
+  Button,
+  IconButton,
+  SupportLinkButton
+} from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -250,13 +255,13 @@ const Blacklist = () => {
                 value={enablePaperWalletOnly}
               />
               <Label2>{enablePaperWalletOnly ? 'On' : 'Off'}</Label2>
-              <HoverableTooltip width={304}>
+              <HelpTooltip width={304}>
                 <P>
                   The "Enable paper wallet (only)" option means that only paper
                   wallets will be printed for users, and they won't be permitted
                   to scan an address from their own wallet.
                 </P>
-              </HoverableTooltip>
+              </HelpTooltip>
             </Box>
             <Box
               display="flex"
@@ -272,13 +277,21 @@ const Blacklist = () => {
                 value={rejectAddressReuse}
               />
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
-              <HoverableTooltip width={304}>
+              <HelpTooltip width={304}>
                 <P>
                   The "Reject reused addresses" option means that all addresses
                   that are used once will be automatically rejected if there's
                   an attempt to use them again on a new transaction.
                 </P>
-              </HoverableTooltip>
+                <P>
+                  For details please read the relevant knowledgebase article:
+                </P>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/360033622211-Reject-Address-Reuse"
+                  label="Reject Address Reuse"
+                  bottomSpace="1"
+                />
+              </HelpTooltip>
             </Box>
           </Box>
           <BlacklistTable

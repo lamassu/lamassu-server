@@ -16,6 +16,7 @@ import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
 import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
+import MachineScreens from 'src/pages/OperatorInfo/MachineScreens'
 import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
 import SMSNotices from 'src/pages/OperatorInfo/SMSNotices/SMSNotices'
 import TermsConditions from 'src/pages/OperatorInfo/TermsConditions'
@@ -49,7 +50,7 @@ const getLamassuRoutes = () => [
     children: [
       {
         key: 'cash_cassettes',
-        label: 'Cash Cassettes',
+        label: 'Cash cassettes',
         route: '/maintenance/cash-cassettes',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: CashCassettes
@@ -63,14 +64,14 @@ const getLamassuRoutes = () => [
       },
       {
         key: 'logs',
-        label: 'Machine Logs',
+        label: 'Machine logs',
         route: '/maintenance/logs',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: MachineLogs
       },
       {
         key: 'machine-status',
-        label: 'Machine Status',
+        label: 'Machine status',
         route: '/maintenance/machine-status',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: MachineStatus
@@ -130,7 +131,7 @@ const getLamassuRoutes = () => [
       },
       {
         key: 'services',
-        label: '3rd Party Services',
+        label: 'Third-party services',
         route: '/settings/3rd-party-services',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         component: Services
@@ -144,9 +145,9 @@ const getLamassuRoutes = () => [
       },
       {
         key: namespaces.OPERATOR_INFO,
-        label: 'Operator Info',
+        label: 'Operator info',
         route: '/settings/operator-info',
-        title: 'Operator Information',
+        title: 'Operator information',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         get component() {
           return () => (
@@ -193,6 +194,13 @@ const getLamassuRoutes = () => [
             route: '/settings/operator-info/terms-conditions',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: TermsConditions
+          },
+          {
+            key: 'machine-screens',
+            label: 'Machine screens',
+            route: '/settings/operator-info/machine-screens',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: MachineScreens
           }
         ]
       }
@@ -232,7 +240,7 @@ const getLamassuRoutes = () => [
         key: 'loyalty',
         label: 'Loyalty',
         route: '/compliance/loyalty',
-        title: 'Loyalty Panel',
+        title: 'Loyalty panel',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
         get component() {
           return () => (
@@ -247,14 +255,14 @@ const getLamassuRoutes = () => [
         children: [
           {
             key: 'individual-discounts',
-            label: 'Individual Discounts',
+            label: 'Individual discounts',
             route: '/compliance/loyalty/individual-discounts',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: IndividualDiscounts
           },
           {
             key: 'promo-codes',
-            label: 'Promo Codes',
+            label: 'Promo codes',
             route: '/compliance/loyalty/codes',
             allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
             component: PromoCodes
@@ -280,14 +288,14 @@ const getLamassuRoutes = () => [
     children: [
       {
         key: 'user-management',
-        label: 'User Management',
+        label: 'User management',
         route: '/system/user-management',
         allowedRoles: [ROLES.SUPERUSER],
         component: UserManagement
       },
       {
         key: 'session-management',
-        label: 'Session Management',
+        label: 'Session management',
         route: '/system/session-management',
         allowedRoles: [ROLES.SUPERUSER],
         component: SessionManagement

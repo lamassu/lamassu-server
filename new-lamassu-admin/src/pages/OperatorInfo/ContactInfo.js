@@ -9,7 +9,8 @@ import * as Yup from 'yup'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
-import { Link, IconButton } from 'src/components/buttons'
+import { HelpTooltip } from 'src/components/Tooltip'
+import { Link, IconButton, SupportLinkButton } from 'src/components/buttons'
 import Switch from 'src/components/inputs/base/Switch'
 import { TextInput } from 'src/components/inputs/formik'
 import { P, H4, Info3, Label1, Label2, Label3 } from 'src/components/typography'
@@ -136,7 +137,7 @@ const ContactInfo = ({ wizard }) => {
   const fields = [
     {
       name: 'name',
-      label: 'Full name',
+      label: 'Company name',
       value: info.name ?? '',
       component: TextInput
     },
@@ -160,7 +161,7 @@ const ContactInfo = ({ wizard }) => {
     },
     {
       name: 'companyNumber',
-      label: 'Company number',
+      label: 'Company registration number',
       value: info.companyNumber ?? '',
       component: TextInput
     }
@@ -189,6 +190,17 @@ const ContactInfo = ({ wizard }) => {
     <>
       <div className={classes.header}>
         <H4>Contact information</H4>
+        <HelpTooltip width={320}>
+          <P>
+            For details on configuring this panel, please read the relevant
+            knowledgebase article:
+          </P>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/360033051732-Enabling-Operator-Info"
+            label="Lamassu Support Article"
+            bottomSpace="1"
+          />
+        </HelpTooltip>
       </div>
       <div className={classes.switchRow}>
         <P>Info card enabled?</P>

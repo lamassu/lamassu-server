@@ -1,5 +1,4 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -54,13 +53,9 @@ const AllSet = ({ data: currentData, doContinue }) => {
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
 
   const save = () => {
-    const defaultCryptoUnit = R.head(
-      R.keys(coinUtils.getCryptoCurrency(coin).units)
-    )
     const adjustedData = {
       zeroConfLimit: 0,
-      ...currentData,
-      cryptoUnits: defaultCryptoUnit
+      ...currentData
     }
     if (!WalletSchema.isValidSync(adjustedData)) return setError(true)
 

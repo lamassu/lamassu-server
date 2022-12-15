@@ -9,7 +9,7 @@ import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 
 import styles from './CustomersList.styles'
-import { getAuthorizedStatus, getFormattedPhone, getName } from './helper'
+import { getFormattedPhone, getName } from './helper'
 
 const useStyles = makeStyles(styles)
 
@@ -35,7 +35,7 @@ const CustomersList = ({
       view: getName
     },
     {
-      header: 'Total TXs',
+      header: 'Total Txs',
       width: 126,
       textAlign: 'right',
       view: it => `${Number.parseInt(it.totalTxs)}`
@@ -73,11 +73,7 @@ const CustomersList = ({
     {
       header: 'Status',
       width: 191,
-      view: it => (
-        <MainStatus
-          statuses={[getAuthorizedStatus(it, triggers, customRequests)]}
-        />
-      )
+      view: it => <MainStatus statuses={[it.authorizedStatus]} />
     }
   ]
 

@@ -5,7 +5,8 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { Link } from 'src/components/buttons'
+import { HelpTooltip } from 'src/components/Tooltip'
+import { Link, SupportLinkButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -60,8 +61,9 @@ const GET_DATA = gql`
 `
 
 const SAVE_CONFIG = gql`
-  mutation Save($config: JSONObject) {
+  mutation Save($config: JSONObject, $accounts: JSONObject) {
     saveConfig(config: $config)
+    saveAccounts(accounts: $accounts)
   }
 `
 
@@ -133,9 +135,9 @@ const Locales = ({ name: SCREEN_KEY }) => {
     return save(newConfig)
   }
 
-  const save = config => {
+  const save = (config, accounts) => {
     setDataToSave(null)
-    return saveConfig({ variables: { config } })
+    return saveConfig({ variables: { config, accounts } })
   }
 
   const saveOverrides = it => {
@@ -161,8 +163,8 @@ const Locales = ({ name: SCREEN_KEY }) => {
   const onEditingDefault = (it, editing) => setEditingDefault(editing)
   const onEditingOverrides = (it, editing) => setEditingOverrides(editing)
 
-  const wizardSave = it =>
-    save(toNamespace(namespaces.WALLETS)(it)).then(it => {
+  const wizardSave = (config, accounts) =>
+    save(toNamespace(namespaces.WALLETS)(config), accounts).then(it => {
       onChangeFunction()
       setOnChangeFunction(null)
       return it
@@ -175,7 +177,22 @@ const Locales = ({ name: SCREEN_KEY }) => {
         close={() => setDataToSave(null)}
         save={() => dataToSave && save(dataToSave)}
       />
-      <TitleSection title="Locales" />
+      <TitleSection
+        title="Locales"
+        appendix={
+          <HelpTooltip width={320}>
+            <P>
+              For details on configuring languages, please read the relevant
+              knowledgebase article:
+            </P>
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/360016257471-Setting-multiple-machine-languages"
+              label="Setting multiple machine languages"
+              bottomSpace="1"
+            />
+          </HelpTooltip>
+        }
+      />
       <Section>
         <EditableTable
           title="Default settings"

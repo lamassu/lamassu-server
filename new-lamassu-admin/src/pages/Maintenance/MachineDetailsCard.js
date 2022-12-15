@@ -92,7 +92,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess, timezone }) => {
       <Item xs>
         <Container className={classes.row}>
           <Item xs={2}>
-            <Label>Machine Model</Label>
+            <Label>Machine model</Label>
             <span>{modelPrettifier[machine.model]}</span>
           </Item>
           <Item xs={4}>
@@ -126,7 +126,7 @@ const MachineDetailsRow = ({ it: machine, onActionSuccess, timezone }) => {
             </span>
           </Item>
           <Item xs={2}>
-            <Label>Packet Loss</Label>
+            <Label>Packet loss</Label>
             <span>
               {machine.packetLoss
                 ? new BigNumber(machine.packetLoss).toFixed(3).toString() +

@@ -1,7 +1,7 @@
 import typographyStyles from 'src/components/typography/styles'
 import { offColor, comet, white, tomato } from 'src/styling/variables'
 
-const { p } = typographyStyles
+const { p, label3 } = typographyStyles
 
 export default {
   wrapper: {
@@ -131,5 +131,13 @@ export default {
   },
   error: {
     color: tomato
+  },
+  swept: {
+    width: 250
+  },
+  errorCopy: {
+    extend: label3,
+    lineBreak: 'normal',
+    maxWidth: 180
   }
 }

@@ -3,10 +3,10 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
-import { isAfter } from 'date-fns/fp'
+import { isAfter, subDays, startOfMinute, startOfHour } from 'date-fns/fp'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { EmptyTable } from 'src/components/table'
 import { Label1, Label2, P } from 'src/components/typography/index'
@@ -32,19 +32,7 @@ const getFiats = R.map(R.prop('fiat'))
 const useStyles = makeStyles(styles)
 
 const GET_DATA = gql`
-  query getData($excludeTestingCustomers: Boolean) {
-    transactions(excludeTestingCustomers: $excludeTestingCustomers) {
-      fiatCode
-      fiat
-      cashInFee
-      commissionPercentage
-      created
-      txClass
-      error
-      profit
-      dispense
-      sendConfirmed
-    }
+  query getData {
     fiatRates {
       code
       name
@@ -54,16 +42,75 @@ const GET_DATA = gql`
   }
 `
 
+const GET_TRANSACTION = gql`
+  query getTransactions(
+    $from: Date
+    $excludeTestingCustomers: Boolean
+    $updatedSince: Date
+  ) {
+    transactions(
+      from: $from
+      excludeTestingCustomers: $excludeTestingCustomers
+      updatedSince: $updatedSince
+    ) {
+      id
+      fiatCode
+      fiat
+      fixedFee
+      commissionPercentage
+      created
+      txClass
+      error
+      profit
+      dispense
+      sendConfirmed
+    }
+  }
+`
+
 const SystemPerformance = () => {
   const classes = useStyles()
   const [selectedRange, setSelectedRange] = useState('Day')
-  const { data, loading } = useQuery(GET_DATA, {
-    variables: { excludeTestingCustomers: true }
-  })
-  const fiatLocale = fromNamespace('locale')(data?.config).fiatCurrency
-  const timezone = fromNamespace('locale')(data?.config).timezone
-
+  const initialTimestamp = startOfHour(Date.now())
   const NOW = Date.now()
+
+  const { data, loading: dataLoading } = useQuery(GET_DATA)
+
+  const { data: initialTxs, loading: loadingTxs } = useQuery(GET_TRANSACTION, {
+    variables: {
+      from: startOfMinute(subDays(31, initialTimestamp)),
+      updatedSince: null,
+      excludeTestingCustomers: true
+    }
+  })
+
+  const { data: updatedTxs, startPolling, stopPolling } = useQuery(
+    GET_TRANSACTION,
+    {
+      variables: {
+        from: startOfMinute(subDays(31, initialTimestamp)),
+        updatedSince: initialTimestamp,
+        excludeTestingCustomers: true
+      }
+    }
+  )
+
+  useEffect(() => {
+    startPolling(10000)
+    return stopPolling
+  })
+
+  const transactions = R.unionWith(
+    R.eqBy(R.prop('id')),
+    updatedTxs?.transactions ?? [],
+    initialTxs?.transactions ?? []
+  )
+
+  const loading = dataLoading || loadingTxs
+
+  const fiatLocale =
+    !loading && fromNamespace('locale')(data?.config).fiatCurrency
+  const timezone = !loading && fromNamespace('locale')(data?.config).timezone
 
   const periodDomains = {
     Day: [NOW - DAY, NOW],
@@ -103,17 +150,19 @@ const SystemPerformance = () => {
 
   const convertFiatToLocale = item => {
     if (item.fiatCode === fiatLocale) return item
-    const itemRate = R.find(R.propEq('code', item.fiatCode))(data.fiatRates)
-    const localeRate = R.find(R.propEq('code', fiatLocale))(data.fiatRates)
+    const itemRate =
+      !loading && R.find(R.propEq('code', item.fiatCode))(data?.fiatRates)
+    const localeRate =
+      !loading && R.find(R.propEq('code', fiatLocale))(data?.fiatRates)
     const multiplier = localeRate.rate / itemRate.rate
     return { ...item, fiat: parseFloat(item.fiat) * multiplier }
   }
 
   const transactionsToShow = R.map(convertFiatToLocale)(
-    R.filter(isInRangeAndNoError(false), data?.transactions ?? [])
+    R.filter(isInRangeAndNoError(false), transactions)
   )
   const transactionsLastTimePeriod = R.map(convertFiatToLocale)(
-    R.filter(isInRangeAndNoError(true), data?.transactions ?? [])
+    R.filter(isInRangeAndNoError(true), transactions)
   )
 
   const getNumTransactions = () => {
@@ -179,16 +228,16 @@ const SystemPerformance = () => {
   return (
     <>
       <Nav
-        showPicker={!loading && !R.isEmpty(data.transactions)}
+        showPicker={!loading && !R.isEmpty(transactions)}
         handleSetRange={setSelectedRange}
       />
-      {!loading && R.isEmpty(data.transactions) && (
+      {!loading && R.isEmpty(transactions) && (
         <EmptyTable
           className={classes.emptyTransactions}
           message="No transactions so far"
         />
       )}
-      {!loading && !R.isEmpty(data.transactions) && (
+      {!loading && !R.isEmpty(transactions) && (
         <>
           <Grid container spacing={2}>
             <Grid item xs={3}>

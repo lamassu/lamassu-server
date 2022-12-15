@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
   makeStyles,
   Breadcrumbs,
@@ -287,6 +287,14 @@ const GET_ACTIVE_CUSTOM_REQUESTS = gql`
   }
 `
 
+const CHECK_AGAINST_SANCTIONS = gql`
+  query checkAgainstSanctions($customerId: ID) {
+    checkAgainstSanctions(customerId: $customerId) {
+      ofacSanctioned
+    }
+  }
+`
+
 const CustomerProfile = memo(() => {
   const history = useHistory()
 
@@ -392,6 +400,10 @@ const CustomerProfile = memo(() => {
 
   const [disableTestCustomer] = useMutation(DISABLE_TEST_CUSTOMER, {
     variables: { customerId },
+    onCompleted: () => getCustomer()
+  })
+
+  const [checkAgainstSanctions] = useLazyQuery(CHECK_AGAINST_SANCTIONS, {
     onCompleted: () => getCustomer()
   })
 
@@ -657,6 +669,7 @@ const CustomerProfile = memo(() => {
                 authorizeCustomRequest={authorizeCustomRequest}
                 updateCustomEntry={updateCustomEntry}
                 setRetrieve={setRetrieve}
+                checkAgainstSanctions={checkAgainstSanctions}
                 retrieveAdditionalDataDialog={
                   <RetrieveDataDialog
                     onDismissed={() => {

@@ -23,22 +23,26 @@ import LegendEntry from './components/LegendEntry'
 import HourOfDayWrapper from './components/wrappers/HourOfDayWrapper'
 import OverTimeWrapper from './components/wrappers/OverTimeWrapper'
 import TopMachinesWrapper from './components/wrappers/TopMachinesWrapper'
+import VolumeOverTimeWrapper from './components/wrappers/VolumeOverTimeWrapper'
 
 const useStyles = makeStyles(styles)
 
 const MACHINE_OPTIONS = [{ code: 'all', display: 'All machines' }]
 const REPRESENTING_OPTIONS = [
   { code: 'overTime', display: 'Over time' },
-  { code: 'topMachines', display: 'Top Machines' },
+  { code: 'volumeOverTime', display: 'Volume' },
+  { code: 'topMachines', display: 'Top machines' },
   { code: 'hourOfTheDay', display: 'Hour of the day' }
 ]
 const PERIOD_OPTIONS = [
   { code: 'day', display: 'Last 24 hours' },
+  { code: 'threeDays', display: 'Last 3 days' },
   { code: 'week', display: 'Last 7 days' },
   { code: 'month', display: 'Last 30 days' }
 ]
 const TIME_OPTIONS = {
   day: DAY,
+  threeDays: 3 * DAY,
   week: WEEK,
   month: MONTH
 }
@@ -77,12 +81,13 @@ const GET_TRANSACTIONS = gql`
       hasError: error
       deviceId
       fiat
-      cashInFee
+      fixedFee
       fiatCode
       cryptoAtoms
       cryptoCode
       toAddress
       created
+      profit
     }
   }
 `
@@ -222,13 +227,11 @@ const Analytics = () => {
     previous: filteredData(period.code).previous.length
   }
 
-  const avgAmount = {
-    current:
-      R.sum(R.map(d => d.fiat, filteredData(period.code).current)) /
-      (txs.current === 0 ? 1 : txs.current),
-    previous:
-      R.sum(R.map(d => d.fiat, filteredData(period.code).previous)) /
-      (txs.previous === 0 ? 1 : txs.previous)
+  const median = values => (values.length === 0 ? 0 : R.median(values))
+
+  const medianAmount = {
+    current: median(R.map(d => d.fiat, filteredData(period.code).current)),
+    previous: median(R.map(d => d.fiat, filteredData(period.code).previous))
   }
 
   const txVolume = {
@@ -237,18 +240,8 @@ const Analytics = () => {
   }
 
   const commissions = {
-    current: R.sum(
-      R.map(
-        d => d.fiat * d.commissionPercentage,
-        filteredData(period.code).current
-      )
-    ),
-    previous: R.sum(
-      R.map(
-        d => d.fiat * d.commissionPercentage,
-        filteredData(period.code).previous
-      )
-    )
+    current: R.sum(R.map(d => d.profit, filteredData(period.code).current)),
+    previous: R.sum(R.map(d => d.profit, filteredData(period.code).previous))
   }
 
   const handleRepresentationChange = newRepresentation => {
@@ -274,10 +267,24 @@ const Analytics = () => {
             currency={fiatLocale}
           />
         )
+      case 'volumeOverTime':
+        return (
+          <VolumeOverTimeWrapper
+            title="Transactions volume over time"
+            representing={representing}
+            period={period}
+            data={R.map(convertFiatToLocale)(filteredData(period.code).current)}
+            machines={machineOptions}
+            selectedMachine={machine}
+            handleMachineChange={setMachine}
+            timezone={timezone}
+            currency={fiatLocale}
+          />
+        )
       case 'topMachines':
         return (
           <TopMachinesWrapper
-            title="Transactions over time"
+            title="Top 5 Machines"
             representing={representing}
             period={period}
             data={R.map(convertFiatToLocale)(filteredData(period.code).current)}
@@ -356,9 +363,9 @@ const Analytics = () => {
             />
             <div className={classes.verticalLine} />
             <OverviewEntry
-              label="Avg. txn amount"
-              value={avgAmount.current}
-              oldValue={avgAmount.previous}
+              label="Median amount"
+              value={medianAmount.current}
+              oldValue={medianAmount.previous}
               currency={fiatLocale}
             />
             <div className={classes.verticalLine} />

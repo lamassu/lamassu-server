@@ -35,9 +35,9 @@ const CryptoBalanceOverrides = ({ section }) => {
     return save(newOverrides)
   }
 
-  const overridenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(setupValues)
+  const overriddenCryptos = R.map(R.prop(CRYPTOCURRENCY_KEY))(setupValues)
   const suggestionFilter = R.filter(
-    it => !R.contains(it.code, overridenCryptos)
+    it => !R.contains(it.code, overriddenCryptos)
   )
   const suggestions = suggestionFilter(cryptoCurrencies)
 
@@ -62,7 +62,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         .nullable()
         .required(),
       [LOW_BALANCE_KEY]: Yup.number()
-        .label('Low Balance')
+        .label('Low balance')
         .when(HIGH_BALANCE_KEY, {
           is: HIGH_BALANCE_KEY => !HIGH_BALANCE_KEY,
           then: Yup.number().required()
@@ -73,7 +73,7 @@ const CryptoBalanceOverrides = ({ section }) => {
         .max(CURRENCY_MAX)
         .nullable(),
       [HIGH_BALANCE_KEY]: Yup.number()
-        .label('High Balance')
+        .label('High balance')
         .when(LOW_BALANCE_KEY, {
           is: LOW_BALANCE_KEY => !LOW_BALANCE_KEY,
           then: Yup.number().required()

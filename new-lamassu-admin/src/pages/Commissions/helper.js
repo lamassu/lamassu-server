@@ -19,7 +19,7 @@ const ALL_MACHINES = {
 }
 
 const ALL_COINS = {
-  display: 'All Coins',
+  header: 'All Coins',
   code: 'ALL_COINS'
 }
 
@@ -51,7 +51,7 @@ const getView = (data, code, compare) => it => {
 const displayCodeArray = data => it => {
   if (!it) return it
 
-  return R.compose(R.join(', '), R.map(getView(data, 'display')))(it)
+  return R.compose(R.join(', '), R.map(getView(data, 'header')))(it)
 }
 
 const onCryptoChange = (prev, curr, setValue) => {
@@ -73,7 +73,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const rawCryptos = getData(['cryptoCurrencies'])
   const cryptoData = [ALL_COINS].concat(
-    R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
+    R.map(it => ({ header: it.code, code: it.code }))(rawCryptos ?? [])
   )
 
   return [
@@ -91,14 +91,15 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'cryptoCurrencies',
-      width: 280,
+      header: 'Cryptocurrencies',
+      width: 145,
       size: 'sm',
       view: displayCodeArray(cryptoData),
       input: Autocomplete,
       inputProps: {
         options: cryptoData,
         valueProp: 'code',
-        labelProp: 'display',
+        labelProp: 'header',
         multiple: true,
         onChange: onCryptoChange,
         shouldStayOpen: true
@@ -107,8 +108,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     {
       header: cashInHeader,
       name: 'cashIn',
-      display: 'Cash-in',
-      width: 130,
+      width: 123,
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
@@ -120,8 +120,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     {
       header: cashOutHeader,
       name: 'cashOut',
-      display: 'Cash-out',
-      width: 130,
+      width: 127,
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
@@ -132,8 +131,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'fixedFee',
-      display: 'Fixed fee',
-      width: 144,
+      width: 126,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
@@ -145,9 +143,23 @@ const getOverridesFields = (getData, currency, auxElements) => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimun Tx',
-      width: 169,
+      header: 'Minimum Tx',
+      width: 140,
       doubleHeader: 'Cash-in only',
+      textAlign: 'center',
+      editingAlign: 'right',
+      input: NumberInput,
+      suffix: currency,
+      bold: bold,
+      inputProps: {
+        decimalPlaces: 2
+      }
+    },
+    {
+      name: 'cashOutFixedFee',
+      header: 'Fixed fee',
+      width: 134,
+      doubleHeader: 'Cash-out only',
       textAlign: 'center',
       editingAlign: 'right',
       input: NumberInput,
@@ -164,7 +176,6 @@ const mainFields = currency => [
   {
     header: cashInHeader,
     name: 'cashIn',
-    display: 'Cash-in',
     width: 169,
     size: 'lg',
     editingAlign: 'right',
@@ -178,7 +189,6 @@ const mainFields = currency => [
   {
     header: cashOutHeader,
     name: 'cashOut',
-    display: 'Cash-out',
     width: 169,
     size: 'lg',
     editingAlign: 'right',
@@ -191,7 +201,6 @@ const mainFields = currency => [
   },
   {
     name: 'fixedFee',
-    display: 'Fixed fee',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
@@ -206,10 +215,25 @@ const mainFields = currency => [
   },
   {
     name: 'minimumTx',
-    display: 'Minimun Tx',
+    header: 'Minimum Tx',
     width: 169,
     size: 'lg',
     doubleHeader: 'Cash-in only',
+    textAlign: 'center',
+    editingAlign: 'right',
+    input: NumberInput,
+    suffix: currency,
+    bold: bold,
+    inputProps: {
+      decimalPlaces: 2
+    }
+  },
+  {
+    name: 'cashOutFixedFee',
+    header: 'Fixed fee',
+    width: 169,
+    size: 'lg',
+    doubleHeader: 'Cash-out only',
     textAlign: 'center',
     editingAlign: 'right',
     input: NumberInput,
@@ -244,12 +268,17 @@ const getSchema = locale => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Fixed Fee')
+      .label('Cash-in fixed fee')
       .min(0)
       .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    cashOutFixedFee: Yup.number()
+      .label('Cash-out fixed fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -282,7 +311,7 @@ const getOverridesSchema = (values, rawData, locale) => {
   const machineData = [ALL_MACHINES].concat(getData(['machines']))
   const rawCryptos = getData(['cryptoCurrencies'])
   const cryptoData = [ALL_COINS].concat(
-    R.map(it => ({ display: it.code, code: it.code }))(rawCryptos ?? [])
+    R.map(it => ({ header: it.code, code: it.code }))(rawCryptos ?? [])
   )
 
   const bills = getBillOptions(locale, denominations).map(it =>
@@ -318,14 +347,14 @@ const getOverridesSchema = (values, rawData, locale) => {
               'deviceId'
             )(machine)
 
-            const message = `${codes} already overriden for machine: ${machineView}`
+            const message = `${codes} already overridden for machine: ${machineView}`
 
             return this.createError({ message })
           }
           return true
         }
       })
-      .label('Crypto Currencies')
+      .label('Crypto currencies')
       .required()
       .min(1),
     cashIn: Yup.number()
@@ -339,12 +368,17 @@ const getOverridesSchema = (values, rawData, locale) => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Fixed Fee')
+      .label('Cash-in fixed fee')
       .min(0)
       .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    cashOutFixedFee: Yup.number()
+      .label('Cash-out fixed fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -355,7 +389,8 @@ const defaults = {
   cashIn: '',
   cashOut: '',
   fixedFee: '',
-  minimumTx: ''
+  minimumTx: '',
+  cashOutFixedFee: ''
 }
 
 const overridesDefaults = {
@@ -364,7 +399,8 @@ const overridesDefaults = {
   cashIn: '',
   cashOut: '',
   fixedFee: '',
-  minimumTx: ''
+  minimumTx: '',
+  cashOutFixedFee: ''
 }
 
 const getOrder = ({ machine, cryptoCurrencies }) => {
@@ -384,6 +420,7 @@ const createCommissions = (cryptoCode, deviceId, isDefault, config) => {
     fixedFee: config.fixedFee,
     cashOut: config.cashOut,
     cashIn: config.cashIn,
+    cashOutFixedFee: config.cashOutFixedFee,
     machine: deviceId,
     cryptoCurrencies: [cryptoCode],
     default: isDefault,
@@ -436,7 +473,7 @@ const getListCommissionsSchema = locale => {
       .label('Machine')
       .required(),
     cryptoCurrencies: Yup.array()
-      .label('Crypto Currency')
+      .label('Crypto currency')
       .required()
       .min(1),
     cashIn: Yup.number()
@@ -450,12 +487,17 @@ const getListCommissionsSchema = locale => {
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
-      .label('Fixed Fee')
+      .label('Cash-in fixed fee')
       .min(0)
       .max(highestBill)
       .required(),
     minimumTx: Yup.number()
       .label('Minimum Tx')
+      .min(0)
+      .max(highestBill)
+      .required(),
+    cashOutFixedFee: Yup.number()
+      .label('Cash-out fixed fee')
       .min(0)
       .max(highestBill)
       .required()
@@ -485,8 +527,8 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'cryptoCurrencies',
-      display: 'Crypto Currency',
-      width: 255,
+      header: 'Cryptocurrency',
+      width: 150,
       view: R.prop(0),
       size: 'sm',
       editable: false
@@ -494,8 +536,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     {
       header: cashInHeader,
       name: 'cashIn',
-      display: 'Cash-in',
-      width: 130,
+      width: 120,
       input: NumberInput,
       textAlign: 'right',
       suffix: '%',
@@ -507,8 +548,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     {
       header: cashOutHeader,
       name: 'cashOut',
-      display: 'Cash-out',
-      width: 140,
+      width: 126,
       input: NumberInput,
       textAlign: 'right',
       greenText: true,
@@ -520,8 +560,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'fixedFee',
-      display: 'Fixed fee',
-      width: 144,
+      width: 140,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
@@ -533,11 +572,25 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimun Tx',
-      width: 144,
+      header: 'Minimum Tx',
+      width: 140,
       input: NumberInput,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
+      suffix: currency,
+      textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 2
+      }
+    },
+    {
+      name: 'cashOutFixedFee',
+      header: 'Fixed fee',
+      width: 140,
+      input: NumberInput,
+      doubleHeader: 'Cash-out only',
+      textAlign: 'center',
+      editingAlign: 'right',
       suffix: currency,
       textStyle: obj => getTextStyle(obj),
       inputProps: {

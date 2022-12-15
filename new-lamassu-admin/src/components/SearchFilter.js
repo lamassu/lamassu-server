@@ -7,7 +7,7 @@ import { P, Label3 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
 import { ReactComponent as FilterIcon } from 'src/styling/icons/button/filter/white.svg'
 import { ReactComponent as ReverseFilterIcon } from 'src/styling/icons/button/filter/zodiac.svg'
-import { onlyFirstToUpper } from 'src/utils/string'
+import { onlyFirstToUpper, singularOrPlural } from 'src/utils/string'
 
 import { chipStyles, styles } from './SearchFilter.styles'
 
@@ -18,7 +18,7 @@ const SearchFilter = ({
   filters,
   onFilterDelete,
   deleteAllFilters,
-  entries
+  entries = 0
 }) => {
   const chipClasses = useChipStyles()
   const classes = useStyles()
@@ -40,8 +40,11 @@ const SearchFilter = ({
         </div>
         <div className={classes.deleteWrapper}>
           {
-            <Label3 className={classes.entries}>{`${entries ??
-              0} entries`}</Label3>
+            <Label3 className={classes.entries}>{`${entries} ${singularOrPlural(
+              entries,
+              `entry`,
+              `entries`
+            )}`}</Label3>
           }
           <ActionButton
             color="secondary"
