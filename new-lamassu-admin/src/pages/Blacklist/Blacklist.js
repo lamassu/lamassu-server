@@ -279,9 +279,9 @@ const Blacklist = () => {
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
               <HelpTooltip width={304}>
                 <P>
-                  This option requires a user to scan a fresh wallet
-                  address if they attempt to scan one that had been previously
-                  used for a transaction in your network.
+                  This option requires a user to scan a fresh wallet address if
+                  they attempt to scan one that had been previously used for a
+                  transaction in your network.
                 </P>
                 <P>
                   For details please read the relevant knowledgebase article:
