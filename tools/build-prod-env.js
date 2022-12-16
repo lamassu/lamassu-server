@@ -14,6 +14,8 @@ if (!_.isEqual(_.intersection(_.keys(argv), requiredParams), requiredParams)) {
 
 fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), path.resolve('/etc', 'lamassu', '.env'))
 
+setEnvVariable('NODE_ENV', 'production')
+
 setEnvVariable('POSTGRES_USER', 'lamassu_pg')
 setEnvVariable('POSTGRES_PASSWORD', `${argv['db-password']}`)
 setEnvVariable('POSTGRES_HOST', 'localhost')
