@@ -11,6 +11,8 @@ import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import SearchBox from 'src/components/SearchBox'
 import SearchFilter from 'src/components/SearchFilter'
 import Title from 'src/components/Title'
+import { HelpTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import DataTable from 'src/components/tables/DataTable'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -101,9 +103,10 @@ const GET_TRANSACTIONS = gql`
       sendConfirmed
       dispense
       hasError: error
+      errorCode
       deviceId
       fiat
-      cashInFee
+      fixedFee
       fiatCode
       cryptoAtoms
       cryptoCode
@@ -230,7 +233,22 @@ const Transactions = () => {
     },
     {
       header: 'Status',
-      view: it => getStatus(it),
+      view: it => {
+        if (getStatus(it) === 'Pending')
+          return (
+            <div className={classes.pendingBox}>
+              {'Pending'}
+              <HelpTooltip width={285}>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/115001210452-Cancelling-cash-out-transactions"
+                  label="Cancelling cash-out transactions"
+                  bottomSpace="0"
+                />
+              </HelpTooltip>
+            </div>
+          )
+        else return getStatus(it)
+      },
       textAlign: 'left',
       size: 'sm',
       width: 80
@@ -320,7 +338,7 @@ const Transactions = () => {
               loading={filtersLoading}
               filters={filters}
               options={filterOptions}
-              inputPlaceholder={'Search Transactions'}
+              inputPlaceholder={'Search transactions'}
               onChange={onFilterChange}
             />
           </div>

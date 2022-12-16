@@ -1,4 +1,14 @@
-import { offDarkColor, tomato, neon, java } from 'src/styling/variables'
+import {
+  offColor,
+  offDarkColor,
+  tomato,
+  neon,
+  java
+} from 'src/styling/variables'
+
+import typographyStyles from '../../components/typography/styles'
+
+const { label1 } = typographyStyles
 
 const styles = {
   overviewLegend: {
@@ -135,6 +145,18 @@ const styles = {
   topMachinesRadio: {
     display: 'flex',
     flexDirection: 'row'
+  },
+  graphHeaderSwitchBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    '& > *': {
+      margin: 0
+    },
+    '& > :first-child': {
+      marginBottom: 2,
+      extend: label1,
+      color: offColor
+    }
   }
 }
 

@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
-import { Button } from 'src/components/buttons'
+import { Button, SupportLinkButton } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
 import { spacer } from 'src/styling/variables'
 
@@ -26,6 +26,9 @@ const styles = {
   grid: {
     marginBottom: 24,
     marginTop: 12
+  },
+  flexStartAlign: {
+    alignSelf: 'flex-start'
   }
 }
 
@@ -37,7 +40,8 @@ const FormRenderer = ({
   save,
   buttonLabel = 'Save changes',
   buttonClass,
-  xs = 12
+  xs = 12,
+  supportArticle
 }) => {
   const classes = useStyles()
 
@@ -90,6 +94,15 @@ const FormRenderer = ({
               )
             )}
           </Grid>
+          {!R.isNil(supportArticle) && (
+            <div className={classes.flexStartAlign}>
+              <SupportLinkButton
+                link={supportArticle}
+                label="Lamassu Support Article"
+                bottomSpace="2"
+              />
+            </div>
+          )}
           <div className={classes.footer}>
             {!R.isEmpty(R.mergeRight(errors, saveError)) && (
               <ErrorMessage>

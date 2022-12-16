@@ -241,7 +241,7 @@ const Users = () => {
 
   return (
     <>
-      <TitleSection title="User Management" />
+      <TitleSection title="User management" />
       <Box
         marginBottom={3}
         marginTop={-5}

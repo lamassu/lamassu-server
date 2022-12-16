@@ -4,7 +4,8 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -83,7 +84,21 @@ const CashOut = ({ name: SCREEN_KEY }) => {
   return (
     !loading && (
       <>
-        <TitleSection title="Cash-out">
+        <TitleSection
+          title="Cash-out"
+          appendix={
+            <HelpTooltip width={320}>
+              <P>
+                For details on configuring cash-out, please read the relevant
+                knowledgebase article:
+              </P>
+              <SupportLinkButton
+                link="https://support.lamassu.is/hc/en-us/articles/115003720192-Enabling-cash-out-on-the-admin"
+                label="Enabling cash-out on the admin"
+                bottomSpace="1"
+              />
+            </HelpTooltip>
+          }>
           <div className={classes.fudgeFactor}>
             <P>Transaction fudge factor</P>
             <Switch
@@ -96,7 +111,7 @@ const CashOut = ({ name: SCREEN_KEY }) => {
             <Label2 className={classes.switchLabel}>
               {fudgeFactorActive ? 'On' : 'Off'}
             </Label2>
-            <HoverableTooltip width={304}>
+            <HelpTooltip width={304}>
               <P>
                 Automatically accept customer deposits as complete if their
                 received amount is 100 crypto atoms or less.
@@ -105,7 +120,13 @@ const CashOut = ({ name: SCREEN_KEY }) => {
                 (Crypto atoms are the smallest unit in each cryptocurrency.
                 E.g., satoshis in Bitcoin, or wei in Ethereum.)
               </P>
-            </HoverableTooltip>
+              <P>For details please read the relevant knowledgebase article:</P>
+              <SupportLinkButton
+                link="https://support.lamassu.is/hc/en-us/articles/360050838011-Automatically-accepting-undersent-deposits-with-Fudge-Factor-"
+                label="Lamassu Support Article"
+                bottomSpace="1"
+              />
+            </HelpTooltip>
           </div>
         </TitleSection>
         <EditableTable

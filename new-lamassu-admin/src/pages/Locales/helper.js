@@ -27,10 +27,10 @@ const allFields = (getData, onChange, auxElements = []) => {
     return R.compose(R.join(', '), R.map(getView(data, 'code')))(it)
   }
 
-  const overridenMachines = R.map(override => override.machine, auxElements)
+  const overriddenMachines = R.map(override => override.machine, auxElements)
 
   const suggestionFilter = it =>
-    R.differenceWith((x, y) => x.deviceId === y, it, overridenMachines)
+    R.differenceWith((x, y) => x.deviceId === y, it, overriddenMachines)
 
   const machineData = getData(['machines'])
   const countryData = getData(['countries'])
@@ -152,7 +152,7 @@ const LocaleSchema = Yup.object().shape({
     .label('Country')
     .required(),
   fiatCurrency: Yup.string()
-    .label('Fiat Currency')
+    .label('Fiat currency')
     .required(),
   languages: Yup.array()
     .label('Languages')
@@ -160,7 +160,7 @@ const LocaleSchema = Yup.object().shape({
     .min(1)
     .max(4),
   cryptoCurrencies: Yup.array()
-    .label('Crypto Currencies')
+    .label('Crypto currencies')
     .required()
     .min(1),
   timezone: Yup.string()
@@ -181,7 +181,7 @@ const OverridesSchema = Yup.object().shape({
     .min(1)
     .max(4),
   cryptoCurrencies: Yup.array()
-    .label('Crypto Currencies')
+    .label('Crypto currencies')
     .required()
     .min(1)
 })

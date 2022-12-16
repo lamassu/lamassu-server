@@ -4,12 +4,7 @@ import React, { useEffect, useRef, useCallback } from 'react'
 
 import { backgroundColor, zircon, primaryColor } from 'src/styling/variables'
 
-const transactionProfit = tx => {
-  const cashInFee = tx.cashInFee ? Number.parseFloat(tx.cashInFee) : 0
-  const commission =
-    Number.parseFloat(tx.commissionPercentage) * Number.parseFloat(tx.fiat)
-  return commission + cashInFee
-}
+const transactionProfit = R.prop('profit')
 
 const mockPoint = (tx, offsetMs, profit) => {
   const date = new Date(new Date(tx.created).getTime() + offsetMs).toISOString()

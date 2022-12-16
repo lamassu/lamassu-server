@@ -4,7 +4,10 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
+import { HelpTooltip } from 'src/components/Tooltip'
+import { SupportLinkButton } from 'src/components/buttons'
 import TitleSection from 'src/components/layout/TitleSection'
+import { P } from 'src/components/typography'
 import { ReactComponent as ReverseListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/white.svg'
 import { ReactComponent as ListingViewIcon } from 'src/styling/icons/circle buttons/listing-view/zodiac.svg'
 import { ReactComponent as OverrideLabelIcon } from 'src/styling/icons/status/spring2.svg'
@@ -74,13 +77,13 @@ const Commissions = ({ name: SCREEN_KEY }) => {
   }
 
   const saveOverridesFromList = it => (_, override) => {
-    const cryptoOverriden = R.path(['cryptoCurrencies', 0], override)
+    const cryptoOverridden = R.path(['cryptoCurrencies', 0], override)
 
     const sameMachine = R.eqProps('machine', override)
     const notSameOverride = it => !R.eqProps('cryptoCurrencies', override, it)
 
     const filterMachine = R.filter(R.both(sameMachine, notSameOverride))
-    const removeCoin = removeCoinFromOverride(cryptoOverriden)
+    const removeCoin = removeCoinFromOverride(cryptoOverridden)
 
     const machineOverrides = R.map(removeCoin)(filterMachine(it))
 
@@ -118,6 +121,24 @@ const Commissions = ({ name: SCREEN_KEY }) => {
           }
         ]}
         iconClassName={classes.listViewButton}
+        appendix={
+          <HelpTooltip width={320}>
+            <P>
+              For details about commissions, please read the relevant
+              knowledgebase articles:
+            </P>
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/115001211752-Fixed-fees-Minimum-transaction"
+              label="Fixed fees & Minimum transaction"
+              bottomSpace="1"
+            />
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/360061558352-Commissions-and-Profit-Calculations"
+              label="SCommissions and Profit Calculations"
+              bottomSpace="1"
+            />
+          </HelpTooltip>
+        }
       />
 
       {!showMachines && !loading && (

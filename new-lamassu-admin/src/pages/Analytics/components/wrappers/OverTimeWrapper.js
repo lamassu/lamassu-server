@@ -1,8 +1,8 @@
 import { Box } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import React from 'react'
+import React, { useState } from 'react'
 
-import { Select } from 'src/components/inputs'
+import { Select, Switch } from 'src/components/inputs'
 import { H2 } from 'src/components/typography'
 import { primaryColor } from 'src/styling/variables'
 
@@ -25,11 +25,13 @@ const OverTimeDotGraphHeader = ({
 }) => {
   const classes = useStyles()
 
+  const [logarithmic, setLogarithmic] = useState()
+
   const legend = {
     cashIn: <div className={classes.cashInIcon}></div>,
     cashOut: <div className={classes.cashOutIcon}></div>,
     transaction: <div className={classes.txIcon}></div>,
-    average: (
+    median: (
       <svg height="12" width="18">
         <path
           stroke={primaryColor}
@@ -53,10 +55,14 @@ const OverTimeDotGraphHeader = ({
               IconElement={legend.transaction}
               label={'One transaction'}
             />
-            <LegendEntry IconElement={legend.average} label={'Average'} />
+            <LegendEntry IconElement={legend.median} label={'Median'} />
           </Box>
         </div>
         <div className={classes.graphHeaderRight}>
+          <div className={classes.graphHeaderSwitchBox}>
+            <span>Log. scale</span>
+            <Switch onChange={event => setLogarithmic(event.target.checked)} />
+          </div>
           <Select
             label="Machines"
             onSelectedItemChange={handleMachineChange}
@@ -74,6 +80,7 @@ const OverTimeDotGraphHeader = ({
         currency={currency}
         selectedMachine={selectedMachine}
         machines={machines}
+        log={logarithmic}
       />
     </>
   )

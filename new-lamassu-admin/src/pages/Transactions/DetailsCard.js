@@ -11,7 +11,7 @@ import * as R from 'ramda'
 import React, { memo, useState } from 'react'
 
 import { ConfirmDialog } from 'src/components/ConfirmDialog'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { IDButton, ActionButton } from 'src/components/buttons'
 import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as CardIdInverseIcon } from 'src/styling/icons/ID/card/white.svg'
@@ -107,7 +107,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
   const zip = new JSZip()
 
   const [fetchSummary] = useLazyQuery(TX_SUMMARY, {
-    onCompleted: data => createCsv(data)
+    onCompleted: data => createCsv(R.filter(it => !R.isEmpty(it), data))
   })
 
   const [cancelTransaction] = useMutation(
@@ -124,10 +124,16 @@ const DetailsRow = ({ it: tx, timezone }) => {
     .toFixed(2, 1) // ROUND_DOWN
   const commissionPercentage =
     Number.parseFloat(tx.commissionPercentage, 2) * 100
-  const cashInFee = isCashIn ? Number.parseFloat(tx.cashInFee) : 0
-  const fiat = Number.parseFloat(tx.fiat)
+
+  const fixedFee = Number.parseFloat(tx.fixedFee) || 0
+  const fiat = BigNumber(tx.fiat)
+
   const crypto = getCryptoAmount(tx)
-  const exchangeRate = (fiat / crypto).toFixed(2)
+  const exchangeRate = BigNumber(fiat)
+    .minus(fixedFee)
+    .div(crypto)
+    .toFixed(2, 1) // ROUND_DOWN
+
   const displayExRate = `1 ${tx.cryptoCode} = ${exchangeRate} ${tx.fiatCode}`
   const discount = tx.discount ? `-${tx.discount}%` : null
 
@@ -169,10 +175,21 @@ const DetailsRow = ({ it: tx, timezone }) => {
     FileSaver.saveAs(content, zipFilename)
   }
 
+  const hasCiphertraceError = tx =>
+    !R.isNil(tx.errorCode) &&
+    R.includes(tx.errorCode, ['scoreThresholdReached', 'ciphertraceError'])
+
   const errorElements = (
     <>
       <Label>Transaction status</Label>
       <span className={classes.bold}>{getStatus(tx)}</span>
+      {getStatusDetails(tx) ? (
+        <CopyToClipboard removeSpace={false} className={classes.errorCopy}>
+          {getStatusDetails(tx)}
+        </CopyToClipboard>
+      ) : (
+        <></>
+      )}
     </>
   )
 
@@ -187,10 +204,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
               r={3.5}
               fill={
                 it < tx.walletScore
-                  ? R.isNil(tx.hasError)
+                  ? !hasCiphertraceError(tx)
                     ? primaryColor
                     : errorColor
-                  : R.isNil(tx.hasError)
+                  : !hasCiphertraceError(tx)
                   ? subheaderColor
                   : offErrorColor
               }
@@ -203,7 +220,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         noMargin
         className={classNames({
           [classes.bold]: true,
-          [classes.error]: !R.isNil(tx.hasError)
+          [classes.error]: hasCiphertraceError(tx)
         })}>
         {tx.walletScore}
       </P>
@@ -332,7 +349,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         </div>
         <div>
           <Label>Fixed fee</Label>
-          <div>{isCashIn ? `${cashInFee} ${tx.fiatCode}` : 'N/A'}</div>
+          <div>{`${fixedFee} ${tx.fiatCode}`}</div>
         </div>
       </div>
       <div className={classes.secondRow}>
@@ -340,9 +357,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
           <div className={classes.addressHeader}>
             <Label>Address</Label>
             {!R.isNil(tx.walletScore) && (
-              <HoverableTooltip parentElements={walletScoreEl}>
+              <HelpTooltip parentElements={walletScoreEl}>
                 {`CipherTrace score: ${tx.walletScore}/10`}
-              </HoverableTooltip>
+              </HelpTooltip>
             )}
           </div>
           <div>
@@ -368,13 +385,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
       </div>
       <div className={classes.lastRow}>
         <div className={classes.status}>
-          {getStatusDetails(tx) ? (
-            <HoverableTooltip parentElements={errorElements} width={200}>
-              <P>{getStatusDetails(tx)}</P>
-            </HoverableTooltip>
-          ) : (
-            errorElements
-          )}
+          {errorElements}
           {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
             <ActionButton
               color="primary"

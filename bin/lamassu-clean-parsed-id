@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('../lib/environment-helper')
+
 const argv = require('minimist')(process.argv.slice(2))
 const _ = require('lodash')
 const db = require('../lib/db')

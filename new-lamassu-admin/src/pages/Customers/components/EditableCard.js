@@ -3,12 +3,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
 import { Form, Formik, Field as FormikField } from 'formik'
 import * as R from 'ramda'
-import { useState, React } from 'react'
+import { useState, React, useRef } from 'react'
 
 import ErrorMessage from 'src/components/ErrorMessage'
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { MainStatus } from 'src/components/Status'
-// import { HoverableTooltip } from 'src/components/Tooltip'
+// import { HelpTooltip } from 'src/components/Tooltip'
 import { ActionButton } from 'src/components/buttons'
 import { Label1, P, H3 } from 'src/components/typography'
 import {
@@ -133,22 +133,26 @@ const ReadOnlyField = ({ field, value, ...props }) => {
 
 const EditableCard = ({
   fields,
-  save,
-  authorize,
+  save = () => {},
+  cancel = () => {},
+  authorize = () => {},
   hasImage,
-  reject,
+  reject = () => {},
   state,
   title,
   titleIcon,
-  children,
+  children = () => {},
   validationSchema,
   initialValues,
   deleteEditedData,
   retrieveAdditionalData,
   hasAdditionalData = true,
-  editable
+  editable,
+  checkAgainstSanctions
 }) => {
   const classes = useStyles()
+
+  const formRef = useRef()
 
   const [editing, setEditing] = useState(false)
   const [input, setInput] = useState(null)
@@ -179,7 +183,7 @@ const EditableCard = ({
               <H3 className={classes.cardTitle}>{title}</H3>
               {
                 // TODO: Enable for next release
-                /* <HoverableTooltip width={304}></HoverableTooltip> */
+                /* <HelpTooltip width={304}></HelpTooltip> */
               }
             </div>
             {state && authorize && (
@@ -188,8 +192,9 @@ const EditableCard = ({
               </div>
             )}
           </div>
-          {children}
+          {children(formRef.current?.values ?? {})}
           <Formik
+            innerRef={formRef}
             validateOnBlur={false}
             validateOnChange={false}
             enableReinitialize
@@ -272,6 +277,16 @@ const EditableCard = ({
                             InverseIcon={DataReversedIcon}
                             onClick={() => retrieveAdditionalData()}>
                             Retrieve API data
+                          </ActionButton>
+                        )}
+                        {checkAgainstSanctions && (
+                          <ActionButton
+                            color="primary"
+                            type="button"
+                            Icon={DataIcon}
+                            InverseIcon={DataReversedIcon}
+                            onClick={() => checkAgainstSanctions()}>
+                            Check against OFAC sanction list
                           </ActionButton>
                         )}
                       </div>
@@ -360,6 +375,7 @@ const EditableCard = ({
                             color="secondary"
                             Icon={CancelReversedIcon}
                             InverseIcon={CancelReversedIcon}
+                            onClick={() => cancel()}
                             type="reset">
                             Cancel
                           </ActionButton>

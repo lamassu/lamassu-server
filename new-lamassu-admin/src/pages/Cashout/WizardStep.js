@@ -131,7 +131,7 @@ const WizardStep = ({
               to zero. Make sure you physically put cash inside the cash
               cassettes to allow the machine to dispense it to your users. If
               you already did, make sure you set the correct cash cassette bill
-              count for this machine on your Cash Boxes & Cassettes tab under
+              count for this machine on your Cash boxes & cassettes tab under
               Maintenance.
             </P>
             <Info2 className={classes.title}>Default Commissions</Info2>

@@ -1,5 +1,4 @@
 const fs = require('fs')
-const os = require('os')
 const path = require('path')
 const argv = require('minimist')(process.argv.slice(2))
 const _ = require('lodash/fp')
@@ -13,7 +12,9 @@ if (!_.isEqual(_.intersection(_.keys(argv), requiredParams), requiredParams)) {
   process.exit(2)
 }
 
-fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env'))
+fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), path.resolve('/etc', 'lamassu', '.env'))
+
+setEnvVariable('NODE_ENV', 'production')
 
 setEnvVariable('NODE_ENV', 'production')
 

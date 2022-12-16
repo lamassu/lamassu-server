@@ -5,7 +5,8 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { Link } from 'src/components/buttons'
+import { HelpTooltip } from 'src/components/Tooltip'
+import { Link, SupportLinkButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -176,7 +177,22 @@ const Locales = ({ name: SCREEN_KEY }) => {
         close={() => setDataToSave(null)}
         save={() => dataToSave && save(dataToSave)}
       />
-      <TitleSection title="Locales" />
+      <TitleSection
+        title="Locales"
+        appendix={
+          <HelpTooltip width={320}>
+            <P>
+              For details on configuring languages, please read the relevant
+              knowledgebase article:
+            </P>
+            <SupportLinkButton
+              link="https://support.lamassu.is/hc/en-us/articles/360016257471-Setting-multiple-machine-languages"
+              label="Setting multiple machine languages"
+              bottomSpace="1"
+            />
+          </HelpTooltip>
+        }
+      />
       <Section>
         <EditableTable
           title="Default settings"

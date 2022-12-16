@@ -1,9 +1,10 @@
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
+const _ = require('lodash/fp')
 
-const setEnvVariable = (key, value) => {
-  const ENV_PATH = process.env.NODE_ENV === 'production' ? path.resolve('/etc', 'lamassu', '.env') : path.resolve(__dirname, '../.env')
+const setEnvVariable = (key, value, opts) => {
+  const ENV_PATH = !_.isNil(opts.ENV_PATH) ? opts.ENV_PATH : path.resolve(__dirname, '../.env')
   const ENV_VARIABLES = fs.readFileSync(ENV_PATH, 'utf-8').split(os.EOL)
   const target = ENV_VARIABLES.indexOf(ENV_VARIABLES.find(line => line.match(new RegExp(`^${key}=`))))
 

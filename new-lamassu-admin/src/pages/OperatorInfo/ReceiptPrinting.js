@@ -4,7 +4,9 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { memo } from 'react'
 
+import { HelpTooltip } from 'src/components/Tooltip'
 import { BooleanPropertiesTable } from 'src/components/booleanPropertiesTable'
+import { SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import { H4, P, Label2 } from 'src/components/typography'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
@@ -47,6 +49,17 @@ const ReceiptPrinting = memo(({ wizard }) => {
     <>
       <div className={classes.header}>
         <H4>Receipt options</H4>
+        <HelpTooltip width={320}>
+          <P>
+            For details on configuring this panel, please read the relevant
+            knowledgebase article:
+          </P>
+          <SupportLinkButton
+            link="https://support.lamassu.is/hc/en-us/articles/360058513951-Receipt-options-printers"
+            label="Lamassu Support Article"
+            bottomSpace="1"
+          />
+        </HelpTooltip>
       </div>
       <div className={classes.switchRow}>
         <P>Enable receipt printing</P>
@@ -67,6 +80,28 @@ const ReceiptPrinting = memo(({ wizard }) => {
             }
           />
           <Label2>{receiptPrintingConfig.active ? 'Yes' : 'No'}</Label2>
+        </div>
+      </div>
+      <div className={classes.switchRow}>
+        <P>Automatic receipt printing</P>
+        <div className={classes.switch}>
+          <Switch
+            disabled={!receiptPrintingConfig.active}
+            checked={receiptPrintingConfig.automaticPrint}
+            onChange={event =>
+              saveConfig({
+                variables: {
+                  config: toNamespace(
+                    namespaces.RECEIPT,
+                    R.merge(receiptPrintingConfig, {
+                      automaticPrint: event.target.checked
+                    })
+                  )
+                }
+              })
+            }
+          />
+          <Label2>{receiptPrintingConfig.automaticPrint ? 'Yes' : 'No'}</Label2>
         </div>
       </div>
       <div className={classes.switchRow}>
@@ -109,7 +144,7 @@ const ReceiptPrinting = memo(({ wizard }) => {
           },
           {
             name: 'companyNumber',
-            display: 'Company number'
+            display: 'Company registration number'
           },
           {
             name: 'customerNameOrPhoneNumber',
