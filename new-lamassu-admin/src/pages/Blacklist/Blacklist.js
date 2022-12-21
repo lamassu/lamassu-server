@@ -279,9 +279,9 @@ const Blacklist = () => {
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
               <HelpTooltip width={304}>
                 <P>
-                  The "Reject reused addresses" option means that all addresses
-                  that are used once will be automatically rejected if there's
-                  an attempt to use them again on a new transaction.
+                  This option requires a user to scan a fresh wallet address if
+                  they attempt to scan one that had been previously used for a
+                  transaction in your network.
                 </P>
                 <P>
                   For details please read the relevant knowledgebase article:
