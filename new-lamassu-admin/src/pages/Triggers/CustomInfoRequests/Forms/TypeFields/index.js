@@ -33,6 +33,7 @@ const defaultValues = {
   inputLength: '',
   inputLabel1: '',
   inputLabel2: '',
+  inputLabel3: '',
   listChoices: [{ text: '' }, { text: '' }]
 }
 
@@ -57,7 +58,8 @@ const validationSchema = Yup.lazy(values => {
           is: 'spaceSeparation',
           then: Yup.string().required(),
           else: Yup.mixed().notRequired()
-        })
+        }),
+        inputLabel3: Yup.string()
       })
     case 'choiceList':
       return Yup.object({

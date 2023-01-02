@@ -44,6 +44,10 @@ const styles = {
   label: {
     width: 200,
     marginRight: spacer
+  },
+  columnFlex: {
+    display: 'flex',
+    flexDirection: 'column'
   }
 }
 
