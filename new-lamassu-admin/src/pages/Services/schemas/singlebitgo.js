@@ -13,7 +13,7 @@ const singleBitgo = code => ({
   elements: [
     {
       code: 'token',
-      display: 'API Token',
+      display: 'API token',
       component: TextInput,
       face: true,
       long: true
@@ -34,12 +34,12 @@ const singleBitgo = code => ({
     },
     {
       code: `${code}WalletId`,
-      display: `${code} Wallet ID`,
+      display: `${code} wallet ID`,
       component: TextInput
     },
     {
       code: `${code}WalletPassphrase`,
-      display: `${code} Wallet Passphrase`,
+      display: `${code} wallet passphrase`,
       component: SecretInput
     }
   ],

@@ -10,7 +10,7 @@ import { transformNumber } from 'src/utils/number'
 
 import NotificationsCtx from '../NotificationsContext'
 
-const CASHBOX_KEY = 'cashbox'
+const CASHBOX_KEY = 'cashInAlertThreshold'
 const CASSETTE_1_KEY = 'fillingPercentageCassette1'
 const CASSETTE_2_KEY = 'fillingPercentageCassette2'
 const CASSETTE_3_KEY = 'fillingPercentageCassette3'

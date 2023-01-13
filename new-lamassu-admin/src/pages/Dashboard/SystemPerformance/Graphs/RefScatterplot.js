@@ -359,7 +359,7 @@ const Graph = ({ data, timeFrame, timezone }) => {
       .selectAll('*')
       .remove()
     drawChart()
-  }, [drawChart])
+  }, [drawChart, data])
 
   return <svg ref={ref} />
 }

@@ -26,7 +26,7 @@ export default {
   elements: [
     {
       code: 'token',
-      display: 'API Token',
+      display: 'API token',
       component: TextInput,
       face: true,
       long: true
@@ -47,52 +47,52 @@ export default {
     },
     {
       code: 'BTCWalletId',
-      display: 'BTC Wallet ID',
+      display: 'BTC wallet ID',
       component: TextInput
     },
     {
       code: 'BTCWalletPassphrase',
-      display: 'BTC Wallet Passphrase',
+      display: 'BTC wallet passphrase',
       component: SecretInput
     },
     {
       code: 'LTCWalletId',
-      display: 'LTC Wallet ID',
+      display: 'LTC wallet ID',
       component: TextInput
     },
     {
       code: 'LTCWalletPassphrase',
-      display: 'LTC Wallet Passphrase',
+      display: 'LTC wallet passphrase',
       component: SecretInput
     },
     {
       code: 'ZECWalletId',
-      display: 'ZEC Wallet ID',
+      display: 'ZEC wallet ID',
       component: TextInput
     },
     {
       code: 'ZECWalletPassphrase',
-      display: 'ZEC Wallet Passphrase',
+      display: 'ZEC wallet passphrase',
       component: SecretInput
     },
     {
       code: 'BCHWalletId',
-      display: 'BCH Wallet ID',
+      display: 'BCH wallet ID',
       component: TextInput
     },
     {
       code: 'BCHWalletPassphrase',
-      display: 'BCH Wallet Passphrase',
+      display: 'BCH wallet passphrase',
       component: SecretInput
     },
     {
       code: 'DASHWalletId',
-      display: 'DASH Wallet ID',
+      display: 'DASH wallet ID',
       component: TextInput
     },
     {
       code: 'DASHWalletPassphrase',
-      display: 'DASH Wallet Passphrase',
+      display: 'DASH wallet passphrase',
       component: SecretInput
     }
   ],

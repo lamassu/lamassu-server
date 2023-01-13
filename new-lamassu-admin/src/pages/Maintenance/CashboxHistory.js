@@ -161,7 +161,7 @@ const CashboxHistory = ({ machines, currency, timezone }) => {
     },
     {
       name: 'billCount',
-      header: 'Bill Count',
+      header: 'Bill count',
       width: 115,
       textAlign: 'left',
       input: NumberInput,

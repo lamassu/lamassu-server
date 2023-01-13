@@ -9,14 +9,14 @@ export default {
   elements: [
     {
       code: 'token',
-      display: 'API Token',
+      display: 'API token',
       component: TextInput,
       face: true,
       long: true
     },
     {
       code: 'confidenceFactor',
-      display: 'Confidence Factor',
+      display: 'Confidence factor',
       component: NumberInput,
       face: true
     },

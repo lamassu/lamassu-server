@@ -4,13 +4,13 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { SupportLinkButton } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
-import schemas from 'src/pages/Services/schemas'
+import _schemas from 'src/pages/Services/schemas'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
@@ -50,6 +50,12 @@ const GET_INFO = gql`
   }
 `
 
+const GET_MARKETS = gql`
+  query getMarkets {
+    getMarkets
+  }
+`
+
 const LOCALE = 'locale'
 
 const Wallet = ({ name: SCREEN_KEY }) => {
@@ -63,6 +69,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
     onCompleted: () => setWizard(false),
     refetchQueries: () => ['getData']
   })
+
+  const { data: marketsData } = useQuery(GET_MARKETS)
 
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
     onCompleted: () => setEditingSchema(null),
@@ -81,6 +89,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies ?? []
   const accounts = data?.accounts ?? []
+
+  const markets = marketsData?.getMarkets
+
+  const schemas = _schemas(markets)
 
   const onChange = (previous, current, setValue) => {
     if (!current) return setValue(current)
@@ -111,7 +123,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   return (
     <>
       <TitleSection
-        title="Wallet Settings"
+        title="Wallet settings"
         buttons={[
           {
             text: 'Advanced settings',
@@ -121,7 +133,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
           }
         ]}
         appendix={
-          <HoverableTooltip width={340}>
+          <HelpTooltip width={340}>
             <P>
               For details on configuring wallets, please read the relevant
               knowledgebase article:
@@ -131,7 +143,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
               label="Wallets, Exchange Linkage, and Volatility"
               bottomSpace="1"
             />
-          </HoverableTooltip>
+          </HelpTooltip>
         }
       />
       {!advancedSettings && (

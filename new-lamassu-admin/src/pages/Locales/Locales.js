@@ -5,7 +5,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Link, SupportLinkButton } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import Section from 'src/components/layout/Section'
@@ -180,7 +180,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
       <TitleSection
         title="Locales"
         appendix={
-          <HoverableTooltip width={320}>
+          <HelpTooltip width={320}>
             <P>
               For details on configuring languages, please read the relevant
               knowledgebase article:
@@ -190,7 +190,7 @@ const Locales = ({ name: SCREEN_KEY }) => {
               label="Setting multiple machine languages"
               bottomSpace="1"
             />
-          </HoverableTooltip>
+          </HelpTooltip>
         }
       />
       <Section>

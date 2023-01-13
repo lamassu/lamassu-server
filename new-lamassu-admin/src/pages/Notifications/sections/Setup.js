@@ -12,7 +12,7 @@ import {
 } from 'src/components/fake-table/Table'
 import { Switch } from 'src/components/inputs'
 import { fromNamespace, toNamespace } from 'src/utils/config'
-import { startCase } from 'src/utils/string'
+import { sentenceCase } from 'src/utils/string'
 
 import NotificationsCtx from '../NotificationsContext'
 
@@ -62,7 +62,7 @@ const Row = ({
   return (
     <Tr>
       <Td width={channelSize}>
-        {shouldUpperCase ? R.toUpper(namespace) : startCase(namespace)}
+        {shouldUpperCase ? R.toUpper(namespace) : sentenceCase(namespace)}
       </Td>
       <Cell name="balance" disabled={disabled} />
       <Cell name="transactions" disabled={disabled} />
@@ -127,7 +127,7 @@ const Setup = ({ wizard, forceDisable }) => {
         <Th width={channelSize - widthAdjust}>Channel</Th>
         {Object.keys(sizes).map(it => (
           <Th key={it} width={sizes[it] - widthAdjust} textAlign="center">
-            {startCase(it)}
+            {sentenceCase(it)}
           </Th>
         ))}
       </THead>
