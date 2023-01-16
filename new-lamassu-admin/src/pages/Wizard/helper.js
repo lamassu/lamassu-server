@@ -44,7 +44,19 @@ const hasValidCommissions = config => {
   return CommissionsSchema(locale).isValidSync(commission)
 }
 
-const getWizardStep = (config, crypto) => {
+const getPazuzWizardStep = (config, crypto) => {
+  if (!config) return 0
+
+  const validLocale = hasValidLocale(config)
+  if (!validLocale) return 1
+
+  const validCommission = hasValidCommissions(config)
+  if (!validCommission) return 2
+
+  return 0
+}
+
+const getLamassuWizardStep = (config, crypto) => {
   if (!config) return 0
 
   const validWallet = hasValidWallet(config, crypto)
@@ -58,6 +70,11 @@ const getWizardStep = (config, crypto) => {
 
   return 0
 }
+
+const getWizardStep =
+  process.env.REACT_APP_BUILD_TARGET === 'PAZUZ'
+    ? getPazuzWizardStep
+    : getLamassuWizardStep
 
 const STEPS = [
   {
