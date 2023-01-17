@@ -330,7 +330,7 @@ const EditableCard = ({
                   {editing && (
                     <div className={classes.editingWrapper}>
                       <div className={classes.replace}>
-                        {hasImage && (
+                        {hasImage && state !== OVERRIDE_PENDING && (
                           <ActionButton
                             color="secondary"
                             type="button"
