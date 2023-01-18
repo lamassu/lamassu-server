@@ -12,16 +12,16 @@ const cashboxClasses = makeStyles(cashboxStyles)
 const gridClasses = makeStyles(gridStyles)
 
 const Cashbox = ({
-  percent = 0,
-  cashOut = false,
-  width,
-  className,
-  emptyPartClassName,
-  labelClassName,
   applyColorVariant,
   applyFiatBalanceAlertsStyling,
+  cashOut = false,
+  className,
+  emptyPartClassName,
+  isLow,
+  labelClassName,
   omitInnerPercentage,
-  isLow
+  percent = 0,
+  width
 }) => {
   const classes = cashboxClasses({
     percent,
