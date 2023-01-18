@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 import classnames from 'classnames'
+import * as R from 'ramda'
 import React from 'react'
 
 import Chip from 'src/components/Chip'
@@ -14,15 +15,23 @@ const gridClasses = makeStyles(gridStyles)
 const Cashbox = ({
   applyColorVariant,
   applyFiatBalanceAlertsStyling,
+  capacity = 0,
   cashOut = false,
   className,
   emptyPartClassName,
-  isLow,
   labelClassName,
+  notes = 0,
   omitInnerPercentage,
-  percent = 0,
+  percent,
+  threshold = 50,
   width
 }) => {
+  percent = R.isNil(percent)
+    ? R.clamp(0, 100)(Math.round((notes / capacity) * 100))
+    : percent
+  const isLow = percent < threshold
+  const ltHalf = percent <= 51
+
   const classes = cashboxClasses({
     percent,
     cashOut,
@@ -30,7 +39,6 @@ const Cashbox = ({
     applyColorVariant,
     isLow
   })
-  const ltHalf = percent <= 51
 
   const showCashBox = {
     [classes.fiatBalanceAlertCashbox]: applyFiatBalanceAlertsStyling,
@@ -85,8 +93,6 @@ const CashOut = ({
   threshold,
   width
 }) => {
-  const percent = Math.round((notes / capacity) * 100)
-  const isLow = percent < threshold
   const classes = gridClasses()
   return (
     <>
@@ -94,9 +100,10 @@ const CashOut = ({
         <div className={classes.col}>
           <Cashbox
             className={className}
-            percent={percent}
+            notes={notes}
+            capacity={capacity}
+            threshold={threshold}
             cashOut
-            isLow={isLow}
             width={width}
           />
         </div>

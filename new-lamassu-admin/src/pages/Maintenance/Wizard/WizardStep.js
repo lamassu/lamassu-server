@@ -140,11 +140,6 @@ const WizardStep = ({
 
   const cassetteCount = values => values[cassetteField] || originalCassetteCount
   const cassetteTotal = values => cassetteCount(values) * cassetteDenomination
-  const getPercentage = R.pipe(
-    cassetteCount,
-    count => 100 * (count / cassetteCapacity),
-    R.clamp(0, 100)
-  )
 
   return (
     <div className={classes.content}>
@@ -261,8 +256,10 @@ const WizardStep = ({
                         </H4>
                       </div>
                       <Cashbox
+                        capacity={cassetteCapacity}
+                        notes={cassetteCount(values)}
                         className={classes.cassetteCashbox}
-                        percent={getPercentage(values)}
+                        threshold={51} // TODO: Get threshold from notification settings?
                         cashOut
                       />
                     </div>
