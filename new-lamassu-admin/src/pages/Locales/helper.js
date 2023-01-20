@@ -97,6 +97,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     },
     {
       name: 'cryptoCurrencies',
+      header: 'Cryptocurrencies',
       width: 170,
       size: 'sm',
       view: displayCodeArray(cryptoData),
@@ -160,7 +161,7 @@ const LocaleSchema = Yup.object().shape({
     .min(1)
     .max(4),
   cryptoCurrencies: Yup.array()
-    .label('Crypto currencies')
+    .label('Cryptocurrencies')
     .required()
     .min(1),
   timezone: Yup.string()
@@ -181,7 +182,7 @@ const OverridesSchema = Yup.object().shape({
     .min(1)
     .max(4),
   cryptoCurrencies: Yup.array()
-    .label('Crypto currencies')
+    .label('Cryptocurrencies')
     .required()
     .min(1)
 })

@@ -354,7 +354,7 @@ const getOverridesSchema = (values, rawData, locale) => {
           return true
         }
       })
-      .label('Crypto currencies')
+      .label('Cryptocurrencies')
       .required()
       .min(1),
     cashIn: Yup.number()
