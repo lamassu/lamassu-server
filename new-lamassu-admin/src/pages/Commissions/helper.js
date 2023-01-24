@@ -240,7 +240,7 @@ const getSchema = locale => {
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(0)
+      .min(-15)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
@@ -335,7 +335,7 @@ const getOverridesSchema = (values, rawData, locale) => {
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(0)
+      .min(-15)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
