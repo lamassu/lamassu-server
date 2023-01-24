@@ -6,7 +6,7 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import { Link, SupportLinkButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -133,7 +133,7 @@ const Triggers = () => {
   return (
     <>
       <TitleSection
-        title="Compliance Triggers"
+        title="Compliance triggers"
         buttons={[
           {
             text: 'Advanced settings',
@@ -173,13 +173,21 @@ const Triggers = () => {
               <Label2 className={classes.switchLabel}>
                 {rejectAddressReuse ? 'On' : 'Off'}
               </Label2>
-              <HoverableTooltip width={304}>
+              <HelpTooltip width={304}>
                 <P>
-                  This option requires a user to scan a different cryptocurrency
-                  address if they attempt to scan one that had been previously
-                  used for a transaction in your network
+                  This option requires a user to scan a fresh wallet address if
+                  they attempt to scan one that had been previously used for a
+                  transaction in your network.
                 </P>
-              </HoverableTooltip>
+                <P>
+                  For details please read the relevant knowledgebase article:
+                </P>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/360033622211-Reject-Address-Reuse"
+                  label="Reject Address Reuse"
+                  bottomSpace="1"
+                />
+              </HelpTooltip>
             </Box>
           </Box>
         )}

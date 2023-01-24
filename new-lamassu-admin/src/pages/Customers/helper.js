@@ -410,7 +410,7 @@ const customerDataElements = {
     },
     {
       name: 'expirationDate',
-      label: 'Expiration Date',
+      label: 'Expiration date',
       component: TextInput,
       editable: true
     },

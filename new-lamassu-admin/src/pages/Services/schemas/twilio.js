@@ -9,6 +9,8 @@ export default {
   code: 'twilio',
   name: 'Twilio',
   title: 'Twilio (SMS)',
+  supportArticle:
+    'https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS',
   elements: [
     {
       code: 'accountSid',
@@ -17,18 +19,18 @@ export default {
     },
     {
       code: 'authToken',
-      display: 'Auth Token',
+      display: 'Auth token',
       component: SecretInputFormik
     },
     {
       code: 'fromNumber',
-      display: 'Twilio Number (international format)',
+      display: 'Twilio number (international format)',
       component: TextInputFormik,
       face: true
     },
     {
       code: 'toNumber',
-      display: 'Notifications Number (international format)',
+      display: 'Notifications number (international format)',
       component: TextInputFormik,
       face: true
     }
@@ -47,6 +49,10 @@ export default {
       toNumber: Yup.string('The notifications number must be a string')
         .max(100, 'The notifications number is too long')
         .required('The notifications number is required')
+        .notOneOf(
+          [Yup.ref('fromNumber')],
+          'Twilio number and notifications number must be different'
+        )
     })
   }
 }

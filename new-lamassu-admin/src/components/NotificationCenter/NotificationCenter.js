@@ -3,6 +3,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
+import {
+  AutoSizer,
+  List,
+  CellMeasurer,
+  CellMeasurerCache
+} from 'react-virtualized'
 
 import ActionButton from 'src/components/buttons/ActionButton'
 import { H5 } from 'src/components/typography'
@@ -95,26 +101,69 @@ const NotificationCenter = ({
       !showingUnread || !hasUnread
         ? notifications
         : R.filter(R.propEq('read', false))(notifications)
-    return notificationsToShow.map(n => {
-      return (
-        <NotificationRow
-          key={n.id}
-          id={n.id}
-          type={n.type}
-          detail={n.detail}
-          message={n.message}
-          deviceName={machines[n.detail.deviceId]}
-          created={n.created}
-          read={n.read}
-          valid={n.valid}
-          toggleClear={() =>
-            toggleClearNotification({
-              variables: { id: n.id, read: !n.read }
-            })
-          }
-        />
-      )
+
+    const cache = new CellMeasurerCache({
+      defaultHeight: 58,
+      fixedWidth: true
     })
+
+    function rowRenderer({ index, key, parent, style }) {
+      return (
+        <CellMeasurer
+          cache={cache}
+          columnIndex={0}
+          key={key}
+          parent={parent}
+          rowIndex={index}>
+          {({ registerChild }) => (
+            <div ref={registerChild} style={style}>
+              <NotificationRow
+                key={key}
+                id={
+                  notificationsToShow[index].id
+                    ? notificationsToShow[index].id
+                    : index
+                }
+                type={notificationsToShow[index].type}
+                detail={notificationsToShow[index].detail}
+                message={notificationsToShow[index].message}
+                deviceName={
+                  machines[notificationsToShow[index].detail.deviceId]
+                }
+                created={notificationsToShow[index].created}
+                read={notificationsToShow[index].read}
+                valid={notificationsToShow[index].valid}
+                toggleClear={() =>
+                  toggleClearNotification({
+                    variables: {
+                      id: notificationsToShow[index].id,
+                      read: !notificationsToShow[index].read
+                    }
+                  })
+                }
+              />
+            </div>
+          )}
+        </CellMeasurer>
+      )
+    }
+
+    return (
+      <AutoSizer>
+        {({ height, width }) => (
+          <List
+            style={{ outline: 'none' }}
+            height={loading ? 0 : height}
+            width={loading ? 0 : width}
+            rowCount={notificationsToShow.length}
+            rowHeight={cache.rowHeight}
+            rowRenderer={rowRenderer}
+            overscanRowCount={5}
+            deferredMeasurementCache={cache}
+          />
+        )}
+      </AutoSizer>
+    )
   }
 
   return (

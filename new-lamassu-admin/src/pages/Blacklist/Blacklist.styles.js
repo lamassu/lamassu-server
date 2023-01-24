@@ -7,11 +7,23 @@ const styles = {
   content: {
     display: 'flex',
     flexDirection: 'column',
-    flex: 1,
-    marginLeft: spacer * 6
+    flex: 1
+  },
+  advancedForm: {
+    '& > *': {
+      marginTop: 20
+    },
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
   },
   footer: {
-    margin: [['auto', 0, spacer * 3, 'auto']]
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 3, 0]]
+  },
+  submit: {
+    margin: [['auto', 0, 0, 'auto']]
   },
   modalTitle: {
     margin: [['auto', 0, 8.5, 'auto']]
@@ -54,6 +66,9 @@ const styles = {
   cancelButton: {
     marginRight: 8,
     padding: 0
+  },
+  resetToDefault: {
+    width: 145
   }
 }
 

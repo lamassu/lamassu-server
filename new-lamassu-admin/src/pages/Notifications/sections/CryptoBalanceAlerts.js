@@ -32,7 +32,7 @@ const CryptoBalanceAlerts = ({ section, fieldWidth }) => {
         section={section}
         decoration={currency}
         className={classes.cryptoBalanceAlertsForm}
-        title="Default (Low Balance)"
+        title="Default (Low balance)"
         label="Alert me under"
         editing={isEditing(LOW_BALANCE_KEY)}
         disabled={isDisabled(LOW_BALANCE_KEY)}
@@ -49,7 +49,7 @@ const CryptoBalanceAlerts = ({ section, fieldWidth }) => {
         save={save}
         decoration={currency}
         className={classes.cryptoBalanceAlertsSecondForm}
-        title="Default (High Balance)"
+        title="Default (High balance)"
         label="Alert me over"
         editing={isEditing(HIGH_BALANCE_KEY)}
         disabled={isDisabled(HIGH_BALANCE_KEY)}

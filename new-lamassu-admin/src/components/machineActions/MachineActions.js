@@ -183,7 +183,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
               display: 'Restart services for'
             })
           }}>
-          Restart Services
+          Restart services
         </ActionButton>
       </div>
       <ConfirmDialog

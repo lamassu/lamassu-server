@@ -95,7 +95,7 @@
   "scripts": {
     "start": "react-scripts start",
     "fix": "eslint --fix --ext .js,.md,.json src/",
-    "build": "react-scripts build",
+    "build": "REACT_APP_BUILD_TARGET=PAZUZ react-scripts build",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

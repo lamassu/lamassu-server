@@ -108,7 +108,7 @@ const SessionManagement = () => {
 
   return (
     <>
-      <TitleSection title="Session Management" />
+      <TitleSection title="Session management" />
       <DataTable
         loading={loading}
         elements={elements}

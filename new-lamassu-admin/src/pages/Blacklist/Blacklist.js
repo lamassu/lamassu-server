@@ -1,38 +1,31 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { utils as coinUtils } from '@lamassu/coins'
+import { addressDetector } from '@lamassu/coins'
 import { Box, Dialog, DialogContent, DialogActions } from '@material-ui/core'
-import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
-import {
-  Link,
-  Button,
-  IconButton,
-  SupportLinkButton
-} from 'src/components/buttons'
+import { Link, Button, IconButton } from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
-import Sidebar from 'src/components/layout/Sidebar'
 import TitleSection from 'src/components/layout/TitleSection'
-import { H4, H2, Label2, P, Info3, Info2 } from 'src/components/typography'
+import { H2, Label2, P, Info3, Info2 } from 'src/components/typography'
 import { ReactComponent as CloseIcon } from 'src/styling/icons/action/close/zodiac.svg'
+import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
+import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import styles from './Blacklist.styles'
+import BlackListAdvanced from './BlacklistAdvanced'
 import BlackListModal from './BlacklistModal'
 import BlacklistTable from './BlacklistTable'
 
 const useStyles = makeStyles(styles)
 
-const groupByCode = R.groupBy(obj => obj.cryptoCode)
-
 const DELETE_ROW = gql`
-  mutation DeleteBlacklistRow($cryptoCode: String!, $address: String!) {
-    deleteBlacklistRow(cryptoCode: $cryptoCode, address: $address) {
-      cryptoCode
+  mutation DeleteBlacklistRow($address: String!) {
+    deleteBlacklistRow(address: $address) {
       address
     }
   }
@@ -41,7 +34,6 @@ const DELETE_ROW = gql`
 const GET_BLACKLIST = gql`
   query getBlacklistData {
     blacklist {
-      cryptoCode
       address
     }
     cryptoCurrencies {
@@ -64,10 +56,28 @@ const GET_INFO = gql`
 `
 
 const ADD_ROW = gql`
-  mutation InsertBlacklistRow($cryptoCode: String!, $address: String!) {
-    insertBlacklistRow(cryptoCode: $cryptoCode, address: $address) {
-      cryptoCode
+  mutation InsertBlacklistRow($address: String!) {
+    insertBlacklistRow(address: $address) {
       address
+    }
+  }
+`
+
+const GET_BLACKLIST_MESSAGES = gql`
+  query getBlacklistMessages {
+    blacklistMessages {
+      id
+      label
+      content
+      allowToggle
+    }
+  }
+`
+
+const EDIT_BLACKLIST_MESSAGE = gql`
+  mutation editBlacklistMessage($id: ID, $content: String) {
+    editBlacklistMessage(id: $id, content: $content) {
+      id
     }
   }
 `
@@ -117,14 +127,13 @@ const PaperWalletDialog = ({ onConfirmed, onDissmised, open, props }) => {
 const Blacklist = () => {
   const { data: blacklistResponse } = useQuery(GET_BLACKLIST)
   const { data: configData } = useQuery(GET_INFO)
+  const { data: messagesResponse, refetch } = useQuery(GET_BLACKLIST_MESSAGES)
   const [showModal, setShowModal] = useState(false)
-  const [clickedItem, setClickedItem] = useState({
-    code: 'BTC',
-    display: 'Bitcoin'
-  })
   const [errorMsg, setErrorMsg] = useState(null)
+  const [editMessageError, setEditMessageError] = useState(null)
   const [deleteDialog, setDeleteDialog] = useState(false)
   const [confirmDialog, setConfirmDialog] = useState(false)
+  const [advancedSettings, setAdvancedSettings] = useState(false)
 
   const [deleteEntry] = useMutation(DELETE_ROW, {
     onError: ({ message }) => {
@@ -144,14 +153,14 @@ const Blacklist = () => {
     refetchQueries: () => ['getData']
   })
 
+  const [editMessage] = useMutation(EDIT_BLACKLIST_MESSAGE, {
+    onError: e => setEditMessageError(e),
+    refetchQueries: () => ['getBlacklistData']
+  })
+
   const classes = useStyles()
 
   const blacklistData = R.path(['blacklist'])(blacklistResponse) ?? []
-  const availableCurrencies = R.filter(
-    coin => coinUtils.getExternalCryptoCode(coin.code) === coin.code
-  )(R.path(['cryptoCurrencies'], blacklistResponse) ?? [])
-
-  const formattedData = groupByCode(blacklistData)
 
   const complianceConfig =
     configData?.config && fromNamespace('compliance')(configData.config)
@@ -165,12 +174,8 @@ const Blacklist = () => {
     return saveConfig({ variables: { config } })
   }
 
-  const onClickSidebarItem = e => {
-    setClickedItem({ code: e.code, display: e.display })
-  }
-
-  const handleDeleteEntry = (cryptoCode, address) => {
-    deleteEntry({ variables: { cryptoCode, address } })
+  const handleDeleteEntry = address => {
+    deleteEntry({ variables: { address } })
   }
 
   const handleConfirmDialog = confirm => {
@@ -180,21 +185,21 @@ const Blacklist = () => {
     setConfirmDialog(false)
   }
 
-  const validateAddress = (cryptoCode, address) => {
+  const validateAddress = address => {
     try {
-      return !R.isNil(coinUtils.parseUrl(cryptoCode, 'main', address))
+      return !R.isEmpty(addressDetector.detectAddress(address).matches)
     } catch {
       return false
     }
   }
 
-  const addToBlacklist = async (cryptoCode, address) => {
+  const addToBlacklist = async address => {
     setErrorMsg(null)
-    if (!validateAddress(cryptoCode, address)) {
+    if (!validateAddress(address)) {
       setErrorMsg('Invalid address')
       return
     }
-    const res = await addEntry({ variables: { cryptoCode, address } })
+    const res = await addEntry({ variables: { address } })
     if (!res.errors) {
       return setShowModal(false)
     }
@@ -208,6 +213,15 @@ const Blacklist = () => {
     }
   }
 
+  const editBlacklistMessage = r => {
+    editMessage({
+      variables: {
+        id: r.id,
+        content: r.content
+      }
+    })
+  }
+
   return (
     <>
       <PaperWalletDialog
@@ -217,32 +231,23 @@ const Blacklist = () => {
           setConfirmDialog(false)
         }}
       />
-      <TitleSection title="Blacklisted addresses">
-        <Box display="flex" justifyContent="flex-end">
-          <Link color="primary" onClick={() => setShowModal(true)}>
-            Blacklist new addresses
-          </Link>
-        </Box>
-      </TitleSection>
-      <Grid container className={classes.grid}>
-        <Sidebar
-          data={availableCurrencies}
-          isSelected={R.propEq('code', clickedItem.code)}
-          displayName={it => it.display}
-          onClick={onClickSidebarItem}
-        />
-        <div className={classes.content}>
-          <Box display="flex" justifyContent="space-between" mb={3}>
-            <H4 noMargin className={classes.subtitle}>
-              {clickedItem.display
-                ? `${clickedItem.display} blacklisted addresses`
-                : ''}{' '}
-            </H4>
+      <TitleSection
+        title="Blacklisted addresses"
+        buttons={[
+          {
+            text: 'Advanced settings',
+            icon: SettingsIcon,
+            inverseIcon: ReverseSettingsIcon,
+            toggle: setAdvancedSettings
+          }
+        ]}>
+        {!advancedSettings && (
+          <Box display="flex" alignItems="center" justifyContent="flex-end">
             <Box
               display="flex"
               alignItems="center"
               justifyContent="end"
-              mr="-140px">
+              mr="15px">
               <P>Enable paper wallet (only)</P>
               <Switch
                 checked={enablePaperWalletOnly}
@@ -268,7 +273,7 @@ const Blacklist = () => {
               display="flex"
               alignItems="center"
               justifyContent="flex-end"
-              mr="-5px">
+              mr="15px">
               <P>Reject reused addresses</P>
               <Switch
                 checked={rejectAddressReuse}
@@ -284,20 +289,18 @@ const Blacklist = () => {
                   that are used once will be automatically rejected if there's
                   an attempt to use them again on a new transaction.
                 </P>
-                <P>
-                  For details please read the relevant knowledgebase article:
-                </P>
-                <SupportLinkButton
-                  link="https://support.lamassu.is/hc/en-us/articles/360033622211-Reject-Address-Reuse"
-                  label="Reject Address Reuse"
-                  bottomSpace="1"
-                />
               </HoverableTooltip>
             </Box>
+            <Link color="primary" onClick={() => setShowModal(true)}>
+              Blacklist new addresses
+            </Link>
           </Box>
+        )}
+      </TitleSection>
+      {!advancedSettings && (
+        <div className={classes.content}>
           <BlacklistTable
-            data={formattedData}
-            selectedCoin={clickedItem}
+            data={blacklistData}
             handleDeleteEntry={handleDeleteEntry}
             errorMessage={errorMsg}
             setErrorMessage={setErrorMsg}
@@ -305,7 +308,15 @@ const Blacklist = () => {
             setDeleteDialog={setDeleteDialog}
           />
         </div>
-      </Grid>
+      )}
+      {advancedSettings && (
+        <BlackListAdvanced
+          data={messagesResponse}
+          editBlacklistMessage={editBlacklistMessage}
+          mutationError={editMessageError}
+          onClose={() => refetch()}
+        />
+      )}
       {showModal && (
         <BlackListModal
           onClose={() => {
@@ -313,7 +324,6 @@ const Blacklist = () => {
             setShowModal(false)
           }}
           errorMsg={errorMsg}
-          selectedCoin={clickedItem}
           addToBlacklist={addToBlacklist}
         />
       )}
