@@ -15,7 +15,8 @@ import TableCtx from './Context'
 
 const styles = {
   orderedBySpan: {
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    textDecoration: 'underline'
   }
 }
 
@@ -75,39 +76,19 @@ const Header = () => {
   }
 
   const mapElement = (
-    { name, display, width = DEFAULT_COL_SIZE, header, textAlign },
+    { name, width = DEFAULT_COL_SIZE, header, textAlign },
     idx
   ) => {
     const orderClasses = classnames({
       [classes.orderedBySpan]:
-        R.isNil(header) && !R.isNil(orderedBy) && R.equals(name, orderedBy.code)
+        !R.isNil(orderedBy) && R.equals(name, orderedBy.code)
     })
-
-    const attachOrderedByToComplexHeader = header => {
-      if (!R.isNil(orderedBy) && R.equals(name, orderedBy.code)) {
-        try {
-          const cloneHeader = R.clone(header)
-          const children = R.path(['props', 'children'], cloneHeader)
-          const spanChild = R.find(it => R.equals(it.type, 'span'), children)
-          spanChild.props.children = R.append(' -', spanChild.props.children)
-          return cloneHeader
-        } catch (e) {
-          return header
-        }
-      }
-      return header
-    }
 
     return (
       <Td header key={idx} width={width} textAlign={textAlign}>
-        {!R.isNil(header) ? (
-          <>{attachOrderedByToComplexHeader(header) ?? header}</>
-        ) : (
-          <span className={orderClasses}>
-            {!R.isNil(display) ? display : sentenceCase(name)}{' '}
-            {!R.isNil(orderedBy) && R.equals(name, orderedBy.code) && '-'}
-          </span>
-        )}
+        <span className={orderClasses}>
+          {!R.isNil(header) ? header : sentenceCase(name)}
+        </span>
       </Td>
     )
   }
