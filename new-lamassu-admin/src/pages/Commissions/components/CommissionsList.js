@@ -26,6 +26,17 @@ const styles = {
     overflowY: 'auto',
     width: '100%',
     maxHeight: '70vh'
+  },
+  longSelect: {
+    '&> button': {
+      width: 200,
+      '&> span': {
+        width: 200
+      }
+    },
+    '&> ul': {
+      width: 200
+    }
   }
 }
 
@@ -45,19 +56,23 @@ const ORDER_OPTIONS = [
   },
   {
     code: 'cashIn',
-    display: 'Cash-in'
-  },
-  {
-    code: 'cashOut',
-    display: 'Cash-out'
+    display: 'Cash-in commission'
   },
   {
     code: 'fixedFee',
-    display: 'Fixed fee'
+    display: 'Cash-in fixed fee'
   },
   {
     code: 'minimumTx',
-    display: 'Minimum Tx'
+    display: 'Cash-in minimum Tx'
+  },
+  {
+    code: 'cashOut',
+    display: 'Cash-out commission'
+  },
+  {
+    code: 'cashOutFixedFee',
+    display: 'Cash-out fixed fee'
   }
 ]
 
@@ -155,6 +170,7 @@ const CommissionsList = memo(
             selectedItem={coinFilter}
           />
           <Select
+            className={classes.longSelect}
             onSelectedItemChange={setOrderProp}
             label="Sort by"
             default={ORDER_OPTIONS[0]}
