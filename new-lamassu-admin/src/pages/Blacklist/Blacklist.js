@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
-import { HoverableTooltip } from 'src/components/Tooltip'
+import { HelpTooltip } from 'src/components/Tooltip'
 import {
   Link,
   Button,
@@ -266,13 +266,13 @@ const Blacklist = () => {
                 value={enablePaperWalletOnly}
               />
               <Label2>{enablePaperWalletOnly ? 'On' : 'Off'}</Label2>
-              <HoverableTooltip width={304}>
+              <HelpTooltip width={304}>
                 <P>
                   The "Enable paper wallet (only)" option means that only paper
                   wallets will be printed for users, and they won't be permitted
                   to scan an address from their own wallet.
                 </P>
-              </HoverableTooltip>
+              </HelpTooltip>
             </Box>
             <Box
               display="flex"
@@ -288,7 +288,7 @@ const Blacklist = () => {
                 value={rejectAddressReuse}
               />
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
-              <HoverableTooltip width={304}>
+              <HelpTooltip width={304}>
                 <P>
                   This option requires a user to scan a fresh wallet address if
                   they attempt to scan one that had been previously used for a
@@ -302,7 +302,7 @@ const Blacklist = () => {
                   label="Reject Address Reuse"
                   bottomSpace="1"
                 />
-              </HoverableTooltip>
+              </HelpTooltip>
             </Box>
             <Link color="primary" onClick={() => setShowModal(true)}>
               Blacklist new addresses
