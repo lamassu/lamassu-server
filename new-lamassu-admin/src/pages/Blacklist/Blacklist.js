@@ -7,7 +7,12 @@ import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import { HoverableTooltip } from 'src/components/Tooltip'
-import { Link, Button, IconButton } from 'src/components/buttons'
+import {
+  Link,
+  Button,
+  IconButton,
+  SupportLinkButton
+} from 'src/components/buttons'
 import { Switch } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { H2, Label2, P, Info3, Info2 } from 'src/components/typography'
@@ -285,10 +290,18 @@ const Blacklist = () => {
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
               <HoverableTooltip width={304}>
                 <P>
-                  The "Reject reused addresses" option means that all addresses
-                  that are used once will be automatically rejected if there's
-                  an attempt to use them again on a new transaction.
+                  This option requires a user to scan a fresh wallet address if
+                  they attempt to scan one that had been previously used for a
+                  transaction in your network.
                 </P>
+                <P>
+                  For details please read the relevant knowledgebase article:
+                </P>
+                <SupportLinkButton
+                  link="https://support.lamassu.is/hc/en-us/articles/360033622211-Reject-Address-Reuse"
+                  label="Reject Address Reuse"
+                  bottomSpace="1"
+                />
               </HoverableTooltip>
             </Box>
             <Link color="primary" onClick={() => setShowModal(true)}>
