@@ -113,6 +113,12 @@ Click on ``+ Add Machine`` in the sidebar. Type in a name for your machine and c
 
 Now continue with lamassu-machine instructions from the ``INSTALL.md`` file in [lamassu-machine repository](https://github.com/lamassu/lamassu-machine).
 
+### Run a local coin node (BTC supported)
+
+Run `node bin/lamassu-coins` in the project root and select `Bitcoin`. This process will require the existence of certain environment variables that the setup will warn about.
+
+Once that is done, the node needs to be run in a terminal with the following command `<YOUR_BLOCKCHAIN_DIR_ENV_VAR>/bin/bitcoind -datadir=<YOUR_BLOCKCHAIN_DIR_ENV_VAR>/bitcoin`
+
 
 ## Subsequent runs
 
