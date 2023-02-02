@@ -46,10 +46,6 @@ setEnvVariable('OFAC_SOURCES_URLS', 'https://www.treasury.gov/ofac/downloads/san
 
 setEnvVariable('BTC_NODE_LOCATION', 'local')
 setEnvVariable('BTC_WALLET_LOCATION', 'local')
-setEnvVariable('BTC_NODE_HOST', 'localhost')
-setEnvVariable('BTC_NODE_PORT', '8332')
-setEnvVariable('BTC_NODE_USER', '')
-setEnvVariable('BTC_NODE_PASSWORD', '')
 
 setEnvVariable('HOSTNAME', `${argv.hostname}`)
 setEnvVariable('LOG_LEVEL', 'info')
