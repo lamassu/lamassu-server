@@ -31,23 +31,17 @@ const removedLanguages = [
     "vi-VN"
 ]
 
-const changeLanguage = lang =>
-    removedLanguages.includes(lang) ? "en-US" : lang
-
 exports.up = next => {
     loadLatest()
-    .then(({ config }) => {
-        locale_languages = _.uniq(config.locale_languages.map(changeLanguage))
-        locale_overrides = config.locale_overrides.map(o => {
-            o.languages = _.uniq(o.languages.map(changeLanguage))
-            return o
+    .then(({ config }) => 
+        migrationSaveConfig({
+            locale_languages: _.difference(config.locale_languages, removedLanguages),
+            locale_overrides: config.locale_overrides.map(o => {
+                o.languages = _.difference(o.languages, removedLanguages)
+                return o
+            })
         })
-
-        return migrationSaveConfig({
-            locale_languages,
-            locale_overrides
-        })
-    })
+    )
     .then(next)
     .catch(err => {
       return next(err)
