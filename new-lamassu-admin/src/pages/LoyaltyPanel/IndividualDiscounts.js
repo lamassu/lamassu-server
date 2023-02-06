@@ -18,10 +18,11 @@ const useStyles = makeStyles(styles)
 
 const GET_INDIVIDUAL_DISCOUNTS = gql`
   query individualDiscounts {
-    individualDiscounts {
+    individualDiscountsWithCustomerData {
       id
-      customerId
       discount
+      phone
+      idCardData
     }
   }
 `
@@ -69,17 +70,15 @@ const IndividualDiscounts = () => {
     GET_CUSTOMERS
   )
 
+  const discounts =
+    R.path(['individualDiscountsWithCustomerData'])(discountResponse) || []
+
   const [createDiscount, { error: creationError }] = useMutation(
     CREATE_DISCOUNT,
     {
       refetchQueries: () => ['individualDiscounts']
     }
   )
-
-  const getCustomer = id => {
-    const customers = R.path(['customers'])(customerData)
-    return R.find(R.propEq('id', id))(customers)
-  }
 
   const [deleteDiscount] = useMutation(DELETE_DISCOUNT, {
     onError: ({ message }) => {
@@ -96,44 +95,38 @@ const IndividualDiscounts = () => {
       width: 312,
       textAlign: 'left',
       size: 'sm',
-      view: t => {
-        const customer = getCustomer(t.customerId)
-        return (
-          <div className={classes.identification}>
-            <PhoneIdIcon />
-            <span>{customer.phone}</span>
-          </div>
-        )
-      }
+      view: discount => (
+        <div className={classes.identification}>
+          <PhoneIdIcon />
+          <span>{discount.phone}</span>
+        </div>
+      )
     },
     {
       header: 'Name',
       width: 300,
       textAlign: 'left',
       size: 'sm',
-      view: t => {
-        const customer = getCustomer(t.customerId)
-        if (R.isNil(customer.idCardData)) {
-          return <>{'-'}</>
-        }
-
-        return (
-          <>{`${customer.idCardData.firstName ?? ``}${
-            customer.idCardData.firstName && customer.idCardData.lastName
-              ? ` `
-              : ``
-          }${customer.idCardData.lastName ?? ``}`}</>
+      view: discount =>
+        R.isNil(discount.idCardData) ? (
+          <>{'-'}</>
+        ) : (
+          <>
+            {R.join(' ', [
+              discount.idCardData.firstName ?? '',
+              discount.idCardData.lastName ?? ''
+            ])}
+          </>
         )
-      }
     },
     {
       header: 'Discount rate',
       width: 220,
       textAlign: 'left',
       size: 'sm',
-      view: t => (
+      view: discount => (
         <>
-          <TL1 inline>{t.discount}</TL1> %
+          <TL1 inline>{discount.discount}</TL1> %
         </>
       )
     },
@@ -142,11 +135,11 @@ const IndividualDiscounts = () => {
       width: 100,
       textAlign: 'center',
       size: 'sm',
-      view: t => (
+      view: discount => (
         <IconButton
           onClick={() => {
             setDeleteDialog(true)
-            setToBeDeleted({ variables: { discountId: t.id } })
+            setToBeDeleted({ variables: { discountId: discount.id } })
           }}>
           <DeleteIcon />
         </IconButton>
@@ -158,7 +151,7 @@ const IndividualDiscounts = () => {
 
   return (
     <>
-      {!loading && !R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && !R.isEmpty(discounts) && (
         <>
           <Box
             marginBottom={4}
@@ -170,10 +163,7 @@ const IndividualDiscounts = () => {
               Add new code
             </Link>
           </Box>
-          <DataTable
-            elements={elements}
-            data={R.path(['individualDiscounts'])(discountResponse)}
-          />
+          <DataTable elements={elements} data={discounts} />
           <DeleteDialog
             open={deleteDialog}
             onDismissed={() => {
@@ -188,7 +178,7 @@ const IndividualDiscounts = () => {
           />
         </>
       )}
-      {!loading && R.isEmpty(discountResponse.individualDiscounts) && (
+      {!loading && R.isEmpty(discounts) && (
         <Box display="flex" alignItems="left" flexDirection="column">
           <Label3>
             It seems there are no active individual customer discounts on your
