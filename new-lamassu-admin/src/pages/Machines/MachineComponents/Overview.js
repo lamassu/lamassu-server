@@ -18,7 +18,9 @@ const Overview = ({ data, onActionSuccess }) => {
   const getAddressString = location => {
     return `${location.addressLine1}${
       location.addressLine2 ? `, ${location.addressLine2}` : ``
-    }, ${location.zipCode}, ${location.country}`
+    } ${location.city}, ${location.state} ${location.zipCode} ${
+      location.country
+    }`
   }
 
   return (

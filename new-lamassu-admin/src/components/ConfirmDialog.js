@@ -80,6 +80,12 @@ export const ConfirmDialog = memo(
       onDismissed()
     }
 
+    const innerOnConfirmed = value => {
+      setValue('')
+      setError(false)
+      onConfirmed(value)
+    }
+
     const isOnErrorState =
       (!saveButtonAlwaysEnabled && toBeConfirmed !== value) || value === ''
 
@@ -122,7 +128,7 @@ export const ConfirmDialog = memo(
           <Button
             color="green"
             disabled={isOnErrorState}
-            onClick={() => onConfirmed(value)}>
+            onClick={() => innerOnConfirmed(value)}>
             Confirm
           </Button>
         </DialogActions>

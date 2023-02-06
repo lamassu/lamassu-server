@@ -7,6 +7,8 @@ exports.up = function (next) {
       label TEXT NOT NULL,
       address_line_1 TEXT NOT NULL,
       address_line_2 TEXT,
+      city TEXT NOT NULL,
+      state TEXT NOT NULL,
       zip_code TEXT NOT NULL,
       country TEXT NOT NULL,
       created TIMESTAMPTZ NOT NULL DEFAULT now()

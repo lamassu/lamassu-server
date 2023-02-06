@@ -125,11 +125,12 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
       {showLocationModal && (
         <EditLocationModal
           machine={machine}
-          editAction={location =>
+          editAction={(location, onActionSuccess) =>
             setAction({
               command: 'editLocation',
               title: "Edit this machine's location",
-              arguments: { location }
+              arguments: { location },
+              onActionSuccess
             })
           }
           deleteAction={(location, onActionSuccess) =>
@@ -141,11 +142,12 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
               onActionSuccess
             })
           }
-          createAction={location =>
+          createAction={(location, onActionSuccess) =>
             setAction({
               command: 'createLocation',
               title: 'Create a new location for this machine',
-              arguments: { location }
+              arguments: { location },
+              onActionSuccess
             })
           }
           handleClose={() => {

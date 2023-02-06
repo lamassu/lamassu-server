@@ -50,6 +50,8 @@ const GET_INFO = gql`
         label
         addressLine1
         addressLine2
+        city
+        state
         zipCode
         country
       }

@@ -239,6 +239,8 @@ const LocationComponent = ({
       label: location?.label ?? '',
       addressLine1: location?.addressLine1 ?? '',
       addressLine2: location?.addressLine2 ?? '',
+      city: location?.city ?? '',
+      state: location?.state ?? '',
       zipCode: location?.zipCode ?? '',
       country: location?.country ?? localeCountry?.display ?? ''
     }
@@ -253,6 +255,12 @@ const LocationComponent = ({
         .required('An address is required.')
         .max(75),
       addressLine2: Yup.string().max(75),
+      city: Yup.string()
+        .required('A city is required.')
+        .max(75),
+      state: Yup.string()
+        .required('A state is required.')
+        .max(75),
       zipCode: Yup.string()
         .required('A zip code is required.')
         .max(20),
@@ -275,9 +283,7 @@ const LocationComponent = ({
   return (
     !loading && (
       <>
-        <Info2 className={classes.nameTitle}>
-          Machine Name (ex: Coffee shop 01)
-        </Info2>
+        <Info2 className={classes.nameTitle}>Machine Location</Info2>
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
@@ -339,6 +345,20 @@ const LocationComponent = ({
                     label="Address line 2"
                     component={TextInput}
                     error={errors.location?.addressLine2}
+                    disabled={disabled}
+                  />
+                  <FastField
+                    name="location.city"
+                    label="City"
+                    component={TextInput}
+                    error={errors.location?.city}
+                    disabled={disabled}
+                  />
+                  <FastField
+                    name="location.state"
+                    label="State/Province"
+                    component={TextInput}
+                    error={errors.location?.state}
                     disabled={disabled}
                   />
                   <FastField

@@ -25,6 +25,8 @@ const GET_COUNTRIES = gql`
       label
       addressLine1
       addressLine2
+      city
+      state
       zipCode
       country
     }
@@ -105,6 +107,8 @@ const EditLocationModal = ({
       label: machine.location?.label ?? '',
       addressLine1: machine.location?.addressLine1 ?? '',
       addressLine2: machine.location?.addressLine2 ?? '',
+      city: machine.location?.city ?? '',
+      state: machine.location?.state ?? '',
       zipCode: machine.location?.zipCode ?? '',
       country: machine.location?.country ?? localeCountry?.display ?? ''
     }
@@ -116,6 +120,8 @@ const EditLocationModal = ({
       label: '',
       addressLine1: '',
       addressLine2: '',
+      city: '',
+      state: '',
       zipCode: '',
       country: localeCountry?.display ?? ''
     }
@@ -130,6 +136,12 @@ const EditLocationModal = ({
         .required('An address is required.')
         .max(75),
       addressLine2: Yup.string().max(75),
+      city: Yup.string()
+        .required('A city is required.')
+        .max(20),
+      state: Yup.string()
+        .required('A state is required.')
+        .max(20),
       zipCode: Yup.string()
         .required('A zip code is required.')
         .max(20),
@@ -143,16 +155,29 @@ const EditLocationModal = ({
 
   const isNewLocation = it => R.equals(it, newLocationOption)
 
-  const createLocation = location => {
-    return createAction(location)
+  const createLocation = (location, onActionSuccess) => {
+    return createAction(location, onActionSuccess)
   }
 
-  const editLocation = location => {
-    return editAction(location)
+  const editLocation = (location, onActionSuccess) => {
+    return editAction(location, onActionSuccess)
   }
 
   const deleteLocation = (location, onActionSuccess) => {
     return deleteAction(location, onActionSuccess)
+  }
+
+  const onLocationChange = (location, setFieldValue) => {
+    return refetch()
+      .then(() => setFieldValue('location', location))
+      .then(() => setPreset(location))
+      .then(() => handleClose())
+  }
+
+  const onLocationDeletion = setFieldValue => {
+    return refetch()
+      .then(() => setFieldValue('location', newLocationValues.location))
+      .then(() => setPreset(newLocationOption))
   }
 
   return (
@@ -161,8 +186,8 @@ const EditLocationModal = ({
         title={`${
           isNewLocation(preset) ? 'Create new' : 'Editing'
         } machine location`}
-        width={600}
-        height={600}
+        width={650}
+        height={750}
         open={true}
         handleClose={handleClose}>
         <Formik
@@ -170,11 +195,15 @@ const EditLocationModal = ({
           validateOnChange={false}
           validationSchema={validationSchema}
           initialValues={initialValues}
-          onSubmit={({ location }) => {
+          onSubmit={({ location }, { setFieldValue }) => {
             if (R.isEmpty(location.id)) {
-              return createLocation(location)
+              return createLocation(location, () =>
+                onLocationChange(location, setFieldValue)
+              )
             }
-            return editLocation(location)
+            return editLocation(location, () =>
+              onLocationChange(location, setFieldValue)
+            )
           }}>
           {({ values, errors, setFieldValue }) => (
             <>
@@ -219,6 +248,18 @@ const EditLocationModal = ({
                   error={errors.location?.addressLine2}
                 />
                 <FastField
+                  name="location.city"
+                  label="City"
+                  component={TextInput}
+                  error={errors.location?.zipCode}
+                />
+                <FastField
+                  name="location.state"
+                  label="State/Province"
+                  component={TextInput}
+                  error={errors.location?.zipCode}
+                />
+                <FastField
                   name="location.zipCode"
                   label="Zip/Postal code"
                   component={TextInput}
@@ -246,14 +287,7 @@ const EditLocationModal = ({
                         type="button"
                         onClick={() =>
                           deleteLocation(values.location, () =>
-                            refetch()
-                              .then(() =>
-                                setFieldValue(
-                                  'location',
-                                  newLocationValues.location
-                                )
-                              )
-                              .then(() => setPreset(newLocationOption))
+                            onLocationDeletion(setFieldValue)
                           )
                         }>
                         Delete
