@@ -23,7 +23,7 @@
     "bip39": "^2.3.1",
     "bitcoind-rpc": "^0.7.0",
     "bitgo": "11.18.0",
-    "ccxt": "1.82.31",
+    "ccxt": "lamassu/ccxt#1.82.31",
     "compression": "^1.7.4",
     "connect-pg-simple": "^6.2.1",
     "console-log-level": "^1.4.0",
