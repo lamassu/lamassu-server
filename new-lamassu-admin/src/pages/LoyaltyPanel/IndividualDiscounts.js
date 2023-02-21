@@ -10,6 +10,7 @@ import DataTable from 'src/components/tables/DataTable'
 import { Label3, TL1 } from 'src/components/typography'
 import { ReactComponent as PhoneIdIcon } from 'src/styling/icons/ID/phone/zodiac.svg'
 import { ReactComponent as DeleteIcon } from 'src/styling/icons/action/delete/enabled.svg'
+import { formatFullName } from 'src/utils/customer'
 
 import styles from './IndividualDiscount.styles'
 import IndividualDiscountModal from './IndividualDiscountModal'
@@ -111,12 +112,7 @@ const IndividualDiscounts = () => {
         R.isNil(discount.idCardData) ? (
           <>{'-'}</>
         ) : (
-          <>
-            {R.join(' ', [
-              discount.idCardData.firstName ?? '',
-              discount.idCardData.lastName ?? ''
-            ])}
-          </>
+          <>{formatFullName(discount.idCardData)}</>
         )
     },
     {
