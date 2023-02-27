@@ -43,7 +43,8 @@ const TitleSection = ({
                   Icon={button.icon}
                   InverseIcon={button.inverseIcon}
                   toggle={button.toggle}
-                  forceDisable={button.forceDisable}>
+                  forceDisable={button.forceDisable}
+                  dataCy={`subpageButton-${idx}`}>
                   <Info1 className={classes.buttonText}>{button.text}</Info1>
                 </SubpageButton>
               )

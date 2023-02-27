@@ -219,7 +219,8 @@ const CustomInfoRequests = ({
                       onClick={() => {
                         setToBeEdited(it)
                         return toggleWizard()
-                      }}>
+                      }}
+                      data-cy={`iconButton-edit`}>
                       <EditIcon />
                     </IconButton>
                   )
@@ -236,7 +237,8 @@ const CustomInfoRequests = ({
                       onClick={() => {
                         setToBeDeleted(it.id)
                         return setDeleteDialog(true)
-                      }}>
+                      }}
+                      data-cy={`iconButton-delete-${it.id}`}>
                       <DeleteIcon />
                     </IconButton>
                   )
@@ -261,7 +263,9 @@ const CustomInfoRequests = ({
               </a>{' '}
               on Compliance before adding new information requests.
             </Info3>
-            <Button onClick={() => toggleWizard()}>
+            <Button
+              onClick={() => toggleWizard()}
+              data-cy={'button-addCustomInformationRequest'}>
               Add custom information request
             </Button>
           </div>

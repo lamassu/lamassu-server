@@ -73,7 +73,8 @@ const Row = ({
             <Td width={expWidth} textAlign="center">
               <button
                 onClick={() => expandRow(id, data)}
-                className={classes.expandButton}>
+                className={classes.expandButton}
+                data-cy={`iconButton-expand`}>
                 {expanded && <ExpandOpenIcon />}
                 {!expanded && <ExpandClosedIcon />}
               </button>

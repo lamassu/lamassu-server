@@ -88,7 +88,8 @@ const ChoiceList = () => {
                 onClick={e => {
                   e.preventDefault()
                   return push({ text: '' })
-                }}>
+                }}
+                data-cy={'button-addChoice'}>
                 Add choice
               </Button>
             </div>

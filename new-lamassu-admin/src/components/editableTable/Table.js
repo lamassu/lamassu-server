@@ -164,7 +164,9 @@ const ETable = ({
     <TableCtx.Provider value={ctxValue}>
       <div className={classes.wrapper}>
         {showButtonOnEmpty && canAdd && (
-          <AddButton onClick={addField}>{createText}</AddButton>
+          <AddButton data-cy={'button-addField'} onClick={addField}>
+            {createText}
+          </AddButton>
         )}
         {showTable && (
           <>
@@ -177,7 +179,10 @@ const ETable = ({
                   <Info2 className={classes.title}>{title}</Info2>
                 )}
                 {enableCreate && canAdd && (
-                  <Link className={classes.addLink} onClick={addField}>
+                  <Link
+                    className={classes.addLink}
+                    onClick={addField}
+                    data-cy={'link-addField'}>
                     {createText}
                   </Link>
                 )}

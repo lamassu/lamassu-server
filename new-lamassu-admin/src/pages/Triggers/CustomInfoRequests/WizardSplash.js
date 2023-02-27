@@ -47,7 +47,10 @@ const WizardSplash = ({ onContinue }) => {
         triggers. You will still need to add a trigger with the new requirement
         to get this information from your customers.
       </P>
-      <Button className={classes.button} onClick={onContinue}>
+      <Button
+        className={classes.button}
+        onClick={onContinue}
+        data-cy={'button-getStarted'}>
         Get started
       </Button>
     </div>

@@ -57,7 +57,8 @@ const ToggleButtonGroup = ({
             className={classes.button}
             value={option.value}
             aria-label={option.value}
-            key={option.value}>
+            key={option.value}
+            data-cy={`toggleButton-${option.value}`}>
             <div className={classes.flex}>
               <option.icon />
               <div className={classes.buttonTextContent}>
