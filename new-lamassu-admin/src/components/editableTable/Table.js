@@ -206,6 +206,7 @@ const ETable = ({
                           editing={true}
                           disabled={forceDisable}
                           newRow={true}
+                          rowID={'row-new'}
                         />
                       </Form>
                     </Formik>
@@ -241,6 +242,7 @@ const ETable = ({
                               (editingId && editingId !== it.id) ||
                               adding
                             }
+                            rowID={it.id ?? idx}
                           />
                         </Form>
                       </Formik>

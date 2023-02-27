@@ -311,7 +311,10 @@ const Wizard = ({ onClose, save, error, currency, customInfoRequests }) => {
                     {createErrorMessage(errors, touched, values)}
                   </ErrorMessage>
                 )}
-                <Button className={classes.button} type="submit">
+                <Button
+                  className={classes.button}
+                  type="submit"
+                  data-cy={'button-finishNext'}>
                   {isLastStep ? 'Finish' : 'Next'}
                 </Button>
               </div>

@@ -216,7 +216,7 @@ const groupStriped = elements => {
   )
 }
 
-const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
+const ERow = ({ editing, disabled, lastOfGroup, newRow, rowID }) => {
   const { touched, errors, values } = useFormikContext()
   const {
     elements,
@@ -265,7 +265,8 @@ const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
       error={editing && hasErrors}
       newRow={newRow && !hasErrors}
       shouldShowError
-      errorMessage={errorMessage}>
+      errorMessage={errorMessage}
+      rowID={rowID}>
       {innerElements.map((it, idx) => {
         return (
           <ECol
