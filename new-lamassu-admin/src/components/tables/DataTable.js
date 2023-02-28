@@ -63,7 +63,8 @@ const Row = ({
           }}
           error={data.error || data.hasError || data.batchError}
           shouldShowError={false}
-          errorMessage={data.errorMessage || data.hasError || data.batchError}>
+          errorMessage={data.errorMessage || data.hasError || data.batchError}
+          rowID={id}>
           {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
             <Td key={idx} {...props}>
               {view(data)}
