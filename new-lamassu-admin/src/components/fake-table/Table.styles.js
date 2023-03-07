@@ -49,7 +49,7 @@ export default {
       height: 28
     },
     '& > :last-child': {
-      padding: [[0, 11]],
+      padding: 0,
       display: 'table-cell',
       verticalAlign: 'middle',
       height: tableDoubleHeaderHeight - 28

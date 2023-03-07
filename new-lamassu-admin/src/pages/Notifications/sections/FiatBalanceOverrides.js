@@ -135,7 +135,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
     [
       {
         name: MACHINE_KEY,
-        display: 'Machine',
+        header: 'Machine',
         width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
         size: 'sm',
         view: viewMachine,
@@ -148,7 +148,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
       },
       {
         name: CASHBOX_KEY,
-        display: 'Cash box',
+        header: 'Cash box',
         width: widthsByNumberOfCassettes[maxNumberOfCassettes].cashbox,
         textAlign: 'right',
         bold: true,
@@ -162,7 +162,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
     R.map(
       it => ({
         name: `fillingPercentageCassette${it}`,
-        display: `Cash cassette ${it}`,
+        header: `Cash cassette ${it}`,
         width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
         textAlign: 'right',
         doubleHeader: 'Cash Cassette Empty',
