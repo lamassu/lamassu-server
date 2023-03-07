@@ -1,23 +1,36 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import { HelpTooltip } from 'src/components/Tooltip'
-import { SupportLinkButton } from 'src/components/buttons'
+import { SupportLinkButton, Button } from 'src/components/buttons'
 import { NamespacedTable as EditableTable } from 'src/components/editableTable'
 import TitleSection from 'src/components/layout/TitleSection'
-import { P } from 'src/components/typography'
+import { P, Info2 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import _schemas from 'src/pages/Services/schemas'
 import { ReactComponent as ReverseSettingsIcon } from 'src/styling/icons/circle buttons/settings/white.svg'
 import { ReactComponent as SettingsIcon } from 'src/styling/icons/circle buttons/settings/zodiac.svg'
+import { spacer } from 'src/styling/variables'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 
 import AdvancedWallet from './AdvancedWallet'
 import Wizard from './Wizard'
 import { WalletSchema, getElements } from './helper'
+
+const useStyles = makeStyles({
+  submit: {
+    margin: [['auto', 0, 0, 'auto']]
+  },
+  footer: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 3, 0]]
+  }
+})
 
 const SAVE_CONFIG = gql`
   mutation Save($config: JSONObject, $accounts: JSONObject) {
@@ -59,6 +72,7 @@ const GET_MARKETS = gql`
 const LOCALE = 'locale'
 
 const Wallet = ({ name: SCREEN_KEY }) => {
+  const [cashInOnlyWallet, setCashInOnlyWallet] = useState(null)
   const [editingSchema, setEditingSchema] = useState(null)
   const [onChangeFunction, setOnChangeFunction] = useState(null)
   const [wizard, setWizard] = useState(false)
@@ -72,6 +86,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   const { data: marketsData } = useQuery(GET_MARKETS)
 
+  const classes = useStyles()
+
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
     onCompleted: () => setEditingSchema(null),
     refetchQueries: () => ['getData']
@@ -80,6 +96,11 @@ const Wallet = ({ name: SCREEN_KEY }) => {
   const save = (rawConfig, accounts) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
     return saveConfig({ variables: { config, accounts } })
+  }
+
+  const checkCashInConstraints = current => {
+    if (R.includes(current, ['coinbasepro']) && schemas[current])
+      setCashInOnlyWallet(schemas[current].name)
   }
 
   const fiatCurrency =
@@ -103,6 +124,8 @@ const Wallet = ({ name: SCREEN_KEY }) => {
       return
     }
 
+    checkCashInConstraints(current)
+
     setValue(current)
   }
 
@@ -115,6 +138,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
     saveAccount({
       variables: { accounts: { [editingSchema.code]: it } }
     }).then(it => {
+      checkCashInConstraints(editingSchema.code)
       onChangeFunction()
       setOnChangeFunction(null)
       return it
@@ -179,7 +203,10 @@ const Wallet = ({ name: SCREEN_KEY }) => {
             <Modal
               title={`Edit ${editingSchema.name}`}
               width={478}
-              handleClose={() => setEditingSchema(null)}
+              handleClose={() => {
+                checkCashInConstraints(editingSchema.code)
+                setEditingSchema(null)
+              }}
               open={true}>
               <FormRenderer
                 save={wizardSave}
@@ -187,6 +214,33 @@ const Wallet = ({ name: SCREEN_KEY }) => {
                 validationSchema={editingSchema.validationSchema}
                 value={accounts[editingSchema.code]}
               />
+            </Modal>
+          )}
+          {cashInOnlyWallet && (
+            <Modal
+              title={'FYI'}
+              width={478}
+              handleClose={() => {
+                setCashInOnlyWallet(null)
+              }}
+              open={true}>
+              <P>
+                Note: Coinbase Pro as a wallet is only compatible with cash-in,
+                not cash-out.
+              </P>
+              <P>Please use this only if you have solely one-way machines.</P>
+              <Info2>
+                {
+                  ' If you have a two-way machine, select another wallet option.'
+                }
+              </Info2>
+              <div className={classes.footer}>
+                <Button
+                  className={classes.submit}
+                  onClick={() => setCashInOnlyWallet(null)}>
+                  Confirm
+                </Button>
+              </div>
             </Modal>
           )}
         </>
