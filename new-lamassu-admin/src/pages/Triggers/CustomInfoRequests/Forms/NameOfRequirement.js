@@ -9,12 +9,10 @@ import { H4, P } from 'src/components/typography'
 const NameOfRequirement = () => {
   return (
     <>
-      <H4>Name of the requirement</H4> {/* TODO Add ? icon */}
+      <H4>Name of the requirement</H4>
       <P>
-        The name of the requirement will only be visible to you on the dashboard
-        on the requirement list, as well as on the custom information request
-        list. The user won't see this name. Make sure to make it distinguishable
-        and short.
+        The name of the requirement will only be visible to you within the
+        admin. The user won't see this name. Make it distinguishable and short.
       </P>
       <Field
         component={TextInputFormik}

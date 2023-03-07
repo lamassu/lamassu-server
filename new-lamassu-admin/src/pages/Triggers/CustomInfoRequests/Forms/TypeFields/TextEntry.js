@@ -6,7 +6,7 @@ import React from 'react'
 
 import RadioGroup from 'src/components/inputs/formik/RadioGroup'
 import TextInput from 'src/components/inputs/formik/TextInput'
-import { H4 } from 'src/components/typography'
+import { H4, P } from 'src/components/typography'
 
 import styles from './formStyles.styles'
 const useStyles = makeStyles(styles)
@@ -35,7 +35,7 @@ const TextEntry = () => {
     switch (context.values.constraintType) {
       case 'spaceSeparation':
         return (
-          <div className={classes.flex}>
+          <div className={classes.columnFlex}>
             <Field
               className={classes.label}
               component={TextInput}
@@ -48,6 +48,18 @@ const TextEntry = () => {
               name={'inputLabel2'}
               label={'Second word label'}
             />
+            <Field
+              className={classes.label}
+              component={TextInput}
+              name={'inputLabel3'}
+              label={'Third (optional) word label'}
+            />
+            <P>
+              If you’re collecting a first and last name, use the only first and
+              second word labels above. If you’d like to collect a middle name,
+              use all three, with the third label intended for the last name.
+              (e.g., ‘First name’ / ‘Middle name’ / ‘Last name’)
+            </P>
           </div>
         )
       default:
