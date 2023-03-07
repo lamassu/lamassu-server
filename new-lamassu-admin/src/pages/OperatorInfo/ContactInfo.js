@@ -197,7 +197,7 @@ const ContactInfo = ({ wizard }) => {
           </P>
           <SupportLinkButton
             link="https://support.lamassu.is/hc/en-us/articles/360033051732-Enabling-Operator-Info"
-            label="Lamassu Support Article"
+            label="Enabling Operator Info"
             bottomSpace="1"
           />
         </HelpTooltip>

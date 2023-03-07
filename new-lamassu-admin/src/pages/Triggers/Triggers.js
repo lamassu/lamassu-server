@@ -244,7 +244,7 @@ const Triggers = () => {
           </P>
           <SupportLinkButton
             link="https://support.lamassu.is/hc/en-us/articles/115001203951-Twilio-for-SMS"
-            label="Lamassu Support Article"
+            label="Twilio for SMS"
           />
           <FormRenderer
             save={twilioSave}
