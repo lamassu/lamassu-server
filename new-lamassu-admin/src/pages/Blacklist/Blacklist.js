@@ -192,7 +192,9 @@ const Blacklist = () => {
 
   const validateAddress = address => {
     try {
-      return !R.isEmpty(addressDetector.detectAddress(address).matches)
+      return !R.isEmpty(
+        addressDetector.getSupportedCoinsForAddress(address).matches
+      )
     } catch {
       return false
     }
