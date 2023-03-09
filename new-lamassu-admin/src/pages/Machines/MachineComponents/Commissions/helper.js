@@ -56,7 +56,7 @@ const getOverridesFields = currency => {
     },
     {
       name: 'minimumTx',
-      display: 'Minimun Tx',
+      display: 'Minimum Tx',
       width: 155,
       doubleHeader: 'Cash-in only',
       textAlign: 'right',
