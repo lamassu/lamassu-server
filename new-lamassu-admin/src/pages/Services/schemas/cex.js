@@ -22,6 +22,13 @@ const schema = markets => {
         long: true
       },
       {
+        code: 'uid',
+        display: 'User ID',
+        component: TextInput,
+        face: true,
+        long: true
+      },
+      {
         code: 'privateKey',
         display: 'Private key',
         component: SecretInput
@@ -43,6 +50,9 @@ const schema = markets => {
         apiKey: Yup.string('The API key must be a string')
           .max(100, 'The API key is too long')
           .required('The API key is required'),
+        uid: Yup.string('The User ID must be a string')
+          .max(100, 'The User ID is too long')
+          .required('The User ID is required'),
         privateKey: Yup.string('The private key must be a string')
           .max(100, 'The private key is too long')
           .test(secretTest(account?.privateKey, 'private key')),
