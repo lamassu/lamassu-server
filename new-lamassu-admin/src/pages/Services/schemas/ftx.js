@@ -10,26 +10,26 @@ import { secretTest, buildCurrencyOptions } from './helper'
 
 const schema = markets => {
   return {
-    code: 'kraken',
-    name: 'Kraken',
+    code: 'ftx',
+    name: 'Ftx',
     category: 'Exchange',
     allowMultiInstances: false,
     elements: [
       {
         code: 'apiKey',
-        display: 'API key',
+        display: 'API Key',
         component: TextInput,
         face: true,
         long: true
       },
       {
         code: 'privateKey',
-        display: 'Private key',
+        display: 'Private Key',
         component: SecretInput
       },
       {
         code: 'currencyMarket',
-        display: 'Currency market',
+        display: 'Currency Market',
         component: Autocomplete,
         inputProps: {
           options: buildCurrencyOptions(markets),

@@ -9,7 +9,8 @@ import {
 const singleBitgo = code => ({
   code: 'bitgo',
   name: 'BitGo',
-  title: 'BitGo (Wallet)',
+  category: 'Wallet',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'token',

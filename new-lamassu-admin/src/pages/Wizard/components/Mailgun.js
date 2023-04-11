@@ -1,17 +1,20 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 import React, { useState, useEffect } from 'react'
+import * as uuid from 'uuid'
 
 import { ActionButton } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { H4, Info3 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
-import schema from 'src/pages/Services/schemas'
+import _schemas from 'src/pages/Services/schemas'
 import styles from 'src/pages/Wizard/Radio.styles'
 import { ReactComponent as InverseLinkIcon } from 'src/styling/icons/action/external link/white.svg'
 import { ReactComponent as LinkIcon } from 'src/styling/icons/action/external link/zodiac.svg'
 import { ReactComponent as WarningIcon } from 'src/styling/icons/warning-icon/comet.svg'
+import { getAccountInstance } from 'src/utils/accounts'
 import { fromNamespace, toNamespace, namespaces } from 'src/utils/config'
 
 const useStyles = makeStyles({
@@ -82,9 +85,29 @@ const Mailgun = () => {
     return saveConfig({ variables: { config } })
   }
 
-  const saveAccount = mailgun => {
-    const accounts = { mailgun }
-    return saveAccounts({ variables: { accounts } })
+  const schemas = _schemas({})
+  const saveAccount = newAccount => {
+    const accountObj = R.pick(
+      ['category', 'code', 'elements', 'name'],
+      schemas.mailgun
+    )
+
+    const accountInstances = R.isNil(accounts.mailgun)
+      ? []
+      : R.clone(accounts.mailgun.instances)
+
+    accountInstances.push(R.merge(newAccount, { id: uuid.v4(), enabled: true }))
+
+    return saveAccounts({
+      variables: {
+        accounts: {
+          mailgun: {
+            ...accountObj,
+            instances: accountInstances
+          }
+        }
+      }
+    })
   }
 
   return (
@@ -123,10 +146,12 @@ const Mailgun = () => {
         <>
           <H4>Mailgun credentials</H4>
           <FormRenderer
-            value={accounts.mailgun}
+            value={getAccountInstance(accounts.mailgun)}
             save={saveAccount}
-            elements={schema.mailgun.elements}
-            validationSchema={schema.mailgun.validationSchema}
+            elements={schemas.mailgun.elements}
+            validationSchema={schemas.mailgun.getValidationSchema(
+              getAccountInstance(accounts.mailgun)
+            )}
             buttonLabel={'Save'}
           />
         </>

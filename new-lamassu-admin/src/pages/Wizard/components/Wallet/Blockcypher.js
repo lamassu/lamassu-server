@@ -7,7 +7,7 @@ import { SupportLinkButton, Button } from 'src/components/buttons'
 import { RadioGroup } from 'src/components/inputs'
 import { P, H4 } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
-import schema from 'src/pages/Services/schemas'
+import _schema from 'src/pages/Services/schemas'
 
 import styles from './Shared.styles'
 
@@ -42,6 +42,8 @@ const options = [
   }
 ]
 
+const schema = _schema({})
+
 const Blockcypher = ({ addData }) => {
   const classes = useStyles()
 
@@ -54,6 +56,8 @@ const Blockcypher = ({ addData }) => {
   const [error, setError] = useState(false)
 
   const accounts = data?.accounts ?? []
+
+  console.log(accounts)
 
   const onSelect = e => {
     setSelected(e.target.value)
@@ -93,7 +97,7 @@ const Blockcypher = ({ addData }) => {
         )}
         {selected === 'enable' && (
           <FormRenderer
-            value={accounts.blockcypher}
+            value={accounts?.blockcypher}
             save={save}
             elements={schema.blockcypher.elements}
             validationSchema={schema.blockcypher.getValidationSchema}

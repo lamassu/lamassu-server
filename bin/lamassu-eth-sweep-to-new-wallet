@@ -97,11 +97,12 @@ function getAllBalance () {
 
 function isInfuraRunning (settings) {
   const isInfuraSelected = settings.config.wallets_ETH_wallet === 'infura'
+  const account = ph.getAccountInstance(settings.accounts.infura)
   const isInfuraConfigured =
-    !_.isNil(settings.accounts.infura) 
-    && !_.isNil(settings.accounts.infura.apiKey)
-    && !_.isNil(settings.accounts.infura.apiSecret)
-    && !_.isNil(settings.accounts.infura.endpoint)
+    !_.isNil(account) 
+    && !_.isNil(account.apiKey)
+    && !_.isNil(account.apiSecret)
+    && !_.isNil(account.endpoint)
 
   return isInfuraSelected && isInfuraConfigured
 }
@@ -205,8 +206,8 @@ function fetchWallet (settings, cryptoCode) {
 
       const masterSeed = mnemonicHelpers.toEntropyBuffer(mnemonic)
       const plugin = configManager.getWalletSettings(cryptoCode, settings.config).wallet
-      const wallet = ph.load(ph.WALLET, plugin)
-      const rawAccount = settings.accounts[plugin]
+      const rawAccount = ph.getAccountInstance(settings.accounts[plugin])
+      const wallet = ph.load(ph.WALLET, plugin, rawAccount?.enabled)
       const account = _.set('seed', computeSeed(masterSeed), rawAccount)
       if (_.isFunction(wallet.run)) wallet.run(account)
       const operatorId = computeOperatorId(masterSeed)
@@ -248,9 +249,10 @@ settingsLoader.loadLatest()
   })
   .then(([infuraIsRunning, settings]) => {
     if (infuraIsRunning) {
-      const endpoint = _.startsWith('https://')(settings.accounts.infura.endpoint)
-        ? settings.accounts.infura.endpoint
-        : `https://${settings.accounts.infura.endpoint}`
+      const account = ph.getAccountInstance(settings.accounts.infura)
+      const endpoint = _.startsWith('https://')(account.endpoint)
+        ? account.endpoint
+        : `https://${account.endpoint}`
       connect(endpoint)
     } else {
       connect(`http://localhost:${coins.utils.getCryptoCurrency('ETH').defaultPort}`)

@@ -1,23 +1,31 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Grid } from '@material-ui/core'
+import { Box, makeStyles, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
+import * as uuid from 'uuid'
 
 import Modal from 'src/components/Modal'
+import { LinkDropdown } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
 import CheckboxInput from 'src/components/inputs/formik/Checkbox'
+import HorizontalSeparator from 'src/components/layout/HorizontalSeparator'
 import TitleSection from 'src/components/layout/TitleSection'
-import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
 
 import FormRenderer from './FormRenderer'
+import { DisabledService, EnabledService } from './ServiceCard'
 import _schemas from './schemas'
 
 const GET_INFO = gql`
   query getData {
     accounts
     config
+    accountsConfig {
+      code
+      class
+      cryptos
+    }
   }
 `
 
@@ -30,6 +38,12 @@ const GET_MARKETS = gql`
 const SAVE_ACCOUNT = gql`
   mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
+  }
+`
+
+const RESET_ACCOUNT = gql`
+  mutation resetAccount($accountId: String, $instanceId: ID) {
+    resetAccount(accountId: $accountId, instanceId: $instanceId)
   }
 `
 
@@ -54,16 +68,39 @@ const Services = () => {
   })
 
   const markets = marketsData?.getMarkets
-
-  const schemas = _schemas(markets)
+  const [resetAccount] = useMutation(RESET_ACCOUNT, {
+    refetchQueries: ['getData']
+  })
 
   const classes = useStyles()
 
   const accounts = data?.accounts ?? {}
+  const cryptos =
+    R.reduce(
+      (acc, value) => ({ ...acc, [value.code]: value.cryptos }),
+      {},
+      R.filter(it => it.class === 'wallet', data?.accountsConfig ?? [])
+    ) ?? {}
 
-  const getItems = (code, elements) => {
+  const schemas = _schemas({ markets, cryptos })
+
+  const serviceInstances = R.reduce(
+    (acc, value) => {
+      acc.push(
+        ...R.map(
+          ite => ({ code: accounts[value].code ?? value, ...ite }),
+          accounts[value].instances
+        )
+      )
+      return acc
+    },
+    [],
+    R.keys(accounts)
+  )
+
+  const getItems = (id, code, elements) => {
     const faceElements = R.filter(R.prop('face'))(elements)
-    const values = accounts[code] || {}
+    const values = R.find(it => it.id === id, accounts[code].instances) || {}
     return R.map(({ display, code, long }) => ({
       label: display,
       value: long ? formatLong(values[code]) : values[code]
@@ -80,23 +117,30 @@ const Services = () => {
     return element
   }
 
-  const getElements = ({ code, elements }) => {
-    return R.map(elem => {
-      if (elem.component === CheckboxInput) return updateSettings(elem)
-      if (elem.component !== SecretInput) return elem
-      return {
-        ...elem,
-        inputProps: {
-          isPasswordFilled:
-            !R.isNil(accounts[code]) &&
-            !R.isNil(R.path([elem.code], accounts[code]))
+  const getElements = ({ elements }, account) => {
+    return R.map(
+      elem => {
+        if (elem.component === CheckboxInput) return updateSettings(elem)
+        if (elem.component !== SecretInput) return elem
+        return {
+          ...elem,
+          inputProps: {
+            isPasswordFilled:
+              !R.isNil(account) && !R.isNil(R.path([elem.code], account))
+          }
         }
-      }
-    }, elements)
+      },
+      R.filter(it => it.code !== 'enabled', elements)
+    )
   }
 
-  const getAccounts = ({ elements, code }) => {
-    const account = accounts[code]
+  const getInstanceIndex = (account = {}) =>
+    R.findIndex(
+      it => it.id === account?.id,
+      accounts[account?.code]?.instances ?? []
+    )
+
+  const getAccounts = ({ elements }, account) => {
     const filterBySecretComponent = R.filter(R.propEq('component', SecretInput))
     const mapToCode = R.map(R.prop(['code']))
     const passwordFields = R.compose(
@@ -109,42 +153,166 @@ const Services = () => {
     )
   }
 
-  const getValidationSchema = ({ code, getValidationSchema }) =>
-    getValidationSchema(accounts[code])
+  const getValidationSchema = ({ schema, account }) => {
+    return schema.getValidationSchema(account)
+  }
+
+  const isServiceEnabled = service =>
+    !R.isNil(service) && Boolean(service?.enabled)
+
+  const isServiceDisabled = service => !R.isNil(service) && !service?.enabled
+
+  const [enabledServices, limbo] = R.partition(
+    isServiceEnabled,
+    serviceInstances
+  )
+  const [disabledServices, unusedServices] = R.partition(
+    isServiceDisabled,
+    limbo
+  )
+  const usedServices = R.concat(enabledServices, disabledServices)
+
+  const createAccount = (schema, newAccount) => {
+    const accountInstances = R.isNil(accounts[schema.code])
+      ? []
+      : R.clone(accounts[schema.code].instances)
+
+    accountInstances.push(R.merge(newAccount, { id: uuid.v4(), enabled: true }))
+
+    return saveAccount({
+      variables: {
+        accounts: {
+          [schema.code]: {
+            instances: accountInstances
+          }
+        }
+      }
+    })
+  }
+
+  const editAccount = ({ schema, account }, newAccount) => {
+    const instanceIndex = getInstanceIndex(account)
+
+    if (instanceIndex === -1) {
+      return createAccount(schema, newAccount)
+    }
+
+    const accountClone = R.clone(accounts[account.code])
+    accountClone.instances[instanceIndex] = R.merge(account, newAccount)
+
+    return saveAccount({
+      variables: {
+        accounts: { [account.code]: accountClone }
+      }
+    })
+  }
+
+  const enableAccount = account => {
+    const instanceIndex = getInstanceIndex(account)
+    const updatedAccount = R.clone(accounts[account.code])
+    updatedAccount.instances[instanceIndex].enabled = true
+    return saveAccount({
+      variables: {
+        accounts: { [account.code]: updatedAccount }
+      }
+    })
+  }
+
+  const disableAccount = account => {
+    const instanceIndex = getInstanceIndex(account)
+    const updatedAccount = R.clone(accounts[account.code])
+    updatedAccount.instances[instanceIndex].enabled = false
+    return saveAccount({
+      variables: {
+        accounts: { [account.code]: updatedAccount }
+      }
+    })
+  }
+
+  const getAvailableServicesToAdd = (services, instances) => {
+    return R.filter(
+      it =>
+        it.allowMultiInstances ||
+        !R.any(ite => it.code === ite.code, instances),
+      services
+    )
+  }
 
   const loading = marketsLoading || configLoading
 
   return (
     !loading && (
       <div className={classes.wrapper}>
-        <TitleSection title="Third-party services" />
-        <Grid container spacing={4}>
-          {R.values(schemas).map(schema => (
-            <Grid item key={schema.code}>
-              <SingleRowTable
-                editMessage={'Configure ' + schema.title}
-                title={schema.title}
-                onEdit={() => setEditingSchema(schema)}
-                items={getItems(schema.code, schema.elements)}
-              />
+        <TitleSection
+          title="Third-party services"
+          appendixRight={
+            <Box display="flex">
+              <LinkDropdown
+                color="primary"
+                options={getAvailableServicesToAdd(
+                  R.values(schemas),
+                  serviceInstances
+                )}
+                onItemClick={it => setEditingSchema({ schema: it })}>
+                Add new service
+              </LinkDropdown>
+            </Box>
+          }
+        />
+        {!R.isEmpty(usedServices) && (
+          <>
+            <Grid container spacing={4}>
+              {R.map(service => {
+                return (
+                  <EnabledService
+                    account={service}
+                    schema={schemas[service.code]}
+                    setEditingSchema={setEditingSchema}
+                    getItems={getItems}
+                    disableAccount={disableAccount}
+                  />
+                )
+              }, enabledServices)}
             </Grid>
-          ))}
-        </Grid>
+            {!R.isEmpty(disabledServices) && (
+              <>
+                <HorizontalSeparator title="Disabled services" />
+                <Grid container spacing={4}>
+                  {R.map(service => {
+                    return (
+                      <DisabledService
+                        account={service}
+                        schema={schemas[service.code]}
+                        deleteAccount={resetAccount}
+                        getItems={getItems}
+                        enableAccount={enableAccount}
+                      />
+                    )
+                  }, disabledServices)}
+                </Grid>
+              </>
+            )}
+          </>
+        )}
         {editingSchema && (
           <Modal
-            title={`Edit ${editingSchema.name}`}
+            title={`${
+              R.includes(editingSchema, unusedServices) ? 'Configure' : 'Edit'
+            } ${editingSchema.schema.name}`}
             width={525}
             handleClose={() => setEditingSchema(null)}
             open={true}>
             <FormRenderer
-              save={it =>
-                saveAccount({
-                  variables: { accounts: { [editingSchema.code]: it } }
-                })
-              }
-              elements={getElements(editingSchema)}
+              save={it => editAccount(editingSchema, it)}
+              elements={getElements(
+                editingSchema.schema,
+                editingSchema.account ?? {}
+              )}
               validationSchema={getValidationSchema(editingSchema)}
-              value={getAccounts(editingSchema)}
+              value={getAccounts(
+                editingSchema.schema,
+                editingSchema.account ?? {}
+              )}
               supportArticle={editingSchema?.supportArticle}
             />
           </Modal>
