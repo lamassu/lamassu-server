@@ -12,7 +12,8 @@ const schema = markets => {
   return {
     code: 'bitstamp',
     name: 'Bitstamp',
-    title: 'Bitstamp (Exchange)',
+    category: 'Exchange',
+    allowMultiInstances: false,
     elements: [
       {
         code: 'clientId',

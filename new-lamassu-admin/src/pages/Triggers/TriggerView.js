@@ -28,7 +28,7 @@ const TriggerView = ({
   config,
   toggleWizard,
   addNewTriger,
-  customInfoRequests
+  additionalInfo
 }) => {
   const currency = R.path(['fiatCurrency'])(
     fromNamespace(namespaces.LOCALE)(config)
@@ -68,7 +68,7 @@ const TriggerView = ({
         error={error?.message}
         save={save}
         validationSchema={Schema}
-        elements={getElements(currency, classes, customInfoRequests)}
+        elements={getElements(currency, classes, additionalInfo)}
       />
       {showWizard && (
         <Wizard
@@ -76,7 +76,8 @@ const TriggerView = ({
           error={error?.message}
           save={add}
           onClose={() => toggleWizard(true)}
-          customInfoRequests={customInfoRequests}
+          triggers={triggers}
+          additionalInfo={additionalInfo}
         />
       )}
       {R.isEmpty(triggers) && (

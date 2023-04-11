@@ -1,6 +1,5 @@
 import * as Yup from 'yup'
 
-import CheckboxFormik from 'src/components/inputs/formik/Checkbox'
 import NumberInputFormik from 'src/components/inputs/formik/NumberInput'
 import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
 
@@ -9,7 +8,8 @@ import { secretTest, leadingZerosTest } from './helper'
 export default {
   code: 'ciphertrace',
   name: 'CipherTrace',
-  title: 'CipherTrace (Scoring)',
+  category: 'Scoring',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'authorizationValue',
@@ -22,17 +22,6 @@ export default {
       component: NumberInputFormik,
       face: true,
       long: false
-    },
-    {
-      code: 'enabled',
-      component: CheckboxFormik,
-      settings: {
-        enabled: true,
-        disabledMessage: 'This plugin is disabled',
-        label: 'Enabled',
-        requirement: null
-      },
-      face: true
     }
   ],
   getValidationSchema: account => {

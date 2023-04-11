@@ -5,7 +5,8 @@ import { Checkbox, TextInput, NumberInput } from 'src/components/inputs/formik'
 export default {
   code: 'blockcypher',
   name: 'Blockcypher',
-  title: 'Blockcypher (Payments)',
+  category: 'Payments',
+  allowMultiInstances: false,
   elements: [
     {
       code: 'token',
