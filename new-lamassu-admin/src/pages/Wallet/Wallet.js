@@ -113,7 +113,7 @@ const Wallet = ({ name: SCREEN_KEY }) => {
 
   const markets = marketsData?.getMarkets
 
-  const schemas = _schemas(markets)
+  const schemas = _schemas({ markets })
 
   const onChange = (previous, current, setValue) => {
     if (!current) return setValue(current)

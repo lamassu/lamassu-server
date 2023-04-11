@@ -16,7 +16,6 @@ import Login from 'src/pages/Authentication/Login'
 import Register from 'src/pages/Authentication/Register'
 import Reset2FA from 'src/pages/Authentication/Reset2FA'
 import ResetPassword from 'src/pages/Authentication/ResetPassword'
-import Sumsub from 'src/pages/Compliance/Sumsub'
 import Dashboard from 'src/pages/Dashboard'
 import Machines from 'src/pages/Machines'
 import Wizard from 'src/pages/Wizard'
@@ -92,8 +91,7 @@ const Routes = () => {
     '/login',
     '/register',
     '/resetpassword',
-    '/reset2fa',
-    '/sumsub'
+    '/reset2fa'
   ]
 
   if (!wizardTested && !R.contains(location.pathname)(dontTriggerPages)) {
@@ -144,7 +142,6 @@ const Routes = () => {
       </PrivateRoute>
       <PrivateRoute path="/machines" component={Machines} />
       <PrivateRoute path="/wizard" component={Wizard} />
-      <PublicRoute path="/sumsub" component={Sumsub} />
       <PublicRoute path="/register" component={Register} />
       {/* <PublicRoute path="/configmigration" component={ConfigMigration} /> */}
       <PublicRoute path="/login" restricted component={Login} />

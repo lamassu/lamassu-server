@@ -89,7 +89,7 @@ const Services = () => {
       acc.push(
         ...R.map(
           ite => ({ code: accounts[value].code ?? value, ...ite }),
-          accounts[value].instances
+          accounts[value].instances ?? []
         )
       )
       return acc
