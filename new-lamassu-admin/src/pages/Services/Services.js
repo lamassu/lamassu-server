@@ -1,17 +1,19 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { makeStyles, Grid } from '@material-ui/core'
+import { Box, makeStyles, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
+import { LinkDropdown } from 'src/components/buttons'
 import { SecretInput } from 'src/components/inputs/formik'
 import CheckboxInput from 'src/components/inputs/formik/Checkbox'
+import HorizontalSeparator from 'src/components/layout/HorizontalSeparator'
 import TitleSection from 'src/components/layout/TitleSection'
-import SingleRowTable from 'src/components/single-row-table/SingleRowTable'
 import { formatLong } from 'src/utils/string'
 
 import FormRenderer from './FormRenderer'
+import { DisabledService, EnabledService } from './ServiceCard'
 import _schemas from './schemas'
 
 const GET_INFO = gql`
@@ -30,6 +32,12 @@ const GET_MARKETS = gql`
 const SAVE_ACCOUNT = gql`
   mutation Save($accounts: JSONObject) {
     saveAccounts(accounts: $accounts)
+  }
+`
+
+const RESET_ACCOUNT = gql`
+  mutation resetAccount($accountId: String) {
+    resetAccount(accountId: $accountId)
   }
 `
 
@@ -56,6 +64,9 @@ const Services = () => {
   const markets = marketsData?.getMarkets
 
   const schemas = _schemas(markets)
+  const [resetAccount] = useMutation(RESET_ACCOUNT, {
+    refetchQueries: ['getData']
+  })
 
   const classes = useStyles()
 
@@ -81,18 +92,21 @@ const Services = () => {
   }
 
   const getElements = ({ code, elements }) => {
-    return R.map(elem => {
-      if (elem.component === CheckboxInput) return updateSettings(elem)
-      if (elem.component !== SecretInput) return elem
-      return {
-        ...elem,
-        inputProps: {
-          isPasswordFilled:
-            !R.isNil(accounts[code]) &&
-            !R.isNil(R.path([elem.code], accounts[code]))
+    return R.map(
+      elem => {
+        if (elem.component === CheckboxInput) return updateSettings(elem)
+        if (elem.component !== SecretInput) return elem
+        return {
+          ...elem,
+          inputProps: {
+            isPasswordFilled:
+              !R.isNil(accounts[code]) &&
+              !R.isNil(R.path([elem.code], accounts[code]))
+          }
         }
-      }
-    }, elements)
+      },
+      R.filter(it => it.code !== 'enabled', elements)
+    )
   }
 
   const getAccounts = ({ elements, code }) => {
@@ -112,40 +126,110 @@ const Services = () => {
   const getValidationSchema = ({ code, getValidationSchema }) =>
     getValidationSchema(accounts[code])
 
-  const loading = marketsLoading || configLoading
+  const isServiceEnabled = service =>
+    !R.isNil(accounts[service.code]) && Boolean(accounts[service.code]?.enabled)
 
+  const isServiceDisabled = service =>
+    !R.isNil(accounts[service.code]) && !accounts[service.code]?.enabled
+
+  const [enabledServices, limbo] = R.partition(
+    isServiceEnabled,
+    R.values(schemas)
+  )
+  const [disabledServices, unusedServices] = R.partition(
+    isServiceDisabled,
+    limbo
+  )
+  const usedServices = R.concat(enabledServices, disabledServices)
+
+  const enableService = service =>
+    saveAccount({
+      variables: {
+        accounts: { [service.code]: { ...service, enabled: true } }
+      }
+    })
+
+  const disableService = service =>
+    saveAccount({
+      variables: {
+        accounts: { [service.code]: { ...service, enabled: false } }
+      }
+    })
+
+  const loading = marketsLoading || configLoading
   return (
     !loading && (
       <div className={classes.wrapper}>
-        <TitleSection title="Third-party services" />
-        <Grid container spacing={4}>
-          {R.values(schemas).map(schema => (
-            <Grid item key={schema.code}>
-              <SingleRowTable
-                editMessage={'Configure ' + schema.title}
-                title={schema.title}
-                onEdit={() => setEditingSchema(schema)}
-                items={getItems(schema.code, schema.elements)}
-              />
+        <TitleSection
+          title="Third-party services"
+          appendixRight={
+            <Box display="flex">
+              <LinkDropdown
+                color="primary"
+                options={unusedServices}
+                onItemClick={setEditingSchema}>
+                Add new service
+              </LinkDropdown>
+            </Box>
+          }
+        />
+        {!R.isEmpty(usedServices) && (
+          <>
+            <Grid container spacing={4}>
+              {R.map(schema => {
+                return (
+                  <EnabledService
+                    account={accounts[schema.code]}
+                    service={schema}
+                    setEditingSchema={setEditingSchema}
+                    getItems={getItems}
+                    disableService={disableService}
+                  />
+                )
+              }, enabledServices)}
             </Grid>
-          ))}
-        </Grid>
+            {!R.isEmpty(disabledServices) && (
+              <>
+                <HorizontalSeparator title="Disabled services" />
+                <Grid container spacing={4}>
+                  {R.map(schema => {
+                    return (
+                      <DisabledService
+                        account={accounts[schema.code]}
+                        service={schema}
+                        deleteAccount={resetAccount}
+                        getItems={getItems}
+                        enableService={enableService}
+                      />
+                    )
+                  }, disabledServices)}
+                </Grid>
+              </>
+            )}
+          </>
+        )}
         {editingSchema && (
           <Modal
-            title={`Edit ${editingSchema.name}`}
+            title={`${
+              R.includes(editingSchema, unusedServices) ? 'Configure' : 'Edit'
+            } ${editingSchema.name}`}
             width={525}
             handleClose={() => setEditingSchema(null)}
             open={true}>
             <FormRenderer
               save={it =>
                 saveAccount({
-                  variables: { accounts: { [editingSchema.code]: it } }
+                  variables: {
+                    accounts: { [editingSchema.code]: { ...it, enabled: true } }
+                  }
                 })
               }
               elements={getElements(editingSchema)}
               validationSchema={getValidationSchema(editingSchema)}
               value={getAccounts(editingSchema)}
               supportArticle={editingSchema?.supportArticle}
+              accountId={editingSchema.code}
+              reset={resetAccount}
             />
           </Modal>
         )}

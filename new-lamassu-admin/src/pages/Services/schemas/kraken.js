@@ -12,7 +12,7 @@ const schema = markets => {
   return {
     code: 'kraken',
     name: 'Kraken',
-    title: 'Kraken (Exchange)',
+    category: 'Exchange',
     elements: [
       {
         code: 'apiKey',

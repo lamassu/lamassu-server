@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
@@ -6,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Label2 } from 'src/components/typography'
 import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
@@ -38,7 +37,7 @@ const Footer = () => {
   const withCommissions = R.path(['cryptoRates', 'withCommissions'])(data) ?? {}
   const classes = useStyles()
   const config = R.path(['config'])(data) ?? {}
-  const canExpand = R.keys(withCommissions).length > 4
+  // const canExpand = R.keys(withCommissions).length > 4
 
   const wallets = fromNamespace('wallets')(config)
   const cryptoCurrencies = R.path(['cryptoCurrencies'])(data) ?? []
