@@ -24,11 +24,19 @@ const GET_DATA = gql`
     machines {
       name
       deviceId
-      cashbox
-      cassette1
-      cassette2
-      cassette3
-      cassette4
+      cashUnits {
+        cashbox
+        cassette1
+        cassette2
+        cassette3
+        cassette4
+        stacker1f
+        stacker1r
+        stacker2f
+        stacker2r
+        stacker3f
+        stacker3r
+      }
       numberOfCassettes
       statuses {
         label

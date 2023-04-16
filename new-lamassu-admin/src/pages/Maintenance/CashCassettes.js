@@ -19,10 +19,11 @@ import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enable
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
-import { MANUAL, AUTOMATIC } from 'src/utils/constants.js'
+import { MANUAL, AUTOMATIC } from 'src/utils/constants'
+import { hasRecycler } from 'src/utils/machine'
 import { onlyFirstToUpper } from 'src/utils/string'
 
-import styles from './CashCassettes.styles.js'
+import styles from './CashCassettes.styles'
 import CashCassettesFooter from './CashCassettesFooter'
 import CashboxHistory from './CashboxHistory'
 import Wizard from './Wizard/Wizard'
@@ -92,11 +93,20 @@ const GET_MACHINES_AND_CONFIG = gql`
     machines {
       name
       id: deviceId
-      cashbox
-      cassette1
-      cassette2
-      cassette3
-      cassette4
+      model
+      cashUnits {
+        cashbox
+        cassette1
+        cassette2
+        cassette3
+        cassette4
+        stacker1f
+        stacker1r
+        stacker2f
+        stacker2r
+        stacker3f
+        stacker3r
+      }
       numberOfCassettes
     }
     unpairedMachines {
@@ -123,27 +133,23 @@ const SET_CASSETTE_BILLS = gql`
   mutation MachineAction(
     $deviceId: ID!
     $action: MachineAction!
-    $cashbox: Int!
-    $cassette1: Int!
-    $cassette2: Int!
-    $cassette3: Int!
-    $cassette4: Int!
+    $cashUnits: CashUnitsInput
   ) {
-    machineAction(
-      deviceId: $deviceId
-      action: $action
-      cashbox: $cashbox
-      cassette1: $cassette1
-      cassette2: $cassette2
-      cassette3: $cassette3
-      cassette4: $cassette4
-    ) {
+    machineAction(deviceId: $deviceId, action: $action, cashUnits: $cashUnits) {
       deviceId
-      cashbox
-      cassette1
-      cassette2
-      cassette3
-      cassette4
+      cashUnits {
+        cashbox
+        cassette1
+        cassette2
+        cassette3
+        cassette4
+        stacker1f
+        stacker1r
+        stacker2f
+        stacker2r
+        stacker3f
+        stacker3r
+      }
     }
   }
 `
@@ -171,6 +177,9 @@ const CashCassettes = () => {
   const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
+  const [nonRecyclerMachines, recyclerMachines] = R.partition(hasRecycler)(
+    machines
+  )
   const unpairedMachines = R.path(['unpairedMachines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
   const fillingPercentageSettings = fromNamespace('notifications', config)
@@ -192,20 +201,19 @@ const CashCassettes = () => {
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
   const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines),
+    ...R.map(it => it.numberOfCassettes, nonRecyclerMachines),
     0
   )
 
   const getCashoutSettings = id => fromNamespace(id)(cashout)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
-  const onSave = (id, cashbox, cassettes) => {
+  const onSave = (id, cashUnits) => {
     return setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: id,
-        cashbox,
-        ...cassettes
+        cashUnits
       }
     })
   }
@@ -247,10 +255,10 @@ const CashCassettes = () => {
       name: 'cashbox',
       header: 'Cash box',
       width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cashbox,
-      view: (value, { id }) => (
+      view: (_, { id, cashUnits }) => (
         <CashIn
           currency={{ code: fiatCurrency }}
-          notes={value}
+          notes={cashUnits.cashbox}
           total={R.sum(R.map(it => it.fiat, bills[id] ?? []))}
         />
       ),
@@ -270,12 +278,12 @@ const CashCassettes = () => {
         width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
         stripe: true,
         doubleHeader: 'Cash-out',
-        view: (value, { id }) => (
+        view: (_, { id, cashUnits }) => (
           <CashOut
             className={classes.cashbox}
             denomination={getCashoutSettings(id)?.[`cassette${it}`]}
             currency={{ code: fiatCurrency }}
-            notes={value}
+            notes={cashUnits[`cassette${it}`]}
             width={
               widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph
             }
@@ -302,7 +310,7 @@ const CashCassettes = () => {
     header: 'Edit',
     width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.editWidth,
     textAlign: 'center',
-    view: (value, { id }) => {
+    view: (_, { id }) => {
       return (
         <IconButton
           onClick={() => {
@@ -374,7 +382,17 @@ const CashCassettes = () => {
               name="cashboxes"
               stripeWhen={isCashOutDisabled}
               elements={elements}
-              data={machines}
+              data={nonRecyclerMachines}
+              validationSchema={ValidationSchema}
+              tbodyWrapperClass={classes.tBody}
+            />
+
+            <EditableTable
+              error={error?.message}
+              name="cashboxes"
+              stripeWhen={isCashOutDisabled}
+              elements={elements}
+              data={recyclerMachines}
               validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />

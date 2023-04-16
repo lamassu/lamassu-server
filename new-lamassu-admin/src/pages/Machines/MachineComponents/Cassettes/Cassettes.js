@@ -57,27 +57,23 @@ const SET_CASSETTE_BILLS = gql`
   mutation MachineAction(
     $deviceId: ID!
     $action: MachineAction!
-    $cashbox: Int!
-    $cassette1: Int!
-    $cassette2: Int!
-    $cassette3: Int!
-    $cassette4: Int!
+    $cashUnits: CashUnitsInput
   ) {
-    machineAction(
-      deviceId: $deviceId
-      action: $action
-      cashbox: $cashbox
-      cassette1: $cassette1
-      cassette2: $cassette2
-      cassette3: $cassette3
-      cassette4: $cassette4
-    ) {
+    machineAction(deviceId: $deviceId, action: $action, cashUnits: $cashUnits) {
       deviceId
-      cashbox
-      cassette1
-      cassette2
-      cassette3
-      cassette4
+      cashUnits {
+        cashbox
+        cassette1
+        cassette2
+        cassette3
+        cassette4
+        stacker1f
+        stacker1r
+        stacker2f
+        stacker2r
+        stacker3f
+        stacker3r
+      }
     }
   }
 `
