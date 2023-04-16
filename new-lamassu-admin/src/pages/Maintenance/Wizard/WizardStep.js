@@ -206,7 +206,7 @@ const WizardStep = ({
                         classes.lineAlignment
                       )}>
                       <Info1 noMargin className={classes.cashboxBills}>
-                        {machine?.cashbox}
+                        {machine?.cashUnits.cashbox}
                       </Info1>
                       <P noMargin>accepted bills</P>
                     </div>
