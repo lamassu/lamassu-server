@@ -18,6 +18,15 @@ const CASSETTE_FIELDS = R.map(
   R.range(1, MAX_NUMBER_OF_CASSETTES + 1)
 )
 
+const STACKER_FIELDS = [
+  'stacker1f',
+  'stacker1r',
+  'stacker2f',
+  'stacker2r',
+  'stacker3f',
+  'stacker3r'
+]
+
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
@@ -45,6 +54,17 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     )
   }
 
+  const buildStackerObj = cassetteInput => {
+    return R.reduce(
+      (acc, value) => {
+        acc[value] = defaultToZero(cassetteInput[value])
+        return acc
+      },
+      {},
+      STACKER_FIELDS
+    )
+  }
+
   const onContinue = it => {
     const newConfig = R.merge(config, it)
     if (isLastStep) {
@@ -53,10 +73,16 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         it?.wasCashboxEmptied
       ].includes('YES')
 
-      const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
       const cassettes = buildCassetteObj(it)
+      const stackers = buildStackerObj(it)
 
-      save(machine.id, cashbox, cassettes)
+      const cashUnits = {
+        cashbox: wasCashboxEmptied ? 0 : machine?.cashUnits.cashbox,
+        ...cassettes,
+        ...stackers
+      }
+
+      save(machine.id, cashUnits)
       return onClose()
     }
 
