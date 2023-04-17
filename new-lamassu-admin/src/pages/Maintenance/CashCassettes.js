@@ -10,8 +10,6 @@ import Modal from 'src/components/Modal'
 import { IconButton, Button } from 'src/components/buttons'
 import { Table as EditableTable } from 'src/components/editableTable'
 import { RadioGroup } from 'src/components/inputs'
-import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
-import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
 import { P, Label1 } from 'src/components/typography'
@@ -20,39 +18,15 @@ import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle b
 import { ReactComponent as HistoryIcon } from 'src/styling/icons/circle buttons/history/zodiac.svg'
 import { fromNamespace, toNamespace } from 'src/utils/config'
 import { MANUAL, AUTOMATIC } from 'src/utils/constants'
-import { hasRecycler } from 'src/utils/machine'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './CashCassettes.styles'
 import CashCassettesFooter from './CashCassettesFooter'
 import CashboxHistory from './CashboxHistory'
 import Wizard from './Wizard/Wizard'
+import helper from './helper'
 
 const useStyles = makeStyles(styles)
-
-const widthsByNumberOfCassettes = {
-  2: {
-    machine: 250,
-    cashbox: 260,
-    cassette: 300,
-    cassetteGraph: 80,
-    editWidth: 90
-  },
-  3: {
-    machine: 220,
-    cashbox: 215,
-    cassette: 225,
-    cassetteGraph: 60,
-    editWidth: 90
-  },
-  4: {
-    machine: 190,
-    cashbox: 180,
-    cassette: 185,
-    cassetteGraph: 50,
-    editWidth: 90
-  }
-}
 
 const ValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -85,7 +59,43 @@ const ValidationSchema = Yup.object().shape({
     .required()
     .integer()
     .min(0)
-    .max(500)
+    .max(500),
+  stacker1f: Yup.number()
+    .label('Stacker 1F')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker1r: Yup.number()
+    .label('Stacker 1R')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker2f: Yup.number()
+    .label('Stacker 2F')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker2r: Yup.number()
+    .label('Stacker 2R')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker3f: Yup.number()
+    .label('Stacker 3F')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker3r: Yup.number()
+    .label('Stacker 3R')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60)
 })
 
 const GET_MACHINES_AND_CONFIG = gql`
@@ -108,6 +118,7 @@ const GET_MACHINES_AND_CONFIG = gql`
         stacker3r
       }
       numberOfCassettes
+      numberOfStackers
     }
     unpairedMachines {
       id: deviceId
@@ -177,12 +188,11 @@ const CashCassettes = () => {
   const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
-  const [nonRecyclerMachines, recyclerMachines] = R.partition(hasRecycler)(
-    machines
-  )
+  const [stackerMachines, nonStackerMachines] = R.partition(
+    it => it.numberOfStackers > 0
+  )(machines)
   const unpairedMachines = R.path(['unpairedMachines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
-  const fillingPercentageSettings = fromNamespace('notifications', config)
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
     refetchQueries: () => ['getData']
   })
@@ -200,10 +210,6 @@ const CashCassettes = () => {
   const cashout = data?.config && fromNamespace('cashOut')(data.config)
   const locale = data?.config && fromNamespace('locale')(data.config)
   const fiatCurrency = locale?.fiatCurrency
-  const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, nonRecyclerMachines),
-    0
-  )
 
   const getCashoutSettings = id => fromNamespace(id)(cashout)
   const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
@@ -243,85 +249,23 @@ const CashCassettes = () => {
     setSelectedRadio(selectedRadio)
   }
 
-  const elements = [
-    {
-      name: 'name',
-      header: 'Machine',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.machine,
-      view: name => <>{name}</>,
-      input: ({ field: { value: name } }) => <>{name}</>
-    },
-    {
-      name: 'cashbox',
-      header: 'Cash box',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cashbox,
-      view: (_, { id, cashUnits }) => (
-        <CashIn
-          currency={{ code: fiatCurrency }}
-          notes={cashUnits.cashbox}
-          total={R.sum(R.map(it => it.fiat, bills[id] ?? []))}
-        />
-      ),
-      input: NumberInput,
-      inputProps: {
-        decimalPlaces: 0
-      }
-    }
-  ]
-
-  R.until(
-    R.gt(R.__, maxNumberOfCassettes),
-    it => {
-      elements.push({
-        name: `cassette${it}`,
-        header: `Cassette ${it}`,
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
-        stripe: true,
-        doubleHeader: 'Cash-out',
-        view: (_, { id, cashUnits }) => (
-          <CashOut
-            className={classes.cashbox}
-            denomination={getCashoutSettings(id)?.[`cassette${it}`]}
-            currency={{ code: fiatCurrency }}
-            notes={cashUnits[`cassette${it}`]}
-            width={
-              widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph
-            }
-            threshold={
-              fillingPercentageSettings[`fillingPercentageCassette${it}`]
-            }
-          />
-        ),
-        isHidden: ({ numberOfCassettes }) => it > numberOfCassettes,
-        input: CashCassetteInput,
-        inputProps: {
-          decimalPlaces: 0,
-          width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassetteGraph,
-          inputClassName: classes.cashbox
-        }
-      })
-      return R.add(1, it)
-    },
-    1
+  const nonStackerElements = helper.getElements(
+    nonStackerMachines,
+    classes,
+    config,
+    bills,
+    setMachineId,
+    setWizard
   )
 
-  elements.push({
-    name: 'edit',
-    header: 'Edit',
-    width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.editWidth,
-    textAlign: 'center',
-    view: (_, { id }) => {
-      return (
-        <IconButton
-          onClick={() => {
-            setMachineId(id)
-            setWizard(true)
-          }}>
-          <EditIcon />
-        </IconButton>
-      )
-    }
-  })
+  const stackerElements = helper.getElements(
+    stackerMachines,
+    classes,
+    config,
+    bills,
+    setMachineId,
+    setWizard
+  )
 
   return (
     !dataLoading && (
@@ -381,18 +325,18 @@ const CashCassettes = () => {
               error={error?.message}
               name="cashboxes"
               stripeWhen={isCashOutDisabled}
-              elements={elements}
-              data={nonRecyclerMachines}
+              elements={nonStackerElements}
+              data={nonStackerMachines}
               validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />
 
             <EditableTable
               error={error?.message}
-              name="cashboxes"
+              name="recyclerCashboxes"
               stripeWhen={isCashOutDisabled}
-              elements={elements}
-              data={recyclerMachines}
+              elements={stackerElements}
+              data={stackerMachines}
               validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />

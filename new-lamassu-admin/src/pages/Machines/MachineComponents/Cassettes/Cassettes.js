@@ -50,7 +50,43 @@ const ValidationSchema = Yup.object().shape({
     .required('Required')
     .integer()
     .min(0)
-    .max(500)
+    .max(500),
+  stacker1f: Yup.number()
+    .label('Stacker 1F')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker1r: Yup.number()
+    .label('Stacker 1R')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker2f: Yup.number()
+    .label('Stacker 2F')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker2r: Yup.number()
+    .label('Stacker 2R')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker3f: Yup.number()
+    .label('Stacker 3F')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60),
+  stacker3r: Yup.number()
+    .label('Stacker 3R')
+    .required('Required')
+    .integer()
+    .min(0)
+    .max(60)
 })
 
 const SET_CASSETTE_BILLS = gql`
