@@ -38,6 +38,7 @@ const GET_DATA = gql`
         stacker3r
       }
       numberOfCassettes
+      numberOfStackers
       statuses {
         label
         type

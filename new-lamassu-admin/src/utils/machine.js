@@ -7,9 +7,6 @@ const modelPrettifier = {
   grandola: 'Grândola'
 }
 
-const hasRecycler = machine =>
-  machine.model === 'aveiro' || machine.model === 'grandola'
-
 const cashUnitCapacity = {
   tejo: {
     cashbox: 1000,
@@ -22,4 +19,4 @@ const cashUnitCapacity = {
   }
 }
 
-export { modelPrettifier, cashUnitCapacity, hasRecycler }
+export { modelPrettifier, cashUnitCapacity }
