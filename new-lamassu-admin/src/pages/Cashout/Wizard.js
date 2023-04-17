@@ -17,7 +17,7 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
 const Wizard = ({ machine, locale, onClose, save, error }) => {
-  const LAST_STEP = machine.numberOfCassettes + 1
+  const LAST_STEP = machine.numberOfCassettes + machine.numberOfStackers + 1
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
@@ -46,18 +46,48 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     })
   }
 
-  const steps = R.map(
-    it => ({
-      type: `cassette${it}`,
-      display: `Cassette ${it}`,
-      component: Autocomplete,
-      inputProps: {
-        options: options,
-        labelProp: 'display',
-        valueProp: 'code'
-      }
-    }),
-    R.range(1, machine.numberOfCassettes + 1)
+  const steps = R.concat(
+    R.map(
+      it => ({
+        type: `cassette${it}`,
+        display: `Cassette ${it}`,
+        component: Autocomplete,
+        inputProps: {
+          options: options,
+          labelProp: 'display',
+          valueProp: 'code'
+        }
+      }),
+      R.range(1, machine.numberOfCassettes + 1)
+    ),
+    R.chain(
+      it => [
+        {
+          type: `stacker${it}f`,
+          display: `Stacker ${it}F`,
+          component: Autocomplete,
+          inputProps: {
+            options: options,
+            labelProp: 'display',
+            valueProp: 'code'
+          }
+        },
+        {
+          type: `stacker${it}r`,
+          display: `Stacker ${it}R`,
+          component: Autocomplete,
+          inputProps: {
+            options: options,
+            labelProp: 'display',
+            valueProp: 'code'
+          }
+        }
+      ],
+      R.range(
+        machine.numberOfCassettes + 1,
+        machine.numberOfCassettes + machine.numberOfStackers + 1
+      )
+    )
   )
 
   const schema = () =>

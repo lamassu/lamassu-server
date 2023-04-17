@@ -54,6 +54,7 @@ const GET_INFO = gql`
         stacker3r
       }
       numberOfCassettes
+      numberOfStackers
     }
     config
   }
