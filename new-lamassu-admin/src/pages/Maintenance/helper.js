@@ -158,7 +158,6 @@ const getElements = (
           header: `Stacker ${it}F`,
           width: widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.cassette,
           stripe: true,
-          doubleHeader: 'Cash recycling',
           view: (_, { id, cashUnits }) => (
             <CashOut
               className={classes.cashbox}
@@ -187,7 +186,6 @@ const getElements = (
           header: `Stacker ${it}R`,
           width: widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.cassette,
           stripe: true,
-          doubleHeader: 'Cash recycling',
           view: (_, { id, cashUnits }) => (
             <CashOut
               className={classes.cashbox}

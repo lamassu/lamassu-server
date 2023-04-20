@@ -9,9 +9,13 @@ import { CURRENCY_MAX } from 'src/utils/constants'
 import { transformNumber } from 'src/utils/number'
 
 const widthsByNumberOfCassettes = {
-  2: { machine: 300, cassette: 225, zeroConf: 200 },
-  3: { machine: 210, cassette: 180, zeroConf: 200 },
-  4: { machine: 200, cassette: 150, zeroConf: 150 }
+  2: { machine: 320, cassette: 315 },
+  3: { machine: 305, cassette: 215 },
+  4: { machine: 195, cassette: 190 },
+  5: { machine: 175, cassette: 155 },
+  6: { machine: 170, cassette: 130 },
+  7: { machine: 140, cassette: 125 },
+  8: { machine: 120, cassette: 125 }
 }
 
 const DenominationsSchema = Yup.object().shape({
@@ -45,6 +49,14 @@ const getElements = (machines, locale = {}, classes) => {
     ...R.map(it => it.numberOfCassettes, machines),
     0
   )
+  const maxNumberOfStackers = Math.max(
+    ...R.map(it => it.numberOfStackers, machines),
+    0
+  )
+  const maxNumberOfCashUnits = Math.max(
+    ...R.map(it => it.numberOfCassettes + it.numberOfStackers * 2, machines),
+    0
+  )
 
   const options = getBillOptions(locale, denominations)
   const cassetteProps =
@@ -61,7 +73,7 @@ const getElements = (machines, locale = {}, classes) => {
     {
       name: 'id',
       header: 'Machine',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.machine,
+      width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.machine,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -77,7 +89,7 @@ const getElements = (machines, locale = {}, classes) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
+        width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
         suffix: fiatCurrency,
         bold: bold,
         view: it => it,
@@ -89,6 +101,52 @@ const getElements = (machines, locale = {}, classes) => {
           machines.find(({ deviceId }) => deviceId === machine.id)
             .numberOfCassettes
       })
+      return R.add(1, it)
+    },
+    1
+  )
+
+  R.until(
+    R.gt(R.__, maxNumberOfStackers),
+    it => {
+      elements.push(
+        {
+          name: `stacker${it}f`,
+          header: `Stacker ${it}F`,
+          size: 'sm',
+          stripe: true,
+          textAlign: 'right',
+          width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
+          suffix: fiatCurrency,
+          bold: bold,
+          view: it => it,
+          input: options?.length > 0 ? Autocomplete : NumberInput,
+          inputProps: cassetteProps,
+          doubleHeader: 'Denominations',
+          isHidden: machine =>
+            it >
+            machines.find(({ deviceId }) => deviceId === machine.id)
+              .numberOfStackers
+        },
+        {
+          name: `stacker${it}r`,
+          header: `Stacker ${it}R`,
+          size: 'sm',
+          stripe: true,
+          textAlign: 'right',
+          width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
+          suffix: fiatCurrency,
+          bold: bold,
+          view: it => it,
+          input: options?.length > 0 ? Autocomplete : NumberInput,
+          inputProps: cassetteProps,
+          doubleHeader: 'Denominations',
+          isHidden: machine =>
+            it >
+            machines.find(({ deviceId }) => deviceId === machine.id)
+              .numberOfStackers
+        }
+      )
       return R.add(1, it)
     },
     1
