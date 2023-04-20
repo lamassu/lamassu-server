@@ -47,7 +47,9 @@ exports.up = function (next) {
       ADD COLUMN denomination_2f INTEGER,
       ADD COLUMN denomination_2r INTEGER,
       ADD COLUMN denomination_3f INTEGER,
-      ADD COLUMN denomination_3r INTEGER`
+      ADD COLUMN denomination_3r INTEGER`,
+    `CREATE TYPE bill_destination_unit AS ENUM ('cashbox', 'stacker1f', 'stacker1r', 'stacker2f', 'stacker2r', 'stacker3f', 'stacker3r')`,
+    `ALTER TABLE bills ADD COLUMN destination_unit bill_destination_unit NOT NULL DEFAULT 'cashbox'`
   ]
 
   db.multi(sql, next)

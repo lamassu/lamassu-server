@@ -4,6 +4,7 @@ import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { MAX_NUMBER_OF_CASSETTES } from 'src/utils/constants'
+import { cashUnitCapacity, modelPrettifier } from 'src/utils/machine'
 import { defaultToZero } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
@@ -11,7 +12,6 @@ import WizardStep from './WizardStep'
 
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 535
-const CASHBOX_DEFAULT_CAPACITY = 500
 
 const CASSETTE_FIELDS = R.map(
   it => `cassette${it}`,
@@ -37,8 +37,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     R.isEmpty(cashoutSettings) || !cashoutSettings?.active
 
   const numberOfCassettes = isCashOutDisabled ? 0 : machine.numberOfCassettes
+  const numberOfStackers = machine.numberOfStackers
 
-  const LAST_STEP = numberOfCassettes + 1
+  const LAST_STEP = numberOfCassettes + numberOfStackers * 2 + 1
 
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
@@ -104,9 +105,55 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           .integer()
           .required()
           .min(0)
-          .max(CASHBOX_DEFAULT_CAPACITY)
+          .max(
+            cashUnitCapacity[machine.model].cassette,
+            `${modelPrettifier[machine.model]} maximum cassette capacity is ${
+              cashUnitCapacity[machine.model].cassette
+            } bills`
+          )
       })
     }))
+  )
+
+  const makeStackerSteps = R.pipe(
+    R.add(1),
+    R.range(1),
+    R.chain(i => [
+      {
+        type: `stacker ${i}f`,
+        schema: Yup.object().shape({
+          [`stacker${i}f`]: Yup.number()
+            .label('Bill count')
+            .positive()
+            .integer()
+            .required()
+            .min(0)
+            .max(
+              cashUnitCapacity[machine.model].stacker,
+              `${modelPrettifier[machine.model]} maximum stacker capacity is ${
+                cashUnitCapacity[machine.model].stacker
+              } bills`
+            )
+        })
+      },
+      {
+        type: `stacker ${i}r`,
+        schema: Yup.object().shape({
+          [`stacker${i}r`]: Yup.number()
+            .label('Bill count')
+            .positive()
+            .integer()
+            .required()
+            .min(0)
+            .max(
+              cashUnitCapacity[machine.model].stacker,
+              `${modelPrettifier[machine.model]} maximum stacker capacity is ${
+                cashUnitCapacity[machine.model].stacker
+              } bills`
+            )
+        })
+      }
+    ])
   )
 
   const makeInitialValues = () =>
@@ -121,16 +168,19 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         )
       : {}
 
-  const steps = R.prepend(
-    {
-      type: 'cashbox',
-      schema: Yup.object().shape({
-        wasCashboxEmptied: Yup.string().required('Select one option.')
-      }),
-      cashoutRequired: false
-    },
-    makeCassetteSteps(numberOfCassettes)
-  )
+  const steps = R.pipe(
+    R.concat(makeStackerSteps(numberOfStackers)),
+    R.concat(makeCassetteSteps(numberOfCassettes)),
+    R.concat([
+      {
+        type: 'cashbox',
+        schema: Yup.object().shape({
+          wasCashboxEmptied: Yup.string().required('Select one option.')
+        }),
+        cashoutRequired: false
+      }
+    ])
+  )([])
 
   return (
     <Modal
@@ -148,7 +198,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           name={machine?.name}
           machine={machine}
           cashoutSettings={cashoutSettings}
-          cassetteCapacity={CASHBOX_DEFAULT_CAPACITY}
           error={error}
           lastStep={isLastStep}
           steps={steps}
