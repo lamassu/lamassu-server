@@ -156,7 +156,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     ])
   )
 
-  const makeInitialValues = () =>
+  const makeCassettesInitialValues = () =>
     !R.isEmpty(cashoutSettings)
       ? R.reduce(
           (acc, value) => {
@@ -167,6 +167,22 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           R.range(1, numberOfCassettes + 1)
         )
       : {}
+
+  const makeStackersInitialValues = () =>
+    !R.isEmpty(cashoutSettings)
+      ? R.reduce(
+          (acc, value) => {
+            acc[`stacker${value}f`] = ''
+            acc[`stacker${value}r`] = ''
+            return acc
+          },
+          {},
+          R.range(1, numberOfStackers + 1)
+        )
+      : {}
+
+  const makeInitialValues = () =>
+    R.merge(makeCassettesInitialValues(), makeStackersInitialValues())
 
   const steps = R.pipe(
     R.concat(makeStackerSteps(numberOfStackers)),
