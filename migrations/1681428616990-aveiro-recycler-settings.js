@@ -33,7 +33,7 @@ exports.up = function (next) {
       ADD COLUMN stacker2f INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN stacker2r INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN stacker3f INTEGER NOT NULL DEFAULT 0,
-      ADD COLUMN stacker3r INTEGER NOT NULL DEFAULT 0
+      ADD COLUMN stacker3r INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN number_of_stackers INTEGER NOT NULL DEFAULT 0`,
     `ALTER TABLE cash_out_txs 
       ADD COLUMN provisioned_1f INTEGER,
