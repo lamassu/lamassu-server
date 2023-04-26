@@ -5,6 +5,7 @@ import { CashOut, CashIn } from 'src/components/inputs/cashbox/Cashbox'
 import { NumberInput, CashCassetteInput } from 'src/components/inputs/formik'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace } from 'src/utils/config'
+import { cashUnitCapacity } from 'src/utils/machine'
 
 const widthsByCashUnits = {
   2: {
@@ -121,12 +122,13 @@ const getElements = (
         width: widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.cassette,
         stripe: true,
         doubleHeader: 'Cash-out',
-        view: (_, { id, cashUnits }) => (
+        view: (_, { id, model, cashUnits }) => (
           <CashOut
             className={classes.cashbox}
             denomination={getCashoutSettings(id)?.[`cassette${it}`]}
             currency={{ code: fiatCurrency }}
             notes={cashUnits[`cassette${it}`]}
+            capacity={cashUnitCapacity[model].cassette}
             width={
               widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.unitGraph
             }
@@ -158,12 +160,13 @@ const getElements = (
           header: `Stacker ${it}F`,
           width: widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.cassette,
           stripe: true,
-          view: (_, { id, cashUnits }) => (
+          view: (_, { id, model, cashUnits }) => (
             <CashOut
               className={classes.cashbox}
               denomination={getCashoutSettings(id)?.[`stacker${it}f`]}
               currency={{ code: fiatCurrency }}
               notes={cashUnits[`stacker${it}f`]}
+              capacity={cashUnitCapacity[model].stacker}
               width={
                 widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.unitGraph
               }
@@ -186,12 +189,13 @@ const getElements = (
           header: `Stacker ${it}R`,
           width: widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.cassette,
           stripe: true,
-          view: (_, { id, cashUnits }) => (
+          view: (_, { id, model, cashUnits }) => (
             <CashOut
               className={classes.cashbox}
               denomination={getCashoutSettings(id)?.[`stacker${it}r`]}
               currency={{ code: fiatCurrency }}
               notes={cashUnits[`stacker${it}r`]}
+              capacity={cashUnitCapacity[model].stacker}
               width={
                 widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.unitGraph
               }
