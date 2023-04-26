@@ -166,7 +166,12 @@ const getElements = (
               denomination={getCashoutSettings(id)?.[`stacker${it}f`]}
               currency={{ code: fiatCurrency }}
               notes={cashUnits[`stacker${it}f`]}
-              capacity={cashUnitCapacity[model].stacker}
+              capacity={
+                it === 1
+                  ? cashUnitCapacity[model].stacker -
+                    cashUnitCapacity[model].escrow
+                  : cashUnitCapacity[model].stacker
+              }
               width={
                 widthsByCashUnits[getMaxNumberOfCashUnits(machines)]?.unitGraph
               }
