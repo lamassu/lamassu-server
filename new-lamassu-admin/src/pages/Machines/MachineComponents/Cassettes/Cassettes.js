@@ -56,7 +56,7 @@ const ValidationSchema = Yup.object().shape({
     .required('Required')
     .integer()
     .min(0)
-    .max(60),
+    .max(40),
   stacker1r: Yup.number()
     .label('Stacker 1R')
     .required('Required')
