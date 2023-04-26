@@ -15,6 +15,7 @@ const cashUnitCapacity = {
   aveiro: {
     cashbox: 1500,
     stacker: 60,
+    escrow: 20,
     cassette: 500
   },
   tejo: {

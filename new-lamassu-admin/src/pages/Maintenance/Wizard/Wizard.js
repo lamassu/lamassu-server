@@ -129,10 +129,21 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
             .required()
             .min(0)
             .max(
-              cashUnitCapacity[machine.model].stacker,
-              `${modelPrettifier[machine.model]} maximum stacker capacity is ${
-                cashUnitCapacity[machine.model].stacker
-              } bills`
+              i === 1
+                ? cashUnitCapacity[machine.model].stacker -
+                    cashUnitCapacity[machine.model].escrow
+                : cashUnitCapacity[machine.model].stacker,
+              i === 1
+                ? `${
+                    modelPrettifier[machine.model]
+                  } maximum stacker capacity for the escrow unit is ${cashUnitCapacity[
+                    machine.model
+                  ].stacker - cashUnitCapacity[machine.model].escrow} bills`
+                : `${
+                    modelPrettifier[machine.model]
+                  } maximum stacker capacity is ${
+                    cashUnitCapacity[machine.model].stacker
+                  } bills`
             )
         })
       },
