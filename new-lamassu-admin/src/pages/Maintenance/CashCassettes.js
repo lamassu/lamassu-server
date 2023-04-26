@@ -3,7 +3,6 @@ import { DialogActions, makeStyles, Box } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useState } from 'react'
-import * as Yup from 'yup'
 
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Modal from 'src/components/Modal'
@@ -27,76 +26,6 @@ import Wizard from './Wizard/Wizard'
 import helper from './helper'
 
 const useStyles = makeStyles(styles)
-
-const ValidationSchema = Yup.object().shape({
-  name: Yup.string().required(),
-  cashbox: Yup.number()
-    .label('Cash box')
-    .required()
-    .integer()
-    .min(0)
-    .max(1000),
-  cassette1: Yup.number()
-    .label('Cassette 1')
-    .required()
-    .integer()
-    .min(0)
-    .max(500),
-  cassette2: Yup.number()
-    .label('Cassette 2')
-    .required()
-    .integer()
-    .min(0)
-    .max(500),
-  cassette3: Yup.number()
-    .label('Cassette 3')
-    .required()
-    .integer()
-    .min(0)
-    .max(500),
-  cassette4: Yup.number()
-    .label('Cassette 4')
-    .required()
-    .integer()
-    .min(0)
-    .max(500),
-  stacker1f: Yup.number()
-    .label('Stacker 1F')
-    .required('Required')
-    .integer()
-    .min(0)
-    .max(60),
-  stacker1r: Yup.number()
-    .label('Stacker 1R')
-    .required('Required')
-    .integer()
-    .min(0)
-    .max(60),
-  stacker2f: Yup.number()
-    .label('Stacker 2F')
-    .required('Required')
-    .integer()
-    .min(0)
-    .max(60),
-  stacker2r: Yup.number()
-    .label('Stacker 2R')
-    .required('Required')
-    .integer()
-    .min(0)
-    .max(60),
-  stacker3f: Yup.number()
-    .label('Stacker 3F')
-    .required('Required')
-    .integer()
-    .min(0)
-    .max(60),
-  stacker3r: Yup.number()
-    .label('Stacker 3R')
-    .required('Required')
-    .integer()
-    .min(0)
-    .max(60)
-})
 
 const GET_MACHINES_AND_CONFIG = gql`
   query getData($billFilters: JSONObject) {
@@ -327,7 +256,6 @@ const CashCassettes = () => {
               stripeWhen={isCashOutDisabled}
               elements={nonStackerElements}
               data={nonStackerMachines}
-              validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />
 
@@ -337,7 +265,6 @@ const CashCassettes = () => {
               stripeWhen={isCashOutDisabled}
               elements={stackerElements}
               data={stackerMachines}
-              validationSchema={ValidationSchema}
               tbodyWrapperClass={classes.tBody}
             />
 
