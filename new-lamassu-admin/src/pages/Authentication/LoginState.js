@@ -200,7 +200,7 @@ const LoginState = ({ state, dispatch, strategy }) => {
                 assertionQueryError ||
                 userDataQueryError
             ) && (
-              <P className={classes.errorMessage}>
+              <P className={classes.errorMessage} id={'p-errorMessage'}>
                 {getErrorMsg(
                   errors,
                   touched,
@@ -225,14 +225,16 @@ const LoginState = ({ state, dispatch, strategy }) => {
                       })
                 }}
                 buttonClassName={classes.loginButton}
-                className={classes.fidoLoginButtonWrapper}>
+                className={classes.fidoLoginButtonWrapper}
+                id={'button-hardwareKey'}>
                 I have a hardware key
               </Button>
             )}
             <Button
               type="submit"
               form="login-form"
-              buttonClassName={classes.loginButton}>
+              buttonClassName={classes.loginButton}
+              id={'button-login'}>
               Login
             </Button>
           </div>
