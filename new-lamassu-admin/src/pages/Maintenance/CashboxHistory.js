@@ -26,8 +26,7 @@ const GET_BATCHES = gql`
       performedBy
       bills {
         fiat
-        deviceId
-        created
+        fiatCode
       }
     }
   }
@@ -71,6 +70,8 @@ const CashboxHistory = ({ machines, currency, timezone }) => {
   const [editing, setEditing] = useState(false) */
 
   const { data: batchesData, loading: batchesLoading } = useQuery(GET_BATCHES)
+
+  console.log(batchesData)
 
   /* const [editBatch] = useMutation(EDIT_BATCH, {
     refetchQueries: () => ['cashboxBatches']
