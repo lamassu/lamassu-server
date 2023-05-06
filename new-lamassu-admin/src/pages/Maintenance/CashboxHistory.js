@@ -71,8 +71,6 @@ const CashboxHistory = ({ machines, currency, timezone }) => {
 
   const { data: batchesData, loading: batchesLoading } = useQuery(GET_BATCHES)
 
-  console.log(batchesData)
-
   /* const [editBatch] = useMutation(EDIT_BATCH, {
     refetchQueries: () => ['cashboxBatches']
   }) */
