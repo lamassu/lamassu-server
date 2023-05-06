@@ -26,9 +26,10 @@ const DenominationsSchema = Yup.object().shape({
     .max(CURRENCY_MAX),
   cassette2: Yup.number()
     .label('Cassette 2')
-    .required()
     .min(1)
-    .max(CURRENCY_MAX),
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
   cassette3: Yup.number()
     .label('Cassette 3')
     .min(1)
