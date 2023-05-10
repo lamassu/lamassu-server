@@ -235,12 +235,12 @@ const getSchema = locale => {
   return Yup.object().shape({
     cashIn: Yup.number()
       .label('Cash-in')
-      .min(-15)
+      .min(0)
       .max(percentMax)
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(-15)
+      .min(0)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
