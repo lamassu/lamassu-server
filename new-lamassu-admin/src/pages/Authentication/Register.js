@@ -127,6 +127,11 @@ const Register = () => {
   )
 
   const [register, { error: mutationError }] = useMutation(REGISTER, {
+    context: {
+      headers: {
+        'Pazuz-Operator-Identifier': identifier
+      }
+    },
     onCompleted: ({ register: success }) => {
       if (success) history.push('/wizard', { fromAuthRegister: true })
     }

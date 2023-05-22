@@ -78,7 +78,7 @@ const CreateUserModal = ({ state, dispatch }) => {
       const queryParams =
         // Pazuz-created register tokens add a field to identify the creator
         process.env.REACT_APP_BUILD_TARGET === 'LAMASSU'
-          ? `t=${token.token}`
+          ? `t=${token.token}&id=${base64.encode(usernameField)}`
           : `t=${token.token}&id=${base64.encode(usernameField)}`
       setCreateUserURL(urlResolver(`/register?${queryParams}`))
     }

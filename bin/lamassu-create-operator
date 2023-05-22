@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+
+require('../lib/environment-helper')
+
+const cp = require('child_process')
+const path = require('path')
+const uuid = require('uuid')
+const base64 = require('base-64')
+
+const userManagement = require('../lib/new-admin/graphql/modules/userManagement')
+const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
+const { createOperator } = require('../lib/ultralight/queries')
+
+
+const name = process.argv[2]
+const schema = process.argv[3]
+const email = process.argv[4]
+const domain = process.env.HOSTNAME
+
+if (!name || !schema || !email) {
+  console.log('Usage: lamassu-create-operator <name> <schema> <email>')
+  process.exit(2)
+}
+
+const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+if (!emailRegex.test(email)) {
+  console.log('Usage: <email> must be in an email format')
+  process.exit(2)
+}
+
+const store = defaultStore()
+store.set('schema', schema)
+asyncLocalStorage.run(store, () => {
+  const operatorId = uuid.v4()
+  const context = { 
+    res: {
+      locals: {
+        operatorId
+      }
+    }
+  }
+
+  createOperator(operatorId, name, schema, email)
+    .then(() => {
+      const dir = path.resolve(__dirname)
+      try {
+        cp.execSync(`${dir}/lamassu-migrate ${schema}`)
+      } catch (err) {
+        console.log(err)
+      }
+
+      userManagement.createRegisterToken(email, 'superuser', context).then(token => {
+        if (domain === 'localhost' && process.env.NODE_ENV !== 'production') {
+          console.log(`https://${domain}:3001/register?t=${token.token}&id=${base64.encode(email)}`)
+        } else {
+          console.log(`https://${domain}/register?t=${token.token}&id=${base64.encode(email)}`)
+        }
+
+        process.exit(0)
+      }).catch(err => {
+        console.log('Error: %s', err)
+        process.exit(3)
+      })
+    })
+})
