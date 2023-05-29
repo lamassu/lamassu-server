@@ -120,6 +120,7 @@ const ActionCol = ({ disabled, editing }) => {
 const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
   const {
     name,
+    names,
     bypassField,
     input,
     editable = true,
@@ -128,6 +129,8 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     width,
     textAlign,
     editingAlign = textAlign,
+    prefix,
+    PrefixComponent = Label2,
     suffix,
     SuffixComponent = Label2,
     textStyle = it => {},
@@ -135,6 +138,8 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
     view = it => it?.toString(),
     inputProps = {}
   } = config
+
+  const fields = names ?? [name]
 
   const { values } = useFormikContext()
   const isEditable = editable => {
@@ -159,36 +164,48 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
   }
 
   return (
-    <Td
-      className={{
-        [classes.extraPaddingRight]: extraPaddingRight,
-        [classes.extraPadding]: extraPadding,
-        [classes.withSuffix]: suffix
-      }}
-      width={width}
-      size={size}
-      bold={bold}
-      textAlign={textAlign}>
-      {isEditing && isField && !isHidden(values) && (
-        <Field name={name} component={input} {...innerProps} />
-      )}
-      {isEditing && !isField && !isHidden(values) && (
-        <config.input name={name} />
-      )}
-      {!isEditing && values && !isHidden(values) && (
-        <div style={textStyle(values, isEditing)}>
-          {view(values[name], values)}
-        </div>
-      )}
-      {suffix && !isHidden(values) && (
-        <SuffixComponent
-          className={classes.suffix}
-          style={isEditing ? {} : textStyle(values, isEditing)}>
-          {suffix}
-        </SuffixComponent>
-      )}
-      {isHidden(values) && <StripesSvg />}
-    </Td>
+    <div className={classes.fields}>
+      {R.map(f => (
+        <Td
+          className={{
+            [classes.extraPaddingRight]: extraPaddingRight,
+            [classes.extraPadding]: extraPadding,
+            [classes.withSuffix]: suffix,
+            [classes.withPrefix]: prefix
+          }}
+          width={width}
+          size={size}
+          bold={bold}
+          textAlign={textAlign}>
+          {prefix && !isHidden(values) && (
+            <PrefixComponent
+              className={classes.prefix}
+              style={isEditing ? {} : textStyle(values, isEditing)}>
+              {typeof prefix === 'function' ? prefix(f) : prefix}
+            </PrefixComponent>
+          )}
+          {isEditing && isField && !isHidden(values) && (
+            <Field name={f} component={input} {...innerProps} />
+          )}
+          {isEditing && !isField && !isHidden(values) && (
+            <config.input name={f} />
+          )}
+          {!isEditing && values && !isHidden(values) && (
+            <div style={textStyle(values, isEditing)}>
+              {view(values[f], values)}
+            </div>
+          )}
+          {suffix && !isHidden(values) && (
+            <SuffixComponent
+              className={classes.suffix}
+              style={isEditing ? {} : textStyle(values, isEditing)}>
+              {suffix}
+            </SuffixComponent>
+          )}
+          {isHidden(values) && <StripesSvg />}
+        </Td>
+      ))(fields)}
+    </div>
   )
 }
 

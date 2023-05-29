@@ -14,8 +14,7 @@ const widthsByNumberOfCassettes = {
   4: { machine: 195, cassette: 190 },
   5: { machine: 175, cassette: 155 },
   6: { machine: 170, cassette: 130 },
-  7: { machine: 140, cassette: 125 },
-  8: { machine: 120, cassette: 125 }
+  7: { machine: 140, cassette: 125 }
 }
 
 const DenominationsSchema = Yup.object().shape({
@@ -41,6 +40,42 @@ const DenominationsSchema = Yup.object().shape({
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
+    .transform(transformNumber),
+  stacker1f: Yup.number()
+    .label('Stacker 1')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker1r: Yup.number()
+    .label('Stacker 1')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker2f: Yup.number()
+    .label('Stacker 2')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker2r: Yup.number()
+    .label('Stacker 2')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker3f: Yup.number()
+    .label('Stacker 3')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker3r: Yup.number()
+    .label('Stacker 3')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
     .transform(transformNumber)
 })
 
@@ -55,7 +90,7 @@ const getElements = (machines, locale = {}, classes) => {
     0
   )
   const maxNumberOfCashUnits = Math.max(
-    ...R.map(it => it.numberOfCassettes + it.numberOfStackers * 2, machines),
+    ...R.map(it => it.numberOfCassettes + it.numberOfStackers, machines),
     0
   )
 
@@ -96,7 +131,7 @@ const getElements = (machines, locale = {}, classes) => {
         view: it => it,
         input: options?.length > 0 ? Autocomplete : NumberInput,
         inputProps: cassetteProps,
-        doubleHeader: 'Denominations',
+        doubleHeader: 'Denominations of Cassettes & Recyclers',
         isHidden: machine =>
           it >
           machines.find(({ deviceId }) => deviceId === machine.id)
@@ -110,44 +145,24 @@ const getElements = (machines, locale = {}, classes) => {
   R.until(
     R.gt(R.__, maxNumberOfStackers),
     it => {
-      elements.push(
-        {
-          name: `stacker${it}f`,
-          header: `Stacker ${it}F`,
-          size: 'sm',
-          stripe: true,
-          textAlign: 'right',
-          width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
-          suffix: fiatCurrency,
-          bold: bold,
-          view: it => it,
-          input: options?.length > 0 ? Autocomplete : NumberInput,
-          inputProps: cassetteProps,
-          doubleHeader: 'Denominations',
-          isHidden: machine =>
-            it >
-            machines.find(({ deviceId }) => deviceId === machine.id)
-              .numberOfStackers
-        },
-        {
-          name: `stacker${it}r`,
-          header: `Stacker ${it}R`,
-          size: 'sm',
-          stripe: true,
-          textAlign: 'right',
-          width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
-          suffix: fiatCurrency,
-          bold: bold,
-          view: it => it,
-          input: options?.length > 0 ? Autocomplete : NumberInput,
-          inputProps: cassetteProps,
-          doubleHeader: 'Denominations',
-          isHidden: machine =>
-            it >
-            machines.find(({ deviceId }) => deviceId === machine.id)
-              .numberOfStackers
-        }
-      )
+      elements.push({
+        names: [`stacker${it}f`, `stacker${it}r`],
+        header: `Stacker ${it}`,
+        size: 'sm',
+        stripe: true,
+        textAlign: 'right',
+        width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
+        prefix: it => (R.last(it) === 'f' ? 'F' : 'R'),
+        suffix: fiatCurrency,
+        bold: bold,
+        input: options?.length > 0 ? Autocomplete : NumberInput,
+        inputProps: cassetteProps,
+        doubleHeader: 'Denominations of Cassettes & Recyclers',
+        isHidden: machine =>
+          it >
+          machines.find(({ deviceId }) => deviceId === machine.id)
+            .numberOfStackers
+      })
       return R.add(1, it)
     },
     1
