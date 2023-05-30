@@ -7,10 +7,10 @@ import React, { useState } from 'react'
 import LogsDowloaderPopover from 'src/components/LogsDownloaderPopper'
 import Modal from 'src/components/Modal'
 import { IconButton, Button } from 'src/components/buttons'
-import { Table as EditableTable } from 'src/components/editableTable'
 import { RadioGroup } from 'src/components/inputs'
 import TitleSection from 'src/components/layout/TitleSection'
 import { EmptyTable } from 'src/components/table'
+import DataTable from 'src/components/tables/DataTable'
 import { P, Label1 } from 'src/components/typography'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { ReactComponent as ReverseHistoryIcon } from 'src/styling/icons/circle buttons/history/white.svg'
@@ -19,8 +19,9 @@ import { fromNamespace, toNamespace } from 'src/utils/config'
 import { MANUAL, AUTOMATIC } from 'src/utils/constants'
 import { onlyFirstToUpper } from 'src/utils/string'
 
-import styles from './CashCassettes.styles'
-import CashCassettesFooter from './CashCassettesFooter'
+import CashUnitDetails from './CashUnitDetails'
+import styles from './CashUnits.styles'
+import CashCassettesFooter from './CashUnitsFooter'
 import CashboxHistory from './CashboxHistory'
 import Wizard from './Wizard/Wizard'
 import helper from './helper'
@@ -117,9 +118,6 @@ const CashCassettes = () => {
   const [machineId, setMachineId] = useState('')
 
   const machines = R.path(['machines'])(data) ?? []
-  const [stackerMachines, nonStackerMachines] = R.partition(
-    it => it.numberOfStackers > 0
-  )(machines)
   const unpairedMachines = R.path(['unpairedMachines'])(data) ?? []
   const config = R.path(['config'])(data) ?? {}
   const [setCassetteBills, { error }] = useMutation(SET_CASSETTE_BILLS, {
@@ -141,7 +139,6 @@ const CashCassettes = () => {
   const fiatCurrency = locale?.fiatCurrency
 
   const getCashoutSettings = id => fromNamespace(id)(cashout)
-  const isCashOutDisabled = ({ id }) => !getCashoutSettings(id).active
 
   const onSave = (id, cashUnits) => {
     return setCassetteBills({
@@ -178,8 +175,8 @@ const CashCassettes = () => {
     setSelectedRadio(selectedRadio)
   }
 
-  const nonStackerElements = helper.getElements(
-    nonStackerMachines,
+  const elements = helper.getElements(
+    machines,
     classes,
     config,
     bills,
@@ -187,13 +184,13 @@ const CashCassettes = () => {
     setWizard
   )
 
-  const stackerElements = helper.getElements(
-    stackerMachines,
-    classes,
-    config,
-    bills,
-    setMachineId,
-    setWizard
+  const InnerCashUnitDetails = ({ it }) => (
+    <CashUnitDetails
+      machine={it}
+      bills={bills[it.id] ?? []}
+      currency={fiatCurrency}
+      config={config}
+    />
   )
 
   return (
@@ -250,22 +247,13 @@ const CashCassettes = () => {
         </TitleSection>
         {!showHistory && (
           <>
-            <EditableTable
-              error={error?.message}
-              name="cashboxes"
-              stripeWhen={isCashOutDisabled}
-              elements={nonStackerElements}
-              data={nonStackerMachines}
-              tbodyWrapperClass={classes.tBody}
-            />
-
-            <EditableTable
-              error={error?.message}
-              name="recyclerCashboxes"
-              stripeWhen={isCashOutDisabled}
-              elements={stackerElements}
-              data={stackerMachines}
-              tbodyWrapperClass={classes.tBody}
+            <DataTable
+              loading={dataLoading}
+              elements={elements}
+              data={machines}
+              Details={InnerCashUnitDetails}
+              emptyText="No machines so far"
+              expandable
             />
 
             {data && R.isEmpty(machines) && (
