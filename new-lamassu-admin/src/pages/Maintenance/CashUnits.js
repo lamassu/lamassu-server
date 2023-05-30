@@ -101,6 +101,13 @@ const GET_BATCHES_CSV = gql`
   }
 `
 
+const widths = {
+  name: 250,
+  cashbox: 200,
+  cassettes: 575,
+  edit: 90
+}
+
 const CashCassettes = () => {
   const classes = useStyles()
   const [showHistory, setShowHistory] = useState(false)
@@ -176,12 +183,12 @@ const CashCassettes = () => {
   }
 
   const elements = helper.getElements(
-    machines,
     classes,
     config,
     bills,
-    setMachineId,
-    setWizard
+    setWizard,
+    widths,
+    setMachineId
   )
 
   const InnerCashUnitDetails = ({ it }) => (
