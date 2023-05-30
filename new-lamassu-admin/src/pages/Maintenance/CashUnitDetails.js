@@ -39,7 +39,7 @@ const styles = {
   billList: ({ hideMachineData }) => ({
     display: 'flex',
     flexDirection: 'column',
-    minWidth: hideMachineData ? 80 : 160,
+    minWidth: hideMachineData ? 60 : 160,
     '& > span': {
       display: 'flex',
       flexDirection: 'row',
@@ -126,7 +126,11 @@ const CashUnitDetails = ({
                   height={40}
                   currency={{ code: currency }}
                   notes={machine.cashUnits[`cassette${it}`]}
-                  denomination={getCashoutSettings(machine.id)[`cassette${it}`]}
+                  denomination={
+                    getCashoutSettings(machine.id ?? machine.deviceId)[
+                      `cassette${it}`
+                    ]
+                  }
                   threshold={
                     fillingPercentageSettings[`fillingPercentageCassette${it}`]
                   }
@@ -152,7 +156,9 @@ const CashUnitDetails = ({
                     currency={{ code: currency }}
                     notes={machine.cashUnits[`cassette${it}`]}
                     denomination={
-                      getCashoutSettings(machine.id)[`cassette${it}`]
+                      getCashoutSettings(machine.id ?? machine.deviceId)[
+                        `cassette${it}`
+                      ]
                     }
                     threshold={
                       fillingPercentageSettings[
@@ -178,7 +184,9 @@ const CashUnitDetails = ({
                       currency={{ code: currency }}
                       notes={machine.cashUnits[`stacker${it}f`]}
                       denomination={
-                        getCashoutSettings(machine.id)[`stacker${it}f`]
+                        getCashoutSettings(machine.id ?? machine.deviceId)[
+                          `stacker${it}f`
+                        ]
                       }
                       threshold={
                         fillingPercentageSettings[
@@ -193,7 +201,9 @@ const CashUnitDetails = ({
                       currency={{ code: currency }}
                       notes={machine.cashUnits[`stacker${it}r`]}
                       denomination={
-                        getCashoutSettings(machine.id)[`stacker${it}r`]
+                        getCashoutSettings(machine.id ?? machine.deviceId)[
+                          `stacker${it}r`
+                        ]
                       }
                       threshold={
                         fillingPercentageSettings[
