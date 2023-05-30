@@ -109,7 +109,7 @@ const Machines = ({ data, refetch, reload }) => {
 
   const machine = R.path(['machine'])(data) ?? {}
   const config = R.path(['config'])(data) ?? {}
-  const bills = R.path(['bills'])(data) ?? []
+  const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
 
   const machineName = R.path(['name'])(machine) ?? null
   const machineID = R.path(['deviceId'])(machine) ?? null
