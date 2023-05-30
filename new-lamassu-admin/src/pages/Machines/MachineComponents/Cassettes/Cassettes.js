@@ -65,20 +65,19 @@ const CashCassettes = ({ machine, config, refetchData, bills }) => {
     refetchQueries: () => refetchData()
   })
 
-  const onSave = (_, cashbox, cassettes) =>
+  const onSave = (_, cashUnits) =>
     setCassetteBills({
       variables: {
         action: 'setCassetteBills',
         deviceId: machine.deviceId,
-        cashbox,
-        ...cassettes
+        cashUnits
       }
     })
 
   const InnerCashUnitDetails = ({ it }) => (
     <CashUnitDetails
       machine={it}
-      bills={bills[it.id] ?? []}
+      bills={bills[it.deviceId] ?? []}
       currency={fiatCurrency}
       config={config}
       hideMachineData

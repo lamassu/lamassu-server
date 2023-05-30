@@ -14,6 +14,7 @@ const getElements = (
   widths,
   setMachineId
 ) => {
+  console.log(config)
   const fillingPercentageSettings = fromNamespace('notifications', config)
   const locale = fromNamespace('locale')(config)
   const cashout = fromNamespace('cashOut')(config)
@@ -37,7 +38,7 @@ const getElements = (
         <CashIn
           currency={{ code: fiatCurrency }}
           notes={m.cashUnits.cashbox}
-          total={R.sum(R.map(it => it.fiat, bills[m.id] ?? []))}
+          total={R.sum(R.map(it => it.fiat, bills[m.id ?? m.deviceId] ?? []))}
           width={25}
           height={45}
           omitInnerPercentage
@@ -61,7 +62,9 @@ const getElements = (
                   width={'100%'}
                   currency={{ code: fiatCurrency }}
                   notes={m.cashUnits[`cassette${it}`]}
-                  denomination={getCashoutSettings(m.id)[`cassette${it}`]}
+                  denomination={
+                    getCashoutSettings(m.id ?? m.deviceId)[`cassette${it}`]
+                  }
                   threshold={
                     fillingPercentageSettings[`fillingPercentageCassette${it}`]
                   }
@@ -76,7 +79,9 @@ const getElements = (
                     width={'100%'}
                     currency={{ code: fiatCurrency }}
                     notes={m.cashUnits[`stacker${it}f`]}
-                    denomination={getCashoutSettings(m.id)[`stacker${it}f`]}
+                    denomination={
+                      getCashoutSettings(m.id ?? m.deviceId)[`stacker${it}f`]
+                    }
                     threshold={
                       fillingPercentageSettings[
                         `fillingPercentageStacker${it}f`
@@ -88,7 +93,9 @@ const getElements = (
                     width={'100%'}
                     currency={{ code: fiatCurrency }}
                     notes={m.cashUnits[`stacker${it}r`]}
-                    denomination={getCashoutSettings(m.id)[`stacker${it}r`]}
+                    denomination={
+                      getCashoutSettings(m.id ?? m.deviceId)[`stacker${it}r`]
+                    }
                     threshold={
                       fillingPercentageSettings[
                         `fillingPercentageStacker${it}r`
@@ -118,7 +125,7 @@ const getElements = (
         return (
           <IconButton
             onClick={() => {
-              !R.isNil(setMachineId) && setMachineId(m.id)
+              !R.isNil(setMachineId) && setMachineId(m.id ?? m.deviceId)
               setWizard(true)
             }}>
             <EditIcon />
