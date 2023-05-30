@@ -9,7 +9,8 @@ import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-ou
 import { fromNamespace } from 'src/utils/config'
 import { numberToFiatAmount } from 'src/utils/number.js'
 
-import styles from './CashCassettesFooter.styles.js'
+import styles from './CashUnitsFooter.styles.js'
+
 const useStyles = makeStyles(styles)
 
 const CashCassettesFooter = ({
