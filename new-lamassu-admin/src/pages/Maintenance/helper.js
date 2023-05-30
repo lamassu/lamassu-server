@@ -7,12 +7,12 @@ import { fromNamespace } from 'src/utils/config'
 import { cashUnitCapacity } from 'src/utils/machine'
 
 const getElements = (
-  machines,
   classes,
   config,
   bills,
-  setMachineId,
-  setWizard
+  setWizard,
+  widths,
+  setMachineId
 ) => {
   const fillingPercentageSettings = fromNamespace('notifications', config)
   const locale = fromNamespace('locale')(config)
@@ -25,14 +25,14 @@ const getElements = (
     {
       name: 'name',
       header: 'Machine',
-      width: 250,
+      width: widths.name,
       view: m => <>{m.name}</>,
       input: ({ field: { value: name } }) => <>{name}</>
     },
     {
       name: 'cashbox',
       header: 'Cashbox',
-      width: 200,
+      width: widths.cashbox,
       view: m => (
         <CashIn
           currency={{ code: fiatCurrency }}
@@ -51,7 +51,7 @@ const getElements = (
     {
       name: 'cassettes',
       header: 'Cassettes & Recyclers',
-      width: 575,
+      width: widths.cassettes,
       view: m => {
         return (
           <div className={classes.unitsRow}>
@@ -112,13 +112,13 @@ const getElements = (
     {
       name: 'edit',
       header: 'Edit',
-      width: 90,
+      width: widths.edit,
       textAlign: 'center',
       view: m => {
         return (
           <IconButton
             onClick={() => {
-              setMachineId(m.id)
+              !R.isNil(setMachineId) && setMachineId(m.id)
               setWizard(true)
             }}>
             <EditIcon />

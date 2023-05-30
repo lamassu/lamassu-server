@@ -36,10 +36,10 @@ const styles = {
     flexDirection: 'column',
     minWidth: 210
   },
-  billList: {
+  billList: ({ hideMachineData }) => ({
     display: 'flex',
     flexDirection: 'column',
-    minWidth: 160,
+    minWidth: hideMachineData ? 80 : 160,
     '& > span': {
       display: 'flex',
       flexDirection: 'row',
@@ -48,7 +48,7 @@ const styles = {
         minWidth: 30
       }
     }
-  },
+  }),
   unitList: {
     display: 'flex',
     flexDirection: 'row',
@@ -82,8 +82,14 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const CashUnitDetails = ({ machine, bills, currency, config }) => {
-  const classes = useStyles()
+const CashUnitDetails = ({
+  machine,
+  bills,
+  currency,
+  config,
+  hideMachineData = false
+}) => {
+  const classes = useStyles({ hideMachineData })
   const billCount = R.countBy(it => it.fiat)(bills)
   const fillingPercentageSettings = fromNamespace('notifications', config)
   const cashout = fromNamespace('cashOut')(config)
@@ -91,10 +97,12 @@ const CashUnitDetails = ({ machine, bills, currency, config }) => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.machineData}>
-        <Label1>Machine Model</Label1>
-        <span>{modelPrettifier[machine.model]}</span>
-      </div>
+      {!hideMachineData && (
+        <div className={classes.machineData}>
+          <Label1>Machine Model</Label1>
+          <span>{modelPrettifier[machine.model]}</span>
+        </div>
+      )}
       <div className={classes.billList}>
         <Label1>Cash box</Label1>
         {R.isEmpty(billCount) && <TL2 noMargin>Empty</TL2>}
