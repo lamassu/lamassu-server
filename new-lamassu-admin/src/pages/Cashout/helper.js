@@ -8,13 +8,13 @@ import { getBillOptions } from 'src/utils/bill-options'
 import { CURRENCY_MAX } from 'src/utils/constants'
 import { transformNumber } from 'src/utils/number'
 
-const widthsByNumberOfCassettes = {
-  2: { machine: 320, cassette: 315 },
-  3: { machine: 305, cassette: 215 },
-  4: { machine: 195, cassette: 190 },
-  5: { machine: 175, cassette: 155 },
-  6: { machine: 170, cassette: 130 },
-  7: { machine: 140, cassette: 125 }
+const widthsByNumberOfUnits = {
+  2: { machine: 325, cassette: 340 },
+  3: { machine: 300, cassette: 235 },
+  4: { machine: 205, cassette: 200 },
+  5: { machine: 180, cassette: 165 },
+  6: { machine: 165, cassette: 140 },
+  7: { machine: 130, cassette: 125 }
 }
 
 const DenominationsSchema = Yup.object().shape({
@@ -89,10 +89,7 @@ const getElements = (machines, locale = {}, classes) => {
     ...R.map(it => it.numberOfStackers, machines),
     0
   )
-  const maxNumberOfCashUnits = Math.max(
-    ...R.map(it => it.numberOfCassettes + it.numberOfStackers, machines),
-    0
-  )
+  const numberOfCashUnits = maxNumberOfCassettes + maxNumberOfStackers
 
   const options = getBillOptions(locale, denominations)
   const cassetteProps =
@@ -109,7 +106,7 @@ const getElements = (machines, locale = {}, classes) => {
     {
       name: 'id',
       header: 'Machine',
-      width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.machine,
+      width: widthsByNumberOfUnits[numberOfCashUnits]?.machine,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -125,7 +122,7 @@ const getElements = (machines, locale = {}, classes) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
+        width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
         suffix: fiatCurrency,
         bold: bold,
         view: it => it,
@@ -151,7 +148,7 @@ const getElements = (machines, locale = {}, classes) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: widthsByNumberOfCassettes[maxNumberOfCashUnits]?.cassette,
+        width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
         prefix: it => (R.last(it) === 'f' ? 'F' : 'R'),
         suffix: fiatCurrency,
         bold: bold,
