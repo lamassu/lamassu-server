@@ -122,9 +122,9 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           data={config}
           stripeWhen={wasNeverEnabled}
           enableEdit
-          editWidth={134}
+          editWidth={95}
           enableToggle
-          toggleWidth={109}
+          toggleWidth={100}
           onToggle={onToggle}
           save={save}
           error={error?.message}
