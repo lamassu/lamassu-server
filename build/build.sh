@@ -6,8 +6,8 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-docker build --rm --build-arg VERSION=$1 --tag l-s-prepackage:$1 --file Dockerfile .
+docker build --rm --build-arg VERSION=$1 --tag l-s-prepackage:ultra-light --file Dockerfile .
 
-id=$(docker create l-s-prepackage:$1)
-docker cp $id:/lamassu/lamassu-server-$1.tar.gz ./lamassu-server-$1.tar.gz
+id=$(docker create l-s-prepackage:ultra-light)
+docker cp $id:/lamassu/lamassu-server-ultralight.tar.gz ./lamassu-server-ultralight.tar.gz
 docker rm -v $id

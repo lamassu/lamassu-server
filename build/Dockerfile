@@ -31,6 +31,6 @@ RUN cd lamassu-server/new-lamassu-admin && npm install && npm run build
 RUN cp -r /lamassu/lamassu-server/new-lamassu-admin/build/* /lamassu/lamassu-server/public
 RUN rm -rf /lamassu/lamassu-server/new-lamassu-admin/node_modules
 
-RUN tar -zcvf lamassu-server-$SERVER_VERSION.tar.gz lamassu-server/
+RUN tar -zcvf lamassu-server-ultralight.tar.gz lamassu-server/
 
 ENTRYPOINT [ "/bin/bash" ]
