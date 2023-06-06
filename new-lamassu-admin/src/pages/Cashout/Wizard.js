@@ -17,7 +17,8 @@ const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 520
 
 const Wizard = ({ machine, locale, onClose, save, error }) => {
-  const LAST_STEP = machine.numberOfCassettes + 1
+  // Each stacker counts as two steps, one for front and another for rear
+  const LAST_STEP = machine.numberOfCassettes + machine.numberOfStackers * 2 + 1
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
@@ -46,37 +47,105 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     })
   }
 
-  const steps = R.map(
-    it => ({
-      type: `cassette${it}`,
-      display: `Cassette ${it}`,
-      component: Autocomplete,
-      inputProps: {
-        options: options,
-        labelProp: 'display',
-        valueProp: 'code'
-      }
-    }),
-    R.range(1, machine.numberOfCassettes + 1)
+  const steps = R.concat(
+    R.map(
+      it => ({
+        type: `cassette${it}`,
+        display: `Cassette ${it}`,
+        component: Autocomplete,
+        inputProps: {
+          options: options,
+          labelProp: 'display',
+          valueProp: 'code'
+        }
+      }),
+      R.range(1, machine.numberOfCassettes + 1)
+    ),
+    R.chain(
+      it => [
+        {
+          type: `stacker${it}f`,
+          display: `Stacker ${it}F`,
+          component: Autocomplete,
+          inputProps: {
+            options: options,
+            labelProp: 'display',
+            valueProp: 'code'
+          }
+        },
+        {
+          type: `stacker${it}r`,
+          display: `Stacker ${it}R`,
+          component: Autocomplete,
+          inputProps: {
+            options: options,
+            labelProp: 'display',
+            valueProp: 'code'
+          }
+        }
+      ],
+      R.range(1, machine.numberOfStackers + 1)
+    )
   )
 
   const schema = () =>
     Yup.object().shape({
-      cassette1: Yup.number().required(),
+      cassette1:
+        machine.numberOfCassettes >= 1 && step >= 1
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
       cassette2:
-        machine.numberOfCassettes > 1 && step >= 2
+        machine.numberOfCassettes >= 2 && step >= 2
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
       cassette3:
-        machine.numberOfCassettes > 2 && step >= 3
+        machine.numberOfCassettes >= 3 && step >= 3
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
       cassette4:
-        machine.numberOfCassettes > 3 && step >= 4
+        machine.numberOfCassettes >= 4 && step >= 4
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      stacker1f:
+        machine.numberOfStackers >= 1 && step >= machine.numberOfCassettes + 1
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      stacker1r:
+        machine.numberOfStackers >= 1 && step >= machine.numberOfCassettes + 2
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      stacker2f:
+        machine.numberOfStackers >= 2 && step >= machine.numberOfCassettes + 3
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      stacker2r:
+        machine.numberOfStackers >= 2 && step >= machine.numberOfCassettes + 4
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      stacker3f:
+        machine.numberOfStackers >= 3 && step >= machine.numberOfCassettes + 5
+          ? Yup.number().required()
+          : Yup.number()
+              .transform(transformNumber)
+              .nullable(),
+      stacker3r:
+        machine.numberOfStackers >= 3 && step >= machine.numberOfCassettes + 6
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)

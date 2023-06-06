@@ -185,6 +185,42 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
           }}>
           Restart Services
         </ActionButton>
+        {machine.model === 'aveiro' && (
+          <ActionButton
+            color="primary"
+            className={classes.inlineChip}
+            Icon={RebootIcon}
+            InverseIcon={RebootReversedIcon}
+            disabled={loading}
+            onClick={() => {
+              setAction({
+                command: 'emptyUnit',
+                display: 'Empty',
+                message:
+                  "Triggering this action will move all cash inside the machine towards its cashbox (if possible), allowing for the collection of cash from the machine via only its cashbox. Depending on how full the cash units are, it's possible that this action will need to be used more than once to ensure that the unit is left completely empty."
+              })
+            }}>
+            Empty Unit
+          </ActionButton>
+        )}
+        {machine.model === 'aveiro' && (
+          <ActionButton
+            color="primary"
+            className={classes.inlineChip}
+            Icon={RebootIcon}
+            InverseIcon={RebootReversedIcon}
+            disabled={loading}
+            onClick={() => {
+              setAction({
+                command: 'refillUnit',
+                display: 'Refill',
+                message:
+                  'Triggering this action will refill the stackers in this machine, by using bills present in its cassettes. This action may require manual operation of the cassettes and close attention to make sure that the denominations in the cassettes match the denominations in the stackers.'
+              })
+            }}>
+            Refill Unit
+          </ActionButton>
+        )}
       </div>
       <ConfirmDialog
         disabled={disabled}

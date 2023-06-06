@@ -19,7 +19,9 @@ const useStyles = makeStyles(styles)
 
 const CASH_IN_KEY = 'fiatBalanceAlertsCashIn'
 const CASH_OUT_KEY = 'fiatBalanceAlertsCashOut'
+const RECYCLER_STACKER_KEY = 'fiatBalanceAlertsRecyclerStacker'
 const DEFAULT_NUMBER_OF_CASSETTES = 2
+const DEFAULT_NUMBER_OF_STACKERS = 0
 const notesMin = 0
 const notesMax = 9999999
 
@@ -37,6 +39,11 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
   const maxNumberOfCassettes = Math.max(
     ...R.map(it => it.numberOfCassettes, machines),
     DEFAULT_NUMBER_OF_CASSETTES
+  )
+
+  const maxNumberOfStackers = Math.max(
+    ...R.map(it => it.numberOfStackers, machines),
+    DEFAULT_NUMBER_OF_STACKERS
   )
 
   const schema = Yup.object().shape({
@@ -157,6 +164,76 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                   </>
                 ),
                 R.times(R.identity, maxNumberOfCassettes)
+              )}
+            </div>
+          </Form>
+          <Form className={classes.form}>
+            <PromptWhenDirty />
+            <Header
+              title="Cash recycling (stackers)"
+              editing={isEditing(RECYCLER_STACKER_KEY)}
+              disabled={isDisabled(RECYCLER_STACKER_KEY)}
+              setEditing={it => setEditing(RECYCLER_STACKER_KEY, it)}
+            />
+            <div className={classes.wrapper}>
+              {R.chain(
+                it => [
+                  <>
+                    <div className={classes.row}>
+                      <Cashbox
+                        labelClassName={classes.cashboxLabel}
+                        emptyPartClassName={classes.cashboxEmptyPart}
+                        percent={
+                          values[`fillingPercentageStacker${it + 1}f`] ??
+                          data[`stacker${it + 1}f`]
+                        }
+                        applyColorVariant
+                        applyFiatBalanceAlertsStyling
+                        omitInnerPercentage
+                        cashOut
+                      />
+                      <div className={classes.col2}>
+                        <TL2 className={classes.title}>Stacker {it + 1}F</TL2>
+                        <EditableNumber
+                          label="Alert me under"
+                          name={`fillingPercentageStacker${it + 1}f`}
+                          editing={isEditing(RECYCLER_STACKER_KEY)}
+                          displayValue={x => (x === '' ? '-' : x)}
+                          decoration="%"
+                          width={fieldWidth}
+                        />
+                      </div>
+                    </div>
+                  </>,
+                  <>
+                    <div className={classes.row}>
+                      <Cashbox
+                        labelClassName={classes.cashboxLabel}
+                        emptyPartClassName={classes.cashboxEmptyPart}
+                        percent={
+                          values[`fillingPercentageStacker${it + 1}r`] ??
+                          data[`stacker${it + 1}r`]
+                        }
+                        applyColorVariant
+                        applyFiatBalanceAlertsStyling
+                        omitInnerPercentage
+                        cashOut
+                      />
+                      <div className={classes.col2}>
+                        <TL2 className={classes.title}>Stacker {it + 1}R</TL2>
+                        <EditableNumber
+                          label="Alert me under"
+                          name={`fillingPercentageStacker${it + 1}r`}
+                          editing={isEditing(RECYCLER_STACKER_KEY)}
+                          displayValue={x => (x === '' ? '-' : x)}
+                          decoration="%"
+                          width={fieldWidth}
+                        />
+                      </div>
+                    </div>
+                  </>
+                ],
+                R.times(R.identity, maxNumberOfStackers)
               )}
             </div>
           </Form>

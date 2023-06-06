@@ -147,7 +147,10 @@ const MachinesTable = ({ machines = [], numToRender }) => {
                     it =>
                       machine.numberOfCassettes >= it ? (
                         <StyledCell align="left">
-                          {makePercentageText(it, machine[`cassette${it}`])}
+                          {makePercentageText(
+                            it,
+                            machine.cashUnits[`cassette${it}`]
+                          )}
                         </StyledCell>
                       ) : (
                         <StyledCell align="left">

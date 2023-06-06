@@ -21,7 +21,7 @@ const cashboxStyles = {
   cashbox: {
     borderColor: colorPicker,
     backgroundColor: colorPicker,
-    height: 118,
+    height: ({ height }) => height ?? 118,
     width: ({ width }) => width ?? 80,
     border: '2px solid',
     textAlign: 'end',
@@ -58,7 +58,13 @@ const cashboxStyles = {
 
 const gridStyles = {
   row: {
-    display: 'flex'
+    display: 'flex',
+    alignItems: 'center'
+  },
+  col: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   innerRow: {
     display: 'flex',

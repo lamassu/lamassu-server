@@ -13,7 +13,7 @@ import Locales from 'src/pages/Locales'
 import IndividualDiscounts from 'src/pages/LoyaltyPanel/IndividualDiscounts'
 import PromoCodes from 'src/pages/LoyaltyPanel/PromoCodes'
 import MachineLogs from 'src/pages/MachineLogs'
-import CashCassettes from 'src/pages/Maintenance/CashCassettes'
+import CashUnits from 'src/pages/Maintenance/CashUnits'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
 import Notifications from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
@@ -48,11 +48,11 @@ const getPazuzRoutes = () => [
     },
     children: [
       {
-        key: 'cash_cassettes',
-        label: 'Cash Cassettes',
-        route: '/maintenance/cash-cassettes',
+        key: 'cash_units',
+        label: 'Cash Units',
+        route: '/maintenance/cash-units',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
-        component: CashCassettes
+        component: CashUnits
       },
       {
         key: 'logs',

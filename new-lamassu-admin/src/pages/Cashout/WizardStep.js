@@ -22,6 +22,9 @@ import styles from './WizardStep.styles'
 const useStyles = makeStyles(styles)
 
 const getCassetesArtworks = () => ({
+  1: {
+    1: cassetteOne
+  },
   2: {
     1: cassetteOne,
     2: cassetteTwo

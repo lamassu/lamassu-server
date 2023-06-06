@@ -4,6 +4,7 @@ import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { MAX_NUMBER_OF_CASSETTES } from 'src/utils/constants'
+import { cashUnitCapacity, modelPrettifier } from 'src/utils/machine'
 import { defaultToZero } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
@@ -11,12 +12,20 @@ import WizardStep from './WizardStep'
 
 const MODAL_WIDTH = 554
 const MODAL_HEIGHT = 535
-const CASHBOX_DEFAULT_CAPACITY = 500
 
 const CASSETTE_FIELDS = R.map(
   it => `cassette${it}`,
   R.range(1, MAX_NUMBER_OF_CASSETTES + 1)
 )
+
+const STACKER_FIELDS = [
+  'stacker1f',
+  'stacker1r',
+  'stacker2f',
+  'stacker2r',
+  'stacker3f',
+  'stacker3r'
+]
 
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
@@ -28,7 +37,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     R.isEmpty(cashoutSettings) || !cashoutSettings?.active
 
   const numberOfCassettes = isCashOutDisabled ? 0 : machine.numberOfCassettes
+  const numberOfStackers = machine.numberOfStackers
 
+  // const LAST_STEP = numberOfCassettes + numberOfStackers * 2 + 1
   const LAST_STEP = numberOfCassettes + 1
 
   const title = `Update counts`
@@ -45,6 +56,18 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     )
   }
 
+  const buildStackerObj = cassetteInput => {
+    return R.reduce(
+      (acc, value) => {
+        acc[value] = machine.cashUnits[value]
+        // acc[value] = defaultToZero(cassetteInput[value])
+        return acc
+      },
+      {},
+      STACKER_FIELDS
+    )
+  }
+
   const onContinue = it => {
     const newConfig = R.merge(config, it)
     if (isLastStep) {
@@ -53,10 +76,16 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         it?.wasCashboxEmptied
       ].includes('YES')
 
-      const cashbox = wasCashboxEmptied ? 0 : machine?.cashbox
       const cassettes = buildCassetteObj(it)
+      const stackers = buildStackerObj(it)
 
-      save(machine.id, cashbox, cassettes)
+      const cashUnits = {
+        cashbox: wasCashboxEmptied ? 0 : machine?.cashUnits.cashbox,
+        ...cassettes,
+        ...stackers
+      }
+
+      save(machine.id, cashUnits)
       return onClose()
     }
 
@@ -78,12 +107,69 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           .integer()
           .required()
           .min(0)
-          .max(CASHBOX_DEFAULT_CAPACITY)
+          .max(
+            cashUnitCapacity[machine.model].cassette,
+            `${modelPrettifier[machine.model]} maximum cassette capacity is ${
+              cashUnitCapacity[machine.model].cassette
+            } bills`
+          )
       })
     }))
   )
 
-  const makeInitialValues = () =>
+  // const makeStackerSteps = R.pipe(
+  //   R.add(1),
+  //   R.range(1),
+  //   R.chain(i => [
+  //     {
+  //       type: `stacker ${i}f`,
+  //       schema: Yup.object().shape({
+  //         [`stacker${i}f`]: Yup.number()
+  //           .label('Bill count')
+  //           .positive()
+  //           .integer()
+  //           .required()
+  //           .min(0)
+  //           .max(
+  //             i === 1
+  //               ? cashUnitCapacity[machine.model].stacker -
+  //                   cashUnitCapacity[machine.model].escrow
+  //               : cashUnitCapacity[machine.model].stacker,
+  //             i === 1
+  //               ? `${
+  //                   modelPrettifier[machine.model]
+  //                 } maximum stacker capacity for the escrow unit is ${cashUnitCapacity[
+  //                   machine.model
+  //                 ].stacker - cashUnitCapacity[machine.model].escrow} bills`
+  //               : `${
+  //                   modelPrettifier[machine.model]
+  //                 } maximum stacker capacity is ${
+  //                   cashUnitCapacity[machine.model].stacker
+  //                 } bills`
+  //           )
+  //       })
+  //     },
+  //     {
+  //       type: `stacker ${i}r`,
+  //       schema: Yup.object().shape({
+  //         [`stacker${i}r`]: Yup.number()
+  //           .label('Bill count')
+  //           .positive()
+  //           .integer()
+  //           .required()
+  //           .min(0)
+  //           .max(
+  //             cashUnitCapacity[machine.model].stacker,
+  //             `${modelPrettifier[machine.model]} maximum stacker capacity is ${
+  //               cashUnitCapacity[machine.model].stacker
+  //             } bills`
+  //           )
+  //       })
+  //     }
+  //   ])
+  // )
+
+  const makeCassettesInitialValues = () =>
     !R.isEmpty(cashoutSettings)
       ? R.reduce(
           (acc, value) => {
@@ -95,16 +181,35 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         )
       : {}
 
-  const steps = R.prepend(
-    {
-      type: 'cashbox',
-      schema: Yup.object().shape({
-        wasCashboxEmptied: Yup.string().required('Select one option.')
-      }),
-      cashoutRequired: false
-    },
-    makeCassetteSteps(numberOfCassettes)
-  )
+  const makeStackersInitialValues = () =>
+    !R.isEmpty(cashoutSettings)
+      ? R.reduce(
+          (acc, value) => {
+            acc[`stacker${value}f`] = ''
+            acc[`stacker${value}r`] = ''
+            return acc
+          },
+          {},
+          R.range(1, numberOfStackers + 1)
+        )
+      : {}
+
+  const makeInitialValues = () =>
+    R.merge(makeCassettesInitialValues(), makeStackersInitialValues())
+
+  const steps = R.pipe(
+    // R.concat(makeStackerSteps(numberOfStackers)),
+    R.concat(makeCassetteSteps(numberOfCassettes)),
+    R.concat([
+      {
+        type: 'cashbox',
+        schema: Yup.object().shape({
+          wasCashboxEmptied: Yup.string().required('Select one option.')
+        }),
+        cashoutRequired: false
+      }
+    ])
+  )([])
 
   return (
     <Modal
@@ -122,7 +227,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           name={machine?.name}
           machine={machine}
           cashoutSettings={cashoutSettings}
-          cassetteCapacity={CASHBOX_DEFAULT_CAPACITY}
           error={error}
           lastStep={isLastStep}
           steps={steps}

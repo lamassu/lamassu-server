@@ -29,12 +29,21 @@ const GET_INFO = gql`
       pairedAt
       version
       model
-      cashbox
-      cassette1
-      cassette2
-      cassette3
-      cassette4
+      cashUnits {
+        cashbox
+        cassette1
+        cassette2
+        cassette3
+        cassette4
+        stacker1f
+        stacker1r
+        stacker2f
+        stacker2r
+        stacker3f
+        stacker3r
+      }
       numberOfCassettes
+      numberOfStackers
       statuses {
         label
         type
@@ -100,7 +109,7 @@ const Machines = ({ data, refetch, reload }) => {
 
   const machine = R.path(['machine'])(data) ?? {}
   const config = R.path(['config'])(data) ?? {}
-  const bills = R.path(['bills'])(data) ?? []
+  const bills = R.groupBy(bill => bill.deviceId)(R.path(['bills'])(data) ?? [])
 
   const machineName = R.path(['name'])(machine) ?? null
   const machineID = R.path(['deviceId'])(machine) ?? null

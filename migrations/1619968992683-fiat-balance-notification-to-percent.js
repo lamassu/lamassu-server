@@ -1,6 +1,6 @@
 const _ = require('lodash/fp')
 const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
-const { CASSETTE_MAX_CAPACITY } = require('../lib/constants')
+const CASSETTE_MAX_CAPACITY = 500
 
 exports.up = function (next) {
   return loadLatest()
