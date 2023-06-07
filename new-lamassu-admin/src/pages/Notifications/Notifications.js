@@ -91,6 +91,8 @@ const Notifications = ({
   const twilioAvailable = R.has('twilio', data?.accounts || {})
   const mailgunAvailable = R.has('mailgun', data?.accounts || {})
 
+  console.log(data?.config)
+
   const currency = R.path(['fiatCurrency'])(
     fromNamespace(namespaces.LOCALE)(data?.config)
   )
