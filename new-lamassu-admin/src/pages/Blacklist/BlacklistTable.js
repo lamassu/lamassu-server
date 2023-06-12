@@ -72,10 +72,7 @@ const BlacklistTable = ({
         }}
         onConfirmed={() => {
           setErrorMessage(null)
-          handleDeleteEntry(
-            R.path(['cryptoCode'], toBeDeleted),
-            R.path(['address'], toBeDeleted)
-          )
+          handleDeleteEntry(R.path(['address'], toBeDeleted))
         }}
         errorMessage={errorMessage}
       />
