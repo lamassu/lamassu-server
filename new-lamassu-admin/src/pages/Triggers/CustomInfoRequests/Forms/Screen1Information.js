@@ -8,10 +8,10 @@ import { H4, P } from 'src/components/typography'
 const Screen1Information = () => {
   return (
     <>
-      <H4>Screen 1 Information</H4> {/* TODO Add ? icon */}
+      <H4>Screen 1 Information</H4>
       <P>
-        On screen 1 you will request the user if he agrees on providing this
-        information, or if he wishes to terminate the transaction instead.
+        On the first screen, you will ask whether the user agrees on providing
+        this information, or if they wish to end the transaction instead.
       </P>
       <Field
         component={TextInputFormik}
@@ -32,8 +32,12 @@ const Screen1Information = () => {
 }
 
 const validationSchema = Yup.object().shape({
-  screen1Title: Yup.string().required(),
-  screen1Text: Yup.string().required()
+  screen1Title: Yup.string()
+    .required()
+    .label('Screen title'),
+  screen1Text: Yup.string()
+    .required()
+    .label('Screen text')
 })
 
 const defaultValues = {

@@ -74,7 +74,7 @@ const CoinATMRadar = memo(({ wizard }) => {
             </P>
             <SupportLinkButton
               link="https://support.lamassu.is/hc/en-us/articles/360023720472-Coin-ATM-Radar"
-              label="Lamassu Support Article"
+              label="Coin ATM Radar"
               bottomSpace="1"
             />
           </HelpTooltip>

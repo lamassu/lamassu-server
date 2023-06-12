@@ -179,7 +179,7 @@ const TermsConditions = () => {
           </P>
           <SupportLinkButton
             link="https://support.lamassu.is/hc/en-us/articles/360015982211-Terms-and-Conditions"
-            label="Lamassu Support Article"
+            label="Terms and Conditions"
             bottomSpace="1"
           />
         </HelpTooltip>

@@ -21,6 +21,9 @@ const styles = {
   },
   marginBottom: {
     marginBottom: 20
+  },
+  thirdItem: {
+    marginRight: 0
   }
 }
 const useStyles = makeStyles(styles)
@@ -47,6 +50,14 @@ const DetailsCard = ({ it }) => {
                 <Label1>{customRequest.input.label2}</Label1>
               </div>
             )}
+            {customRequest.input.constraintType === 'spaceSeparation' &&
+              !!customRequest.input.label3 && (
+                <div
+                  className={classnames(classes.halfWidth, classes.thirdItem)}>
+                  <Info2>Third word label</Info2>
+                  <Label1>{customRequest.input.label3}</Label1>
+                </div>
+              )}
           </>
         )
       default:

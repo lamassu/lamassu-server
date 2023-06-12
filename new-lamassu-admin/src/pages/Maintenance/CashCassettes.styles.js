@@ -5,7 +5,7 @@ export default {
     height: 36
   },
   tBody: {
-    maxHeight: '65vh',
+    maxHeight: 'calc(100vh - 350px)',
     overflow: 'auto'
   },
   tableWidth: {

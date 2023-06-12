@@ -132,6 +132,10 @@ const formatValues = (values, isEditing) => {
     resObj = R.assocPath(['input', 'label2'], values.inputLabel2, resObj)
   }
 
+  if (values.inputLabel3) {
+    resObj = R.assocPath(['input', 'label3'], values.inputLabel3, resObj)
+  }
+
   if (isEditing) {
     resObj = R.assocPath(['id'], values.id, resObj)
   }
@@ -151,6 +155,7 @@ const makeEditingValues = it => {
     inputType: customRequest.input.type,
     inputLabel1: customRequest.input.label1,
     inputLabel2: customRequest.input.label2,
+    inputLabel3: customRequest.input.label3,
     listChoices: customRequest.input.choiceList,
     constraintType: customRequest.input.constraintType,
     inputLength: customRequest.input.numDigits

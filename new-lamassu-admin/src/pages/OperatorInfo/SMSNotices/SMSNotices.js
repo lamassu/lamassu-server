@@ -244,7 +244,7 @@ const SMSNotices = () => {
           </P>
           <SupportLinkButton
             link="https://support.lamassu.is/hc/en-us/articles/115001205591-SMS-Phone-Verification"
-            label="Lamassu Support Article"
+            label="SMS Phone Verification"
             bottomSpace="1"
           />
         </HelpTooltip>

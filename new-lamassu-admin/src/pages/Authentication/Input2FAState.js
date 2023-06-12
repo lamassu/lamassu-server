@@ -123,7 +123,7 @@ const Input2FAState = ({ state, dispatch }) => {
       </TL1>
       {/* TODO: refactor the 2FA CodeInput to properly use Formik */}
       <Formik onSubmit={() => {}} initialValues={{}}>
-        <Form>
+        <Form id="form-codeInput">
           <CodeInput
             name="2fa"
             value={state.twoFAField}
@@ -136,7 +136,11 @@ const Input2FAState = ({ state, dispatch }) => {
         </Form>
       </Formik>
       <div className={classes.twofaFooter}>
-        {errorMessage && <P className={classes.errorMessage}>{errorMessage}</P>}
+        {errorMessage && (
+          <P className={classes.errorMessage} id={'p-errorMessage'}>
+            {errorMessage}
+          </P>
+        )}
         <Button onClick={handleSubmit} buttonClassName={classes.loginButton}>
           Login
         </Button>

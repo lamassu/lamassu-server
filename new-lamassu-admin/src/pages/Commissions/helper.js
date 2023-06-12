@@ -106,22 +106,11 @@ const getOverridesFields = (getData, currency, auxElements) => {
       }
     },
     {
-      header: cashInHeader,
+      header: 'Commission',
       name: 'cashIn',
-      width: 123,
+      width: 140,
       input: NumberInput,
-      textAlign: 'right',
-      suffix: '%',
-      bold: bold,
-      inputProps: {
-        decimalPlaces: 3
-      }
-    },
-    {
-      header: cashOutHeader,
-      name: 'cashOut',
-      width: 127,
-      input: NumberInput,
+      doubleHeader: 'Cash-in',
       textAlign: 'right',
       suffix: '%',
       bold: bold,
@@ -133,7 +122,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       name: 'fixedFee',
       width: 126,
       input: NumberInput,
-      doubleHeader: 'Cash-in only',
+      doubleHeader: 'Cash-in',
       textAlign: 'right',
       suffix: currency,
       bold: bold,
@@ -145,7 +134,7 @@ const getOverridesFields = (getData, currency, auxElements) => {
       name: 'minimumTx',
       header: 'Minimum Tx',
       width: 140,
-      doubleHeader: 'Cash-in only',
+      doubleHeader: 'Cash-in',
       textAlign: 'center',
       editingAlign: 'right',
       input: NumberInput,
@@ -156,10 +145,23 @@ const getOverridesFields = (getData, currency, auxElements) => {
       }
     },
     {
+      header: 'Commission',
+      name: 'cashOut',
+      width: 140,
+      doubleHeader: 'Cash-out',
+      input: NumberInput,
+      textAlign: 'right',
+      suffix: '%',
+      bold: bold,
+      inputProps: {
+        decimalPlaces: 3
+      }
+    },
+    {
       name: 'cashOutFixedFee',
       header: 'Fixed fee',
       width: 134,
-      doubleHeader: 'Cash-out only',
+      doubleHeader: 'Cash-out',
       textAlign: 'center',
       editingAlign: 'right',
       input: NumberInput,
@@ -259,12 +261,12 @@ const getSchema = locale => {
   return Yup.object().shape({
     cashIn: Yup.number()
       .label('Cash-in')
-      .min(0)
+      .min(-15)
       .max(percentMax)
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(0)
+      .min(-15)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
@@ -354,7 +356,7 @@ const getOverridesSchema = (values, rawData, locale) => {
           return true
         }
       })
-      .label('Crypto currencies')
+      .label('Cryptocurrencies')
       .required()
       .min(1),
     cashIn: Yup.number()
@@ -534,24 +536,12 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       editable: false
     },
     {
-      header: cashInHeader,
+      header: 'Commission',
       name: 'cashIn',
-      width: 120,
+      doubleHeader: 'Cash-in',
+      width: 130,
       input: NumberInput,
       textAlign: 'right',
-      suffix: '%',
-      textStyle: obj => getTextStyle(obj),
-      inputProps: {
-        decimalPlaces: 3
-      }
-    },
-    {
-      header: cashOutHeader,
-      name: 'cashOut',
-      width: 126,
-      input: NumberInput,
-      textAlign: 'right',
-      greenText: true,
       suffix: '%',
       textStyle: obj => getTextStyle(obj),
       inputProps: {
@@ -560,9 +550,9 @@ const getListCommissionsFields = (getData, currency, defaults) => {
     },
     {
       name: 'fixedFee',
-      width: 140,
+      width: 130,
       input: NumberInput,
-      doubleHeader: 'Cash-in only',
+      doubleHeader: 'Cash-in',
       textAlign: 'right',
       suffix: currency,
       textStyle: obj => getTextStyle(obj),
@@ -575,7 +565,7 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       header: 'Minimum Tx',
       width: 140,
       input: NumberInput,
-      doubleHeader: 'Cash-in only',
+      doubleHeader: 'Cash-in',
       textAlign: 'right',
       suffix: currency,
       textStyle: obj => getTextStyle(obj),
@@ -584,11 +574,25 @@ const getListCommissionsFields = (getData, currency, defaults) => {
       }
     },
     {
+      header: 'Commission',
+      name: 'cashOut',
+      doubleHeader: 'Cash-out',
+      width: 130,
+      input: NumberInput,
+      textAlign: 'right',
+      greenText: true,
+      suffix: '%',
+      textStyle: obj => getTextStyle(obj),
+      inputProps: {
+        decimalPlaces: 3
+      }
+    },
+    {
       name: 'cashOutFixedFee',
       header: 'Fixed fee',
       width: 140,
       input: NumberInput,
-      doubleHeader: 'Cash-out only',
+      doubleHeader: 'Cash-out',
       textAlign: 'center',
       editingAlign: 'right',
       suffix: currency,

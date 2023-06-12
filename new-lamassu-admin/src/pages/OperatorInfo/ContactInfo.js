@@ -197,7 +197,7 @@ const ContactInfo = ({ wizard }) => {
           </P>
           <SupportLinkButton
             link="https://support.lamassu.is/hc/en-us/articles/360033051732-Enabling-Operator-Info"
-            label="Lamassu Support Article"
+            label="Enabling Operator Info"
             bottomSpace="1"
           />
         </HelpTooltip>
@@ -212,6 +212,7 @@ const ContactInfo = ({ wizard }) => {
                 active: event.target.checked
               })
             }
+            id={'switch-active'}
           />
           <Label2>{info.active ? 'Yes' : 'No'}</Label2>
         </div>
@@ -222,7 +223,8 @@ const ContactInfo = ({ wizard }) => {
           {!editing && (
             <IconButton
               className={classes.transparentButton}
-              onClick={() => setEditing(true)}>
+              onClick={() => setEditing(true)}
+              id={'button-editing'}>
               <EditIcon />
             </IconButton>
           )}
@@ -285,10 +287,10 @@ const ContactInfo = ({ wizard }) => {
               <div className={classnames(classes.row, classes.submit)}>
                 {editing && (
                   <>
-                    <Link color="primary" type="submit">
+                    <Link color="primary" type="submit" id={'button-save'}>
                       Save
                     </Link>
-                    <Link color="secondary" type="reset">
+                    <Link color="secondary" type="reset" id={'button-cancel'}>
                       Cancel
                     </Link>
                     {error && (

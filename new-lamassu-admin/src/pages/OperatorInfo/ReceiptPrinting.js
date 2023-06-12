@@ -56,7 +56,7 @@ const ReceiptPrinting = memo(({ wizard }) => {
           </P>
           <SupportLinkButton
             link="https://support.lamassu.is/hc/en-us/articles/360058513951-Receipt-options-printers"
-            label="Lamassu Support Article"
+            label="Receipt options & printers"
             bottomSpace="1"
           />
         </HelpTooltip>
