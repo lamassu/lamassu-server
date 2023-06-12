@@ -83,7 +83,8 @@ const Tr = ({
   children,
   className,
   size,
-  newRow
+  newRow,
+  rowID
 }) => {
   const classes = useStyles({ size })
   const cardClasses = { root: classes.cardContentRoot }
@@ -99,7 +100,12 @@ const Tr = ({
     <>
       <Card className={classnames(classNames, className)} onClick={onClick}>
         <CardContent classes={cardClasses}>
-          <div className={classes.mainContent}>{children}</div>
+          <div
+            className={classes.mainContent}
+            data-cy={'table-row'}
+            data-row-id={rowID ?? ''}>
+            {children}
+          </div>
           {error && shouldShowError && (
             <div className={classes.errorContent}>{errorMessage}</div>
           )}

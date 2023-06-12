@@ -50,7 +50,12 @@ const RadioGroup = ({
               <FormControlLabel
                 disabled={option.disabled}
                 value={option.code}
-                control={<Radio className={radioClassName} />}
+                control={
+                  <Radio
+                    className={radioClassName}
+                    data-cy={`radio-${option.code}`}
+                  />
+                }
                 label={option.display}
                 className={classnames(labelClassName)}
               />

@@ -97,20 +97,25 @@ const Modal = ({
   return (
     <MaterialModal onClose={innerClose} className={classes.modal} {...props}>
       <>
-        <Paper className={classnames(classes.wrapper, className)}>
+        <Paper
+          className={classnames(classes.wrapper, className)}
+          data-cy={'paper-modal'}>
           <div className={classes.header}>
             {title && <TitleCase className={classes.title}>{title}</TitleCase>}
             <IconButton
               size={closeSize}
               className={classes.button}
-              onClick={() => handleClose()}>
+              onClick={() => handleClose()}
+              data-cy={'button-closeModal'}>
               <CloseIcon />
             </IconButton>
           </div>
           <div className={classes.content}>{children}</div>
         </Paper>
         {infoPanel && (
-          <Paper className={classnames(classes.infoPanelWrapper, className)}>
+          <Paper
+            className={classnames(classes.infoPanelWrapper, className)}
+            data-cy={'paper-modalInfoPanel'}>
             <div className={classes.panelContent}>{infoPanel}</div>
           </Paper>
         )}
