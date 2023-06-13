@@ -1,17 +1,29 @@
+import * as R from 'ramda'
 import React from 'react'
+
+import { fromNamespace } from 'src/utils/config'
 
 import SingleFieldEditableNumber from '../components/SingleFieldEditableNumber'
 
-const NAME = 'highValueTransaction'
+const TransactionAlerts = ({ fieldWidth, data, saveTransactionAlerts }) => {
+  const { config, notificationSettings } = data
+  const currencyCode = fromNamespace('locale')(config).fiatCurrency
+  const eventName = 'transactionValue'
+  const value = R.find(it => it.event === eventName && R.isNil(it.overrideId))(
+    notificationSettings
+  )
 
-const TransactionAlerts = ({ section, fieldWidth }) => {
+  const save = obj => saveTransactionAlerts({ variables: obj })
+
   return (
     <SingleFieldEditableNumber
-      section={section}
       title="High value transaction"
       label="Alert me over"
-      name={NAME}
       width={fieldWidth}
+      value={value}
+      valueField={'upperBound'}
+      suffix={currencyCode}
+      save={save}
     />
   )
 }

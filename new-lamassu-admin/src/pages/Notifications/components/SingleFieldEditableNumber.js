@@ -1,11 +1,10 @@
 import { Form, Formik } from 'formik'
-import React, { useContext, useState } from 'react'
+import * as R from 'ramda'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
 import { transformNumber } from 'src/utils/number'
-
-import NotificationsCtx from '../NotificationsContext'
 
 import Header from './EditHeader'
 import EditableNumber from './EditableNumber'
@@ -16,39 +15,38 @@ const SingleFieldEditableNumber = ({
   width = 80,
   min = 0,
   max = 9999999,
-  name,
-  section,
-  className
+  className,
+  value,
+  valueField,
+  save,
+  suffix,
+  disabled
 }) => {
   const [saving, setSaving] = useState(false)
+  const [isEditing, setEditing] = useState(false)
 
-  const innerSave = async (section, value) => {
+  const innerSave = async value => {
     if (saving) return
 
     setSaving(true)
 
     // no response means the save failed
-    await save(section, value)
+    await save(value)
 
     setSaving(false)
   }
 
-  const {
-    save,
-    data,
-    currency,
-    isEditing,
-    isDisabled,
-    setEditing
-  } = useContext(NotificationsCtx)
-
   const schema = Yup.object().shape({
-    [name]: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable()
+    event: Yup.string().required(),
+    overrideId: Yup.string().nullable(),
+    value: Yup.object().shape({
+      [valueField]: Yup.number()
+        .transform(transformNumber)
+        .integer()
+        .min(min)
+        .max(max)
+        .nullable()
+    })
   })
 
   return (
@@ -56,27 +54,27 @@ const SingleFieldEditableNumber = ({
       validateOnBlur={false}
       validateOnChange={false}
       enableReinitialize
-      initialValues={{ [name]: (data && data[name]) ?? '' }}
+      initialValues={value}
       validationSchema={schema}
-      onSubmit={it => innerSave(section, schema.cast(it))}
+      onSubmit={it => innerSave(schema.cast(it))}
       onReset={() => {
-        setEditing(name, false)
+        setEditing(false)
       }}>
       <Form className={className}>
         <PromptWhenDirty />
         <Header
           title={title}
-          editing={isEditing(name)}
-          disabled={isDisabled(name)}
-          setEditing={it => setEditing(name, it)}
+          editing={isEditing}
+          disabled={disabled}
+          setEditing={it => setEditing(it)}
         />
         <EditableNumber
           label={label}
-          name={name}
-          editing={isEditing(name)}
+          name={`value.${valueField}`}
+          editing={isEditing}
           width={width}
-          displayValue={x => (x === '' ? '-' : x)}
-          decoration={currency}
+          displayValue={x => (R.isEmpty(x) || R.isNil(x) ? '-' : x)}
+          decoration={suffix}
         />
       </Form>
     </Formik>

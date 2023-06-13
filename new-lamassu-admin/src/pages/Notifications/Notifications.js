@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import TitleSection from 'src/components/layout/TitleSection'
@@ -34,7 +35,110 @@ const GET_INFO = gql`
       code
       display
     }
+    notificationChannelPreferences {
+      channel
+      active
+    }
+    notificationPreferences {
+      event
+      category
+      channel
+      active
+    }
+    notificationSettings {
+      event
+      overrideId
+      value
+    }
     accounts
+  }
+`
+
+const GET_SETUP_AND_TX_ALERTS = gql`
+  query getSetupAndTxAlerts {
+    config
+    notificationChannelPreferences {
+      channel
+      active
+    }
+    notificationPreferences {
+      event
+      category
+      channel
+      active
+    }
+    notificationSettings {
+      event
+      overrideId
+      value
+    }
+    accounts
+  }
+`
+
+const GET_FIAT_BALANCE_ALERTS = gql`
+  query getFiatBalanceAlerts {
+    notificationSettings {
+      event
+      overrideId
+      value
+    }
+    machines {
+      name
+      deviceId
+      numberOfCassettes
+      numberOfStackers
+    }
+  }
+`
+
+const DISABLE_NOTIFICATION_CHANNEL = gql`
+  mutation disableChannel($channelName: String) {
+    deactivateNotificationsByChannel(channelName: $channelName)
+  }
+`
+
+const ENABLE_NOTIFICATION_CHANNEL = gql`
+  mutation enableChannel($channelName: String) {
+    activateNotificationsByChannel(channelName: $channelName)
+  }
+`
+
+const DISABLE_NOTIFICATION_CATEGORY_BY_CHANNEL = gql`
+  mutation disableCategoryByChannel(
+    $categoryName: String
+    $channelName: String
+  ) {
+    deactivateNotificationsByCategoryAndChannel(
+      categoryName: $categoryName
+      channelName: $channelName
+    )
+  }
+`
+
+const ENABLE_NOTIFICATION_CATEGORY_BY_CHANNEL = gql`
+  mutation enableCategoryByChannel(
+    $categoryName: String
+    $channelName: String
+  ) {
+    activateNotificationsByCategoryAndChannel(
+      categoryName: $categoryName
+      channelName: $channelName
+    )
+  }
+`
+
+const SAVE_NOTIFICATION_SETTING = gql`
+  mutation saveNotificationSetting(
+    $event: NotificationEvent
+    $overrideId: ID
+    $value: JSONObject
+  ) {
+    saveNotificationSetting(
+      event: $event
+      overrideId: $overrideId
+      value: $value
+    )
   }
 `
 
@@ -52,144 +156,130 @@ const SAVE_ACCOUNT = gql`
 
 const FIELDS_WIDTH = 130
 
-const Notifications = ({
-  name: SCREEN_KEY,
-  displaySetup = true,
-  displayTransactionAlerts = true,
-  displayFiatAlerts = true,
-  displayCryptoAlerts = true,
-  displayOverrides = true,
-  displayTitle = true,
-  wizard = false
-}) => {
-  const [section, setSection] = useState(null)
-  const [error, setError] = useState(null)
-  const [editingKey, setEditingKey] = useState(null)
+const SetupAndTransactions = () => {
   const [smsSetupPopup, setSmsSetupPopup] = useState(false)
   const [emailSetupPopup, setEmailSetupPopup] = useState(false)
+  const [txAlertError, setTxAlertError] = useState(null)
+  const [setupError, setSetupError] = useState(null)
 
-  const { data, loading } = useQuery(GET_INFO)
+  const { data, loading } = useQuery(GET_SETUP_AND_TX_ALERTS)
+  const {
+    config,
+    notificationChannelPreferences,
+    notificationPreferences,
+    notificationSettings,
+    accounts
+  } = !loading && data
 
-  const [saveConfig] = useMutation(SAVE_CONFIG, {
-    refetchQueries: ['getData'],
-    onCompleted: () => setEditingKey(null),
-    onError: error => setError(error)
-  })
+  const twilioAvailable = R.has('twilio', accounts || {})
+  const mailgunAvailable = R.has('mailgun', accounts || {})
 
   const [saveAccount] = useMutation(SAVE_ACCOUNT, {
     onCompleted: () => {
       setSmsSetupPopup(false)
       setEmailSetupPopup(false)
     },
-    refetchQueries: ['getData'],
-    onError: error => setError(error)
+    refetchQueries: ['getSetupAndTxAlerts'],
+    onError: error => setSetupError(error)
   })
 
-  const config = fromNamespace(SCREEN_KEY)(data?.config)
-  const machines = data?.machines
-  const cryptoCurrencies = data?.cryptoCurrencies
-  const twilioAvailable = R.has('twilio', data?.accounts || {})
-  const mailgunAvailable = R.has('mailgun', data?.accounts || {})
+  const [enableChannel] = useMutation(ENABLE_NOTIFICATION_CHANNEL, {
+    onCompleted: () => {
+      setSmsSetupPopup(false)
+      setEmailSetupPopup(false)
+    },
+    refetchQueries: ['getSetupAndTxAlerts'],
+    onError: error => setSetupError(error)
+  })
 
-  console.log(data?.config)
+  const [disableChannel] = useMutation(DISABLE_NOTIFICATION_CHANNEL, {
+    onCompleted: () => {
+      setSmsSetupPopup(false)
+      setEmailSetupPopup(false)
+    },
+    refetchQueries: ['getSetupAndTxAlerts'],
+    onError: error => setSetupError(error)
+  })
 
-  const currency = R.path(['fiatCurrency'])(
-    fromNamespace(namespaces.LOCALE)(data?.config)
+  const [enableCategoryByChannel] = useMutation(
+    ENABLE_NOTIFICATION_CATEGORY_BY_CHANNEL,
+    {
+      onCompleted: () => {
+        setSmsSetupPopup(false)
+        setEmailSetupPopup(false)
+      },
+      refetchQueries: ['getSetupAndTxAlerts'],
+      onError: error => setSetupError(error)
+    }
   )
 
-  const save = R.curry((section, rawConfig) => {
-    const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setSection(section)
-    setError(null)
-    return saveConfig({ variables: { config } })
+  const [disableCategoryByChannel] = useMutation(
+    DISABLE_NOTIFICATION_CATEGORY_BY_CHANNEL,
+    {
+      onCompleted: () => {
+        setSmsSetupPopup(false)
+        setEmailSetupPopup(false)
+      },
+      refetchQueries: ['getSetupAndTxAlerts'],
+      onError: error => setSetupError(error)
+    }
+  )
+
+  const [saveTransactionAlerts] = useMutation(SAVE_NOTIFICATION_SETTING, {
+    onCompleted: () => {
+      setSmsSetupPopup(false)
+      setEmailSetupPopup(false)
+    },
+    refetchQueries: ['getSetupAndTxAlerts'],
+    onError: error => setTxAlertError(error)
   })
 
-  const setEditing = (key, state) => {
-    if (!state) {
-      setError(null)
-    }
-    setEditingKey(state ? key : null)
-  }
-
   const twilioSave = it => {
-    setError(null)
+    setSetupError(null)
     return saveAccount({
       variables: { accounts: { twilio: it } }
-    }).then(() => R.compose(save(null), toNamespace('sms'))({ active: true }))
+    })
   }
 
   const mailgunSave = it => {
-    setError(null)
+    setSetupError(null)
     return saveAccount({
       variables: { accounts: { mailgun: it } }
-    }).then(() => R.compose(save(null), toNamespace('email'))({ active: true }))
+    })
   }
 
-  const isEditing = key => editingKey === key
-  const isDisabled = key => editingKey && editingKey !== key
+  const turnOffToggle = obj => {
+    if (R.isNil(obj.categoryName)) disableChannel({ variables: obj })
+    return disableCategoryByChannel({ variables: obj })
+  }
 
-  const contextValue = {
-    save,
-    error,
-    editingKey,
-    data: config,
-    currency,
-    isEditing,
-    isDisabled,
-    setEditing,
-    setSection,
-    machines,
-    cryptoCurrencies,
-    twilioAvailable,
-    setSmsSetupPopup,
-    mailgunAvailable,
-    setEmailSetupPopup
+  const turnOnToggle = obj => {
+    if (R.isNil(obj.categoryName)) return enableChannel({ variables: obj })
+    return enableCategoryByChannel({ variables: obj })
   }
 
   return (
     !loading && (
       <>
-        <NotificationsCtx.Provider value={contextValue}>
-          {displayTitle && <TitleSection title="Notifications" />}
-          {displaySetup && (
-            <Section title="Setup" error={error && !section}>
-              <Setup forceDisable={!!editingKey} wizard={wizard} />
-            </Section>
-          )}
-          {displayTransactionAlerts && (
-            <Section
-              title="Transaction alerts"
-              error={error && section === 'tx'}>
-              <TransactionAlerts section="tx" fieldWidth={FIELDS_WIDTH} />
-            </Section>
-          )}
-          {displayFiatAlerts && (
-            <Section
-              title="Fiat balance alerts"
-              error={error && section === 'fiat'}>
-              <FiatBalanceAlerts section="fiat" max={100} fieldWidth={50} />
-              {displayOverrides && (
-                <FiatBalanceOverrides
-                  config={fromNamespace(namespaces.CASH_OUT)(data?.config)}
-                  section="fiat"
-                />
-              )}
-            </Section>
-          )}
-          {displayCryptoAlerts && (
-            <Section
-              title="Crypto balance alerts"
-              error={error && section === 'crypto'}>
-              <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
-              {displayOverrides && (
-                <CryptoBalanceOverrides
-                  section="crypto"
-                  fieldWidth={FIELDS_WIDTH}
-                />
-              )}
-            </Section>
-          )}
-        </NotificationsCtx.Provider>
+        <Section title="Setup" error={setupError}>
+          <Setup
+            twilioAvailable={twilioAvailable}
+            mailgunAvailable={mailgunAvailable}
+            setSmsSetupPopup={setSmsSetupPopup}
+            setEmailSetupPopup={setEmailSetupPopup}
+            notificationPreferences={notificationPreferences}
+            notificationChannelPreferences={notificationChannelPreferences}
+            turnOffToggle={turnOffToggle}
+            turnOnToggle={turnOnToggle}
+          />
+        </Section>
+        <Section title="Transaction alerts" error={txAlertError}>
+          <TransactionAlerts
+            fieldWidth={FIELDS_WIDTH}
+            data={{ config, notificationSettings }}
+            saveTransactionAlerts={saveTransactionAlerts}
+          />
+        </Section>
         {smsSetupPopup && (
           <Modal
             title={`Configure Twilio`}
@@ -229,4 +319,174 @@ const Notifications = ({
   )
 }
 
-export default Notifications
+const FiatBalance = () => {
+  const [error, setError] = useState(false)
+  const [editing, setEditing] = useState(null)
+  const { data, loading } = useQuery(GET_FIAT_BALANCE_ALERTS)
+
+  const { machines, notificationSettings } = !loading && data
+
+  const [saveTransactionAlerts] = useMutation(SAVE_NOTIFICATION_SETTING, {
+    refetchQueries: ['getFiatBalanceAlerts'],
+    onError: error => setError(error)
+  })
+
+  return (
+    !loading && (
+      <>
+        <Section title="Fiat balance alerts" error={error}>
+          <div>
+            <FiatBalanceAlerts
+              max={100}
+              fieldWidth={50}
+              data={{
+                machines,
+                notificationSettings: R.filter(it => R.isNil(it.overrideId))(
+                  notificationSettings
+                )
+              }}
+              save={saveTransactionAlerts}
+              error={error}
+              editing={editing}
+              setEditing={setEditing}
+            />
+          </div>
+          <FiatBalanceOverrides
+            data={{
+              machines,
+              notificationSettings: R.filter(it => !R.isNil(it.overrideId))(
+                notificationSettings
+              )
+            }}
+            save={saveTransactionAlerts}
+            error={error}
+            editing={editing}
+            setEditing={setEditing}
+          />
+        </Section>
+      </>
+    )
+  )
+}
+
+const CryptoBalance = ({
+  displayCryptoAlerts = true,
+  displayOverrides = true,
+  section = 'crypto'
+}) => {
+  const context = useContext(NotificationsCtx)
+  const { error, loading } = context
+
+  return (
+    !loading && (
+      <>
+        {displayCryptoAlerts && (
+          <Section
+            title="Crypto balance alerts"
+            error={error && section === 'crypto'}>
+            <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
+            {displayOverrides && (
+              <CryptoBalanceOverrides
+                section="crypto"
+                fieldWidth={FIELDS_WIDTH}
+              />
+            )}
+          </Section>
+        )}
+      </>
+    )
+  )
+}
+
+const Notifications = ({
+  name: SCREEN_KEY,
+  displaySetup = true,
+  displayTransactionAlerts = true,
+  displayFiatAlerts = true,
+  displayCryptoAlerts = true,
+  displayOverrides = true,
+  displayTitle = true
+}) => {
+  const [section, setSection] = useState(null)
+  const [error, setError] = useState(null)
+  const [editingKey, setEditingKey] = useState(null)
+
+  const { data, loading } = useQuery(GET_INFO)
+
+  const [saveConfig] = useMutation(SAVE_CONFIG, {
+    refetchQueries: ['getData'],
+    onCompleted: () => setEditingKey(null),
+    onError: error => setError(error)
+  })
+
+  // const config = fromNamespace(SCREEN_KEY)(data?.config)
+  const machines = data?.machines
+  const cryptoCurrencies = data?.cryptoCurrencies
+
+  const currency = R.path(['fiatCurrency'])(
+    fromNamespace(namespaces.LOCALE)(data?.config)
+  )
+
+  const save = R.curry((section, rawConfig) => {
+    const config = toNamespace(SCREEN_KEY)(rawConfig)
+    setSection(section)
+    setError(null)
+    return saveConfig({ variables: { config } })
+  })
+
+  const setEditing = (key, state) => {
+    if (!state) {
+      setError(null)
+    }
+    setEditingKey(state ? key : null)
+  }
+
+  const isEditing = key => editingKey === key
+  const isDisabled = key => editingKey && editingKey !== key
+
+  const contextValue = {
+    save,
+    error,
+    editingKey,
+    data,
+    loading,
+    currency,
+    isEditing,
+    isDisabled,
+    setEditing,
+    setSection,
+    machines,
+    cryptoCurrencies
+  }
+
+  return (
+    !loading && (
+      <NotificationsCtx.Provider value={contextValue}>
+        {/* {displayTitle && <TitleSection title="Notifications" />}
+        <SetupAndTransactions
+          displaySetup={displaySetup}
+          displayTransactionAlerts={displayTransactionAlerts}
+          section={section}
+          error={error}
+          editingKey={editingKey}
+          wizard={wizard}
+        />
+        <FiatBalance
+          displayFiatAlerts={displayFiatAlerts}
+          displayOverrides={displayOverrides}
+          error={error}
+          section={section}
+          data={data}
+        />
+        <CryptoBalance
+          displayCryptoAlerts={displayCryptoAlerts}
+          displayOverrides={displayOverrides}
+          error={error}
+          section={section}
+        /> */}
+      </NotificationsCtx.Provider>
+    )
+  )
+}
+
+export { Notifications, SetupAndTransactions, FiatBalance, CryptoBalance }

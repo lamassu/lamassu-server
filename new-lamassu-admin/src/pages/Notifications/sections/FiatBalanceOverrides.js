@@ -1,14 +1,13 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import * as R from 'ramda'
-import React, { useContext } from 'react'
+import React from 'react'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
-import { fromNamespace } from 'src/utils/config'
 import { transformNumber } from 'src/utils/number'
-
-import NotificationsCtx from '../NotificationsContext'
 
 const CASHBOX_KEY = 'cashInAlertThreshold'
 const CASSETTE_1_KEY = 'fillingPercentageCassette1'
@@ -32,19 +31,11 @@ const widthsByNumberOfCassettes = {
   4: { machine: 210, cashbox: 150, cassette: 204 }
 }
 
-const FiatBalanceOverrides = ({ config, section }) => {
-  const {
-    machines = [],
-    data,
-    save,
-    isDisabled,
-    setEditing,
-    error
-  } = useContext(NotificationsCtx)
+const FiatBalanceOverrides = ({ data, save, error, editing, setEditing }) => {
+  const { machines, notificationSettings } = data
 
   const setupValues = data?.fiatBalanceOverrides ?? []
-  const innerSetEditing = it => setEditing(NAME, it)
-  const cashoutConfig = it => fromNamespace(it)(config)
+  const innerSetEditing = it => setEditing(it.overrideId)
 
   const overriddenMachines = R.map(override => override.machine, setupValues)
   const suggestions = R.differenceWith(
@@ -194,10 +185,10 @@ const FiatBalanceOverrides = ({ config, section }) => {
       enableDelete
       enableEdit
       enableCreate
-      save={it => save(section, validationSchema.cast(it))}
+      save={it => save(validationSchema.cast(it))}
       initialValues={initialValues}
       validationSchema={validationSchema}
-      forceDisable={isDisabled(NAME) || !machines}
+      forceDisable={R.isEmpty(machines) || R.isNil(machines)}
       data={setupValues}
       elements={elements}
       disableAdd={!suggestions?.length}

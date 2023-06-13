@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import classnames from 'classnames'
 import { useFormikContext, Field as FormikField } from 'formik'
+import * as R from 'ramda'
 import React from 'react'
 
 import { NumberInput } from 'src/components/inputs/formik'
@@ -33,7 +34,9 @@ const EditableNumber = ({
       {label && <Label1 className={classes.label}>{label}</Label1>}
       <div className={classes.valueWrapper}>
         {!editing && (
-          <Info1 className={classes.text}>{displayValue(values[name])}</Info1>
+          <Info1 className={classes.text}>
+            {displayValue(R.path(R.split('.', name), values))}
+          </Info1>
         )}
         {editing && (
           <FormikField

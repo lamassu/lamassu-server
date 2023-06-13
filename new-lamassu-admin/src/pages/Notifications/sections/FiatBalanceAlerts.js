@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import { Form, Formik } from 'formik'
 import * as R from 'ramda'
-import React, { useContext } from 'react'
+import React from 'react'
 import * as Yup from 'yup'
 
 import PromptWhenDirty from 'src/components/PromptWhenDirty'
@@ -9,7 +9,6 @@ import { TL2 } from 'src/components/typography'
 import { transformNumber } from 'src/utils/number'
 
 import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
-import NotificationsCtx from '../NotificationsContext'
 import Header from '../components/EditHeader'
 import EditableNumber from '../components/EditableNumber'
 
@@ -17,23 +16,26 @@ import styles from './FiatBalanceAlerts.styles.js'
 
 const useStyles = makeStyles(styles)
 
-const CASH_IN_KEY = 'fiatBalanceAlertsCashIn'
-const CASH_OUT_KEY = 'fiatBalanceAlertsCashOut'
-const RECYCLER_STACKER_KEY = 'fiatBalanceAlertsRecyclerStacker'
+const CASH_IN_KEY = 'cash-in'
+const LOAD_BOXES_KEY = 'load-boxes'
+const CASSETTES_RECYCLERS_KEY = 'cassettes-recyclers'
 const DEFAULT_NUMBER_OF_CASSETTES = 2
 const DEFAULT_NUMBER_OF_STACKERS = 0
 const notesMin = 0
 const notesMax = 9999999
 
-const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
-  const {
-    isEditing,
-    isDisabled,
-    setEditing,
-    data,
-    save,
-    machines = []
-  } = useContext(NotificationsCtx)
+const FiatBalance = ({
+  min = 0,
+  max = 100,
+  fieldWidth = 80,
+  data,
+  save,
+  error,
+  editing,
+  setEditing
+}) => {
+  const { machines, notificationSettings } = data
+  console.log(notificationSettings)
   const classes = useStyles()
 
   const maxNumberOfCassettes = Math.max(
@@ -92,20 +94,17 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
         fillingPercentageCassette4: data?.fillingPercentageCassette4 ?? ''
       }}
       validationSchema={schema}
-      onSubmit={it => save(section, schema.cast(it))}
-      onReset={() => {
-        setEditing(CASH_IN_KEY, false)
-        setEditing(CASH_OUT_KEY, false)
-      }}>
+      onSubmit={it => save(schema.cast(it))}
+      onReset={() => setEditing(null)}>
       {({ values }) => (
         <>
           <Form className={classes.form}>
             <PromptWhenDirty />
             <Header
               title="Cash box"
-              editing={isEditing(CASH_IN_KEY)}
-              disabled={isDisabled(CASH_IN_KEY)}
-              setEditing={it => setEditing(CASH_IN_KEY, it)}
+              editing={editing === CASH_IN_KEY}
+              disabled={editing !== CASH_IN_KEY}
+              setEditing={() => setEditing(CASH_IN_KEY)}
             />
             <div className={classes.wrapper}>
               <div className={classes.first}>
@@ -114,7 +113,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                     <EditableNumber
                       label="Alert me over"
                       name="cashInAlertThreshold"
-                      editing={isEditing(CASH_IN_KEY)}
+                      editing={editing === CASH_IN_KEY}
                       displayValue={x => (x === '' ? '-' : x)}
                       decoration="notes"
                       width={fieldWidth}
@@ -127,10 +126,10 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
           <Form className={classes.form}>
             <PromptWhenDirty />
             <Header
-              title="Cash out (Empty)"
-              editing={isEditing(CASH_OUT_KEY)}
-              disabled={isDisabled(CASH_OUT_KEY)}
-              setEditing={it => setEditing(CASH_OUT_KEY, it)}
+              title="Load boxes - Aveiro (Empty)"
+              editing={editing === LOAD_BOXES_KEY}
+              disabled={editing !== LOAD_BOXES_KEY}
+              setEditing={() => setEditing(LOAD_BOXES_KEY)}
             />
             <div className={classes.wrapper}>
               {R.map(
@@ -154,7 +153,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         <EditableNumber
                           label="Alert me under"
                           name={`fillingPercentageCassette${it + 1}`}
-                          editing={isEditing(CASH_OUT_KEY)}
+                          editing={editing === LOAD_BOXES_KEY}
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="%"
                           width={fieldWidth}
@@ -170,10 +169,10 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
           <Form className={classes.form}>
             <PromptWhenDirty />
             <Header
-              title="Cash recycling (stackers)"
-              editing={isEditing(RECYCLER_STACKER_KEY)}
-              disabled={isDisabled(RECYCLER_STACKER_KEY)}
-              setEditing={it => setEditing(RECYCLER_STACKER_KEY, it)}
+              title="Cassettes & Recyclers (Empty)"
+              editing={editing === CASSETTES_RECYCLERS_KEY}
+              disabled={editing !== CASSETTES_RECYCLERS_KEY}
+              setEditing={() => setEditing(CASSETTES_RECYCLERS_KEY)}
             />
             <div className={classes.wrapper}>
               {R.chain(
@@ -197,7 +196,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         <EditableNumber
                           label="Alert me under"
                           name={`fillingPercentageStacker${it + 1}f`}
-                          editing={isEditing(RECYCLER_STACKER_KEY)}
+                          editing={editing === CASSETTES_RECYCLERS_KEY}
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="%"
                           width={fieldWidth}
@@ -224,7 +223,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         <EditableNumber
                           label="Alert me under"
                           name={`fillingPercentageStacker${it + 1}r`}
-                          editing={isEditing(RECYCLER_STACKER_KEY)}
+                          editing={editing === CASSETTES_RECYCLERS_KEY}
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="%"
                           width={fieldWidth}

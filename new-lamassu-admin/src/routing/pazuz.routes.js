@@ -15,7 +15,12 @@ import PromoCodes from 'src/pages/LoyaltyPanel/PromoCodes'
 import MachineLogs from 'src/pages/MachineLogs'
 import CashUnits from 'src/pages/Maintenance/CashUnits'
 import MachineStatus from 'src/pages/Maintenance/MachineStatus'
-import Notifications from 'src/pages/Notifications/Notifications'
+import {
+  Notifications,
+  SetupAndTransactions,
+  FiatBalance,
+  CryptoBalance
+} from 'src/pages/Notifications/Notifications'
 import CoinAtmRadar from 'src/pages/OperatorInfo/CoinATMRadar'
 import ContactInfo from 'src/pages/OperatorInfo/ContactInfo'
 import ReceiptPrinting from 'src/pages/OperatorInfo/ReceiptPrinting'
@@ -119,7 +124,41 @@ const getPazuzRoutes = () => [
         label: 'Notifications',
         route: '/settings/notifications',
         allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
-        component: Notifications
+        get component() {
+          return () => (
+            <Notifications>
+              <Redirect
+                to={{
+                  pathname: this.children[0].route,
+                  state: { prev: this.state?.prev }
+                }}
+              />
+            </Notifications>
+          )
+        },
+        children: [
+          {
+            key: 'setup-tx-alerts',
+            label: 'Setup & Transaction Alerts',
+            route: '/settings/notifications/setup-tx-alerts',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: SetupAndTransactions
+          },
+          {
+            key: 'fiat-alerts',
+            label: 'Fiat Balance Alerts',
+            route: '/settings/notifications/fiat-alerts',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: FiatBalance
+          },
+          {
+            key: 'crypto-alerts',
+            label: 'Crypto Balance Alerts',
+            route: '/settings/notifications/crypto-alerts',
+            allowedRoles: [ROLES.USER, ROLES.SUPERUSER],
+            component: CryptoBalance
+          }
+        ]
       },
       {
         key: namespaces.OPERATOR_INFO,
