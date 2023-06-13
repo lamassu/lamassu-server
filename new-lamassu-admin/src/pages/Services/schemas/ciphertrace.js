@@ -29,8 +29,10 @@ export default {
       settings: {
         enabled: true,
         disabledMessage: 'This plugin is disabled',
-        label: 'Enabled',
-        requirement: null
+        label:
+          'Enabled (Supported coins: BTC, ETH, BCH, LTC and all active ERC-20 tokens)',
+        requirement: null,
+        rightSideLabel: true
       },
       face: true
     }
