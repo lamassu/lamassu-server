@@ -86,10 +86,7 @@ const CryptoBalanceOverrides = ({
       view: (_, it) => viewCrypto(it),
       input: Autocomplete,
       inputProps: {
-        options: it => {
-          console.log(it)
-          return R.concat(suggestions, findSuggestion(it))
-        },
+        options: it => R.concat(suggestions, findSuggestion(it)),
         optionsLimit: null,
         valueProp: 'code',
         labelProp: 'display'

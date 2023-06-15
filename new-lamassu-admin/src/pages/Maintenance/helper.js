@@ -14,7 +14,6 @@ const getElements = (
   widths,
   setMachineId
 ) => {
-  console.log(config)
   const fillingPercentageSettings = fromNamespace('notifications', config)
   const locale = fromNamespace('locale')(config)
   const cashout = fromNamespace('cashOut')(config)
