@@ -49,7 +49,7 @@ const ActionCol = ({ disabled, editing }) => {
   const [deleteDialog, setDeleteDialog] = useState(false)
 
   const onConfirmed = () => {
-    onDelete(values.id).then(res => {
+    onDelete(values.id ?? values.overrideId).then(res => {
       if (!R.isNil(res)) setDeleteDialog(false)
     })
   }
@@ -77,7 +77,7 @@ const ActionCol = ({ disabled, editing }) => {
           <IconButton
             disabled={disableEdit}
             className={classes.editButton}
-            onClick={() => onEdit && onEdit(values.id)}>
+            onClick={() => onEdit && onEdit(values.id ?? values.overrideId)}>
             {disableEdit ? <DisabledEditIcon /> : <EditIcon />}
           </IconButton>
         </Td>
@@ -192,7 +192,10 @@ const ECol = ({ editing, focus, config, extraPaddingRight, extraPadding }) => {
           )}
           {!isEditing && values && !isHidden(values) && (
             <div style={textStyle(values, isEditing)}>
-              {view(values[f], values)}
+              {view(
+                R.isNil(f) ? null : R.path(R.split('.', f), values),
+                values
+              )}
             </div>
           )}
           {suffix && !isHidden(values) && (

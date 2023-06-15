@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core'
-import { Form, Formik } from 'formik'
+import { FieldArray, Form, Formik } from 'formik'
 import * as R from 'ramda'
 import React from 'react'
 import * as Yup from 'yup'
@@ -12,15 +12,15 @@ import { Cashbox } from '../../../components/inputs/cashbox/Cashbox'
 import Header from '../components/EditHeader'
 import EditableNumber from '../components/EditableNumber'
 
-import styles from './FiatBalanceAlerts.styles.js'
+import styles from './FiatBalanceAlerts.styles'
 
 const useStyles = makeStyles(styles)
 
 const CASH_IN_KEY = 'cash-in'
 const LOAD_BOXES_KEY = 'load-boxes'
 const CASSETTES_RECYCLERS_KEY = 'cassettes-recyclers'
-const DEFAULT_NUMBER_OF_CASSETTES = 2
-const DEFAULT_NUMBER_OF_STACKERS = 0
+const MAX_NUMBER_OF_CASSETTES_RECYCLERS = 4
+const MAX_NUMBER_OF_LOAD_BOXES = 2
 const notesMin = 0
 const notesMax = 9999999
 
@@ -34,51 +34,59 @@ const FiatBalance = ({
   editing,
   setEditing
 }) => {
-  const { machines, notificationSettings } = data
-  console.log(notificationSettings)
+  const { notificationSettings } = data
   const classes = useStyles()
 
-  const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines),
-    DEFAULT_NUMBER_OF_CASSETTES
-  )
-
-  const maxNumberOfStackers = Math.max(
-    ...R.map(it => it.numberOfStackers, machines),
-    DEFAULT_NUMBER_OF_STACKERS
+  const eventName = 'unitFillThreshold'
+  const value = R.find(it => it.event === eventName && R.isNil(it.overrideId))(
+    notificationSettings
   )
 
   const schema = Yup.object().shape({
-    cashInAlertThreshold: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(notesMin)
-      .max(notesMax)
-      .nullable(),
-    fillingPercentageCassette1: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable(),
-    fillingPercentageCassette2: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable(),
-    fiatBalanceCassette3: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable(),
-    fiatBalanceCassette4: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable()
+    event: Yup.string().required(),
+    overrideId: Yup.string().nullable(),
+    value: Yup.object().shape({
+      cashboxCount: Yup.object().shape({
+        upperBound: Yup.number()
+          .transform(transformNumber)
+          .integer()
+          .min(notesMin)
+          .max(notesMax)
+          .nullable()
+      }),
+      rejectBoxCount: Yup.object().shape({
+        upperBound: Yup.number()
+          .transform(transformNumber)
+          .integer()
+          .min(notesMin)
+          .max(notesMax)
+          .nullable()
+      }),
+      loadboxPercentage: Yup.object().shape({
+        lowerBound: Yup.array()
+          .of(
+            Yup.number()
+              .transform(transformNumber)
+              .integer()
+              .min(min)
+              .max(max)
+              .nullable()
+          )
+          .length(MAX_NUMBER_OF_LOAD_BOXES)
+      }),
+      cassetteAndRecyclerPercentage: Yup.object().shape({
+        lowerBound: Yup.array()
+          .of(
+            Yup.number()
+              .transform(transformNumber)
+              .integer()
+              .min(min)
+              .max(max)
+              .nullable()
+          )
+          .length(MAX_NUMBER_OF_CASSETTES_RECYCLERS)
+      })
+    })
   })
 
   return (
@@ -86,39 +94,45 @@ const FiatBalance = ({
       validateOnBlur={false}
       validateOnChange={false}
       enableReinitialize
-      initialValues={{
-        cashInAlertThreshold: data?.cashInAlertThreshold ?? '',
-        fillingPercentageCassette1: data?.fillingPercentageCassette1 ?? '',
-        fillingPercentageCassette2: data?.fillingPercentageCassette2 ?? '',
-        fillingPercentageCassette3: data?.fillingPercentageCassette3 ?? '',
-        fillingPercentageCassette4: data?.fillingPercentageCassette4 ?? ''
-      }}
+      initialValues={value}
       validationSchema={schema}
       onSubmit={it => save(schema.cast(it))}
       onReset={() => setEditing(null)}>
-      {({ values }) => (
-        <>
+      <div className={classes.formWrapper}>
+        <div className={classes.formRow}>
           <Form className={classes.form}>
             <PromptWhenDirty />
             <Header
-              title="Cash box"
+              title="Cash-In (Full)"
               editing={editing === CASH_IN_KEY}
-              disabled={editing !== CASH_IN_KEY}
+              disabled={editing !== null}
               setEditing={() => setEditing(CASH_IN_KEY)}
             />
             <div className={classes.wrapper}>
-              <div className={classes.first}>
-                <div className={classes.row}>
-                  <div className={classes.col2}>
-                    <EditableNumber
-                      label="Alert me over"
-                      name="cashInAlertThreshold"
-                      editing={editing === CASH_IN_KEY}
-                      displayValue={x => (x === '' ? '-' : x)}
-                      decoration="notes"
-                      width={fieldWidth}
-                    />
-                  </div>
+              <div className={classes.row}>
+                <div className={classes.col2}>
+                  <TL2 className={classes.title}>Cashbox</TL2>
+                  <EditableNumber
+                    label="Alert me over"
+                    name="value.cashboxCount.upperBound"
+                    editing={editing === CASH_IN_KEY}
+                    displayValue={x => (R.isNil(x) || R.isEmpty(x) ? '-' : x)}
+                    decoration="notes"
+                    width={fieldWidth}
+                  />
+                </div>
+              </div>
+              <div className={classes.row}>
+                <div className={classes.col2}>
+                  {/* <TL2 className={classes.title}>Rejection box</TL2>
+                  <EditableNumber
+                    label="Alert me over"
+                    name="value.rejectBoxCount.upperBound"
+                    editing={editing === CASH_IN_KEY}
+                    displayValue={x => (R.isNil(x) || R.isEmpty(x) ? '-' : x)}
+                    decoration="notes"
+                    width={fieldWidth}
+                  /> */}
                 </div>
               </div>
             </div>
@@ -128,21 +142,70 @@ const FiatBalance = ({
             <Header
               title="Load boxes - Aveiro (Empty)"
               editing={editing === LOAD_BOXES_KEY}
-              disabled={editing !== LOAD_BOXES_KEY}
+              disabled={editing !== null}
               setEditing={() => setEditing(LOAD_BOXES_KEY)}
             />
-            <div className={classes.wrapper}>
-              {R.map(
-                it => (
-                  <>
+            <FieldArray name="value.loadboxPercentage.lowerBound">
+              <div className={classes.wrapper}>
+                {R.map(
+                  it => (
+                    <>
+                      <div className={classes.row}>
+                        <Cashbox
+                          labelClassName={classes.cashboxLabel}
+                          emptyPartClassName={classes.cashboxEmptyPart}
+                          percent={R.defaultTo(
+                            0,
+                            value?.loadboxPercentage?.lowerBound[it]
+                          )}
+                          applyColorVariant
+                          applyFiatBalanceAlertsStyling
+                          omitInnerPercentage
+                          cashOut
+                        />
+                        <div className={classes.col2}>
+                          <TL2 className={classes.title}>Load box {it + 1}</TL2>
+                          <EditableNumber
+                            label="Alert me under"
+                            name={`value.loadboxPercentage.lowerBound.${it}`}
+                            editing={editing === LOAD_BOXES_KEY}
+                            displayValue={x =>
+                              R.isNil(x) || R.isEmpty(x) ? '-' : x
+                            }
+                            decoration="%"
+                            width={fieldWidth}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ),
+                  R.times(R.identity, MAX_NUMBER_OF_LOAD_BOXES)
+                )}
+              </div>
+            </FieldArray>
+          </Form>
+        </div>
+        <div className={classes.formRow}>
+          <Form className={classes.form}>
+            <PromptWhenDirty />
+            <Header
+              title="Cassettes & Recyclers (Empty)"
+              editing={editing === CASSETTES_RECYCLERS_KEY}
+              disabled={editing !== null}
+              setEditing={() => setEditing(CASSETTES_RECYCLERS_KEY)}
+            />
+            <FieldArray name="value.cassetteAndRecyclerPercentage.lowerBound">
+              <div className={classes.wrapper}>
+                {R.map(
+                  it => (
                     <div className={classes.row}>
                       <Cashbox
                         labelClassName={classes.cashboxLabel}
                         emptyPartClassName={classes.cashboxEmptyPart}
-                        percent={
-                          values[`fillingPercentageCassette${it + 1}`] ??
-                          data[`cassette${it + 1}`]
-                        }
+                        percent={R.defaultTo(
+                          0,
+                          value?.cassetteAndRecyclerPercentage?.lowerBound[it]
+                        )}
                         applyColorVariant
                         applyFiatBalanceAlertsStyling
                         omitInnerPercentage
@@ -152,92 +215,24 @@ const FiatBalance = ({
                         <TL2 className={classes.title}>Cassette {it + 1}</TL2>
                         <EditableNumber
                           label="Alert me under"
-                          name={`fillingPercentageCassette${it + 1}`}
-                          editing={editing === LOAD_BOXES_KEY}
-                          displayValue={x => (x === '' ? '-' : x)}
-                          decoration="%"
-                          width={fieldWidth}
-                        />
-                      </div>
-                    </div>
-                  </>
-                ),
-                R.times(R.identity, maxNumberOfCassettes)
-              )}
-            </div>
-          </Form>
-          <Form className={classes.form}>
-            <PromptWhenDirty />
-            <Header
-              title="Cassettes & Recyclers (Empty)"
-              editing={editing === CASSETTES_RECYCLERS_KEY}
-              disabled={editing !== CASSETTES_RECYCLERS_KEY}
-              setEditing={() => setEditing(CASSETTES_RECYCLERS_KEY)}
-            />
-            <div className={classes.wrapper}>
-              {R.chain(
-                it => [
-                  <>
-                    <div className={classes.row}>
-                      <Cashbox
-                        labelClassName={classes.cashboxLabel}
-                        emptyPartClassName={classes.cashboxEmptyPart}
-                        percent={
-                          values[`fillingPercentageStacker${it + 1}f`] ??
-                          data[`stacker${it + 1}f`]
-                        }
-                        applyColorVariant
-                        applyFiatBalanceAlertsStyling
-                        omitInnerPercentage
-                        cashOut
-                      />
-                      <div className={classes.col2}>
-                        <TL2 className={classes.title}>Stacker {it + 1}F</TL2>
-                        <EditableNumber
-                          label="Alert me under"
-                          name={`fillingPercentageStacker${it + 1}f`}
+                          name={`value.cassetteAndRecyclerPercentage.lowerBound.${it}`}
                           editing={editing === CASSETTES_RECYCLERS_KEY}
-                          displayValue={x => (x === '' ? '-' : x)}
+                          displayValue={x =>
+                            R.isNil(x) || R.isEmpty(x) ? '-' : x
+                          }
                           decoration="%"
                           width={fieldWidth}
                         />
                       </div>
                     </div>
-                  </>,
-                  <>
-                    <div className={classes.row}>
-                      <Cashbox
-                        labelClassName={classes.cashboxLabel}
-                        emptyPartClassName={classes.cashboxEmptyPart}
-                        percent={
-                          values[`fillingPercentageStacker${it + 1}r`] ??
-                          data[`stacker${it + 1}r`]
-                        }
-                        applyColorVariant
-                        applyFiatBalanceAlertsStyling
-                        omitInnerPercentage
-                        cashOut
-                      />
-                      <div className={classes.col2}>
-                        <TL2 className={classes.title}>Stacker {it + 1}R</TL2>
-                        <EditableNumber
-                          label="Alert me under"
-                          name={`fillingPercentageStacker${it + 1}r`}
-                          editing={editing === CASSETTES_RECYCLERS_KEY}
-                          displayValue={x => (x === '' ? '-' : x)}
-                          decoration="%"
-                          width={fieldWidth}
-                        />
-                      </div>
-                    </div>
-                  </>
-                ],
-                R.times(R.identity, maxNumberOfStackers)
-              )}
-            </div>
+                  ),
+                  R.times(R.identity, MAX_NUMBER_OF_CASSETTES_RECYCLERS)
+                )}
+              </div>
+            </FieldArray>
           </Form>
-        </>
-      )}
+        </div>
+      </div>
     </Formik>
   )
 }

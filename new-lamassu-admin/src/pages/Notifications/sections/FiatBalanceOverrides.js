@@ -1,43 +1,37 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 import * as R from 'ramda'
 import React from 'react'
+import * as uuid from 'uuid'
 import * as Yup from 'yup'
 
 import { Table as EditableTable } from 'src/components/editableTable'
 import { NumberInput } from 'src/components/inputs/formik/'
 import Autocomplete from 'src/components/inputs/formik/Autocomplete'
+import { fromNamespace, namespaces } from 'src/utils/config'
 import { transformNumber } from 'src/utils/number'
 
-const CASHBOX_KEY = 'cashInAlertThreshold'
-const CASSETTE_1_KEY = 'fillingPercentageCassette1'
-const CASSETTE_2_KEY = 'fillingPercentageCassette2'
-const CASSETTE_3_KEY = 'fillingPercentageCassette3'
-const CASSETTE_4_KEY = 'fillingPercentageCassette4'
-const MACHINE_KEY = 'machine'
-const NAME = 'fiatBalanceOverrides'
-const DEFAULT_NUMBER_OF_CASSETTES = 2
+const MAX_NUMBER_OF_CASSETTES_RECYCLERS = 4
+const MAX_NUMBER_OF_LOAD_BOXES = 2
 
-const CASSETTE_LIST = [
-  CASSETTE_1_KEY,
-  CASSETTE_2_KEY,
-  CASSETTE_3_KEY,
-  CASSETTE_4_KEY
-]
+const widths = { machine: 130, cashbox: 110, cassette: 104 }
 
-const widthsByNumberOfCassettes = {
-  2: { machine: 230, cashbox: 150, cassette: 250 },
-  3: { machine: 216, cashbox: 150, cassette: 270 },
-  4: { machine: 210, cashbox: 150, cassette: 204 }
-}
+const FiatBalanceOverrides = ({
+  data,
+  save,
+  onDelete,
+  error,
+  editing,
+  setEditing
+}) => {
+  const { config, machines, notificationSettings } = data
+  const eventName = 'unitFillThreshold'
+  const values = R.filter(
+    it => it.event === eventName && !R.isNil(it.overrideId)
+  )(notificationSettings)
 
-const FiatBalanceOverrides = ({ data, save, error, editing, setEditing }) => {
-  const { machines, notificationSettings } = data
+  const cashoutConfig = fromNamespace(namespaces.CASH_OUT)(config)
+  const getMachineCashoutConfig = it => fromNamespace(it)(cashoutConfig)
 
-  const setupValues = data?.fiatBalanceOverrides ?? []
-  const innerSetEditing = it => setEditing(it.overrideId)
-
-  const overriddenMachines = R.map(override => override.machine, setupValues)
+  const overriddenMachines = R.map(override => override?.value?.machine, values)
   const suggestions = R.differenceWith(
     (it, m) => it.deviceId === m,
     machines,
@@ -45,154 +39,215 @@ const FiatBalanceOverrides = ({ data, save, error, editing, setEditing }) => {
   )
 
   const findSuggestion = it => {
-    const coin = R.find(R.propEq('deviceId', it?.machine), machines)
-    return coin ? [coin] : []
+    const machine = R.find(ite => it?.value?.machine === ite.deviceId, machines)
+    return machine ? [machine] : []
   }
 
+  const _save = (_, it) => save(schema.cast(it))
+  const _delete = id => onDelete(eventName, id)
+
   const initialValues = {
-    [MACHINE_KEY]: null,
-    [CASHBOX_KEY]: '',
-    [CASSETTE_1_KEY]: '',
-    [CASSETTE_2_KEY]: '',
-    [CASSETTE_3_KEY]: '',
-    [CASSETTE_4_KEY]: ''
+    event: 'unitFillThreshold',
+    overrideId: uuid.v4(),
+    value: {
+      machine: null,
+      cashboxCount: {
+        upperBound: null
+      },
+      rejectBoxCount: {
+        upperBound: null
+      },
+      loadboxPercentage: {
+        lowerBound: R.times(() => null, MAX_NUMBER_OF_LOAD_BOXES)
+      },
+      cassetteAndRecyclerPercentage: {
+        lowerBound: R.times(() => null, MAX_NUMBER_OF_CASSETTES_RECYCLERS)
+      }
+    }
   }
 
   const notesMin = 0
   const notesMax = 9999999
-
-  const maxNumberOfCassettes = Math.max(
-    ...R.map(it => it.numberOfCassettes, machines),
-    DEFAULT_NUMBER_OF_CASSETTES
-  )
-
   const percentMin = 0
   const percentMax = 100
-  const validationSchema = Yup.object()
+
+  const schema = Yup.object()
     .shape({
-      [MACHINE_KEY]: Yup.string()
-        .label('Machine')
-        .required(),
-      [CASHBOX_KEY]: Yup.number()
-        .label('Cash box')
-        .transform(transformNumber)
-        .integer()
-        .min(notesMin)
-        .max(notesMax)
-        .nullable(),
-      [CASSETTE_1_KEY]: Yup.number()
-        .label('Cassette 1')
-        .transform(transformNumber)
-        .integer()
-        .min(percentMin)
-        .max(percentMax)
-        .nullable(),
-      [CASSETTE_2_KEY]: Yup.number()
-        .label('Cassette 2')
-        .transform(transformNumber)
-        .integer()
-        .min(percentMin)
-        .max(percentMax)
-        .nullable(),
-      [CASSETTE_3_KEY]: Yup.number()
-        .label('Cassette 3')
-        .transform(transformNumber)
-        .integer()
-        .min(percentMin)
-        .max(percentMax)
-        .nullable(),
-      [CASSETTE_4_KEY]: Yup.number()
-        .label('Cassette 4')
-        .transform(transformNumber)
-        .integer()
-        .min(percentMin)
-        .max(percentMax)
-        .nullable()
+      event: Yup.string().required(),
+      overrideId: Yup.string().required(),
+      value: Yup.object().shape({
+        machine: Yup.string().required(),
+        cashboxCount: Yup.object().shape({
+          upperBound: Yup.number()
+            .transform(transformNumber)
+            .integer()
+            .min(notesMin)
+            .max(notesMax)
+            .nullable()
+        }),
+        rejectBoxCount: Yup.object().shape({
+          upperBound: Yup.number()
+            .transform(transformNumber)
+            .integer()
+            .min(notesMin)
+            .max(notesMax)
+            .nullable()
+        }),
+        loadboxPercentage: Yup.object().shape({
+          lowerBound: Yup.array()
+            .of(
+              Yup.number()
+                .transform(transformNumber)
+                .integer()
+                .min(percentMin)
+                .max(percentMax)
+                .nullable()
+            )
+            .length(MAX_NUMBER_OF_LOAD_BOXES)
+        }),
+        cassetteAndRecyclerPercentage: Yup.object().shape({
+          lowerBound: Yup.array()
+            .of(
+              Yup.number()
+                .transform(transformNumber)
+                .integer()
+                .min(percentMin)
+                .max(percentMax)
+                .nullable()
+            )
+            .length(MAX_NUMBER_OF_CASSETTES_RECYCLERS)
+        })
+      })
     })
-    .test((values, context) =>
-      R.any(key => !R.isNil(values[key]), R.prepend(CASHBOX_KEY, CASSETTE_LIST))
-        ? undefined
-        : context.createError({
-            path: CASHBOX_KEY,
+    .test((values, context) => {
+      const { value } = values
+      const fieldValues = R.pipe(
+        R.props([
+          'cashboxCount',
+          'loadboxPercentage',
+          'cassetteAndRecyclerPercentage'
+        ]),
+        R.map(R.values),
+        R.flatten
+      )(value)
+      return R.all(R.isNil)(fieldValues)
+        ? context.createError({
+            path: 'value',
             message:
               'The cash box or at least one of the cassettes must have a value'
           })
-    )
+        : undefined
+    })
 
   const viewMachine = it =>
     R.compose(R.path(['name']), R.find(R.propEq('deviceId', it)))(machines)
 
-  const elements = R.concat(
-    [
-      {
-        name: MACHINE_KEY,
-        display: 'Machine',
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes].machine,
-        size: 'sm',
-        view: viewMachine,
-        input: Autocomplete,
-        inputProps: {
-          options: it => R.concat(suggestions, findSuggestion(it)),
-          valueProp: 'deviceId',
-          labelProp: 'name'
-        }
-      },
-      {
-        name: CASHBOX_KEY,
-        display: 'Cash box',
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cashbox,
-        textAlign: 'right',
-        bold: true,
-        input: NumberInput,
-        suffix: 'notes',
-        inputProps: {
-          decimalPlaces: 0
-        }
+  const getMachine = id => R.find(it => it.deviceId === id)(machines)
+
+  const elements = [
+    {
+      name: 'value.machine',
+      display: 'Machine',
+      width: widths.machine,
+      size: 'sm',
+      view: viewMachine,
+      input: Autocomplete,
+      inputProps: {
+        options: (_, it) => R.concat(suggestions, findSuggestion(it)),
+        valueProp: 'deviceId',
+        labelProp: 'name'
       }
-    ],
-    R.map(
+    },
+    {
+      name: 'value.cashboxCount.upperBound',
+      display: 'Cash box',
+      width: widths.cashbox,
+      textAlign: 'right',
+      bold: true,
+      input: NumberInput,
+      suffix: 'notes',
+      inputProps: {
+        decimalPlaces: 0
+      }
+    },
+    ...R.map(
       it => ({
-        name: `fillingPercentageCassette${it}`,
-        display: `Cash cassette ${it}`,
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes].cassette,
+        name: `value.loadboxPercentage.lowerBound.${it - 1}`,
+        display: `LB ${it}`,
+        width: widths.cassette,
         textAlign: 'right',
-        doubleHeader: 'Cash Cassette Empty',
+        doubleHeader: 'Cassettes & Recyclers (Empty)',
         bold: true,
         input: NumberInput,
         suffix: '%',
         inputProps: {
           decimalPlaces: 0
         },
-        view: el => el?.toString() ?? '—',
-        isHidden: value =>
-          !cashoutConfig(value.machine).active ||
-          it >
-            R.defaultTo(
-              0,
-              machines.find(({ deviceId }) => deviceId === value.machine)
-                ?.numberOfCassettes
-            )
+        view: el => R.defaultTo('—', el),
+        isHidden: override => {
+          const m = getMachine(override.value.machine)
+          if (R.isNil(m) || m?.model !== 'aveiro') return true
+          return (
+            !getMachineCashoutConfig(m.deviceId).active ||
+            it > R.defaultTo(0, m?.numberOfCassettes)
+          )
+        }
       }),
-      R.range(1, maxNumberOfCassettes + 1)
+      R.range(1, MAX_NUMBER_OF_LOAD_BOXES + 1)
+    ),
+    ...R.map(
+      it => ({
+        name: `value.cassetteAndRecyclerPercentage.lowerBound.${it - 1}`,
+        display: `Cass ${it}`,
+        width: widths.cassette,
+        textAlign: 'right',
+        doubleHeader: 'Cassettes & Recyclers (Empty)',
+        bold: true,
+        input: NumberInput,
+        suffix: '%',
+        inputProps: {
+          decimalPlaces: 0
+        },
+        view: el => R.defaultTo('—', el),
+        isHidden: override => {
+          const m = getMachine(override.value.machine)
+          if (R.isNil(m)) return true
+
+          if (m?.model === 'aveiro') {
+            return (
+              !getMachineCashoutConfig(m.deviceId).active ||
+              it > R.defaultTo(0, m?.numberOfStackers)
+            )
+          }
+
+          return (
+            !getMachineCashoutConfig(m.deviceId).active ||
+            it > R.defaultTo(0, m?.numberOfCassettes)
+          )
+        }
+      }),
+      R.range(1, MAX_NUMBER_OF_CASSETTES_RECYCLERS + 1)
     )
-  )
+  ]
 
   return (
     <EditableTable
-      name={NAME}
+      name="overrides"
       title="Overrides"
       error={error?.message}
       enableDelete
       enableEdit
       enableCreate
-      save={it => save(validationSchema.cast(it))}
+      save={_save}
+      onDelete={_delete}
       initialValues={initialValues}
-      validationSchema={validationSchema}
+      validationSchema={schema}
       forceDisable={R.isEmpty(machines) || R.isNil(machines)}
-      data={setupValues}
+      data={values}
       elements={elements}
       disableAdd={!suggestions?.length}
-      setEditing={innerSetEditing}
+      editing={editing}
+      setEditing={setEditing}
     />
   )
 }

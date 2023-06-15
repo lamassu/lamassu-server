@@ -32,6 +32,7 @@ const ETable = ({
   elements = [],
   data = [],
   save,
+  onDelete: externalOnDelete,
   error: externalError,
   rowSize = 'md',
   validationSchema,
@@ -94,6 +95,7 @@ const ETable = ({
   }
 
   const onDelete = id => {
+    if (!R.isNil(externalOnDelete)) return externalOnDelete(id)
     const list = R.reject(it => it.id === id, data)
     return save({ [name]: list })
   }
@@ -230,7 +232,9 @@ const ETable = ({
                           <PromptWhenDirty />
                           <ERow
                             lastOfGroup={isLastOfGroup}
-                            editing={editingId === it.id}
+                            editing={
+                              editingId === it.id || editingId === it.overrideId
+                            }
                             disabled={
                               forceDisable ||
                               (editingId && editingId !== it.id) ||

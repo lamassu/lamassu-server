@@ -87,16 +87,16 @@ exports.up = function (next) {
       value JSONB,
       PRIMARY KEY (event, override_id)
     )`,
-    `CREATE TABLE notification_alert (
-      id UUID PRIMARY KEY,
-      event notification_event NOT NULL,
-      category notification_category NOT NULL,
-      context JSONB NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-      read BOOLEAN NOT NULL DEFAULT false
-    )`,
-    `INSERT INTO notification_settings (event, override_id, value) VALUES ('unitFillThreshold', '00000000-0000-0000-0000-000000000000', '{ "cashboxCountUpperBound": ${_.defaultTo(null, config.notifications_cashInAlertThreshold)}, "cassettesCountLowerBound": [${_.defaultTo(null, config.notifications_fillingPercentageCassette1)}, ${_.defaultTo(null, config.notifications_fillingPercentageCassette2)}, ${_.isEmpty(config.notifications_fillingPercentageCassette3) ? null : _.defaultTo(null, config.notifications_fillingPercentageCassette3)}, ${_.isEmpty(config.notifications_fillingPercentageCassette4) ? null : _.defaultTo(null, config.notifications_fillingPercentageCassette4)}] }')`,
-    ..._.map(it => `INSERT INTO notification_settings (event, override_id, value) VALUES ('unitFillThreshold', '${it.id}', '{ "machine": "${it.machine}", "cashboxCountUpperBound": ${_.defaultTo(null, it.cashInAlertThreshold)}, "cassettesCountLowerBound": [${_.defaultTo(null, it.fillingPercentageCassette1)}, ${_.defaultTo(null, it.fillingPercentageCassette2)}, ${_.defaultTo(null, it.fillingPercentageCassette3)}, ${_.defaultTo(null, it.fillingPercentageCassette4)}] }')`)(config.notifications_fiatBalanceOverrides),
+    // `CREATE TABLE notification_alert (
+    //   id UUID PRIMARY KEY,
+    //   event notification_event NOT NULL,
+    //   category notification_category NOT NULL,
+    //   context JSONB NOT NULL,
+    //   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    //   read BOOLEAN NOT NULL DEFAULT false
+    // )`,
+    `INSERT INTO notification_settings (event, override_id, value) VALUES ('unitFillThreshold', '00000000-0000-0000-0000-000000000000', "loadboxPercentage": { "lowerBound": [null, null] }, '{ "cashboxCount": { "upperBound": ${_.defaultTo(null, config.notifications_cashInAlertThreshold)} }, "cassetteAndRecyclerPercentage": { "lowerBound": [${_.defaultTo(null, config.notifications_fillingPercentageCassette1)}, ${_.defaultTo(null, config.notifications_fillingPercentageCassette2)}, ${_.isEmpty(config.notifications_fillingPercentageCassette3) ? null : _.defaultTo(null, config.notifications_fillingPercentageCassette3)}, ${_.isEmpty(config.notifications_fillingPercentageCassette4) ? null : _.defaultTo(null, config.notifications_fillingPercentageCassette4)}] } }')`,
+    ..._.map(it => `INSERT INTO notification_settings (event, override_id, value) VALUES ('unitFillThreshold', '${it.id}', '{ "machine": "${it.machine}", "cashboxCount": { "upperBound": ${_.defaultTo(null, it.cashInAlertThreshold)} }, "loadboxPercentage": { "lowerBound": [null, null] }, "cassetteAndRecyclerPercentage": { "lowerBound": [${_.defaultTo(null, it.fillingPercentageCassette1)}, ${_.defaultTo(null, it.fillingPercentageCassette2)}, ${_.defaultTo(null, it.fillingPercentageCassette3)}, ${_.defaultTo(null, it.fillingPercentageCassette4)}] } }')`)(config.notifications_fiatBalanceOverrides),
     `INSERT INTO notification_settings (event, override_id, value) VALUES ('transactionValue', '00000000-0000-0000-0000-000000000000', '{ "upperBound": ${_.defaultTo(null, config.notifications_highValueTransaction)} }')`,
     `INSERT INTO notification_settings (event, override_id, value) VALUES ('cryptoBalance', '00000000-0000-0000-0000-000000000000', '{ "upperBound": ${_.defaultTo(null, config.notifications_cryptoHighBalance)}, "lowerBound": ${_.defaultTo(null, config.notifications_cryptoLowBalance)} }')`,
     ..._.map(it => `INSERT INTO notification_settings (event, override_id, value) VALUES ('cryptoBalance', '${it.id}', '{ "cryptoCurrency": "${_.defaultTo(null, it.cryptoCurrency)}", "upperBound": ${_.defaultTo(null, it.highBalance)}, "lowerBound": ${_.defaultTo(null, it.lowBalance)} }')`)(config.notifications_cryptoBalanceOverrides),

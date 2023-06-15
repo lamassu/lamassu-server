@@ -1,4 +1,4 @@
-import { backgroundColor } from 'src/styling/variables'
+import { backgroundColor, offDarkColor } from 'src/styling/variables'
 
 export default {
   wrapper: {
@@ -27,5 +27,18 @@ export default {
   },
   cashboxEmptyPart: {
     backgroundColor: `${backgroundColor}`
+  },
+  formWrapper: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  formRow: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  verticalLine: {
+    height: '165px',
+    width: 1,
+    backgroundColor: offDarkColor
   }
 }

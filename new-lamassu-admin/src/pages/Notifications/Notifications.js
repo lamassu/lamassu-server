@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 import React, { useContext, useState } from 'react'
 
 import Modal from 'src/components/Modal'
-import TitleSection from 'src/components/layout/TitleSection'
 import { P } from 'src/components/typography'
 import FormRenderer from 'src/pages/Services/FormRenderer'
 import twilioSchema from 'src/pages/Services/schemas/twilio'
@@ -78,6 +76,7 @@ const GET_SETUP_AND_TX_ALERTS = gql`
 
 const GET_FIAT_BALANCE_ALERTS = gql`
   query getFiatBalanceAlerts {
+    config
     notificationSettings {
       event
       overrideId
@@ -88,6 +87,7 @@ const GET_FIAT_BALANCE_ALERTS = gql`
       deviceId
       numberOfCassettes
       numberOfStackers
+      model
     }
   }
 `
@@ -139,6 +139,15 @@ const SAVE_NOTIFICATION_SETTING = gql`
       overrideId: $overrideId
       value: $value
     )
+  }
+`
+
+const DELETE_FIAT_ALERT_OVERRIDE = gql`
+  mutation deleteNotificationSetting(
+    $event: NotificationEvent
+    $overrideId: ID
+  ) {
+    deleteNotificationSetting(event: $event, overrideId: $overrideId)
   }
 `
 
@@ -324,41 +333,51 @@ const FiatBalance = () => {
   const [editing, setEditing] = useState(null)
   const { data, loading } = useQuery(GET_FIAT_BALANCE_ALERTS)
 
-  const { machines, notificationSettings } = !loading && data
+  const { config, machines, notificationSettings } = !loading && data
 
   const [saveTransactionAlerts] = useMutation(SAVE_NOTIFICATION_SETTING, {
     refetchQueries: ['getFiatBalanceAlerts'],
     onError: error => setError(error)
   })
 
+  const [deleteOverride] = useMutation(DELETE_FIAT_ALERT_OVERRIDE, {
+    refetchQueries: ['getFiatBalanceAlerts'],
+    onError: error => setError(error)
+  })
+
+  const _saveTransactionAlerts = obj =>
+    saveTransactionAlerts({ variables: obj })
+
+  const deleteEntry = (event, overrideId) =>
+    deleteOverride({ variables: { event, overrideId } })
+
   return (
     !loading && (
       <>
         <Section title="Fiat balance alerts" error={error}>
-          <div>
-            <FiatBalanceAlerts
-              max={100}
-              fieldWidth={50}
-              data={{
-                machines,
-                notificationSettings: R.filter(it => R.isNil(it.overrideId))(
-                  notificationSettings
-                )
-              }}
-              save={saveTransactionAlerts}
-              error={error}
-              editing={editing}
-              setEditing={setEditing}
-            />
-          </div>
+          <FiatBalanceAlerts
+            max={100}
+            fieldWidth={50}
+            data={{
+              notificationSettings: R.filter(it => R.isNil(it.overrideId))(
+                notificationSettings
+              )
+            }}
+            save={_saveTransactionAlerts}
+            error={error}
+            editing={editing}
+            setEditing={setEditing}
+          />
           <FiatBalanceOverrides
             data={{
+              config,
               machines,
               notificationSettings: R.filter(it => !R.isNil(it.overrideId))(
                 notificationSettings
               )
             }}
-            save={saveTransactionAlerts}
+            save={_saveTransactionAlerts}
+            onDelete={deleteEntry}
             error={error}
             editing={editing}
             setEditing={setEditing}
@@ -407,7 +426,6 @@ const Notifications = ({
   displayOverrides = true,
   displayTitle = true
 }) => {
-  const [section, setSection] = useState(null)
   const [error, setError] = useState(null)
   const [editingKey, setEditingKey] = useState(null)
 
@@ -429,7 +447,6 @@ const Notifications = ({
 
   const save = R.curry((section, rawConfig) => {
     const config = toNamespace(SCREEN_KEY)(rawConfig)
-    setSection(section)
     setError(null)
     return saveConfig({ variables: { config } })
   })
@@ -454,7 +471,6 @@ const Notifications = ({
     isEditing,
     isDisabled,
     setEditing,
-    setSection,
     machines,
     cryptoCurrencies
   }

@@ -1,6 +1,7 @@
 export default {
   section: {
-    marginBottom: 72
+    marginBottom: 72,
+    maxWidth: 932
   },
   sectionHeader: {
     display: 'flex',
