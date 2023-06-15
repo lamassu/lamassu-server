@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 
 import Modal from 'src/components/Modal'
 import { P } from 'src/components/typography'
@@ -92,6 +93,21 @@ const GET_FIAT_BALANCE_ALERTS = gql`
   }
 `
 
+const GET_CRYPTO_BALANCE_ALERTS = gql`
+  query getCryptoBalanceAlerts {
+    config
+    notificationSettings {
+      event
+      overrideId
+      value
+    }
+    cryptoCurrencies {
+      code
+      display
+    }
+  }
+`
+
 const DISABLE_NOTIFICATION_CHANNEL = gql`
   mutation disableChannel($channelName: String) {
     deactivateNotificationsByChannel(channelName: $channelName)
@@ -142,7 +158,7 @@ const SAVE_NOTIFICATION_SETTING = gql`
   }
 `
 
-const DELETE_FIAT_ALERT_OVERRIDE = gql`
+const DELETE_NOTIFICATION_SETTING = gql`
   mutation deleteNotificationSetting(
     $event: NotificationEvent
     $overrideId: ID
@@ -340,7 +356,7 @@ const FiatBalance = () => {
     onError: error => setError(error)
   })
 
-  const [deleteOverride] = useMutation(DELETE_FIAT_ALERT_OVERRIDE, {
+  const [deleteOverride] = useMutation(DELETE_NOTIFICATION_SETTING, {
     refetchQueries: ['getFiatBalanceAlerts'],
     onError: error => setError(error)
   })
@@ -388,31 +404,62 @@ const FiatBalance = () => {
   )
 }
 
-const CryptoBalance = ({
-  displayCryptoAlerts = true,
-  displayOverrides = true,
-  section = 'crypto'
-}) => {
-  const context = useContext(NotificationsCtx)
-  const { error, loading } = context
+const CryptoBalance = () => {
+  const [error, setError] = useState(false)
+  const [editing, setEditing] = useState(null)
+  const { data, loading } = useQuery(GET_CRYPTO_BALANCE_ALERTS)
+
+  const { config, cryptoCurrencies, notificationSettings } = !loading && data
+
+  const [saveTransactionAlerts] = useMutation(SAVE_NOTIFICATION_SETTING, {
+    refetchQueries: ['getCryptoBalanceAlerts'],
+    onError: error => setError(error)
+  })
+
+  const [deleteOverride] = useMutation(DELETE_NOTIFICATION_SETTING, {
+    refetchQueries: ['getCryptoBalanceAlerts'],
+    onError: error => setError(error)
+  })
+
+  const _saveTransactionAlerts = obj =>
+    saveTransactionAlerts({ variables: obj })
+
+  const deleteEntry = (event, overrideId) =>
+    deleteOverride({ variables: { event, overrideId } })
 
   return (
     !loading && (
-      <>
-        {displayCryptoAlerts && (
-          <Section
-            title="Crypto balance alerts"
-            error={error && section === 'crypto'}>
-            <CryptoBalanceAlerts section="crypto" fieldWidth={FIELDS_WIDTH} />
-            {displayOverrides && (
-              <CryptoBalanceOverrides
-                section="crypto"
-                fieldWidth={FIELDS_WIDTH}
-              />
-            )}
-          </Section>
-        )}
-      </>
+      <Section title="Crypto balance alerts" error={error}>
+        <CryptoBalanceAlerts
+          fieldWidth={FIELDS_WIDTH}
+          data={{
+            config,
+            notificationSettings: R.filter(it => R.isNil(it.overrideId))(
+              notificationSettings
+            )
+          }}
+          save={_saveTransactionAlerts}
+          error={error}
+          setError={setError}
+          editing={editing}
+          setEditing={setEditing}
+        />
+        <CryptoBalanceOverrides
+          fieldWidth={FIELDS_WIDTH}
+          data={{
+            config,
+            cryptoCurrencies,
+            notificationSettings: R.filter(it => !R.isNil(it.overrideId))(
+              notificationSettings
+            )
+          }}
+          save={_saveTransactionAlerts}
+          onDelete={deleteEntry}
+          error={error}
+          editing={editing}
+          setEditing={setEditing}
+        />
+      </Section>
     )
   )
 }

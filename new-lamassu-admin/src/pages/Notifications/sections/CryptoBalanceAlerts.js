@@ -1,62 +1,112 @@
 import { makeStyles } from '@material-ui/core'
-import React, { useContext } from 'react'
+import * as R from 'ramda'
+import React from 'react'
+import * as Yup from 'yup'
 
-import NotificationsCtx from '../NotificationsContext'
+import ErrorMessage from 'src/components/ErrorMessage'
+import { fromNamespace } from 'src/utils/config'
+import { transformNumber } from 'src/utils/number'
+
 import SingleFieldEditableNumber from '../components/SingleFieldEditableNumber'
 
 import styles from './CryptoBalanceAlerts.styles'
 
-const LOW_BALANCE_KEY = 'cryptoLowBalance'
-const HIGH_BALANCE_KEY = 'cryptoHighBalance'
-
 const useStyles = makeStyles(styles)
 
-const CryptoBalanceAlerts = ({ section, fieldWidth }) => {
+const CryptoBalanceAlerts = ({
+  fieldWidth,
+  data,
+  save,
+  error,
+  setError,
+  editing,
+  setEditing
+}) => {
+  const { config, notificationSettings } = data
   const classes = useStyles()
 
-  const {
-    data,
-    save,
-    currency,
-    setEditing,
-    isEditing,
-    isDisabled
-  } = useContext(NotificationsCtx)
+  const eventName = 'cryptoBalance'
+  const value = R.find(it => it.event === eventName && R.isNil(it.overrideId))(
+    notificationSettings
+  )
+  const currencyCode = fromNamespace('locale')(config).fiatCurrency
+
+  const schema = Yup.object()
+    .shape({
+      event: Yup.string().required(),
+      overrideId: Yup.string().nullable(),
+      value: Yup.object().shape({
+        lowerBound: Yup.number()
+          .transform(transformNumber)
+          .integer()
+          .min(0)
+          .max(9999999)
+          .nullable(),
+        upperBound: Yup.number()
+          .transform(transformNumber)
+          .integer()
+          .min(0)
+          .max(9999999)
+          .nullable()
+      })
+    })
+    .test((values, context) => {
+      const {
+        value: { upperBound, lowerBound }
+      } = values
+      return !R.isNil(upperBound) &&
+        !R.isNil(lowerBound) &&
+        R.gte(lowerBound, upperBound)
+        ? context.createError({
+            message:
+              'The high balance limit should be higher than the low balance limit'
+          })
+        : true
+    })
+
+  const _save = _value => {
+    return schema
+      .validate(_value)
+      .then(value => {
+        setError(false)
+        return save(value)
+      })
+      .catch(error => setError(error.message))
+  }
 
   return (
-    <div className={classes.cryptoBalanceAlerts}>
-      <SingleFieldEditableNumber
-        name={LOW_BALANCE_KEY}
-        data={data}
-        save={save}
-        section={section}
-        decoration={currency}
-        className={classes.cryptoBalanceAlertsForm}
-        title="Default (Low Balance)"
-        label="Alert me under"
-        editing={isEditing(LOW_BALANCE_KEY)}
-        disabled={isDisabled(LOW_BALANCE_KEY)}
-        setEditing={it => setEditing(LOW_BALANCE_KEY, it)}
-        width={fieldWidth}
-      />
+    <>
+      <div className={classes.cryptoBalanceAlerts}>
+        <SingleFieldEditableNumber
+          value={value}
+          valueField={'lowerBound'}
+          save={_save}
+          suffix={currencyCode}
+          className={classes.cryptoBalanceAlertsForm}
+          title="Default (Low Balance)"
+          label="Alert me under"
+          editing={editing}
+          setEditing={setEditing}
+          width={fieldWidth}
+        />
 
-      <div className={classes.vertSeparator} />
+        <div className={classes.vertSeparator} />
 
-      <SingleFieldEditableNumber
-        name={HIGH_BALANCE_KEY}
-        data={data}
-        section={section}
-        save={save}
-        decoration={currency}
-        className={classes.cryptoBalanceAlertsSecondForm}
-        title="Default (High Balance)"
-        label="Alert me over"
-        editing={isEditing(HIGH_BALANCE_KEY)}
-        disabled={isDisabled(HIGH_BALANCE_KEY)}
-        setEditing={it => setEditing(HIGH_BALANCE_KEY, it)}
-        width={fieldWidth}
-      />
-    </div>
+        <SingleFieldEditableNumber
+          value={value}
+          valueField={'upperBound'}
+          save={_save}
+          suffix={currencyCode}
+          className={classes.cryptoBalanceAlertsSecondForm}
+          title="Default (High Balance)"
+          label="Alert me over"
+          editing={editing}
+          setEditing={setEditing}
+          width={fieldWidth}
+        />
+      </div>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+    </>
   )
 }
 
