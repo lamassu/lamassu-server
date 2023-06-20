@@ -386,8 +386,15 @@ const DetailsRow = ({ it: tx, timezone }) => {
       </div>
       <div className={classes.lastRow}>
         <div className={classes.status}>
-          {errorElements}
-          {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
+          {getStatusDetails(tx) ? (
+            <HoverableTooltip parentElements={errorElements} width={200}>
+              <P>{getStatusDetails(tx)}</P>
+            </HoverableTooltip>
+          ) : (
+            errorElements
+          )}
+          {((tx.txClass === 'cashOut' && getStatus(tx) === 'Pending') ||
+            (tx.txClass === 'cashIn' && getStatus(tx) === 'Batched')) && (
             <ActionButton
               color="primary"
               Icon={CancelIcon}

@@ -253,6 +253,7 @@ const overrides = (auxData, currency, auxElements) => {
   return getOverridesFields(getData, currency, auxElements)
 }
 
+const percentMin = -15
 const percentMax = 100
 const getSchema = locale => {
   const bills = getBillOptions(locale, denominations).map(it => it.code)
@@ -261,12 +262,12 @@ const getSchema = locale => {
   return Yup.object().shape({
     cashIn: Yup.number()
       .label('Cash-in')
-      .min(-15)
+      .min(percentMin)
       .max(percentMax)
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(-15)
+      .min(percentMin)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
@@ -361,12 +362,12 @@ const getOverridesSchema = (values, rawData, locale) => {
       .min(1),
     cashIn: Yup.number()
       .label('Cash-in')
-      .min(0)
+      .min(percentMin)
       .max(percentMax)
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(0)
+      .min(percentMin)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
@@ -480,12 +481,12 @@ const getListCommissionsSchema = locale => {
       .min(1),
     cashIn: Yup.number()
       .label('Cash-in')
-      .min(0)
+      .min(percentMin)
       .max(percentMax)
       .required(),
     cashOut: Yup.number()
       .label('Cash-out')
-      .min(0)
+      .min(percentMin)
       .max(percentMax)
       .required(),
     fixedFee: Yup.number()
