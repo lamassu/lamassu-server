@@ -11,8 +11,8 @@ jobs:
       - name: Run script
         shell: bash
         run: |
-         chmod +x ./build-scripts/ci-build.sh
-         ./build-scripts/ci-build.sh 
+         chmod +x ./build/ci-build.sh
+         ./build/ci-build.sh 
       - uses: actions/upload-artifact@v3
         with:
           name: lamassu-server.tar.gz
