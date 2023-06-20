@@ -288,6 +288,7 @@ const Blacklist = () => {
                   addressReuseSave({ rejectAddressReuse: event.target.checked })
                 }}
                 value={rejectAddressReuse}
+                data-cy={'switch-rejectAddressReuse'}
               />
               <Label2>{rejectAddressReuse ? 'On' : 'Off'}</Label2>
               <HelpTooltip width={304}>

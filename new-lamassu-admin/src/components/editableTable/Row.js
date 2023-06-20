@@ -62,11 +62,15 @@ const ActionCol = ({ disabled, editing }) => {
             className={classes.saveButton}
             type="submit"
             color="primary"
-            onClick={submitForm}>
+            onClick={submitForm}
+            data-cy={`linkButton-saveEdit`}>
             Save
           </Link>
           {!forceAdd && (
-            <Link color="secondary" onClick={cancel}>
+            <Link
+              color="secondary"
+              onClick={cancel}
+              data-cy={`linkButton-cancelEdit`}>
               Cancel
             </Link>
           )}
@@ -77,7 +81,8 @@ const ActionCol = ({ disabled, editing }) => {
           <IconButton
             disabled={disableEdit}
             className={classes.editButton}
-            onClick={() => onEdit && onEdit(values.id)}>
+            onClick={() => onEdit && onEdit(values.id)}
+            data-cy={`iconButton-edit`}>
             {disableEdit ? <DisabledEditIcon /> : <EditIcon />}
           </IconButton>
         </Td>
@@ -88,7 +93,8 @@ const ActionCol = ({ disabled, editing }) => {
             disabled={disabled}
             onClick={() => {
               setDeleteDialog(true)
-            }}>
+            }}
+            data-cy={`iconButton-delete`}>
             {disabled ? <DisabledDeleteIcon /> : <DeleteIcon />}
           </IconButton>
           <DeleteDialog
@@ -110,6 +116,7 @@ const ActionCol = ({ disabled, editing }) => {
             value={!!values.active}
             disabled={disabled}
             onChange={() => onToggle(values.id)}
+            data-cy={`switch-enable`}
           />
         </Td>
       )}
@@ -209,7 +216,7 @@ const groupStriped = elements => {
   )
 }
 
-const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
+const ERow = ({ editing, disabled, lastOfGroup, newRow, rowID }) => {
   const { touched, errors, values } = useFormikContext()
   const {
     elements,
@@ -258,7 +265,8 @@ const ERow = ({ editing, disabled, lastOfGroup, newRow }) => {
       error={editing && hasErrors}
       newRow={newRow && !hasErrors}
       shouldShowError
-      errorMessage={errorMessage}>
+      errorMessage={errorMessage}
+      rowID={rowID}>
       {innerElements.map((it, idx) => {
         return (
           <ECol

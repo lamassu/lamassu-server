@@ -63,7 +63,8 @@ const Row = ({
           }}
           error={data.error || data.hasError || data.batchError}
           shouldShowError={false}
-          errorMessage={data.errorMessage || data.hasError || data.batchError}>
+          errorMessage={data.errorMessage || data.hasError || data.batchError}
+          rowID={id}>
           {elements.map(({ view = it => it?.toString(), ...props }, idx) => (
             <Td key={idx} {...props}>
               {view(data)}
@@ -73,7 +74,8 @@ const Row = ({
             <Td width={expWidth} textAlign="center">
               <button
                 onClick={() => expandRow(id, data)}
-                className={classes.expandButton}>
+                className={classes.expandButton}
+                data-cy={`iconButton-expand`}>
                 {expanded && <ExpandOpenIcon />}
                 {!expanded && <ExpandClosedIcon />}
               </button>

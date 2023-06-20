@@ -16,7 +16,8 @@ const SubpageButton = memo(
     InverseIcon,
     toggle,
     forceDisable = false,
-    children
+    children,
+    dataCy
   }) => {
     const [active, setActive] = useState(false)
     const isActive = forceDisable ? false : active
@@ -57,7 +58,8 @@ const SubpageButton = memo(
     return (
       <button
         className={classnames(classNames, className)}
-        onClick={innerToggle}>
+        onClick={innerToggle}
+        data-cy={dataCy}>
         {isActive ? activeButton : normalButton}
       </button>
     )

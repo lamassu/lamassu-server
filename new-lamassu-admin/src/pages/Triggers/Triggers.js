@@ -169,6 +169,7 @@ const Triggers = () => {
                   addressReuseSave({ rejectAddressReuse: event.target.checked })
                 }}
                 value={rejectAddressReuse}
+                data-cy={'switch-rejectReusedAddresses'}
               />
               <Label2 className={classes.switchLabel}>
                 {rejectAddressReuse ? 'On' : 'Off'}
@@ -196,14 +197,18 @@ const Triggers = () => {
             <Box display="flex" justifyContent="flex-end">
               <Link
                 color="primary"
-                onClick={() => toggleWizard('newCustomRequest')()}>
+                onClick={() => toggleWizard('newCustomRequest')()}
+                data-cy={'button-addNewCustomInfoRequest'}>
                 + Add new custom info request
               </Link>
             </Box>
           )}
         {!loading && !subMenu && !R.isEmpty(triggers) && (
           <Box display="flex" justifyContent="flex-end">
-            <Link color="primary" onClick={addNewTriger}>
+            <Link
+              color="primary"
+              onClick={addNewTriger}
+              data-cy={'button-addNewTrigger'}>
               + Add new trigger
             </Link>
           </Box>

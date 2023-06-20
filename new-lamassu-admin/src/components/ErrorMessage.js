@@ -32,7 +32,7 @@ const ErrorMessage = ({ className, children, ...props }) => {
   return (
     <div className={classnames(classes.wrapper, className)}>
       <ErrorIcon />
-      <Info3 className={classes.message} id={'p-errorMessage'}>
+      <Info3 className={classes.message} data-cy={'errorMessage'}>
         {children}
       </Info3>
     </div>

@@ -252,7 +252,10 @@ const Wizard = ({
                     {R.head(R.values(errors)) ?? `Failed to save`}
                   </ErrorMessage>
                 )}
-                <Button className={classes.button} type="submit">
+                <Button
+                  className={classes.button}
+                  type="submit"
+                  data-cy={'button-saveNext'}>
                   {isLastStep ? 'Save' : 'Next'}
                 </Button>
               </div>
