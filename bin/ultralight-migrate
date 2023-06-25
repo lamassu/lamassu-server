@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+const _ = require('lodash/fp')
+
+require('../lib/environment-helper')
+const db = require('../lib/db')
+const migrate = require('../lib/migrate')
+const { asyncLocalStorage, defaultStore } = require('../lib/async-storage')
+
+const schema = process.argv[2]
+
+if (!schema) {
+  console.log('Usage: lamassu-migrate <schema>')
+  process.exit(2)
+}
+
+const createMigration = `CREATE TABLE IF NOT EXISTS migrations (
+  id serial PRIMARY KEY,
+  data json NOT NULL
+)`
+
+const select = 'select * from migrations limit 1'
+
+const getMigrateFile = () => Promise.resolve()
+
+const store = defaultStore()
+store.set('schema', schema)
+asyncLocalStorage.run(store, () => {
+  db.none(createMigration)
+    .then(() => Promise.all([db.oneOrNone(select), getMigrateFile()]))
+    .then(([qResult, migrateFile]) => {
+      process.env.SKIP_SERVER_LOGS = !(qResult && _.find(({ title }) => title === '1572524820075
+-server-support-logs.js', qResult.data.migrations ?? []))
+      if (!qResult && migrateFile) {
+        return db.none('insert into migrations (id, data) values (1, $1)', [migrateFile])
+      }
+    })
+    .then(() => migrate.run())
+    .then(() => {
+      console.log('DB Migration succeeded.')
+      process.exit(0)
+    })
+    .catch(err => {
+      console.error('DB Migration failed: %s', err)
+      process.exit(1)
+    })
+})
