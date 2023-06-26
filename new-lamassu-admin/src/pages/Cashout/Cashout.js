@@ -40,12 +40,21 @@ const GET_INFO = gql`
     machines {
       name
       deviceId
-      cashbox
-      cassette1
-      cassette2
-      cassette3
-      cassette4
+      cashUnits {
+        cashbox
+        cassette1
+        cassette2
+        cassette3
+        cassette4
+        stacker1f
+        stacker1r
+        stacker2f
+        stacker2r
+        stacker3f
+        stacker3r
+      }
       numberOfCassettes
+      numberOfStackers
     }
     config
   }
@@ -113,9 +122,9 @@ const CashOut = ({ name: SCREEN_KEY }) => {
           data={config}
           stripeWhen={wasNeverEnabled}
           enableEdit
-          editWidth={134}
+          editWidth={95}
           enableToggle
-          toggleWidth={109}
+          toggleWidth={100}
           onToggle={onToggle}
           save={save}
           error={error?.message}

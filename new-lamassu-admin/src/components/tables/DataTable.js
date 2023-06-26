@@ -81,7 +81,7 @@ const Row = ({
           )}
         </Tr>
       </div>
-      {expandable && expanded && (
+      {expanded && (
         <div className={classes.after}>
           <Tr className={classnames({ [classes.expanded]: expanded })}>
             <Td width={width}>
@@ -99,6 +99,7 @@ const DataTable = ({
   data = [],
   Details,
   className,
+  tableClassName,
   expandable,
   initialExpanded,
   onClick,
@@ -169,7 +170,7 @@ const DataTable = ({
 
   return (
     <Box display="flex" flex="1" flexDirection="column">
-      <Table className={classes.table}>
+      <Table className={classnames(classes.table, tableClassName)}>
         <THead>
           {elements.map(({ width, className, textAlign, header }, idx) => (
             <Th

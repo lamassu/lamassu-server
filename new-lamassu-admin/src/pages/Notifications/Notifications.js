@@ -28,6 +28,7 @@ const GET_INFO = gql`
       name
       deviceId
       numberOfCassettes
+      numberOfStackers
     }
     cryptoCurrencies {
       code

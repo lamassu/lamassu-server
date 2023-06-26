@@ -23,7 +23,9 @@ import tejo4CassetteThree from 'src/styling/icons/cassettes/tejo/4-cassettes/4-c
 import tejo4CassetteFour from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-4-left.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { comet, errorColor } from 'src/styling/variables'
+import { cashUnitCapacity } from 'src/utils/machine'
 import { numberToFiatAmount } from 'src/utils/number'
+import { startCase } from 'src/utils/string'
 
 const styles = {
   content: {
@@ -104,19 +106,41 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const cassetesArtworks = (numberOfCassettes, step) =>
-  [
+const CASHBOX_STEP = 1
+
+const cassetesArtworks = (step, numberOfCassettes, numberOfStackers) => {
+  const cassetteStepsStart = CASHBOX_STEP + 1
+  return [
+    [cassetteOne],
     [cassetteOne, cassetteTwo],
     [tejo3CassetteOne, tejo3CassetteTwo, tejo3CassetteThree],
     [tejo4CassetteOne, tejo4CassetteTwo, tejo4CassetteThree, tejo4CassetteFour]
-  ][numberOfCassettes - 2][step - 2]
+  ][numberOfCassettes - cassetteStepsStart + 1][step - cassetteStepsStart]
+}
+
+const getCashUnitFieldName = (step, numberOfCassettes, numberOfStackers) => {
+  if (step === CASHBOX_STEP) return { name: 'cashbox', category: 'cashbox' }
+  const cassetteStepsStart = CASHBOX_STEP + 1
+  if (step < cassetteStepsStart + numberOfCassettes)
+    return {
+      name: `cassette${step - cassetteStepsStart + 1}`,
+      category: 'cassette'
+    }
+  const stackerStepsStart = CASHBOX_STEP + numberOfCassettes + 1
+  if (step < stackerStepsStart + numberOfStackers * 2)
+    return {
+      name: `stacker${Math.ceil((step - stackerStepsStart + 1) / 2)}${
+        (step - stackerStepsStart) % 2 === 0 ? 'f' : 'r'
+      }`,
+      category: 'stacker'
+    }
+}
 
 const WizardStep = ({
   step,
   name,
   machine,
   cashoutSettings,
-  cassetteCapacity,
   error,
   lastStep,
   steps,
@@ -133,16 +157,20 @@ const WizardStep = ({
     { display: 'No', code: 'NO' }
   ]
 
-  const cassetteField = `cassette${step - 1}`
   const numberOfCassettes = machine.numberOfCassettes
-  const originalCassetteCount = machine?.[cassetteField]
-  const cassetteDenomination = cashoutSettings?.[cassetteField]
+  const numberOfStackers = machine.numberOfStackers
+  const {
+    name: cashUnitField,
+    category: cashUnitCategory
+  } = getCashUnitFieldName(step, numberOfCassettes, numberOfStackers)
+  const originalCashUnitCount = machine?.cashUnits?.[cashUnitField]
+  const cashUnitDenomination = cashoutSettings?.[cashUnitField]
 
-  const cassetteCount = values => values[cassetteField] || originalCassetteCount
-  const cassetteTotal = values => cassetteCount(values) * cassetteDenomination
+  const cassetteCount = values => values[cashUnitField] || originalCashUnitCount
+  const cassetteTotal = values => cassetteCount(values) * cashUnitDenomination
   const getPercentage = R.pipe(
     cassetteCount,
-    count => 100 * (count / cassetteCapacity),
+    count => 100 * (count / cashUnitCapacity[machine.model][cashUnitCategory]),
     R.clamp(0, 100)
   )
 
@@ -161,7 +189,7 @@ const WizardStep = ({
           initialValues={{ wasCashboxEmptied: '' }}
           enableReinitialize
           validationSchema={steps[0].schema}>
-          {({ values, errors }) => (
+          {({ errors }) => (
             <Form>
               <div
                 className={classnames(classes.horizontalAlign, classes.form)}>
@@ -206,7 +234,7 @@ const WizardStep = ({
                         classes.lineAlignment
                       )}>
                       <Info1 noMargin className={classes.cashboxBills}>
-                        {machine?.cashbox}
+                        {machine?.cashUnits.cashbox}
                       </Info1>
                       <P noMargin>accepted bills</P>
                     </div>
@@ -236,7 +264,11 @@ const WizardStep = ({
                 <img
                   className={classes.stepImage}
                   alt="cassette"
-                  src={cassetesArtworks(numberOfCassettes, step)}></img>
+                  src={cassetesArtworks(
+                    step,
+                    numberOfCassettes,
+                    numberOfStackers
+                  )}></img>
                 <div className={classes.formWrapper}>
                   <div
                     className={classnames(
@@ -257,7 +289,13 @@ const WizardStep = ({
                         <H4
                           className={classes.cassetteFormTitleContent}
                           noMargin>
-                          Cash cassette {step - 1} (dispenser)
+                          {startCase(cashUnitField)} (
+                          {R.includes('cassette', cashUnitField)
+                            ? `dispenser`
+                            : R.includes('stacker', cashUnitField)
+                            ? `recycler`
+                            : ``}
+                          )
                         </H4>
                       </div>
                       <Cashbox
@@ -276,13 +314,13 @@ const WizardStep = ({
                         component={NumberInput}
                         decimalPlaces={0}
                         width={50}
-                        placeholder={originalCassetteCount.toString()}
-                        name={cassetteField}
+                        placeholder={originalCashUnitCount.toString()}
+                        name={cashUnitField}
                         className={classes.cashboxBills}
                         autoFocus
                       />
                       <P>
-                        {cassetteDenomination} {fiatCurrency} bills loaded
+                        {cashUnitDenomination} {fiatCurrency} bills loaded
                       </P>
                     </div>
                     <P noMargin className={classes.fiatTotal}>
