@@ -26,8 +26,7 @@ const GET_BATCHES = gql`
       performedBy
       bills {
         fiat
-        deviceId
-        created
+        fiatCode
       }
     }
   }

@@ -8,10 +8,13 @@ import { getBillOptions } from 'src/utils/bill-options'
 import { CURRENCY_MAX } from 'src/utils/constants'
 import { transformNumber } from 'src/utils/number'
 
-const widthsByNumberOfCassettes = {
-  2: { machine: 300, cassette: 225, zeroConf: 200 },
-  3: { machine: 210, cassette: 180, zeroConf: 200 },
-  4: { machine: 200, cassette: 150, zeroConf: 150 }
+const widthsByNumberOfUnits = {
+  2: { machine: 325, cassette: 340 },
+  3: { machine: 300, cassette: 235 },
+  4: { machine: 205, cassette: 200 },
+  5: { machine: 180, cassette: 165 },
+  6: { machine: 165, cassette: 140 },
+  7: { machine: 130, cassette: 125 }
 }
 
 const DenominationsSchema = Yup.object().shape({
@@ -22,9 +25,10 @@ const DenominationsSchema = Yup.object().shape({
     .max(CURRENCY_MAX),
   cassette2: Yup.number()
     .label('Cassette 2')
-    .required()
     .min(1)
-    .max(CURRENCY_MAX),
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
   cassette3: Yup.number()
     .label('Cassette 3')
     .min(1)
@@ -33,6 +37,42 @@ const DenominationsSchema = Yup.object().shape({
     .transform(transformNumber),
   cassette4: Yup.number()
     .label('Cassette 4')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker1f: Yup.number()
+    .label('Stacker 1')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker1r: Yup.number()
+    .label('Stacker 1')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker2f: Yup.number()
+    .label('Stacker 2')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker2r: Yup.number()
+    .label('Stacker 2')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker3f: Yup.number()
+    .label('Stacker 3')
+    .min(1)
+    .max(CURRENCY_MAX)
+    .nullable()
+    .transform(transformNumber),
+  stacker3r: Yup.number()
+    .label('Stacker 3')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
@@ -45,6 +85,11 @@ const getElements = (machines, locale = {}, classes) => {
     ...R.map(it => it.numberOfCassettes, machines),
     0
   )
+  const maxNumberOfStackers = Math.max(
+    ...R.map(it => it.numberOfStackers, machines),
+    0
+  )
+  const numberOfCashUnits = maxNumberOfCassettes + maxNumberOfStackers
 
   const options = getBillOptions(locale, denominations)
   const cassetteProps =
@@ -61,7 +106,7 @@ const getElements = (machines, locale = {}, classes) => {
     {
       name: 'id',
       header: 'Machine',
-      width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.machine,
+      width: widthsByNumberOfUnits[numberOfCashUnits]?.machine,
       view: it => machines.find(({ deviceId }) => deviceId === it).name,
       size: 'sm',
       editable: false
@@ -77,17 +122,43 @@ const getElements = (machines, locale = {}, classes) => {
         size: 'sm',
         stripe: true,
         textAlign: 'right',
-        width: widthsByNumberOfCassettes[maxNumberOfCassettes]?.cassette,
+        width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
         suffix: fiatCurrency,
         bold: bold,
         view: it => it,
         input: options?.length > 0 ? Autocomplete : NumberInput,
         inputProps: cassetteProps,
-        doubleHeader: 'Denominations',
+        doubleHeader: 'Denominations of Cassettes & Recyclers',
         isHidden: machine =>
           it >
           machines.find(({ deviceId }) => deviceId === machine.id)
             .numberOfCassettes
+      })
+      return R.add(1, it)
+    },
+    1
+  )
+
+  R.until(
+    R.gt(R.__, maxNumberOfStackers),
+    it => {
+      elements.push({
+        names: [`stacker${it}f`, `stacker${it}r`],
+        header: `Stacker ${it}`,
+        size: 'sm',
+        stripe: true,
+        textAlign: 'right',
+        width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
+        prefix: it => (R.last(it) === 'f' ? 'F' : 'R'),
+        suffix: fiatCurrency,
+        bold: bold,
+        input: options?.length > 0 ? Autocomplete : NumberInput,
+        inputProps: cassetteProps,
+        doubleHeader: 'Denominations of Cassettes & Recyclers',
+        isHidden: machine =>
+          it >
+          machines.find(({ deviceId }) => deviceId === machine.id)
+            .numberOfStackers
       })
       return R.add(1, it)
     },
