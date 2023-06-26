@@ -383,7 +383,8 @@ const DetailsRow = ({ it: tx, timezone }) => {
           ) : (
             errorElements
           )}
-          {tx.txClass === 'cashOut' && getStatus(tx) === 'Pending' && (
+          {((tx.txClass === 'cashOut' && getStatus(tx) === 'Pending') ||
+            (tx.txClass === 'cashIn' && getStatus(tx) === 'Batched')) && (
             <ActionButton
               color="primary"
               Icon={CancelIcon}
