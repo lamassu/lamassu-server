@@ -4,7 +4,7 @@ import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { MAX_NUMBER_OF_CASSETTES } from 'src/utils/constants'
-import { cashUnitCapacity, modelPrettifier } from 'src/utils/machine'
+import { getCashUnitCapacity, modelPrettifier } from 'src/utils/machine'
 import { defaultToZero } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
@@ -108,10 +108,13 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
           .required()
           .min(0)
           .max(
-            cashUnitCapacity[machine.model].cassette,
-            `${modelPrettifier[machine.model]} maximum cassette capacity is ${
-              cashUnitCapacity[machine.model].cassette
-            } bills`
+            getCashUnitCapacity(machine.model, 'cassette'),
+            `${
+              modelPrettifier[machine.model]
+            } maximum cassette capacity is ${getCashUnitCapacity(
+              machine.model,
+              'cassette'
+            )} bills`
           )
       })
     }))

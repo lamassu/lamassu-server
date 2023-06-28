@@ -8,6 +8,14 @@ const modelPrettifier = {
 }
 
 const cashUnitCapacity = {
+  default: {
+    cashbox: 600,
+    cassette: 500
+  },
+  douro: {
+    cashbox: 600,
+    cassette: 500
+  },
   grandola: {
     cashbox: 2000,
     recycler: 2800
@@ -36,4 +44,11 @@ const cashUnitCapacity = {
   }
 }
 
-export { modelPrettifier, cashUnitCapacity }
+const getCashUnitCapacity = (model, device) => {
+  if (!cashUnitCapacity[model]) {
+    return cashUnitCapacity.default[device]
+  }
+  return cashUnitCapacity[model][device]
+}
+
+export { modelPrettifier, cashUnitCapacity, getCashUnitCapacity }

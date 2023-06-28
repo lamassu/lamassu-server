@@ -4,7 +4,7 @@ import { IconButton } from 'src/components/buttons'
 import { CashIn, CashOutLite } from 'src/components/inputs/cashbox/Cashbox'
 import { ReactComponent as EditIcon } from 'src/styling/icons/action/edit/enabled.svg'
 import { fromNamespace } from 'src/utils/config'
-import { cashUnitCapacity } from 'src/utils/machine'
+import { getCashUnitCapacity } from 'src/utils/machine'
 
 const getElements = (
   classes,
@@ -68,7 +68,7 @@ const getElements = (
                   threshold={
                     fillingPercentageSettings[`fillingPercentageCassette${it}`]
                   }
-                  capacity={cashUnitCapacity[m.model].cassette}
+                  capacity={getCashUnitCapacity(m.model, 'cassette')}
                 />
               ))(R.range(1, m.numberOfCassettes + 1))}
             </div>
@@ -87,7 +87,7 @@ const getElements = (
                         `fillingPercentageStacker${it}f`
                       ]
                     }
-                    capacity={cashUnitCapacity[m.model].stacker}
+                    capacity={getCashUnitCapacity(m.model, 'stacker')}
                   />
                   <CashOutLite
                     width={'100%'}
@@ -101,7 +101,7 @@ const getElements = (
                         `fillingPercentageStacker${it}r`
                       ]
                     }
-                    capacity={cashUnitCapacity[m.model].stacker}
+                    capacity={getCashUnitCapacity(m.model, 'stacker')}
                   />
                   {it !== m.numberOfStackers && (
                     <span className={classes.verticalLine} />
