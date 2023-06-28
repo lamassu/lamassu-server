@@ -29,6 +29,10 @@ const cashUnitCapacity = {
   sintra: {
     cashbox: 1000,
     cassette: 500
+  },
+  gmuk1: {
+    cashbox: 2200,
+    cassette: 2000
   }
 }
 
