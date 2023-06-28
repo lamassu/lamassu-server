@@ -7,7 +7,7 @@ import { CashOut } from 'src/components/inputs'
 import { Label1, TL2 } from 'src/components/typography'
 import { offDarkColor } from 'src/styling/variables'
 import { fromNamespace } from 'src/utils/config'
-import { cashUnitCapacity, modelPrettifier } from 'src/utils/machine'
+import { getCashUnitCapacity, modelPrettifier } from 'src/utils/machine'
 
 const styles = {
   wrapper: {
@@ -134,7 +134,7 @@ const CashUnitDetails = ({
                   threshold={
                     fillingPercentageSettings[`fillingPercentageCassette${it}`]
                   }
-                  capacity={cashUnitCapacity[machine.model].cassette}
+                  capacity={getCashUnitCapacity(machine.model, 'cassette')}
                 />
               </div>
               {it !== machine.numberOfCassettes && (
@@ -165,7 +165,7 @@ const CashUnitDetails = ({
                         `fillingPercentageCassette${it}`
                       ]
                     }
-                    capacity={cashUnitCapacity[machine.model].cassette}
+                    capacity={getCashUnitCapacity(machine.model, 'cassette')}
                   />
                 ))(R.range(1, machine.numberOfCassettes + 1))}
               </div>
@@ -193,7 +193,7 @@ const CashUnitDetails = ({
                           `fillingPercentageStacker${it}f`
                         ]
                       }
-                      capacity={cashUnitCapacity[machine.model].stacker}
+                      capacity={getCashUnitCapacity(machine.model, 'stacker')}
                     />
                     <CashOut
                       width={60}
@@ -210,7 +210,7 @@ const CashUnitDetails = ({
                           `fillingPercentageStacker${it}r`
                         ]
                       }
-                      capacity={cashUnitCapacity[machine.model].stacker}
+                      capacity={getCashUnitCapacity(machine.model, 'stacker')}
                     />
                   </div>
                 </div>

@@ -23,7 +23,7 @@ import tejo4CassetteThree from 'src/styling/icons/cassettes/tejo/4-cassettes/4-c
 import tejo4CassetteFour from 'src/styling/icons/cassettes/tejo/4-cassettes/4-cassettes-open-4-left.svg'
 import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
 import { comet, errorColor } from 'src/styling/variables'
-import { cashUnitCapacity } from 'src/utils/machine'
+import { getCashUnitCapacity } from 'src/utils/machine'
 import { numberToFiatAmount } from 'src/utils/number'
 import { startCase } from 'src/utils/string'
 
@@ -170,7 +170,8 @@ const WizardStep = ({
   const cassetteTotal = values => cassetteCount(values) * cashUnitDenomination
   const getPercentage = R.pipe(
     cassetteCount,
-    count => 100 * (count / cashUnitCapacity[machine.model][cashUnitCategory]),
+    count =>
+      100 * (count / getCashUnitCapacity(machine.model, cashUnitCategory)),
     R.clamp(0, 100)
   )
 
