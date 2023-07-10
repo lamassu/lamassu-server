@@ -46,6 +46,13 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
     DEFAULT_NUMBER_OF_STACKERS
   )
 
+  const percentValidation = Yup.number()
+    .transform(transformNumber)
+    .integer()
+    .min(0)
+    .max(100)
+    .nullable()
+
   const schema = Yup.object().shape({
     cashInAlertThreshold: Yup.number()
       .transform(transformNumber)
@@ -53,30 +60,16 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
       .min(notesMin)
       .max(notesMax)
       .nullable(),
-    fillingPercentageCassette1: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable(),
-    fillingPercentageCassette2: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable(),
-    fiatBalanceCassette3: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable(),
-    fiatBalanceCassette4: Yup.number()
-      .transform(transformNumber)
-      .integer()
-      .min(min)
-      .max(max)
-      .nullable()
+    fillingPercentageCassette1: percentValidation,
+    fillingPercentageCassette2: percentValidation,
+    fillingPercentageCassette3: percentValidation,
+    fillingPercentageCassette4: percentValidation,
+    fillingPercentageStacker1f: percentValidation,
+    fillingPercentageStacker1r: percentValidation,
+    fillingPercentageStacker2f: percentValidation,
+    fillingPercentageStacker2r: percentValidation,
+    fillingPercentageStacker3f: percentValidation,
+    fillingPercentageStacker3r: percentValidation
   })
 
   return (
@@ -89,7 +82,13 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
         fillingPercentageCassette1: data?.fillingPercentageCassette1 ?? '',
         fillingPercentageCassette2: data?.fillingPercentageCassette2 ?? '',
         fillingPercentageCassette3: data?.fillingPercentageCassette3 ?? '',
-        fillingPercentageCassette4: data?.fillingPercentageCassette4 ?? ''
+        fillingPercentageCassette4: data?.fillingPercentageCassette4 ?? '',
+        fillingPercentageStacker1f: data?.fillingPercentageStacker1f ?? '',
+        fillingPercentageStacker1r: data?.fillingPercentageStacker1r ?? '',
+        fillingPercentageStacker2f: data?.fillingPercentageStacker2f ?? '',
+        fillingPercentageStacker2r: data?.fillingPercentageStacker2r ?? '',
+        fillingPercentageStacker3f: data?.fillingPercentageStacker3f ?? '',
+        fillingPercentageStacker3r: data?.fillingPercentageStacker3r ?? ''
       }}
       validationSchema={schema}
       onSubmit={it => save(section, schema.cast(it))}
