@@ -36,7 +36,8 @@ const BlackListModal = ({
     BCH: 'qrd6za97wm03lfyg82w0c9vqgc727rhemg5yd9k3dm',
     USDT: '0x5754284f345afc66a98fbb0a0afe71e0f007b949',
     USDC: '0x5754284f345afc66a98fbb0a0afe71e0f007b949',
-    XMR: '888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H'
+    XMR:
+      '888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H'
   }
 
   return (
