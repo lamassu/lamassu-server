@@ -79,6 +79,7 @@
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
     "talisman": "^0.20.0",
+    "telnyx": "^1.25.5",
     "twilio": "^3.6.1",
     "uuid": "8.3.2",
     "web3": "1.7.1",
