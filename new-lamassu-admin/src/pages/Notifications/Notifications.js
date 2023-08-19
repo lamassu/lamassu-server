@@ -19,11 +19,19 @@ import CryptoBalanceOverrides from './sections/CryptoBalanceOverrides'
 import FiatBalanceAlerts from './sections/FiatBalanceAlerts'
 import FiatBalanceOverrides from './sections/FiatBalanceOverrides'
 import Setup from './sections/Setup'
+import ThirdPartyProvider from './sections/ThirdPartyProvider'
 import TransactionAlerts from './sections/TransactionAlerts'
 
 const GET_INFO = gql`
   query getData {
     config
+    accountsConfig {
+      code
+      display
+      class
+      cryptos
+      deprecated
+    }
     machines {
       name
       deviceId
@@ -59,6 +67,7 @@ const Notifications = ({
   displayCryptoAlerts = true,
   displayOverrides = true,
   displayTitle = true,
+  displayThirdPartyProvider = true,
   wizard = false
 }) => {
   const [section, setSection] = useState(null)
@@ -86,6 +95,7 @@ const Notifications = ({
 
   const config = fromNamespace(SCREEN_KEY)(data?.config)
   const machines = data?.machines
+  const accountsConfig = data?.accountsConfig
   const cryptoCurrencies = data?.cryptoCurrencies
   const twilioAvailable = R.has('twilio', data?.accounts || {})
   const mailgunAvailable = R.has('mailgun', data?.accounts || {})
@@ -136,6 +146,7 @@ const Notifications = ({
     setEditing,
     setSection,
     machines,
+    accountsConfig,
     cryptoCurrencies,
     twilioAvailable,
     setSmsSetupPopup,
@@ -148,6 +159,13 @@ const Notifications = ({
       <>
         <NotificationsCtx.Provider value={contextValue}>
           {displayTitle && <TitleSection title="Notifications" />}
+          {displayThirdPartyProvider && (
+            <Section
+              title="Third party providers"
+              error={error && !section === 'thirdParty'}>
+              <ThirdPartyProvider section="thirdParty" />
+            </Section>
+          )}
           {displaySetup && (
             <Section title="Setup" error={error && !section}>
               <Setup forceDisable={!!editingKey} wizard={wizard} />
