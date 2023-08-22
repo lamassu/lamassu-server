@@ -52,8 +52,8 @@ const ThirdPartyProvider = () => {
   return (
     <EditableTable
       name="thirdParty"
-      initialValues={data?.thirdParty ?? { sms: 'twilio' }}
-      data={R.of(data || [])}
+      initialValues={{ sms: data.sms ?? 'twilio' }}
+      data={R.of({ sms: data.sms ?? 'twilio' })}
       error={error?.message}
       enableEdit
       editWidth={174}
