@@ -31,9 +31,7 @@ const ThirdPartyProvider = () => {
   }
 
   const ThirdPartySchema = Yup.object().shape({
-    sms: Yup.string('The ticker must be a string').required(
-      'The ticker is required'
-    )
+    sms: Yup.string('The sms must be a string').required('The sms is required')
   })
 
   const elements = [
