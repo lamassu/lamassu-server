@@ -15,5 +15,5 @@ See [lamassu-remote-install/README.md](lamassu-remote-install/README.md).
 
 ## Running
 ```bash
-node bin/lamassu-server --mockSms --mockScoring
+node bin/lamassu-server --mockScoring
 ```
