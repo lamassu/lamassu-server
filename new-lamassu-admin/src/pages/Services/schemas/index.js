@@ -9,7 +9,9 @@ import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
+import telnyx from './telnyx'
 import twilio from './twilio'
+import vonage from './vonage'
 
 export default {
   [bitgo.code]: bitgo,
@@ -19,6 +21,8 @@ export default {
   [itbit.code]: itbit,
   [kraken.code]: kraken,
   [mailgun.code]: mailgun,
+  [telnyx.code]: telnyx,
+  [vonage.code]: vonage,
   [twilio.code]: twilio,
   [binanceus.code]: binanceus,
   [cex.code]: cex,
