@@ -52,5 +52,8 @@ export default {
     height: '100%',
     width: 1,
     backgroundColor: offDarkColor
+  },
+  dataTable: {
+    marginBottom: 80
   }
 }
