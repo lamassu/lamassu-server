@@ -50,6 +50,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
   const steps = R.concat(
     R.map(
       it => ({
+        model: 'cassette',
         type: `cassette${it}`,
         display: `Cassette ${it}`,
         component: Autocomplete,
@@ -65,6 +66,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
       it => [
         {
           type: `stacker${it}f`,
+          model: 'stacker',
           display: `Stacker ${it}F`,
           component: Autocomplete,
           inputProps: {
@@ -75,6 +77,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
         },
         {
           type: `stacker${it}r`,
+          model: 'stacker',
           display: `Stacker ${it}R`,
           component: Autocomplete,
           inputProps: {

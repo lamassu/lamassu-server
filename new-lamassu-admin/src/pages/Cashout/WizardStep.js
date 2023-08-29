@@ -57,7 +57,7 @@ const WizardStep = ({
   const classes = useStyles()
 
   const label = isLastStep ? 'Finish' : 'Next'
-
+  const cassetteIcon = getCassetesArtworks()[numberOfCassettes]
   return (
     <>
       <div className={classes.titleDiv}>
@@ -114,7 +114,7 @@ const WizardStep = ({
                 alt="cassette"
                 width="148"
                 height="205"
-                src={getCassetesArtworks()[numberOfCassettes][step]}></img>
+                src={cassetteIcon ? cassetteIcon[step] : null}></img>
             </div>
 
             <Button className={classes.submit} type="submit">
