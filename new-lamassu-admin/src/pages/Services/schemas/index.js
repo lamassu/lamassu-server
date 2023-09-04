@@ -12,6 +12,7 @@ import mailgun from './mailgun'
 import telnyx from './telnyx'
 import twilio from './twilio'
 import vonage from './vonage'
+import trongrid from './trongrid'
 
 export default {
   [bitgo.code]: bitgo,
@@ -27,5 +28,6 @@ export default {
   [binanceus.code]: binanceus,
   [cex.code]: cex,
   [ciphertrace.code]: ciphertrace,
+  [trongrid.code]: trongrid,
   [binance.code]: binance
 }
