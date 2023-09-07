@@ -10,9 +10,9 @@ import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
 import telnyx from './telnyx'
+import trongrid from './trongrid'
 import twilio from './twilio'
 import vonage from './vonage'
-import trongrid from './trongrid'
 
 export default {
   [bitgo.code]: bitgo,
