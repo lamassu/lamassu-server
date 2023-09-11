@@ -9,16 +9,10 @@ export default {
   elements: [
     {
       code: 'apiKey',
-      display: 'Project ID',
+      display: 'API Key',
       component: TextInputFormik,
       face: true,
       long: true
-    },
-    {
-      code: 'endpoint',
-      display: 'Endpoint',
-      component: TextInputFormik,
-      face: true
     }
   ],
   getValidationSchema: account => {
