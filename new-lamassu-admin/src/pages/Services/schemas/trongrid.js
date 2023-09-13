@@ -19,10 +19,7 @@ export default {
     return Yup.object().shape({
       apiKey: Yup.string('The project ID must be a string')
         .max(100, 'The project ID is too long')
-        .required('The project ID is required'),
-      endpoint: Yup.string('The endpoint must be a string')
-        .max(100, 'The endpoint is too long')
-        .required('The endpoint is required')
+        .required('The project ID is required')
     })
   }
 }
