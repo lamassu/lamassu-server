@@ -30,6 +30,7 @@
     "@bitgo/sdk-coin-dash": "1.5.10",
     "@bitgo/sdk-coin-ltc": "2.2.10",
     "@bitgo/sdk-coin-zec": "1.5.10",
+    "@bitgo/utxo-lib": "9.13.0",
     "ccxt": "lamassu/ccxt#1.82.31",
     "compression": "^1.7.4",
     "connect-pg-simple": "^6.2.1",
