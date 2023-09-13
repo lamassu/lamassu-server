@@ -17,8 +17,8 @@ const cashUnitCapacity = {
     cassette: 500
   },
   grandola: {
-    cashbox: 2000,
-    recycler: 2800
+    cashbox: 2500,
+    cassette: 2800
   },
   aveiro: {
     cashbox: 1500,
