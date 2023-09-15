@@ -190,7 +190,7 @@ const Funding = () => {
         {selected && !viewHistory && !selected.errorMsg && (
           <div className={classes.main}>
             <div className={classes.firstSide}>
-              <H3>Balance ({selected.display})</H3>
+              <H3>Balance</H3>
               <div className={classes.coinTotal}>
                 <Info1 inline noMargin>
                   {`${selected.confirmedBalance} ${selected.cryptoCode}`}
