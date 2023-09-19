@@ -10,6 +10,7 @@ import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
 import telnyx from './telnyx'
+import trongrid from './trongrid'
 import twilio from './twilio'
 import vonage from './vonage'
 
@@ -27,5 +28,6 @@ export default {
   [binanceus.code]: binanceus,
   [cex.code]: cex,
   [ciphertrace.code]: ciphertrace,
+  [trongrid.code]: trongrid,
   [binance.code]: binance
 }
