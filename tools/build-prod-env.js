@@ -44,6 +44,16 @@ setEnvVariable('OFAC_SOURCES_URLS', 'https://www.treasury.gov/ofac/downloads/san
 
 setEnvVariable('BTC_NODE_LOCATION', 'local')
 setEnvVariable('BTC_WALLET_LOCATION', 'local')
+setEnvVariable('BCH_NODE_LOCATION', 'local')
+setEnvVariable('BCH_WALLET_LOCATION', 'local')
+setEnvVariable('LTC_NODE_LOCATION', 'local')
+setEnvVariable('LTC_WALLET_LOCATION', 'local')
+setEnvVariable('DASH_NODE_LOCATION', 'local')
+setEnvVariable('DASH_WALLET_LOCATION', 'local')
+setEnvVariable('ZEC_NODE_LOCATION', 'local')
+setEnvVariable('ZEC_WALLET_LOCATION', 'local')
+setEnvVariable('XMR_NODE_LOCATION', 'local')
+setEnvVariable('XMR_WALLET_LOCATION', 'local')
 
 setEnvVariable('HOSTNAME', `${argv.hostname}`)
 setEnvVariable('LOG_LEVEL', 'info')

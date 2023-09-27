@@ -39,7 +39,7 @@ const SAVE_ACCOUNTS = gql`
   }
 `
 
-const isConfigurable = it => R.contains(it)(['infura', 'bitgo'])
+const isConfigurable = it => R.contains(it)(['infura', 'bitgo', 'trongrid'])
 
 const isLocalHosted = it =>
   R.contains(it)([
@@ -146,6 +146,21 @@ const ChooseWallet = ({ data: currentData, addData }) => {
             elements={schema.infura.elements}
             validationSchema={schema.infura.getValidationSchema(
               accounts.infura
+            )}
+            buttonLabel={'Continue'}
+            buttonClass={classes.formButton}
+          />
+        </>
+      )}
+      {selected === 'trongrid' && (
+        <>
+          <H4 noMargin>Enter wallet information</H4>
+          <FormRenderer
+            value={accounts.trongrid}
+            save={saveWallet(selected)}
+            elements={schema.trongrid.elements}
+            validationSchema={schema.trongrid.getValidationSchema(
+              accounts.trongrid
             )}
             buttonLabel={'Continue'}
             buttonClass={classes.formButton}

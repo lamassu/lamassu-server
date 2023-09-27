@@ -1,7 +1,7 @@
 var db = require('./db')
 const _ = require('lodash/fp')
 const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
-const { getMachines } = require('../lib/machine-loader')
+const { getMachineIds } = require('../lib/machine-loader')
 
 exports.up = function (next) {
   var sql = [
@@ -25,20 +25,20 @@ exports.up = function (next) {
       ADD COLUMN denomination_4 INTEGER`
   ]
 
-  return Promise.all([loadLatest(), getMachines()])
-    .then(([config, machines]) => {
-      const formattedMachines = _.map(it => _.pick(['deviceId'], it), machines)
+  return Promise.all([loadLatest(), getMachineIds()])
+    .then(([config, machineIds]) => {
       const newConfig = _.reduce((acc, value) => {
-        if (_.includes(`cashOut_${value.deviceId}_top`, _.keys(config.config))) {
-          acc[`cashOut_${value.deviceId}_cassette1`] = config.config[`cashOut_${value.deviceId}_top`]
+        const deviceId = value.device_id
+        if (_.includes(`cashOut_${deviceId}_top`, _.keys(config.config))) {
+          acc[`cashOut_${deviceId}_cassette1`] = config.config[`cashOut_${deviceId}_top`]
         }
 
-        if (_.includes(`cashOut_${value.deviceId}_bottom`, _.keys(config.config))) {
-          acc[`cashOut_${value.deviceId}_cassette2`] = config.config[`cashOut_${value.deviceId}_bottom`]
+        if (_.includes(`cashOut_${deviceId}_bottom`, _.keys(config.config))) {
+          acc[`cashOut_${deviceId}_cassette2`] = config.config[`cashOut_${deviceId}_bottom`]
         }
 
         return acc
-      }, {}, formattedMachines)
+      }, {}, machineIds)
 
       return migrationSaveConfig(newConfig)
         .then(() => db.multi(sql, next))

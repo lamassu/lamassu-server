@@ -86,7 +86,7 @@ Go to all the required, unconfigured red fields and choose some values. Choose m
 ### Run lamassu-server
 
 ```
-node bin/lamassu-server --mockSms --mockScoring
+node bin/lamassu-server --mockScoring
 ```
 
 ### Add a lamassu-machine
@@ -100,7 +100,7 @@ Now continue with lamassu-machine instructions from the ``INSTALL.md`` file in [
 To start the Lamassu server run:
 
 ```
-node bin/lamassu-server --mockSms --mockScoring
+node bin/lamassu-server --mockScoring
 ```
 
 To start the Lamassu Admin run:

@@ -261,6 +261,7 @@ const CashCassettes = () => {
               Details={InnerCashUnitDetails}
               emptyText="No machines so far"
               expandable
+              tableClassName={classes.dataTable}
             />
 
             {data && R.isEmpty(machines) && (
