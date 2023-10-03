@@ -2,8 +2,8 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "8.6.0-beta.10",
-  "license": "Unlicense",
+  "version": "8.6.0-beta.11",
+  "license": "./LICENSE",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "@ethereumjs/common": "^2.6.4",
