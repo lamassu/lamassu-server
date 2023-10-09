@@ -35,7 +35,7 @@ const ChooseTicker = ({ data: currentData, addData }) => {
   const accounts = data?.accounts ?? []
   const accountsConfig = data?.accountsConfig ?? []
 
-  const coin = coinUtils.getExternalCryptoCode(currentData.coin)
+  const coin = coinUtils.getEquivalentCode(currentData.coin)
   const tickers = getItems(accountsConfig, accounts, 'ticker', coin)
 
   const submit = () => {
