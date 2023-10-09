@@ -78,36 +78,40 @@ const getElements = (
                   <CashOutLite
                     width={'100%'}
                     currency={{ code: fiatCurrency }}
-                    notes={m.cashUnits[`stacker${it}f`]}
+                    notes={m.cashUnits[`recycler${it * 2 - 1}`]}
                     denomination={
-                      getCashoutSettings(m.id ?? m.deviceId)[`stacker${it}f`]
+                      getCashoutSettings(m.id ?? m.deviceId)[
+                        `recycler${it * 2 - 1}`
+                      ]
                     }
                     threshold={
                       fillingPercentageSettings[
-                        `fillingPercentageStacker${it}f`
+                        `fillingPercentageRecycler${it * 2 - 1}`
                       ]
                     }
-                    capacity={getCashUnitCapacity(m.model, 'stacker')}
+                    capacity={getCashUnitCapacity(m.model, 'recycler')}
                   />
                   <CashOutLite
                     width={'100%'}
                     currency={{ code: fiatCurrency }}
-                    notes={m.cashUnits[`stacker${it}r`]}
+                    notes={m.cashUnits[`recycler${it * 2}`]}
                     denomination={
-                      getCashoutSettings(m.id ?? m.deviceId)[`stacker${it}r`]
+                      getCashoutSettings(m.id ?? m.deviceId)[
+                        `recycler${it * 2}`
+                      ]
                     }
                     threshold={
                       fillingPercentageSettings[
-                        `fillingPercentageStacker${it}r`
+                        `fillingPercentageRecycler${it * 2}`
                       ]
                     }
-                    capacity={getCashUnitCapacity(m.model, 'stacker')}
+                    capacity={getCashUnitCapacity(m.model, 'recycler')}
                   />
-                  {it !== m.numberOfStackers && (
+                  {it !== m.numberOfRecyclers && (
                     <span className={classes.verticalLine} />
                   )}
                 </>
-              ))(R.range(1, m.numberOfStackers + 1))}
+              ))(R.range(1, m.numberOfRecyclers / 2 + 1))}
             </div>
           </div>
         )

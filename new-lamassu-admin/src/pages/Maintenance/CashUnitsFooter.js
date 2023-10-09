@@ -43,29 +43,29 @@ const CashCassettesFooter = ({
     acc,
     {
       cashUnits: {
-        stacker1f,
-        stacker1r,
-        stacker2f,
-        stacker2r,
-        stacker3f,
-        stacker3r
+        recycler1,
+        recycler2,
+        recycler3,
+        recycler4,
+        recycler5,
+        recycler6
       },
       id
     }
   ) => {
-    const stacker1fDenomination = getCashoutSettings(id).stacker1f ?? 0
-    const stacker1rDenomination = getCashoutSettings(id).stacker1r ?? 0
-    const stacker2fDenomination = getCashoutSettings(id).stacker2f ?? 0
-    const stacker2rDenomination = getCashoutSettings(id).stacker2r ?? 0
-    const stacker3fDenomination = getCashoutSettings(id).stacker3f ?? 0
-    const stacker3rDenomination = getCashoutSettings(id).stacker3r ?? 0
+    const recycler1Denomination = getCashoutSettings(id).recycler1 ?? 0
+    const recycler2Denomination = getCashoutSettings(id).recycler2 ?? 0
+    const recycler3Denomination = getCashoutSettings(id).recycler3 ?? 0
+    const recycler4Denomination = getCashoutSettings(id).recycler4 ?? 0
+    const recycler5Denomination = getCashoutSettings(id).recycler5 ?? 0
+    const recycler6Denomination = getCashoutSettings(id).recycler6 ?? 0
     return [
-      (acc[0] += stacker1f * stacker1fDenomination),
-      (acc[1] += stacker1r * stacker1rDenomination),
-      (acc[0] += stacker2f * stacker2fDenomination),
-      (acc[1] += stacker2r * stacker2rDenomination),
-      (acc[0] += stacker3f * stacker3fDenomination),
-      (acc[1] += stacker3r * stacker3rDenomination)
+      (acc[0] += recycler1 * recycler1Denomination),
+      (acc[1] += recycler2 * recycler2Denomination),
+      (acc[0] += recycler3 * recycler3Denomination),
+      (acc[1] += recycler4 * recycler4Denomination),
+      (acc[0] += recycler5 * recycler5Denomination),
+      (acc[1] += recycler6 * recycler6Denomination)
     ]
   }
 

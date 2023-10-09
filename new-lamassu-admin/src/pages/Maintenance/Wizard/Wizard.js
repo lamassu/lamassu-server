@@ -18,13 +18,13 @@ const CASSETTE_FIELDS = R.map(
   R.range(1, MAX_NUMBER_OF_CASSETTES + 1)
 )
 
-const STACKER_FIELDS = [
-  'stacker1f',
-  'stacker1r',
-  'stacker2f',
-  'stacker2r',
-  'stacker3f',
-  'stacker3r'
+const RECYCLER_FIELDS = [
+  'recycler1',
+  'recycler2',
+  'recycler3',
+  'recycler4',
+  'recycler5',
+  'recycler6'
 ]
 
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
@@ -37,9 +37,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     R.isEmpty(cashoutSettings) || !cashoutSettings?.active
 
   const numberOfCassettes = isCashOutDisabled ? 0 : machine.numberOfCassettes
-  const numberOfStackers = machine.numberOfStackers
+  const numberOfRecyclers = machine.numberOfRecyclers
 
-  // const LAST_STEP = numberOfCassettes + numberOfStackers * 2 + 1
+  // const LAST_STEP = numberOfCassettes + numberOfRecyclers * 2 + 1
   const LAST_STEP = numberOfCassettes + 1
 
   const title = `Update counts`
@@ -56,7 +56,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     )
   }
 
-  const buildStackerObj = cassetteInput => {
+  const buildRecyclerObj = cassetteInput => {
     return R.reduce(
       (acc, value) => {
         acc[value] = machine.cashUnits[value]
@@ -64,7 +64,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         return acc
       },
       {},
-      STACKER_FIELDS
+      RECYCLER_FIELDS
     )
   }
 
@@ -77,12 +77,12 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       ].includes('YES')
 
       const cassettes = buildCassetteObj(it)
-      const stackers = buildStackerObj(it)
+      const recyclers = buildRecyclerObj(it)
 
       const cashUnits = {
         cashbox: wasCashboxEmptied ? 0 : machine?.cashUnits.cashbox,
         ...cassettes,
-        ...stackers
+        ...recyclers
       }
 
       save(machine.id, cashUnits)
@@ -184,21 +184,21 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         )
       : {}
 
-  const makeStackersInitialValues = () =>
+  const makeRecyclersInitialValues = () =>
     !R.isEmpty(cashoutSettings)
       ? R.reduce(
           (acc, value) => {
-            acc[`stacker${value}f`] = ''
-            acc[`stacker${value}r`] = ''
+            acc[`recycler${value * 2 - 1}`] = ''
+            acc[`recycler${value * 2}`] = ''
             return acc
           },
           {},
-          R.range(1, numberOfStackers + 1)
+          R.range(1, numberOfRecyclers + 1)
         )
       : {}
 
   const makeInitialValues = () =>
-    R.merge(makeCassettesInitialValues(), makeStackersInitialValues())
+    R.merge(makeCassettesInitialValues(), makeRecyclersInitialValues())
 
   const steps = R.pipe(
     // R.concat(makeStackerSteps(numberOfStackers)),

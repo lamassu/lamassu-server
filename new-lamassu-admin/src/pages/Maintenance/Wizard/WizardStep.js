@@ -108,7 +108,7 @@ const useStyles = makeStyles(styles)
 
 const CASHBOX_STEP = 1
 
-const cassetesArtworks = (step, numberOfCassettes, numberOfStackers) => {
+const cassetesArtworks = (step, numberOfCassettes, numberOfRecyclers) => {
   const cassetteStepsStart = CASHBOX_STEP + 1
   return [
     [cassetteOne],
@@ -118,7 +118,7 @@ const cassetesArtworks = (step, numberOfCassettes, numberOfStackers) => {
   ][numberOfCassettes - cassetteStepsStart + 1][step - cassetteStepsStart]
 }
 
-const getCashUnitFieldName = (step, numberOfCassettes, numberOfStackers) => {
+const getCashUnitFieldName = (step, numberOfCassettes, numberOfRecyclers) => {
   if (step === CASHBOX_STEP) return { name: 'cashbox', category: 'cashbox' }
   const cassetteStepsStart = CASHBOX_STEP + 1
   if (step < cassetteStepsStart + numberOfCassettes)
@@ -126,13 +126,11 @@ const getCashUnitFieldName = (step, numberOfCassettes, numberOfStackers) => {
       name: `cassette${step - cassetteStepsStart + 1}`,
       category: 'cassette'
     }
-  const stackerStepsStart = CASHBOX_STEP + numberOfCassettes + 1
-  if (step < stackerStepsStart + numberOfStackers * 2)
+  const recyclerStepsStart = CASHBOX_STEP + numberOfCassettes + 1
+  if (step < recyclerStepsStart + numberOfRecyclers * 2)
     return {
-      name: `stacker${Math.ceil((step - stackerStepsStart + 1) / 2)}${
-        (step - stackerStepsStart) % 2 === 0 ? 'f' : 'r'
-      }`,
-      category: 'stacker'
+      name: `recycler${Math.ceil(step - recyclerStepsStart + 1)}`,
+      category: 'recycler'
     }
 }
 
@@ -158,11 +156,11 @@ const WizardStep = ({
   ]
 
   const numberOfCassettes = machine.numberOfCassettes
-  const numberOfStackers = machine.numberOfStackers
+  const numberOfRecyclers = machine.numberOfRecyclers
   const {
     name: cashUnitField,
     category: cashUnitCategory
-  } = getCashUnitFieldName(step, numberOfCassettes, numberOfStackers)
+  } = getCashUnitFieldName(step, numberOfCassettes, numberOfRecyclers)
   const originalCashUnitCount = machine?.cashUnits?.[cashUnitField]
   const cashUnitDenomination = cashoutSettings?.[cashUnitField]
 
@@ -268,7 +266,7 @@ const WizardStep = ({
                   src={cassetesArtworks(
                     step,
                     numberOfCassettes,
-                    numberOfStackers
+                    numberOfRecyclers
                   )}></img>
                 <div className={classes.formWrapper}>
                   <div
@@ -293,7 +291,7 @@ const WizardStep = ({
                           {startCase(cashUnitField)} (
                           {R.includes('cassette', cashUnitField)
                             ? `dispenser`
-                            : R.includes('stacker', cashUnitField)
+                            : R.includes('recycler', cashUnitField)
                             ? `recycler`
                             : ``}
                           )

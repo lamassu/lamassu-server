@@ -18,7 +18,8 @@ const MODAL_HEIGHT = 520
 
 const Wizard = ({ machine, locale, onClose, save, error }) => {
   // Each stacker counts as two steps, one for front and another for rear
-  const LAST_STEP = machine.numberOfCassettes + machine.numberOfStackers * 2 + 1
+  const LAST_STEP =
+    machine.numberOfCassettes + machine.numberOfRecyclers * 2 + 1
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
@@ -65,9 +66,9 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
     R.chain(
       it => [
         {
-          type: `stacker${it}f`,
-          model: 'stacker',
-          display: `Stacker ${it}F`,
+          type: `recycler${it * 2 - 1}`,
+          model: 'recycler',
+          display: `Recycler ${it}`,
           component: Autocomplete,
           inputProps: {
             options: options,
@@ -76,9 +77,9 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
           }
         },
         {
-          type: `stacker${it}r`,
-          model: 'stacker',
-          display: `Stacker ${it}R`,
+          type: `recycler${it * 2}`,
+          model: 'recycler',
+          display: `Recycler ${it}`,
           component: Autocomplete,
           inputProps: {
             options: options,
@@ -87,7 +88,7 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
           }
         }
       ],
-      R.range(1, machine.numberOfStackers + 1)
+      R.range(1, machine.numberOfRecyclers + 1)
     )
   )
 
@@ -117,38 +118,38 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
-      stacker1f:
-        machine.numberOfStackers >= 1 && step >= machine.numberOfCassettes + 1
+      recycler1:
+        machine.numberOfRecyclers >= 1 && step >= machine.numberOfCassettes + 1
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
-      stacker1r:
-        machine.numberOfStackers >= 1 && step >= machine.numberOfCassettes + 2
+      recycler2:
+        machine.numberOfRecyclers >= 2 && step >= machine.numberOfCassettes + 2
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
-      stacker2f:
-        machine.numberOfStackers >= 2 && step >= machine.numberOfCassettes + 3
+      recycler3:
+        machine.numberOfRecyclers >= 3 && step >= machine.numberOfCassettes + 3
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
-      stacker2r:
-        machine.numberOfStackers >= 2 && step >= machine.numberOfCassettes + 4
+      recycler4:
+        machine.numberOfRecyclers >= 4 && step >= machine.numberOfCassettes + 4
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
-      stacker3f:
-        machine.numberOfStackers >= 3 && step >= machine.numberOfCassettes + 5
+      recycler5:
+        machine.numberOfRecyclers >= 5 && step >= machine.numberOfCassettes + 5
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
               .nullable(),
-      stacker3r:
-        machine.numberOfStackers >= 3 && step >= machine.numberOfCassettes + 6
+      recycler6:
+        machine.numberOfRecyclers >= 6 && step >= machine.numberOfCassettes + 6
           ? Yup.number().required()
           : Yup.number()
               .transform(transformNumber)
