@@ -174,9 +174,13 @@ const CashUnitDetails = ({
             {R.map(it => (
               <>
                 <div className={classes.col}>
-                  <Label1 noMargin className={classes.label}>{`Recycler ${it *
-                    2 -
-                    1}`}</Label1>
+                  <Label1 noMargin className={classes.label}>
+                    {`Recycler ${
+                      machine.model === 'aveiro'
+                        ? `${it} f/r`
+                        : `${it * 2 - 1} - ${it * 2}`
+                    }`}
+                  </Label1>
                   <div className={classes.loadingBoxes}>
                     <CashOut
                       width={60}
@@ -185,7 +189,7 @@ const CashUnitDetails = ({
                       notes={machine.cashUnits[`recycler${it * 2 - 1}`]}
                       denomination={
                         getCashoutSettings(machine.id ?? machine.deviceId)[
-                          `recycler${it}`
+                          `recycler${it * 2 - 1}`
                         ]
                       }
                       threshold={
@@ -214,7 +218,7 @@ const CashUnitDetails = ({
                     />
                   </div>
                 </div>
-                {it !== machine.numberOfRecyclers && (
+                {it !== machine.numberOfRecyclers / 2 && (
                   <span className={classes.verticalLine} />
                 )}
               </>

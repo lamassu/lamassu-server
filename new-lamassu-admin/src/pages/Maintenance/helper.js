@@ -14,7 +14,6 @@ const getElements = (
   widths,
   setMachineId
 ) => {
-  console.log(config)
   const fillingPercentageSettings = fromNamespace('notifications', config)
   const locale = fromNamespace('locale')(config)
   const cashout = fromNamespace('cashOut')(config)
@@ -107,7 +106,7 @@ const getElements = (
                     }
                     capacity={getCashUnitCapacity(m.model, 'recycler')}
                   />
-                  {it !== m.numberOfRecyclers && (
+                  {it !== m.numberOfRecyclers / 2 && (
                     <span className={classes.verticalLine} />
                   )}
                 </>

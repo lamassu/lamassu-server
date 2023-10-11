@@ -18,8 +18,7 @@ const MODAL_HEIGHT = 520
 
 const Wizard = ({ machine, locale, onClose, save, error }) => {
   // Each stacker counts as two steps, one for front and another for rear
-  const LAST_STEP =
-    machine.numberOfCassettes + machine.numberOfRecyclers * 2 + 1
+  const LAST_STEP = machine.numberOfCassettes + machine.numberOfRecyclers + 1
   const [{ step, config }, setState] = useState({
     step: 0,
     config: { active: true }
@@ -63,31 +62,18 @@ const Wizard = ({ machine, locale, onClose, save, error }) => {
       }),
       R.range(1, machine.numberOfCassettes + 1)
     ),
-    R.chain(
-      it => [
-        {
-          type: `recycler${it * 2 - 1}`,
-          model: 'recycler',
-          display: `Recycler ${it}`,
-          component: Autocomplete,
-          inputProps: {
-            options: options,
-            labelProp: 'display',
-            valueProp: 'code'
-          }
-        },
-        {
-          type: `recycler${it * 2}`,
-          model: 'recycler',
-          display: `Recycler ${it}`,
-          component: Autocomplete,
-          inputProps: {
-            options: options,
-            labelProp: 'display',
-            valueProp: 'code'
-          }
+    R.map(
+      it => ({
+        type: `recycler${it}`,
+        model: 'recycler',
+        display: `Recycler ${it}`,
+        component: Autocomplete,
+        inputProps: {
+          options: options,
+          labelProp: 'display',
+          valueProp: 'code'
         }
-      ],
+      }),
       R.range(1, machine.numberOfRecyclers + 1)
     )
   )

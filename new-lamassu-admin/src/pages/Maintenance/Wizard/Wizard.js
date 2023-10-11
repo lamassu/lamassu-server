@@ -120,58 +120,6 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     }))
   )
 
-  // const makeStackerSteps = R.pipe(
-  //   R.add(1),
-  //   R.range(1),
-  //   R.chain(i => [
-  //     {
-  //       type: `stacker ${i}f`,
-  //       schema: Yup.object().shape({
-  //         [`stacker${i}f`]: Yup.number()
-  //           .label('Bill count')
-  //           .positive()
-  //           .integer()
-  //           .required()
-  //           .min(0)
-  //           .max(
-  //             i === 1
-  //               ? cashUnitCapacity[machine.model].stacker -
-  //                   cashUnitCapacity[machine.model].escrow
-  //               : cashUnitCapacity[machine.model].stacker,
-  //             i === 1
-  //               ? `${
-  //                   modelPrettifier[machine.model]
-  //                 } maximum stacker capacity for the escrow unit is ${cashUnitCapacity[
-  //                   machine.model
-  //                 ].stacker - cashUnitCapacity[machine.model].escrow} bills`
-  //               : `${
-  //                   modelPrettifier[machine.model]
-  //                 } maximum stacker capacity is ${
-  //                   cashUnitCapacity[machine.model].stacker
-  //                 } bills`
-  //           )
-  //       })
-  //     },
-  //     {
-  //       type: `stacker ${i}r`,
-  //       schema: Yup.object().shape({
-  //         [`stacker${i}r`]: Yup.number()
-  //           .label('Bill count')
-  //           .positive()
-  //           .integer()
-  //           .required()
-  //           .min(0)
-  //           .max(
-  //             cashUnitCapacity[machine.model].stacker,
-  //             `${modelPrettifier[machine.model]} maximum stacker capacity is ${
-  //               cashUnitCapacity[machine.model].stacker
-  //             } bills`
-  //           )
-  //       })
-  //     }
-  //   ])
-  // )
-
   const makeCassettesInitialValues = () =>
     !R.isEmpty(cashoutSettings)
       ? R.reduce(

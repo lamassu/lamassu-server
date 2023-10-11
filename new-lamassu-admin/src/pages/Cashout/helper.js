@@ -141,31 +141,28 @@ const getElements = (machines, locale = {}, classes) => {
   )
 
   R.until(
-    R.gt(
-      R.__,
-      Math.ceil(maxNumberOfRecyclers),
-      it => {
-        elements.push({
-          names: [`recycler${it * 2 - 1}`, `recycler${it * 2}`],
-          header: `Recyclers ${it * 2 - 1} ${it * 2}`,
-          size: 'sm',
-          stripe: true,
-          textAlign: 'right',
-          width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
-          suffix: fiatCurrency,
-          bold: bold,
-          input: options?.length > 0 ? Autocomplete : NumberInput,
-          inputProps: cassetteProps,
-          doubleHeader: 'Denominations of Cassettes & Recyclers',
-          isHidden: machine =>
-            it >
-            machines.find(({ deviceId }) => deviceId === machine.id)
-              .numberOfRecyclers
-        })
-        return R.add(1, it)
-      },
-      1
-    )
+    R.gt(R.__, Math.ceil(maxNumberOfRecyclers / 2)),
+    it => {
+      elements.push({
+        names: [`recycler${it * 2 - 1}`, `recycler${it * 2}`],
+        header: `Recyclers ${it * 2 - 1} - ${it * 2}`,
+        size: 'sm',
+        stripe: true,
+        textAlign: 'right',
+        width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
+        suffix: fiatCurrency,
+        bold: bold,
+        input: options?.length > 0 ? Autocomplete : NumberInput,
+        inputProps: cassetteProps,
+        doubleHeader: 'Denominations of Cassettes & Recyclers',
+        isHidden: machine =>
+          it >
+          machines.find(({ deviceId }) => deviceId === machine.id)
+            .numberOfRecyclers
+      })
+      return R.add(1, it)
+    },
+    1
   )
 
   return elements
