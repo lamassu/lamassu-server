@@ -185,7 +185,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         percent={
                           values[
                             `fillingPercentageRecycler${(it + 1) * 2 - 1}`
-                          ] ?? data[`recycler${(it + 1) * 2 - 1}f`]
+                          ] ?? data[`recycler${(it + 1) * 2 - 1}`]
                         }
                         applyColorVariant
                         applyFiatBalanceAlertsStyling
@@ -237,7 +237,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                     </div>
                   </>
                 ],
-                R.times(R.identity, maxNumberOfRecyclers)
+                R.times(R.identity, maxNumberOfRecyclers / 2)
               )}
             </div>
           </Form>

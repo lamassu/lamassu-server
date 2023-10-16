@@ -127,7 +127,7 @@ const getCashUnitFieldName = (step, numberOfCassettes, numberOfRecyclers) => {
       category: 'cassette'
     }
   const recyclerStepsStart = CASHBOX_STEP + numberOfCassettes + 1
-  if (step < recyclerStepsStart + numberOfRecyclers * 2)
+  if (step < recyclerStepsStart + numberOfRecyclers)
     return {
       name: `recycler${Math.ceil(step - recyclerStepsStart + 1)}`,
       category: 'recycler'
