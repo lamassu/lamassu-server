@@ -41,38 +41,38 @@ const DenominationsSchema = Yup.object().shape({
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber),
-  stacker1f: Yup.number()
-    .label('Stacker 1')
+  recycler1: Yup.number()
+    .label('Recycler 1')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber),
-  stacker1r: Yup.number()
-    .label('Stacker 1')
+  recycler2: Yup.number()
+    .label('Recycler 2')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber),
-  stacker2f: Yup.number()
-    .label('Stacker 2')
+  recycler3: Yup.number()
+    .label('Recycler 3')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber),
-  stacker2r: Yup.number()
-    .label('Stacker 2')
+  recycler4: Yup.number()
+    .label('Recycler 4')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber),
-  stacker3f: Yup.number()
-    .label('Stacker 3')
+  recycler5: Yup.number()
+    .label('Recycler 5')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
     .transform(transformNumber),
-  stacker3r: Yup.number()
-    .label('Stacker 3')
+  recycler6: Yup.number()
+    .label('Recycler 6')
     .min(1)
     .max(CURRENCY_MAX)
     .nullable()
@@ -85,11 +85,12 @@ const getElements = (machines, locale = {}, classes) => {
     ...R.map(it => it.numberOfCassettes, machines),
     0
   )
-  const maxNumberOfStackers = Math.max(
-    ...R.map(it => it.numberOfStackers, machines),
+  const maxNumberOfRecyclers = Math.max(
+    ...R.map(it => it.numberOfRecyclers, machines),
     0
   )
-  const numberOfCashUnits = maxNumberOfCassettes + maxNumberOfStackers
+  const numberOfCashUnits =
+    maxNumberOfCassettes + Math.ceil(maxNumberOfRecyclers / 2)
 
   const options = getBillOptions(locale, denominations)
   const cassetteProps =
@@ -140,16 +141,15 @@ const getElements = (machines, locale = {}, classes) => {
   )
 
   R.until(
-    R.gt(R.__, maxNumberOfStackers),
+    R.gt(R.__, Math.ceil(maxNumberOfRecyclers / 2)),
     it => {
       elements.push({
-        names: [`stacker${it}f`, `stacker${it}r`],
-        header: `Stacker ${it}`,
+        names: [`recycler${it * 2 - 1}`, `recycler${it * 2}`],
+        header: `Recyclers ${it * 2 - 1} - ${it * 2}`,
         size: 'sm',
         stripe: true,
         textAlign: 'right',
         width: widthsByNumberOfUnits[numberOfCashUnits]?.cassette,
-        prefix: it => (R.last(it) === 'f' ? 'F' : 'R'),
         suffix: fiatCurrency,
         bold: bold,
         input: options?.length > 0 ? Autocomplete : NumberInput,
@@ -158,7 +158,7 @@ const getElements = (machines, locale = {}, classes) => {
         isHidden: machine =>
           it >
           machines.find(({ deviceId }) => deviceId === machine.id)
-            .numberOfStackers
+            .numberOfRecyclers
       })
       return R.add(1, it)
     },

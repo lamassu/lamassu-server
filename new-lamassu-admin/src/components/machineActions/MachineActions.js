@@ -215,7 +215,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
                 command: 'refillUnit',
                 display: 'Refill',
                 message:
-                  'Triggering this action will refill the stackers in this machine, by using bills present in its cassettes. This action may require manual operation of the cassettes and close attention to make sure that the denominations in the cassettes match the denominations in the stackers.'
+                  'Triggering this action will refill the recyclers in this machine, by using bills present in its cassettes. This action may require manual operation of the cassettes and close attention to make sure that the denominations in the cassettes match the denominations in the recyclers.'
               })
             }}>
             Refill Unit

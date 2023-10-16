@@ -178,8 +178,6 @@ const Accounting = () => {
     ) ?? 0
   ).toNumber()
 
-  console.log(opData)
-
   return (
     !loading && (
       <>

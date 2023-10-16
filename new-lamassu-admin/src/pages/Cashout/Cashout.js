@@ -46,15 +46,15 @@ const GET_INFO = gql`
         cassette2
         cassette3
         cassette4
-        stacker1f
-        stacker1r
-        stacker2f
-        stacker2r
-        stacker3f
-        stacker3r
+        recycler1
+        recycler2
+        recycler3
+        recycler4
+        recycler5
+        recycler6
       }
       numberOfCassettes
-      numberOfStackers
+      numberOfRecyclers
     }
     config
   }

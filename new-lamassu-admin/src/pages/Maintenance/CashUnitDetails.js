@@ -114,7 +114,7 @@ const CashUnitDetails = ({
         ))(R.keys(billCount))}
       </div>
       <div className={classes.unitList}>
-        {machine.numberOfStackers === 0 &&
+        {machine.numberOfRecyclers === 0 &&
           R.map(it => (
             <>
               <div className={classes.col}>
@@ -142,7 +142,7 @@ const CashUnitDetails = ({
               )}
             </>
           ))(R.range(1, machine.numberOfCassettes + 1))}
-        {machine.numberOfStackers > 0 && (
+        {machine.numberOfRecyclers > 0 && (
           <>
             <div className={classes.col}>
               <Label1
@@ -174,51 +174,55 @@ const CashUnitDetails = ({
             {R.map(it => (
               <>
                 <div className={classes.col}>
-                  <Label1
-                    noMargin
-                    className={classes.label}>{`Stacker ${it}`}</Label1>
+                  <Label1 noMargin className={classes.label}>
+                    {`Recycler ${
+                      machine.model === 'aveiro'
+                        ? `${it} f/r`
+                        : `${it * 2 - 1} - ${it * 2}`
+                    }`}
+                  </Label1>
                   <div className={classes.loadingBoxes}>
                     <CashOut
                       width={60}
                       height={40}
                       currency={{ code: currency }}
-                      notes={machine.cashUnits[`stacker${it}f`]}
+                      notes={machine.cashUnits[`recycler${it * 2 - 1}`]}
                       denomination={
                         getCashoutSettings(machine.id ?? machine.deviceId)[
-                          `stacker${it}f`
+                          `recycler${it * 2 - 1}`
                         ]
                       }
                       threshold={
                         fillingPercentageSettings[
-                          `fillingPercentageStacker${it}f`
+                          `fillingPercentageRecycler${it * 2 - 1}`
                         ]
                       }
-                      capacity={getCashUnitCapacity(machine.model, 'stacker')}
+                      capacity={getCashUnitCapacity(machine.model, 'recycler')}
                     />
                     <CashOut
                       width={60}
                       height={40}
                       currency={{ code: currency }}
-                      notes={machine.cashUnits[`stacker${it}r`]}
+                      notes={machine.cashUnits[`recycler${it * 2}`]}
                       denomination={
                         getCashoutSettings(machine.id ?? machine.deviceId)[
-                          `stacker${it}r`
+                          `recycler${it * 2}`
                         ]
                       }
                       threshold={
                         fillingPercentageSettings[
-                          `fillingPercentageStacker${it}r`
+                          `fillingPercentageRecycler${it * 2}`
                         ]
                       }
-                      capacity={getCashUnitCapacity(machine.model, 'stacker')}
+                      capacity={getCashUnitCapacity(machine.model, 'recycler')}
                     />
                   </div>
                 </div>
-                {it !== machine.numberOfStackers && (
+                {it !== machine.numberOfRecyclers / 2 && (
                   <span className={classes.verticalLine} />
                 )}
               </>
-            ))(R.range(1, machine.numberOfStackers + 1))}
+            ))(R.range(1, machine.numberOfRecyclers / 2 + 1))}
           </>
         )}
       </div>

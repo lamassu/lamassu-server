@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+require('../lib/environment-helper')
+
+const _ = require('lodash')
+const db = require('../lib/db')
+
+if (process.argv.length !== 4) {
+  console.log('Usage: lamassu-update-recyclers <device_id> <number_of_recyclers>')
+  process.exit(1)
+}
+
+if (!_.isFinite(parseInt(process.argv[3]))) {
+  console.log('Error: <number_of_recyclers> is not a valid number (%s)', err)
+  process.exit(3)
+}
+
+if (parseInt(process.argv[3]) > 6 || parseInt(process.argv[3]) < 1) {
+  console.log('Error: <number_of_recyclers> is out of range. Should be a number between 1 and 3')
+  process.exit(3)
+}
+
+const deviceId = process.argv[2]
+const numberOfRecyclers = parseInt(process.argv[3])
+
+const query = `UPDATE devices SET number_of_recyclers = $1 WHERE device_id = $2`
+
+db.none(query, [numberOfRecyclers, deviceId])
+  .then(() => {
+    console.log('Success! Device %s updated to %s recyclers', deviceId, numberOfRecyclers)
+    process.exit(0)
+  })
+  .catch(err => {
+    console.log('Error: %s', err)
+    process.exit(3)
+  })

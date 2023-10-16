@@ -21,7 +21,7 @@ const CASH_IN_KEY = 'fiatBalanceAlertsCashIn'
 const CASH_OUT_KEY = 'fiatBalanceAlertsCashOut'
 const RECYCLER_STACKER_KEY = 'fiatBalanceAlertsRecyclerStacker'
 const DEFAULT_NUMBER_OF_CASSETTES = 2
-const DEFAULT_NUMBER_OF_STACKERS = 0
+const DEFAULT_NUMBER_OF_RECYCLERS = 0
 const notesMin = 0
 const notesMax = 9999999
 
@@ -41,9 +41,9 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
     DEFAULT_NUMBER_OF_CASSETTES
   )
 
-  const maxNumberOfStackers = Math.max(
-    ...R.map(it => it.numberOfStackers, machines),
-    DEFAULT_NUMBER_OF_STACKERS
+  const maxNumberOfRecyclers = Math.max(
+    ...R.map(it => it.numberOfRecyclers, machines),
+    DEFAULT_NUMBER_OF_RECYCLERS
   )
 
   const percentValidation = Yup.number()
@@ -64,12 +64,12 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
     fillingPercentageCassette2: percentValidation,
     fillingPercentageCassette3: percentValidation,
     fillingPercentageCassette4: percentValidation,
-    fillingPercentageStacker1f: percentValidation,
-    fillingPercentageStacker1r: percentValidation,
-    fillingPercentageStacker2f: percentValidation,
-    fillingPercentageStacker2r: percentValidation,
-    fillingPercentageStacker3f: percentValidation,
-    fillingPercentageStacker3r: percentValidation
+    fillingPercentageRecycler1: percentValidation,
+    fillingPercentageRecycler2: percentValidation,
+    fillingPercentageRecycler3: percentValidation,
+    fillingPercentageRecycler4: percentValidation,
+    fillingPercentageRecycler5: percentValidation,
+    fillingPercentageRecycler6: percentValidation
   })
 
   return (
@@ -83,12 +83,12 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
         fillingPercentageCassette2: data?.fillingPercentageCassette2 ?? '',
         fillingPercentageCassette3: data?.fillingPercentageCassette3 ?? '',
         fillingPercentageCassette4: data?.fillingPercentageCassette4 ?? '',
-        fillingPercentageStacker1f: data?.fillingPercentageStacker1f ?? '',
-        fillingPercentageStacker1r: data?.fillingPercentageStacker1r ?? '',
-        fillingPercentageStacker2f: data?.fillingPercentageStacker2f ?? '',
-        fillingPercentageStacker2r: data?.fillingPercentageStacker2r ?? '',
-        fillingPercentageStacker3f: data?.fillingPercentageStacker3f ?? '',
-        fillingPercentageStacker3r: data?.fillingPercentageStacker3r ?? ''
+        fillingPercentageRecycler1: data?.fillingPercentageRecycler1 ?? '',
+        fillingPercentageRecycler2: data?.fillingPercentageRecycler2 ?? '',
+        fillingPercentageRecycler3: data?.fillingPercentageRecycler3 ?? '',
+        fillingPercentageRecycler4: data?.fillingPercentageRecycler4 ?? '',
+        fillingPercentageRecycler5: data?.fillingPercentageRecycler5 ?? '',
+        fillingPercentageRecycler6: data?.fillingPercentageRecycler6 ?? ''
       }}
       validationSchema={schema}
       onSubmit={it => save(section, schema.cast(it))}
@@ -169,7 +169,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
           <Form className={classes.form}>
             <PromptWhenDirty />
             <Header
-              title="Cash recycling (stackers)"
+              title="Cash recycling"
               editing={isEditing(RECYCLER_STACKER_KEY)}
               disabled={isDisabled(RECYCLER_STACKER_KEY)}
               setEditing={it => setEditing(RECYCLER_STACKER_KEY, it)}
@@ -183,8 +183,9 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         labelClassName={classes.cashboxLabel}
                         emptyPartClassName={classes.cashboxEmptyPart}
                         percent={
-                          values[`fillingPercentageStacker${it + 1}f`] ??
-                          data[`stacker${it + 1}f`]
+                          values[
+                            `fillingPercentageRecycler${(it + 1) * 2 - 1}`
+                          ] ?? data[`recycler${(it + 1) * 2 - 1}`]
                         }
                         applyColorVariant
                         applyFiatBalanceAlertsStyling
@@ -192,10 +193,12 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         cashOut
                       />
                       <div className={classes.col2}>
-                        <TL2 className={classes.title}>Stacker {it + 1}F</TL2>
+                        <TL2 className={classes.title}>
+                          Recycler {(it + 1) * 2 - 1}
+                        </TL2>
                         <EditableNumber
                           label="Alert me under"
-                          name={`fillingPercentageStacker${it + 1}f`}
+                          name={`fillingPercentageRecycler${(it + 1) * 2 - 1}`}
                           editing={isEditing(RECYCLER_STACKER_KEY)}
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="%"
@@ -210,8 +213,8 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         labelClassName={classes.cashboxLabel}
                         emptyPartClassName={classes.cashboxEmptyPart}
                         percent={
-                          values[`fillingPercentageStacker${it + 1}r`] ??
-                          data[`stacker${it + 1}r`]
+                          values[`fillingPercentageRecycler${(it + 1) * 2}`] ??
+                          data[`recycler${(it + 1) * 2}`]
                         }
                         applyColorVariant
                         applyFiatBalanceAlertsStyling
@@ -219,10 +222,12 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                         cashOut
                       />
                       <div className={classes.col2}>
-                        <TL2 className={classes.title}>Stacker {it + 1}R</TL2>
+                        <TL2 className={classes.title}>
+                          Recycler {(it + 1) * 2}
+                        </TL2>
                         <EditableNumber
                           label="Alert me under"
-                          name={`fillingPercentageStacker${it + 1}r`}
+                          name={`fillingPercentageRecycler${(it + 1) * 2}`}
                           editing={isEditing(RECYCLER_STACKER_KEY)}
                           displayValue={x => (x === '' ? '-' : x)}
                           decoration="%"
@@ -232,7 +237,7 @@ const FiatBalance = ({ section, min = 0, max = 100, fieldWidth = 80 }) => {
                     </div>
                   </>
                 ],
-                R.times(R.identity, maxNumberOfStackers)
+                R.times(R.identity, maxNumberOfRecyclers / 2)
               )}
             </div>
           </Form>
