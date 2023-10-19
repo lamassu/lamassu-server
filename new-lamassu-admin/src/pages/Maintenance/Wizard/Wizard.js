@@ -52,16 +52,8 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
 
-  const buildCashUnitObj = (fields, cassetteInput) => {
-    return R.reduce(
-      (acc, value) => {
-        acc[value] = defaultToZero(cassetteInput[value])
-        return acc
-      },
-      {},
-      fields
-    )
-  }
+  const buildCashUnitObj = (fields, cassetteInput) =>
+    R.pipe(R.pickAll(fields), R.map(defaultToZero))(cassetteInput)
 
   const onContinue = it => {
     const newConfig = R.merge(config, it)
