@@ -108,26 +108,51 @@ const useStyles = makeStyles(styles)
 
 const CASHBOX_STEP = 1
 
+const isCashboxStep = step => step === CASHBOX_STEP
+const isCassetteStep = (step, numberOfCassettes) =>
+  step > 1 && step <= numberOfCassettes + 1
+const isRecyclerStep = (step, numberOfCassettes, numberOfRecyclers) =>
+  step > numberOfCassettes + 1 &&
+  step <= numberOfCassettes + numberOfRecyclers + 1
+
 const cassetesArtworks = (step, numberOfCassettes, numberOfRecyclers) => {
   const cassetteStepsStart = CASHBOX_STEP + 1
-  return [
-    [cassetteOne],
-    [cassetteOne, cassetteTwo],
-    [tejo3CassetteOne, tejo3CassetteTwo, tejo3CassetteThree],
-    [tejo4CassetteOne, tejo4CassetteTwo, tejo4CassetteThree, tejo4CassetteFour]
-  ][numberOfCassettes - cassetteStepsStart + 1][step - cassetteStepsStart]
+  return isCassetteStep(step, numberOfCassettes)
+    ? [
+        [cassetteOne],
+        [cassetteOne, cassetteTwo],
+        [tejo3CassetteOne, tejo3CassetteTwo, tejo3CassetteThree],
+        [
+          tejo4CassetteOne,
+          tejo4CassetteTwo,
+          tejo4CassetteThree,
+          tejo4CassetteFour
+        ]
+      ][numberOfCassettes - 1][step - cassetteStepsStart]
+    : [
+        /* TODO: Recycler artwork */
+        [cassetteOne],
+        [cassetteOne, cassetteTwo],
+        [tejo3CassetteOne, tejo3CassetteTwo, tejo3CassetteThree],
+        [
+          tejo4CassetteOne,
+          tejo4CassetteTwo,
+          tejo4CassetteThree,
+          tejo4CassetteFour
+        ]
+      ][numberOfRecyclers - 1][step - cassetteStepsStart]
 }
 
 const getCashUnitFieldName = (step, numberOfCassettes, numberOfRecyclers) => {
-  if (step === CASHBOX_STEP) return { name: 'cashbox', category: 'cashbox' }
+  if (isCashboxStep(step)) return { name: 'cashbox', category: 'cashbox' }
   const cassetteStepsStart = CASHBOX_STEP + 1
-  if (step < cassetteStepsStart + numberOfCassettes)
+  if (isCassetteStep(step, numberOfCassettes))
     return {
       name: `cassette${step - cassetteStepsStart + 1}`,
       category: 'cassette'
     }
   const recyclerStepsStart = CASHBOX_STEP + numberOfCassettes + 1
-  if (step < recyclerStepsStart + numberOfRecyclers)
+  if (isRecyclerStep(step, numberOfCassettes, numberOfRecyclers))
     return {
       name: `recycler${Math.ceil(step - recyclerStepsStart + 1)}`,
       category: 'recycler'
@@ -180,7 +205,7 @@ const WizardStep = ({
         <Stepper steps={steps.length} currentStep={step} />
       </div>
 
-      {step === 1 && (
+      {isCashboxStep(step) && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
@@ -194,7 +219,7 @@ const WizardStep = ({
                 className={classnames(classes.horizontalAlign, classes.form)}>
                 <img
                   className={classes.stepImage}
-                  alt="cassette"
+                  alt={cashUnitCategory}
                   src={cashbox}></img>
                 <div className={classes.formWrapper}>
                   <div
@@ -248,7 +273,7 @@ const WizardStep = ({
         </Formik>
       )}
 
-      {step > 1 && (
+      {!isCashboxStep(step) && (
         <Formik
           validateOnBlur={false}
           validateOnChange={false}
@@ -262,7 +287,7 @@ const WizardStep = ({
                 className={classnames(classes.horizontalAlign, classes.form)}>
                 <img
                   className={classes.stepImage}
-                  alt="cassette"
+                  alt={cashUnitCategory}
                   src={cassetesArtworks(
                     step,
                     numberOfCassettes,
@@ -289,9 +314,9 @@ const WizardStep = ({
                           className={classes.cassetteFormTitleContent}
                           noMargin>
                           {startCase(cashUnitField)} (
-                          {R.includes('cassette', cashUnitField)
+                          {cashUnitCategory === 'cassette'
                             ? `dispenser`
-                            : R.includes('recycler', cashUnitField)
+                            : cashUnitCategory === 'recycler'
                             ? `recycler`
                             : ``}
                           )
