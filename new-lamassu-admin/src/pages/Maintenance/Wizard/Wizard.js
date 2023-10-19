@@ -4,7 +4,11 @@ import * as Yup from 'yup'
 
 import Modal from 'src/components/Modal'
 import { MAX_NUMBER_OF_CASSETTES } from 'src/utils/constants'
-import { getCashUnitCapacity, modelPrettifier } from 'src/utils/machine'
+import {
+  cashUnitCapacity,
+  getCashUnitCapacity,
+  modelPrettifier
+} from 'src/utils/machine'
 import { defaultToZero } from 'src/utils/number'
 
 import WizardSplash from './WizardSplash'
@@ -27,6 +31,8 @@ const RECYCLER_FIELDS = [
   'recycler6'
 ]
 
+const canManuallyLoadRecyclers = ({ model }) => ['grandola'].includes(model)
+
 const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const [{ step, config }, setState] = useState({
     step: 0,
@@ -39,34 +45,15 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const numberOfCassettes = isCashOutDisabled ? 0 : machine.numberOfCassettes
   const numberOfRecyclers = machine.numberOfRecyclers
 
-  // const LAST_STEP = numberOfCassettes + numberOfRecyclers * 2 + 1
-  const LAST_STEP = numberOfCassettes + 1
+  const LAST_STEP = canManuallyLoadRecyclers(machine)
+    ? numberOfCassettes + numberOfRecyclers + 1
+    : numberOfCassettes + 1
 
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
 
-  const buildCassetteObj = cassetteInput => {
-    return R.reduce(
-      (acc, value) => {
-        acc[value] = defaultToZero(cassetteInput[value])
-        return acc
-      },
-      {},
-      CASSETTE_FIELDS
-    )
-  }
-
-  const buildRecyclerObj = cassetteInput => {
-    return R.reduce(
-      (acc, value) => {
-        acc[value] = machine.cashUnits[value]
-        // acc[value] = defaultToZero(cassetteInput[value])
-        return acc
-      },
-      {},
-      RECYCLER_FIELDS
-    )
-  }
+  const buildCashUnitObj = (fields, cassetteInput) =>
+    R.pipe(R.pickAll(fields), R.map(defaultToZero))(cassetteInput)
 
   const onContinue = it => {
     const newConfig = R.merge(config, it)
@@ -76,8 +63,8 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         it?.wasCashboxEmptied
       ].includes('YES')
 
-      const cassettes = buildCassetteObj(it)
-      const recyclers = buildRecyclerObj(it)
+      const cassettes = buildCashUnitObj(CASSETTE_FIELDS, it)
+      const recyclers = buildCashUnitObj(RECYCLER_FIELDS, it)
 
       const cashUnits = {
         cashbox: wasCashboxEmptied ? 0 : machine?.cashUnits.cashbox,
@@ -120,6 +107,29 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     }))
   )
 
+  const makeRecyclerSteps = R.pipe(
+    R.add(1),
+    R.range(1),
+    R.chain(i => ({
+      type: `recycler ${i}`,
+      schema: Yup.object().shape({
+        [`recycler${i}`]: Yup.number()
+          .label('Bill count')
+          .positive()
+          .integer()
+          .required()
+          .min(0)
+          .max(
+            cashUnitCapacity[machine.model].recycler,
+            `${modelPrettifier[machine.model]}
+              maximum recycler capacity is ${
+                cashUnitCapacity[machine.model].recycler
+              } bills`
+          )
+      })
+    }))
+  )
+
   const makeCassettesInitialValues = () =>
     !R.isEmpty(cashoutSettings)
       ? R.reduce(
@@ -149,7 +159,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     R.merge(makeCassettesInitialValues(), makeRecyclersInitialValues())
 
   const steps = R.pipe(
-    // R.concat(makeStackerSteps(numberOfStackers)),
+    R.concat(makeRecyclerSteps(numberOfRecyclers)),
     R.concat(makeCassetteSteps(numberOfCassettes)),
     R.concat([
       {
