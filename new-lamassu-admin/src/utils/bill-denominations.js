@@ -408,6 +408,17 @@ export default {
     },
     polymer: false
   },
+  XCD: {
+    thickness: 0x0c,
+    lengths: {
+      5: [0x9b, 0x87],
+      10: [0x9b, 0x87],
+      20: [0x9b, 0x87],
+      50: [0x9b, 0x87],
+      100: [0x9b, 0x87]
+    },
+    polymer: true
+  },
   ZAR: {
     thickness: 0x0c,
     lengths: {
