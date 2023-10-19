@@ -52,25 +52,14 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const title = `Update counts`
   const isLastStep = step === LAST_STEP
 
-  const buildCassetteObj = cassetteInput => {
+  const buildCashUnitObj = (fields, cassetteInput) => {
     return R.reduce(
       (acc, value) => {
         acc[value] = defaultToZero(cassetteInput[value])
         return acc
       },
       {},
-      CASSETTE_FIELDS
-    )
-  }
-
-  const buildRecyclerObj = cassetteInput => {
-    return R.reduce(
-      (acc, value) => {
-        acc[value] = defaultToZero(cassetteInput[value])
-        return acc
-      },
-      {},
-      RECYCLER_FIELDS
+      fields
     )
   }
 
@@ -82,8 +71,8 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
         it?.wasCashboxEmptied
       ].includes('YES')
 
-      const cassettes = buildCassetteObj(it)
-      const recyclers = buildRecyclerObj(it)
+      const cassettes = buildCashUnitObj(CASSETTE_FIELDS, it)
+      const recyclers = buildCashUnitObj(RECYCLER_FIELDS, it)
 
       const cashUnits = {
         cashbox: wasCashboxEmptied ? 0 : machine?.cashUnits.cashbox,
