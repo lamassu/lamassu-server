@@ -66,8 +66,7 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
   const buildRecyclerObj = cassetteInput => {
     return R.reduce(
       (acc, value) => {
-        acc[value] = machine.cashUnits[value]
-        // acc[value] = defaultToZero(cassetteInput[value])
+        acc[value] = defaultToZero(cassetteInput[value])
         return acc
       },
       {},
