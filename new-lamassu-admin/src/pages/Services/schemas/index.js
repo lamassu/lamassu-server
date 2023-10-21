@@ -5,6 +5,7 @@ import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import cex from './cex'
 import ciphertrace from './ciphertrace'
+import galoy from './galoy'
 import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
@@ -16,6 +17,7 @@ import vonage from './vonage'
 
 export default {
   [bitgo.code]: bitgo,
+  [galoy.code]: galoy,
   [bitstamp.code]: bitstamp,
   [blockcypher.code]: blockcypher,
   [infura.code]: infura,

@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
+import { utils as coinUtils } from '@lamassu/coins'
 import { makeStyles } from '@material-ui/core'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
@@ -34,7 +35,7 @@ const ChooseTicker = ({ data: currentData, addData }) => {
   const accounts = data?.accounts ?? []
   const accountsConfig = data?.accountsConfig ?? []
 
-  const coin = currentData.coin
+  const coin = coinUtils.getEquivalentCode(currentData.coin)
   const tickers = getItems(accountsConfig, accounts, 'ticker', coin)
 
   const submit = () => {
