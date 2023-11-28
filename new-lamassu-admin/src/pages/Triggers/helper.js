@@ -545,7 +545,7 @@ const hasCustomRequirementError = (errors, touched, values) =>
   (!values.requirement?.customInfoRequestId ||
     !R.isNil(values.requirement?.customInfoRequestId))
 
-const Requirement = ({ customInfoRequests }) => {
+const Requirement = ({ customInfoRequests, emailAuth }) => {
   const classes = useStyles()
   const {
     touched,
@@ -568,9 +568,11 @@ const Requirement = ({ customInfoRequests }) => {
     display: 'Custom information requirement',
     code: 'custom'
   }
+  const itemToRemove = emailAuth ? 'sms' : 'email'
+  const reqOptions = requirementOptions.filter(it => it.code !== itemToRemove)
   const options = enableCustomRequirement
-    ? [...requirementOptions, customInfoOption]
-    : [...requirementOptions]
+    ? [...reqOptions, customInfoOption]
+    : [...reqOptions]
   const titleClass = {
     [classes.error]:
       (!!errors.requirement && !isSuspend && !isCustom) ||
@@ -622,11 +624,11 @@ const Requirement = ({ customInfoRequests }) => {
   )
 }
 
-const requirements = customInfoRequests => ({
+const requirements = (customInfoRequests, emailAuth) => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  props: { customInfoRequests },
+  props: { customInfoRequests, emailAuth },
   hasRequirementError: hasRequirementError,
   hasCustomRequirementError: hasCustomRequirementError,
   initialValues: {
