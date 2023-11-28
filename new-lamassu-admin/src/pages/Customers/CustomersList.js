@@ -25,9 +25,9 @@ const CustomersList = ({
 
   const elements = [
     {
-      header: 'Phone',
+      header: 'Phone/email',
       width: 199,
-      view: it => getFormattedPhone(it.phone, locale.country)
+      view: it => `${getFormattedPhone(it.phone, locale.country)} ${it.email}`
     },
     {
       header: 'Name',

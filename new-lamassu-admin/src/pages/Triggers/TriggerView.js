@@ -28,7 +28,8 @@ const TriggerView = ({
   config,
   toggleWizard,
   addNewTriger,
-  customInfoRequests
+  customInfoRequests,
+  emailAuth
 }) => {
   const currency = R.path(['fiatCurrency'])(
     fromNamespace(namespaces.LOCALE)(config)
@@ -77,6 +78,7 @@ const TriggerView = ({
           save={add}
           onClose={() => toggleWizard(true)}
           customInfoRequests={customInfoRequests}
+          emailAuth={emailAuth}
         />
       )}
       {R.isEmpty(triggers) && (

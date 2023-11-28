@@ -17,6 +17,9 @@ const CustomerDetails = memo(({ customer, photosData, locale, timezone }) => {
 
   const idNumber = R.path(['idCardData', 'documentNumber'])(customer)
   const usSsn = R.path(['usSsn'])(customer)
+  const name = getName(customer)
+  const email = R.path(['email'])(customer)
+  const phone = R.path(['phone'])(customer)
 
   const elements = [
     {
@@ -40,7 +43,12 @@ const CustomerDetails = memo(({ customer, photosData, locale, timezone }) => {
       value: usSsn
     })
 
-  const name = getName(customer)
+  if (email)
+    elements.push({
+      header: 'Email',
+      size: 190,
+      value: email
+    })
 
   return (
     <Box display="flex">
@@ -51,7 +59,9 @@ const CustomerDetails = memo(({ customer, photosData, locale, timezone }) => {
           <H2 noMargin>
             {name.length
               ? name
-              : getFormattedPhone(R.path(['phone'])(customer), locale.country)}
+              : email?.length
+              ? email
+              : getFormattedPhone(phone, locale.country)}
           </H2>
         </div>
         <Box display="flex" mt="auto">

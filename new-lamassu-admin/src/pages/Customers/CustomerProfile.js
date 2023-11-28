@@ -57,6 +57,7 @@ const GET_CUSTOMER = gql`
       frontCameraAt
       frontCameraOverride
       phone
+      email
       isAnonymous
       smsOverride
       idCardData
@@ -132,6 +133,7 @@ const SET_CUSTOMER = gql`
       frontCameraPath
       frontCameraOverride
       phone
+      email
       smsOverride
       idCardData
       idCardDataOverride
@@ -516,6 +518,8 @@ const CustomerProfile = memo(() => {
     })) ?? []
 
   const classes = useStyles()
+  const email = R.path(['email'])(customerData)
+  const phone = R.path(['phone'])(customerData)
 
   return (
     <>
@@ -532,10 +536,9 @@ const CustomerProfile = memo(() => {
         <Label2 noMargin className={classes.labelLink}>
           {name.length
             ? name
-            : getFormattedPhone(
-                R.path(['phone'])(customerData),
-                locale.country
-              )}
+            : email?.length
+            ? email
+            : getFormattedPhone(phone, locale.country)}
         </Label2>
       </Breadcrumbs>
       <div className={classes.panels}>

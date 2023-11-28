@@ -31,7 +31,8 @@ const ThirdPartyProvider = () => {
   }
 
   const ThirdPartySchema = Yup.object().shape({
-    sms: Yup.string('The sms must be a string').required('The sms is required')
+    sms: Yup.string('SMS must be a string').required('SMS is required'),
+    email: Yup.string('Email must be a string').required('Email is required')
   })
 
   const elements = [
@@ -46,14 +47,30 @@ const ThirdPartyProvider = () => {
         valueProp: 'code',
         labelProp: 'display'
       }
+    },
+    {
+      name: 'email',
+      size: 'sm',
+      view: getDisplayName('email'),
+      width: 175,
+      input: Autocomplete,
+      inputProps: {
+        options: filterOptions('email'),
+        valueProp: 'code',
+        labelProp: 'display'
+      }
     }
   ]
+  const values = {
+    sms: data.sms ?? 'twilio',
+    email: data.email ?? 'mailgun'
+  }
 
   return (
     <EditableTable
       name="thirdParty"
-      initialValues={{ sms: data.sms ?? 'twilio' }}
-      data={R.of({ sms: data.sms ?? 'twilio' })}
+      initialValues={values}
+      data={R.of(values)}
       error={error?.message}
       enableEdit
       editWidth={174}
