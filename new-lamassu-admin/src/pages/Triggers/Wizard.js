@@ -138,6 +138,8 @@ const getTypeText = (config, currency, classes) => {
 
 const getRequirementText = (config, classes) => {
   switch (config.requirement?.requirement) {
+    case 'email':
+      return <>asked to enter code provided through email verification</>
     case 'sms':
       return <>asked to enter code provided through SMS verification</>
     case 'idCardPhoto':

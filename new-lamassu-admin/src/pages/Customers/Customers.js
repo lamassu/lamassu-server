@@ -39,6 +39,7 @@ const GET_CUSTOMERS = gql`
       id
       idCardData
       phone
+      email
       totalTxs
       totalSpent
       lastActive

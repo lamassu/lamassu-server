@@ -522,6 +522,7 @@ const requirementSchema = Yup.object()
 
 const requirementOptions = [
   { display: 'SMS verification', code: 'sms' },
+  { display: 'Email verification', code: 'email' },
   { display: 'ID card image', code: 'idCardPhoto' },
   { display: 'ID data', code: 'idCardData' },
   { display: 'Customer camera', code: 'facephoto' },
