@@ -45,6 +45,16 @@ const GET_INFO = gql`
       latestEvent {
         note
       }
+      location {
+        id
+        label
+        addressLine1
+        addressLine2
+        city
+        state
+        zipCode
+        country
+      }
     }
     bills(filters: $billFilters) {
       id
@@ -120,7 +130,7 @@ const Machines = ({ data, refetch, reload }) => {
                 {machineName}
               </TL2>
             </Breadcrumbs>
-            <Overview data={machine} onActionSuccess={reload} />
+            <Overview data={machine} onActionSuccess={refetch} />
           </div>
         </Grid>
       </Grid>
