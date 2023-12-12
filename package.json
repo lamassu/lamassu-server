@@ -3,7 +3,7 @@
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
   "version": "8.1.7",
-  "license": "Unlicense",
+  "license": "./LICENSE",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
     "@ethereumjs/common": "^2.6.4",
