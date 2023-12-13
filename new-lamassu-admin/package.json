@@ -1,10 +1,10 @@
 {
   "name": "lamassu-admin",
-  "version": "0.2.0",
-  "license": "unlicense",
+  "version": "0.2.1",
+  "license": "../LICENSE",
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
-    "@lamassu/coins": "v1.3.3",
+    "@lamassu/coins": "v1.3.5",
     "@material-ui/core": "4.11.0",
     "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
