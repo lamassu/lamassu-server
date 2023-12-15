@@ -101,6 +101,7 @@ const CustomerData = ({
   )
 
   const phone = R.path(['phone'])(customer)
+  const email = R.path(['email'])(customer)
   const smsData = R.path(['subscriberInfo'])(customer)
 
   const isEven = elem => elem % 2 === 0
@@ -133,6 +134,9 @@ const CustomerData = ({
     },
     idCardPhoto: {
       idCardPhoto: null
+    },
+    email: {
+      email
     },
     smsData: {
       phoneNumber: getFormattedPhone(phone, locale.country)
@@ -199,6 +203,19 @@ const CustomerData = ({
       initialValues: initialValues.smsData,
       isAvailable: !R.isNil(phone),
       hasAdditionalData: !R.isNil(smsData) && !R.isEmpty(smsData),
+      editable: false
+    },
+    {
+      title: 'Email',
+      fields: customerDataElements.email,
+      titleIcon: <CardIcon className={classes.cardIcon} />,
+      // state: R.path(['emailOverride'])(customer),
+      // authorize: () => updateCustomer({ emailOverride: OVERRIDE_AUTHORIZED }),
+      // reject: () => updateCustomer({ emailOverride: OVERRIDE_REJECTED }),
+      save: values => editCustomer(values),
+      deleteEditedData: () => deleteEditedData({ email: null }),
+      initialValues: initialValues.email,
+      isAvailable: !R.isNil(customer.email),
       editable: false
     },
     {

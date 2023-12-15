@@ -27,7 +27,8 @@ const CustomersList = ({
     {
       header: 'Phone/email',
       width: 199,
-      view: it => `${getFormattedPhone(it.phone, locale.country)} ${it.email}`
+      view: it => `${getFormattedPhone(it.phone, locale.country) || ''} 
+      ${it.email || ''}`
     },
     {
       header: 'Name',
