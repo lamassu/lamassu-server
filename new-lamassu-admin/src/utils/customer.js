@@ -28,10 +28,13 @@ const displayName = ({
   isAnonymous,
   customerName,
   customerIdCardData,
-  customerPhone
+  customerPhone,
+  customerEmail
 }) =>
   isAnonymous
     ? 'Anonymous'
-    : customerName || R.defaultTo(customerPhone, formatName(customerIdCardData))
+    : customerName ||
+      customerEmail ||
+      R.defaultTo(customerPhone, formatName(customerIdCardData))
 
 export { displayName, formatFullName, formatName }

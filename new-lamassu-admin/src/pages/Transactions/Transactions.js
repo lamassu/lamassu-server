@@ -116,6 +116,7 @@ const GET_TRANSACTIONS = gql`
       customerFrontCameraPath
       txCustomerPhotoPath
       customerPhone
+      customerEmail
       discount
       customerId
       isAnonymous
