@@ -20,8 +20,8 @@ const widthsByNumberOfUnits = {
 const DenominationsSchema = Yup.object().shape({
   cassette1: Yup.number()
     .label('Cassette 1')
-    .required()
     .min(1)
+    .nullable()
     .max(CURRENCY_MAX),
   cassette2: Yup.number()
     .label('Cassette 2')
