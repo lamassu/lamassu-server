@@ -36,6 +36,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
     "dataloader": "^2.0.0",
+    "dateformat": "^3.0.3",
     "date-fns": "^2.26.0",
     "date-fns-tz": "^1.1.6",
     "dotenv": "^16.0.0",
