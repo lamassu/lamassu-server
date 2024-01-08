@@ -90,6 +90,9 @@ export default {
   transactionId: {
     width: 280
   },
+  blockFee: {
+    width: 140
+  },
   sessionId: {
     width: 215
   },
