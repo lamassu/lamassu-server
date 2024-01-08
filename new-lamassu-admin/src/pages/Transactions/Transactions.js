@@ -104,6 +104,7 @@ const GET_TRANSACTIONS = gql`
       errorCode
       deviceId
       fiat
+      fee
       cashInFee
       fiatCode
       cryptoAtoms
