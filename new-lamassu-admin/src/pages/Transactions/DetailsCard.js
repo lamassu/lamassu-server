@@ -91,7 +91,7 @@ const getCryptoAmount = tx =>
 
 const getCryptoFeeAmount = tx => {
   const feeAmount = coinUtils
-    .toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode)
+    .toUnit(new BigNumber(tx.fee), tx.cryptoCode)
     .toNumber()
 
   return new BigNumber(feeAmount)
