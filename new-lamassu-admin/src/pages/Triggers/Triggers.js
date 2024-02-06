@@ -58,7 +58,7 @@ const GET_CUSTOM_REQUESTS = gql`
 const Triggers = () => {
   const classes = useStyles()
   const [wizardType, setWizard] = useState(false)
-  const { data, loading: configLoading } = useQuery(GET_CONFIG)
+  const { data, loading: configLoading, refetch } = useQuery(GET_CONFIG)
   const { data: customInfoReqData, loading: customInfoLoading } = useQuery(
     GET_CUSTOM_REQUESTS
   )
@@ -72,6 +72,8 @@ const Triggers = () => {
   const enabledCustomInfoRequests = R.filter(R.propEq('enabled', true))(
     customInfoRequests
   )
+  const emailAuth =
+    data?.config?.triggersConfig_customerAuthentication === 'EMAIL'
 
   const triggers = fromServer(data?.config?.triggers ?? [])
   const complianceConfig =
@@ -141,6 +143,7 @@ const Triggers = () => {
             inverseIcon: ReverseSettingsIcon,
             forceDisable: !(subMenu === 'advancedSettings'),
             toggle: show => {
+              refetch()
               setSubMenu(show ? 'advancedSettings' : false)
             }
           },
@@ -150,6 +153,7 @@ const Triggers = () => {
             inverseIcon: ReverseCustomInfoIcon,
             forceDisable: !(subMenu === 'customInfoRequests'),
             toggle: show => {
+              refetch()
               setSubMenu(show ? 'customInfoRequests' : false)
             }
           }
@@ -216,6 +220,7 @@ const Triggers = () => {
           toggleWizard={toggleWizard('newTrigger')}
           addNewTriger={addNewTriger}
           customInfoRequests={enabledCustomInfoRequests}
+          emailAuth={emailAuth}
         />
       )}
       {!loading && subMenu === 'advancedSettings' && (

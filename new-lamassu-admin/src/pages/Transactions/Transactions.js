@@ -104,6 +104,7 @@ const GET_TRANSACTIONS = gql`
       errorCode
       deviceId
       fiat
+      fee
       cashInFee
       fiatCode
       cryptoAtoms
@@ -116,6 +117,7 @@ const GET_TRANSACTIONS = gql`
       customerFrontCameraPath
       txCustomerPhotoPath
       customerPhone
+      customerEmail
       discount
       customerId
       isAnonymous

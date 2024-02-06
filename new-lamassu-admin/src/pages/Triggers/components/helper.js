@@ -94,6 +94,21 @@ const getDefaultSettings = () => {
         labelProp: 'display',
         valueProp: 'code'
       }
+    },
+    {
+      name: 'customerAuthentication',
+      header: 'Customer Auth',
+      width: 196,
+      size: 'sm',
+      input: Autocomplete,
+      inputProps: {
+        options: [
+          { code: 'SMS', display: 'SMS' },
+          { code: 'EMAIL', display: 'EMAIL' }
+        ],
+        labelProp: 'display',
+        valueProp: 'code'
+      }
     }
   ]
 }
@@ -144,7 +159,8 @@ const getOverrides = customInfoRequests => {
 const defaults = [
   {
     expirationTime: 'Forever',
-    automation: 'Automatic'
+    automation: 'Automatic',
+    customerAuth: 'SMS'
   }
 ]
 

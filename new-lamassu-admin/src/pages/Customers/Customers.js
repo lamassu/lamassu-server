@@ -31,14 +31,22 @@ const GET_CUSTOMERS = gql`
   query configAndCustomers(
     $phone: String
     $name: String
+    $email: String
     $address: String
     $id: String
   ) {
     config
-    customers(phone: $phone, name: $name, address: $address, id: $id) {
+    customers(
+      phone: $phone
+      email: $email
+      name: $name
+      address: $address
+      id: $id
+    ) {
       id
       idCardData
       phone
+      email
       totalTxs
       totalSpent
       lastActive
@@ -154,6 +162,7 @@ const Customers = () => {
     setVariables({
       phone: filtersObject.phone,
       name: filtersObject.name,
+      email: filtersObject.email,
       address: filtersObject.address,
       id: filtersObject.id
     })
@@ -173,6 +182,7 @@ const Customers = () => {
     setVariables({
       phone: filtersObject.phone,
       name: filtersObject.name,
+      email: filtersObject.email,
       address: filtersObject.address,
       id: filtersObject.id
     })
@@ -187,6 +197,7 @@ const Customers = () => {
     setVariables({
       phone: filtersObject.phone,
       name: filtersObject.name,
+      email: filtersObject.email,
       address: filtersObject.address,
       id: filtersObject.id
     })
