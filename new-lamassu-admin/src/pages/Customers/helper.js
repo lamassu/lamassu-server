@@ -59,7 +59,7 @@ const ID_CARD_DATA = 'idCardData'
 
 const getAuthorizedStatus = (it, triggers, customRequests) => {
   const fields = R.concat(
-    ['frontCamera', 'idCardData', 'idCardPhoto', 'usSsn', 'sanctions'],
+    ['frontCamera', 'idCardData', 'idCardPhoto', 'email', 'usSsn', 'sanctions'],
     R.map(ite => ite.id, customRequests)
   )
   const fieldsWithPathSuffix = ['frontCamera', 'idCardPhoto']
@@ -165,6 +165,7 @@ const requirementOptions = [
   { display: 'ID card image', code: 'idCardPhoto' },
   { display: 'ID data', code: 'idCardData' },
   { display: 'US SSN', code: 'usSsn' },
+  { display: 'Email', code: 'email' },
   { display: 'Customer camera', code: 'frontCamera' }
 ]
 
@@ -430,6 +431,15 @@ const customerDataElements = {
       editable: true
     }
   ],
+  email: [
+    {
+      name: 'email',
+      label: 'Email',
+      component: TextInput,
+      size: 190,
+      editable: false
+    }
+  ],
   idCardPhoto: [{ name: 'idCardPhoto' }],
   frontCamera: [{ name: 'frontCamera' }]
 }
@@ -460,6 +470,9 @@ const customerDataSchemas = {
   }),
   frontCamera: Yup.object().shape({
     frontCamera: Yup.mixed().required()
+  }),
+  email: Yup.object().shape({
+    email: Yup.string().required()
   })
 }
 
@@ -484,6 +497,13 @@ const requirementElements = {
     options: customerDataElements.usSsn,
     Component: ManualDataEntry,
     initialValues: { usSsn: '' },
+    saveType: 'customerData'
+  },
+  email: {
+    schema: customerDataSchemas.email,
+    options: customerDataElements.email,
+    Component: ManualDataEntry,
+    initialValues: { email: '' },
     saveType: 'customerData'
   },
   idCardPhoto: {

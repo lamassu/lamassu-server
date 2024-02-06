@@ -89,6 +89,17 @@ const CANCEL_CASH_IN_TRANSACTION = gql`
 const getCryptoAmount = tx =>
   coinUtils.toUnit(new BigNumber(tx.cryptoAtoms), tx.cryptoCode).toNumber()
 
+const getCryptoFeeAmount = tx => {
+  const feeAmount = coinUtils
+    .toUnit(new BigNumber(tx.fee), tx.cryptoCode)
+    .toNumber()
+
+  return new BigNumber(feeAmount)
+    .times(tx.rawTickerPrice)
+    .toNumber()
+    .toFixed(2, 1)
+}
+
 const formatAddress = (cryptoCode = '', address = '') =>
   coinUtils.formatCryptoAddress(cryptoCode, address).replace(/(.{5})/g, '$1 ')
 
@@ -129,6 +140,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
     .minus(cashInFee)
     .toFixed(2, 1) // ROUND_DOWN
   const crypto = getCryptoAmount(tx)
+  const cryptoFee = getCryptoFeeAmount(tx)
   const exchangeRate = BigNumber(fiat)
     .div(crypto)
     .toFixed(2, 1) // ROUND_DOWN
@@ -369,6 +381,12 @@ const DetailsRow = ({ it: tx, timezone }) => {
             )}
           </div>
         </div>
+        {tx.txClass === 'cashIn' && (
+          <div className={classes.blockFee}>
+            <Label>Network Fee</Label>
+            {cryptoFee} {tx.fiatCode}
+          </div>
+        )}
         <div className={classes.sessionId}>
           <Label>Session ID</Label>
           <CopyToClipboard>{tx.id}</CopyToClipboard>
