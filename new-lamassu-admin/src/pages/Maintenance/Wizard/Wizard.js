@@ -159,8 +159,12 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
     R.merge(makeCassettesInitialValues(), makeRecyclersInitialValues())
 
   const steps = R.pipe(
-    R.concat(makeRecyclerSteps(numberOfRecyclers)),
-    R.concat(makeCassetteSteps(numberOfCassettes)),
+    R.concat(
+      makeRecyclerSteps(
+        canManuallyLoadRecyclers(machine) ? numberOfRecyclers : 0
+      )
+    ),
+    R.concat(makeCassetteSteps(isCashOutDisabled ? 0 : numberOfCassettes)),
     R.concat([
       {
         type: 'cashbox',

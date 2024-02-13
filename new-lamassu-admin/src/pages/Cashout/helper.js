@@ -17,67 +17,90 @@ const widthsByNumberOfUnits = {
   7: { machine: 130, cassette: 125 }
 }
 
-const DenominationsSchema = Yup.object().shape({
-  cassette1: Yup.number()
-    .label('Cassette 1')
-    .min(1)
-    .nullable()
-    .max(CURRENCY_MAX),
-  cassette2: Yup.number()
-    .label('Cassette 2')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  cassette3: Yup.number()
-    .label('Cassette 3')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  cassette4: Yup.number()
-    .label('Cassette 4')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  recycler1: Yup.number()
-    .label('Recycler 1')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  recycler2: Yup.number()
-    .label('Recycler 2')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  recycler3: Yup.number()
-    .label('Recycler 3')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  recycler4: Yup.number()
-    .label('Recycler 4')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  recycler5: Yup.number()
-    .label('Recycler 5')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber),
-  recycler6: Yup.number()
-    .label('Recycler 6')
-    .min(1)
-    .max(CURRENCY_MAX)
-    .nullable()
-    .transform(transformNumber)
-})
+const denominationKeys = [
+  'cassette1',
+  'cassette2',
+  'cassette3',
+  'cassette4',
+  'recycler1',
+  'recycler2',
+  'recycler3',
+  'recycler4',
+  'recycler5',
+  'recycler6'
+]
+
+const DenominationsSchema = Yup.object()
+  .shape({
+    cassette1: Yup.number()
+      .label('Cassette 1')
+      .min(1)
+      .nullable()
+      .max(CURRENCY_MAX),
+    cassette2: Yup.number()
+      .label('Cassette 2')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    cassette3: Yup.number()
+      .label('Cassette 3')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    cassette4: Yup.number()
+      .label('Cassette 4')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    recycler1: Yup.number()
+      .label('Recycler 1')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    recycler2: Yup.number()
+      .label('Recycler 2')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    recycler3: Yup.number()
+      .label('Recycler 3')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    recycler4: Yup.number()
+      .label('Recycler 4')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    recycler5: Yup.number()
+      .label('Recycler 5')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber),
+    recycler6: Yup.number()
+      .label('Recycler 6')
+      .min(1)
+      .max(CURRENCY_MAX)
+      .nullable()
+      .transform(transformNumber)
+  })
+  .test((values, context) =>
+    R.any(key => !R.isNil(values[key]), denominationKeys)
+      ? true
+      : context.createError({
+          path: '',
+          message:
+            'The recyclers or at least one of the cassettes must have a value'
+        })
+  )
 
 const getElements = (machines, locale = {}, classes) => {
   const fiatCurrency = R.prop('fiatCurrency')(locale)
@@ -157,8 +180,10 @@ const getElements = (machines, locale = {}, classes) => {
         doubleHeader: 'Denominations of Cassettes & Recyclers',
         isHidden: machine =>
           it >
-          machines.find(({ deviceId }) => deviceId === machine.id)
-            .numberOfRecyclers
+          Math.ceil(
+            machines.find(({ deviceId }) => deviceId === machine.id)
+              .numberOfRecyclers / 2
+          )
       })
       return R.add(1, it)
     },
