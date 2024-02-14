@@ -44,7 +44,6 @@ const NotificationRow = ({
   deviceName,
   created,
   read,
-  valid,
   toggleClear
 }) => {
   const classes = useStyles()
@@ -72,7 +71,7 @@ const NotificationRow = ({
     <div
       className={classnames(
         classes.notificationRow,
-        !read && valid ? classes.unread : ''
+        !read ? classes.unread : ''
       )}>
       <div className={classes.notificationRowIcon}>
         <div>{icon}</div>
