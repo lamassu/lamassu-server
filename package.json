@@ -15,7 +15,7 @@
     "@ethereumjs/common": "^2.6.4",
     "@ethereumjs/tx": "^3.5.1",
     "@graphql-tools/merge": "^6.2.5",
-    "@lamassu/coins": "v1.4.9",
+    "@lamassu/coins": "v1.4.10",
     "@simplewebauthn/server": "^3.0.0",
     "@vonage/auth": "^1.5.0",
     "@vonage/sms": "^1.7.0",
