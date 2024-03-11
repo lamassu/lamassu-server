@@ -47,6 +47,7 @@ const GET_DATA = gql`
     cryptoCurrencies {
       code
       display
+      isBeta
     }
     languages {
       code
