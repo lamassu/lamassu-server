@@ -208,7 +208,7 @@ const getElements = (cryptoCurrencies, accounts, onChange, wizard = false) => {
   const widthAdjust = wizard ? 11 : 0
   const viewCryptoCurrency = it => {
     const currencyDisplay = R.compose(
-      R.prop(['display']),
+      it => `${R.prop(['display'])(it)} ${it.isBeta ? '(Beta)' : ''}`,
       R.find(R.propEq('code', it))
     )(cryptoCurrencies)
     return currencyDisplay
