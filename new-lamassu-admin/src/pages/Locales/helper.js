@@ -16,7 +16,7 @@ const allFields = (getData, onChange, auxElements = []) => {
     if (!data) return ''
 
     return R.compose(
-      R.prop(code),
+      it => `${R.prop(code)(it)} ${it?.isBeta ? '(Beta)' : ''}`,
       R.find(R.propEq(compare ?? 'code', it))
     )(data)
   }
@@ -36,7 +36,12 @@ const allFields = (getData, onChange, auxElements = []) => {
   const countryData = getData(['countries'])
   const currencyData = getData(['currencies'])
   const languageData = getData(['languages'])
-  const cryptoData = getData(['cryptoCurrencies'])
+  const rawCryptoData = getData(['cryptoCurrencies'])
+  const cryptoData = rawCryptoData?.map(it => {
+    it.codeLabel = `${it.code}${it.isBeta ? ' (Beta)' : ''}`
+    return it
+  })
+
   const timezonesData = timezoneList
 
   const findSuggestion = it => {
@@ -104,7 +109,7 @@ const allFields = (getData, onChange, auxElements = []) => {
       inputProps: {
         options: cryptoData,
         valueProp: 'code',
-        labelProp: 'code',
+        labelProp: 'codeLabel',
         multiple: true,
         optionsLimit: null,
         onChange

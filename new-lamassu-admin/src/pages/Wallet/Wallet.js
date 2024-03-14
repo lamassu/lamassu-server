@@ -45,6 +45,7 @@ const GET_INFO = gql`
     cryptoCurrencies {
       code
       display
+      isBeta
     }
   }
 `
