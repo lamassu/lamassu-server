@@ -6,7 +6,6 @@ const setEnvVariable = require('./set-env-var')
 
 fs.copyFileSync(path.resolve(__dirname, '../.sample.env'), path.resolve(__dirname, '../.env'))
 
-setEnvVariable('LAMASSU_DB', 'DEV')
 setEnvVariable('POSTGRES_USER', 'postgres')
 setEnvVariable('POSTGRES_PASSWORD', 'postgres123')
 setEnvVariable('POSTGRES_HOST', 'localhost')
