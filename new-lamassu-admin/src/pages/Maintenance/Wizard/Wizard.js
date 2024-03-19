@@ -64,7 +64,9 @@ const Wizard = ({ machine, cashoutSettings, locale, onClose, save, error }) => {
       ].includes('YES')
 
       const cassettes = buildCashUnitObj(CASSETTE_FIELDS, it)
-      const recyclers = buildCashUnitObj(RECYCLER_FIELDS, it)
+      const recyclers = canManuallyLoadRecyclers(machine)
+        ? buildCashUnitObj(RECYCLER_FIELDS, it)
+        : []
 
       const cashUnits = {
         cashbox: wasCashboxEmptied ? 0 : machine?.cashUnits.cashbox,
