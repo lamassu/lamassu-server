@@ -138,7 +138,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
     .minus(cashInFee)
     .toFixed(2, 1) // ROUND_DOWN
   const crypto = getCryptoAmount(tx)
-  const cryptoFee = getCryptoFeeAmount(tx)
+  const cryptoFee = tx.fee ? `${getCryptoFeeAmount(tx)} ${tx.fiatCode}` : 'N/A'
   const exchangeRate = BigNumber(fiat)
     .div(crypto)
     .toFixed(2, 1) // ROUND_DOWN
@@ -382,7 +382,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         {tx.txClass === 'cashIn' && (
           <div className={classes.blockFee}>
             <Label>Network Fee</Label>
-            {cryptoFee} {tx.fiatCode}
+            {cryptoFee}
           </div>
         )}
         <div className={classes.sessionId}>
