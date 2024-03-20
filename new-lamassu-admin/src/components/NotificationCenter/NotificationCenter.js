@@ -25,6 +25,7 @@ const GET_NOTIFICATIONS = gql`
       message
       created
       read
+      valid
     }
     hasUnreadNotifications
     machines {
@@ -105,6 +106,7 @@ const NotificationCenter = ({
           deviceName={machines[n.detail.deviceId]}
           created={n.created}
           read={n.read}
+          valid={n.valid}
           toggleClear={() =>
             toggleClearNotification({
               variables: { id: n.id, read: !n.read }
