@@ -130,13 +130,12 @@ const CustomInfoRequestsData = ({ data }) => {
     )
   }
 
-  const getAuthorizedStatus = it => {
-    return it.approved === null
+  const getAuthorizedStatus = it =>
+    it.approved === null
       ? { label: 'Pending', type: 'neutral' }
       : it.approved === false
       ? { label: 'Rejected', type: 'error' }
       : { label: 'Accepted', type: 'success' }
-  }
 
   return (
     <>
