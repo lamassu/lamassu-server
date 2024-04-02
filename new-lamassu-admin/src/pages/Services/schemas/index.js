@@ -1,5 +1,6 @@
 import binance from './binance'
 import binanceus from './binanceus'
+import bitfinex from './bitfinex'
 import bitgo from './bitgo'
 import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
@@ -31,5 +32,6 @@ export default {
   [cex.code]: cex,
   [ciphertrace.code]: ciphertrace,
   [trongrid.code]: trongrid,
-  [binance.code]: binance
+  [binance.code]: binance,
+  [bitfinex.code]: bitfinex
 }
