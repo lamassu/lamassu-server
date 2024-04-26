@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+const inquirer = require('inquirer')
+
+const bitcoind = require('../lib/plugins/wallet/bitcoind/bitcoind')
+const BN = require('../lib/bn')
+const mempool = require('../lib/blockexplorers/mempool.space')
+
+const txId = process.argv[2]
+if (!txId) {
+  console.error('Please provide a BTC transaction hash as input.')
+  process.exit(1)
+}
+
+const bumpTransactionFee = async (txId) => {
+  const txData = await bitcoind.fetch('gettransaction', [txId, true, true])
+
+  const fee = new BN(txData.fee).abs().shiftedBy(8).decimalPlaces(0)
+  const size = txData.decoded.vsize
+  const satPerVb = fee.div(size)
+
+  console.log(`Current fee: ${satPerVb.toFixed(2).toString()} sat/vB`)
+
+  const recommendedFees = mempool.getSatBEstimateFees()
+
+  console.log('Recommended fees (sat/vB):', recommendedFees)
+
+  const { selectedFee } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'selectedFee',
+      message: 'Select a fee higher than the current one:',
+      choices: Object.entries(recommendedFees)
+        .filter(([_, value]) => satPerVb.gt(value))
+        .map(([key, value]) => ({name: `${key}: ${value} sat/vB`, value})),
+    },
+  ])
+
+  await bitcoind.fetch('bumpfee', [txId, {fee_rate: selectedFee}])
+
+  console.log(`Fee bumped to ${selectedFee.toFixed(2)} sat/vB`)
+}
+
+bumpTransactionFee(txId)
