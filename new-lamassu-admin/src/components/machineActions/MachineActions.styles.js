@@ -27,4 +27,35 @@ const machineActionsStyles = {
   }
 }
 
-export { machineActionsStyles }
+const diagnosticsModal = {
+  modal: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '1em'
+  },
+  photo: {
+    width: 350
+  },
+  photoWrapper: {
+    marginTop: spacer * 3,
+    display: 'flex'
+  },
+  footer: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: [['auto', 0, spacer * 3, 0]]
+  },
+  downloadLogs: {
+    margin: [['auto', spacer, 0, 'auto']]
+  },
+  message: {
+    margin: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+}
+
+export { machineActionsStyles, diagnosticsModal }

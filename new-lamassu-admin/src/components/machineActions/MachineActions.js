@@ -15,6 +15,7 @@ import { ReactComponent as ShutdownIcon } from 'src/styling/icons/button/shut do
 import { ReactComponent as UnpairReversedIcon } from 'src/styling/icons/button/unpair/white.svg'
 import { ReactComponent as UnpairIcon } from 'src/styling/icons/button/unpair/zodiac.svg'
 
+import DiagnosticsModal from './DiagnosticsModal'
 import { machineActionsStyles } from './MachineActions.styles'
 
 const useStyles = makeStyles(machineActionsStyles)
@@ -66,6 +67,7 @@ const getState = machineEventsLazy =>
 const MachineActions = memo(({ machine, onActionSuccess }) => {
   const [action, setAction] = useState({ command: null })
   const [preflightOptions, setPreflightOptions] = useState({})
+  const [showModal, setShowModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const classes = useStyles()
 
@@ -80,6 +82,8 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
     MACHINE,
     preflightOptions
   )
+
+  const [simpleMachineAction] = useMutation(MACHINE_ACTION)
 
   const [machineAction, { loading }] = useMutation(MACHINE_ACTION, {
     onError: ({ message }) => {
@@ -188,7 +192,7 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
         {machine.model === 'aveiro' && (
           <ActionButton
             color="primary"
-            className={classes.inlineChip}
+            className={classes.mr}
             Icon={RebootIcon}
             InverseIcon={RebootReversedIcon}
             disabled={loading}
@@ -221,7 +225,34 @@ const MachineActions = memo(({ machine, onActionSuccess }) => {
             Refill Unit
           </ActionButton>
         )}
+        <ActionButton
+          color="primary"
+          className={classes.mr}
+          Icon={RebootIcon}
+          InverseIcon={RebootReversedIcon}
+          disabled={loading}
+          onClick={() => {
+            setShowModal(true)
+          }}>
+          Diagnostics
+        </ActionButton>
       </div>
+      {showModal && (
+        <DiagnosticsModal
+          sendAction={() =>
+            simpleMachineAction({
+              variables: {
+                deviceId: machine.deviceId,
+                action: 'diagnostics'
+              }
+            })
+          }
+          deviceId={machine.deviceId}
+          onClose={() => {
+            setShowModal(false)
+          }}
+        />
+      )}
       <ConfirmDialog
         disabled={disabled}
         open={confirmDialogOpen}
