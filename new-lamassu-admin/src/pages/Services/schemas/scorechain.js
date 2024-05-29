@@ -12,7 +12,7 @@ export default {
   title: 'Scorechain (Scoring)',
   elements: [
     {
-      code: 'apikey',
+      code: 'apiKey',
       display: 'API Key',
       component: SecretInputFormik
     },
