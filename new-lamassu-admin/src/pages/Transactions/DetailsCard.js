@@ -185,11 +185,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
 
   const hasChainAnalysisError = tx =>
     !R.isNil(tx.errorCode) &&
-    R.includes(tx.errorCode, [
-      'scoreThresholdReached',
-      'walletScoringError',
-      'ciphertraceError'
-    ])
+    R.includes(tx.errorCode, ['scoreThresholdReached', 'walletScoringError'])
 
   const errorElements = (
     <>
