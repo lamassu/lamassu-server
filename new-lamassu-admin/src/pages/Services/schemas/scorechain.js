@@ -7,13 +7,13 @@ import SecretInputFormik from 'src/components/inputs/formik/SecretInput'
 import { secretTest, leadingZerosTest } from './helper'
 
 export default {
-  code: 'ciphertrace',
-  name: 'CipherTrace',
-  title: 'CipherTrace (Scoring)',
+  code: 'scorechain',
+  name: 'Scorechain',
+  title: 'Scorechain (Scoring)',
   elements: [
     {
-      code: 'authorizationValue',
-      display: 'Authorization value',
+      code: 'apiKey',
+      display: 'API Key',
       component: SecretInputFormik
     },
     {
@@ -29,8 +29,7 @@ export default {
       settings: {
         enabled: true,
         disabledMessage: 'This plugin is disabled',
-        label:
-          'Enabled (Supported coins: BTC, ETH, BCH, LTC and all active ERC-20 tokens)',
+        label: 'Enabled',
         requirement: null,
         rightSideLabel: true
       },
@@ -39,13 +38,13 @@ export default {
   ],
   getValidationSchema: account => {
     return Yup.object().shape({
-      authorizationValue: Yup.string('The authorization value must be a string')
+      apiKey: Yup.string('The API key must be a string')
         .max(100, 'Too long')
-        .test(secretTest(account?.authorizationValue, 'authorization value')),
+        .test(secretTest(account?.apiKey, 'API key')),
       scoreThreshold: Yup.number('The score threshold must be a number')
         .required('A score threshold is required')
-        .min(1, 'The score threshold must be between 1 and 10')
-        .max(10, 'The score threshold must be between 1 and 10')
+        .min(1, 'The score threshold must be between 1 and 100')
+        .max(100, 'The score threshold must be between 1 and 100')
         .integer('The score threshold must be an integer')
         .test(
           'no-leading-zeros',

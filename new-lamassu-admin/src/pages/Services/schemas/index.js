@@ -5,12 +5,12 @@ import bitgo from './bitgo'
 import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import cex from './cex'
-import ciphertrace from './ciphertrace'
 import galoy from './galoy'
 import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
+import scorechain from './scorechain'
 import telnyx from './telnyx'
 import trongrid from './trongrid'
 import twilio from './twilio'
@@ -30,7 +30,7 @@ export default {
   [twilio.code]: twilio,
   [binanceus.code]: binanceus,
   [cex.code]: cex,
-  [ciphertrace.code]: ciphertrace,
+  [scorechain.code]: scorechain,
   [trongrid.code]: trongrid,
   [binance.code]: binance,
   [bitfinex.code]: bitfinex

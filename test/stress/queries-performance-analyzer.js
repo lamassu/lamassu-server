@@ -4,7 +4,7 @@ const _ = require('lodash/fp')
 const cashInTx = require('../../lib/cash-in/cash-in-tx')
 const { CASH_OUT_TRANSACTION_STATES, REDEEMABLE_AGE } = require('../../lib/cash-out/cash-out-helper')
 
-const TX_PASSTHROUGH_ERROR_CODES = ['operatorCancel', 'scoreThresholdReached', 'ciphertraceError']
+const TX_PASSTHROUGH_ERROR_CODES = ['operatorCancel', 'scoreThresholdReached']
 
 function filterTransaction () {
   const sql = `EXPLAIN ANALYZE

@@ -183,9 +183,9 @@ const DetailsRow = ({ it: tx, timezone }) => {
     FileSaver.saveAs(content, zipFilename)
   }
 
-  const hasCiphertraceError = tx =>
+  const hasChainAnalysisError = tx =>
     !R.isNil(tx.errorCode) &&
-    R.includes(tx.errorCode, ['scoreThresholdReached', 'ciphertraceError'])
+    R.includes(tx.errorCode, ['scoreThresholdReached', 'walletScoringError'])
 
   const errorElements = (
     <>
@@ -205,10 +205,10 @@ const DetailsRow = ({ it: tx, timezone }) => {
               r={3.5}
               fill={
                 it < tx.walletScore
-                  ? !hasCiphertraceError(tx)
+                  ? !hasChainAnalysisError(tx)
                     ? primaryColor
                     : errorColor
-                  : !hasCiphertraceError(tx)
+                  : !hasChainAnalysisError(tx)
                   ? subheaderColor
                   : offErrorColor
               }
@@ -221,7 +221,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
         noMargin
         className={classNames({
           [classes.bold]: true,
-          [classes.error]: hasCiphertraceError(tx)
+          [classes.error]: hasChainAnalysisError(tx)
         })}>
         {tx.walletScore}
       </P>
@@ -359,7 +359,7 @@ const DetailsRow = ({ it: tx, timezone }) => {
             <Label>Address</Label>
             {!R.isNil(tx.walletScore) && (
               <HoverableTooltip parentElements={walletScoreEl}>
-                {`CipherTrace score: ${tx.walletScore}/10`}
+                {`Chain analysis score: ${tx.walletScore}/10`}
               </HoverableTooltip>
             )}
           </div>
