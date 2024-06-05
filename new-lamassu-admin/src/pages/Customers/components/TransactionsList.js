@@ -17,12 +17,12 @@ import mainStyles from '../CustomersList.styles'
 
 const useStyles = makeStyles(mainStyles)
 
-const TransactionsList = ({ customer, data, loading, locale }) => {
+const TransactionsList = ({ customer, data, loading }) => {
   const classes = useStyles()
   const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
   const hasData = !(R.isEmpty(data) || R.isNil(data))
 
-  const timezone = locale.timezone
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const tableSpacingClasses = {
     [classes.titleAndButtonsContainer]: loading || (!loading && !hasData),
     [classes.txTableSpacing]: !loading && hasData
