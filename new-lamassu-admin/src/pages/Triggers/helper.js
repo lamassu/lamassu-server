@@ -504,13 +504,6 @@ const requirementSchema = Yup.object()
         otherwise: Yup.string()
           .nullable()
           .transform(() => '')
-      }),
-      externalServiceApplicantLevel: Yup.string().when('requirement', {
-        is: value => value === 'external',
-        then: Yup.string(),
-        otherwise: Yup.string()
-          .nullable()
-          .transform(() => '')
       })
     }).required()
   })
@@ -527,8 +520,7 @@ const requirementSchema = Yup.object()
             : true
         case 'external':
           return requirement.requirement === type
-            ? !R.isNil(requirement.externalService) &&
-                !R.isNil(requirement.externalServiceApplicantLevel)
+            ? !R.isNil(requirement.externalService)
             : true
         default:
           return true
@@ -582,20 +574,13 @@ const hasCustomRequirementError = (errors, touched, values) =>
 const hasExternalRequirementError = (errors, touched, values) =>
   !!errors.requirement &&
   !!touched.requirement?.externalService &&
-  !!touched.requirement?.externalServiceApplicantLevel &&
-  (!values.requirement?.externalService ||
-    !R.isNil(values.requirement?.externalService)) &&
-  (!values.requirement?.externalServiceApplicantLevel ||
-    !R.isNil(values.requirement?.externalServiceApplicantLevel))
+  !values.requirement?.externalService
 
 const Requirement = ({
   config = {},
   triggers,
-  additionalInfo: {
-    emailAuth,
-    customInfoRequests = [],
-    externalValidationLevels = {}
-  }
+  emailAuth,
+  customInfoRequests = []
 }) => {
   const classes = useStyles()
   const {
@@ -725,30 +710,17 @@ const Requirement = ({
             name="requirement.externalService"
             options={externalServices}
           />
-          {!R.isNil(
-            externalValidationLevels[values.requirement.externalService]
-          ) && (
-            <Field
-              className={classes.dropdownField}
-              component={Dropdown}
-              label="Applicant level"
-              name="requirement.externalServiceApplicantLevel"
-              options={
-                externalValidationLevels[values.requirement.externalService]
-              }
-            />
-          )}
         </div>
       )}
     </>
   )
 }
 
-const requirements = (config, triggers, additionalInfo) => ({
+const requirements = (config, triggers, customInfoRequests, emailAuth) => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  props: { config, triggers, additionalInfo },
+  props: { config, triggers, customInfoRequests, emailAuth },
   hasRequirementError: hasRequirementError,
   hasCustomRequirementError: hasCustomRequirementError,
   hasExternalRequirementError: hasExternalRequirementError,
@@ -757,8 +729,7 @@ const requirements = (config, triggers, additionalInfo) => ({
       requirement: '',
       suspensionDays: '',
       customInfoRequestId: '',
-      externalService: '',
-      externalServiceApplicantLevel: ''
+      externalService: ''
     }
   }
 })
@@ -788,9 +759,7 @@ const customReqIdMatches = customReqId => it => {
   return it.id === customReqId
 }
 
-const RequirementInput = ({
-  additionalInfo: { customInfoRequests = [], externalValidationLevels = {} }
-}) => {
+const RequirementInput = ({ customInfoRequests = [] }) => {
   const { values } = useFormikContext()
   const classes = useStyles()
 
@@ -826,7 +795,7 @@ const RequirementView = ({
   suspensionDays,
   customInfoRequestId,
   externalService,
-  additionalInfo: { customInfoRequests = [], externalValidationLevels = {} }
+  customInfoRequests = []
 }) => {
   const classes = useStyles()
   const display =
@@ -949,7 +918,7 @@ const ThresholdView = ({ config, currency }) => {
   return <DisplayThreshold config={config} currency={currency} />
 }
 
-const getElements = (currency, classes, additionalInfo) => [
+const getElements = (currency, classes, customInfoRequests) => [
   {
     name: 'triggerType',
     size: 'sm',
@@ -970,8 +939,10 @@ const getElements = (currency, classes, additionalInfo) => [
     size: 'sm',
     width: 260,
     bypassField: true,
-    input: () => <RequirementInput additionalInfo={additionalInfo} />,
-    view: it => <RequirementView {...it} additionalInfo={additionalInfo} />
+    input: () => <RequirementInput customInfoRequests={customInfoRequests} />,
+    view: it => (
+      <RequirementView {...it} customInfoRequests={customInfoRequests} />
+    )
   },
   {
     name: 'threshold',
@@ -1003,7 +974,7 @@ const sortBy = [
   )
 ]
 
-const fromServer = (triggers, customInfoRequests) => {
+const fromServer = triggers => {
   return R.map(
     ({
       requirement,
@@ -1012,15 +983,13 @@ const fromServer = (triggers, customInfoRequests) => {
       thresholdDays,
       customInfoRequestId,
       externalService,
-      externalServiceApplicantLevel,
       ...rest
     }) => ({
       requirement: {
         requirement,
         suspensionDays,
         customInfoRequestId,
-        externalService,
-        externalServiceApplicantLevel
+        externalService
       },
       threshold: {
         threshold,
@@ -1039,7 +1008,6 @@ const toServer = triggers =>
     thresholdDays: threshold.thresholdDays,
     customInfoRequestId: requirement.customInfoRequestId,
     externalService: requirement.externalService,
-    externalServiceApplicantLevel: requirement.externalServiceApplicantLevel,
     ...rest
   }))(triggers)
 

@@ -2,7 +2,7 @@ import Wizard from '../Wizard'
 
 import CustomerDetails from './CustomerDetails'
 import CustomerSidebar from './CustomerSidebar'
-import { EditableCard, NonEditableCard } from './EditableCard'
+import EditableCard from './EditableCard'
 import Field from './Field'
 import IdDataCard from './IdDataCard'
 import PhotosCarousel from './PhotosCarousel'
@@ -17,7 +17,6 @@ export {
   CustomerSidebar,
   Field,
   EditableCard,
-  NonEditableCard,
   Wizard,
   Upload
 }

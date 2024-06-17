@@ -53,8 +53,7 @@ const getStep = (
   currency,
   customInfoRequests,
   emailAuth,
-  triggers,
-  additionalInfo
+  triggers
 ) => {
   switch (step) {
     // case 1:
@@ -62,13 +61,7 @@ const getStep = (
     case 1:
       return type(currency)
     case 2:
-      return requirements(
-        customInfoRequests,
-        emailAuth,
-        config,
-        triggers,
-        additionalInfo
-      )
+      return requirements(config, triggers, customInfoRequests, emailAuth)
     default:
       return Fragment
   }
@@ -226,8 +219,7 @@ const Wizard = ({
   currency,
   customInfoRequests,
   emailAuth,
-  triggers,
-  additionalInfo
+  triggers
 }) => {
   const classes = useStyles()
 
@@ -242,8 +234,7 @@ const Wizard = ({
     currency,
     customInfoRequests,
     emailAuth,
-    triggers,
-    additionalInfo
+    triggers
   )
 
   const onContinue = async it => {

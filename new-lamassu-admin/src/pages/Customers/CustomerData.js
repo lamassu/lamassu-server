@@ -11,8 +11,7 @@ import { TextInput } from 'src/components/inputs/formik'
 import { H3, Info3 } from 'src/components/typography'
 import {
   OVERRIDE_AUTHORIZED,
-  OVERRIDE_REJECTED,
-  OVERRIDE_PENDING
+  OVERRIDE_REJECTED
 } from 'src/pages/Customers/components/propertyCard'
 import { ReactComponent as CardIcon } from 'src/styling/icons/ID/card/comet.svg'
 import { ReactComponent as PhoneIcon } from 'src/styling/icons/ID/phone/comet.svg'
@@ -26,7 +25,7 @@ import { URI } from 'src/utils/apollo'
 import { onlyFirstToUpper } from 'src/utils/string'
 
 import styles from './CustomerData.styles.js'
-import { EditableCard, NonEditableCard } from './components'
+import { EditableCard } from './components'
 import {
   customerDataElements,
   customerDataSchemas,
@@ -401,59 +400,22 @@ const CustomerData = ({
     })
   }, R.keys(smsData) ?? [])
 
-  const externalComplianceProvider =
-    R.path([`externalCompliance`, `provider`])(customer) ?? undefined
-
-  const externalComplianceData = {
-    sumsub: {
-      getApplicantInfo: data => {
-        return R.path(['fixedInfo'])(data) ?? {}
-      },
-      getVerificationState: data => {
-        const reviewStatus = R.path(['review', 'reviewStatus'])(data)
-        const reviewResult = R.path(['review', 'reviewResult', 'reviewAnswer'])(
-          data
-        )
-
-        const state =
-          reviewStatus === 'completed'
-            ? reviewResult === 'GREEN'
-              ? OVERRIDE_AUTHORIZED
-              : OVERRIDE_REJECTED
-            : OVERRIDE_PENDING
-
-        const comment = R.path(['review', 'reviewResult', 'clientComment'])(
-          data
-        )
-
-        const labels = R.path(['review', 'reviewResult', 'rejectLabels'])(data)
-
-        return { state, comment, labels }
-      }
-    }
-  }
-
-  const externalComplianceValues = R.path(['externalCompliance'])(customer)
-
-  if (
-    !R.isNil(externalComplianceValues) &&
-    !R.isEmpty(externalComplianceValues)
-  ) {
-    externalCompliance.push({
-      fields: R.map(it => ({ name: it[0], label: it[0], value: it[1] }))(
-        R.toPairs(
-          externalComplianceData[externalComplianceProvider]?.getApplicantInfo(
-            externalComplianceValues
-          )
-        )
-      ),
-      titleIcon: <CardIcon className={classes.cardIcon} />,
-      state: externalComplianceData[
-        externalComplianceProvider
-      ]?.getVerificationState(externalComplianceValues),
-      title: 'External Info'
-    })
-  }
+  // TODO - add external compliance data
+  // R.forEach(outer => {
+  //   initialValues.
+  //   externalCompliance.push({
+  //     fields: [
+  //       {
+  //         name: 'lastKnownStatus',
+  //         label: 'Last Known Status',
+  //         component: TextInput
+  //       }
+  //     ],
+  //     titleIcon: <CardIcon className={classes.cardIcon} />,
+  //     state: outer.state,
+  //     title: 'External Info'
+  //     })
+  // })(R.keys(customer.externalCompliance))
 
   const editableCard = (
     {
@@ -501,13 +463,14 @@ const CustomerData = ({
     idx
   ) => {
     return (
-      <NonEditableCard
+      <EditableCard
         title={title}
         key={idx}
         state={state}
         titleIcon={titleIcon}
+        editable={false}
         hasImage={hasImage}
-        fields={fields}></NonEditableCard>
+        fields={fields}></EditableCard>
     )
   }
 
