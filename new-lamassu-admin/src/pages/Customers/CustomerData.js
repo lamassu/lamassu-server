@@ -400,22 +400,34 @@ const CustomerData = ({
     })
   }, R.keys(smsData) ?? [])
 
-  // TODO - add external compliance data
-  // R.forEach(outer => {
-  //   initialValues.
-  //   externalCompliance.push({
-  //     fields: [
-  //       {
-  //         name: 'lastKnownStatus',
-  //         label: 'Last Known Status',
-  //         component: TextInput
-  //       }
-  //     ],
-  //     titleIcon: <CardIcon className={classes.cardIcon} />,
-  //     state: outer.state,
-  //     title: 'External Info'
-  //     })
-  // })(R.keys(customer.externalCompliance))
+  R.forEach(it => {
+    externalCompliance.push({
+      fields: [
+        {
+          name: 'externalId',
+          label: 'Third Party ID',
+          editable: false
+        },
+        {
+          name: 'lastKnownStatus',
+          label: 'Last Known Status',
+          editable: false
+        },
+        {
+          name: 'lastUpdated',
+          label: 'Last Updated',
+          editable: false
+        }
+      ],
+      titleIcon: <CardIcon className={classes.cardIcon} />,
+      title: `External Info [${it.service}]`,
+      initialValues: it ?? {
+        externalId: '',
+        lastKnownStatus: '',
+        lastUpdated: ''
+      }
+    })
+  })(customer.externalCompliance ?? [])
 
   const editableCard = (
     {
@@ -459,7 +471,7 @@ const CustomerData = ({
   }
 
   const nonEditableCard = (
-    { title, state, titleIcon, fields, hasImage },
+    { title, state, titleIcon, fields, hasImage, initialValues, children },
     idx
   ) => {
     return (
@@ -467,6 +479,8 @@ const CustomerData = ({
         title={title}
         key={idx}
         state={state}
+        children={children}
+        initialValues={initialValues}
         titleIcon={titleIcon}
         editable={false}
         hasImage={hasImage}
