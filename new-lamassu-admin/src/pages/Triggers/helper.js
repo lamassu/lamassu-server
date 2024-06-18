@@ -556,7 +556,8 @@ const requirementOptions = [
   { display: 'US SSN', code: 'usSsn' },
   // { display: 'Super user', code: 'superuser' },
   { display: 'Suspend', code: 'suspend' },
-  { display: 'Block', code: 'block' }
+  { display: 'Block', code: 'block' },
+  { display: 'External Verification', code: 'external' }
 ]
 
 const hasRequirementError = (errors, touched, values) =>
@@ -580,6 +581,7 @@ const Requirement = ({
   config = {},
   triggers,
   emailAuth,
+  complianceServices,
   customInfoRequests = []
 }) => {
   const classes = useStyles()
@@ -624,27 +626,17 @@ const Requirement = ({
     }))
 
   const enableCustomRequirement = !R.isEmpty(availableCustomRequirements)
-  const enableExternalRequirement = !R.any(
-    // TODO: right now this condition is directly related with sumsub. On adding external validation, this needs to be generalized
-    ite => ite.requirement === 'external' && ite.externalService === 'sumsub',
-    R.map(it => ({
-      requirement: it.requirement.requirement,
-      externalService: it.requirement.externalService
-    }))(triggers)
-  )
 
   const customInfoOption = {
     display: 'Custom information requirement',
     code: 'custom'
   }
-  const externalOption = { display: 'External verification', code: 'external' }
 
   const itemToRemove = emailAuth ? 'sms' : 'email'
   const reqOptions = requirementOptions.filter(it => it.code !== itemToRemove)
   const options = R.clone(reqOptions)
 
   enableCustomRequirement && options.push(customInfoOption)
-  enableExternalRequirement && options.push(externalOption)
 
   const titleClass = {
     [classes.error]:
@@ -653,13 +645,6 @@ const Requirement = ({
       (isCustom && hasCustomRequirementError(errors, touched, values)) ||
       (isExternal && hasExternalRequirementError(errors, touched, values))
   }
-
-  const externalServices = [
-    {
-      value: 'sumsub',
-      display: 'Sumsub'
-    }
-  ]
 
   return (
     <>
@@ -708,7 +693,10 @@ const Requirement = ({
             component={Dropdown}
             label="Service"
             name="requirement.externalService"
-            options={externalServices}
+            options={complianceServices.map(it => ({
+              value: it.code,
+              display: it.display
+            }))}
           />
         </div>
       )}
@@ -716,11 +704,23 @@ const Requirement = ({
   )
 }
 
-const requirements = (config, triggers, customInfoRequests, emailAuth) => ({
+const requirements = (
+  config,
+  triggers,
+  customInfoRequests,
+  complianceServices,
+  emailAuth
+) => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  props: { config, triggers, customInfoRequests, emailAuth },
+  props: {
+    config,
+    triggers,
+    customInfoRequests,
+    emailAuth,
+    complianceServices
+  },
   hasRequirementError: hasRequirementError,
   hasCustomRequirementError: hasCustomRequirementError,
   hasExternalRequirementError: hasExternalRequirementError,
@@ -804,7 +804,7 @@ const RequirementView = ({
           R.find(customReqIdMatches(customInfoRequestId))(customInfoRequests)
         ) ?? ''
       : requirement === 'external'
-      ? `External validation (${onlyFirstToUpper(externalService)})`
+      ? `External Verification (${onlyFirstToUpper(externalService)})`
       : getView(requirementOptions, 'display')(requirement)
   const isSuspend = requirement === 'suspend'
   return (

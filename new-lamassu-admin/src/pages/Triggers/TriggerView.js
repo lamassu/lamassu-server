@@ -29,6 +29,7 @@ const TriggerView = ({
   toggleWizard,
   addNewTriger,
   emailAuth,
+  complianceServices,
   customInfoRequests
 }) => {
   const currency = R.path(['fiatCurrency'])(
@@ -78,6 +79,7 @@ const TriggerView = ({
           save={add}
           onClose={() => toggleWizard(true)}
           customInfoRequests={customInfoRequests}
+          complianceServices={complianceServices}
           emailAuth={emailAuth}
           triggers={triggers}
         />

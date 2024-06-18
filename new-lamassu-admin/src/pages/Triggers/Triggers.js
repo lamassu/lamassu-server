@@ -42,6 +42,12 @@ const GET_CONFIG = gql`
   query getData {
     config
     accounts
+    accountsConfig {
+      code
+      display
+      class
+      cryptos
+    }
   }
 `
 
@@ -75,6 +81,9 @@ const Triggers = () => {
   const emailAuth =
     data?.config?.triggersConfig_customerAuthentication === 'EMAIL'
 
+  const complianceServices = R.filter(R.propEq('class', 'compliance'))(
+    data?.accountsConfig || []
+  )
   const triggers = fromServer(data?.config?.triggers ?? [])
   const complianceConfig =
     data?.config && fromNamespace('compliance')(data.config)
@@ -220,6 +229,7 @@ const Triggers = () => {
           toggleWizard={toggleWizard('newTrigger')}
           addNewTriger={addNewTriger}
           emailAuth={emailAuth}
+          complianceServices={complianceServices}
           customInfoRequests={enabledCustomInfoRequests}
         />
       )}

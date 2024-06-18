@@ -52,6 +52,7 @@ const getStep = (
   { step, config },
   currency,
   customInfoRequests,
+  complianceServices,
   emailAuth,
   triggers
 ) => {
@@ -61,7 +62,13 @@ const getStep = (
     case 1:
       return type(currency)
     case 2:
-      return requirements(config, triggers, customInfoRequests, emailAuth)
+      return requirements(
+        config,
+        triggers,
+        customInfoRequests,
+        complianceServices,
+        emailAuth
+      )
     default:
       return Fragment
   }
@@ -218,6 +225,7 @@ const Wizard = ({
   error,
   currency,
   customInfoRequests,
+  complianceServices,
   emailAuth,
   triggers
 }) => {
@@ -233,6 +241,7 @@ const Wizard = ({
     { step, config },
     currency,
     customInfoRequests,
+    complianceServices,
     emailAuth,
     triggers
   )
