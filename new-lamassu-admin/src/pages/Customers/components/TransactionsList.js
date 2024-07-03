@@ -22,6 +22,13 @@ const TransactionsList = ({ customer, data, loading }) => {
   const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
   const hasData = !(R.isEmpty(data) || R.isNil(data))
 
+  const lastUsedMachine = R.pipe(
+    R.sort(R.descend(R.prop('created'))),
+    R.head,
+    R.prop('machineName'),
+    R.defaultTo(null)
+  )(data)
+
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const tableSpacingClasses = {
     [classes.titleAndButtonsContainer]: loading || (!loading && !hasData),
@@ -65,6 +72,11 @@ const TransactionsList = ({ customer, data, loading }) => {
             ${customer.lastTxFiatCode}`}
         </>
       )
+    },
+    {
+      header: 'Last used machine',
+      size: 198,
+      value: ifNotNull(lastUsedMachine, <>{lastUsedMachine}</>)
     }
   ]
 
