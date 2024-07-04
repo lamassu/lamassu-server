@@ -6,6 +6,7 @@ import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import cex from './cex'
 import galoy from './galoy'
+import inforu from './inforu'
 import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
@@ -21,6 +22,7 @@ export default {
   [galoy.code]: galoy,
   [bitstamp.code]: bitstamp,
   [blockcypher.code]: blockcypher,
+  [inforu.code]: inforu,
   [infura.code]: infura,
   [itbit.code]: itbit,
   [kraken.code]: kraken,
