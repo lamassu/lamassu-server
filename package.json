@@ -2,7 +2,7 @@
   "name": "lamassu-server",
   "description": "bitcoin atm client server protocol module",
   "keywords": [],
-  "version": "10.0.0-rc.10",
+  "version": "10.0.0",
   "license": "./LICENSE",
   "author": "Lamassu (https://lamassu.is)",
   "dependencies": {
@@ -20,6 +20,8 @@
     "@simplewebauthn/server": "^3.0.0",
     "@vonage/auth": "1.5.0",
     "@vonage/sms": "1.7.0",
+    "@vonage/server-client": "1.7.0",
+    "@vonage/vetch": "1.5.0",
     "apollo-server-express": "2.25.1",
     "argon2": "0.28.2",
     "axios": "0.21.1",
