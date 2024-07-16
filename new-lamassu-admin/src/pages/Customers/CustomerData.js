@@ -99,7 +99,6 @@ const CustomerData = ({
   const customInfoRequests = sortByName(
     R.path(['customInfoRequests'])(customer) ?? []
   )
-  const externalCompliance = []
 
   const phone = R.path(['phone'])(customer)
   const email = R.path(['email'])(customer)
@@ -400,34 +399,32 @@ const CustomerData = ({
     })
   }, R.keys(smsData) ?? [])
 
-  R.forEach(it => {
-    externalCompliance.push({
-      fields: [
-        {
-          name: 'externalId',
-          label: 'Third Party ID',
-          editable: false
-        },
-        {
-          name: 'lastKnownStatus',
-          label: 'Last Known Status',
-          editable: false
-        },
-        {
-          name: 'lastUpdated',
-          label: 'Last Updated',
-          editable: false
-        }
-      ],
-      titleIcon: <CardIcon className={classes.cardIcon} />,
-      title: `External Info [${it.service}]`,
-      initialValues: it ?? {
-        externalId: '',
-        lastKnownStatus: '',
-        lastUpdated: ''
+  const externalCompliance = R.map(it => ({
+    fields: [
+      {
+        name: 'externalId',
+        label: 'Third Party ID',
+        editable: false
+      },
+      {
+        name: 'lastKnownStatus',
+        label: 'Last Known Status',
+        editable: false
+      },
+      {
+        name: 'lastUpdated',
+        label: 'Last Updated',
+        editable: false
       }
-    })
-  })(customer.externalCompliance ?? [])
+    ],
+    titleIcon: <CardIcon className={classes.cardIcon} />,
+    title: `External Info [${it.service}]`,
+    initialValues: it ?? {
+      externalId: '',
+      lastKnownStatus: '',
+      lastUpdated: ''
+    }
+  }))(customer.externalCompliance ?? [])
 
   const editableCard = (
     {
