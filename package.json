@@ -131,7 +131,7 @@
     "admin-server": "nodemon bin/lamassu-admin-server --dev --logLevel silly",
     "graphql-server": "nodemon bin/new-graphql-dev-insecure",
     "watch": "concurrently \"npm:server\" \"npm:admin-server\" \"npm:graphql-server\"",
-    "stress-test": "cd ./test/stress/ && node index.js 50 -v"
+    "stress-test": "cd tests/stress/ && node index.js 50 -v"
   },
   "nodemonConfig": {
     "ignore": [
@@ -139,12 +139,9 @@
     ]
   },
   "devDependencies": {
-    "ava": "3.8.2",
     "concurrently": "^5.3.0",
     "jest": "^26.6.3",
-    "mocha": "^5.0.1",
     "nodemon": "^2.0.6",
-    "rewire": "^4.0.1",
     "standard": "^12.0.1"
   },
   "standard": {

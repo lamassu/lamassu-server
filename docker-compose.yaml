@@ -126,18 +126,3 @@ services:
     depends_on:
       lamassu-server:
         condition: service_started
-
-  # admin:
-  #   container_name: lamassu-admin
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfiles/admin.Dockerfile
-  #     target: production-admin
-  #   restart: always
-  #   ports:
-  #     - 80:80
-  #   networks:
-  #     - lamassu-network
-  #   depends_on:
-  #     lamassu-admin-server:
-  #       condition: service_started

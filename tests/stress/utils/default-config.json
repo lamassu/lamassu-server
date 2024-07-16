@@ -1,0 +1,2 @@
+{"config":{"wallets_BTC_coin":"BTC","wallets_BTC_wallet":"mock-wallet","wallets_BTC_ticker":"mock-ticker","wallets_BTC_exchange":"mock-exchange","wallets_BTC_zeroConf":"all-zero-conf","locale_id":"32cc539a-78e6-4a1d-96d8-31b7aa628e1f","locale_country":"US","locale_fiatCurrency":"USD","locale_languages":["en-US"],"locale_cryptoCurrencies":["BTC"],"commissions_minimumTx":1,"commissions_fixedFee":1,"commissions_cashOut":1,"commissions_cashIn":1,"commissions_id":"719b9dd9-1444-42fc-918a-f8b2265513ac"}}
+
