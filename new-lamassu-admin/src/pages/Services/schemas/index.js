@@ -6,11 +6,13 @@ import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import cex from './cex'
 import galoy from './galoy'
+import inforu from './inforu'
 import infura from './infura'
 import itbit from './itbit'
 import kraken from './kraken'
 import mailgun from './mailgun'
 import scorechain from './scorechain'
+import sumsub from './sumsub'
 import telnyx from './telnyx'
 import trongrid from './trongrid'
 import twilio from './twilio'
@@ -21,6 +23,7 @@ export default {
   [galoy.code]: galoy,
   [bitstamp.code]: bitstamp,
   [blockcypher.code]: blockcypher,
+  [inforu.code]: inforu,
   [infura.code]: infura,
   [itbit.code]: itbit,
   [kraken.code]: kraken,
@@ -33,5 +36,6 @@ export default {
   [scorechain.code]: scorechain,
   [trongrid.code]: trongrid,
   [binance.code]: binance,
-  [bitfinex.code]: bitfinex
+  [bitfinex.code]: bitfinex,
+  [sumsub.code]: sumsub
 }

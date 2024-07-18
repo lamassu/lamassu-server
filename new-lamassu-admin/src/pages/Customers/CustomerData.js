@@ -64,7 +64,7 @@ const Photo = ({ show, src }) => {
 
 const CustomerData = ({
   locale,
-  customer,
+  customer = {},
   updateCustomer,
   replacePhoto,
   editCustomer,
@@ -399,6 +399,33 @@ const CustomerData = ({
     })
   }, R.keys(smsData) ?? [])
 
+  const externalCompliance = R.map(it => ({
+    fields: [
+      {
+        name: 'externalId',
+        label: 'Third Party ID',
+        editable: false
+      },
+      {
+        name: 'lastKnownStatus',
+        label: 'Last Known Status',
+        editable: false
+      },
+      {
+        name: 'lastUpdated',
+        label: 'Last Updated',
+        editable: false
+      }
+    ],
+    titleIcon: <CardIcon className={classes.cardIcon} />,
+    title: `External Info [${it.service}]`,
+    initialValues: it ?? {
+      externalId: '',
+      lastKnownStatus: '',
+      lastUpdated: ''
+    }
+  }))(customer.externalCompliance ?? [])
+
   const editableCard = (
     {
       title,
@@ -437,6 +464,24 @@ const CustomerData = ({
         deleteEditedData={deleteEditedData}
         retrieveAdditionalData={retrieveAdditionalData}
         editable={editable}></EditableCard>
+    )
+  }
+
+  const nonEditableCard = (
+    { title, state, titleIcon, fields, hasImage, initialValues, children },
+    idx
+  ) => {
+    return (
+      <EditableCard
+        title={title}
+        key={idx}
+        state={state}
+        children={children}
+        initialValues={initialValues}
+        titleIcon={titleIcon}
+        editable={false}
+        hasImage={hasImage}
+        fields={fields}></EditableCard>
     )
   }
 
@@ -509,6 +554,25 @@ const CustomerData = ({
               <Grid container direction="column" item xs={6}>
                 {customRequirements.map((elem, idx) => {
                   return !isEven(idx) ? editableCard(elem, idx) : null
+                })}
+              </Grid>
+            </Grid>
+          </div>
+        )}
+        {!R.isEmpty(externalCompliance) && (
+          <div className={classes.wrapper}>
+            <span className={classes.separator}>
+              External compliance information
+            </span>
+            <Grid container>
+              <Grid container direction="column" item xs={6}>
+                {externalCompliance.map((elem, idx) => {
+                  return isEven(idx) ? nonEditableCard(elem, idx) : null
+                })}
+              </Grid>
+              <Grid container direction="column" item xs={6}>
+                {externalCompliance.map((elem, idx) => {
+                  return !isEven(idx) ? nonEditableCard(elem, idx) : null
                 })}
               </Grid>
             </Grid>
