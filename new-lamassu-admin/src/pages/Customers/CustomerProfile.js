@@ -74,6 +74,7 @@ const GET_CUSTOMER = gql`
       totalTxs
       totalSpent
       lastActive
+      lastUsedMachineName
       lastTxFiat
       lastTxFiatCode
       lastTxClass
