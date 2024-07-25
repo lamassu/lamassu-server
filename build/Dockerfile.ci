@@ -28,10 +28,10 @@ RUN npm version --allow-same-version --git-tag-version false --commit-hooks fals
 RUN npm install --production
 
 COPY . ./
-RUN rm -rf public/*
+RUN rm -rf new-lamassu-admin/public/*
 
 RUN cd new-lamassu-admin && npm install && npm run build
-RUN cp -r new-lamassu-admin/build/* public
+RUN cp -r new-lamassu-admin/build/* -t new-lamassu-admin/public/
 RUN rm -rf new-lamassu-admin/node_modules
 
 RUN cd .. && tar -zcvf lamassu-server.tar.gz ./lamassu-server
