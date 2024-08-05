@@ -21,6 +21,7 @@ const TransactionsList = ({ customer, data, loading }) => {
   const classes = useStyles()
   const LastTxIcon = customer.lastTxClass === 'cashOut' ? TxOutIcon : TxInIcon
   const hasData = !(R.isEmpty(data) || R.isNil(data))
+  const { lastUsedMachineName } = customer
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const tableSpacingClasses = {
@@ -65,6 +66,11 @@ const TransactionsList = ({ customer, data, loading }) => {
             ${customer.lastTxFiatCode}`}
         </>
       )
+    },
+    {
+      header: 'Last used machine',
+      size: 198,
+      value: ifNotNull(lastUsedMachineName, <>{lastUsedMachineName}</>)
     }
   ]
 
