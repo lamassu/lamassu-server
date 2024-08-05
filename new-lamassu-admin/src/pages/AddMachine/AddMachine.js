@@ -71,7 +71,7 @@ const QrCodeComponent = ({ classes, qrCode, name, count, onPaired }) => {
         Scan QR code with your new cryptomat
       </Info2>
       <div className={classes.qrCodeWrapper}>
-        <div className={classes.qrCodeImageWrapper}>
+        <div className={classes.qrCodeImageWrapper} data-cy={qrCode}>
           <QRCode
             size={280}
             fgColor={primaryColor}
