@@ -31,7 +31,7 @@ COPY . ./
 RUN rm -rf public/*
 
 RUN cd new-lamassu-admin && npm install && npm run build
-RUN cp -r new-lamassu-admin/build/* public
+RUN cp -r new-lamassu-admin/build/* -t new-lamassu-admin/public/
 RUN rm -rf new-lamassu-admin/node_modules
 
 RUN cd .. && tar -zcvf lamassu-server.tar.gz ./lamassu-server

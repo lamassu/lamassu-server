@@ -9,6 +9,7 @@ import { NumberInput, RadioGroup, Dropdown } from 'src/components/inputs/formik'
 import { H4, Label2, Label1, Info1, Info2 } from 'src/components/typography'
 import { errorColor } from 'src/styling/variables'
 import { transformNumber } from 'src/utils/number'
+import { onlyFirstToUpper } from 'src/utils/string'
 
 // import { ReactComponent as TxInIcon } from 'src/styling/icons/direction/cash-in.svg'
 // import { ReactComponent as TxOutIcon } from 'src/styling/icons/direction/cash-out.svg'
@@ -82,6 +83,14 @@ const useStyles = makeStyles({
   dropdownField: {
     marginTop: 16,
     minWidth: 155
+  },
+  externalFields: {
+    '& > *': {
+      marginRight: 15
+    },
+    '& > *:last-child': {
+      marginRight: 0
+    }
   }
 })
 
@@ -488,6 +497,13 @@ const requirementSchema = Yup.object()
         otherwise: Yup.string()
           .nullable()
           .transform(() => '')
+      }),
+      externalService: Yup.string().when('requirement', {
+        is: value => value === 'external',
+        then: Yup.string(),
+        otherwise: Yup.string()
+          .nullable()
+          .transform(() => '')
       })
     }).required()
   })
@@ -501,6 +517,10 @@ const requirementSchema = Yup.object()
         case 'custom':
           return requirement.requirement === type
             ? !R.isNil(requirement.customInfoRequestId)
+            : true
+        case 'external':
+          return requirement.requirement === type
+            ? !R.isNil(requirement.externalService)
             : true
         default:
           return true
@@ -518,6 +538,12 @@ const requirementSchema = Yup.object()
         path: 'requirement',
         message: 'You must select an item'
       })
+
+    if (requirement && !requirementValidator(requirement, 'external'))
+      return context.createError({
+        path: 'requirement',
+        message: 'You must select an item'
+      })
   })
 
 const requirementOptions = [
@@ -530,7 +556,8 @@ const requirementOptions = [
   { display: 'US SSN', code: 'usSsn' },
   // { display: 'Super user', code: 'superuser' },
   { display: 'Suspend', code: 'suspend' },
-  { display: 'Block', code: 'block' }
+  { display: 'Block', code: 'block' },
+  { display: 'External Verification', code: 'external' }
 ]
 
 const hasRequirementError = (errors, touched, values) =>
@@ -545,7 +572,18 @@ const hasCustomRequirementError = (errors, touched, values) =>
   (!values.requirement?.customInfoRequestId ||
     !R.isNil(values.requirement?.customInfoRequestId))
 
-const Requirement = ({ customInfoRequests, emailAuth }) => {
+const hasExternalRequirementError = (errors, touched, values) =>
+  !!errors.requirement &&
+  !!touched.requirement?.externalService &&
+  !values.requirement?.externalService
+
+const Requirement = ({
+  config = {},
+  triggers,
+  emailAuth,
+  complianceServices,
+  customInfoRequests = []
+}) => {
   const classes = useStyles()
   const {
     touched,
@@ -557,27 +595,55 @@ const Requirement = ({ customInfoRequests, emailAuth }) => {
 
   const isSuspend = values?.requirement?.requirement === 'suspend'
   const isCustom = values?.requirement?.requirement === 'custom'
+  const isExternal = values?.requirement?.requirement === 'external'
+
+  const customRequirementsInUse = R.reduce(
+    (acc, value) => {
+      if (value.requirement.requirement === 'custom')
+        acc.push({
+          triggerType: value.triggerType,
+          id: value.requirement.customInfoRequestId
+        })
+      return acc
+    },
+    [],
+    triggers
+  )
+
+  const availableCustomRequirements = R.filter(
+    it =>
+      !R.includes(
+        { triggerType: config.triggerType, id: it.id },
+        customRequirementsInUse
+      ),
+    customInfoRequests
+  )
+
   const makeCustomReqOptions = () =>
-    customInfoRequests.map(it => ({
+    availableCustomRequirements.map(it => ({
       value: it.id,
       display: it.customRequest.name
     }))
 
-  const enableCustomRequirement = customInfoRequests?.length > 0
+  const enableCustomRequirement = !R.isEmpty(availableCustomRequirements)
+
   const customInfoOption = {
     display: 'Custom information requirement',
     code: 'custom'
   }
+
   const itemToRemove = emailAuth ? 'sms' : 'email'
   const reqOptions = requirementOptions.filter(it => it.code !== itemToRemove)
-  const options = enableCustomRequirement
-    ? [...reqOptions, customInfoOption]
-    : [...reqOptions]
+  const options = R.clone(reqOptions)
+
+  enableCustomRequirement && options.push(customInfoOption)
+
   const titleClass = {
     [classes.error]:
       (!!errors.requirement && !isSuspend && !isCustom) ||
       (isSuspend && hasRequirementError(errors, touched, values)) ||
-      (isCustom && hasCustomRequirementError(errors, touched, values))
+      (isCustom && hasCustomRequirementError(errors, touched, values)) ||
+      (isExternal && hasExternalRequirementError(errors, touched, values))
   }
 
   return (
@@ -620,22 +686,50 @@ const Requirement = ({ customInfoRequests, emailAuth }) => {
           />
         </div>
       )}
+      {isExternal && (
+        <div className={classes.externalFields}>
+          <Field
+            className={classes.dropdownField}
+            component={Dropdown}
+            label="Service"
+            name="requirement.externalService"
+            options={complianceServices.map(it => ({
+              value: it.code,
+              display: it.display
+            }))}
+          />
+        </div>
+      )}
     </>
   )
 }
 
-const requirements = (customInfoRequests, emailAuth) => ({
+const requirements = (
+  config,
+  triggers,
+  customInfoRequests,
+  complianceServices,
+  emailAuth
+) => ({
   schema: requirementSchema,
   options: requirementOptions,
   Component: Requirement,
-  props: { customInfoRequests, emailAuth },
+  props: {
+    config,
+    triggers,
+    customInfoRequests,
+    emailAuth,
+    complianceServices
+  },
   hasRequirementError: hasRequirementError,
   hasCustomRequirementError: hasCustomRequirementError,
+  hasExternalRequirementError: hasExternalRequirementError,
   initialValues: {
     requirement: {
       requirement: '',
       suspensionDays: '',
-      customInfoRequestId: ''
+      customInfoRequestId: '',
+      externalService: ''
     }
   }
 })
@@ -665,7 +759,7 @@ const customReqIdMatches = customReqId => it => {
   return it.id === customReqId
 }
 
-const RequirementInput = ({ customInfoRequests }) => {
+const RequirementInput = ({ customInfoRequests = [] }) => {
   const { values } = useFormikContext()
   const classes = useStyles()
 
@@ -700,7 +794,8 @@ const RequirementView = ({
   requirement,
   suspensionDays,
   customInfoRequestId,
-  customInfoRequests
+  externalService,
+  customInfoRequests = []
 }) => {
   const classes = useStyles()
   const display =
@@ -708,6 +803,8 @@ const RequirementView = ({
       ? R.path(['customRequest', 'name'])(
           R.find(customReqIdMatches(customInfoRequestId))(customInfoRequests)
         ) ?? ''
+      : requirement === 'external'
+      ? `External Verification (${onlyFirstToUpper(externalService)})`
       : getView(requirementOptions, 'display')(requirement)
   const isSuspend = requirement === 'suspend'
   return (
@@ -840,7 +937,7 @@ const getElements = (currency, classes, customInfoRequests) => [
   {
     name: 'requirement',
     size: 'sm',
-    width: 230,
+    width: 260,
     bypassField: true,
     input: () => <RequirementInput customInfoRequests={customInfoRequests} />,
     view: it => (
@@ -850,7 +947,7 @@ const getElements = (currency, classes, customInfoRequests) => [
   {
     name: 'threshold',
     size: 'sm',
-    width: 284,
+    width: 254,
     textAlign: 'right',
     input: () => <ThresholdInput currency={currency} />,
     view: (it, config) => <ThresholdView config={config} currency={currency} />
@@ -877,7 +974,7 @@ const sortBy = [
   )
 ]
 
-const fromServer = (triggers, customInfoRequests) => {
+const fromServer = triggers => {
   return R.map(
     ({
       requirement,
@@ -885,12 +982,14 @@ const fromServer = (triggers, customInfoRequests) => {
       threshold,
       thresholdDays,
       customInfoRequestId,
+      externalService,
       ...rest
     }) => ({
       requirement: {
         requirement,
         suspensionDays,
-        customInfoRequestId
+        customInfoRequestId,
+        externalService
       },
       threshold: {
         threshold,
@@ -908,6 +1007,7 @@ const toServer = triggers =>
     threshold: threshold.threshold,
     thresholdDays: threshold.thresholdDays,
     customInfoRequestId: requirement.customInfoRequestId,
+    externalService: requirement.externalService,
     ...rest
   }))(triggers)
 
