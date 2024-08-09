@@ -22,13 +22,11 @@ setEnvVariable('POSTGRES_HOST', 'localhost')
 setEnvVariable('POSTGRES_PORT', '5432')
 setEnvVariable('POSTGRES_DB', 'lamassu')
 
-setEnvVariable('LAMASSU_CA_PATH', `/etc/ssl/certs/Lamassu_CA.pem`)
 setEnvVariable('CA_PATH', `/etc/ssl/certs/Lamassu_OP_Root_CA.pem`)
 setEnvVariable('CERT_PATH', `/etc/ssl/certs/Lamassu_OP.pem`)
 setEnvVariable('KEY_PATH', `/etc/ssl/private/Lamassu_OP.key`)
 
 setEnvVariable('MNEMONIC_PATH', `/etc/lamassu/mnemonics/mnemonic.txt`)
-setEnvVariable('MIGRATE_STATE_PATH', `/etc/lamassu/.migrate`)
 
 setEnvVariable('BLOCKCHAIN_DIR', `/mnt/blockchains`)
 setEnvVariable('OFAC_DATA_DIR', `/var/lamassu/ofac`)
@@ -36,7 +34,6 @@ setEnvVariable('ID_PHOTO_CARD_DIR', `/opt/lamassu-server/idphotocard`)
 setEnvVariable('FRONT_CAMERA_DIR', `/opt/lamassu-server/frontcamera`)
 setEnvVariable('OPERATOR_DATA_DIR', `/opt/lamassu-server/operatordata`)
 
-setEnvVariable('STRIKE_BASE_URL', `https://api.strike.acinq.co/api/`)
 setEnvVariable('COIN_ATM_RADAR_URL', `https://coinatmradar.info/api/lamassu/`)
 
 setEnvVariable('OFAC_SOURCES_NAMES', 'sdn_advanced,cons_advanced')
