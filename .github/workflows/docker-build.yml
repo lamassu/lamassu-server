@@ -40,6 +40,7 @@ jobs:
           context: .
           push: true
           target: l-s
+          file: ./build/server.Dockerfile
           tags: ${{ env.DOCKERHUB_SERVER_REPO }}:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
@@ -50,6 +51,7 @@ jobs:
           context: .
           push: true
           target: l-a-s
+          file: ./build/server.Dockerfile
           tags: ${{ env.DOCKERHUB_ADMIN_REPO }}:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
