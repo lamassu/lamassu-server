@@ -9,8 +9,6 @@ CONFIG_DIR=$HOME/.lamassu
 LOG_FILE=/tmp/cert-gen.log
 CERT_DIR=$PWD/certs
 KEY_DIR=$PWD/certs
-LAMASSU_CA_PATH=$PWD/Lamassu_CA.pem
-MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
 POSTGRES_PASS=postgres123
 OFAC_DATA_DIR=$CONFIG_DIR/ofac
 IDPHOTOCARD_DIR=$CONFIG_DIR/idphotocard
@@ -91,6 +89,6 @@ rm /tmp/Lamassu_OP.csr.pem
 mkdir -p $OFAC_DATA_DIR/sources
 touch $OFAC_DATA_DIR/etags.json
 
-node tools/build-dev-env.js
+node bin/scripts/build-dev-env.js
 
 echo "Done."

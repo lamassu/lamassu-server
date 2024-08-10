@@ -11,7 +11,6 @@ CERT_DIR=/etc/ssl/certs
 KEY_DIR=/etc/ssl/private
 CONFIG_DIR=/etc/lamassu
 
-LAMASSU_CA_PATH=$CERT_DIR/Lamassu_CA.pem
 CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
 CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
 SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
@@ -32,15 +31,7 @@ mkdir -p $NEW_VOLUME_MOUNTING_POINT/blockchains
 mkdir -p $NEW_VOLUME_MOUNTING_POINT/lamassu
 mkdir -p $NEW_VOLUME_MOUNTING_POINT/lamassu-server
 
-if [ -f $LAMASSU_CA_PATH ]; 
-then
-   cp $LAMASSU_CA_PATH $NEW_VOLUME_MOUNTING_POINT/ssl/certs
-   echo "Successfully migrated $LAMASSU_CA_PATH"
-else 
-   echo "Failed to migrate $LAMASSU_CA_PATH, file doesn't exist!"
-fi
-
-if [ -f $CA_KEY_PATH ]; 
+if [ -f $CA_KEY_PATH ];
 then
    cp $CA_KEY_PATH $NEW_VOLUME_MOUNTING_POINT/ssl/private
    echo "Successfully migrated $CA_KEY_PATH"

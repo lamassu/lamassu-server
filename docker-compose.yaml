@@ -36,7 +36,7 @@ services:
     container_name: lamassu-server
     build:
       context: .
-      dockerfile: Dockerfiles/server.Dockerfile
+      dockerfile: build/server.Dockerfile
       target: production-l-s
     restart: on-failure
     ports:
@@ -59,18 +59,15 @@ services:
       - POSTGRES_HOST=postgres-db
       - POSTGRES_PORT=5432
       - POSTGRES_DB=lamassu
-      - LAMASSU_CA_PATH=/etc/ssl/certs/Lamassu_CA.pem
       - CA_PATH=/etc/ssl/certs/Lamassu_OP_Root_CA.pem
       - CERT_PATH=/etc/ssl/certs/Lamassu_OP.pem
       - KEY_PATH=/etc/ssl/private/Lamassu_OP.key
       - MNEMONIC_PATH=/etc/lamassu/mnemonics/mnemonic.txt
-      - MIGRATE_STATE_PATH=/etc/lamassu/.migrate
       - BLOCKCHAIN_DIR=/mnt/blockchains
       - OFAC_DATA_DIR=/var/lamassu/ofac
       - ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
       - FRONT_CAMERA_DIR=/opt/lamassu-server/frontcamera
       - OPERATOR_DATA_DIR=/opt/lamassu-server/operatordata
-      - STRIKE_BASE_URL=https://api.strike.acinq.co/api/
       - COIN_ATM_RADAR_URL=https://coinatmradar.info/api/lamassu/
       - OFAC_SOURCES_NAMES=sdn_advanced,cons_advanced
       - OFAC_SOURCES_URLS=https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml,https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml
@@ -84,7 +81,7 @@ services:
     container_name: lamassu-admin-server
     build:
       context: .
-      dockerfile: Dockerfiles/admin-server.Dockerfile
+      dockerfile: build/admin-server.Dockerfile
       target: production-l-a-s
     restart: on-failure
     ports:
@@ -106,18 +103,15 @@ services:
       - POSTGRES_HOST=postgres-db
       - POSTGRES_PORT=5432
       - POSTGRES_DB=lamassu
-      - LAMASSU_CA_PATH=/etc/ssl/certs/Lamassu_CA.pem
       - CA_PATH=/etc/ssl/certs/Lamassu_OP_Root_CA.pem
       - CERT_PATH=/etc/ssl/certs/Lamassu_OP.pem
       - KEY_PATH=/etc/ssl/private/Lamassu_OP.key
       - MNEMONIC_PATH=/etc/lamassu/mnemonics/mnemonic.txt
-      - MIGRATE_STATE_PATH=/etc/lamassu/.migrate
       - BLOCKCHAIN_DIR=/mnt/blockchains
       - OFAC_DATA_DIR=/var/lamassu/ofac
       - ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
       - FRONT_CAMERA_DIR=/opt/lamassu-server/frontcamera
       - OPERATOR_DATA_DIR=/opt/lamassu-server/operatordata
-      - STRIKE_BASE_URL=https://api.strike.acinq.co/api/
       - COIN_ATM_RADAR_URL=https://coinatmradar.info/api/lamassu/
       - OFAC_SOURCES_NAMES=sdn_advanced,cons_advanced
       - OFAC_SOURCES_URLS=https://www.treasury.gov/ofac/downloads/sanctions/1.0/sdn_advanced.xml,https://www.treasury.gov/ofac/downloads/sanctions/1.0/cons_advanced.xml

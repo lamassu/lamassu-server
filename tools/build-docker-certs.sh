@@ -6,8 +6,6 @@ export LOG_FILE=/tmp/install.log
 CERT_DIR=/etc/ssl/certs
 KEY_DIR=/etc/ssl/private
 CONFIG_DIR=/etc/lamassu
-MIGRATE_STATE_PATH=$CONFIG_DIR/.migrate
-LAMASSU_CA_PATH=$CERT_DIR/Lamassu_CA.pem
 CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
 CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
 SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
@@ -32,7 +30,7 @@ NPM_BIN=$(npm -g bin)
 decho "Generating mnemonic..."
 mkdir -p $MNEMONIC_DIR
 SEED=$(openssl rand -hex 32)
-MNEMONIC=$(/app/packages/lamassu-server/bin/bip39 $SEED)
+MNEMONIC=$(/lamassu-server/bin/bip39 $SEED)
 echo "$MNEMONIC" > $MNEMONIC_FILE
 
 mkdir -p $CERT_DIR
@@ -81,9 +79,5 @@ openssl x509 \
   -days 3650
 
 rm /tmp/Lamassu_OP.csr.pem
-
-decho "Copying Lamassu certificate authority..."
-LAMASSU_CA_FILE=/app/packages/lamassu-server/Lamassu_CA.pem
-cp $LAMASSU_CA_FILE $LAMASSU_CA_PATH
 
 mkdir -p $OFAC_DATA_DIR
