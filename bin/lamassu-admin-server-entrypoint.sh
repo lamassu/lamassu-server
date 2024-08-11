@@ -18,5 +18,9 @@ cp /lamassu-data/certs/Lamassu_CA.pem /usr/local/share/ca-certificates
 cp /lamassu-data/certs/Lamassu_OP_Root_CA.pem /usr/local/share/ca-certificates
 update-ca-certificates
 
-echo "Starting admin server..."
-node /lamassu-server/bin/lamassu-admin-server
+if [ "${LAMASSU_DEV_MODE}" = "true" ]; then
+    echo "Starting in dev mode"
+    node /lamassu-server/bin/lamassu-admin-server --dev
+else
+    node /lamassu-server/bin/lamassu-admin-server
+fi
