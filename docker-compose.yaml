@@ -47,7 +47,6 @@ services:
       - ~/lamassu-data/files:/opt/lamassu-server
       - ~/lamassu-data/mnemonics:/etc/lamassu/mnemonics
       - ~/lamassu-data/ofac:/var/lamassu/ofac
-      - ~/lamassu-data/.migrate:/etc/lamassu/.migrate
       - ~/lamassu-data/blockchains:/mnt/blockchains
     networks:
       lamassu-network:
@@ -92,7 +91,6 @@ services:
       - ~/lamassu-data/files:/opt/lamassu-server
       - ~/lamassu-data/mnemonics:/etc/lamassu/mnemonics
       - ~/lamassu-data/ofac:/var/lamassu/ofac
-      - ~/lamassu-data/.migrate:/etc/lamassu/.migrate
       - ~/lamassu-data/blockchains:/mnt/blockchains
     networks:
       - lamassu-network

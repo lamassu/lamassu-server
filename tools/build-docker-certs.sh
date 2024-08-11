@@ -6,6 +6,7 @@ export LOG_FILE=/tmp/install.log
 CERT_DIR=/etc/ssl/certs
 KEY_DIR=/etc/ssl/private
 CONFIG_DIR=/etc/lamassu
+LAMASSU_CA_PATH=$CERT_DIR/Lamassu_CA.pem
 CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
 CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
 SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
@@ -81,3 +82,7 @@ openssl x509 \
 rm /tmp/Lamassu_OP.csr.pem
 
 mkdir -p $OFAC_DATA_DIR
+
+decho "Copying Lamassu certificate authority..."
+LAMASSU_CA_FILE=/lamassu-server/Lamassu_CA.pem
+cp $LAMASSU_CA_FILE $LAMASSU_CA_PATH

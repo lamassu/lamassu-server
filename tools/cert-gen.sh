@@ -9,6 +9,7 @@ CONFIG_DIR=$HOME/.lamassu
 LOG_FILE=/tmp/cert-gen.log
 CERT_DIR=$PWD/certs
 KEY_DIR=$PWD/certs
+LAMASSU_CA_PATH=$PWD/Lamassu_CA.pem
 POSTGRES_PASS=postgres123
 OFAC_DATA_DIR=$CONFIG_DIR/ofac
 IDPHOTOCARD_DIR=$CONFIG_DIR/idphotocard
