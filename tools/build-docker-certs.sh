@@ -3,22 +3,21 @@ set -e
 
 export LOG_FILE=/tmp/install.log
 
-CERT_DIR=/etc/ssl/certs
-KEY_DIR=/etc/ssl/private
-CONFIG_DIR=/etc/lamassu
+CONFIG_DIR=/lamassu-data
+
+# certs
+CERT_DIR=$CONFIG_DIR/certs
+KEY_DIR=$CONFIG_DIR/private
 LAMASSU_CA_PATH=$CERT_DIR/Lamassu_CA.pem
 CA_KEY_PATH=$KEY_DIR/Lamassu_OP_Root_CA.key
 CA_PATH=$CERT_DIR/Lamassu_OP_Root_CA.pem
 SERVER_KEY_PATH=$KEY_DIR/Lamassu_OP.key
 SERVER_CERT_PATH=$CERT_DIR/Lamassu_OP.pem
-MNEMONIC_DIR=$CONFIG_DIR/mnemonics 
-MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt 
-BACKUP_DIR=/var/backups/postgresql
-BLOCKCHAIN_DIR=/mnt/blockchains
-OFAC_DATA_DIR=/var/lamassu/ofac
-ID_PHOTO_CARD_DIR=/opt/lamassu-server/idphotocard
-FRONTCAMERA_DIR=/opt/lamassu-server/frontcamera
-OPERATOR_DIR=/opt/lamassu-server/operatordata
+
+# other
+MNEMONIC_DIR=$CONFIG_DIR/mnemonics
+MNEMONIC_FILE=$MNEMONIC_DIR/mnemonic.txt
+OFAC_DATA_DIR=$CONFIG_DIR/ofac
 
 decho () {
   echo `date +"%H:%M:%S"` $1
@@ -35,7 +34,7 @@ MNEMONIC=$(/lamassu-server/bin/bip39 $SEED)
 echo "$MNEMONIC" > $MNEMONIC_FILE
 
 mkdir -p $CERT_DIR
-mkdir -p $CONFIG_DIR
+mkdir -p $KEY_DIR
 
 decho "Generating SSL certificates..."
 

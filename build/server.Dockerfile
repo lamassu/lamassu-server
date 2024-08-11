@@ -1,4 +1,4 @@
-FROM alpine:3.14 as build
+FROM alpine:3.14 AS build
 RUN apk add --no-cache nodejs npm git curl build-base net-tools python3 postgresql-dev
 
 WORKDIR lamassu-server
@@ -10,13 +10,13 @@ RUN npm install --production
 COPY . ./
 
 
-FROM alpine:3.14 as l-s-base
-RUN apk add --no-cache nodejs npm git curl bash libpq openssl
+FROM alpine:3.14 AS l-s-base
+RUN apk add --no-cache nodejs npm git curl bash libpq openssl ca-certificates
 
 COPY --from=build /lamassu-server /lamassu-server
 
 
-FROM l-s-base as l-s
+FROM l-s-base AS l-s
 
 RUN chmod +x /lamassu-server/bin/lamassu-server-entrypoint.sh
 
@@ -25,7 +25,7 @@ EXPOSE 3000
 ENTRYPOINT [ "/lamassu-server/bin/lamassu-server-entrypoint.sh" ]
 
 
-FROM alpine:3.14 as build-ui
+FROM alpine:3.14 AS build-ui
 RUN apk add --no-cache nodejs npm git curl build-base python3
 
 COPY ["new-lamassu-admin/package.json", "new-lamassu-admin/package-lock.json", "./"]
@@ -37,10 +37,11 @@ COPY new-lamassu-admin/ ./
 RUN npm run build
 
 
-FROM l-s-base as l-a-s
+FROM l-s-base AS l-a-s
 COPY --from=build-ui /build /lamassu-server/public
+
+RUN chmod +x /lamassu-server/bin/lamassu-admin-server-entrypoint.sh
 
 EXPOSE 443
 
-ENTRYPOINT [ "node" ]
-CMD [ "/lamassu-server/bin/lamassu-admin-server" ]
+ENTRYPOINT [ "/lamassu-server/bin/lamassu-admin-server-entrypoint.sh" ]
