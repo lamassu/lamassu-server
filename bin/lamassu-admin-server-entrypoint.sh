@@ -20,7 +20,7 @@ update-ca-certificates
 
 if [ "${LAMASSU_DEV_MODE}" = "true" ]; then
     echo "Starting in dev mode"
-    node /lamassu-server/bin/lamassu-admin-server --dev
+    node /lamassu-server/bin/lamassu-admin-server --lamassuDev
 else
     node /lamassu-server/bin/lamassu-admin-server
 fi
