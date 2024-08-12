@@ -557,7 +557,7 @@ const requirementOptions = [
   // { display: 'Super user', code: 'superuser' },
   { display: 'Suspend', code: 'suspend' },
   { display: 'Block', code: 'block' },
-  { display: 'External Verification', code: 'external' }
+  { display: 'External verification', code: 'external' }
 ]
 
 const hasRequirementError = (errors, touched, values) =>
@@ -640,7 +640,7 @@ const Requirement = ({
 
   const titleClass = {
     [classes.error]:
-      (!!errors.requirement && !isSuspend && !isCustom) ||
+      (!!errors.requirement && !isSuspend && !isCustom && !isExternal) ||
       (isSuspend && hasRequirementError(errors, touched, values)) ||
       (isCustom && hasCustomRequirementError(errors, touched, values)) ||
       (isExternal && hasExternalRequirementError(errors, touched, values))
@@ -804,7 +804,7 @@ const RequirementView = ({
           R.find(customReqIdMatches(customInfoRequestId))(customInfoRequests)
         ) ?? ''
       : requirement === 'external'
-      ? `External Verification (${onlyFirstToUpper(externalService)})`
+      ? `External verification (${onlyFirstToUpper(externalService)})`
       : getView(requirementOptions, 'display')(requirement)
   const isSuspend = requirement === 'suspend'
   return (
