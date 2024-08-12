@@ -1,5 +1,6 @@
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
+import { subMinutes } from 'date-fns'
 import FileSaver from 'file-saver'
 import gql from 'graphql-tag'
 import React, { useState, useEffect } from 'react'
@@ -81,7 +82,6 @@ const DiagnosticsModal = ({ onClose, deviceId, sendAction }) => {
       setState(STATES.EMPTY)
     }
     if (
-      timestamp &&
       data.machine.diagnostics.timestamp &&
       data.machine.diagnostics.timestamp !== timestamp
     ) {
@@ -89,10 +89,6 @@ const DiagnosticsModal = ({ onClose, deviceId, sendAction }) => {
       setTimestamp(data.machine.diagnostics.timestamp)
       setState(STATES.FILLED)
       stopPolling()
-    }
-    if (!timestamp && data.machine.diagnostics.timestamp) {
-      setTimestamp(data.machine.diagnostics.timestamp)
-      setState(STATES.FILLED)
     }
   }, [data, stopPolling, timeout, timestamp])
 
@@ -177,7 +173,7 @@ const DiagnosticsModal = ({ onClose, deviceId, sendAction }) => {
             if (loading) return
             fetchSummary({
               variables: {
-                from: timestamp,
+                from: subMinutes(new Date(timestamp), 5),
                 deviceId,
                 limit: 500
               }
