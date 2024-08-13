@@ -24,10 +24,8 @@ const GET_BATCHES = gql`
       operationType
       customBillCount
       performedBy
-      bills {
-        fiat
-        fiatCode
-      }
+      billCount
+      fiatTotal
     }
   }
 `
@@ -168,7 +166,7 @@ const CashboxHistory = ({ machines, currency, timezone }) => {
         decimalPlaces: 0
       },
       view: it =>
-        R.isNil(it.customBillCount) ? it.bills.length : it.customBillCount
+        R.isNil(it.customBillCount) ? it.billCount : it.customBillCount
     },
     {
       name: 'total',
@@ -177,7 +175,7 @@ const CashboxHistory = ({ machines, currency, timezone }) => {
       textAlign: 'right',
       view: it => (
         <span>
-          {R.sum(R.map(b => R.prop('fiat', b), it.bills))} {currency}
+          {it.fiatTotal} {currency}
         </span>
       )
     },
