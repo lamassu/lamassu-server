@@ -38,8 +38,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: update.tar
-          path: update.tar
+          name: lamassu-server.tar.gz
+          path: lamassu-server.tar.gz
 
       - name: Move cache
         run: |
