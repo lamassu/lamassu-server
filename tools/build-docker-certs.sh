@@ -23,7 +23,7 @@ decho () {
   echo `date +"%H:%M:%S"` $1
 }
 
-IP=$(hostname -i)
+IP=$HOSTNAME
 NODE_MODULES=$(npm -g root)
 NPM_BIN=$(npm -g bin)
 
