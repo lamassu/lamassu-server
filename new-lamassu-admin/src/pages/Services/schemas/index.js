@@ -5,6 +5,7 @@ import bitgo from './bitgo'
 import bitstamp from './bitstamp'
 import blockcypher from './blockcypher'
 import cex from './cex'
+import elliptic from './elliptic'
 import galoy from './galoy'
 import inforu from './inforu'
 import infura from './infura'
@@ -23,6 +24,7 @@ export default {
   [galoy.code]: galoy,
   [bitstamp.code]: bitstamp,
   [blockcypher.code]: blockcypher,
+  [elliptic.code]: elliptic,
   [inforu.code]: inforu,
   [infura.code]: infura,
   [itbit.code]: itbit,
