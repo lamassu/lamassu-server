@@ -1,5 +1,22 @@
-FROM alpine:3.14
-RUN apk add --no-cache nodejs npm git curl build-base net-tools python3 postgresql-dev
+FROM ubuntu:20.04 as base
+
+ARG VERSION
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Lisbon
+
+RUN apt-get update
+
+RUN apt-get install -y -q curl \
+                          sudo \
+                          git \
+                          python2-minimal \
+                          build-essential \
+                          libpq-dev \
+                          net-tools \
+                          tar
+
+RUN curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+RUN apt-get install nodejs -y -q
 
 WORKDIR lamassu-server
 
