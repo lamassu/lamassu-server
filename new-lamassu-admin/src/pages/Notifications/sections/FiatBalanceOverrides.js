@@ -59,7 +59,7 @@ const FiatBalanceOverrides = ({ config, section }) => {
   }
 
   const initialValues = {
-    [MACHINE_KEY]: null,
+    [MACHINE_KEY]: '',
     [CASHBOX_KEY]: '',
     [CASSETTE_1_KEY]: '',
     [CASSETTE_2_KEY]: '',
