@@ -90,6 +90,6 @@ rm /tmp/Lamassu_OP.csr.pem
 mkdir -p $OFAC_DATA_DIR/sources
 touch $OFAC_DATA_DIR/etags.json
 
-node bin/scripts/build-dev-env.js
+node tools/build-dev-env.js
 
 echo "Done."
