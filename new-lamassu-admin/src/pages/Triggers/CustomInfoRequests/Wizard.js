@@ -139,10 +139,9 @@ const formatValues = (values, isEditing) => {
   return resObj
 }
 
-const makeEditingValues = it => {
-  const { customRequest } = it
+const makeEditingValues = ({ customRequest, id }) => {
   return {
-    id: it.id,
+    id,
     requirementName: customRequest.name,
     screen1Title: customRequest.screen1.title,
     screen1Text: customRequest.screen1.text,
