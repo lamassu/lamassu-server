@@ -40,28 +40,38 @@ const validationSchema = Yup.lazy(values => {
   switch (values.inputType) {
     case 'numerical':
       return Yup.object({
-        constraintType: Yup.string().required(),
+        constraintType: Yup.string()
+          .label('Constraint type')
+          .required(),
         inputLength: Yup.number().when('constraintType', {
           is: 'length',
           then: Yup.number()
             .min(0)
-            .required(),
+            .required('The number of digits is required'),
           else: Yup.mixed().notRequired()
         })
       })
     case 'text':
       return Yup.object({
-        constraintType: Yup.string().required(),
-        inputLabel1: Yup.string().required(),
+        constraintType: Yup.string()
+          .label('Constraint type')
+          .required(),
+        inputLabel1: Yup.string()
+          .label('Text entry label')
+          .required(),
         inputLabel2: Yup.string().when('constraintType', {
           is: 'spaceSeparation',
-          then: Yup.string().required(),
+          then: Yup.string()
+            .label('Second word label')
+            .required(),
           else: Yup.mixed().notRequired()
         })
       })
     case 'choiceList':
       return Yup.object({
-        constraintType: Yup.string().required(),
+        constraintType: Yup.string()
+          .label('Constraint type')
+          .required(),
         listChoices: Yup.array().test(
           'has-2-or-more',
           'Choice list needs to have two or more non empty fields',
