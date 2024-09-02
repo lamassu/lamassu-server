@@ -53,39 +53,26 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const getStep = (step, existingRequirements) => {
-  switch (step) {
-    case 1:
-      return {
-        schema: nameOfReqSchema(existingRequirements),
-        Component: NameOfRequirement
-      }
-    case 2:
-      return {
-        schema: screen1InfoSchema,
-        Component: Screen1Information
-      }
-    case 3:
-      return { schema: chooseTypeSchema, Component: ChooseType }
-    case 4:
-      return {
-        schema: screen2InfoSchema,
-        Component: Screen2Information
-      }
-    case 5:
-      return {
-        schema: typeFieldsValidationSchema,
-        Component: TypeFields
-      }
-    default:
-      return {
-        schema: {},
-        Component: () => {
-          return <h1>Default component step</h1>
-        }
-      }
-  }
-}
+const getStep = (step, existingRequirements) =>
+  [
+    {
+      validationSchema: nameOfReqSchema(existingRequirements),
+      Component: NameOfRequirement
+    },
+    {
+      validationSchema: screen1InfoSchema,
+      Component: Screen1Information
+    },
+    { validationSchema: chooseTypeSchema, Component: ChooseType },
+    {
+      validationSchema: screen2InfoSchema,
+      Component: Screen2Information
+    },
+    {
+      validationSchema: typeFieldsValidationSchema,
+      Component: TypeFields
+    }
+  ][step - 1]
 
 const nonEmptyStr = obj => obj.text && obj.text.length
 
@@ -179,10 +166,10 @@ const Wizard = ({
   }
 
   // If we're editing, filter out the requirement being edited so that validation schemas don't enter in circular conflicts
-  const _existingRequirements = isEditing
+  existingRequirements = isEditing
     ? R.filter(it => it.id !== toBeEdited.id, existingRequirements)
     : existingRequirements
-  const stepOptions = getStep(step, _existingRequirements)
+  const stepOptions = getStep(step, existingRequirements)
   const isLastStep = step === LAST_STEP
 
   const onContinue = (values, actions) => {
@@ -232,7 +219,7 @@ const Wizard = ({
           enableReinitialize={true}
           onSubmit={onContinue}
           initialValues={initialValues}
-          validationSchema={stepOptions.schema}>
+          validationSchema={stepOptions.validationSchema}>
           {({ errors }) => (
             <Form className={classes.form} id={'custom-requirement-form'}>
               <stepOptions.Component />
