@@ -173,6 +173,14 @@ const Wizard = ({
   const isEditing = !R.isNil(toBeEdited)
   const [step, setStep] = useState(isEditing ? 1 : 0)
 
+  const defaultValues = {
+    ...nameOfReqDefaults,
+    ...screen1InfoDefaults,
+    ...screen2InfoDefaults,
+    ...chooseTypeDefaults,
+    ...typeFieldsDefaults
+  }
+
   // If we're editing, filter out the requirement being edited so that validation schemas don't enter in circular conflicts
   const _existingRequirements = isEditing
     ? R.filter(it => it.id !== toBeEdited.id, existingRequirements)
@@ -201,6 +209,7 @@ const Wizard = ({
   }
 
   const editingValues = isEditing ? makeEditingValues(toBeEdited) : {}
+  const initialValues = R.mergeWith(chooseNotNull, defaultValues, editingValues)
   const wizardTitle = isEditing
     ? 'Editing custom requirement'
     : 'New custom requirement'
@@ -225,17 +234,7 @@ const Wizard = ({
           validateOnChange={false}
           enableReinitialize={true}
           onSubmit={onContinue}
-          initialValues={R.mergeWith(
-            chooseNotNull,
-            {
-              ...nameOfReqDefaults,
-              ...screen1InfoDefaults,
-              ...screen2InfoDefaults,
-              ...chooseTypeDefaults,
-              ...typeFieldsDefaults
-            },
-            editingValues
-          )}
+          initialValues={initialValues}
           validationSchema={stepOptions.schema}>
           {({ errors }) => (
             <Form className={classes.form} id={'custom-requirement-form'}>
