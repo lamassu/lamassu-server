@@ -156,10 +156,7 @@ const makeEditingValues = ({ customRequest, id }) => {
   }
 }
 
-const chooseNotNull = (a, b) => {
-  if (!R.isNil(b)) return b
-  return a
-}
+const chooseNotNull = (a, b) => (R.isNil(b) ? a : b)
 
 const Wizard = ({
   onClose,
