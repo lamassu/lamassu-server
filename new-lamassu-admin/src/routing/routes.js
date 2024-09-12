@@ -143,7 +143,6 @@ const Routes = () => {
       <PrivateRoute path="/machines" component={Machines} />
       <PrivateRoute path="/wizard" component={Wizard} />
       <PublicRoute path="/register" component={Register} />
-      {/* <PublicRoute path="/configmigration" component={ConfigMigration} /> */}
       <PublicRoute path="/login" restricted component={Login} />
       <PublicRoute path="/resetpassword" component={ResetPassword} />
       <PublicRoute path="/reset2fa" component={Reset2FA} />
