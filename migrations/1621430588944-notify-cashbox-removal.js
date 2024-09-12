@@ -1,5 +1,5 @@
 const db = require('./db')
-const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { migrationSaveConfig } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
   const sql = [
