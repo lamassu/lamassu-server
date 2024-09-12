@@ -30,7 +30,7 @@ const BooleanPropertiesTable = memo(
       elements.map(it => [it.name, data[it.name]?.toString() ?? null])
     )
 
-    const schemaValidation = R.fromPairs(
+    const validationSchema = R.fromPairs(
       elements.map(it => [it.name, Yup.boolean().required()])
     )
 
@@ -56,7 +56,7 @@ const BooleanPropertiesTable = memo(
           enableReinitialize
           onSubmit={innerSave}
           initialValues={initialValues}
-          schemaValidation={schemaValidation}>
+          validationSchema={validationSchema}>
           {({ resetForm }) => {
             return (
               <Form>

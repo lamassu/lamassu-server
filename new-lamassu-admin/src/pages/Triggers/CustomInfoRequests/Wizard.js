@@ -53,39 +53,26 @@ const styles = {
 
 const useStyles = makeStyles(styles)
 
-const getStep = (step, existingRequirements) => {
-  switch (step) {
-    case 1:
-      return {
-        schema: nameOfReqSchema(existingRequirements),
-        Component: NameOfRequirement
-      }
-    case 2:
-      return {
-        schema: screen1InfoSchema,
-        Component: Screen1Information
-      }
-    case 3:
-      return { schema: chooseTypeSchema, Component: ChooseType }
-    case 4:
-      return {
-        schema: screen2InfoSchema,
-        Component: Screen2Information
-      }
-    case 5:
-      return {
-        schema: typeFieldsValidationSchema,
-        Component: TypeFields
-      }
-    default:
-      return {
-        schema: {},
-        Component: () => {
-          return <h1>Default component step</h1>
-        }
-      }
-  }
-}
+const getStep = (step, existingRequirements) =>
+  [
+    {
+      validationSchema: nameOfReqSchema(existingRequirements),
+      Component: NameOfRequirement
+    },
+    {
+      validationSchema: screen1InfoSchema,
+      Component: Screen1Information
+    },
+    { validationSchema: chooseTypeSchema, Component: ChooseType },
+    {
+      validationSchema: screen2InfoSchema,
+      Component: Screen2Information
+    },
+    {
+      validationSchema: typeFieldsValidationSchema,
+      Component: TypeFields
+    }
+  ][step - 1]
 
 const nonEmptyStr = obj => obj.text && obj.text.length
 
@@ -139,10 +126,9 @@ const formatValues = (values, isEditing) => {
   return resObj
 }
 
-const makeEditingValues = it => {
-  const { customRequest } = it
+const makeEditingValues = ({ customRequest, id }) => {
   return {
-    id: it.id,
+    id,
     requirementName: customRequest.name,
     screen1Title: customRequest.screen1.title,
     screen1Text: customRequest.screen1.text,
@@ -157,10 +143,7 @@ const makeEditingValues = it => {
   }
 }
 
-const chooseNotNull = (a, b) => {
-  if (!R.isNil(b)) return b
-  return a
-}
+const chooseNotNull = (a, b) => (R.isNil(b) ? a : b)
 
 const Wizard = ({
   onClose,
@@ -174,11 +157,19 @@ const Wizard = ({
   const isEditing = !R.isNil(toBeEdited)
   const [step, setStep] = useState(isEditing ? 1 : 0)
 
+  const defaultValues = {
+    ...nameOfReqDefaults,
+    ...screen1InfoDefaults,
+    ...screen2InfoDefaults,
+    ...chooseTypeDefaults,
+    ...typeFieldsDefaults
+  }
+
   // If we're editing, filter out the requirement being edited so that validation schemas don't enter in circular conflicts
-  const _existingRequirements = isEditing
+  existingRequirements = isEditing
     ? R.filter(it => it.id !== toBeEdited.id, existingRequirements)
     : existingRequirements
-  const stepOptions = getStep(step, _existingRequirements)
+  const stepOptions = getStep(step, existingRequirements)
   const isLastStep = step === LAST_STEP
 
   const onContinue = (values, actions) => {
@@ -202,6 +193,7 @@ const Wizard = ({
   }
 
   const editingValues = isEditing ? makeEditingValues(toBeEdited) : {}
+  const initialValues = R.mergeWith(chooseNotNull, defaultValues, editingValues)
   const wizardTitle = isEditing
     ? 'Editing custom requirement'
     : 'New custom requirement'
@@ -226,18 +218,8 @@ const Wizard = ({
           validateOnChange={false}
           enableReinitialize={true}
           onSubmit={onContinue}
-          initialValues={R.mergeWith(
-            chooseNotNull,
-            {
-              ...nameOfReqDefaults,
-              ...screen1InfoDefaults,
-              ...screen2InfoDefaults,
-              ...chooseTypeDefaults,
-              ...typeFieldsDefaults
-            },
-            editingValues
-          )}
-          validationSchema={stepOptions.schema}>
+          initialValues={initialValues}
+          validationSchema={stepOptions.validationSchema}>
           {({ errors }) => (
             <Form className={classes.form} id={'custom-requirement-form'}>
               <stepOptions.Component />

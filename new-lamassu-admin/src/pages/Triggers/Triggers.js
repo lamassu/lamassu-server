@@ -73,11 +73,12 @@ const Triggers = () => {
 
   const [twilioSetupPopup, setTwilioSetupPopup] = useState(false)
 
-  const customInfoRequests =
-    R.path(['customInfoRequests'])(customInfoReqData) ?? []
-  const enabledCustomInfoRequests = R.filter(R.propEq('enabled', true))(
-    customInfoRequests
-  )
+  const enabledCustomInfoRequests = R.pipe(
+    R.path(['customInfoRequests']),
+    R.defaultTo([]),
+    R.filter(R.propEq('enabled', true))
+  )(customInfoReqData)
+
   const emailAuth =
     data?.config?.triggersConfig_customerAuthentication === 'EMAIL'
 

@@ -29,14 +29,14 @@ const NameOfRequirement = () => {
 const validationSchema = existingRequirements =>
   Yup.object().shape({
     requirementName: Yup.string()
-      .required('A requirement name is required')
+      .required('Name is required')
       .test(
         'unique-name',
         'A custom information requirement with that name already exists',
         (value, _context) =>
-          !R.any(
-            it => R.equals(R.toLower(it), R.toLower(value)),
-            R.map(it => it.customRequest.name, existingRequirements)
+          !R.includes(
+            R.toLower(R.defaultTo('', value)),
+            R.map(it => R.toLower(it.customRequest.name), existingRequirements)
           )
       )
   })
