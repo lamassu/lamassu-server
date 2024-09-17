@@ -3,7 +3,7 @@ const settingsLoader = require('../lib/new-settings-loader')
 const configManager = require('../lib/new-config-manager')
 
 exports.up = async function (next) {
-  const { config } = await settingsLoader.loadLatest()
+  const config = await settingsLoader.loadLatestConfig()
   const cryptoCodes = configManager.getCryptosFromWalletNamespace(config)
   _.forEach(cryptoCode => {
     const key = `wallets_${cryptoCode}_zeroConf`
