@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+
+require('../lib/environment-helper')
+const TronWeb = require('tronweb')
+const db = require('../lib/db')
+const _ = require('lodash/fp')
+
+const pify = require('pify')
+const fs = pify(require('fs'))
+
+const MNEMONIC_PATH = process.env.MNEMONIC_PATH
+
+const defaultPrefixPath = "m/44'/195'/0'/0"
+const paymentPrefixPath = "m/44'/195'/1'/0"
+
+const address = process.argv[2]
+
+if (!MNEMONIC_PATH) {
+  console.error(`Unable to fetch mnemonic from your account!`)
+  process.exit(1)
+}
+
+if (!address) {
+  console.log('Usage: lamassu-trx-recovery <cash-out address>')
+  process.exit(2)
+}
+
+function run (address) {
+  Promise.all([fetchMnemonic(), searchForHdIndex(address)])
+    .then(([mnemonic, hdIndex]) => {
+      try {
+        const prefix = !_.isNil(hdIndex) ? `${paymentPrefixPath}/${hdIndex}` : `${defaultPrefixPath}/0`
+        const privKey = TronWeb.fromMnemonic(mnemonic.replace(/[\r\n]/gm, ' ').trim(), prefix).privateKey
+        console.log(`Private key: `, privKey.slice(2))
+        process.exit(0)
+      } catch (err) {
+        console.error(`Error while retrieving private key!`)
+        process.exit(3)
+      }
+    })
+}
+
+function searchForHdIndex (address) {
+  const sql = `SELECT hd_index FROM cash_out_txs WHERE to_address = $1`
+  return db.oneOrNone(sql, [address])
+    .then(result => _.get('hd_index', result))
+}
+
+function fetchMnemonic () {
+  return fs.readFile(MNEMONIC_PATH, 'utf8')
+}
+
+run(address)
