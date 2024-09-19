@@ -1,6 +1,5 @@
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
-import { parse, format } from 'date-fns/fp'
 import * as R from 'ramda'
 import { useState, React } from 'react'
 import * as Yup from 'yup'
@@ -30,6 +29,7 @@ import {
   customerDataElements,
   customerDataSchemas,
   formatDates,
+  tryFormatDate,
   getFormattedPhone
 } from './helper.js'
 
@@ -113,18 +113,10 @@ const CustomerData = ({
       firstName: R.path(['firstName'])(idData) ?? '',
       lastName: R.path(['lastName'])(idData) ?? '',
       documentNumber: R.path(['documentNumber'])(idData) ?? '',
-      dateOfBirth:
-        (rawDob &&
-          format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDob))) ??
-        '',
+      dateOfBirth: tryFormatDate(rawDob),
       gender: R.path(['gender'])(idData) ?? '',
       country: R.path(['country'])(idData) ?? '',
-      expirationDate:
-        (rawExpirationDate &&
-          format('yyyy-MM-dd')(
-            parse(new Date(), 'yyyyMMdd', rawExpirationDate)
-          )) ??
-        ''
+      expirationDate: tryFormatDate(rawExpirationDate)
     },
     usSsn: {
       usSsn: customer.usSsn ?? ''
