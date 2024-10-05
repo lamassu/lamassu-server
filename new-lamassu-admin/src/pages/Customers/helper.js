@@ -528,13 +528,22 @@ const requirementElements = {
   }
 }
 
+const tryFormatDate = rawDate => {
+  try {
+    return (
+      (rawDate &&
+        format('yyyy-MM-dd')(parse(new Date(), 'yyyyMMdd', rawDate))) ??
+      ''
+    )
+  } catch (err) {
+    return ''
+  }
+}
+
 const formatDates = values => {
-  R.map(
-    elem =>
-      (values[elem] = format('yyyyMMdd')(
-        parse(new Date(), 'yyyy-MM-dd', values[elem])
-      ))
-  )(['dateOfBirth', 'expirationDate'])
+  R.forEach(elem => {
+    values[elem] = tryFormatDate(values[elem])
+  })(['dateOfBirth', 'expirationDate'])
   return values
 }
 
@@ -579,6 +588,7 @@ export {
   customerDataElements,
   customerDataSchemas,
   formatDates,
+  tryFormatDate,
   REQUIREMENT,
   CUSTOM,
   ID_CARD_DATA
