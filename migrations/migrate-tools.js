@@ -9,8 +9,8 @@ module.exports = {migrateNames}
 function migrateNames () {
   const cs = new pgp.helpers.ColumnSet(['?device_id', 'name'], {table: 'devices'})
 
-  return settingsLoader.loadLatest(false)
-    .then(r => machineLoader.getMachineNames(r.config))
+  return settingsLoader.loadLatestConfig(false)
+    .then(config => machineLoader.getMachineNames(config))
     .then(_.map(r => ({device_id: r.deviceId, name: r.name})))
     .then(data => pgp.helpers.update(data, cs) + ' WHERE t.device_id=v.device_id')
 }

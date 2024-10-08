@@ -1,10 +1,10 @@
 const _ = require('lodash/fp')
-const { migrationSaveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { migrationSaveConfig, loadLatestConfig } = require('../lib/new-settings-loader')
 const CASSETTE_MAX_CAPACITY = 500
 
 exports.up = function (next) {
-  return loadLatest()
-    .then(({ config }) => {
+  return loadLatestConfig()
+    .then(config => {
       const fiatBalance1 = config.notifications_fiatBalanceCassette1
       const fiatBalance2 = config.notifications_fiatBalanceCassette2
       const fiatBalance3 = config.notifications_fiatBalanceCassette3

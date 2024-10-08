@@ -5,9 +5,9 @@ const configManager = require('../lib/new-config-manager')
 
 exports.up = function (next) {
   return db.tx(async t => {
-    const settingsPromise = settingsLoader.loadLatest()
+    const settingsPromise = settingsLoader.loadLatestConfig()
     const machinesPromise = t.any('SELECT device_id FROM devices')
-    const [{ config }, machines] = await Promise.all([settingsPromise, machinesPromise])
+    const [config, machines] = await Promise.all([settingsPromise, machinesPromise])
     const cryptoCodes = configManager.getCryptosFromWalletNamespace(config)
 
     const deviceIds = _.map(_.get('device_id'))(machines)

@@ -1,12 +1,11 @@
 const _ = require('lodash/fp')
-const { saveConfig, loadLatest } = require('../lib/new-settings-loader')
+const { saveConfig, loadLatestConfig } = require('../lib/new-settings-loader')
 
 exports.up = function (next) {
-  const newConfig = {}
-  return loadLatest()
+  return loadLatestConfig()
     .then(config => {
-      if (!_.isNil(config.config.locale_timezone)) return
-      newConfig[`locale_timezone`] = 'GMT'
+      if (!_.isNil(config.locale_timezone)) return
+      const newConfig = { locale_timezone: 'GMT' }
       return saveConfig(newConfig)
     })
     .then(next)
